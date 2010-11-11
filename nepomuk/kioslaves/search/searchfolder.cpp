@@ -49,13 +49,6 @@
 #include <KConfigGroup>
 
 
-namespace {
-    int defaultQueryLimit() {
-        return qMax( 0, KConfig( "kio_nepomuksearchrc" ).group( "General" ).readEntry( "Default limit", 10 ) );
-    }
-}
-
-
 Nepomuk::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
     : QThread(),
       m_url( url ),
@@ -74,16 +67,9 @@ Nepomuk::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
 
     if ( m_query.isValid() ) {
         kDebug() << "Extracted query" << m_query;
-        // we default to a limit to get results as fast as possible
-        // the "+1" is necessary to determine if there are actually more results we could list
-        if ( m_query.limit() == 0 ) {
-            const int limit = defaultQueryLimit();
-            if ( limit > 0 )
-                m_query.setLimit( limit + 1 );
-        }
     }
     else {
-        // the URL contains pure sparql. We simply list it without trying to change the limit
+        // the URL contains pure sparql.
         m_sparqlQuery = Nepomuk::Query::Query::sparqlFromQueryUrl( url );
         kDebug() << "Extracted SPARQL query:" << m_sparqlQuery;
     }
@@ -97,13 +83,6 @@ Nepomuk::SearchFolder::~SearchFolder()
     // properly shut down the search thread
     quit();
     wait();
-}
-
-
-bool Nepomuk::SearchFolder::haveMoreResults() const
-{
-    return( m_query.limit() > 0 &&
-            m_resultCnt >= m_query.limit() );
 }
 
 
@@ -130,7 +109,6 @@ void Nepomuk::SearchFolder::run()
              this, SLOT( slotFinishedListing() ),
              Qt::DirectConnection );
 
-    m_resultCnt = 0;
     if ( m_query.isValid() )
         m_client->query( m_query );
     else
@@ -180,11 +158,6 @@ void Nepomuk::SearchFolder::slotResultCount( int count )
 {
     if ( !m_initialListingFinished ) {
         QMutexLocker lock( &m_slaveMutex );
-        if ( m_query.limit() > 0 &&
-             count > m_query.limit() ) {
-            // fixup count since we always ignore the last result when we have a limit
-            count = m_query.limit()-1;
-        }
         m_slave->totalSize( count );
     }
 }
@@ -209,8 +182,7 @@ void Nepomuk::SearchFolder::statResults()
             Query::Result result = m_resultsQueue.dequeue();
             m_resultMutex.unlock();
             KIO::UDSEntry uds = statResult( result );
-            if ( uds.count() &&
-                ( m_query.limit() <= 0 || ++m_resultCnt < m_query.limit() ) ) {
+            if ( uds.count() ) {
                 kDebug() << "listing" << result.resource().resourceUri();
                 QMutexLocker lock( &m_slaveMutex );
                 m_slave->listEntries( KIO::UDSEntryList() << uds );

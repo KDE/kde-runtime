@@ -74,12 +74,6 @@ namespace Nepomuk {
         Query::Query query() const { return m_query; }
 
         /**
-         * \return \p true if the query had a limit and there were more results
-         * thatn the reported ones.
-         */
-        bool haveMoreResults() const;
-
-        /**
          * List the results directly on the parent slave.
          */
         void list();
@@ -129,9 +123,6 @@ namespace Nepomuk {
         // ones do not need to be listed but emitted through
         // KDirNotify
         bool m_initialListingFinished;
-
-        /// number of emitted results
-        int m_resultCnt;
 
         // the parent slave used for listing and stating
         KIO::SlaveBase* m_slave;

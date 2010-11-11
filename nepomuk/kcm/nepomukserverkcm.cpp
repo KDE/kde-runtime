@@ -205,7 +205,7 @@ void Nepomuk::ServerConfigModule::load()
     // 4. kio_nepomuksearch settings
     KConfig kio_nepomuksearchConfig( "kio_nepomuksearchrc" );
     KConfigGroup kio_nepomuksearchGeneral = kio_nepomuksearchConfig.group( "General" );
-    m_spinMaxResults->setValue( kio_nepomuksearchGeneral.readEntry( "Default limit", 10 ) );
+    m_spinMaxResults->setValue( kio_nepomuksearchGeneral.readEntry( "Root query limit", 10 ) );
 
     // this is a temp solution until we have a proper query builder
     m_customQuery = kio_nepomuksearchGeneral.readEntry( "Custom query", QString() );
@@ -271,7 +271,7 @@ void Nepomuk::ServerConfigModule::save()
 
     // 4. update kio_nepomuksearch config
     KConfig kio_nepomuksearchConfig( "kio_nepomuksearchrc" );
-    kio_nepomuksearchConfig.group( "General" ).writeEntry( "Default limit", m_spinMaxResults->value() );
+    kio_nepomuksearchConfig.group( "General" ).writeEntry( "Root query limit", m_spinMaxResults->value() );
     kio_nepomuksearchConfig.group( "General" ).writeEntry( "Root query", queryForButton( m_rootQueryButtonGroup->checkedButton() ).toString() );
     kio_nepomuksearchConfig.group( "General" ).writeEntry( "Custom query", m_customQuery );
 

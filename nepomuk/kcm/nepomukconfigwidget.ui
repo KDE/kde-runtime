@@ -4,6 +4,9 @@
  <class>NepomukConfigWidget</class>
  <widget class="QWidget" name="NepomukConfigWidget">
   <layout class="QVBoxLayout" name="verticalLayout_8">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="KTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -363,97 +366,33 @@
             </item>
            </layout>
           </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_6">
-         <property name="title">
-          <string>Miscellaneous</string>
-         </property>
-         <layout class="QFormLayout" name="formLayout">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_6">
-            <property name="toolTip">
-             <string>Specify the maximum number of results that should be listed in query folders.</string>
-            </property>
-            <property name="text">
-             <string>Maximum number of results in initial listing:</string>
-            </property>
-            <property name="buddy">
-             <cstring>m_spinMaxResults</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="KIntNumInput" name="m_spinMaxResults">
-            <property name="value">
-             <number>10</number>
-            </property>
-            <property name="minimum">
-             <number>0</number>
-            </property>
-            <property name="specialValueText">
-             <string>Show all results</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="QCheckBox" name="m_checkAlwaysSortByScore">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
+          <item>
+           <layout class="QFormLayout" name="formLayout_2">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_6">
               <property name="toolTip">
-               <string>Sort all desktop query results by importance as deducted by Nepomuk</string>
-              </property>
-              <property name="whatsThis">
-               <string>Sort all search results by the importance deducted by Nepomuk.
-The importance of a resource is determined by its usage times, its usage frequency, its type, and other criteria.</string>
+               <string>Specify the maximum number of results that should be listed in query folders.</string>
               </property>
               <property name="text">
-               <string>Always sort results by importance</string>
+               <string>Maximum number of results in listing:</string>
+              </property>
+              <property name="buddy">
+               <cstring>m_spinMaxResults</cstring>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="KUrlLabel" name="m_buttonEditDocumentPriorities">
-              <property name="enabled">
-               <bool>false</bool>
+            <item row="0" column="1">
+             <widget class="KIntNumInput" name="m_spinMaxResults">
+              <property name="value">
+               <number>10</number>
               </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+              <property name="minimum">
+               <number>0</number>
               </property>
-              <property name="toolTip">
-               <string>Modify the importance of document types</string>
-              </property>
-              <property name="text">
-               <string>Modify document types priorities...</string>
+              <property name="specialValueText">
+               <string>Show all results</string>
               </property>
              </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_5">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </item>
@@ -553,9 +492,6 @@ The importance of a resource is determined by its usage times, its usage frequen
     </widget>
    </item>
   </layout>
-  <widget class="QWidget" name="">
-   <layout class="QVBoxLayout" name="verticalLayout_2"/>
-  </widget>
  </widget>
  <customwidgets>
   <customwidget>
@@ -586,18 +522,18 @@ The importance of a resource is determined by its usage times, its usage frequen
  <resources/>
  <connections>
   <connection>
-   <sender>m_checkEnableNepomuk</sender>
+   <sender>m_checkRootQueryCustom</sender>
    <signal>toggled(bool)</signal>
-   <receiver>groupBox</receiver>
-   <slot>setEnabled(bool)</slot>
+   <receiver>m_customQueryLabel</receiver>
+   <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>68</x>
-     <y>102</y>
+     <x>95</x>
+     <y>192</y>
     </hint>
     <hint type="destinationlabel">
-     <x>42</x>
-     <y>154</y>
+     <x>197</x>
+     <y>194</y>
     </hint>
    </hints>
   </connection>
@@ -618,6 +554,22 @@ The importance of a resource is determined by its usage times, its usage frequen
    </hints>
   </connection>
   <connection>
+   <sender>m_checkRootQueryCustom</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_buttonEditCustomQuery</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>43</x>
+     <y>193</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>230</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>m_editMemoryUsage</sender>
    <signal>valueChanged(int)</signal>
    <receiver>m_sliderMemoryUsage</receiver>
@@ -634,34 +586,18 @@ The importance of a resource is determined by its usage times, its usage frequen
    </hints>
   </connection>
   <connection>
-   <sender>m_checkRootQueryCustom</sender>
+   <sender>m_checkEnableNepomuk</sender>
    <signal>toggled(bool)</signal>
-   <receiver>m_customQueryLabel</receiver>
-   <slot>setVisible(bool)</slot>
+   <receiver>groupBox</receiver>
+   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>95</x>
-     <y>192</y>
+     <x>68</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel">
-     <x>197</x>
-     <y>194</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>m_checkRootQueryCustom</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>m_buttonEditCustomQuery</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>43</x>
-     <y>193</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>230</x>
-     <y>190</y>
+     <x>42</x>
+     <y>154</y>
     </hint>
    </hints>
   </connection>

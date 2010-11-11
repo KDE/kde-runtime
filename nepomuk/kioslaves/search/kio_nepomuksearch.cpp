@@ -112,11 +112,15 @@ namespace {
     }
 
     Nepomuk::Query::Query rootQuery() {
-        QString queryStr = KConfig( "kio_nepomuksearchrc" ).group( "General" ).readEntry( "Root query", QString() );
+        KConfig config( "kio_nepomuksearchrc" );
+        QString queryStr = config.group( "General" ).readEntry( "Root query", QString() );
+        Nepomuk::Query::Query query;
         if ( queryStr.isEmpty() )
-            return Nepomuk::lastModifiedFilesQuery();
+            query = Nepomuk::lastModifiedFilesQuery();
         else
-            return Nepomuk::Query::Query::fromString( queryStr );
+            query = Nepomuk::Query::Query::fromString( queryStr );
+        query.setLimit( config.group( "General" ).readEntry( "Root query limit", 10 ) );
+        return query;
     }
     const int s_historyMax = 10;
 }
@@ -178,13 +182,6 @@ void Nepomuk::SearchProtocol::listDir( const KUrl& url )
         else if ( SearchFolder* folder = getQueryFolder( url ) ) {
             updateQueryUrlHistory( url );
             folder->list();
-
-            // did we limit the search
-            if ( folder->haveMoreResults() ) {
-                //setMetaData( QLatin1String("total query count"), QString::number(folder->totalCount()) );
-                setMetaData(QLatin1String("more results"), QLatin1String("true"));
-            }
-
             listEntry( KIO::UDSEntry(), true );
             finished();
         }
@@ -359,7 +356,6 @@ void Nepomuk::SearchProtocol::listRoot()
 
     Query::Query query = rootQuery();
     if ( query.isValid() ) {
-        query.setLimit( KConfig( "kio_nepomuksearchrc" ).group( "General" ).readEntry( "Default limit", 10 )+1 );
         getQueryFolder( query.toSearchUrl() )->list();
     }
 
