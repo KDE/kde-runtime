@@ -54,8 +54,7 @@ using namespace Soprano;
 
 Nepomuk::Query::SearchRunnable::SearchRunnable( Folder* folder )
     : QRunnable(),
-      m_folder( folder ),
-      m_resultCnt( 0 )
+      m_folder( folder )
 {
     m_canceled = false;
 }
@@ -69,8 +68,10 @@ Nepomuk::Query::SearchRunnable::~SearchRunnable()
 void Nepomuk::Query::SearchRunnable::cancel()
 {
     m_canceled = true;
-    // we wait for the runnable to finish by locking the mutex the run() method locks, too
-    QMutexLocker lock( &m_cancelMutex );
+
+    // "detach" us from the folder which will most likely be deleted now
+    QMutexLocker lock( &m_folderMutex );
+    m_folder = 0;
 }
 
 
@@ -79,31 +80,34 @@ void Nepomuk::Query::SearchRunnable::run()
     if( m_canceled )
         return;
 
+    kDebug() << m_folder->query() << m_folder->sparqlQuery();
+
     QTime time;
     time.start();
 
-    // lock the cancel mutex to make the cancel() method block until we are actually done
-    m_cancelMutex.lock();
-
-    m_resultCnt = 0;
+    // we push the results in batches to lower the traffic and improve the user experience
+    QList<Result> resultCache;
 
     Soprano::QueryResultIterator hits = ResourceManager::instance()->mainModel()->executeQuery( m_folder->sparqlQuery(), Soprano::Query::QueryLanguageSparql );
-    while ( hits.next() ) {
-        if ( m_canceled ) break;
-
-        ++m_resultCnt;
-
+    while ( !m_canceled &&
+            m_folder &&
+            hits.next() ) {
         Result result = extractResult( hits );
 
         kDebug() << "Found result:" << result.resource().resourceUri() << result.score();
 
-        if( m_folder )
-            m_folder->addResult( result );
-        else
-            break;
-    }
+        resultCache << result;
 
-    m_cancelMutex.unlock();
+        // FIXME: does it really make sense to emit results in batches? Or do we then waste time that we could already use to stat local file results in the kio slave?
+        static const int s_resultBatchSize = 20;
+        if( resultCache.count() >= s_resultBatchSize ) {
+            QMutexLocker lock( &m_folderMutex );
+            if( m_folder ) {
+                m_folder->addResults( resultCache );
+                resultCache.clear();
+            }
+        }
+    }
 
     kDebug() << time.elapsed();
 

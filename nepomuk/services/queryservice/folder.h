@@ -89,7 +89,7 @@ namespace Nepomuk {
              */
             int getResultCount() const { return m_resultCount; }
 
-            void addResult( const Result& result );
+            void addResults( const QList<Result>& result );
 
             void listingFinished();
 

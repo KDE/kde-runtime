@@ -128,17 +128,25 @@ Nepomuk::Query::RequestPropertyMap Nepomuk::Query::Folder::requestPropertyMap() 
 
 
 // called from SearchRunnable in the search thread
-void Nepomuk::Query::Folder::addResult( const Nepomuk::Query::Result& result )
+void Nepomuk::Query::Folder::addResults( const QList<Nepomuk::Query::Result>& results )
 {
     if ( m_initialListingDone ) {
-        m_newResults.insert( result.resource().resourceUri(), result );
-        if ( !m_results.contains( result.resource().resourceUri() ) ) {
-            emit newEntries( QList<Result>() << result );
+        QList<Result> newResults;
+        Q_FOREACH( const Result& result, results ) {
+            m_newResults.insert( result.resource().resourceUri(), result );
+            if ( !m_results.contains( result.resource().resourceUri() ) ) {
+                newResults << result;
+            }
+        }
+        if( !newResults.isEmpty() ) {
+            emit newEntries( newResults );
         }
     }
     else {
-        m_results.insert( result.resource().resourceUri(), result );
-        emit newEntries( QList<Result>() << result );
+        Q_FOREACH( const Result& result, results ) {
+            m_results.insert( result.resource().resourceUri(), result );
+        }
+        emit newEntries( results );
     }
 }
 
