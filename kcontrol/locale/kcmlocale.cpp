@@ -683,7 +683,9 @@ void KCMLocale::changeCountry( int activated )
 void KCMLocale::initCountryDivision()
 {
     m_ui->m_labelCountryDivision->setText( ki18n( "Subdivision:" ).toString( m_kcmLocale ) );
-    QString helpText = ki18n( "" ).toString( m_kcmLocale );
+    QString helpText = ki18n( "<p>This is the country subdivision where you live, e.g. your state "
+                              "or province.  The KDE Workspace will use this setting for local "
+                              "information services such as holidays.</p>" ).toString( m_kcmLocale );
     m_ui->m_comboCountryDivision->setToolTip( helpText );
     m_ui->m_comboCountryDivision->setWhatsThis( helpText );
     loadCountry();
