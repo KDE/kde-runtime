@@ -1,5 +1,6 @@
 [KCM Locale]
 Name=Saint Barthélemy
+Name[x-test]=xxSaint Barthélemyxx
 Region=caribbean
 Languages=fr
 DecimalSymbol=,

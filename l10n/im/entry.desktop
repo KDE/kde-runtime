@@ -1,5 +1,6 @@
 [KCM Locale]
 Name=Isle of Man
+Name[x-test]=xxIsle of Manxx
 Region=westeurope
 Languages=en_GB,gv
 NegativeMonetarySignPosition=1

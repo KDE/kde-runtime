@@ -1,5 +1,6 @@
 [KCM Locale]
 Name=Saint Martin
+Name[x-test]=xxSaint Martinxx
 Region=caribbean
 Languages=fr,nl
 DecimalSymbol=,

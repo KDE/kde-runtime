@@ -1,5 +1,6 @@
 [KCM Locale]
 Name=Northern Mariana Islands
+Name[x-test]=xxNorthern Mariana Islandsxx
 Region=oceania
 Languages=en_US
 DecimalSymbol=.

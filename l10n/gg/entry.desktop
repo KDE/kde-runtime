@@ -1,5 +1,6 @@
 [KCM Locale]
 Name=Guernsey
+Name[x-test]=xxGuernseyxx
 Region=westeurope
 Languages=en_GB,fr
 NegativeMonetarySignPosition=1

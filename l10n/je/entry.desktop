@@ -1,5 +1,6 @@
 [KCM Locale]
 Name=Jersey
+Name[x-test]=xxJerseyxx
 Region=westeurope
 Languages=en_GB,fr
 NegativeMonetarySignPosition=1
