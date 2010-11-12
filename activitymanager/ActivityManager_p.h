@@ -28,11 +28,13 @@
 #include <KConfigGroup>
 #include <KUrl>
 
-#include <Nepomuk/ResourceManager>
-#include <Nepomuk/Resource>
-
 #include "ActivityManager.h"
 #include "config-features.h"
+
+#ifdef HAVE_NEPOMUK
+    #include <Nepomuk/ResourceManager>
+    #include <Nepomuk/Resource>
+#endif
 
 #ifndef HAVE_NEPOMUK
     #warning "No Nepomuk, disabling some activity related features"

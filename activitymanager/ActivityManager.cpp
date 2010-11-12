@@ -31,8 +31,10 @@
 
 #include <KWindowSystem>
 
-#include <Nepomuk/ResourceManager>
-#include <Nepomuk/Resource>
+#ifdef HAVE_NEPOMUK
+    #include <Nepomuk/ResourceManager>
+    #include <Nepomuk/Resource>
+#endif
 
 #include "activitymanageradaptor.h"
 #include "EventProcessor.h"

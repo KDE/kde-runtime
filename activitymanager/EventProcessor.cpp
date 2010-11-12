@@ -30,7 +30,9 @@
 
 #include <KDebug>
 
-#include <Nepomuk/ResourceManager>
+#ifdef HAVE_NEPOMUK
+    #include <Nepomuk/ResourceManager>
+#endif
 
 #include <time.h>
 
