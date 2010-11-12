@@ -204,7 +204,7 @@ QString MergeConflictDelegate::statusText(const QModelIndex &index, QPainter* pa
     }
     else {
         return i18nc("@item:inlistbox The item in this row has not been identified yet, ie. the file corresponding to it has not been chosen yet.",
-                     "Not Identified");
+                     "Not identified");
     }
 }
 

@@ -125,7 +125,7 @@ void Nepomuk::RestoreSelectionPage::initializePage()
     }
 
     if( backupFiles.isEmpty() ) {
-        QLabel * errorLabel = new QLabel( i18nc("@info", "No System Backups Found. Please select a custom backup path.") , this);
+        QLabel * errorLabel = new QLabel( i18nc("@info", "No system backups found. Please select a custom backup path.") , this);
         QGridLayout* layout = new QGridLayout(m_listWidget);
         layout->addWidget(errorLabel, 1, 1);
         layout->setRowStretch(0,1);
@@ -215,7 +215,7 @@ void Nepomuk::RestorePage::initializePage()
         // string that can be translated.
         kDebug() << "Invalid sync file";
 
-        QLabel * invalidLabel = new QLabel( i18n("Invalid Backup File"), this );
+        QLabel * invalidLabel = new QLabel( i18n("Invalid backup file"), this );
         m_identifierWidget->hide();
         layout()->addWidget( invalidLabel );
     }
