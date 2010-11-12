@@ -1163,7 +1163,7 @@ void KCMLocale::initMonetaryDecimalSymbol()
 {
     m_ui->m_labelMonetaryDecimalSymbol->setText( ki18n( "Decimal separator:" ).toString( m_kcmLocale ) );
     QString helpText = ki18n( "<p>Here you can define the decimal separator used to display "
-                              "monetary values.</p><p>Note that the thousands separator used to "
+                              "monetary values.</p><p>Note that the decimal separator used to "
                               "display other numbers has to be defined separately (see the "
                               "'Numbers' tab).</p>" ).toString( m_kcmLocale );
     m_ui->m_comboMonetaryDecimalSymbol->setToolTip( helpText );
