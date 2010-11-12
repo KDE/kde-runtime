@@ -56,7 +56,6 @@ Nepomuk::Query::SearchRunnable::SearchRunnable( Folder* folder )
     : QRunnable(),
       m_folder( folder )
 {
-    m_canceled = false;
 }
 
 
@@ -67,8 +66,6 @@ Nepomuk::Query::SearchRunnable::~SearchRunnable()
 
 void Nepomuk::Query::SearchRunnable::cancel()
 {
-    m_canceled = true;
-
     // "detach" us from the folder which will most likely be deleted now
     QMutexLocker lock( &m_folderMutex );
     m_folder = 0;
@@ -77,23 +74,23 @@ void Nepomuk::Query::SearchRunnable::cancel()
 
 void Nepomuk::Query::SearchRunnable::run()
 {
-    if( m_canceled )
+    QMutexLocker lock( &m_folderMutex );
+    if( !m_folder )
         return;
-
-    m_folderMutex.lock();
     kDebug() << m_folder->query() << m_folder->sparqlQuery();
     const QString sparql = m_folder->sparqlQuery();
-    m_folderMutex.unlock();
+    lock.unlock();
 
+#ifndef NDEBUG
     QTime time;
     time.start();
+#endif
 
     // we push the results in batches to lower the traffic and improve the user experience
     QList<Result> resultCache;
 
     Soprano::QueryResultIterator hits = ResourceManager::instance()->mainModel()->executeQuery( sparql, Soprano::Query::QueryLanguageSparql );
-    while ( !m_canceled &&
-            m_folder &&
+    while ( m_folder &&
             hits.next() ) {
         Result result = extractResult( hits );
 
@@ -104,18 +101,21 @@ void Nepomuk::Query::SearchRunnable::run()
         // FIXME: does it really make sense to emit results in batches? Or do we then waste time that we could already use to stat local file results in the kio slave?
         static const int s_resultBatchSize = 20;
         if( resultCache.count() >= s_resultBatchSize ) {
-            QMutexLocker lock( &m_folderMutex );
+            lock.relock();
             if( m_folder ) {
                 m_folder->addResults( resultCache );
                 resultCache.clear();
             }
+            lock.unlock();
         }
     }
 
+#ifndef NDEBUG
     kDebug() << time.elapsed();
+#endif
 
-    QMutexLocker lock( &m_folderMutex );
-    if( m_folder && !m_canceled ) {
+    lock.relock();
+    if( m_folder ) {
         if( !resultCache.isEmpty() )
             m_folder->addResults( resultCache );
         m_folder->listingFinished();
@@ -131,12 +131,16 @@ Nepomuk::Query::Result Nepomuk::Query::SearchRunnable::extractResult( const Sopr
     QStringList names = it.bindingNames();
     names.removeAll( QLatin1String( "r" ) );
 
-    RequestPropertyMap requestProperties = m_folder->requestPropertyMap();
-    for ( RequestPropertyMap::const_iterator rpIt = requestProperties.constBegin();
-          rpIt != requestProperties.constEnd(); ++rpIt ) {
-        result.addRequestProperty( rpIt.value(), it.binding( rpIt.key() ) );
-        names.removeAll( rpIt.key() );
+    m_folderMutex.lock();
+    if( m_folder ) {
+        RequestPropertyMap requestProperties = m_folder->requestPropertyMap();
+        for ( RequestPropertyMap::const_iterator rpIt = requestProperties.constBegin();
+             rpIt != requestProperties.constEnd(); ++rpIt ) {
+            result.addRequestProperty( rpIt.value(), it.binding( rpIt.key() ) );
+            names.removeAll( rpIt.key() );
+        }
     }
+    m_folderMutex.unlock();
 
     static const char* s_scoreVarName = "_n_f_t_m_s_";
     static const char* s_excerptVarName = "_n_f_t_m_ex_";

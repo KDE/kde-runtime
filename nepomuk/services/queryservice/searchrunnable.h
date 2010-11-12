@@ -59,10 +59,7 @@ namespace Nepomuk {
             Nepomuk::Query::Result extractResult( const Soprano::QueryResultIterator& it ) const;
 
             QPointer<Folder> m_folder;
-            QMutex m_folderMutex;
-
-            // status
-            bool m_canceled;
+            mutable QMutex m_folderMutex;
         };
     }
 }
