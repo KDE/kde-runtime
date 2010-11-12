@@ -521,10 +521,10 @@ void KCMLocale::initSeparatorCombo( KComboBox *separatorCombo )
 {
     separatorCombo->clear();
 
-    separatorCombo->addItem( ki18nc( "No seperator symbol" , "None" ).toString( m_kcmLocale ), QString() );
+    separatorCombo->addItem( ki18nc( "No separator symbol" , "None" ).toString( m_kcmLocale ), QString() );
     separatorCombo->addItem( QString(','), QString(',') );
     separatorCombo->addItem( QString('.'), QString('.') );
-    separatorCombo->addItem( ki18nc( "Space seperator symbol", "Single Space" ).toString( m_kcmLocale ), ' ' );
+    separatorCombo->addItem( ki18nc( "Space separator symbol", "Single Space" ).toString( m_kcmLocale ), ' ' );
 }
 
 void KCMLocale::initPositiveCombo( KComboBox *positiveCombo )

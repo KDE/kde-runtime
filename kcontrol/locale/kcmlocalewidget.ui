@@ -195,7 +195,7 @@
           <string/>
          </property>
          <property name="text">
-          <string>Decimal seperator:</string>
+          <string>Decimal separator:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

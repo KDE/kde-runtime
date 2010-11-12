@@ -186,7 +186,7 @@ Nepomuk::RestorePage::RestorePage(QWidget* parent)
 
     // Page Properties
     setTitle( i18n("Restoring Backup") );
-    setSubTitle( i18n("The backup is being restored .. ") );
+    setSubTitle( i18n("The backup is being restored...") );
 
     m_backupManager = new BackupManager( QLatin1String("org.kde.nepomuk.services.nepomukbackupsync"),
                                          "/backupmanager",

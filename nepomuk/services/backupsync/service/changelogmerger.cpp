@@ -67,7 +67,7 @@ int Nepomuk::ChangeLogMerger::id()
 
 void Nepomuk::ChangeLogMerger::load()
 {
-    kDebug() << "Loading the ChangeLog .. " << m_logFile.size();
+    kDebug() << "Loading the ChangeLog..." << m_logFile.size();
     m_hash = ResourceLogMap::fromChangeLog( m_logFile );
     
     // The records are stored according to dateTime

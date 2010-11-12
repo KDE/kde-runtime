@@ -157,7 +157,7 @@ void BackupTests::restore()
     // There is no signal which reports when a restore has been completed
     // For now just wait for 5 seconds
 
-    kDebug() << "Restored .. waiting for 10 secs";
+    kDebug() << "Restored... waiting for 10 secs";
     QTest::qWait( 10000 );
 }
 
