@@ -48,7 +48,7 @@
 
 
 K_PLUGIN_FACTORY( NepomukConfigModuleFactory, registerPlugin<Nepomuk::ServerConfigModule>(); )
-K_EXPORT_PLUGIN( NepomukConfigModuleFactory("kcm_nepomuk", "nepomuk") )
+K_EXPORT_PLUGIN( NepomukConfigModuleFactory("kcm_nepomuk", "kcm_nepomuk") )
 
 
 namespace {
@@ -138,7 +138,7 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
       m_failedToInitialize( false )
 {
     KAboutData *about = new KAboutData(
-        "kcm_nepomuk", "nepomuk", ki18n("Nepomuk Configuration Module"),
+        "kcm_nepomuk", "kcm_nepomuk", ki18n("Nepomuk Configuration Module"),
         KDE_VERSION_STRING, KLocalizedString(), KAboutData::License_GPL,
         ki18n("Copyright 2007-2010 Sebastian Trüg"));
     about->addAuthor(ki18n("Sebastian Trüg"), KLocalizedString(), "trueg@kde.org");
