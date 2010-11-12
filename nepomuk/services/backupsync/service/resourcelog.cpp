@@ -108,7 +108,7 @@ void Nepomuk::ResourceLogMap::optimize()
                 OptimizeHash hash;
                 foreach( const ChangeLogRecord & record, records ) {
                     if( record.added() ) {
-                        OptimizeHash::const_iterator iter = hash.find( record.st().object() );
+                        OptimizeHash::const_iterator iter = hash.constFind( record.st().object() );
                         if( iter != hash.constEnd() ){
                             if( !iter.value().added() ) {
                                 hash.remove( record.st().object() );
@@ -119,7 +119,7 @@ void Nepomuk::ResourceLogMap::optimize()
                         }
                     }
                     else {
-                        OptimizeHash::const_iterator iter = hash.find( record.st().object() );
+                        OptimizeHash::const_iterator iter = hash.constFind( record.st().object() );
                         if( iter != hash.constEnd() ) {
                             if( iter.value().added() ) {
                                 hash.remove( record.st().object() );
