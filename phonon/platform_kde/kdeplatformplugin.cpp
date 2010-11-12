@@ -43,8 +43,10 @@
 
 typedef QPair<QByteArray, QString> PhononDeviceAccess;
 typedef QList<PhononDeviceAccess> PhononDeviceAccessList;
+#if (PHONON_VERSION < PHONON_VERSION_CHECK(4, 4, 3))
 #ifndef KDE_USE_FINAL
 Q_DECLARE_METATYPE(PhononDeviceAccessList)
+#endif
 #endif
 namespace Phonon
 {

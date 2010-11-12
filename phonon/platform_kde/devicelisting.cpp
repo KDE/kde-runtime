@@ -19,6 +19,7 @@
 */
 
 #include "devicelisting.h"
+#include "phononnamespace.h"
 
 #include <QtCore/QFile>
 #include <QtDBus/QDBusReply>
@@ -35,7 +36,9 @@
 #endif // HAVE_ALSA_ASOUNDLIB_H
 
 typedef QList<QPair<QByteArray, QString> > PhononDeviceAccessList;
+#if (PHONON_VERSION < PHONON_VERSION_CHECK(4, 4, 3))
 Q_DECLARE_METATYPE(PhononDeviceAccessList)
+#endif
 
 static void installAlsaPhononDeviceHandle()
 {

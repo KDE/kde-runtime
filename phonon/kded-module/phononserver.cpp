@@ -18,6 +18,7 @@
 
 */
 
+#include "phononnamespace.h"
 #include "phononserver.h"
 #include "audiodevice.h"
 
@@ -56,7 +57,9 @@ K_PLUGIN_FACTORY(PhononServerFactory,
 K_EXPORT_PLUGIN(PhononServerFactory("phononserver"))
 
 typedef QList<QPair<QByteArray, QString> > PhononDeviceAccessList;
+#if (PHONON_VERSION < PHONON_VERSION_CHECK(4, 4, 3))
 Q_DECLARE_METATYPE(PhononDeviceAccessList)
+#endif
 
 PhononServer::PhononServer(QObject *parent, const QList<QVariant> &)
     : KDEDModule(parent),
