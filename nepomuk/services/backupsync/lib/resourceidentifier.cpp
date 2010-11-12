@@ -198,8 +198,8 @@ QHash< KUrl, Nepomuk::Resource > Nepomuk::Sync::ResourceIdentifier::mappings() c
 
 Nepomuk::Sync::SimpleResource Nepomuk::Sync::ResourceIdentifier::simpleResource(const KUrl& uri)
 {
-    QHash< KUrl, SimpleResource >::const_iterator it = d->m_resourceHash.find( uri );
-    if( it != d->m_resourceHash.end() ) {
+    QHash< KUrl, SimpleResource >::const_iterator it = d->m_resourceHash.constFind( uri );
+    if( it != d->m_resourceHash.constEnd() ) {
         return it.value();
     }
     
