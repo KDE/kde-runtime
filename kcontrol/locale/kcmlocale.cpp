@@ -76,7 +76,7 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
     connect( m_ui->m_buttonResetCountryDivision, SIGNAL( clicked() ),
              this,                               SLOT( defaultCountryDivision() ) );
 
-    // Langauges tab
+    // Languages tab
 
     m_ui->m_selectorTranslations->setButtonsEnabled();
 
@@ -728,7 +728,7 @@ void KCMLocale::initTranslations()
     m_ui->m_selectorTranslations->availableListWidget()->setToolTip( availableHelp );
     m_ui->m_selectorTranslations->availableListWidget()->setWhatsThis( availableHelp );
 
-    m_ui->m_selectorTranslations->setSelectedLabel( ki18n( "Preferred Langauges:" ).toString( m_kcmLocale ) );
+    m_ui->m_selectorTranslations->setSelectedLabel( ki18n( "Preferred Languages:" ).toString( m_kcmLocale ) );
     QString selectedHelp = ki18n( "<p>This is the list of installed KDE Workspace language "
                                   "translations currently being used, listed in order of "
                                   "preference.  If a translation is not available for the "
@@ -808,7 +808,7 @@ void KCMLocale::changeTranslations( QListWidgetItem *item )
 void KCMLocale::initTranslationsInstall()
 {
     m_ui->m_buttonTranslationInstall->setText( ki18n( "Install more languages" ).toString( m_kcmLocale ) );
-    QString helpText = ki18n( "<p>Click here to install more langauges</p>" ).toString( m_kcmLocale );
+    QString helpText = ki18n( "<p>Click here to install more languages</p>" ).toString( m_kcmLocale );
     m_ui->m_buttonTranslationInstall->setToolTip( helpText );
     m_ui->m_buttonTranslationInstall->setWhatsThis( helpText );
 }
