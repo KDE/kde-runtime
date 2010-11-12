@@ -69,7 +69,9 @@ __inline int toInt(WId wid)
 ActivityManagerPrivate::ActivityManagerPrivate(ActivityManager * parent)
     : haveSessions(false),
     config("activitymanagerrc"),
+#ifdef HAVE_NEPOMUK
     m_nepomukInitCalled(false),
+#endif
     q(parent)
 {
     // Initializing config
