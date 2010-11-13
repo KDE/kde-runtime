@@ -40,6 +40,10 @@
 #include <KConfig>
 #include <KConfigGroup>
 #include <KDirWatch>
+#include <KGlobal>
+#include <KLocale>
+#include <KCalendarSystem>
+
 
 Nepomuk::BackupManager::BackupManager(Nepomuk::Identifier* ident, QObject* parent)
     : QObject( parent ),
@@ -107,12 +111,55 @@ void Nepomuk::BackupManager::automatedBackup()
 
 void Nepomuk::BackupManager::slotConfigDirty()
 {
-    // Reparse config
-    QString timeString = m_config.group("backup").readEntry<QString>("time", QTime().toString( Qt::ISODate ) );
+    kDebug();
+    m_config.reparseConfiguration();
+    
+    QString freq = m_config.group("Backup").readEntry( "backup frequency", QString("disabled") );
+    kDebug() << "Frequency : " << freq;
+    
+    if( freq == QLatin1String("disabled") ) {
+        kDebug() << "Auto Backups Disabled";
+        m_timer.stop();
+        return;
+    }
+
+    QString timeString = m_config.group("Backup").readEntry( "backup time", QTime().toString( Qt::ISODate ) );
     m_backupTime = QTime::fromString( timeString, Qt::ISODate );
 
-    m_daysBetweenBackups = m_config.group("backup").readEntry<int>("daysbetweenbackups", 0);
-    m_maxBackups = m_config.group("backup").readEntry<int>("maxBackups", 1);
+    //if( freq == QLatin1String("daily") ) {
+    // Nothing to do    
+    //}
+
+    if( freq == QLatin1String("weekly") ) {
+
+        const KCalendarSystem* cal = KGlobal::locale()->calendar();
+
+        int backupDay = m_config.group("Backup").readEntry( "backup day", 0 );
+        int dayOfWeek = cal->dayOfWeek( QDate::currentDate() );
+
+        kDebug() << "DayOfWeek: " << dayOfWeek;
+        kDebug() << "BackupDay: " << backupDay;
+        if( dayOfWeek < backupDay ) {
+            m_daysBetweenBackups = backupDay - dayOfWeek;
+        }
+        else if( dayOfWeek > backupDay ) {
+            m_daysBetweenBackups = cal->daysInWeek( QDate::currentDate() ) - dayOfWeek + backupDay;
+        }
+        else {
+            if( QTime::currentTime() <= m_backupTime )
+                m_daysBetweenBackups = 0;
+            else
+                m_daysBetweenBackups = cal->daysInWeek( QDate::currentDate() );
+        }
+
+        kDebug() << "Days between backups : " << m_daysBetweenBackups;
+    }
+
+    else if( freq == QLatin1String("monthly") ) {
+        //TODO: Implement me!
+    }
+    
+    m_maxBackups = m_config.group("Backup").readEntry<int>("max backups", 1);
 
     // Remove old timers and start new
     resetTimer();
