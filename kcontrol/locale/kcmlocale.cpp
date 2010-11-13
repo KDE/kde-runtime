@@ -272,6 +272,7 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
 
 KCMLocale::~KCMLocale()
 {
+    // Throw away any unsaved changes as delete calls an unwanted sync()
     m_globalConfig->markAsClean();
     m_countryConfig->markAsClean();
     m_defaultConfig->markAsClean();
@@ -285,11 +286,14 @@ KCMLocale::~KCMLocale()
 // Also gets called automatically called after constructor
 void KCMLocale::load()
 {
-    // Reload the configs
+    // Throw away any unsaved changes as reparse calls an unwanted sync()
+    // Then reload the configs
+    m_globalConfig->markAsClean();
     m_globalConfig->reparseConfiguration();
+    m_kcmConfig->markAsClean();
     m_kcmConfig->reparseConfiguration();
 
-    // Create the kcm locale from the config, as it may be global or null (i.e. default)
+    // Create the kcm locale from the config, it may or may not include globals
     delete m_kcmLocale;
     m_kcmLocale = new KLocale( QLatin1String("kcmlocale"), KGlobal::locale()->country(),
                                KGlobal::locale()->country(), m_kcmConfig );
@@ -327,12 +331,13 @@ void KCMLocale::save()
 // We interpret this to mean the defaults for the current global country and language
 void KCMLocale::defaults()
 {
-    // Load the kcm config with a null config
+    // Load the kcm config without the users Global settings but still including any Group settings
+    // The load() call will then merge the Country and Group settings in the kcmLocale
     delete m_kcmConfig;
     m_kcmConfig = new KConfig( QString(), KConfig::NoGlobals );
     m_kcmSettings = KConfigGroup( m_kcmConfig, "Locale" );
 
-    // Do  full load using the new null kcm config
+    // Do full load using the new kcm config
     load();
 }
 

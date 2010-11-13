@@ -35,6 +35,21 @@ namespace Ui {
   class KCMLocaleWidget;
 }
 
+/**
+ * @short A KCM to configure locale settings
+ *
+ * This module is for changing the Users locale settings, which may override their Group and
+ * Country defaults.
+ *
+ * The settings hierarchy is as follows:
+ * - User settings from kdeglobals
+ * - Group settings from $KDE_DIRS
+ * - Country settings from l10n
+ * - Default C settings from l10n
+ *
+ * This may be restricted by Kiosk Group settings locking the user from updating some/all settings.
+ */
+
 class KCMLocale : public KCModule
 {
     Q_OBJECT
