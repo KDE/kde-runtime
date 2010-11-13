@@ -1,5 +1,10 @@
 [KCM Locale]
 Name=Saint Martin
+Name[ia]=Saint Martin
+Name[pt]=Saint Martin
+Name[pt_BR]=Saint Martin
+Name[sv]=Saint Martin
+Name[uk]=Сен-Мартен
 Name[x-test]=xxSaint Martinxx
 Region=caribbean
 Languages=fr,nl

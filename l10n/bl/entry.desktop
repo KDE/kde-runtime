@@ -1,5 +1,10 @@
 [KCM Locale]
 Name=Saint Barthélemy
+Name[ia]=Saint Barthélemy
+Name[pt]=Saint Barthélemy
+Name[pt_BR]=Saint Barthélemy
+Name[sv]=Saint-Barthélemy
+Name[uk]=Сен-Бартельмі
 Name[x-test]=xxSaint Barthélemyxx
 Region=caribbean
 Languages=fr

@@ -1,5 +1,10 @@
 [KCM Locale]
 Name=Guernsey
+Name[ia]=Guernsey
+Name[pt]=Guernsey
+Name[pt_BR]=Guernsey
+Name[sv]=Guernsey
+Name[uk]=Острів Гернсі
 Name[x-test]=xxGuernseyxx
 Region=westeurope
 Languages=en_GB,fr
