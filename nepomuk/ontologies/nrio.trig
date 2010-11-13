@@ -46,7 +46,7 @@
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
-@prefix nrio:    <<http://nepomuk.kde.org/ontologies/2010/11/11/NRIO#> .
+@prefix nrio:    <http://nepomuk.kde.org/ontologies/2010/11/11/nrio#> .
 
 nrio: {
     nao:identifyingProperty
@@ -399,20 +399,19 @@ nrio: {
         
 }
 
-<http://nepomuk.kde.org/ontologies/2010/11/11/NRIO/metadata> {
+<http://nepomuk.kde.org/ontologies/2010/11/11/nrio/metadata> {
 
     nrio:  a       nrl:Ontology ;
-    nao:hasDefaultNamespace
-        "<http://nepomuk.kde.org/ontologies/2010/11/11/NRIO#" ;
-    nao:hasDefaultNamespaceAbbreviation
-        "nrio" ;
+    nao:hasDefaultNamespace "http://nepomuk.kde.org/ontologies/2010/11/11/nrio#" ;
+    nao:hasDefaultNamespaceAbbreviation "nrio" ;
+
+    nao:serializationLanguage "TriG" ;
     nao:lastModified "2010-11-11T11:45:58Z" ;
     nao:status "Unstable" ;
     nao:updatable "0 " ;
     nao:version "Revision-1" .
 
-    <http://nepomuk.kde.org/ontologies/2010/11/11/NRIO/metadata>
-          a       nrl:GraphMetadata ;
-          nrl:coreGraphMetadataFor
-                  nrio: .
+    <http://nepomuk.kde.org/ontologies/2010/11/11/nrio/metadata>
+          a nrl:GraphMetadata ;
+          nrl:coreGraphMetadataFor nrio: .
 }
