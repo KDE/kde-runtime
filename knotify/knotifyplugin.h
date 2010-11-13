@@ -26,6 +26,8 @@
 #include <QtCore/QObject>
 #include <KPluginFactory>
 
+#include "knotify_export.h"
+
 class KNotifyPluginPrivate;
 class KNotifyConfig;
 
@@ -39,7 +41,7 @@ class KNotifyConfig;
  *
  * @author Olivier Goffart <ogoffart at kde.org>
 */
-class KDE_EXPORT KNotifyPlugin : public QObject
+class KNOTIFY_EXPORT KNotifyPlugin : public QObject
 { Q_OBJECT
 	public:
 	        KNotifyPlugin(QObject *parent=0l, const QVariantList &args=QVariantList());

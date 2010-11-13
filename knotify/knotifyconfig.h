@@ -27,12 +27,14 @@
 #include <QPixmap>
 #include <QObject> //for Wid
 
+#include "knotify_export.h"
+
 typedef QList< QPair<QString,QString> > ContextList;
 
 /**
  * An image with lazy loading from the byte array
  */
-class KDE_EXPORT KNotifyImage
+class KNOTIFY_EXPORT KNotifyImage
 {
 	public:
 		KNotifyImage() : dirty(false) {}
@@ -55,7 +57,7 @@ class KDE_EXPORT KNotifyImage
  * Represent the configuration for an event
  * @author Olivier Goffart <ogoffart@kde.org>
 */
-class KDE_EXPORT KNotifyConfig
+class KNOTIFY_EXPORT KNotifyConfig
 {
 	public:
 		KNotifyConfig(const QString &appname, const ContextList &_contexts , const QString &_eventid);
