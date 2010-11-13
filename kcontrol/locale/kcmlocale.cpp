@@ -49,10 +49,11 @@ K_EXPORT_PLUGIN( KCMLocaleFactory( "kcmlocale" ) )
 
 KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
          : KCModule( KCMLocaleFactory::componentData(), parent, args ),
-           m_config( KSharedConfig::openConfig( QString(), KConfig::FullConfig ) ),
-           m_settings( m_config, "Locale" ),
-           m_userConfig( KSharedConfig::openConfig( QString(), KConfig::NoCascade ) ),
-           m_userSettings( m_userConfig, "Locale" ),
+           m_globalConfig( 0 ),
+           m_countryConfig( 0 ),
+           m_defaultConfig( 0 ),
+           m_kcmConfig( 0 ),
+           m_kcmLocale( 0 ),
            m_ui( new Ui::KCMLocaleWidget )
 {
     KAboutData *about = new KAboutData( "kcmlocale", 0, ki18n( "Localization options for KDE applications" ),
@@ -64,6 +65,20 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
     setAboutData( about );
 
     m_ui->setupUi( this );
+
+    //For the global config/settings use a live pointer to teh globals
+    //Remember this doesn't include the country values, only the group or user overrides
+    m_globalConfig = KSharedConfig::openConfig( QString(), KConfig::FullConfig );
+    m_globalSettings = KConfigGroup( KGlobal::config(), "Locale" );
+
+    //For the kcm config/settings start with a copy of current global
+    m_kcmConfig = m_globalConfig->copyTo( QLatin1String( "/dev/null" ) );
+    m_kcmSettings = KConfigGroup( m_kcmConfig, "Locale" );
+
+    // Load the default C settings here as they never change
+    m_defaultConfig = KSharedConfig::openConfig( KStandardDirs::locate( "locale",
+                                                 QString::fromLatin1("l10n/C/entry.desktop") ) );
+    m_defaultSettings= KConfigGroup( m_defaultConfig, "KCM Locale" );
 
     // Country tab
     connect( m_ui->m_comboCountry,       SIGNAL( activated( int ) ),
@@ -253,29 +268,40 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
              this,                                 SLOT( changeBinaryUnitDialect( int ) ) );
     connect( m_ui->m_buttonResetBinaryUnitDialect, SIGNAL( clicked() ),
              this,                                 SLOT( defaultPageSize() ) );
-
-    load();
-    initAllWidgets();
 }
 
 KCMLocale::~KCMLocale()
 {
-    delete m_ui;
+    m_globalConfig->markAsClean();
+    m_countryConfig->markAsClean();
+    m_defaultConfig->markAsClean();
+    m_kcmConfig->markAsClean();
+    delete m_kcmConfig;
     delete m_kcmLocale;
+    delete m_ui;
 }
 
+// Load == User has clicked on Reset to restore previous settings
+// Also gets called automatically called after constructor
 void KCMLocale::load()
 {
-    m_kcmLocale = KGlobal::locale();
+    // Reload the configs
+    m_globalConfig->reparseConfiguration();
+    m_kcmConfig->reparseConfiguration();
+
+    // Create the kcm locale from the config, as it may be global or null (i.e. default)
+    delete m_kcmLocale;
+    m_kcmLocale = new KLocale( QLatin1String("kcmlocale"), KGlobal::locale()->country(),
+                               KGlobal::locale()->country(), m_kcmConfig );
+    m_languages = m_kcmLocale->languageList();
 
     m_countryConfig = KSharedConfig::openConfig( KStandardDirs::locate( "locale",
                                                  QString::fromLatin1("l10n/%1/entry.desktop")
                                                  .arg( m_kcmLocale->country() ) ) );
-    m_countrySettings= KConfigGroup( m_countryConfig, "KCM Locale" );
+    m_countrySettings = KConfigGroup( m_countryConfig, "KCM Locale" );
 
-    m_defaultConfig = KSharedConfig::openConfig( KStandardDirs::locate( "locale",
-                                                 QString::fromLatin1("l10n/C/entry.desktop") ) );
-    m_defaultSettings= KConfigGroup( m_defaultConfig, "KCM Locale" );
+    initAllWidgets();
+    emit changed( false );
 }
 
 void KCMLocale::save()
@@ -293,12 +319,21 @@ void KCMLocale::save()
     {
         KBuildSycocaProgressDialog::rebuildKSycoca(this);
     }
+
+    load();
 }
 
+// Defaults == User has clicked on Defaults to load default settings
+// We interpret this to mean the defaults for the current global country and language
 void KCMLocale::defaults()
 {
+    // Load the kcm config with a null config
+    delete m_kcmConfig;
+    m_kcmConfig = new KConfig( QString(), KConfig::NoGlobals );
+    m_kcmSettings = KConfigGroup( m_kcmConfig, "Locale" );
+
+    // Do  full load using the new null kcm config
     load();
-    initAllWidgets();
 }
 
 QString KCMLocale::quickHelp() const
@@ -316,12 +351,12 @@ QString KCMLocale::quickHelp() const
 
 void KCMLocale::setItemEnabled( const QString itemKey, QWidget *itemWidget, KPushButton *itemReset )
 {
-    if ( m_settings.isEntryImmutable( itemKey ) ) {
+    if ( m_globalSettings.isEntryImmutable( itemKey ) ) {
             itemWidget->setEnabled( false );
             itemReset->setEnabled( false );
     } else {
         itemWidget->setEnabled( true );
-        if ( m_userSettings.hasKey( itemKey ) ) {
+        if ( m_globalSettings.hasKey( itemKey ) ) {
             itemReset->setEnabled( true );
         } else {
             itemReset->setEnabled( false );
@@ -466,20 +501,22 @@ void KCMLocale::saveValue( const QString &key, const QString &saveValue )
 {
     QString defaultValue = m_defaultSettings.readEntry( key, QString() );
     QString countryValue = m_countrySettings.readEntry( key, defaultValue );
-    m_settings.deleteEntry( key, KConfig::Persistent | KConfig::Global );
+    m_kcmSettings.deleteEntry( key, KConfig::Persistent | KConfig::Global );
     if ( saveValue != countryValue ) {
-        m_settings.writeEntry( key, saveValue, KConfig::Persistent | KConfig::Global );
+        m_kcmSettings.writeEntry( key, saveValue, KConfig::Persistent | KConfig::Global );
     }
+    emit changed( true );
 }
 
 void KCMLocale::saveValue( const QString &key, int saveValue )
 {
     int defaultValue = m_defaultSettings.readEntry( key, 0 );
     int countryValue = m_countrySettings.readEntry( key, defaultValue );
-    m_settings.deleteEntry( key, KConfig::Persistent | KConfig::Global );
+    m_kcmSettings.deleteEntry( key, KConfig::Persistent | KConfig::Global );
     if ( saveValue != countryValue ) {
-        m_settings.writeEntry( key, saveValue, KConfig::Persistent | KConfig::Global );
+        m_kcmSettings.writeEntry( key, saveValue, KConfig::Persistent | KConfig::Global );
     }
+    emit changed( true );
 }
 
 void KCMLocale::defaultCombo( const QString &key, const QString &type, KComboBox *combo )
@@ -675,7 +712,7 @@ void KCMLocale::defaultCountry()
 
 void KCMLocale::changeCountry( int activated )
 {
-    m_kcmLocale->setCountry( m_ui->m_comboCountry->itemData( activated ).toString(), m_config.data() );
+    m_kcmLocale->setCountry( m_ui->m_comboCountry->itemData( activated ).toString(), m_kcmConfig );
     saveCountry();
     setItemEnabled( "Country", m_ui->m_comboCountry, m_ui->m_buttonResetCountry );
 }
@@ -749,7 +786,7 @@ void KCMLocale::loadTranslations()
     m_installedLanguages.clear();
     m_installedLanguages = m_kcmLocale->installedLanguages();
     m_languages.clear();
-    m_languages = m_settings.readEntry( "Language" ).split( ':', QString::SkipEmptyParts );
+    m_languages = m_kcmSettings.readEntry( "Language" ).split( ':', QString::SkipEmptyParts );
     m_kcmLocale->setLanguage( m_languages );
 
     QStringList missingLanguages;
@@ -1405,7 +1442,8 @@ void KCMLocale::initUseCommonEra()
 
 void KCMLocale::loadUseCommonEra()
 {
-    KConfigGroup calendarGroup( m_config, QString( "KCalendarSystem %1" ).arg( m_kcmLocale->calendarType() ) );
+    // ???
+    KConfigGroup calendarGroup( m_kcmConfig, QString( "KCalendarSystem %1" ).arg( m_kcmLocale->calendarType() ) );
     m_ui->m_checkCalendarGregorianUseCommonEra->setChecked( calendarGroup.readEntry( "UseCommonEra", false ) );
     setItemEnabled( "UseCommonEra", m_ui->m_checkCalendarGregorianUseCommonEra, m_ui->m_buttonResetCalendarGregorianUseCommonEra );
 }

@@ -366,17 +366,17 @@ private:
 
     // The current merged system and user global config, i.e. KGlobal::config()
     // Note does NOT include the country default values
-    KSharedConfigPtr m_config;
-    KConfigGroup m_settings;
-    // The current user global config, i.e. from .kde/share/config/kdeglobals
-    KSharedConfigPtr m_userConfig;
-    KConfigGroup m_userSettings;
+    KSharedConfigPtr m_globalConfig;
+    KConfigGroup m_globalSettings;
     // The country Locale config, i.e. from l10n/<county>/entry.desktop
     KSharedConfigPtr m_countryConfig;
     KConfigGroup m_countrySettings;
     // The default C Locale config, i.e. from l10n/C/entry.desktop
     KSharedConfigPtr m_defaultConfig;
     KConfigGroup m_defaultSettings;
+    // The kcm config, i.e. originally from global, but then modified in the kcm and not yet saved
+    KConfig *m_kcmConfig;
+    KConfigGroup m_kcmSettings;
 
     QMap<QString, QString> m_dateFormatMap;
     QMap<QString, QString> m_timeFormatMap;
