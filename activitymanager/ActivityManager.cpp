@@ -334,11 +334,9 @@ QString ActivityManager::AddActivity(const QString & name)
         id.replace(QRegExp("[{}]"), QString());
     }
 
-    d->setActivityState(id, Invalid);
+    d->setActivityState(id, Running);
 
     SetActivityName(id, name);
-
-    StartActivity(id);
 
     emit ActivityAdded(id);
 
@@ -387,7 +385,7 @@ void ActivityManager::StartActivity(const QString & id)
     kDebug() << id;
 
     if (!d->activities.contains(id) ||
-            d->activities[id] == Running) {
+            d->activities[id] != Stopped) {
         return;
     }
 
@@ -396,6 +394,9 @@ void ActivityManager::StartActivity(const QString & id)
         //TODO: implement a queue instead
         return;
     }
+
+    d->transitioningActivity = id;
+    d->setActivityState(id, Starting); 
 
     bool called = false;
     // start the starting :)
@@ -414,15 +415,10 @@ void ActivityManager::StartActivity(const QString & id)
         }
     }
 
-    if (called) {
-        d->transitioningActivity = id;
-        d->setActivityState(id, Starting);
-    } else {
+    if (!called) {
         //maybe they use compiz?
         //go ahead without the session
         d->setActivityState(id, Running);
-        //and because we skipped "starting", do this manually:
-        emit ActivityStarted(id);
     }
     d->configSync(); //force immediate sync
 }
@@ -452,6 +448,8 @@ void ActivityManager::StopActivity(const QString & id)
         return;
     }
 
+    d->transitioningActivity = id;
+    d->setActivityState(id, Stopping);
     bool called = false;
     // start the stopping :)
     if (d->haveSessions) {
@@ -469,10 +467,7 @@ void ActivityManager::StopActivity(const QString & id)
         }
     }
 
-    if (called) {
-        d->transitioningActivity = id;
-        d->setActivityState(id, Stopping);
-    } else {
+    if (!called) {
         //maybe they use compiz?
         //go ahead without the session
         d->setActivityState(id, Stopped);
@@ -509,7 +504,7 @@ void ActivityManagerPrivate::stopCancelled()
 
 int ActivityManager::ActivityState(const QString & id) const
 {
-    kDebug() << id << "- is it in" << d->activities << "?";
+    //kDebug() << id << "- is it in" << d->activities << "?";
     if (!d->activities.contains(id)) {
         return Invalid;
     } else {
