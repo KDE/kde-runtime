@@ -18,7 +18,6 @@
 
 */
 
-#include "phononnamespace.h"
 #include "phononserver.h"
 #include "audiodevice.h"
 
@@ -45,6 +44,7 @@
 #include <Solid/GenericInterface>
 #include <Solid/Device>
 #include <Solid/DeviceNotifier>
+#include <phonon/phononnamespace.h>
 
 #include <../config-alsa.h>
 #ifdef HAVE_LIBASOUND2

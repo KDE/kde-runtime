@@ -19,7 +19,6 @@
 */
 
 #include "devicelisting.h"
-#include "phononnamespace.h"
 
 #include <QtCore/QFile>
 #include <QtDBus/QDBusReply>
@@ -29,6 +28,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <ksharedconfig.h>
+#include <phonon/phononnamespace.h>
 
 #include <../config-alsa.h>
 #ifdef HAVE_ALSA_ASOUNDLIB_H
