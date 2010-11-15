@@ -1,12 +1,15 @@
 [KCM Locale]
 Name=Isle of Man
+Name[hu]=Man sziget
 Name[ia]=Insula de Man
+Name[nds]=Isle of Man
 Name[nl]=Eiland Man
 Name[pt]=Ilha de Man
 Name[pt_BR]=Ilha de Man
 Name[sv]=Isle of Man
 Name[uk]=Острів Мен
 Name[x-test]=xxIsle of Manxx
+Name[zh_TW]=曼島
 Region=westeurope
 Languages=en_GB,gv
 NegativeMonetarySignPosition=1

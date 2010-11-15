@@ -1,12 +1,15 @@
 [KCM Locale]
 Name=Saint Martin
+Name[hu]=Saint-Martin
 Name[ia]=Saint Martin
+Name[nds]=St. Martin
 Name[nl]=Saint Martin
 Name[pt]=Saint Martin
 Name[pt_BR]=Saint Martin
 Name[sv]=Saint Martin
 Name[uk]=Сен-Мартен
 Name[x-test]=xxSaint Martinxx
+Name[zh_TW]=法屬聖馬丁
 Region=caribbean
 Languages=fr,nl
 DecimalSymbol=,

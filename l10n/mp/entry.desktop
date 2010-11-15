@@ -1,12 +1,15 @@
 [KCM Locale]
 Name=Northern Mariana Islands
+Name[hu]=Északi-Mariana-szigetek
 Name[ia]=Insulas Mariana Septentrional
+Name[nds]=Noordmarianen-Eilannen
 Name[nl]=Noord Marianen
 Name[pt]=Ilhas Marianas do Norte
 Name[pt_BR]=Ilhas Marianas do Norte
 Name[sv]=Nordmarianerna
 Name[uk]=Північні Маріанські острови
 Name[x-test]=xxNorthern Mariana Islandsxx
+Name[zh_TW]=北馬里亞納群島
 Region=oceania
 Languages=en_US
 DecimalSymbol=.

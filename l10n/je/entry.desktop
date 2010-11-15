@@ -1,12 +1,15 @@
 [KCM Locale]
 Name=Jersey
+Name[hu]=Jersey
 Name[ia]=Jersey
+Name[nds]=Jersey
 Name[nl]=Jersey
 Name[pt]=Jersey
 Name[pt_BR]=Jersey
 Name[sv]=Jersey
 Name[uk]=Джерсі
 Name[x-test]=xxJerseyxx
+Name[zh_TW]=Jersey
 Region=westeurope
 Languages=en_GB,fr
 NegativeMonetarySignPosition=1
