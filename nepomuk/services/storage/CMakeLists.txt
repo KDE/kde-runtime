@@ -17,6 +17,7 @@ set(storage_SRCS
   ontologymanagermodel.cpp
   graphretriever.cpp
   crappyinferencer.cpp
+  crappyinferencer2.cpp
   )
 
 soprano_add_ontology(storage_SRCS
@@ -54,3 +55,5 @@ install(
   TARGETS nepomukstorage
   DESTINATION ${PLUGIN_INSTALL_DIR})
 # -----------------------------
+
+add_subdirectory(test)
