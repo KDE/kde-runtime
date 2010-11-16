@@ -1,11 +1,5 @@
 project(nepomukbackup_gui)
 
-find_package(KDE4 REQUIRED)
-find_package(Nepomuk REQUIRED)
-
-include(SopranoAddOntology)
-include (KDE4Defaults)
-
 include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
@@ -21,35 +15,30 @@ set( NepomukBackup_GUI_SRCS
   backupwizard.cpp
   mergeconflictdelegate.cpp
   main.cpp
-    identifiermodel.cpp
-    identifiermodeltree.cpp
-    identifierwidget.cpp
-    ../service/dbusoperators.cpp
+  identifiermodel.cpp
+  identifiermodeltree.cpp
+  identifierwidget.cpp
+  ../service/dbusoperators.cpp
 )
-
-set_source_files_properties(
-  ../../../interfaces/org.kde.nepomuk.services.nepomukbackupsync.identifier.xml
-  PROPERTIES INCLUDE "../service/dbusoperators.h")
-
-qt4_add_dbus_interface( NepomukBackup_GUI_SRCS
-                        ../../../interfaces/org.kde.nepomuk.services.nepomukbackupsync.identifier.xml
-                        identifierinterface )
-
-qt4_add_dbus_interface( NepomukBackup_GUI_SRCS
-                        ../../../interfaces/org.kde.nepomuk.services.nepomukbackupsync.merger.xml
-                        mergerinterface )
-
 
 #----- DBus interfaces --------
 
 set_source_files_properties(
+  ../../../interfaces/org.kde.nepomuk.services.nepomukbackupsync.identifier.xml
+  PROPERTIES INCLUDE "../service/dbusoperators.h")
+set_source_files_properties(
   ../../../interfaces/org.kde.nepomuk.services.nepomukbackupsync.backupmanager.xml
   PROPERTIES INCLUDE "QtCore/QList")
-
 set_source_files_properties(
   ../../../interfaces/org.kde.nepomuk.services.nepomukbackupsync.backupmanager.xml
   PROPERTIES INCLUDE "QtCore/QString")
 
+qt4_add_dbus_interface( NepomukBackup_GUI_SRCS
+                        ../../../interfaces/org.kde.nepomuk.services.nepomukbackupsync.identifier.xml
+                        identifierinterface )
+qt4_add_dbus_interface( NepomukBackup_GUI_SRCS
+                        ../../../interfaces/org.kde.nepomuk.services.nepomukbackupsync.merger.xml
+                        mergerinterface )
 qt4_add_dbus_interface( NepomukBackup_GUI_SRCS
                         ../../../interfaces/org.kde.nepomuk.services.nepomukbackupsync.syncmanager.xml
                         syncmanagerinterface )
@@ -69,9 +58,7 @@ kde4_add_ui_files( NepomukBackup_GUI_SRCS
   errorpage.ui
 )
 
-
 kde4_add_executable(nepomukbackup ${NepomukBackup_GUI_SRCS})
-
 
 target_link_libraries(nepomukbackup
   ${KDE4_KDEUI_LIBS}
@@ -81,5 +68,6 @@ target_link_libraries(nepomukbackup
   )
 
 install(TARGETS nepomukbackup
-        DESTINATION ${BIN_INSTALL_DIR})
-
+  DESTINATION ${BIN_INSTALL_DIR})
+install(PROGRAMS nepomukbackup.desktop
+  DESTINATION ${XDG_APPS_INSTALL_DIR})

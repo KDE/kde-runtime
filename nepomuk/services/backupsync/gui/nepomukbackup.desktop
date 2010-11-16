@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Nepomuk Backup
+Exec=nepomukbackup
+Icon=nepomuk
+Type=Application
+Categories=Qt;KDE;System;Backup;
