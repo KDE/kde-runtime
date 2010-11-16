@@ -29,6 +29,7 @@ namespace Soprano {
 }
 
 class KJob;
+class CrappyInferencer2;
 
 namespace Nepomuk {
 
@@ -59,8 +60,9 @@ namespace Nepomuk {
          * Will emit the opened signal
          */
         void open();
-
         void close();
+
+        void updateInference();
 
     Q_SIGNALS:
         void opened( Repository*, bool success );
@@ -75,6 +77,7 @@ namespace Nepomuk {
         State m_state;
 
         Soprano::Model* m_model;
+        CrappyInferencer2* m_inferencer;
         const Soprano::Backend* m_backend;
 
         // only used during opening

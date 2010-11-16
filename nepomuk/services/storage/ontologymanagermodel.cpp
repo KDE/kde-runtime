@@ -21,6 +21,7 @@
 
 #include <QtCore/QUrl>
 #include <QtCore/QDateTime>
+#include <QtCore/QScopedPointer>
 
 #include <Soprano/Backend>
 #include <Soprano/Version>
@@ -225,23 +226,6 @@ namespace {
         tmpModel->addStatement( Soprano::Statement( dataGraphUri, Soprano::Vocabulary::NAO::hasDefaultNamespace(), LiteralValue( ns.toString() ), metaDataGraphUri ) );
 #endif
     }
-
-    /**
-     * Simple garbage collection class.
-     */
-    class ObjectGarbageCollector
-    {
-    public:
-        ObjectGarbageCollector( QObject* o )
-            : m_object( o ) {
-        }
-        ~ObjectGarbageCollector() {
-            delete m_object;
-        }
-
-    private:
-        QObject* m_object;
-    };
 }
 
 
@@ -308,7 +292,7 @@ bool Nepomuk::OntologyManagerModel::updateOntology( Soprano::StatementIterator d
     }
 
     // so we do not have to care about deleting out tmpModel anymore.
-    ObjectGarbageCollector modelGarbageCollector( tmpModel );
+    QScopedPointer<Soprano::Model> modelGarbageCollector( tmpModel );
 
     // import the data into our tmp model
     while ( data.next() ) {
