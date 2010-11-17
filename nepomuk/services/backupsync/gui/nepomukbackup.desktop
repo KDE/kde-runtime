@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Nepomuk Backup
+Name[x-test]=xxNepomuk Backupxx
 Exec=nepomukbackup
 Icon=nepomuk
 Type=Application
