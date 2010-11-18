@@ -50,15 +50,18 @@ void Nepomuk::saveBackupChangeLog(const QUrl& url)
     int i=0;
     while( iter.next() ) {
         Soprano::Statement st( iter["r"], iter["p"], iter["o"], iter["g"] );
-//         kDebug() << st;
+         //kDebug() << st;
         changeLog += ChangeLogRecord( st );
 
         if( ++i >= step ) {
+            //kDebug() << "Saving .. " << changeLog.size();
             changeLog.save( url );
             changeLog.clear();
             i = 0;
         }
     }
+
+    changeLog.save( url );
 }
 
 //TODO: This doesn't really solve the problem that the backup maybe huge and
