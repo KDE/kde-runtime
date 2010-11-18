@@ -28,8 +28,10 @@
 #include <KLocale>
 
 class QListWidgetItem;
+class QCheckBox;
 class KPushButton;
 class KComboBox;
+class KIntNumInput;
 
 namespace Ui {
   class KCMLocaleWidget;
@@ -38,16 +40,23 @@ namespace Ui {
 /**
  * @short A KCM to configure locale settings
  *
- * This module is for changing the Users locale settings, which may override their Group and
+ * This module is for changing the User's Locale settings, which may override their Group and
  * Country defaults.
  *
  * The settings hierarchy is as follows:
  * - User settings from kdeglobals
- * - Group settings from $KDE_DIRS
+ * - Group settings from $KDEDIRS
  * - Country settings from l10n
- * - Default C settings from l10n
+ * - C default settings from l10n
+ *
+ * The settings that apply to the User are a merger of all these.
  *
  * This may be restricted by Kiosk Group settings locking the user from updating some/all settings.
+ *
+ * The KCM starts by loading the fully merged settings including the User settings
+ * In KCM terms, to Reload is to load the fully merged settings including the User settings
+ * In KCM terms, to reset to Defaults is to remove the User settings only.
+ * The user can also reset to Default each individual setting.
  */
 
 class KCMLocale : public KCModule
@@ -67,27 +76,34 @@ private:
 
     //Common load/save utilities
 
-    void loadCombo( const QString &key, const QString &loadValue, KComboBox *combo, KPushButton *resetButton );
-    void loadCombo( const QString &key, int loadValue, KComboBox *combo, KPushButton *resetButton );
-    void loadEditCombo( const QString &key, const QString &loadValue, KComboBox *combo, KPushButton *resetButton );
+    void mergeSettings( const QString &countryCode, bool mergeUser );
 
-    void saveValue( const QString &key, const QString &saveValue );
-    void saveValue( const QString &key, int saveValue );
-
-    void defaultCombo( const QString &key, const QString &type, KComboBox *combo );
-    void defaultCombo( const QString &key, int type, KComboBox *combo );
-    void defaultEditCombo( const QString &key, const QString &type, KComboBox *combo );
-
-    void setItemEnabled( const QString itemKey, QWidget *itemWidget, KPushButton *itemReset );
+    void setItem( const QString itemKey, const QString &itemValue,
+                  QWidget *itemWidget, KPushButton *itemReset );
+    void setItem( const QString itemKey, int itemValue,
+                  QWidget *itemWidget, KPushButton *itemReset );
+    void setItem( const QString itemKey, bool itemValue,
+                  QWidget *itemWidget, KPushButton *itemReset );
+    void setComboItem( const QString itemKey, const QString &itemValue,
+                       KComboBox *itemCombo, KPushButton *itemDefaultButton );
+    void setComboItem( const QString itemKey, int itemValue,
+                       KComboBox *itemCombo, KPushButton *itemDefaultButton );
+    void setEditComboItem( const QString itemKey, const QString &itemValue,
+                           KComboBox *itemCombo, KPushButton *itemDefaultButton );
+    void setEditComboItem( const QString itemKey, int itemValue,
+                           KComboBox *itemCombo, KPushButton *itemDefaultButton );
+    void setIntItem( const QString itemKey, int itemValue,
+                     KIntNumInput *itemInput, KPushButton *itemDefaultButton );
+    void setCheckItem( const QString itemKey, bool itemValue,
+                       QCheckBox *itemCheck, KPushButton *itemDefaultButton );
 
     //Common init utilities
     void initSeparatorCombo( KComboBox *separatorCombo );
-    void initPositiveCombo( KComboBox *positiveCombo );
-    void initNegativeCombo( KComboBox *negativeCombo );
     void initWeekDayCombo( KComboBox *dayCombo );
     void initDigitSetCombo( KComboBox *digitSetCombo );
 
     void initAllWidgets();
+    void initSettingsWidgets();
     void initResetButtons();
     void initTabs();
     void initSample();
@@ -95,12 +111,7 @@ private:
     //Country tab
 
     void initCountry();
-    void loadCountry();
-    void saveCountry();
-
     void initCountryDivision();
-    void loadCountryDivision();
-    void saveCountryDivision();
 
     //Translations/Languages tab
 
@@ -109,141 +120,51 @@ private:
     void saveTranslations();
 
     void initTranslationsInstall();
-    void loadTranslationsInstall();
-    void saveTranslationsInstall();
 
     //Numeric tab
 
     void initNumericThousandsSeparator();
-    void loadNumericThousandsSeparator();
-    void saveNumericThousandsSeparator();
-
     void initNumericDecimalSymbol();
-    void loadNumericDecimalSymbol();
-    void saveNumericDecimalSymbol();
-
     void initNumericDecimalPlaces();
-    void loadNumericDecimalPlaces();
-    void saveNumericDecimalPlaces();
-
     void initNumericPositiveSign();
-    void loadNumericPositiveSign();
-    void saveNumericPositiveSign();
-
     void initNumericNegativeSign();
-    void loadNumericNegativeSign();
-    void saveNumericNegativeSign();
-
     void initNumericDigitSet();
-    void loadNumericDigitSet();
-    void saveNumericDigitSet();
 
     //Monetary tab
     void initCurrencyCode();
-    void loadCurrencyCode();
-    void saveCurrencyCode();
-
     void initCurrencySymbol();
-    void loadCurrencySymbol();
-    void saveCurrencySymbol();
-
     void initMonetaryThousandsSeparator();
-    void loadMonetaryThousandsSeparator();
-    void saveMonetaryThousandsSeparator();
-
     void initMonetaryDecimalSymbol();
-    void loadMonetaryDecimalSymbol();
-    void saveMonetaryDecimalSymbol();
-
     void initMonetaryDecimalPlaces();
-    void loadMonetaryDecimalPlaces();
-    void saveMonetaryDecimalPlaces();
-
     void initMonetaryPositiveFormat();
-    void loadMonetaryPositiveFormat();
-    void saveMonetaryPositiveFormat();
-
     void initMonetaryNegativeFormat();
-    void loadMonetaryNegativeFormat();
-    void saveMonetaryNegativeFormat();
-
     void initMonetaryDigitSet();
-    void loadMonetaryDigitSet();
-    void saveMonetaryDigitSet();
 
     //Calendar Tab
 
     void initCalendarSystem();
-    void loadCalendarSystem();
-    void saveCalendarSystem();
-
     void initUseCommonEra();
-    void loadUseCommonEra();
-    void saveUseCommonEra();
-
     void initShortYearWindow();
-    void loadShortYearWindow();
-    void saveShortYearWindow();
-
     void initWeekStartDay();
-    void loadWeekStartDay();
-    void saveWeekStartDay();
-
     void initWorkingWeekStartDay();
-    void loadWorkingWeekStartDay();
-    void saveWorkingWeekStartDay();
-
     void initWorkingWeekEndDay();
-    void loadWorkingWeekEndDay();
-    void saveWorkingWeekEndDay();
-
     void initWeekDayOfPray();
-    void loadWeekDayOfPray();
-    void saveWeekDayOfPray();
 
     //Date/Time tab
 
     void initTimeFormat();
-    void loadTimeFormat();
-    void saveTimeFormat();
-
     void initAmSymbol();
-    void loadAmSymbol();
-    void saveAmSymbol();
-
     void initPmSymbol();
-    void loadPmSymbol();
-    void savePmSymbol();
-
     void initDateFormat();
-    void loadDateFormat();
-    void saveDateFormat();
-
     void initShortDateFormat();
-    void loadShortDateFormat();
-    void saveShortDateFormat();
-
     void initMonthNamePossessive();
-    void loadMonthNamePossessive();
-    void saveMonthNamePossessive();
-
     void initDateTimeDigitSet();
-    void loadDateTimeDigitSet();
-    void saveDateTimeDigitSet();
 
     //Other Tab
 
     void initPageSize();
-    void loadPageSize();
-    void savePageSize();
-
     void initMeasureSystem();
-    void loadMeasureSystem();
-    void saveMeasureSystem();
-
     void initBinaryUnitDialect();
-    void loadBinaryUnitDialect();
-    void saveBinaryUnitDialect();
 
 private Q_SLOTS:
 
@@ -252,10 +173,12 @@ private Q_SLOTS:
     //Country tab
 
     void defaultCountry();
-    void changeCountry( int activated );
+    void changedCountryIndex( int index );
+    void changeCountry( const QString &newValue );
 
     void defaultCountryDivision();
-    void changeCountryDivision( int activated );
+    void changedCountryDivisionIndex( int index );
+    void changeCountryDivision( const QString &newValue );
 
     //Translations/Languages tab
 
@@ -271,8 +194,8 @@ private Q_SLOTS:
     void defaultNumericDecimalSymbol();
     void changeNumericDecimalSymbol( const QString &newValue );
 
-    //void defaultNumericDecimalPlaces();
-    //void changeNumericDecimalPlaces( int newValue );
+    void defaultNumericDecimalPlaces();
+    void changeNumericDecimalPlaces( int newValue );
 
     void defaultNumericPositiveSign();
     void changeNumericPositiveSign( const QString &newValue );
@@ -281,15 +204,18 @@ private Q_SLOTS:
     void changeNumericNegativeSign( const QString &newValue );
 
     void defaultNumericDigitSet();
-    void changeNumericDigitSet( int activated );
+    void changedNumericDigitSetIndex( int index );
+    void changeNumericDigitSet( int newValue );
 
     //Monetary tab
 
     void defaultCurrencyCode();
-    void changeCurrencyCode( int activated );
+    void changedCurrencyCodeIndex( int index );
+    void changeCurrencyCode( const QString &newValue );
 
     void defaultCurrencySymbol();
-    void changeCurrencySymbol( int activated );
+    void changedCurrencySymbolIndex( int index );
+    void changeCurrencySymbol( const QString &newValue );
 
     void defaultMonetaryThousandsSeparator();
     void changeMonetaryThousandsSeparator( const QString &newValue );
@@ -301,18 +227,22 @@ private Q_SLOTS:
     void changeMonetaryDecimalPlaces( int newValue );
 
     void defaultMonetaryPositiveFormat();
-    void changeMonetaryPositiveFormat( int activated );
+    void changedMonetaryPositiveFormatIndex( int index );
+    void changeMonetaryPositiveFormat( int newValue );
 
     void defaultMonetaryNegativeFormat();
-    void changeMonetaryNegativeFormat( int activated );
+    void changedMonetaryNegativeFormatIndex( int index );
+    void changeMonetaryNegativeFormat( int newValue );
 
     void defaultMonetaryDigitSet();
-    void changeMonetaryDigitSet( int activated );
+    void changedMonetaryDigitSetIndex( int index );
+    void changeMonetaryDigitSet( int newValue );
 
     //Calendar Tab
 
     void defaultCalendarSystem();
-    void changeCalendarSystem( int activated );
+    void changedCalendarSystemIndex( int index );
+    void changeCalendarSystem( const QString &newValue );
 
     //void defaultUseCommonEra();
     //void changeUseCommonEra();
@@ -321,21 +251,25 @@ private Q_SLOTS:
     //void changeShortYearWindow( int newStartYear );
 
     void defaultWeekStartDay();
-    void changeWeekStartDay( int activated );
+    void changedWeekStartDayIndex( int index );
+    void changeWeekStartDay( int newValue );
 
     void defaultWorkingWeekStartDay();
-    void changeWorkingWeekStartDay( int activated );
+    void changedWorkingWeekStartDayIndex( int index );
+    void changeWorkingWeekStartDay( int newValue );
 
     void defaultWorkingWeekEndDay();
-    void changeWorkingWeekEndDay( int activated );
+    void changedWorkingWeekEndDayIndex( int index );
+    void changeWorkingWeekEndDay( int newValue );
 
     void defaultWeekDayOfPray();
-    void changeWeekDayOfPray( int activated );
+    void changedWeekDayOfPrayIndex( int index );
+    void changeWeekDayOfPray( int newValue );
 
     //Date/Time tab
 
-    //void defaultTimeFormat();
-    //void changeTimeFormat( const QString &newValue );
+    void defaultTimeFormat();
+    void changeTimeFormat( const QString &newValue );
 
     //void defaultAmSymbol();
     //void changeAmSymbol( const QString &newValue );
@@ -343,31 +277,35 @@ private Q_SLOTS:
     //void defaultPmSymbol();
     //void changePmSymbol( const QString &newValue );
 
-    //void defaultDateFormat();
-    //void changeDateFormat( const QString &newValue );
+    void defaultDateFormat();
+    void changeDateFormat( const QString &newValue );
 
-    //void defaultShortDateFormat();
-    //void changeShortDateFormat( const QString &newValue );
+    void defaultShortDateFormat();
+    void changeShortDateFormat( const QString &newValue );
 
-    //void defaultMonthNamePossessive();
-    //void changeMonthNamePossessive();
+    void defaultMonthNamePossessive();
+    void changeMonthNamePossessive( bool newValue );
 
     void defaultDateTimeDigitSet();
-    void changeDateTimeDigitSet( int activated );
+    void changedDateTimeDigitSetIndex( int index );
+    void changeDateTimeDigitSet( int newValue );
 
     //Other Tab
 
     void defaultPageSize();
-    void changePageSize( int activated );
+    void changedPageSizeIndex( int index );
+    void changePageSize( int newValue );
 
     void defaultMeasureSystem();
-    void changeMeasureSystem( int activated );
+    void changedMeasureSystemIndex( int index );
+    void changeMeasureSystem( int newValue );
 
     void defaultBinaryUnitDialect();
-    void changeBinaryUnitDialect( int activated );
+    void changedBinaryUnitDialectIndex( int index );
+    void changeBinaryUnitDialect( int newValue );
 
 private:
-    //Utilities
+    // Calendar Type/System Conversion Utilities
     KLocale::CalendarSystem calendarTypeToCalendarSystem(const QString &calendarType) const;
     QString calendarSystemToCalendarType(KLocale::CalendarSystem calendarSystem) const;
 
@@ -379,22 +317,40 @@ private:
     QString userToPosixTime( const QString &userFormat ) const;
     QString userToPosix( const QString &userFormat, const QMap<QString, QString> &map ) const;
 
-    // The current merged system and user global config, i.e. KGlobal::config()
-    // Note does NOT include the country default values
-    KSharedConfigPtr m_globalConfig;
+    // The current merged Group and User global config/settings
+    // From KGlobal::config(), does NOT include the country settings
+    //KSharedConfigPtr m_globalConfig;
     KConfigGroup m_globalSettings;
-    // The country Locale config, i.e. from l10n/<county>/entry.desktop
-    KSharedConfigPtr m_countryConfig;
-    KConfigGroup m_countrySettings;
-    // The default C Locale config, i.e. from l10n/C/entry.desktop
+    // The current Group global config/settings
+    // Initially from KGlobal::config(), does NOT include the User or Country settings
+    KSharedConfigPtr m_groupConfig;
+    KConfigGroup m_groupSettings;
+    // The current User global config/settings, with kcm modifications
+    // Initially from KGlobal::config(), does NOT include the Group or Country settings
+    KSharedConfigPtr m_userConfig;
+    KConfigGroup m_userSettings;
+    // The KCM Default config/settings,
+    // A merger of C, Country, and Group, i.e. excluding User
     KSharedConfigPtr m_defaultConfig;
     KConfigGroup m_defaultSettings;
-    // The kcm config, i.e. originally from global, but then modified in the kcm and not yet saved
-    KConfig *m_kcmConfig;
+    // The Country Locale config
+    // From l10n/<county>/entry.desktop
+    KSharedConfigPtr m_countryConfig;
+    KConfigGroup m_countrySettings;
+    // The default C Locale config/settings
+    // From l10n/C/entry.desktop
+    KSharedConfigPtr m_cConfig;
+    KConfigGroup m_cSettings;
+    // The kcm config/settings
+    // A merger of C, Country, Group and USer settings, as well as unsaved changes.
+    KSharedConfigPtr m_kcmConfig;
     KConfigGroup m_kcmSettings;
 
     QMap<QString, QString> m_dateFormatMap;
     QMap<QString, QString> m_timeFormatMap;
+
+    // The system country, not the KDE one
+    QString m_systemCountry;
 
     // NOTE: we need to mantain our own language list instead of using KLocale's
     // because KLocale does not add a language if there is no translation

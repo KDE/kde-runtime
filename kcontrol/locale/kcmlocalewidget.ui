@@ -62,6 +62,9 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="m_labelCountryDivision">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Subdivison:</string>
          </property>
@@ -74,6 +77,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_34">
          <item>
           <widget class="KComboBox" name="m_comboCountryDivision">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -83,7 +89,11 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetCountryDivision"/>
+          <widget class="KPushButton" name="m_buttonResetCountryDivision">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -600,6 +610,9 @@
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="m_labelMonetaryPositiveFormat">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="toolTip">
           <string/>
          </property>
@@ -618,6 +631,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
           <widget class="KComboBox" name="m_comboMonetaryPositiveFormat">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -633,12 +649,19 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetMonetaryPositiveFormat"/>
+          <widget class="KPushButton" name="m_buttonResetMonetaryPositiveFormat">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
        <item row="6" column="0">
         <widget class="QLabel" name="m_labelMonetaryNegativeFormat">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="toolTip">
           <string/>
          </property>
@@ -657,6 +680,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
           <widget class="KComboBox" name="m_comboMonetaryNegativeFormat">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -672,7 +698,11 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetMonetaryNegativeFormat"/>
+          <widget class="KPushButton" name="m_buttonResetMonetaryNegativeFormat">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -794,6 +824,9 @@
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="m_labelShortYearWindow">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Short year window:</string>
          </property>
@@ -804,7 +837,7 @@
          <item>
           <widget class="KIntNumInput" name="m_intShortYearWindowStartYear">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -836,7 +869,7 @@
          <item>
           <widget class="KIntSpinBox" name="m_spinShortYearWindowEndYear">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -864,7 +897,7 @@
          <item>
           <widget class="KPushButton" name="m_buttonResetShortYearWindow">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -1080,6 +1113,9 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="m_labelAmSymbol">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>AM symbol:</string>
          </property>
@@ -1092,6 +1128,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_18">
          <item>
           <widget class="KComboBox" name="m_comboAmSymbol">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1104,12 +1143,19 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetAmSymbol"/>
+          <widget class="KPushButton" name="m_buttonResetAmSymbol">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="m_labelPmSymbol">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>PM symbol:</string>
          </property>
@@ -1122,6 +1168,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_19">
          <item>
           <widget class="KComboBox" name="m_comboPmSymbol">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1134,7 +1183,11 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetPmSymbol"/>
+          <widget class="KPushButton" name="m_buttonResetPmSymbol">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>

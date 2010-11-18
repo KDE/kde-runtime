@@ -106,7 +106,7 @@ DigitSet=0
 
 CurrencyCode=USD
 CurrencyCodesInUse=USD
-CurrencySymbol=$
+#CurrencySymbol=$ Don't default as will use default for CurrencyCode
 MonetaryDecimalPlaces=2
 MonetaryDecimalSymbol=.
 MonetaryThousandsSeparator=,
