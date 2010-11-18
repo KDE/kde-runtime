@@ -1,6 +1,12 @@
 [Desktop Entry]
 Name=Nepomuk Backup
+Name[ia]=Retrocopia de Nepomuk
+Name[kk]=Nepomuk сақтық көшірмелеу
+Name[pt]=Salvaguarda do Nepomuk
+Name[pt_BR]=Cópia de segurança do Nepomuk
+Name[uk]=Резервні копії даних Nepomuk
 Name[x-test]=xxNepomuk Backupxx
+Name[zh_TW]=Nepomuk 備份
 Exec=nepomukbackup
 Icon=nepomuk
 Type=Application
