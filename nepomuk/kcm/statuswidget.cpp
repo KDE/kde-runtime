@@ -48,7 +48,7 @@ Nepomuk::StatusWidget::StatusWidget( QWidget* parent )
     setDefaultButton( Close );
 
     KIcon icon( "nepomuk" );
-    m_title->setPixmap( icon.pixmap( 32, 32 ) );
+    iconLabel->setPixmap( icon.pixmap( 32, 32 ) );
     setWindowIcon( icon );
 
     m_updateTimer.setSingleShot( true );
