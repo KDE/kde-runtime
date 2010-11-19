@@ -57,11 +57,10 @@ void Nepomuk::InvalidFileResourceCleaner::run()
     // Since the removal of the graphs could intefere with the iterator and result
     // in jumping of rows (worst case) we cache all graphs to remove
     //
-    QList<Soprano::Node> graphsToRemove;
-    QString query = QString::fromLatin1( "select distinct ?g ?url where { "
+    QList<Soprano::Node> resourcesToRemove;
+    QString query = QString::fromLatin1( "select distinct ?r ?url where { "
                                          "?r %1 ?url. "
-                                         "FILTER(regex(str(?url), 'file://')) . "
-                                         "graph ?g { ?r ?p ?o. } }" )
+                                         "FILTER(regex(str(?url), 'file://')) . }" )
                     .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ) );
     Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 
@@ -71,14 +70,15 @@ void Nepomuk::InvalidFileResourceCleaner::run()
 
         if( !file.isEmpty() && !QFile::exists(file) ) {
             kDebug() << "REMOVING " << file;
-            graphsToRemove << it["g"];
+            resourcesToRemove << it["r"];
         }
     }
 
-    Q_FOREACH( const Soprano::Node& g, graphsToRemove ) {
+    Q_FOREACH( const Soprano::Node& r, resourcesToRemove ) {
         if ( m_stopped )
             break;
-        Nepomuk::ResourceManager::instance()->mainModel()->removeContext( g );
+        Nepomuk::ResourceManager::instance()->mainModel()->removeAllStatements( r, Soprano::Node(), Soprano::Node() );
+        Nepomuk::ResourceManager::instance()->mainModel()->removeAllStatements( Soprano::Node(), Soprano::Node(), r );
     }
     kDebug() << "Done searching for invalid local file entries";
 }
