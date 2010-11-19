@@ -62,8 +62,8 @@ Nepomuk::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
     // parse URL (this may fail in which case we fall back to pure SPARQL below)
     m_query = Nepomuk::Query::Query::fromQueryUrl( url );
 
-    // the only request property we handle is nie:url
-    m_query.setRequestProperties( QList<Query::Query::RequestProperty>() << Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url() ) );
+    // the only request property we handle is nie:url (non-optional for file-queries)
+    m_query.setRequestProperties( QList<Query::Query::RequestProperty>() << Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url(), !m_query.isFileQuery() ) );
 
     if ( m_query.isValid() ) {
         kDebug() << "Extracted query" << m_query;
