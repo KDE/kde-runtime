@@ -11,11 +11,12 @@
 
 <authorgroup>
 <author><firstname>Sebastian</firstname><surname>Trueg</surname><email>&lt;trueg@kde.org&gt;</email></author>
+<author>&Anne-Marie.Mahfouf; &Anne-Marie.Mahfouf.mail;</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2010-06-23</date>
-<releaseinfo>&kde; 4.5</releaseinfo>
+<date>2010-11-18</date>
+<releaseinfo>&kde; 4.6</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -39,15 +40,18 @@ about the Nepomuk semantic desktop can be found at the <ulink url="http://nepomu
 
 <para>There are two checkboxes:</para>
 <itemizedlist>
-<listitem><para><guilabel>Enable Nepomuk Semantic Desktop:</guilabel> Enabling the Nepomuk semantic desktop means that
+<listitem><para><guilabel>Enable Nepomuk Semantic Desktop</guilabel> Enabling the Nepomuk semantic desktop means that
 the Nepomuk services are running. These services provide metadata/annotation storage (files can be tagged or rated in &dolphin;
 for example) but also desktop search which can be used through the &kde; runner or again &dolphin;.</para></listitem>
-<listitem><para><guilabel>Enable Strigi Desktop File Indexer:</guilabel> Enabling the Strigi desktop file indexer means that
+<listitem><para><guilabel>Enable Strigi Desktop File Indexer</guilabel> Enabling the Strigi desktop file indexer means that
 the Nepomuk Strigi service is started in addition to the standard services already running. The Strigi service will run through
 all files in the configured folders (see below) and extract metadata from them (such as title or artist on music files or even
 simple things like the creation date). This metadata is then exposed through the desktop search just like the manual annotations
 mentioned earlier.</para></listitem>
 </itemizedlist>
+
+<para>On the right of <guilabel>Enable Nepomuk Semantic Desktop</guilabel> you can click on <guilabel>Details...</guilabel> and 
+a dialog will inform you on the status of the KDE metadata store: how many files are indexed and the size of the store.</para>
 
 <para>Under the <guilabel>Enable Strigi Desktop File Indexer</guilabel> checkbox the current status of the Strigi service is
 shown. The service has four normal operation states:</para>
@@ -76,9 +80,9 @@ to be evaluated case by case.</para></listitem>
 </sect2>
 
 <sect2 id="file-indexing">
-<title>File Indexing</title>
+<title>Desktop Query</title>
 
-<para>The file indexing settings allow to fine tune the files and folders that are to be analyzed by the Strigi file indexer explained
+<para>This tab allows to fine tune the files and folders that are to be analyzed by the Strigi file indexer explained
 above. The left panel allows to select and de-select folders that should be searched for files to be analyzed. By default the home folder
 and all subfolders are analyzed. By simply unchecking a folder it can be excluded. It is also possible to include a subfolder of an
 excluded one by checking it again. This allows a rather fine selection of the folders to be analyzed.</para>
@@ -86,6 +90,44 @@ excluded one by checking it again. This allows a rather fine selection of the fo
 <para>The right panel allows to define exclude filters. The filenames of all files found in the configured folders will be matched
 against these filters. Only if none of them matches the file will be analyzed. This is very helpful to exclude log and backup files
 and the like.</para>
+</sect2>
+
+<sect2 id="backup">
+<title>Backup</title>
+
+<para>On this tab you can decide to make a backup of all data that could not be restored otherwise. This includes
+manually created tags, ratings but also statistical data. No backup is done as default so you need to decide what you want to do. 
+You have two possibilities: automatic backups and manual ones.</para>
+
+<sect3 id="automatic">
+<title>Automatic Backups</title>
+<para>First choose the <guilabel>Backup Frequency</guilabel>: this is set to <guilabel>Disable Automatic Backups</guilabel> but you 
+can choose <guilabel>Daily Backups</guilabel>, <guilabel>Weekly Backups</guilabel> or <guilabel>Monthly Backups</guilabel>.
+Then set the <guilabel>Backup Time:</guilabel> to anything convenient for you using the spinbox: you can set the hour and minutes.
+Finally you can set a limit for the number of backup files using <guilabel>Max Number of Backups:</guilabel>.
+This will ensure you do not waste disk space with the backup files and only the N last files will be kept, N being 
+the number you set there, 10 as default.</para>
+<para>Your automatic backups are saved locally in the following directory: 
+<filename class="directory">$KDEHOME/share/apps/nepomuk/backupsync/backups/</filename>.</para>
+</sect3>
+
+<sect3 id="tools">
+<title>Tools</title>
+<itemizedlist>
+<listitem><para><guilabel>Manual Backup...</guilabel>
+You can also perform manual backups. Manual backups will be saved in your chosen location, as a file.
+Click on <guilabel>Manual Backup...</guilabel> and a wizard will guide you. You first need to point to the location
+of the backup file. Enter a full valid path in the field or use the file dialog to point to a file.</para>
+<note><para>You can create a new file in the folder of your choice and then point to this new file.</para></note>
+<para>Then click on the <guibutton>Next</guibutton> button and the dialog should report that the backup has been done.</para>
+</listitem>
+<listitem><para><guilabel>Restore Backup...</guilabel>
+If you want to later restore your backup, use this button and follow the wizard. The backup will be merged
+into the local Nepomuk database.
+</para></listitem>
+</itemizedlist>
+</sect3>
+
 </sect2>
 
 <sect2 id="advanced">
