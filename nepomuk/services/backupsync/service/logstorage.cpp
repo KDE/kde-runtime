@@ -98,6 +98,12 @@ void Nepomuk::LogStorage::addRecord(const Nepomuk::ChangeLogRecord& record)
 {
     //kDebug() << record.st();
     m_records.append( record );
+
+    if( m_records.size() >= m_maxFileRecords ) {
+        kDebug() << "Saving Records .. " << m_records.size();
+        saveRecords();
+        m_records.clear();
+    }
 }
 
 
@@ -140,7 +146,7 @@ namespace {
 }
 
 
-//FIXME: The code is too complicated and possibly buggy. It's buggy in the way that it makes
+//FIXME: The code is too complicated and POSSIBLY buggy. It's buggy in the way that it makes
 // the service usage skyrocket to 50%+ for large amounts of time.
 bool Nepomuk::LogStorage::saveRecords()
 {
