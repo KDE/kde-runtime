@@ -40,6 +40,7 @@ namespace Nepomuk {
     namespace Query {
 
         class SearchRunnable;
+        class CountQueryRunnable;
         class FolderConnection;
 
         /**
@@ -162,6 +163,7 @@ namespace Nepomuk {
 
             /// the runnable doing work at the moment or 0 if idle
             SearchRunnable* m_currentSearchRunnable;
+            CountQueryRunnable* m_currentCountQueryRunnable;
 
             /// did the nepomuk store change after the last update - used for caching of update signals via m_updateTimer
             bool m_storageChanged;

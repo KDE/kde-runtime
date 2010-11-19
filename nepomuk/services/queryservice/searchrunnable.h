@@ -44,8 +44,7 @@ namespace Nepomuk {
             ~SearchRunnable();
 
             /**
-             * Cancel the search. When this method returns
-             * the runnable is not running.
+             * Cancel the search and detach it from the folder.
              */
             void cancel();
 

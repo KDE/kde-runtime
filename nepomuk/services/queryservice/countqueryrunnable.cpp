@@ -31,6 +31,9 @@
 
 #include <KDebug>
 
+#include <QtCore/QMutexLocker>
+#include <QtCore/QTime>
+
 
 Nepomuk::Query::CountQueryRunnable::CountQueryRunnable( Folder* folder )
     : QRunnable(),
@@ -45,16 +48,42 @@ Nepomuk::Query::CountQueryRunnable::~CountQueryRunnable()
 }
 
 
+void Nepomuk::Query::CountQueryRunnable::cancel()
+{
+    // "detach" us from the folder which will most likely be deleted now
+    QMutexLocker lock( &m_folderMutex );
+    m_folder = 0;
+}
+
+
 void Nepomuk::Query::CountQueryRunnable::run()
 {
+    QMutexLocker lock( &m_folderMutex );
+    if( !m_folder )
+        return;
+
     int count = -1;
     Query query = m_folder->query();
+    lock.unlock();
+
+#ifndef NDEBUG
+    QTime time;
+    time.start();
+#endif
+
     QString sparql = query.toSparqlQuery( Query::CreateCountQuery );
     Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( sparql, Soprano::Query::QueryLanguageSparql );
     if( it.next() ) {
         count = it.binding( 0 ).literal().toInt();
     }
     kDebug() << "Count:" << count;
+
+#ifndef NDEBUG
+    kDebug() << time.elapsed();
+#endif
+
+    lock.relock();
+
     if( m_folder )
         m_folder->countQueryFinished( count );
 }

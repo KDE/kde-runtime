@@ -47,7 +47,8 @@ Nepomuk::Query::Folder::Folder( const QString& query, const RequestPropertyMap& 
       m_isSparqlQueryFolder( true ),
       m_sparqlQuery( query ),
       m_requestProperties( requestProps ),
-      m_currentSearchRunnable( 0 )
+      m_currentSearchRunnable( 0 ),
+      m_currentCountQueryRunnable( 0 )
 {
     init();
 }
@@ -75,6 +76,8 @@ Nepomuk::Query::Folder::~Folder()
 {
     if( m_currentSearchRunnable )
         m_currentSearchRunnable->cancel();
+    if( m_currentCountQueryRunnable )
+        m_currentCountQueryRunnable->cancel();
 
     // cannot use qDeleteAll since deleting a connection changes m_connections
     while ( !m_connections.isEmpty() )
@@ -91,7 +94,8 @@ void Nepomuk::Query::Folder::update()
         // we only need the count for initialListingDone
         if ( !m_initialListingDone &&
              !m_isSparqlQueryFolder ) {
-            QueryService::searchThreadPool()->start( new CountQueryRunnable( this ), 0 );
+            m_currentCountQueryRunnable = new CountQueryRunnable( this );
+            QueryService::searchThreadPool()->start( m_currentCountQueryRunnable, 0 );
         }
     }
 }
@@ -205,6 +209,8 @@ void Nepomuk::Query::Folder::slotUpdateTimeout()
 // called from CountQueryRunnable in the search thread
 void Nepomuk::Query::Folder::countQueryFinished( int count )
 {
+    m_currentCountQueryRunnable = 0;
+
     m_resultCount = count;
     kDebug() << m_resultCount;
     if( count >= 0 )

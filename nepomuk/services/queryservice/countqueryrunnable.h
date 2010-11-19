@@ -23,6 +23,7 @@
 
 #include <QtCore/QRunnable>
 #include <QtCore/QPointer>
+#include <QtCore/QMutex>
 
 #include "folder.h"
 
@@ -36,10 +37,16 @@ namespace Nepomuk {
             CountQueryRunnable( Folder* folder );
             ~CountQueryRunnable();
 
+            /**
+             * Cancel the search and detach it from the folder.
+             */
+            void cancel();
+
             void run();
 
         private:
             QPointer<Folder> m_folder;
+            QMutex m_folderMutex;
         };
     }
 }
