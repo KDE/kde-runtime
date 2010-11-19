@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>BackupSettingsPage</class>
  <widget class="QWidget" name="BackupSettingsPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>276</width>
+    <height>139</height>
+   </rect>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="margin">
     <number>0</number>
@@ -15,7 +23,7 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string extracomment="@info">Please choose a location for the backup about to be created. Make sure that enough hard disk space is available.</string>
+         <string extracomment="@info">Please choose a file for the backup. Make sure that enough hard disk space is available.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
