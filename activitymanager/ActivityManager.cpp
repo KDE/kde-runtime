@@ -396,11 +396,17 @@ void ActivityManager::StartActivity(const QString & id)
     }
 
     d->transitioningActivity = id;
-    d->setActivityState(id, Starting); 
+    d->setActivityState(id, Starting);
 
+    //ugly hack to avoid dbus deadlocks
+    QMetaObject::invokeMethod(d, "reallyStartActivity", Qt::QueuedConnection, Q_ARG(QString, id));
+}
+
+void ActivityManagerPrivate::reallyStartActivity(const QString & id)
+{
     bool called = false;
     // start the starting :)
-    if (d->haveSessions) {
+    if (haveSessions) {
         QDBusInterface kwin("org.kde.kwin", "/KWin", "org.kde.KWin");
         if (kwin.isValid()) {
             QDBusMessage reply = kwin.call("startActivity", id);
@@ -418,9 +424,9 @@ void ActivityManager::StartActivity(const QString & id)
     if (!called) {
         //maybe they use compiz?
         //go ahead without the session
-        d->setActivityState(id, Running);
+        setActivityState(id, ActivityManager::Running);
     }
-    d->configSync(); //force immediate sync
+    configSync(); //force immediate sync
 }
 
 void ActivityManagerPrivate::startCompleted()
@@ -450,9 +456,16 @@ void ActivityManager::StopActivity(const QString & id)
 
     d->transitioningActivity = id;
     d->setActivityState(id, Stopping);
+
+    //ugly hack to avoid dbus deadlocks
+    QMetaObject::invokeMethod(d, "reallyStopActivity", Qt::QueuedConnection, Q_ARG(QString, id));
+}
+
+void ActivityManagerPrivate::reallyStopActivity(const QString & id)
+{
     bool called = false;
     // start the stopping :)
-    if (d->haveSessions) {
+    if (haveSessions) {
         QDBusInterface kwin("org.kde.kwin", "/KWin", "org.kde.KWin");
         if (kwin.isValid()) {
             QDBusMessage reply = kwin.call("stopActivity", id);
@@ -470,11 +483,11 @@ void ActivityManager::StopActivity(const QString & id)
     if (!called) {
         //maybe they use compiz?
         //go ahead without the session
-        d->setActivityState(id, Stopped);
-        if (d->currentActivity == id) {
-            d->ensureCurrentActivityIsRunning();
+        setActivityState(id, ActivityManager::Stopped);
+        if (currentActivity == id) {
+            ensureCurrentActivityIsRunning();
         }
-        d->configSync(); //force immediate sync
+        configSync(); //force immediate sync
     }
 }
 

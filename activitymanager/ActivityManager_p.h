@@ -95,6 +95,10 @@ public Q_SLOTS:
     void stopCompleted();
     void stopCancelled();
 
+    //for avoiding dbus deadlocks
+    void reallyStartActivity(const QString & id);
+    void reallyStopActivity(const QString & id);
+
 private:
     ActivityManager * const q;
     QDBusInterface *ksmserverInterface; //just keeping it for the signals
