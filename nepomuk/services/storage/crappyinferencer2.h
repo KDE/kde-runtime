@@ -60,6 +60,12 @@ public:
      */
     QUrl crappyInferenceContext() const;
 
+Q_SIGNALS:
+    /**
+     * Emitted once a call to updateAllResources() has finished.
+     */
+    void allResourcesUpdated();
+
 public Q_SLOTS:
     /**
      * Update the internal map of super types that is used to determine which

@@ -346,6 +346,8 @@ Soprano::BackendSettings Nepomuk::Repository::readVirtuosoSettings() const
     settings << Soprano::BackendSetting( "ServerThreads", 100 );
 
     // Never take more than 5 minutes to answer a query (this is to filter out broken queries and bugs in Virtuoso's query optimizer)
+    // trueg: We cannot activate this yet. 1. Virtuoso < 6.3 crashes and 2. even open cursors are subject to the timeout which is really
+    //        not what we want!
 //    settings << Soprano::BackendSetting( "QueryTimeout", 5*60000 );
 
     return settings;

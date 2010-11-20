@@ -24,14 +24,10 @@
 
 #include <Soprano/Global>
 #include <Soprano/Node>
-#include <Soprano/LiteralValue>
 #include <Soprano/Model>
 #include <Soprano/PluginManager>
 #include <Soprano/StatementIterator>
-#include <Soprano/QueryResultIterator>
 #include <Soprano/Parser>
-#include <Soprano/Vocabulary/NAO>
-#include <Soprano/Vocabulary/RDFS>
 
 #include <KConfig>
 #include <KConfigGroup>
@@ -188,7 +184,6 @@ void Nepomuk::OntologyLoader::updateNextOntology()
     else {
         d->forceOntologyUpdate = false;
         d->updateTimer.stop();
-        updateUserVisibility();
         emit ontologyLoadingFinished(this);
     }
 }
@@ -223,117 +218,6 @@ void Nepomuk::OntologyLoader::slotGraphRetrieverResult( KJob* job )
             emit ontologyUpdateFailed( QString::fromAscii( graphRetriever->url().toEncoded() ), d->model->lastError().message() );
         }
     }
-}
-
-
-namespace {
-    struct UserVisibleNode {
-        UserVisibleNode( const QUrl& r )
-            : uri( r ),
-              userVisible( 0 ) {
-        }
-
-        QUrl uri;
-        int userVisible;
-        QHash<QUrl, UserVisibleNode*> parents;
-
-        /**
-         * Set the value of nao:userVisible and add the corresponding
-         * statement to the list of statements in case the value was
-         * not defined yet.
-         */
-        int updateUserVisibility( QList<Soprano::Statement>& statements ) {
-            if ( userVisible != 0 ) {
-                //kDebug() << "User visibility already set" << uri.toString() << ( userVisible == 1 );
-                return userVisible;
-            }
-            else {
-                if ( !parents.isEmpty() ) {
-                    for ( QHash<QUrl, UserVisibleNode*>::iterator it = parents.begin();
-                          it != parents.end(); ++it ) {
-                        kDebug() << uri.toString() << "Checking parent class" << it.value()->uri.toString();
-                        if ( it.value()->updateUserVisibility( statements ) == -1 ) {
-                            userVisible = -1;
-                            break;
-                        }
-                    }
-                }
-                if ( userVisible == 0 ) {
-                    // default to visible
-                    userVisible = 1;
-                }
-                statements << Soprano::Statement( uri,
-                                                  Soprano::Vocabulary::NAO::userVisible(),
-                                                  Soprano::LiteralValue( userVisible == 1 ),
-                                                  Nepomuk::Vocabulary::KUVO::nrlOntologyGraph() );
-                kDebug() << "Setting nao:userVisible of" << uri.toString() << ( userVisible == 1 );
-                return userVisible;
-            }
-        }
-    };
-}
-
-void Nepomuk::OntologyLoader::updateUserVisibility()
-{
-    //
-    // build a tree of all classes and properties
-    //
-    QString query
-        = QString::fromLatin1( "select distinct ?r ?p ?v where { "
-                               "{ ?r a rdfs:Class . "
-                               "OPTIONAL { ?r rdfs:subClassOf ?p . ?p a rdfs:Class . } . } "
-                               "UNION "
-                               "{ ?r a rdf:Property . "
-                               "OPTIONAL { ?r rdfs:subPropertyOf ?p . ?p a rdf:Property . } . } "
-                               "OPTIONAL { ?r %1 ?v . } . "
-                               "FILTER(?r!=rdfs:Resource) . "
-                               "}" )
-        .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::NAO::userVisible() ) );
-    kDebug() << query;
-    QHash<QUrl, UserVisibleNode*> all;
-    {
-        Soprano::QueryResultIterator it
-            = d->model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-        while( it.next() ) {
-            const QUrl r = it["r"].uri();
-            const Soprano::Node p = it["p"];
-            const Soprano::Node v = it["v"];
-
-            if ( !all.contains( r ) ) {
-                UserVisibleNode* r_uvn = new UserVisibleNode( r );
-                all.insert( r, r_uvn );
-            }
-            if( v.isLiteral() )
-                all[r]->userVisible = (v.literal().toBool() ? 1 : -1);
-            if ( p.isResource() &&
-                 p.uri() != r &&
-                 p.uri() != Soprano::Vocabulary::RDFS::Resource() ) {
-                if ( !all.contains( p.uri() ) ) {
-                    UserVisibleNode* p_uvn = new UserVisibleNode( p.uri() );
-                    all.insert( p.uri(), p_uvn );
-                    all[r]->parents.insert( p.uri(), p_uvn );
-                }
-                else {
-                    all[r]->parents.insert( p.uri(), all[p.uri()] );
-                }
-            }
-        }
-    }
-
-    //
-    // create a list of all statements we need to add
-    //
-    QList<Soprano::Statement> statements;
-    for ( QHash<QUrl, UserVisibleNode*>::iterator it = all.begin();
-          it != all.end(); ++it ) {
-        it.value()->updateUserVisibility( statements );
-    }
-
-    //
-    // cleanup and add all the necessary statements to the main model
-    //
-    qDeleteAll( all );
-    d->model->addStatements( statements );
 }
 
 #include "ontologyloader.moc"

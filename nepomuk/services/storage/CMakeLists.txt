@@ -18,6 +18,7 @@ set(storage_SRCS
   graphretriever.cpp
   crappyinferencer.cpp
   crappyinferencer2.cpp
+  typevisibilitytree.cpp
   )
 
 soprano_add_ontology(storage_SRCS
