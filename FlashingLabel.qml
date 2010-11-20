@@ -32,6 +32,10 @@ Item {
     property string font: "Arial"
     property string color: theme.textColor
     property int duration: 3000
+
+    /*### actually the FlashingLabel in C++ doesn't have
+    this as part of its API, either text or pixmap is
+    set only when flash is called.*/
     property string text: ""
 
     //###
@@ -65,4 +69,6 @@ Item {
             label.horizontalAlignment = alignment
         fade.start()
     }
+
+    //###TODO: flash pixmap
 }
