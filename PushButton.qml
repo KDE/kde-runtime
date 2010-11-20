@@ -21,14 +21,9 @@ import Qt 4.7
 import org.kde.plasma.core 0.1 as PlasmaCore
 
 Item {
-    width:200
-    height: 100
-    
-Item {
     width: 50
     height:20
-    x:10
-    y:10
+
     id: button
     PlasmaCore.FrameSvgItem {
         id: hover
@@ -94,4 +89,3 @@ Item {
 
 }
 
-}
