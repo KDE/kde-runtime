@@ -20,7 +20,78 @@
 import Qt 4.7
 import org.kde.plasma.core 0.1 as PlasmaCore
 
-PlasmaCore.FrameSvgItem {
-    imagePath: "widgets/button"
-    prefix: "normal"
+Item {
+    width:200
+    height: 100
+    
+Item {
+    width: 50
+    height:20
+    x:10
+    y:10
+    id: button
+    PlasmaCore.FrameSvgItem {
+        id: hover
+        anchors.fill: parent
+        opacity: 0
+        anchors.leftMargin: -margins.left
+        anchors.topMargin: -margins.top
+        anchors.rightMargin: -margins.right
+        anchors.bottomMargin: -margins.bottom
+        imagePath: "widgets/button"
+        prefix: "hover"
+        Behavior on opacity {
+            PropertyAnimation { duration: 250 }
+        }
+    }
+    PlasmaCore.FrameSvgItem {
+        id: shadow
+        anchors.fill: parent
+        anchors.leftMargin: -margins.left
+        anchors.topMargin: -margins.top
+        anchors.rightMargin: -margins.right
+        anchors.bottomMargin: -margins.bottom
+        imagePath: "widgets/button"
+        prefix: "shadow"
+        Behavior on opacity {
+            PropertyAnimation { duration: 250 }
+        }
+    }
+        
+    PlasmaCore.FrameSvgItem {
+        id: surface
+        anchors.fill: parent
+        imagePath: "widgets/button"
+        prefix: "normal"   
+    }
+
+    Text {
+        text: "Ok"
+        anchors.fill: parent
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+    }
+    
+    MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+
+        onPressed: {
+            surface.prefix = "pressed"
+        }
+        onReleased: {
+            surface.prefix = "normal"
+        }
+        onEntered: {
+            shadow.opacity = 0
+            hover.opacity = 1
+        }
+        onExited: {
+            shadow.opacity = 1
+            hover.opacity = 0
+        }
+    }
+
+}
+
 }
