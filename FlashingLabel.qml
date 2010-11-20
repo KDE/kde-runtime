@@ -28,6 +28,7 @@ Item {
     //API
     property bool autohide: false
     //### get font from theme when available
+    //### deal with QFont stuff in a proper way
     property string font: "Arial"
     property string color: theme.textColor
     property int duration: 3000
@@ -56,7 +57,8 @@ Item {
     }
 
     function flash(text, duration, alignment) {
-        root.text = text
+        if (text)
+            root.text = text
         if (duration)
             root.duration = duration
         if (alignment)
