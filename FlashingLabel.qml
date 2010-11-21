@@ -54,10 +54,12 @@ Item {
         anchors.horizontalCenter: root.horizontalCenter
     }
 
-    SequentialAnimation on opacity {
+    PropertyAnimation {
         id: fade
-        running: false
-        PropertyAnimation { duration: root.duration; to: 0 }
+        target: label;
+        property: "opacity";
+        duration: root.duration;
+        to: 0
     }
 
     function flash(text, duration, alignment) {
