@@ -58,9 +58,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <includes>
-  <include location="local">klineedit.h</include>
- </includes>
  <resources/>
  <connections/>
 </ui>
