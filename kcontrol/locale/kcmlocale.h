@@ -76,6 +76,11 @@ private:
 
     //Common load/save utilities
 
+    void copySettings( KConfigGroup *fromGroup, KConfigGroup *toGroup );
+    void copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, const QString &type );
+    void copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, const QStringList &type );
+    void copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, int type );
+    void copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, bool type );
     void mergeSettings( const QString &countryCode, bool mergeUser );
 
     void setItem( const QString itemKey, const QString &itemValue,

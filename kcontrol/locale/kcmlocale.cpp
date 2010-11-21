@@ -77,13 +77,13 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
     // Setup the Group Config/Settings
     // These are the Group overrides, they exclude any User, Country, or C settings
     // This will be used in the merge to obtain the KCM Defaults
-    m_groupConfig = KSharedConfig::openConfig( QString(), KConfig::NoGlobals );
+    m_groupConfig = KSharedConfig::openConfig( "groupconfig", KConfig::NoGlobals );
     m_groupSettings = KConfigGroup( m_groupConfig, "Locale" );
 
     // Setup the User Config/Settings
     // These are the User overrides, they exclude any Group, Country, or C settings
     // This will be used to store the User changes
-    m_userConfig = KSharedConfig::openConfig( QString(), KConfig::IncludeGlobals );
+    m_userConfig = KSharedConfig::openConfig( "userconfig", KConfig::IncludeGlobals );
     m_userSettings = KConfigGroup( m_userConfig, "Locale" );
 
     // Setup the KCM Config/Settings
@@ -319,8 +319,15 @@ KCMLocale::~KCMLocale()
 // Also gets called automatically called after constructor
 void KCMLocale::load()
 {
+    // Throw away any unsaved changes
+    m_globalSettings.markAsClean();
+    m_userSettings.markAsClean();
+    m_userSettings.deleteGroup();
+
+    // Then create the new settings using the default, include user settings
     mergeSettings( KGlobal::locale()->country(), true );
 
+    // The update all the widgets to use the new settings
     initAllWidgets();
 
     emit changed( false );
@@ -330,19 +337,88 @@ void KCMLocale::load()
 // We interpret this to mean the defaults for the current global country and language
 void KCMLocale::defaults()
 {
+    // Throw away any unsaved changes
+    m_globalSettings.markAsClean();
+    m_userSettings.markAsClean();
+    m_userSettings.deleteGroup();
+
+    // Then create the new settings using the default, exclude user settings
     mergeSettings( KGlobal::locale()->country(), false );
 
+    // The update all the widgets to use the new settings
     initAllWidgets();
 
-    emit changed( false );
+    emit changed( true );
+}
+
+// Write our own copy routine as we need to be selective about what values get copied, e.g. exclude
+// Name, Region, etc, and copyTo() seems to barf on some uses
+void KCMLocale::copySettings( KConfigGroup *fromGroup, KConfigGroup *toGroup )
+{
+    copySetting( fromGroup, toGroup, "Country", QString() );
+    copySetting( fromGroup, toGroup, "CountryDivision", QString() );
+    copySetting( fromGroup, toGroup, "Languages", QStringList() );
+    copySetting( fromGroup, toGroup, "DecimalPlaces", 0 );
+    copySetting( fromGroup, toGroup, "DecimalSymbol", QString() );
+    copySetting( fromGroup, toGroup, "ThousandsSeparator", QString() );
+    copySetting( fromGroup, toGroup, "PositiveSign", QString() );
+    copySetting( fromGroup, toGroup, "NegativeSign", QString() );
+    copySetting( fromGroup, toGroup, "DigitSet", 0 );
+    copySetting( fromGroup, toGroup, "CurrencyCode", QString() );
+    copySetting( fromGroup, toGroup, "CurrencySymbol", QString() );
+    copySetting( fromGroup, toGroup, "MonetaryDecimalPlaces", 0 );
+    copySetting( fromGroup, toGroup, "MonetaryDecimalSymbol", QString() );
+    copySetting( fromGroup, toGroup, "MonetaryThousandsSeparator", QString() );
+    copySetting( fromGroup, toGroup, "PositivePrefixCurrencySymbol", false );
+    copySetting( fromGroup, toGroup, "NegativePrefixCurrencySymbol", false );
+    copySetting( fromGroup, toGroup, "PositiveMonetarySignPosition", 0 );
+    copySetting( fromGroup, toGroup, "NegativeMonetarySignPosition", 0 );
+    copySetting( fromGroup, toGroup, "MonetaryDigitSet", 0 );
+    copySetting( fromGroup, toGroup, "CalendarSystem", QString() );
+    copySetting( fromGroup, toGroup, "TimeFormat", QString() );
+    copySetting( fromGroup, toGroup, "DateFormat", QString() );
+    copySetting( fromGroup, toGroup, "DateFormatShort", QString() );
+    copySetting( fromGroup, toGroup, "DateMonthNamePossessive", false );
+    copySetting( fromGroup, toGroup, "WeekStartDay", 0 );
+    copySetting( fromGroup, toGroup, "WorkingWeekStartDay", 0 );
+    copySetting( fromGroup, toGroup, "WorkingWeekEndDay", 0 );
+    copySetting( fromGroup, toGroup, "WeekDayOfPray", 0 );
+    copySetting( fromGroup, toGroup, "DateTimeDigitSet", 0 );
+    copySetting( fromGroup, toGroup, "BinaryUnitDialect", 0 );
+    copySetting( fromGroup, toGroup, "PageSize", 0 );
+    copySetting( fromGroup, toGroup, "MeasureSystem", 0 );
+}
+
+void KCMLocale::copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, const QString &type )
+{
+    if ( fromGroup->hasKey( key ) ) {
+        toGroup->writeEntry( key, fromGroup->readEntry( key, type ) );
+    }
+}
+
+void KCMLocale::copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, const QStringList &type )
+{
+    if ( fromGroup->hasKey( key ) ) {
+        toGroup->writeEntry( key, fromGroup->readEntry( key, type ) );
+    }
+}
+
+void KCMLocale::copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, int type )
+{
+    if ( fromGroup->hasKey( key ) ) {
+        toGroup->writeEntry( key, fromGroup->readEntry( key, type ) );
+    }
+}
+
+void KCMLocale::copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, bool type )
+{
+    if ( fromGroup->hasKey( key ) ) {
+        toGroup->writeEntry( key, fromGroup->readEntry( key, type ) );
+    }
 }
 
 void KCMLocale::mergeSettings( const QString &countryCode, bool mergeUser )
 {
-    // Throw away any unsaved changes as reparse calls an unwanted sync()
-    m_globalSettings.markAsClean();
-    m_userSettings.markAsClean();
-
     // Load up the required country settings
     m_countryConfig = KSharedConfig::openConfig( KStandardDirs::locate( "locale",
                                                  QString::fromLatin1("l10n/%1/entry.desktop")
@@ -350,18 +426,16 @@ void KCMLocale::mergeSettings( const QString &countryCode, bool mergeUser )
     m_countrySettings = KConfigGroup( m_countryConfig, "KCM Locale" );
 
     // Merge the default settings, i.e. C, Country, and Group
-    m_defaultSettings.markAsClean();
     m_defaultSettings.deleteGroup();
-    m_cSettings.copyTo( &m_defaultSettings );
-    m_countrySettings.copyTo( &m_defaultSettings );
-    m_groupSettings.copyTo( &m_defaultSettings );
+    copySettings( &m_cSettings, &m_defaultSettings );
+    copySettings( &m_countrySettings, &m_defaultSettings );
+    copySettings( &m_groupSettings, &m_defaultSettings );
 
     // Merge the KCM settings, i.e. C, Country, Group, and optionally User
-    m_kcmSettings.markAsClean();
     m_kcmSettings.deleteGroup();
-    m_defaultSettings.copyTo( &m_kcmSettings );
+    copySettings( &m_defaultSettings, &m_kcmSettings );
     if ( mergeUser ) {
-        m_globalSettings.copyTo( &m_kcmSettings );
+        copySettings( &m_userSettings, &m_kcmSettings );
     }
 
     // Create the kcm locale from the config, it may or may not include globals
@@ -413,15 +487,6 @@ QString KCMLocale::quickHelp() const
 
 void KCMLocale::initAllWidgets()
 {
-kDebug() << "initAllWidgets()";
-kDebug() << "global = " << m_globalSettings.entryMap();
-kDebug() << "group = " << m_groupSettings.entryMap();
-kDebug() << "user = " << m_userSettings.entryMap();
-kDebug() << "c = " << m_cSettings.entryMap();
-kDebug() << "country = " << m_countrySettings.entryMap();
-kDebug() << "defaults = " << m_defaultSettings.entryMap();
-kDebug() << "kcm = " << m_kcmSettings.entryMap();
-
     //Country tab
     initCountry();
     initCountryDivision();
@@ -435,7 +500,7 @@ kDebug() << "kcm = " << m_kcmSettings.entryMap();
 
 void KCMLocale::initSettingsWidgets()
 {
-    // Initialise the settings widgets with the default values wheneve teh country or language changes
+    // Initialise the settings widgets with the default values wheneve the country or language changes
 
     //Common
     initTabs();
@@ -538,7 +603,6 @@ void KCMLocale::setItem( const QString itemKey, const QString &itemValue, QWidge
     } else {
         itemWidget->setEnabled( true );
         // If the new value is not the default, then enable the default button
-kDebug() << "newValue = " <<itemValue << " kcmValue = " << m_kcmSettings.readEntry( itemKey, QString() ) << " defaultValue = " << m_defaultSettings.readEntry( itemKey, QString() );
         m_kcmSettings.writeEntry( itemKey, itemValue );
         if ( itemValue != m_defaultSettings.readEntry( itemKey, QString() ) ) {
             m_userSettings.writeEntry( itemKey, itemValue );
@@ -558,13 +622,11 @@ void KCMLocale::setItem( const QString itemKey, int itemValue, QWidget *itemWidg
             itemDefaultButton->setEnabled( false );
     } else {
         itemWidget->setEnabled( true );
-        // If the new value is not the default, then save it and enable the default button
-kDebug() << "newValue = " <<itemValue << " kcmValue = " << m_kcmSettings.readEntry( itemKey, QString() ) << " defaultValue = " << m_defaultSettings.readEntry( itemKey, QString() );
-        m_kcmSettings.writeEntry( itemKey, itemValue );
+        // If the new value is not the default (i.e. is set in user), then save it and enable the default button
         if ( itemValue != m_defaultSettings.readEntry( itemKey, 0 ) ) {
             m_userSettings.writeEntry( itemKey, itemValue );
             itemDefaultButton->setEnabled( true );
-        } else {
+        } else {  // Is the default so delete any user setting
             m_userSettings.deleteEntry( itemKey );
             itemDefaultButton->setEnabled( false );
         }
@@ -580,8 +642,6 @@ void KCMLocale::setItem( const QString itemKey, bool itemValue, QWidget *itemWid
     } else {
         itemWidget->setEnabled( true );
         // If the new value is not the default, then save it and enable the default button
-kDebug() << "newValue = " <<itemValue << " kcmValue = " << m_kcmSettings.readEntry( itemKey, false ) << " defaultValue = " << m_defaultSettings.readEntry( itemKey, QString() );
-        m_kcmSettings.writeEntry( itemKey, itemValue );
         if ( itemValue != m_defaultSettings.readEntry( itemKey, false ) ) {
             m_userSettings.writeEntry( itemKey, itemValue );
             itemDefaultButton->setEnabled( true );
@@ -780,14 +840,18 @@ void KCMLocale::defaultCountry()
 
 void KCMLocale::changedCountryIndex( int index )
 {
+    m_ui->m_comboCountry->blockSignals( true );
     changeCountry( m_ui->m_comboCountry->itemData( index ).toString() );
+    mergeSettings( m_kcmSettings.readEntry( "Country", QString() ), true );
+    m_ui->m_comboCountry->blockSignals( false );
+    initSettingsWidgets();
+    emit changed( true );
 }
 
 void KCMLocale::changeCountry( const QString &newValue )
 {
     setComboItem( "Country", newValue,
-                m_ui->m_comboCountry, m_ui->m_buttonResetCountry );
-    //m_kcmLocale->setCountry( m_kcmSettings.readEntry( "Country", QString() ) );
+                  m_ui->m_comboCountry, m_ui->m_buttonResetCountry );
 }
 
 void KCMLocale::initCountryDivision()
@@ -1742,7 +1806,6 @@ void KCMLocale::initPmSymbol()
 
 void KCMLocale::initDateFormat()
 {
-kDebug() << "initDateFormat()";
     m_ui->m_comboDateFormat->blockSignals( true );
 
     m_ui->m_labelDateFormat->setText( ki18n( "Long date format:" ).toString( m_kcmLocale ) );
