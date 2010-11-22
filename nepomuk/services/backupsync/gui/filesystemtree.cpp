@@ -132,6 +132,26 @@ bool FileSystemTreeItem::isFile() const
     return !isFolder();
 }
 
+namespace {
+    bool withoutTrailingSlashCompare( const QString & a, const QString & b ) {
+        if( a.endsWith('/') && b.endsWith('/') )
+            return a < b;
+        else if( a.endsWith('/') )
+            return a.mid( 0, a.length() -1 ) < b;
+        else
+            return a < b.mid( 0, b.length() -1 );
+    }
+
+
+    bool withoutTrailingSlashEquality( const QString & a, const QString & b ) {
+        if( a.endsWith('/') && b.endsWith('/') )
+            return a == b;
+        else if( a.endsWith('/') )
+            return a.mid( 0, a.length() -1 ) == b;
+        else
+            return a == b.mid( 0, b.length() -1 );
+    }
+}
 
 // static
 void FileSystemTreeItem::insert(QList< FileSystemTreeItem* >& list, FileSystemTreeItem* item, FileSystemTreeItem* parent)
@@ -145,7 +165,7 @@ void FileSystemTreeItem::insert(QList< FileSystemTreeItem* >& list, FileSystemTr
     
     // Step 1 : Check for duplicates
     foreach( FileSystemTreeItem *p, list ) {
-        if( p->m_url == item->m_url ) {
+        if( withoutTrailingSlashEquality( p->m_url, item->m_url ) ) {
             kDebug() << "Duplicate ..";
             return;
         }
@@ -167,8 +187,8 @@ void FileSystemTreeItem::insert(QList< FileSystemTreeItem* >& list, FileSystemTr
     QMutableListIterator<FileSystemTreeItem* > iter( list );
     while( iter.hasNext() ) {
         FileSystemTreeItem * p = iter.next();
-        kDebug() << p->m_url << " > " << item->m_url << " " << (p->m_url > item->m_url);
-        if( /*p->isFolder() &&*/ p->m_url > item->m_url ) {
+        
+        if( withoutTrailingSlashCompare( item->m_url, p->m_url ) ) {
             kDebug() << "Inserting before " << p->url();
             iter.previous();
             // Insert it and set it's parent
