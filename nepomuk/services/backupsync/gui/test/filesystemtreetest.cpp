@@ -39,28 +39,30 @@ void FileSystemTreeTest::testAdditions()
     FileSystemTree tree;
 
     tree.add( new FileSystemTreeItem( "/a/b/c" ) );
-    kDebug() << tree.toList();
+    QVERIFY( tree.toList() == QList<QString>() << "/a/b/c" );
     
     tree.add( new FileSystemTreeItem( "/a/b/" ) );
-    kDebug() << tree.toList();
+    QVERIFY( tree.toList() == QList<QString>() << "/a/b/" << "/a/b/c" );
     
     tree.add( new FileSystemTreeItem( "/a/" ) );
-    kDebug() << tree.toList();
+    QVERIFY( tree.toList() == QList<QString>() << "/a/" << "/a/b/" << "/a/b/c" );
     
     tree.add( new FileSystemTreeItem( "/a/ba" ) );
-    kDebug() << tree.toList();
+    QVERIFY( tree.toList() == QList<QString>() << "/a/" << "/a/b/" << "/a/b/c" << "/a/ba" );
     
     tree.add( new FileSystemTreeItem( "/a/bb" ) );
-    kDebug() << tree.toList();
+    QVERIFY( tree.toList() == QList<QString>() << "/a/" << "/a/b/" << "/a/b/c" << "/a/ba" << "/a/bb" );
     
     tree.add( new FileSystemTreeItem( "/a/b/d" ) );
-    kDebug() << tree.toList();
+    QVERIFY( tree.toList() == QList<QString>() << "/a/" << "/a/b/" << "/a/b/c" << "/a/b/d" << "/a/ba" << "/a/bb" );
 
-    tree.add( new FileSystemTreeItem( "/b" ) );
-    kDebug() << tree.toList();
-
+    int size = tree.size();
     tree.add( new FileSystemTreeItem("/a/b/d") );
-    kDebug() << tree.toList();
+    QVERIFY( tree.size() == size );
+
+    
+    tree.add( new FileSystemTreeItem( "/b" ) );
+    QVERIFY( tree.toList() == QList<QString>() << "/a/" << "/a/b/" << "/a/b/c" << "/a/b/d" << "/a/ba" << "/a/bb" << "/b" );
 }
 
 

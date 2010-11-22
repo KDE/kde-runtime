@@ -85,6 +85,15 @@ QList< FileSystemTreeItem* > FileSystemTree::rootNodes() const
     return m_rootNodes;
 }
 
+int FileSystemTree::size() const
+{
+    int s = 0;
+    foreach( const FileSystemTreeItem * item, m_rootNodes )
+        s += item->size();
+    return s;
+}
+
+
 //
 // Tree Item
 //
@@ -134,22 +143,32 @@ bool FileSystemTreeItem::isFile() const
 
 namespace {
     bool withoutTrailingSlashCompare( const QString & a, const QString & b ) {
-        if( a.endsWith('/') && b.endsWith('/') )
-            return a < b;
-        else if( a.endsWith('/') )
+        if( a.endsWith('/') ) {
+            if( b.endsWith('/') )
+                return a < b;
+            
             return a.mid( 0, a.length() -1 ) < b;
-        else
+        }
+        else if( b.endsWith('/') ) {
             return a < b.mid( 0, b.length() -1 );
+        }
+        else
+            return a < b;
     }
 
 
     bool withoutTrailingSlashEquality( const QString & a, const QString & b ) {
-        if( a.endsWith('/') && b.endsWith('/') )
-            return a == b;
-        else if( a.endsWith('/') )
+        if( a.endsWith('/') ) {
+            if( b.endsWith('/') )
+                return a == b;
+
             return a.mid( 0, a.length() -1 ) == b;
-        else
+        }
+        else if( b.endsWith('/') ) {
             return a == b.mid( 0, b.length() -1 );
+        }
+        else
+            return a == b;
     }
 }
 
@@ -268,6 +287,15 @@ int FileSystemTreeItem::parentRowNum()
 
     kDebug() << "RETURNING -1";
     return -1;
+}
+
+
+int FileSystemTreeItem::size() const
+{
+    int s = 1; // For self
+    foreach( const FileSystemTreeItem * child, m_children )
+        s += child->size();
+    return s;
 }
 
 

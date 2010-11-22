@@ -48,6 +48,8 @@ public :
     QList<QString> toList() const;
 
     bool isEmpty() const;
+
+    int size() const;
     
 private :
     friend class FileSystemTreeItem;
@@ -103,6 +105,8 @@ public:
      * Returns the url
      */
     QString url() const;
+
+    int size() const;
     
     
     FileSystemTreeItem * parent() const;
