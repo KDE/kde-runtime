@@ -145,6 +145,9 @@
            </property>
           </spacer>
          </item>
+         <item>
+          <widget class="KPushButton" name="m_buttonResetTranslations"/>
+         </item>
         </layout>
        </item>
       </layout>

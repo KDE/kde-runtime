@@ -121,9 +121,6 @@ private:
     //Translations/Languages tab
 
     void initTranslations();
-    void loadTranslations();
-    void saveTranslations();
-
     void initTranslationsInstall();
 
     //Numeric tab
@@ -187,7 +184,8 @@ private Q_SLOTS:
 
     //Translations/Languages tab
 
-    void changeTranslations( QListWidgetItem *item );
+    void defaultTranslations();
+    void changeTranslations();
 
     //void callTranslationsInstall();
 
@@ -361,10 +359,10 @@ private:
     // because KLocale does not add a language if there is no translation
     // for the current application so it would not be possible to set
     // a language which has no systemsettings/kcontrol module translation
-    QStringList m_languages;
-    QStringList m_installedLanguages;
+    QStringList m_translations;
+    QStringList m_installedTranslations;
 
-    // The locale
+    // The locale we use when displaying the sample output, not used for anythign else
     KLocale *m_kcmLocale;
 
     Ui::KCMLocaleWidget *m_ui;

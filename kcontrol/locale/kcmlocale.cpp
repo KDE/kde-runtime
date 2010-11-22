@@ -38,9 +38,7 @@
 #include <KMessageBox>
 #include <KPluginFactory>
 #include <KStandardDirs>
-
-//TODO create <> include in kdelibs!!!
-#include "kcurrencycode.h"
+#include <KCurrencyCode>
 
 #include "ui_kcmlocalewidget.h"
 
@@ -70,7 +68,7 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
 
     // Setup the Global Config/Settings
     // These are the merged Group and User settings, excluding the Country and C settings
-    // This will be used to obtain the initial settings, and to save any User changes
+    // This will be used to obtain the tial settings, and to save any User changes
     //m_globalConfig = KSharedConfig::openConfig( QString(), KConfig::FullConfig );
     m_globalSettings = KConfigGroup( KGlobal::config(), "Locale" );
 
@@ -125,16 +123,16 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
 
     // Languages tab
 
-    m_ui->m_selectorTranslations->setButtonsEnabled();
-
-    connect( m_ui->m_selectorTranslations, SIGNAL( added( QListWidgetItem * ) ),
-             this,                         SLOT( changeTranslationsAdded( QListWidgetItem * ) ) );
-    connect( m_ui->m_selectorTranslations, SIGNAL( removed( QListWidgetItem * ) ),
-             this,                         SLOT( changeTranslationsRemoved( QListWidgetItem * ) ) );
-    connect( m_ui->m_selectorTranslations, SIGNAL( movedDown( QListWidgetItem * ) ),
-             this,                         SLOT( changeTranslationsMoved( QListWidgetItem * ) ) );
-    connect( m_ui->m_selectorTranslations, SIGNAL( movedUp( QListWidgetItem * ) ),
-             this,                         SLOT( changeTranslationsMoved( QListWidgetItem * ) ) );
+    connect( m_ui->m_selectorTranslations,    SIGNAL( added( QListWidgetItem * ) ),
+             this,                            SLOT( changeTranslations() ) );
+    connect( m_ui->m_selectorTranslations,    SIGNAL( removed( QListWidgetItem * ) ),
+             this,                            SLOT( changeTranslations() ) );
+    connect( m_ui->m_selectorTranslations,    SIGNAL( movedDown( QListWidgetItem * ) ),
+             this,                            SLOT( changeTranslations() ) );
+    connect( m_ui->m_selectorTranslations,    SIGNAL( movedUp( QListWidgetItem * ) ),
+             this,                            SLOT( changeTranslations() ) );
+    connect( m_ui->m_buttonResetTranslations, SIGNAL( clicked() ),
+             this,                            SLOT( defaultTranslations() ) );
 
     // Numbers tab
 
@@ -357,7 +355,7 @@ void KCMLocale::copySettings( KConfigGroup *fromGroup, KConfigGroup *toGroup )
 {
     copySetting( fromGroup, toGroup, "Country", QString() );
     copySetting( fromGroup, toGroup, "CountryDivision", QString() );
-    copySetting( fromGroup, toGroup, "Languages", QStringList() );
+    copySetting( fromGroup, toGroup, "Language", QString() );
     copySetting( fromGroup, toGroup, "DecimalPlaces", 0 );
     copySetting( fromGroup, toGroup, "DecimalSymbol", QString() );
     copySetting( fromGroup, toGroup, "ThousandsSeparator", QString() );
@@ -441,7 +439,7 @@ void KCMLocale::mergeSettings( const QString &countryCode, bool mergeUser )
     // Create the kcm locale from the config, it may or may not include globals
     delete m_kcmLocale;
     m_kcmLocale = new KLocale( QLatin1String("kcmlocale"), m_kcmConfig );
-    m_languages = m_kcmSettings.readEntry( "Languages", QStringList() );
+    m_translations = m_kcmSettings.readEntry( "Language", QString() ).split( ':', QString::SkipEmptyParts );
 }
 
 void KCMLocale::save()
@@ -551,6 +549,9 @@ void KCMLocale::initResetButtons()
     //Country tab
     m_ui->m_buttonResetCountry->setGuiItem( defaultItem );
     m_ui->m_buttonResetCountryDivision->setGuiItem( defaultItem );
+
+    //Translations tab
+    m_ui->m_buttonResetTranslations->setGuiItem( defaultItem );
 
     //Numeric tab
     m_ui->m_buttonResetThousandsSeparator->setGuiItem( defaultItem );
@@ -914,41 +915,53 @@ void KCMLocale::initTranslations()
     QString enUS;
     QString defaultLang = ki18nc( "%1 = default language name", "%1 (Default)" ).subs( enUS ).toString( m_kcmLocale );
 
-    loadTranslations();
+    m_installedTranslations.clear();
+    m_installedTranslations = m_kcmLocale->installedLanguages();
+    m_translations.clear();
+    m_translations = m_kcmSettings.readEntry( "Language" ).split( ':', QString::SkipEmptyParts );
+    m_kcmLocale->setLanguage( m_translations );
 
-    m_ui->m_selectorTranslations->blockSignals( false );
-}
-
-void KCMLocale::loadTranslations()
-{
-    m_installedLanguages.clear();
-    m_installedLanguages = m_kcmLocale->installedLanguages();
-    m_languages.clear();
-    m_languages = m_kcmSettings.readEntry( "Language" ).split( ':', QString::SkipEmptyParts );
-    m_kcmLocale->setLanguage( m_languages );
-
+    // Check if any of the user requested translations are no longer installed
+    // If any missing remove them, we'll tell the user later
     QStringList missingLanguages;
-    foreach ( const QString &languageCode, m_languages ) {
-        if ( !m_installedLanguages.contains( languageCode ) ) {
+    foreach ( const QString &languageCode, m_translations ) {
+        if ( !m_installedTranslations.contains( languageCode ) ) {
             missingLanguages.append( languageCode );
-            m_languages.removeAll( languageCode );
+            m_translations.removeAll( languageCode );
         }
     }
 
-    foreach ( const QString &languageCode, m_languages ) {
+    // Clear the selector before reloading
+    m_ui->m_selectorTranslations->selectedListWidget()->clear();
+    m_ui->m_selectorTranslations->availableListWidget()->clear();
+
+    // Load each user selected language into the selected list
+    foreach ( const QString &languageCode, m_translations ) {
         QListWidgetItem *listItem = new QListWidgetItem( m_ui->m_selectorTranslations->selectedListWidget() );
         listItem->setText( m_kcmLocale->languageCodeToName( languageCode ) );
         listItem->setData( Qt::UserRole, languageCode );
     }
 
-    foreach ( const QString &languageCode, m_installedLanguages ) {
-        if ( !m_languages.contains( languageCode ) ) {
+    // If en_US not already selected, add it to the selected list as last option
+    if ( !m_translations.contains( "en_US" ) ) {
+        QListWidgetItem *listItem = new QListWidgetItem( m_ui->m_selectorTranslations->selectedListWidget() );
+        listItem->setText( m_kcmLocale->languageCodeToName( "en_US" ) );
+        listItem->setData( Qt::UserRole, "en_US" );
+        m_translations.append( "en_US" );
+    }
+
+    // Load all the available languages the user hasn't selected into the available list
+    foreach ( const QString &languageCode, m_installedTranslations ) {
+        if ( !m_translations.contains( languageCode ) ) {
             QListWidgetItem *listItem = new QListWidgetItem( m_ui->m_selectorTranslations->availableListWidget() );
             listItem->setText( m_kcmLocale->languageCodeToName( languageCode ) );
             listItem->setData( Qt::UserRole, languageCode );
         }
     }
 
+    m_ui->m_selectorTranslations->blockSignals( false );
+
+    // Now tell the user about the missing languages
     foreach ( const QString &languageCode, missingLanguages ) {
         KMessageBox::information(this, ki18n("You have the language with code '%1' in your list "
                                              "of languages to use for translation but the "
@@ -961,23 +974,35 @@ void KCMLocale::loadTranslations()
 
 }
 
-void KCMLocale::saveTranslations()
+void KCMLocale::defaultTranslations()
 {
-//    saveValue( "Language", m_languages.join(":") );
+    m_translations.clear();
+    m_translations = m_defaultSettings.readEntry( "Language" ).split( ':', QString::SkipEmptyParts );
+    mergeSettings( m_kcmSettings.readEntry( "Country", QString() ), true );
+    m_kcmLocale->setLanguage( m_translations );
+    initAllWidgets();
+    emit changed( true );
 }
 
-void KCMLocale::changeTranslations( QListWidgetItem *item )
+void KCMLocale::changeTranslations()
 {
-    Q_UNUSED( item );
-
-    m_languages.clear();
+    m_translations.clear();
 
     foreach( QListWidgetItem *item, m_ui->m_selectorTranslations->selectedListWidget()->selectedItems() ) {
-        m_languages.append( item->data( Qt::UserRole ).toString() );
+        m_translations.append( item->data( Qt::UserRole ).toString() );
     }
 
-    saveTranslations();
-    //loadSettings();
+    QString itemValue = m_translations.join( ":" );
+    if ( itemValue != m_defaultSettings.readEntry( "Language", QString() ) ) {
+        m_userSettings.writeEntry( "Language", itemValue );
+    } else {
+        m_userSettings.deleteEntry( "Language" );
+    }
+    mergeSettings( m_kcmSettings.readEntry( "Country", QString() ), true );
+    m_kcmLocale->setLanguage( m_translations );
+    initAllWidgets();
+
+    emit changed( true );
 }
 
 void KCMLocale::initTranslationsInstall()
