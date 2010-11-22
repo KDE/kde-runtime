@@ -19,7 +19,6 @@
  */
 
 #include "filesystemtreetest.h"
-#include "../filesystemtree.h"
 
 #include <KTempDir>
 #include <KRandom>
@@ -37,12 +36,18 @@
 void FileSystemTreeTest::testAdditions()
 {
     FileSystemTree tree;
+    FileSystemTreeItem * item, *p;
 
     tree.add( new FileSystemTreeItem( "/a/b/c" ) );
     QVERIFY( tree.toList() == QList<QString>() << "/a/b/c" );
-    
+   
     tree.add( new FileSystemTreeItem( "/a/b/" ) );
     QVERIFY( tree.toList() == QList<QString>() << "/a/b/" << "/a/b/c" );
+    item = tree.find( "/a/b/c" );
+    QVERIFY( item != 0 );
+    p = tree.find( "/a/b/" );
+    QVERIFY( p != 0 );
+    QVERIFY( item->parent() == p );
     
     tree.add( new FileSystemTreeItem( "/a/" ) );
     QVERIFY( tree.toList() == QList<QString>() << "/a/" << "/a/b/" << "/a/b/c" );
@@ -63,6 +68,69 @@ void FileSystemTreeTest::testAdditions()
     
     tree.add( new FileSystemTreeItem( "/b" ) );
     QVERIFY( tree.toList() == QList<QString>() << "/a/" << "/a/b/" << "/a/b/c" << "/a/b/d" << "/a/ba" << "/a/bb" << "/b" );
+
+    kDebug() << tree.toList();
+    
+    // Find tests
+    item = tree.find("/a/b/d");
+    QVERIFY( item != 0 );
+    QVERIFY( item->url() == "/a/b/d" );
+    kDebug() << "?";
+
+    size = tree.size();
+    tree.remove("/a/b");
+
+    // Check all pointers
+    checkPointers( tree );
+    
+    kDebug() << "Old : " << size << " New : "<< tree.size();
+    QVERIFY( size == (tree.size() +1) );
+
+    kDebug() << "To list..";
+    kDebug() << "LIST :::: " <<  tree.toList();
+    QVERIFY( tree.toList() == QList<QString>() << "/a/" << "/a/b/c" << "/a/b/d" << "/a/ba" << "/a/bb" << "/b" );
+
+    item = tree.find("/a/b/c");
+    QVERIFY( item != 0 );
+    FileSystemTreeItem * parent = tree.find("/a/");
+    QVERIFY( parent != 0 );
+    QVERIFY( item->parent() == parent );
+
+    size = tree.size();
+    tree.remove( "/a" );
+    QVERIFY( size == tree.size() + 1 );
+    QVERIFY( tree.toList() == QList<QString>() << "/a/b/c" << "/a/b/d" << "/a/ba" << "/a/bb" << "/b" );
+}
+
+void FileSystemTreeTest::checkPointers(const FileSystemTree& tree)
+{
+    foreach( FileSystemTreeItem * p, tree.rootNodes() ) {
+        checkAll( p, 0 );
+    }
+}
+
+void FileSystemTreeTest::check( FileSystemTreeItem* child, FileSystemTreeItem* parent)
+{
+    kDebug() << "Checking with child ";
+    kDebug() << child->url();
+    kDebug() << " and parent ";
+    if( parent )
+        kDebug() << parent->url();
+    else
+        kDebug() << " NULL";
+    
+    if( child )
+        QVERIFY( child->parent() == parent );
+    if( parent )
+        QVERIFY( parent->children().indexOf( child ) != -1 );
+}
+
+void FileSystemTreeTest::checkAll( FileSystemTreeItem* c, FileSystemTreeItem* p)
+{
+    check( c, p );
+    foreach( FileSystemTreeItem * ch, c->children() ) {
+        check( ch, c );
+    }
 }
 
 

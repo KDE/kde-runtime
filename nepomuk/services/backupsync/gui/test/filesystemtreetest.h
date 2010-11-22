@@ -22,6 +22,7 @@
 #define FILESYSTEMTREE__H
 
 #include <QtCore/QObject>
+#include "../filesystemtree.h"
 
 class FileSystemTreeTest : public QObject
 {
@@ -29,6 +30,11 @@ class FileSystemTreeTest : public QObject
 
 private slots:
     void testAdditions();
+
+private :
+    void checkPointers( const FileSystemTree & tree );
+    void check( FileSystemTreeItem* child, FileSystemTreeItem* parent );
+    void checkAll( FileSystemTreeItem* c, FileSystemTreeItem* p);
 };
 
 #endif // FILESYSTEMTREE_H

@@ -39,7 +39,7 @@ public :
     virtual void remove( const QString& url );
     
     FileSystemTreeItem * find( const QString & url );
-
+    void remove( FileSystemTreeItem * item );
     QList<FileSystemTreeItem*> rootNodes() const;
     
     /**
@@ -67,6 +67,7 @@ public:
 
     virtual ~FileSystemTreeItem();
 
+    void add( FileSystemTreeItem * item );
     /**
      * Inserts \p child into the children of this, and sets
      * the child's parent to this.
@@ -77,13 +78,7 @@ public:
     /**
      * Return the TreeItem which matches the given url
      */
-    //FileSystemTreeItem* find( const QString& url );
-    
-    /**
-     * Remove this from it's parents children list, and resets it's parent
-     * Clears all other data as well
-     */
-    void remove();
+    FileSystemTreeItem* find( const QString& url );
     
     /**
      * Returns the row number of the current TreeItem in it's parents children list.
