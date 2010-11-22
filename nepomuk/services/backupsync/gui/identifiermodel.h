@@ -60,7 +60,7 @@ namespace Nepomuk {
         /**
          * Used for debugging & testing.
          */
-        void debug_notIdentified( int id, const QString & resUri, const QString & nieUrl, bool folder=false );
+        void debug_notIdentified( const QString& resUri, const QString& nieUrl );
 
         /**
          * Used for debugging & testing.

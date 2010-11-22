@@ -30,22 +30,13 @@ namespace Soprano {
 }
 
 namespace Nepomuk {
-    
-    struct IdentificationData {
-        int id;
-        bool identified;
-        QUrl identifiedUrl;
-        QList<Soprano::Statement> statements;
-    };
 
-    class IdentifierModelTreeItem : public FileSystemTreeItem<IdentificationData> {
+    class IdentifierModelTreeItem : public FileSystemTreeItem {
     public:
-        IdentifierModelTreeItem( const QUrl & url, bool isFolder, const IdentificationData & data );
+        IdentifierModelTreeItem( const QUrl & url, bool isFolder );
 
-        static IdentifierModelTreeItem* fromData(const IdentificationData & data );
-        static IdentifierModelTreeItem* fromStatementList( int id, const QList<Soprano::Statement> & stList );
+        static IdentifierModelTreeItem* fromStatementList( const QList<Soprano::Statement> & stList );
 
-        int id() const;
         QUrl resourceUri() const;
 
         QUrl type() const;
@@ -53,18 +44,27 @@ namespace Nepomuk {
 
         void setUnidentified();
         void setIdentified( const QUrl & newUri );
+
+    private:
+        
+        bool m_identified;
+        QUrl m_identifiedUrl;
+        QList<Soprano::Statement> m_statements;
+
+        friend class IdentifierModelTree;
     };
 
     
-    class IdentifierModelTree : public FileSystemTree<IdentificationData>
+    class IdentifierModelTree : public FileSystemTree
     {
     public:
         IdentifierModelTree();
 
-        virtual void add(FileSystemTreeItem<IdentificationData>* item);
+        virtual void add(IdentifierModelTreeItem* item);
         virtual void remove(const QString& resUri);
     private:
         QHash<QString, QUrl> m_resUrlHash;
+        friend class IdentifierModelTreeItem;
     };
 
 }

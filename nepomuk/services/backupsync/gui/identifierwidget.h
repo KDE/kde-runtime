@@ -40,7 +40,7 @@ namespace Nepomuk {
     {
         Q_OBJECT
     public :
-        IdentifierWidget( QWidget* parent = 0 );
+        IdentifierWidget( int id, QWidget* parent = 0 );
 
     private slots:
         void t();
@@ -54,6 +54,7 @@ namespace Nepomuk {
         
     private :
         IdentifierModel * m_model;
+        int m_id;
 
         /*QTreeView * m_treeView;
         

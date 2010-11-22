@@ -37,7 +37,7 @@
 #include <Soprano/StatementIterator>
 
 
-Nepomuk::IdentifierWidget::IdentifierWidget(QWidget* parent): QWidget(parent)
+Nepomuk::IdentifierWidget::IdentifierWidget(int id, QWidget* parent): QWidget(parent), m_id(id)
 {
     registerMetaTypes();
     setupUi(this);
@@ -103,14 +103,14 @@ void Nepomuk::IdentifierWidget::t()
     //kDebug() << m_model->rowCount();
 
     //kDebug() <<"Inserting another";
-    m_model->debug_notIdentified(0, "res2", "/home/user/", true);
-    
-    m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/file2");
-    m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/file1");
-    m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/file3");
-    m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/file4");
-    m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/ZAB", true);
-    m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/ZAB/f1");
+//     m_model->debug_notIdentified(0, "res2", "/home/user/", true);
+//     
+//     m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/file2");
+//     m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/file1");
+//     m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/file3");
+//     m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/file4");
+//     m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/ZAB", true);
+//     m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/ZAB/f1");
     //m_treeView->expandAll();
 }
 
@@ -122,7 +122,7 @@ void Nepomuk::IdentifierWidget::ignore(const QUrl& uri)
 
     IdentifierModelTreeItem * treeItem = static_cast<IdentifierModelTreeItem*>( index.internalPointer() );
 
-    m_identifier->ignore( treeItem->id(), treeItem->resourceUri().toString(), false);
+    m_identifier->ignore( m_id, treeItem->resourceUri().toString(), false);
 }
 
 void Nepomuk::IdentifierWidget::ignoreSubTree()
@@ -151,7 +151,7 @@ void Nepomuk::IdentifierWidget::identify(const QUrl& uri)
         newUrl = KFileDialog::getOpenUrl();
 
    if( !newUrl.isEmpty() )
-        m_identifier->identify( treeItem->id(), treeItem->resourceUri().toString(), newUrl.url() );
+        m_identifier->identify( m_id, treeItem->resourceUri().toString(), newUrl.url() );
 }
 
 void Nepomuk::IdentifierWidget::notIdentified(int id, const QString& string)

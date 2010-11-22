@@ -178,12 +178,6 @@ void Nepomuk::RestoreSelectionPage::slotCustomBackupUrl()
 Nepomuk::RestorePage::RestorePage(QWidget* parent)
     : QWizardPage(parent)
 {
-    QHBoxLayout * layout = new QHBoxLayout( this );
-    setLayout( layout );
-
-    m_identifierWidget = new IdentifierWidget( this );
-    layout->addWidget( m_identifierWidget );
-
     // Page Properties
     setTitle( i18n("Restoring Backup") );
     setSubTitle( i18n("The backup is being restored...") );
@@ -219,6 +213,13 @@ void Nepomuk::RestorePage::initializePage()
         m_identifierWidget->hide();
         layout()->addWidget( invalidLabel );
     }
+
+
+    QHBoxLayout * layout = new QHBoxLayout( this );
+    setLayout( layout );
+
+    m_identifierWidget = new IdentifierWidget( m_id, this );
+    layout->addWidget( m_identifierWidget );
 }
 
 int Nepomuk::RestorePage::nextId() const

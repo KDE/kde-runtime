@@ -51,15 +51,20 @@ Nepomuk::IdentifierModel::~IdentifierModel()
 
 QVariant Nepomuk::IdentifierModel::data(const QModelIndex& index, int role) const
 {
-    IdentifierModelTreeItem *item = static_cast<IdentifierModelTreeItem *> (m_tree->root());
-    if( index.isValid() )
+    IdentifierModelTreeItem *item;// = static_cast<IdentifierModelTreeItem *> (m_tree->root());
+    if( index.isValid() ) {
         item = static_cast<IdentifierModelTreeItem *>(index.internalPointer());
-    
+        kDebug() << "Called for : "<< item->url();
+    }
+    else {
+        kDebug() << "Index is not VALID!!! What to do?";
+    }
+
     switch(role) {
         case LabelRole:
         case Qt::DisplayRole:
             //FIXME: Make this look good
-            return QString::fromLatin1("Text for item %1").arg( item->prettyString() );
+            return  item->url();
             
         case SizeRole:
             //FIXME: How am I supposed to get the size?
@@ -81,7 +86,7 @@ QVariant Nepomuk::IdentifierModel::data(const QModelIndex& index, int role) cons
             //return m_discardedResource.contains(data(index,ResourceRole).toUrl());
     }
     
-    return item->url();
+    return QVariant();
 }
 
 
@@ -100,7 +105,7 @@ int Nepomuk::IdentifierModel::rowCount(const QModelIndex& parent) const
     
     if( !parent.isValid() ) {
         //kDebug() << "NOT VALID - Probably root";
-        int r = m_tree->root()->isEmpty() ? 0 : 1;
+        int r = m_tree->isEmpty() ? 0 : 1;
         //kDebug() << r;
         return r;
     }
@@ -111,7 +116,7 @@ int Nepomuk::IdentifierModel::rowCount(const QModelIndex& parent) const
     parentItem = static_cast<IdentifierModelTreeItem *>(parent.internalPointer());
     //if( parentItem == m_tree->root() )
     //    kDebug() << "ROOT!! :-D";
-    
+
     int r = parentItem->numChildren();
     //kDebug() << r;
     return r;
@@ -124,15 +129,20 @@ QModelIndex Nepomuk::IdentifierModel::parent(const QModelIndex& index) const
         return QModelIndex();
 
     IdentifierModelTreeItem *childItem = static_cast<IdentifierModelTreeItem*>( index.internalPointer() );
-    if( childItem == m_tree->root() )
+    if( childItem->parent() == 0 )
         return QModelIndex();
 
-    FileSystemTreeItem<IdentificationData> *parentItem = static_cast<FileSystemTreeItem<IdentificationData>*>( childItem->parent() );
+    FileSystemTreeItem *parentItem = static_cast< IdentifierModelTreeItem*>( childItem->parent() );
     if( !parentItem )
         return QModelIndex();
 
-    if( parentItem == m_tree->root() )
-        return createIndex( 0, 0, m_tree->root() );
+    int rootPos = m_tree->rootNodes().indexOf( parentItem );
+    if( rootPos != -1 ) {
+        return createIndex( rootPos, 0, parentItem );
+    }
+    
+    //if( parentItem == m_tree->root() )
+    //    return createIndex( 0, 0, m_tree->root() );
     
     return createIndex( parentItem->parentRowNum(), 0, parentItem );
 }
@@ -140,19 +150,28 @@ QModelIndex Nepomuk::IdentifierModel::parent(const QModelIndex& index) const
 
 QModelIndex Nepomuk::IdentifierModel::index(int row, int column, const QModelIndex& parent) const
 {
+    if( column > 0 ) {
+        kDebug() << "Column greater than zero!!";
+        return QModelIndex();
+    }
+    
     if (!parent.isValid()) {
 //         IdentifierModelTreeItem * root = dynamic_cast<IdentifierModelTreeItem*>( );
 
-        if( m_tree->root()->isEmpty() )
+        if( m_tree->isEmpty() || row >= m_tree->rootNodes().size() )
             return QModelIndex();
 
-        return createIndex( row, column, m_tree->root() );
+//        kDebug() << "------------- Returning index for row column : " << row << " " << column;
+        return createIndex( row, column, m_tree->rootNodes().at( row ) );
     }
     else {
         IdentifierModelTreeItem *parentItem = static_cast<IdentifierModelTreeItem *>( parent.internalPointer() );
-        FileSystemTreeItem<IdentificationData> *childItem = static_cast<FileSystemTreeItem<IdentificationData>*>( parentItem->child(row) );
+        FileSystemTreeItem *childItem = static_cast<IdentifierModelTreeItem *>( parentItem->child(row) );
+        kDebug() << "creating index from parent : "<< parentItem->url() << "for child : "<< childItem->url();
         return createIndex(row, column, childItem);
     }
+
+    return QModelIndex();
 }
 
 
@@ -174,7 +193,7 @@ void Nepomuk::IdentifierModel::notIdentified(int id, const QList< Soprano::State
     kDebug();
     emit layoutAboutToBeChanged();
 
-    IdentifierModelTreeItem* item = IdentifierModelTreeItem::fromStatementList(id, sts);
+    IdentifierModelTreeItem* item = IdentifierModelTreeItem::fromStatementList( sts );
     item->setUnidentified();;
     m_tree->add( item );
 
@@ -191,9 +210,8 @@ void Nepomuk::IdentifierModel::debug_identified(int id, const QString& nieUrl)
 }
 
 
-void Nepomuk::IdentifierModel::debug_notIdentified(int id, const QString& resUri, const QString& nieUrl, bool folder)
+void Nepomuk::IdentifierModel::debug_notIdentified( const QString& resUri, const QString& nieUrl )
 {
-    
     emit layoutAboutToBeChanged();
 
     Soprano::Statement st( Soprano::Node( QUrl(resUri) ),
@@ -201,12 +219,12 @@ void Nepomuk::IdentifierModel::debug_notIdentified(int id, const QString& resUri
                            Soprano::Node( QUrl(nieUrl) ) );
     QList<Soprano::Statement> stList;
     stList.append( st );
-    if( folder ) {
+    if( nieUrl.endsWith('/') ) {
         stList << Soprano::Statement( QUrl(resUri), Soprano::Vocabulary::RDF::type(), Nepomuk::Vocabulary::NFO::Folder() );
     }
     
     //kDebug() << m_tree->toList();
-    m_tree->add( IdentifierModelTreeItem::fromStatementList( id, stList ) );
+    m_tree->add( IdentifierModelTreeItem::fromStatementList( stList ) );
     kDebug() << m_tree->toList();
     emit layoutChanged();
 }

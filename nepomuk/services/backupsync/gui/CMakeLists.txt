@@ -18,6 +18,7 @@ set( NepomukBackup_GUI_SRCS
   identifiermodel.cpp
   identifiermodeltree.cpp
   identifierwidget.cpp
+  filesystemtree.cpp
   ../service/dbusoperators.cpp
 )
 
