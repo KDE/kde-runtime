@@ -355,6 +355,7 @@ Soprano::BackendSettings Nepomuk::Repository::readVirtuosoSettings() const
 
 void Nepomuk::Repository::updateInference()
 {
+    m_inferencer->updateInferenceIndex();
     m_inferencer->updateAllResources();
 }
 
