@@ -239,9 +239,9 @@ bool Nepomuk::RestorePage::validatePage()
 
 void Nepomuk::RestorePage::slotIdentificationDone(int id, int unidentified)
 {
-    if( id == m_id && unidentified == 0 ) {
-        wizard()->next();
-    }
+    //if( id == m_id && unidentified == 0 ) {
+    //    wizard()->next();
+    //}
 }
 
 //

@@ -33,7 +33,7 @@ namespace Nepomuk {
 
     class IdentifierModelTreeItem : public FileSystemTreeItem {
     public:
-        IdentifierModelTreeItem( const QUrl & url, bool isFolder );
+        IdentifierModelTreeItem( const QString & url, bool isFolder );
 
         static IdentifierModelTreeItem* fromStatementList( const QList<Soprano::Statement> & stList );
 
@@ -41,14 +41,19 @@ namespace Nepomuk {
 
         QUrl type() const;
         bool identified() const;
+        QUrl identifiedUri() const;
 
         void setUnidentified();
         void setIdentified( const QUrl & newUri );
 
-    private:
+        QString toString() const;
+
+        void setDiscarded( bool status );
+        bool discarded() const;
         
-        bool m_identified;
+    private:
         QUrl m_identifiedUrl;
+        bool m_discarded;
         QList<Soprano::Statement> m_statements;
 
         friend class IdentifierModelTree;
@@ -61,9 +66,11 @@ namespace Nepomuk {
         IdentifierModelTree();
 
         virtual void add(IdentifierModelTreeItem* item);
+        IdentifierModelTreeItem* findByUri( const QUrl& uri );
+        
         virtual void remove(const QString& resUri);
     private:
-        QHash<QString, QUrl> m_resUrlHash;
+        QHash<QUrl, QString> m_resUrlHash;
         friend class IdentifierModelTreeItem;
     };
 

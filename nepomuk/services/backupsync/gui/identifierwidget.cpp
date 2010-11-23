@@ -120,21 +120,12 @@ void Nepomuk::IdentifierWidget::ignore(const QUrl& uri)
     if( !index.isValid() )
         return;
 
-    IdentifierModelTreeItem * treeItem = static_cast<IdentifierModelTreeItem*>( index.internalPointer() );
-
-    m_identifier->ignore( m_id, treeItem->resourceUri().toString(), false);
+    IdentifierModelTreeItem * item = static_cast<IdentifierModelTreeItem*>( index.internalPointer() );
+    item->setDiscarded( true );
+    
+    m_identifier->ignore( m_id, item->resourceUri().toString(), true);
 }
 
-void Nepomuk::IdentifierWidget::ignoreSubTree()
-{
-//     QModelIndex index = m_treeView->currentIndex();
-//     if( !index.isValid() )
-//         return;
-//     
-//     IdentifierModelTreeItem * treeItem = static_cast<IdentifierModelTreeItem*>( index.internalPointer() );
-// 
-//     m_identifier->ignore( treeItem->id(), treeItem->resourceUri().toString(), true);
-}
 
 void Nepomuk::IdentifierWidget::identify(const QUrl& uri)
 {

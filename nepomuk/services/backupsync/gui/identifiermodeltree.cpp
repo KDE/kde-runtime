@@ -28,9 +28,10 @@
 
 #include <Soprano/Statement>
 
-Nepomuk::IdentifierModelTreeItem::IdentifierModelTreeItem(const QUrl& url, bool isFolder)
-    : FileSystemTreeItem( url.toString() , isFolder )
+Nepomuk::IdentifierModelTreeItem::IdentifierModelTreeItem(const QString& url, bool isFolder)
+    : FileSystemTreeItem( url, isFolder )
 {
+    m_discarded = false;
 }
 
 QUrl Nepomuk::IdentifierModelTreeItem::type() const
@@ -39,7 +40,35 @@ QUrl Nepomuk::IdentifierModelTreeItem::type() const
     return Nepomuk::Vocabulary::NFO::Audio();
 }
 
+QString Nepomuk::IdentifierModelTreeItem::toString() const
+{
+    if( !parent() ) {
+        return url();
+    }
 
+    const QString parentString = parent()->url();
+    const QString ownString = url();
+
+    return ownString.mid( parentString.size() );
+}
+
+QUrl Nepomuk::IdentifierModelTreeItem::identifiedUri() const
+{
+    return m_identifiedUrl;
+}
+
+bool Nepomuk::IdentifierModelTreeItem::discarded() const
+{
+    return m_discarded;
+}
+
+void Nepomuk::IdentifierModelTreeItem::setDiscarded(bool status)
+{
+    m_discarded = status;
+}
+
+
+// static
 Nepomuk::IdentifierModelTreeItem* Nepomuk::IdentifierModelTreeItem::fromStatementList( const QList< Soprano::Statement >& stList)
 {
     const QUrl nieUrl = Nepomuk::Vocabulary::NIE::url();
@@ -47,12 +76,12 @@ Nepomuk::IdentifierModelTreeItem* Nepomuk::IdentifierModelTreeItem::fromStatemen
     const QUrl nfoFolder = Nepomuk::Vocabulary::NFO::Folder();
     
     bool isFolder = false;
-    QUrl url;
+    QString url;
     foreach( const Soprano::Statement & st, stList ) {
         if( st.predicate().uri() == nieUrl ) {
-            url = st.object().uri();
-            //if( m_nieUrl.startsWith("file://") )
-            //    m_nieUrl = m_nieUrl.mid( 7 );
+            url = st.object().uri().toLocalFile();
+            if( url.startsWith("file://") )
+                url = url.mid( 7 );
         }
         else if( st.predicate().uri() == rdfType ) {
             if( st.object().uri() == nfoFolder )
@@ -74,18 +103,17 @@ QUrl Nepomuk::IdentifierModelTreeItem::resourceUri() const
 
 bool Nepomuk::IdentifierModelTreeItem::identified() const
 {
-    return m_identified;
+    return !m_identifiedUrl.isEmpty();
 }
 
 void Nepomuk::IdentifierModelTreeItem::setIdentified(const QUrl& newUri)
 {
     m_identifiedUrl = newUri;
-    m_identified = true;
 }
 
 void Nepomuk::IdentifierModelTreeItem::setUnidentified()
 {
-    m_identified = false;
+    m_identifiedUrl.clear();
 }
 
 
@@ -100,9 +128,9 @@ Nepomuk::IdentifierModelTree::IdentifierModelTree()
 
 void Nepomuk::IdentifierModelTree::add(IdentifierModelTreeItem* item)
 {
-    QString resUri;
+    QUrl resUri;
     if( !item->m_statements.isEmpty() )
-        resUri = item->m_statements.first().subject().toString();
+        resUri = item->m_statements.first().subject().uri();
     
     m_resUrlHash.insert( resUri, item->url() );
     
@@ -112,11 +140,21 @@ void Nepomuk::IdentifierModelTree::add(IdentifierModelTreeItem* item)
 
 void Nepomuk::IdentifierModelTree::remove(const QString& resUri)
 {
-
-    QHash< QString, QUrl >::const_iterator it = m_resUrlHash.constFind( resUri );
+    QHash<QUrl, QString>::const_iterator it = m_resUrlHash.constFind( resUri );
     if( it != m_resUrlHash.constEnd() ) {
-        FileSystemTree::remove( it.value().toString() );
+        FileSystemTree::remove( it.value() );
     }
+}
+
+Nepomuk::IdentifierModelTreeItem* Nepomuk::IdentifierModelTree::findByUri(const QUrl& uri)
+{
+    QHash<QUrl, QString>::const_iterator it = m_resUrlHash.constFind( uri );
+    if( it != m_resUrlHash.constEnd() ) {
+        FileSystemTreeItem* p = find( it.value() );
+        return dynamic_cast<IdentifierModelTreeItem*>( p );
+    }
+
+    return 0;
 }
 
 

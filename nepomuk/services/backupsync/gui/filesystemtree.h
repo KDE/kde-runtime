@@ -37,9 +37,10 @@ public :
     
     virtual void add( FileSystemTreeItem * item );
     virtual void remove( const QString& url );
+    virtual void remove( FileSystemTreeItem * item );
     
     FileSystemTreeItem * find( const QString & url );
-    void remove( FileSystemTreeItem * item );
+    
     QList<FileSystemTreeItem*> rootNodes() const;
     
     /**

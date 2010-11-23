@@ -63,27 +63,23 @@ QVariant Nepomuk::IdentifierModel::data(const QModelIndex& index, int role) cons
     switch(role) {
         case LabelRole:
         case Qt::DisplayRole:
-            //FIXME: Make this look good
-            return  item->url();
+            return  item->toString();
             
         case SizeRole:
             //FIXME: How am I supposed to get the size?
             return KRandom::random();
             
         case TypeRole:
-            return item->url();
+            return item->type();
             
         case ResourceRole:
-            return QUrl( item->resourceUri() );
+            return item->resourceUri();
             
         case IdentifiedResourceRole:
-            //FIXME!
-            return QUrl( item->resourceUri() );
+            return item->identifiedUri();
             
         case DiscardedRole:
-            return true;
-            //FIXME!
-            //return m_discardedResource.contains(data(index,ResourceRole).toUrl());
+            return item->discarded();
     }
     
     return QVariant();
@@ -182,7 +178,9 @@ void Nepomuk::IdentifierModel::identified(int id, const QString& oldUri, const Q
     
     emit layoutAboutToBeChanged();
  
-    m_tree->remove( oldUri );
+    IdentifierModelTreeItem* item = m_tree->findByUri( QUrl(oldUri) );
+    if( item )
+        item->setIdentified( QUrl(newUri) );
     
     emit layoutChanged();
 }
@@ -190,9 +188,20 @@ void Nepomuk::IdentifierModel::identified(int id, const QString& oldUri, const Q
 
 void Nepomuk::IdentifierModel::notIdentified(int id, const QList< Soprano::Statement >& sts)
 {
+    if( sts.isEmpty() )
+        return;
+    
     kDebug();
     emit layoutAboutToBeChanged();
 
+    // If already exists - Remove it
+    QUrl resUri = sts.first().subject().uri();
+    IdentifierModelTreeItem* it = m_tree->findByUri( resUri );
+    if( it ) {
+        m_tree->FileSystemTree::remove( it );
+    }
+
+    // Insert into the tree
     IdentifierModelTreeItem* item = IdentifierModelTreeItem::fromStatementList( sts );
     item->setUnidentified();;
     m_tree->add( item );

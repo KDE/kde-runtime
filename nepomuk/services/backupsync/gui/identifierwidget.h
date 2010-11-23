@@ -45,7 +45,6 @@ namespace Nepomuk {
     private slots:
         void t();
 
-        void ignoreSubTree();
         void identify( const QUrl & uri );
         void ignore( const QUrl & uri );
         
