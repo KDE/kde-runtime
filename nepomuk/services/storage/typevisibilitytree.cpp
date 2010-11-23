@@ -85,15 +85,17 @@ TypeVisibilityTree::TypeVisibilityTree( Soprano::Model* model )
 TypeVisibilityTree::~TypeVisibilityTree()
 {
     QMutexLocker lock( &m_mutex );
-    qDeleteAll(m_tree);
 }
 
 void TypeVisibilityTree::rebuildTree()
 {
     QMutexLocker lock( &m_mutex );
 
-    qDeleteAll(m_tree);
-    m_tree.clear();
+    // cleanup
+    m_visibilityHash.clear();
+
+    // we build a temporary helper tree
+    QHash<QUrl, TypeVisibilityNode*> tree;
 
     const QString query
         = QString::fromLatin1( "select distinct ?r ?p ?v where { "
@@ -114,32 +116,32 @@ void TypeVisibilityTree::rebuildTree()
         const Soprano::Node p = it["p"];
         const Soprano::Node v = it["v"];
 
-        if ( !m_tree.contains( r ) ) {
+        if ( !tree.contains( r ) ) {
             TypeVisibilityNode* r_uvn = new TypeVisibilityNode( r );
-            m_tree.insert( r, r_uvn );
+            tree.insert( r, r_uvn );
         }
         if( v.isLiteral() )
-            m_tree[r]->userVisible = (v.literal().toBool() ? 1 : -1);
+            tree[r]->userVisible = (v.literal().toBool() ? 1 : -1);
         if ( p.isResource() &&
                 p.uri() != r &&
                 p.uri() != Soprano::Vocabulary::RDFS::Resource() ) {
-            if ( !m_tree.contains( p.uri() ) ) {
+            if ( !tree.contains( p.uri() ) ) {
                 TypeVisibilityNode* p_uvn = new TypeVisibilityNode( p.uri() );
-                m_tree.insert( p.uri(), p_uvn );
-                m_tree[r]->parents.insert( p_uvn );
+                tree.insert( p.uri(), p_uvn );
+                tree[r]->parents.insert( p_uvn );
             }
             else {
-                m_tree[r]->parents.insert( m_tree[p.uri()] );
+                tree[r]->parents.insert( tree[p.uri()] );
             }
         }
     }
 
     // make sure rdfs:Resource is visible by default
     TypeVisibilityNode* rdfsResourceNode = 0;
-    QHash<QUrl, TypeVisibilityNode*>::iterator rdfsResourceIt = m_tree.find(Soprano::Vocabulary::RDFS::Resource());
-    if( rdfsResourceIt == m_tree.end() ) {
+    QHash<QUrl, TypeVisibilityNode*>::iterator rdfsResourceIt = tree.find(Soprano::Vocabulary::RDFS::Resource());
+    if( rdfsResourceIt == tree.end() ) {
         rdfsResourceNode = new TypeVisibilityNode(Soprano::Vocabulary::RDFS::Resource());
-        m_tree.insert( Soprano::Vocabulary::RDFS::Resource(), rdfsResourceNode );
+        tree.insert( Soprano::Vocabulary::RDFS::Resource(), rdfsResourceNode );
     }
     else {
         rdfsResourceNode = rdfsResourceIt.value();
@@ -148,28 +150,31 @@ void TypeVisibilityTree::rebuildTree()
         rdfsResourceNode->userVisible = 1;
     }
     // add rdfs:Resource as parent for all top-level classes
-    for ( QHash<QUrl, TypeVisibilityNode*>::iterator it = m_tree.begin();
-          it != m_tree.end(); ++it ) {
+    for ( QHash<QUrl, TypeVisibilityNode*>::iterator it = tree.begin();
+          it != tree.end(); ++it ) {
         if( it.value() != rdfsResourceNode && it.value()->parents.isEmpty() ) {
             it.value()->parents.insert( rdfsResourceNode );
         }
     }
 
     // finally determine visibility of all nodes
-    for ( QHash<QUrl, TypeVisibilityNode*>::iterator it = m_tree.begin();
-          it != m_tree.end(); ++it ) {
+    for ( QHash<QUrl, TypeVisibilityNode*>::iterator it = tree.begin();
+          it != tree.end(); ++it ) {
         QSet<TypeVisibilityNode*> visitedNodes;
-        it.value()->updateUserVisibility( visitedNodes );
+        m_visibilityHash.insert(it.key(), it.value()->updateUserVisibility( visitedNodes ) == 1 );
     }
+
+    // get rid of the temp tree
+    qDeleteAll(tree);
 }
 
 bool TypeVisibilityTree::isVisible(const QUrl &type) const
 {
     QMutexLocker lock( &m_mutex );
 
-    QHash<QUrl, TypeVisibilityNode*>::const_iterator it = m_tree.constFind(type);
-    if( it != m_tree.constEnd() ) {
-        return( (*it)->userVisible == 1 );
+    QHash<QUrl, bool>::const_iterator it = m_visibilityHash.constFind(type);
+    if( it != m_visibilityHash.constEnd() ) {
+        return *it;
     }
     else {
         kDebug() << "Could not find type" << type << "in tree. Defaulting to visible.";

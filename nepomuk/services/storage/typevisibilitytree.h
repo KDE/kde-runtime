@@ -41,12 +41,16 @@ public:
     ~TypeVisibilityTree();
 
     void rebuildTree();
+
+    /**
+     * Check if the specified type is visible.
+     */
     bool isVisible( const QUrl& type ) const;
 
 private:
     Soprano::Model* m_model;
     class TypeVisibilityNode;
-    QHash<QUrl, TypeVisibilityNode*> m_tree;
+    QHash<QUrl, bool> m_visibilityHash;
     mutable QMutex m_mutex;
 };
 
