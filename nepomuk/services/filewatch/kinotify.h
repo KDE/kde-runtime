@@ -32,7 +32,7 @@ class KInotify : public QObject
     Q_OBJECT
 
 public:
-    KInotify( QObject* parent );
+    KInotify( QObject* parent = 0 );
     ~KInotify();
 
     /**
@@ -127,7 +127,7 @@ Q_SIGNALS:
      * Emitted if a watched file or folder has been deleted.
      * This includes files in watched foldes (KInotify::EventDelete and KInotify::EventDeleteSelf)
      */
-    void deleted( const QString& file );
+    void deleted( const QString& file, bool isFolder );
 
     /**
      * Emitted if a watched file is modified (KInotify::EventModify)

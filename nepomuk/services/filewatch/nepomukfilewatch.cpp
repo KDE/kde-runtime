@@ -19,6 +19,7 @@
 #include "nepomukfilewatch.h"
 #include "metadatamover.h"
 #include "strigiserviceinterface.h"
+#include "invalidfileresourcecleaner.h"
 #include "nie.h"
 
 #ifdef BUILD_KINOTIFY
@@ -45,69 +46,6 @@ using namespace Soprano;
 
 NEPOMUK_EXPORT_SERVICE( Nepomuk::FileWatch, "nepomukfilewatch")
 
-
-namespace {
-
-    class RemoveInvalidThread : public QThread {
-    public :
-        RemoveInvalidThread(QObject* parent = 0);
-        ~RemoveInvalidThread();
-        void run();
-
-    private:
-        bool m_stopped;
-    };
-
-    RemoveInvalidThread::RemoveInvalidThread(QObject* parent)
-        : QThread(parent),
-          m_stopped( false )
-    {
-        connect( this, SIGNAL(finished()), this, SLOT(deleteLater()) );
-    }
-
-    RemoveInvalidThread::~RemoveInvalidThread()
-    {
-        // gently terminate the thread
-        m_stopped = true;
-        wait();
-    }
-
-    void RemoveInvalidThread::run()
-    {
-        kDebug() << "Searching for invalid local file entries";
-        //
-        // Since the removal of the graphs could intefere with the iterator and result
-        // in jumping of rows (worst case) we cache all graphs to remove
-        //
-        QList<Soprano::Node> graphsToRemove;
-        QString query = QString::fromLatin1( "select distinct ?g ?url where { "
-                                             "?r %1 ?url. "
-                                             "FILTER(regex(str(?url), 'file://')) . "
-                                             "graph ?g { ?r ?p ?o. } }" )
-                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ) );
-        Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-
-        while( it.next() && !m_stopped ) {
-            QUrl url( it["url"].uri() );
-            QString file = url.toLocalFile();
-
-            if( !file.isEmpty() && !QFile::exists(file) ) {
-                kDebug() << "REMOVING " << file;
-                graphsToRemove << it["g"];
-            }
-        }
-
-        Q_FOREACH( const Soprano::Node& g, graphsToRemove ) {
-            if ( m_stopped )
-                break;
-            Nepomuk::ResourceManager::instance()->mainModel()->removeContext( g );
-        }
-        kDebug() << "Done searching for invalid local file entries";
-    }
-
-}
-
-
 Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
     : Service( parent )
 {
@@ -126,8 +64,8 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
 
     connect( m_dirWatch, SIGNAL( moved( const QString&, const QString& ) ),
              this, SLOT( slotFileMoved( const QString&, const QString& ) ) );
-    connect( m_dirWatch, SIGNAL( deleted( const QString& ) ),
-             this, SLOT( slotFileDeleted( const QString& ) ) );
+    connect( m_dirWatch, SIGNAL( deleted( const QString&, bool ) ),
+             this, SLOT( slotFileDeleted( const QString&, bool ) ) );
     connect( m_dirWatch, SIGNAL( created( const QString& ) ),
              this, SLOT( slotFileCreated( const QString& ) ) );
     connect( m_dirWatch, SIGNAL( modified( const QString& ) ),
@@ -149,7 +87,7 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
     connectToKDirWatch();
 #endif
 
-    (new RemoveInvalidThread(this))->start();
+    (new InvalidFileResourceCleaner(this))->start();
 }
 
 
@@ -192,13 +130,19 @@ void Nepomuk::FileWatch::slotFilesDeleted( const QStringList& paths )
 
     kDebug() << urls;
 
-    m_metadataMover->removeFileMetadata( urls );
+    if(!urls.isEmpty())
+        m_metadataMover->removeFileMetadata( urls );
 }
 
 
-void Nepomuk::FileWatch::slotFileDeleted( const QString& urlString )
+void Nepomuk::FileWatch::slotFileDeleted( const QString& urlString, bool isDir )
 {
-    slotFilesDeleted( QStringList( urlString ) );
+    // Directories must always end with a trailing slash '/'
+    QString url = urlString;
+    if( isDir && url[ url.length() - 1 ] != '/') {
+        url.append('/');
+    }
+    slotFilesDeleted( QStringList( url ) );
 }
 
 

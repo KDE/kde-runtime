@@ -59,7 +59,7 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void slotFileMoved( const QString& from, const QString& to );
-        void slotFileDeleted( const QString& path );
+        void slotFileDeleted( const QString& path, bool isDir );
         void slotFilesDeleted( const QStringList& path );
         void slotFileCreated( const QString& );
         void slotFileModified( const QString& );

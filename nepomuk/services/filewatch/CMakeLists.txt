@@ -16,6 +16,7 @@ set(SRCS
   nepomukfilewatch.cpp
   metadatamover.cpp
   updaterequest.cpp
+  invalidfileresourcecleaner.cpp
   )
 
 qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.Strigi.xml strigiserviceinterface)
