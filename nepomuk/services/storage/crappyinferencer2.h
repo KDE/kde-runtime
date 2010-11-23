@@ -87,6 +87,7 @@ private:
     void removeInferenceStatements( const QUrl& resource, const QUrl& type );
     void removeInferenceStatements( const QUrl& resource, const QList<QUrl>& types );
     void removeInferenceStatements( const QUrl& resource, const QList<Soprano::Node>& types );
+    void setVisibility(const QUrl& resource, bool visible);
 
     class UpdateAllResourcesThread;
     class Private;
