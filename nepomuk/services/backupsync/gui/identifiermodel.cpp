@@ -101,7 +101,7 @@ int Nepomuk::IdentifierModel::rowCount(const QModelIndex& parent) const
     
     if( !parent.isValid() ) {
         //kDebug() << "NOT VALID - Probably root";
-        int r = m_tree->isEmpty() ? 0 : 1;
+        int r = m_tree->isEmpty() ? 0 : m_tree->rootNodes().size();
         //kDebug() << r;
         return r;
     }
@@ -157,7 +157,8 @@ QModelIndex Nepomuk::IdentifierModel::index(int row, int column, const QModelInd
         if( m_tree->isEmpty() || row >= m_tree->rootNodes().size() )
             return QModelIndex();
 
-//        kDebug() << "------------- Returning index for row column : " << row << " " << column;
+        kDebug() << "------------- Returning index for row column : " << row << " " << column;
+        kDebug() << "-------- " << m_tree->rootNodes().at( row );
         return createIndex( row, column, m_tree->rootNodes().at( row ) );
     }
     else {
@@ -221,8 +222,6 @@ void Nepomuk::IdentifierModel::debug_identified(int id, const QString& nieUrl)
 
 void Nepomuk::IdentifierModel::debug_notIdentified( const QString& resUri, const QString& nieUrl )
 {
-    emit layoutAboutToBeChanged();
-
     Soprano::Statement st( Soprano::Node( QUrl(resUri) ),
                            Soprano::Node( Nepomuk::Vocabulary::NIE::url() ),
                            Soprano::Node( QUrl(nieUrl) ) );
@@ -232,10 +231,7 @@ void Nepomuk::IdentifierModel::debug_notIdentified( const QString& resUri, const
         stList << Soprano::Statement( QUrl(resUri), Soprano::Vocabulary::RDF::type(), Nepomuk::Vocabulary::NFO::Folder() );
     }
     
-    //kDebug() << m_tree->toList();
-    m_tree->add( IdentifierModelTreeItem::fromStatementList( stList ) );
-    kDebug() << m_tree->toList();
-    emit layoutChanged();
+    notIdentified( 0, stList );
 }
 
 Qt::ItemFlags Nepomuk::IdentifierModel::flags(const QModelIndex& index) const
