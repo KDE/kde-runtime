@@ -230,6 +230,9 @@ void Nepomuk::IdentifierModel::debug_notIdentified( const QString& resUri, const
     if( nieUrl.endsWith('/') ) {
         stList << Soprano::Statement( QUrl(resUri), Soprano::Vocabulary::RDF::type(), Nepomuk::Vocabulary::NFO::Folder() );
     }
+    else {
+        stList << Soprano::Statement( QUrl(resUri), Soprano::Vocabulary::RDF::type(), Nepomuk::Vocabulary::NFO::FileDataObject() );
+    }
     
     notIdentified( 0, stList );
 }

@@ -55,6 +55,7 @@ namespace Nepomuk {
         QUrl m_identifiedUrl;
         bool m_discarded;
         QList<Soprano::Statement> m_statements;
+        QUrl m_type;
 
         friend class IdentifierModelTree;
     };

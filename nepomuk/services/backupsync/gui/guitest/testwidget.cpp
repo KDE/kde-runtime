@@ -57,11 +57,13 @@ void TestWidget::slotOnButtonClick()
     m_model->debug_notIdentified( "nepomuk:/res/5", "/home/vishesh/folder/fol-file1" );
     m_model->debug_notIdentified( "nepomuk:/res/6", "/home/vishesh/folder/fol-file2" );
 
-    m_model->debug_notIdentified( "nepomuk:/res/1", "/home/user/" );
-    m_model->debug_notIdentified( "nepomuk:/res/2", "/home/user/file1" );
-    m_model->debug_notIdentified( "nepomuk:/res/3", "/home/user/folder/" );
-    m_model->debug_notIdentified( "nepomuk:/res/4", "/home/user/file2" );
-    m_model->debug_notIdentified( "nepomuk:/res/5", "/home/user/folder/fol-file1" );
-    m_model->debug_notIdentified( "nepomuk:/res/6", "/home/user/folder/fol-file2" );
+    m_model->debug_notIdentified( "nepomuk:/res/-1", "/home/user/" );
+    m_model->debug_notIdentified( "nepomuk:/res/-2", "/home/user/file1" );
+    m_model->debug_notIdentified( "nepomuk:/res/-3", "/home/user/folder/" );
+    m_model->debug_notIdentified( "nepomuk:/res/-4", "/home/user/file2" );
+    m_model->debug_notIdentified( "nepomuk:/res/-5", "/home/user/folder/fol-file1" );
+    m_model->debug_notIdentified( "nepomuk:/res/-6", "/home/user/folder/fol-file2" );
+
+    m_model->identified(0, "nepomuk:/res/-5", "nepomuk:/res/-5-identified" );
 }
 

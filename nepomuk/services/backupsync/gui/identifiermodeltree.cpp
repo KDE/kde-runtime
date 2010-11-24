@@ -27,6 +27,9 @@
 #include <Soprano/Vocabulary/RDF>
 
 #include <Soprano/Statement>
+#include <Soprano/Vocabulary/RDFS>
+
+#include <Nepomuk/Types/Class>
 
 Nepomuk::IdentifierModelTreeItem::IdentifierModelTreeItem(const QString& url, bool isFolder)
     : FileSystemTreeItem( url, isFolder )
@@ -36,8 +39,7 @@ Nepomuk::IdentifierModelTreeItem::IdentifierModelTreeItem(const QString& url, bo
 
 QUrl Nepomuk::IdentifierModelTreeItem::type() const
 {
-    //TODO: Implement me!
-    return Nepomuk::Vocabulary::NFO::Audio();
+    return m_type;
 }
 
 QString Nepomuk::IdentifierModelTreeItem::toString() const
@@ -77,6 +79,8 @@ Nepomuk::IdentifierModelTreeItem* Nepomuk::IdentifierModelTreeItem::fromStatemen
     
     bool isFolder = false;
     QString url;
+    QUrl type = Soprano::Vocabulary::RDFS::Resource();
+    
     foreach( const Soprano::Statement & st, stList ) {
         if( st.predicate().uri() == nieUrl ) {
             url = st.object().uri().toLocalFile();
@@ -84,12 +88,27 @@ Nepomuk::IdentifierModelTreeItem* Nepomuk::IdentifierModelTreeItem::fromStatemen
                 url = url.mid( 7 );
         }
         else if( st.predicate().uri() == rdfType ) {
-            if( st.object().uri() == nfoFolder )
+            QUrl objectUri = st.object().uri();
+            if( objectUri == nfoFolder )
                 isFolder = true;
+
+            // Get the correct type and store it into type
+            // FIXME: This may not be totally accurate
+            Types::Class oldClass( type );
+            Types::Class newClass( objectUri );
+            kDebug() << "Object uri : " << objectUri;
+            if( newClass.isSubClassOf( oldClass ) ) {
+                kDebug() << "SETTING";
+                type = objectUri;
+            }
         }
     }
     
-    return new IdentifierModelTreeItem( url, isFolder );
+    IdentifierModelTreeItem* item = new IdentifierModelTreeItem( url, isFolder );
+    item->m_statements = stList;
+    item->m_type = type;
+
+    return item;
 }
 
 QUrl Nepomuk::IdentifierModelTreeItem::resourceUri() const
