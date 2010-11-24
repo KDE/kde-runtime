@@ -73,6 +73,9 @@ namespace {
 
 void Nepomuk::SyncFileIdentifier::load()
 {
+    if( unidentified().size() > 0 )
+        return;
+
     //
     // Translate all file:// uri so that the home dir is correct.
     //
