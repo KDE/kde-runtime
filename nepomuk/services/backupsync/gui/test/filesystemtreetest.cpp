@@ -100,6 +100,9 @@ void FileSystemTreeTest::testAdditions()
     tree.remove( "/a" );
     QVERIFY( size == tree.size() + 1 );
     QVERIFY( tree.toList() == QList<QString>() << "/a/b/c" << "/a/b/d" << "/a/ba" << "/a/bb" << "/b" );
+
+    tree.add( new FileSystemTreeItem("/a/") );
+    QVERIFY( tree.toList() == QList<QString>() << "/a/" << "/a/b/c" << "/a/b/d" << "/a/ba" << "/a/bb" << "/b" );
 }
 
 void FileSystemTreeTest::checkPointers(const FileSystemTree& tree)

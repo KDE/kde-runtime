@@ -43,13 +43,9 @@ public :
     
     QList<FileSystemTreeItem*> rootNodes() const;
     
-    /**
-     * Returns a list of all the files/folders arranged properly.
-     */
     QList<QString> toList() const;
 
     bool isEmpty() const;
-
     int size() const;
     
 private :
@@ -69,78 +65,46 @@ public:
     virtual ~FileSystemTreeItem();
 
     void add( FileSystemTreeItem * item );
-    /**
-     * Inserts \p child into the children of this, and sets
-     * the child's parent to this.
-     */
-    static void insert(QList<FileSystemTreeItem*>& list, FileSystemTreeItem* item, FileSystemTreeItem * parent );
-    static FileSystemTreeItem* find( QList<FileSystemTreeItem*>& list, const QString & url );
-    
-    /**
-     * Return the TreeItem which matches the given url
-     */
+
     FileSystemTreeItem* find( const QString& url );
     
-    /**
-     * Returns the row number of the current TreeItem in it's parents children list.
-     * Returns 0 if it doesn't have a parent
-     */
-    int parentRowNum();
-    
-    /**
-     * Returns the number of children.
-     */
+    QList<FileSystemTreeItem*> children() const;
+    FileSystemTreeItem* child(int row) const;
     int numChildren() const;
     
     /**
-     * Returns the child at row number \p row
+     * Returns the row number of the current TreeItem in it's parents children list.
+     * Returns -1 if it doesn't have a parent
      */
-    FileSystemTreeItem* child(int row);
-    
-    /**
-     * Returns the url
-     */
-    QString url() const;
-
-    int size() const;
-    
+    int parentRowNum();
     
     FileSystemTreeItem * parent() const;
-    
-    /**
-     * Based on the nieurl it determines the correct position
-     * and inserts item.
-     * May cause major restructuring of the tree.
-     * Should be called from the root node.
-     */
-    //void add( FileSystemTreeItem * item );
-    
+    QString url() const;
+   
     QList< QString > toList() const;
-    
-    QList<FileSystemTreeItem*> children() const;
+
+    /// Returns the number of nodes in this tree
+    int size() const;
     
     bool isNull() const;
-    
     bool isFile() const;
     bool isFolder() const;
-
-    int depth();
-    
-    QString prettyString() const;
 private :
-        
-    // Tree Handling
+    
     QList<FileSystemTreeItem *> m_children;
     FileSystemTreeItem * m_parent;
     bool m_isFolder;
     
-    // Internal data
     QString m_url;
     
     friend class FileSystemTree;
 
-    
+    int depth();
     bool shouldBeParentOf( FileSystemTreeItem * item );
+
+    static void insert(QList<FileSystemTreeItem*>& list,
+                       FileSystemTreeItem* item, FileSystemTreeItem * parent );
+    static FileSystemTreeItem* find( QList<FileSystemTreeItem*>& list, const QString & url );
 };
 
 

@@ -49,7 +49,6 @@ void FileSystemTree::add( FileSystemTreeItem* item )
 void FileSystemTree::remove(FileSystemTreeItem* item)
 {
     if( item->parent() == 0 ) {
-        kDebug() << "Removing one of the root nodes";
         m_rootNodes.removeAll( item );
         
         foreach( FileSystemTreeItem * child, item->m_children )
@@ -59,16 +58,12 @@ void FileSystemTree::remove(FileSystemTreeItem* item)
         delete item;
     }
     else {
-        kDebug() << "Removing .. " << item->url();
-        kDebug() << "Other ..";
-
         item->m_parent->m_children.removeAll( item );
 
         foreach( FileSystemTreeItem * child, item->m_children )
                 item->m_parent->add( child );
 
         item->m_children.clear();
-        kDebug() << "Deleting item";
         delete item;
     }
 }
@@ -92,7 +87,6 @@ QList<QString> FileSystemTree::toList() const
 {
     QList<QString> list;
     foreach( FileSystemTreeItem * item, m_rootNodes ) {
-        kDebug() << item->url();
         list << item->toList();
     }
     
@@ -146,20 +140,14 @@ FileSystemTreeItem::FileSystemTreeItem(const QString& url, bool folder)
 
 FileSystemTreeItem::~FileSystemTreeItem()
 {
-    kDebug();
     foreach( FileSystemTreeItem * t, m_children ) {
-        kDebug() << "Deleting child : " << t->url();
         delete t;
     }
 }
 
 bool FileSystemTreeItem::shouldBeParentOf(FileSystemTreeItem* item)
 {
-    bool r = item->depth() > depth() && item->m_url.contains( m_url );
-    //kDebug() << url() << " should be parent of " << item->url() << " ? " << r;
-    //kDebug() << url() << " depth : "<< depth();
-    //kDebug() << item->url() << " depth : " << item->depth();
-    return r;
+    return item->depth() > depth() && item->m_url.contains( m_url );
 }
 
 bool FileSystemTreeItem::isFile() const
@@ -202,7 +190,6 @@ namespace {
 void FileSystemTreeItem::insert(QList< FileSystemTreeItem* >& list, FileSystemTreeItem* item, FileSystemTreeItem* parent)
 {
     if( list.isEmpty() ) {
-        kDebug() << "Empty list - appending";
         list.append( item );
         item->m_parent = parent;
         return;
@@ -211,7 +198,6 @@ void FileSystemTreeItem::insert(QList< FileSystemTreeItem* >& list, FileSystemTr
     // Step 1 : Check for duplicates
     foreach( FileSystemTreeItem *p, list ) {
         if( withoutTrailingSlashEquality( p->m_url, item->m_url ) ) {
-            kDebug() << "Duplicate ..";
             return;
         }
     }
@@ -220,28 +206,21 @@ void FileSystemTreeItem::insert(QList< FileSystemTreeItem* >& list, FileSystemTr
     //          If so, call for that FileSystemTreeItem *
     foreach( FileSystemTreeItem * p, list ) {
         if( p->isFolder() && p->shouldBeParentOf( item ) ) {
-            kDebug() << "Calling insert on " << p->url();
             insert( p->m_children, item, p );
             return;
         }
     }
 
     // Step 3 : Insert in the correct position
-
-    kDebug() << "Inserting " << item->url() << " over here somewhere";
     QMutableListIterator<FileSystemTreeItem* > iter( list );
     while( iter.hasNext() ) {
         FileSystemTreeItem * p = iter.next();
         
         if( withoutTrailingSlashCompare( item->m_url, p->m_url ) ) {
-            kDebug() << "Inserting before " << p->url();
             iter.previous();
             // Insert it and set it's parent
             iter.insert( item );
             item->m_parent = parent;
-            kDebug() << "DONE!!";
-            if( parent )
-                kDebug() << parent->toList();
             break;
         }
     }
@@ -254,17 +233,13 @@ void FileSystemTreeItem::insert(QList< FileSystemTreeItem* >& list, FileSystemTr
     }
     
     if( item->isFile() ) {
-        kDebug() << "Is file .. nothing more to do";
         return;
     }
 
     // Insert all the files which are in the list and should be under item
-    kDebug() << "Checking remaining files/folders..";
     while( iter.hasNext() ) {
         FileSystemTreeItem * p = iter.next();
-        kDebug() << "Testing " << p->url();
-        if( /*p->isFile() &&*/ item->shouldBeParentOf( p ) ) {
-            kDebug() << p->url() << " is now going to be child of " << item->url();
+        if( item->shouldBeParentOf( p ) ) {
             iter.remove();
             insert( item->m_children, p, item );
         }
@@ -287,7 +262,7 @@ FileSystemTreeItem* FileSystemTreeItem::find(QList< FileSystemTreeItem* >& list,
 }
 
 
-FileSystemTreeItem* FileSystemTreeItem::child(int row)
+FileSystemTreeItem* FileSystemTreeItem::child(int row) const
 {
     return m_children.at( row );
 }
@@ -314,7 +289,6 @@ int FileSystemTreeItem::parentRowNum()
         return m_parent->m_children.indexOf( this );
     }
 
-    kDebug() << "RETURNING -1";
     return -1;
 }
 
@@ -366,13 +340,11 @@ QList<QString> FileSystemTreeItem::toList() const
     if( !m_url.isEmpty() )
         urls << m_url;
     
-    kDebug() << m_url << " children : ";
     foreach( FileSystemTreeItem * item, m_children )
         urls << item->toList();
     
     return urls;
 }
-
 
 
 bool FileSystemTreeItem::isFolder() const
@@ -390,19 +362,6 @@ QList<FileSystemTreeItem* > FileSystemTreeItem::children() const
 bool FileSystemTreeItem::isNull() const
 {
     return m_url.isEmpty() && numChildren() == 0;
-}
-
-QString FileSystemTreeItem::prettyString() const
-{
-//     if( !m_parent )
-//         return m_url.toLocalFile();
-//     
-//     QString parentString = m_parent->m_url.toLocalFile();
-//     QString ownString = m_url.toLocalFile();
-//     
-//     ownString.replace( parentString, "" );
-//     return ownString;
-    return QString();
 }
 
 int FileSystemTreeItem::depth()
