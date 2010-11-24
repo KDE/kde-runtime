@@ -61,8 +61,8 @@ namespace Nepomuk {
 //         void resolveResource( const QUrl& resource, const QUrl& identified );
 //         void discardResource( const QUrl& resource );
         
-        void notIdentified( int id, const QList<Soprano::Statement> & sts );
-        void identified( int id, const QString & oldUri, const QString & newUri );
+        void notIdentified( const QList<Soprano::Statement> & sts );
+        void identified( const QUrl& oldUri, const QUrl& newUri );
 
     private:
         IdentifierModelTree * m_tree;

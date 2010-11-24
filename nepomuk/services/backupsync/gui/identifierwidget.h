@@ -43,26 +43,17 @@ namespace Nepomuk {
         IdentifierWidget( int id, QWidget* parent = 0 );
 
     private slots:
-        void t();
-
         void identify( const QUrl & uri );
         void ignore( const QUrl & uri );
         
     private slots:
         void notIdentified( int id, const QString & string );
+        void identified( int id, const QString & oldUri, const QString & newUri );
         
     private :
         IdentifierModel * m_model;
         int m_id;
 
-        /*QTreeView * m_treeView;
-        
-        QPushButton * m_button;
-        
-        QPushButton * m_ignore;
-        QPushButton * m_ignoreSubTree;
-        QPushButton * m_identify;*/
-        
         typedef OrgKdeNepomukServicesNepomukbackupsyncIdentifierInterface Identifier;
         Identifier * m_identifier;
     };

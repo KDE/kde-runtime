@@ -47,71 +47,22 @@ Nepomuk::IdentifierWidget::IdentifierWidget(int id, QWidget* parent): QWidget(pa
     MergeConflictDelegate * delegate = new MergeConflictDelegate( m_viewConflicts, this );
     m_viewConflicts->setModel( m_model );
     m_viewConflicts->setItemDelegate( delegate );
-    /*
-    QVBoxLayout * layout = new QVBoxLayout();
-    layout->addWidget( label );
-    layout->addWidget( m_treeView );
-
-    setLayout( layout );*/
-
-    //m_button = new QPushButton("test", this);
-    //connect( m_button, SIGNAL(clicked(bool)), this , SLOT(t()) );
-    //layout->addWidget( m_button );
-
-    //View Options
-    //m_treeView->setSelectionMode( QAbstractItemView::SingleSelection );
-    //m_treeView->setSelectionBehavior( QAbstractItemView::SelectRows );
-    //m_treeView->setHeaderHidden( true );
-    //m_treeView->setExpandsOnDoubleClick( false );
-/*
-    m_ignore = new QPushButton( "Ignore", this );
-    m_ignoreSubTree = new QPushButton( "Ignore Sub Tree", this );
-    m_identify = new QPushButton( "Identify", this );
-
-    QHBoxLayout * hBox = new QHBoxLayout();
-    hBox->addWidget( m_ignore );
-    hBox->addWidget( m_ignoreSubTree );
-    hBox->addWidget( m_identify );
-    layout->addLayout( hBox );
-
-    connect( m_ignore, SIGNAL(clicked(bool)), this, SLOT(ignore()) );
-    connect( m_ignoreSubTree, SIGNAL(clicked(bool)), this, SLOT(ignoreSubTree()) );
-    connect( m_identify, SIGNAL(clicked(bool)), this,SLOT(identify()) );*/
 
     m_identifier = new Identifier( QLatin1String("org.kde.nepomuk.services.nepomukbackupsync"),
                                    QLatin1String("/identifier"),
                                    QDBusConnection::sessionBus(), this );
     
     if( m_identifier->isValid() ) {
-        kDebug() << "Valid : Connecting identified signals";
-        Q_ASSERT(connect( m_identifier, SIGNAL(notIdentified(int,QString)),
-                          this, SLOT(notIdentified(int,QString)) ));
+        connect( m_identifier, SIGNAL(notIdentified(int,QString)),
+                 this, SLOT(notIdentified(int,QString)) );
         connect( m_identifier, SIGNAL(identified(int,QString,QString)),
-                 m_model, SLOT(identified(int,QString,QString)) );
+                 this, SLOT(identified(int,QString,QString)) );
     }
 
     connect( delegate, SIGNAL(requestResourceResolve(QUrl)),
              this, SLOT(identify(QUrl)) );
     connect( delegate, SIGNAL(requestResourceDiscard(QUrl)),
              this, SLOT(ignore(QUrl)) );
-}
-
-void Nepomuk::IdentifierWidget::t()
-{
-    //kDebug() << m_model->rowCount();
-    //m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/file0");
-    //kDebug() << m_model->rowCount();
-
-    //kDebug() <<"Inserting another";
-//     m_model->debug_notIdentified(0, "res2", "/home/user/", true);
-//     
-//     m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/file2");
-//     m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/file1");
-//     m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/file3");
-//     m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/file4");
-//     m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/ZAB", true);
-//     m_model->debug_notIdentified(0, "res1", "/home/user/nepomuk/ZAB/f1");
-    //m_treeView->expandAll();
 }
 
 void Nepomuk::IdentifierWidget::ignore(const QUrl& uri)
@@ -147,12 +98,23 @@ void Nepomuk::IdentifierWidget::identify(const QUrl& uri)
 
 void Nepomuk::IdentifierWidget::notIdentified(int id, const QString& string)
 {
+    if( id != m_id )
+        return;
+    
     kDebug() << string;
     const Soprano::Parser* parser = Soprano::PluginManager::instance()->discoverParserForSerialization( Soprano::SerializationNQuads );
 
     QList<Soprano::Statement> stList = parser->parseString( string, QUrl(), Soprano::SerializationNQuads ).allStatements();
 
-    m_model->notIdentified( id, stList );
+    m_model->notIdentified( stList );
+}
+
+void Nepomuk::IdentifierWidget::identified(int id, const QString& oldUri, const QString& newUri)
+{
+    if( id != m_id )
+        return;
+
+    m_model->identified( QUrl(oldUri), QUrl(newUri) );
 }
 
 #include "identifierwidget.moc"

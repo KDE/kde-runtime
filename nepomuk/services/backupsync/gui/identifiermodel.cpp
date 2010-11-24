@@ -149,24 +149,23 @@ QModelIndex Nepomuk::IdentifierModel::index(int row, int column, const QModelInd
 }
 
 
-void Nepomuk::IdentifierModel::identified(int id, const QString& oldUri, const QString& newUri)
+void Nepomuk::IdentifierModel::identified( const QUrl& oldUri, const QUrl& newUri)
 {
-    Q_UNUSED( id );
     //kDebug() << oldUri << " -----> " << newUri;
     
     emit layoutAboutToBeChanged();
  
-    IdentifierModelTreeItem* item = m_tree->findByUri( QUrl(oldUri) );
+    IdentifierModelTreeItem* item = m_tree->findByUri( oldUri );
     if( item ) {
         kDebug() << item->url() << " -----> " << newUri;
-        item->setIdentified( QUrl(newUri) );
+        item->setIdentified( newUri );
     }
     
     emit layoutChanged();
 }
 
 
-void Nepomuk::IdentifierModel::notIdentified(int id, const QList< Soprano::Statement >& sts)
+void Nepomuk::IdentifierModel::notIdentified( const QList< Soprano::Statement >& sts )
 {
     if( sts.isEmpty() )
         return;
