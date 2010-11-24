@@ -196,7 +196,7 @@ Nepomuk::RestorePage::RestorePage(QWidget* parent)
 
 void Nepomuk::RestorePage::initializePage()
 {
-    QString backupUrl = field("backupUrl").toString();
+    QString backupUrl = field("backupToRestorePath").toString();
     kDebug() << "Restoring : " << backupUrl;
     
     QDBusPendingReply< int > reply = m_backupManager->restore( backupUrl );
