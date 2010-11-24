@@ -101,6 +101,7 @@ private:
                      KIntNumInput *itemInput, KPushButton *itemDefaultButton );
     void setCheckItem( const QString itemKey, bool itemValue,
                        QCheckBox *itemCheck, KPushButton *itemDefaultButton );
+    void checkIfChanged();
 
     //Common init utilities
     void initSeparatorCombo( KComboBox *separatorCombo );
