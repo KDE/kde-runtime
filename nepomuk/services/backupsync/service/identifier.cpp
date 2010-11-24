@@ -184,6 +184,18 @@ bool Nepomuk::Identifier::ignore(int id, const QString& urlString, bool ignoreSu
     return identifier->ignore( url, ignoreSub );
 }
 
+void Nepomuk::Identifier::ignoreAll(int id)
+{
+    QMutexLocker lock ( &m_processMutex );
+
+    QHash<int, SyncFileIdentifier*>::iterator it = m_processes.find( id );
+    if( it == m_processes.end() )
+        return;
+
+    delete it.value();
+    m_processes.remove( id );
+}
+
 void Nepomuk::Identifier::emitNotIdentified(int id, const QList< Soprano::Statement >& stList)
 {
     const Soprano::Serializer* serializer = Soprano::PluginManager::instance()->discoverSerializerForSerialization( Soprano::SerializationNQuads );

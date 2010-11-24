@@ -26,6 +26,9 @@
         <arg name="url" type="s" direction="in"/>
         <arg name="ignoreSubDirectories" type="b" direction="in"/>
     </method>
+    <method name="ignoreAll">
+        <arg name="id" type="i" direction="in"/>
+    </method>
     <method name="completeIdentification">
         <arg name="id" type="i" direction="in"/>
     </method>

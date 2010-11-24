@@ -70,6 +70,8 @@ namespace Nepomuk {
 
         bool ignore(int id, const QString& url, bool ignoreSubDirectories);
 
+        void ignoreAll( int id );
+
         void completeIdentification( int id );
 
     protected:

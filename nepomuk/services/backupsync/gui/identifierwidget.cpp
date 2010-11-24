@@ -63,6 +63,9 @@ Nepomuk::IdentifierWidget::IdentifierWidget(int id, QWidget* parent): QWidget(pa
              this, SLOT(identify(QUrl)) );
     connect( delegate, SIGNAL(requestResourceDiscard(QUrl)),
              this, SLOT(ignore(QUrl)) );
+
+    connect( m_buttonDiscardAll, SIGNAL(clicked(bool)),
+             this, SLOT(slotDiscardAll()) );
 }
 
 void Nepomuk::IdentifierWidget::ignore(const QUrl& uri)
@@ -116,5 +119,11 @@ void Nepomuk::IdentifierWidget::identified(int id, const QString& oldUri, const 
 
     m_model->identified( QUrl(oldUri), QUrl(newUri) );
 }
+
+void Nepomuk::IdentifierWidget::slotDiscardAll()
+{
+    m_identifier->ignoreAll( m_id );
+}
+
 
 #include "identifierwidget.moc"
