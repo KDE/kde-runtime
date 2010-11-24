@@ -56,16 +56,6 @@ namespace Nepomuk {
         virtual QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const;
         virtual Qt::ItemFlags flags(const QModelIndex& index) const;
         
-    public Q_SLOTS:
-        /**
-         * Used for debugging & testing.
-         */
-        void debug_notIdentified( const QString& resUri, const QString& nieUrl );
-
-        /**
-         * Used for debugging & testing.
-         */
-        void debug_identified( int id, const QString & nieUrl );
 
     public Q_SLOTS:
 //         void resolveResource( const QUrl& resource, const QUrl& identified );

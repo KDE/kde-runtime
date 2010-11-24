@@ -38,6 +38,7 @@ private:
     Nepomuk::IdentifierModel * m_model;
     MergeConflictDelegate * m_delegate;
 
+    void notIdentified( const QString& resUri, const QString& nieUrl );
 private slots:
     void slotOnButtonClick();
 };

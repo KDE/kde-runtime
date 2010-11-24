@@ -96,9 +96,7 @@ Nepomuk::IdentifierModelTreeItem* Nepomuk::IdentifierModelTreeItem::fromStatemen
             // FIXME: This may not be totally accurate
             Types::Class oldClass( type );
             Types::Class newClass( objectUri );
-            kDebug() << "Object uri : " << objectUri;
             if( newClass.isSubClassOf( oldClass ) ) {
-                kDebug() << "SETTING";
                 type = objectUri;
             }
         }
@@ -154,15 +152,6 @@ void Nepomuk::IdentifierModelTree::add(IdentifierModelTreeItem* item)
     m_resUrlHash.insert( resUri, item->url() );
     
     FileSystemTree::add(item);
-}
-
-
-void Nepomuk::IdentifierModelTree::remove(const QString& resUri)
-{
-    QHash<QUrl, QString>::const_iterator it = m_resUrlHash.constFind( resUri );
-    if( it != m_resUrlHash.constEnd() ) {
-        FileSystemTree::remove( it.value() );
-    }
 }
 
 Nepomuk::IdentifierModelTreeItem* Nepomuk::IdentifierModelTree::findByUri(const QUrl& uri)

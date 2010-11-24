@@ -22,6 +22,10 @@
 
 #include <QtGui/QBoxLayout>
 
+#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk/Vocabulary/NIE>
+#include <Soprano/Vocabulary/RDF>
+
 #include <KDebug>
 
 TestWidget::TestWidget(QWidget* parent, Qt::WindowFlags f)
@@ -46,23 +50,39 @@ TestWidget::~TestWidget()
 {
 }
 
+void TestWidget::notIdentified(const QString& resUri, const QString& nieUrl)
+{
+    Soprano::Statement st( Soprano::Node( QUrl(resUri) ),
+                           Soprano::Node( Nepomuk::Vocabulary::NIE::url() ),
+                           Soprano::Node( QUrl(nieUrl) ) );
+    QList<Soprano::Statement> stList;
+    stList.append( st );
+    if( nieUrl.endsWith('/') ) {
+        stList << Soprano::Statement( QUrl(resUri), Soprano::Vocabulary::RDF::type(), Nepomuk::Vocabulary::NFO::Folder() );
+    }
+    else {
+        stList << Soprano::Statement( QUrl(resUri), Soprano::Vocabulary::RDF::type(), Nepomuk::Vocabulary::NFO::FileDataObject() );
+    }
+    
+    m_model->notIdentified( 0, stList );
+}
 
 void TestWidget::slotOnButtonClick()
 {
 
-    m_model->debug_notIdentified( "nepomuk:/res/1", "/home/vishesh/" );
-    m_model->debug_notIdentified( "nepomuk:/res/2", "/home/vishesh/file1" );
-    m_model->debug_notIdentified( "nepomuk:/res/3", "/home/vishesh/folder/" );
-    m_model->debug_notIdentified( "nepomuk:/res/4", "/home/vishesh/file2" );
-    m_model->debug_notIdentified( "nepomuk:/res/5", "/home/vishesh/folder/fol-file1" );
-    m_model->debug_notIdentified( "nepomuk:/res/6", "/home/vishesh/folder/fol-file2" );
+    notIdentified( "nepomuk:/res/1", "/home/vishesh/" );
+    notIdentified( "nepomuk:/res/2", "/home/vishesh/file1" );
+    notIdentified( "nepomuk:/res/3", "/home/vishesh/folder/" );
+    notIdentified( "nepomuk:/res/4", "/home/vishesh/file2" );
+    notIdentified( "nepomuk:/res/5", "/home/vishesh/folder/fol-file1" );
+    notIdentified( "nepomuk:/res/6", "/home/vishesh/folder/fol-file2" );
 
-    m_model->debug_notIdentified( "nepomuk:/res/-1", "/home/user/" );
-    m_model->debug_notIdentified( "nepomuk:/res/-2", "/home/user/file1" );
-    m_model->debug_notIdentified( "nepomuk:/res/-3", "/home/user/folder/" );
-    m_model->debug_notIdentified( "nepomuk:/res/-4", "/home/user/file2" );
-    m_model->debug_notIdentified( "nepomuk:/res/-5", "/home/user/folder/fol-file1" );
-    m_model->debug_notIdentified( "nepomuk:/res/-6", "/home/user/folder/fol-file2" );
+    notIdentified( "nepomuk:/res/-1", "/home/user/" );
+    notIdentified( "nepomuk:/res/-2", "/home/user/file1" );
+    notIdentified( "nepomuk:/res/-3", "/home/user/folder/" );
+    notIdentified( "nepomuk:/res/-4", "/home/user/file2" );
+    notIdentified( "nepomuk:/res/-5", "/home/user/folder/fol-file1" );
+    notIdentified( "nepomuk:/res/-6", "/home/user/folder/fol-file2" );
 
     m_model->identified(0, "nepomuk:/res/-5", "nepomuk:/res/-5-identified" );
 }

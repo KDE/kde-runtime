@@ -69,7 +69,6 @@ namespace Nepomuk {
         virtual void add(IdentifierModelTreeItem* item);
         IdentifierModelTreeItem* findByUri( const QUrl& uri );
         
-        virtual void remove(const QString& resUri);
     private:
         QHash<QUrl, QString> m_resUrlHash;
         friend class IdentifierModelTreeItem;
