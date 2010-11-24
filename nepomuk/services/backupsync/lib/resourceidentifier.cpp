@@ -291,7 +291,7 @@ void Nepomuk::Sync::ResourceIdentifier::forceResource(const KUrl& oldUri, const 
     if( res.isFile() ) {
         const QUrl nieUrlProp = Nepomuk::Vocabulary::NIE::url();
         
-        Sync::SimpleResource & simRes = d->m_resourceHash[ res.resourceUri() ];
+        Sync::SimpleResource & simRes = d->m_resourceHash[ oldUri ];
         KUrl oldNieUrl = simRes.nieUrl();
         KUrl newNieUrl = res.property( nieUrlProp ).toUrl();
         
@@ -302,7 +302,7 @@ void Nepomuk::Sync::ResourceIdentifier::forceResource(const KUrl& oldUri, const 
         simRes.insert( nieUrlProp, Soprano::Node( newNieUrl ) );
         
         // Remove from list. Insert later
-        d->m_notIdentified.remove( res.resourceUri() );
+        d->m_notIdentified.remove( oldUri );
         
         //
         // Modify other non identified resources with similar nie:urls
@@ -336,13 +336,13 @@ void Nepomuk::Sync::ResourceIdentifier::forceResource(const KUrl& oldUri, const 
             // Modify the existing nie:url
             if( nieUrl.startsWith(oldString) ) {
                 nieUrl.replace( oldString, newString );
-                
+
                 simpleRes.remove( nieUrlProp );
                 simpleRes.insert( nieUrlProp, Soprano::Node( KUrl(nieUrl) ) );
             }
         }
         
-        d->m_notIdentified.insert( res.resourceUri() );
+        d->m_notIdentified.insert( oldUri );
     }
 }
 
