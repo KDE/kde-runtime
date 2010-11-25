@@ -36,6 +36,7 @@
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix nao:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#> .
 @prefix nrl:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#> .
+@prefix nie:     <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix kuvo:    <http://nepomuk.kde.org/ontologies/2010/08/18/kuvo#> .
@@ -50,6 +51,9 @@ kuvo: {
         nao:userVisible false .
 
     nao:score
+        nao:userVisible false .
+
+    nie:hasPart
         nao:userVisible false .
 
     nrl:Graph
