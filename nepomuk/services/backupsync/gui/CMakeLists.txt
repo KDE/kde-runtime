@@ -68,7 +68,6 @@ target_link_libraries(nepomukbackup
   ${SOPRANO_LIBRARIES}
   )
 
-install(TARGETS nepomukbackup
-  DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS nepomukbackup ${INSTALL_TARGETS_DEFAULT_ARGS} )
 install(PROGRAMS nepomukbackup.desktop
   DESTINATION ${XDG_APPS_INSTALL_DIR})
