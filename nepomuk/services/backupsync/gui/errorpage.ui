@@ -19,7 +19,7 @@
      <item>
       <widget class="QLabel" name="m_labelPixmap">
        <property name="text">
-        <string>TextLabel</string>
+        <string comment="KDE::DoNotExtract">TextLabel</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignBottom|Qt::AlignHCenter</set>
@@ -29,7 +29,7 @@
      <item>
       <widget class="QLabel" name="m_labelMessage">
        <property name="text">
-        <string>TextLabel</string>
+        <string comment="KDE::DoNotExtract">TextLabel</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignHCenter|Qt::AlignTop</set>
