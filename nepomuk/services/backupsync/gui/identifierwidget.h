@@ -49,6 +49,7 @@ namespace Nepomuk {
     private slots:
         void notIdentified( int id, const QString & string );
         void identified( int id, const QString & oldUri, const QString & newUri );
+        void completed( int id, int progress );
         void slotDiscardAll();
         
     private :

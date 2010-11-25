@@ -102,7 +102,7 @@ void Nepomuk::Identifier::run()
             m_queueMutex.unlock();
 
             identifier->load();
-            identifier->identifyAll();
+            identifyAllWithCompletedSignals( identifier );
 
             emit identificationDone( identifier->id(), identifier->unidentified().size() );
             
@@ -236,6 +236,23 @@ void Nepomuk::Identifier::completeIdentification(int id)
     }
 
     delete identifier;
+}
+
+
+void Nepomuk::Identifier::identifyAllWithCompletedSignals(Nepomuk::SyncFileIdentifier* ident)
+{
+    int unidentified = ident->unidentified().size();
+    float step = 100.0/unidentified;
+    float progress = 0;
+
+    emit completed( ident->id(), 0 );
+    foreach( const KUrl & url, ident->unidentified() ) {
+        ident->identify( url );
+
+        progress += step;
+        emit completed( ident->id(), (int)progress );
+    }
+    emit completed( ident->id(), 100 );
 }
 
 

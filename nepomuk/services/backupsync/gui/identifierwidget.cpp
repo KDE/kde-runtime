@@ -57,6 +57,8 @@ Nepomuk::IdentifierWidget::IdentifierWidget(int id, QWidget* parent): QWidget(pa
                  this, SLOT(notIdentified(int,QString)) );
         connect( m_identifier, SIGNAL(identified(int,QString,QString)),
                  this, SLOT(identified(int,QString,QString)) );
+        connect( m_identifier, SIGNAL(completed(int,int)),
+                 this, SLOT(completed(int,int)) );
     }
 
     connect( delegate, SIGNAL(requestResourceResolve(QUrl)),
@@ -128,5 +130,13 @@ void Nepomuk::IdentifierWidget::slotDiscardAll()
     m_model->ignoreAll();
 }
 
+void Nepomuk::IdentifierWidget::completed(int id, int progress)
+{
+    if( id != m_id )
+        return;
+
+    kDebug() << progress;
+    m_progressBar->setValue( progress );
+}
 
 #include "identifierwidget.moc"

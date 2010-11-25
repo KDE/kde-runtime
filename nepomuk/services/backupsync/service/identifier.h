@@ -57,7 +57,8 @@ namespace Nepomuk {
 
         void identificationDone( int id, int unidentified );
         void processed( const Nepomuk::ChangeLog & logFile );
-
+        
+        void completed( int id, int progress );
     public Q_SLOTS:
         int process( const SyncFile & sf );
 
@@ -88,6 +89,7 @@ namespace Nepomuk {
         QMutex m_processMutex;
 
         void emitNotIdentified( int id, const QList<Soprano::Statement> & stList );
+        void identifyAllWithCompletedSignals( SyncFileIdentifier * ident );
     };
 
 }

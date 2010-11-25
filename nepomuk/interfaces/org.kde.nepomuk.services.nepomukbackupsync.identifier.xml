@@ -14,6 +14,10 @@
       <arg name="id" type="i" direction="out"/>
       <arg name="serializedStatements" type="s" direction="out"/>
     </signal>
+    <signal name="completed">
+        <arg name="id" type="i" direction="out"/>
+        <arg name="progress" type="i" direction="out"/>
+    </signal>
     <method name="identify">
       <arg type="b" direction="out"/>
       <arg name="id" type="i" direction="in"/>
