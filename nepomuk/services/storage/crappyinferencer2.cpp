@@ -90,7 +90,9 @@ public:
             while(typeIt.next()) {
                 baseTypes << typeIt[0].uri();
             }
-            m_model->addInferenceStatements( res, baseTypes );
+            if( !baseTypes.isEmpty() ) {
+                m_model->addInferenceStatements( res, baseTypes );
+            }
         }
 #ifndef NDEBUG
         kDebug() << cnt << "resources updated. Elapsed:" << timer.elapsed();
@@ -389,28 +391,25 @@ Soprano::Error::ErrorCode CrappyInferencer2::removeAllStatements(const Soprano::
         // Neither subject nor object are defined
         //
         else {
-            QSet<QUrl> resources;
-            QSet<QUrl> types;
+            QHash<QUrl, QList<QUrl> > resTypeHash;
             QString query;
             if( statement.context().isValid() ) {
-                query = QString::fromLatin1("select ?r ?t where { graph %1 { ?r a ?t . } . }")
+                query = QString::fromLatin1("select distinct ?r ?t where { graph %1 { ?r a ?t . } . }")
                         .arg(statement.context().toN3());
             }
             else {
-                query = QString::fromLatin1("select ?r ?t where { graph ?g { ?r a ?t . } . FILTER(?g!=%1) . }")
+                query = QString::fromLatin1("select distinct ?r ?t where { graph ?g { ?r a ?t . } . FILTER(?g!=%1) . }")
                         .arg(Soprano::Node::resourceToN3(crappyInferenceContext()));
             }
             Soprano::QueryResultIterator it = parentModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
             while( it.next() ) {
-                resources << it["r"].uri();
-                types << it["t"].uri();
+                resTypeHash[it["r"].uri()].append( it["t"].uri() );
             }
             const Soprano::Error::ErrorCode error = parentModel()->removeAllStatements(statement);
             if( error == Soprano::Error::ErrorNone ) {
-                Q_FOREACH( const QUrl& res, resources ) {
-                    Q_FOREACH( const QUrl& type, types ) {
-                        removeInferenceStatements( res, type );
-                    }
+                QHash<QUrl, QList<QUrl> >::const_iterator end = resTypeHash.constEnd();
+                for( QHash<QUrl, QList<QUrl> >::const_iterator it = resTypeHash.constBegin(); it != end; ++it ) {
+                    removeInferenceStatements( it.key(), it.value() );
                 }
             }
             return error;
@@ -506,9 +505,12 @@ void CrappyInferencer2::addInferenceStatements( const QUrl& resource, const QUrl
 void CrappyInferencer2::addInferenceStatements( const QUrl& resource, const QSet<QUrl>& types )
 {
     // add missing types
+    bool haveVisibleType = false;
     QSet<QUrl> superTypes;
     Q_FOREACH( const QUrl& type, types ) {
         superTypes += d->superClasses(type);
+        if( !haveVisibleType && d->m_typeVisibilityTree->isVisible(type) )
+            haveVisibleType = true;
     }
     QSet<QUrl>::const_iterator end = superTypes.constEnd();
     for( QSet<QUrl>::const_iterator typeIt = superTypes.constBegin(); typeIt != end; ++typeIt ) {
@@ -518,7 +520,11 @@ void CrappyInferencer2::addInferenceStatements( const QUrl& resource, const QSet
                                     crappyInferenceContext());
     }
 
-    setVisibility( resource, d->isVisibleFromTypes(d->queryResourceTypes(resource)) );
+    // the visibility can only change if we add a visible type
+    // otherwise there is no need to perform the additional query
+    if( haveVisibleType ) {
+        setVisibility( resource, d->isVisibleFromTypes(d->queryResourceTypes(resource)) );
+    }
 }
 
 void CrappyInferencer2::removeInferenceStatements(const QUrl &resource, const QUrl &type)
@@ -550,7 +556,11 @@ void CrappyInferencer2::removeInferenceStatements(const QUrl &resource, const QL
     Q_FOREACH( const QUrl& type, QSet<QUrl>::fromList(types) )
         typesToRemove += d->superClasses(type);
     typesToRemove -= correctSuperTypes;
+
+    bool haveVisibleType = false;
     Q_FOREACH( const QUrl& typeToRemove, typesToRemove ) {
+        if( !haveVisibleType && d->m_typeVisibilityTree->isVisible(typeToRemove) )
+            haveVisibleType = true;
         parentModel()->removeStatement(resource,
                                        Soprano::Vocabulary::RDF::type(),
                                        typeToRemove,
@@ -558,7 +568,10 @@ void CrappyInferencer2::removeInferenceStatements(const QUrl &resource, const QL
     }
 
     // remove the visibility if necessary
-    setVisibility( resource, d->isVisibleFromTypes(correctTypes) );
+    // only be removing visible types we can change the actual visibility
+    if( haveVisibleType ) {
+        setVisibility( resource, d->isVisibleFromTypes(correctTypes) );
+    }
 }
 
 void CrappyInferencer2::setVisibility(const QUrl &resource, bool visible)
