@@ -70,6 +70,8 @@ Nepomuk::IdentifierWidget::IdentifierWidget(int id, QWidget* parent): QWidget(pa
 
 void Nepomuk::IdentifierWidget::ignore(const QUrl& uri)
 {
+    Q_UNUSED( uri );
+    
     QModelIndex index = m_viewConflicts->currentIndex();
     if( !index.isValid() )
         return;
@@ -123,6 +125,7 @@ void Nepomuk::IdentifierWidget::identified(int id, const QString& oldUri, const 
 void Nepomuk::IdentifierWidget::slotDiscardAll()
 {
     m_identifier->ignoreAll( m_id );
+    m_model->ignoreAll();
 }
 
 

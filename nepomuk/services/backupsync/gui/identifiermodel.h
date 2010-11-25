@@ -57,6 +57,7 @@ namespace Nepomuk {
         virtual Qt::ItemFlags flags(const QModelIndex& index) const;
         
 
+        void ignoreAll();
     public Q_SLOTS:
 //         void resolveResource( const QUrl& resource, const QUrl& identified );
 //         void discardResource( const QUrl& resource );

@@ -172,7 +172,7 @@ bool Nepomuk::Identifier::identify(int id, const QString& oldUriString, const QS
 
 bool Nepomuk::Identifier::ignore(int id, const QString& urlString, bool ignoreSub)
 {
-    QUrl url( urlString );
+    KUrl url( urlString );
     // Lock the mutex and all
     QMutexLocker lock ( &m_processMutex );
 
@@ -187,13 +187,15 @@ bool Nepomuk::Identifier::ignore(int id, const QString& urlString, bool ignoreSu
 void Nepomuk::Identifier::ignoreAll(int id)
 {
     QMutexLocker lock ( &m_processMutex );
-
+    
     QHash<int, SyncFileIdentifier*>::iterator it = m_processes.find( id );
     if( it == m_processes.end() )
         return;
-
-    delete it.value();
-    m_processes.remove( id );
+    
+    SyncFileIdentifier* identifier = *it;
+    foreach( const KUrl & url, identifier->unidentified() ) {
+        identifier->ignore( url, true );
+    }
 }
 
 void Nepomuk::Identifier::emitNotIdentified(int id, const QList< Soprano::Statement >& stList)

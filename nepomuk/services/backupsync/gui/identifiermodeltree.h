@@ -50,7 +50,8 @@ namespace Nepomuk {
 
         void setDiscarded( bool status );
         bool discarded() const;
-        
+
+        void discardAll();
     private:
         QUrl m_identifiedUrl;
         bool m_discarded;
@@ -68,7 +69,8 @@ namespace Nepomuk {
 
         virtual void add(FileSystemTreeItem* item);
         IdentifierModelTreeItem* findByUri( const QUrl& uri );
-        
+
+        void discardAll();
     private:
         QHash<QUrl, QString> m_resUrlHash;
         friend class IdentifierModelTreeItem;

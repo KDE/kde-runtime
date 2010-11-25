@@ -133,6 +133,15 @@ void Nepomuk::IdentifierModelTreeItem::setUnidentified()
     m_identifiedUrl.clear();
 }
 
+void Nepomuk::IdentifierModelTreeItem::discardAll()
+{
+    setDiscarded( true );
+    foreach( FileSystemTreeItem* item, children() ) {
+        IdentifierModelTreeItem* i = dynamic_cast<IdentifierModelTreeItem*>(item);
+        i->discardAll();
+    }
+}
+
 
 //
 // IdentifierModelTree
@@ -166,5 +175,14 @@ Nepomuk::IdentifierModelTreeItem* Nepomuk::IdentifierModelTree::findByUri(const 
 
     return 0;
 }
+
+void Nepomuk::IdentifierModelTree::discardAll()
+{
+    foreach( FileSystemTreeItem* item, rootNodes() ) {
+        IdentifierModelTreeItem* i = dynamic_cast<IdentifierModelTreeItem*>(item);
+        i->discardAll();
+    }
+}   
+
 
 

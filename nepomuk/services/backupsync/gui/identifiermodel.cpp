@@ -195,5 +195,13 @@ Qt::ItemFlags Nepomuk::IdentifierModel::flags(const QModelIndex& index) const
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
+void Nepomuk::IdentifierModel::ignoreAll()
+{
+    emit layoutAboutToBeChanged();
+    
+    m_tree->discardAll();
+    
+    emit layoutChanged();
+}
 
 #include "identifiermodel.moc"
