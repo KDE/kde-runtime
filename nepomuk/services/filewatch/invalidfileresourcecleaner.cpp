@@ -20,6 +20,7 @@
 */
 
 #include "invalidfileresourcecleaner.h"
+#include "nie.h"
 
 #include <QtCore/QList>
 #include <QtCore/QFile>
@@ -29,7 +30,6 @@
 #include <Soprano/QueryResultIterator>
 
 #include <Nepomuk/ResourceManager>
-#include <Nepomuk/Vocabulary/NIE>
 
 #include <KDebug>
 
