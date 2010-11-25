@@ -151,13 +151,14 @@ QModelIndex Nepomuk::IdentifierModel::index(int row, int column, const QModelInd
 
 void Nepomuk::IdentifierModel::identified( const QUrl& oldUri, const QUrl& newUri)
 {
-    //kDebug() << oldUri << " -----> " << newUri;
-    
+//    kDebug() << oldUri << " -----> " << newUri;
+
+    //FIXME: Should probably emit dataChanged
     emit layoutAboutToBeChanged();
- 
+    
     IdentifierModelTreeItem* item = m_tree->findByUri( oldUri );
     if( item ) {
-        kDebug() << item->url() << " -----> " << newUri;
+        kDebug() << item->url() << " --- URL --> " << newUri;
         item->setIdentified( newUri );
     }
     
@@ -170,14 +171,12 @@ void Nepomuk::IdentifierModel::notIdentified( const QList< Soprano::Statement >&
     if( sts.isEmpty() )
         return;
     
-    //kDebug();
-    emit layoutAboutToBeChanged();
+    beginResetModel();
 
     // If already exists - Remove it
     QUrl resUri = sts.first().subject().uri();
     IdentifierModelTreeItem* it = m_tree->findByUri( resUri );
     if( it ) {
-        kDebug() << "ALREADY EXISTS!! REMOVING!!";
         m_tree->remove( it );
     }
 
@@ -186,7 +185,7 @@ void Nepomuk::IdentifierModel::notIdentified( const QList< Soprano::Statement >&
     item->setUnidentified();
     m_tree->add( item );
 
-    emit layoutChanged();
+    endResetModel();
 }
 
 Qt::ItemFlags Nepomuk::IdentifierModel::flags(const QModelIndex& index) const
@@ -195,5 +194,6 @@ Qt::ItemFlags Nepomuk::IdentifierModel::flags(const QModelIndex& index) const
     //return QAbstractItemModel::flags(index);
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
+
 
 #include "identifiermodel.moc"

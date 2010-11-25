@@ -60,7 +60,7 @@ Nepomuk::IdentifierWidget::IdentifierWidget(int id, QWidget* parent): QWidget(pa
     }
 
     connect( delegate, SIGNAL(requestResourceResolve(QUrl)),
-             this, SLOT(identify(QUrl)) );
+             this, SLOT(identify()) );
     connect( delegate, SIGNAL(requestResourceDiscard(QUrl)),
              this, SLOT(ignore(QUrl)) );
 
@@ -81,7 +81,7 @@ void Nepomuk::IdentifierWidget::ignore(const QUrl& uri)
 }
 
 
-void Nepomuk::IdentifierWidget::identify(const QUrl& uri)
+void Nepomuk::IdentifierWidget::identify()
 {
     QModelIndex index = m_viewConflicts->currentIndex();
     if( !index.isValid() )

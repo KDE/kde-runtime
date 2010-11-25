@@ -43,7 +43,7 @@ namespace Nepomuk {
         IdentifierWidget( int id, QWidget* parent = 0 );
 
     private slots:
-        void identify( const QUrl & uri );
+        void identify(  );
         void ignore( const QUrl & uri );
         
     private slots:

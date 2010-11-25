@@ -39,8 +39,12 @@ private:
     MergeConflictDelegate * m_delegate;
 
     void notIdentified( const QString& resUri, const QString& nieUrl );
+    void notIdentified( const QString & nieUrl );
+
+    int m_resNum;
 private slots:
     void slotOnButtonClick();
+    void shouldCrash();
 };
 
 #endif // TESTWIDGET_H

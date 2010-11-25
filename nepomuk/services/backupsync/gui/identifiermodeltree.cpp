@@ -143,8 +143,10 @@ Nepomuk::IdentifierModelTree::IdentifierModelTree()
 {
 }
 
-void Nepomuk::IdentifierModelTree::add(IdentifierModelTreeItem* item)
+void Nepomuk::IdentifierModelTree::add(FileSystemTreeItem* fileItem)
 {
+    IdentifierModelTreeItem * item = dynamic_cast<IdentifierModelTreeItem *>( fileItem );
+    
     QUrl resUri;
     if( !item->m_statements.isEmpty() )
         resUri = item->m_statements.first().subject().uri();

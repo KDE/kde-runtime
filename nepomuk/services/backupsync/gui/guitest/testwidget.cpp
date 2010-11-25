@@ -31,12 +31,14 @@
 TestWidget::TestWidget(QWidget* parent, Qt::WindowFlags f)
 : QWidget( parent )
 {
+    m_resNum = 0;
     m_model = new Nepomuk::IdentifierModel( this );
     QTreeView * view = new QTreeView( this );
-    view->setModel( m_model );
-
     m_delegate = new MergeConflictDelegate( view, this );
 
+    view->setModel( m_model );
+    view->setItemDelegate( m_delegate );
+    
     QVBoxLayout * layout = new QVBoxLayout( this );
     layout->addWidget( view );
 
@@ -64,26 +66,49 @@ void TestWidget::notIdentified(const QString& resUri, const QString& nieUrl)
         stList << Soprano::Statement( QUrl(resUri), Soprano::Vocabulary::RDF::type(), Nepomuk::Vocabulary::NFO::FileDataObject() );
     }
     
-    m_model->notIdentified( 0, stList );
+    m_model->notIdentified( stList );
 }
+
+void TestWidget::notIdentified(const QString& nieUrl)
+{
+    notIdentified( QString("nepomuk:/res/") + QString::number( m_resNum ), nieUrl );
+    m_resNum++;
+}
+
 
 void TestWidget::slotOnButtonClick()
 {
+    shouldCrash();
+//     notIdentified( "nepomuk:/res/1", "/home/vishesh/" );
+//     notIdentified( "nepomuk:/res/2", "/home/vishesh/file1" );
+//     notIdentified( "nepomuk:/res/3", "/home/vishesh/folder/" );
+//     notIdentified( "nepomuk:/res/4", "/home/vishesh/file2" );
+//     notIdentified( "nepomuk:/res/5", "/home/vishesh/folder/fol-file1" );
+//     notIdentified( "nepomuk:/res/6", "/home/vishesh/folder/fol-file2" );
+// 
+//     notIdentified( "nepomuk:/res/-1", "/home/user/" );
+//     notIdentified( "nepomuk:/res/-2", "/home/user/file1" );
+//     notIdentified( "nepomuk:/res/-3", "/home/user/folder/" );
+//     notIdentified( "nepomuk:/res/-4", "/home/user/file2" );
+//     notIdentified( "nepomuk:/res/-5", "/home/user/folder/fol-file1" );
+//     notIdentified( "nepomuk:/res/-6", "/home/user/folder/fol-file2" );
+// 
+//     m_model->identified(0, "nepomuk:/res/-5", "nepomuk:/res/-5-identified" );
+}
 
-    notIdentified( "nepomuk:/res/1", "/home/vishesh/" );
-    notIdentified( "nepomuk:/res/2", "/home/vishesh/file1" );
-    notIdentified( "nepomuk:/res/3", "/home/vishesh/folder/" );
-    notIdentified( "nepomuk:/res/4", "/home/vishesh/file2" );
-    notIdentified( "nepomuk:/res/5", "/home/vishesh/folder/fol-file1" );
-    notIdentified( "nepomuk:/res/6", "/home/vishesh/folder/fol-file2" );
+void TestWidget::shouldCrash()
+{
+    for( int i=0; i<20; i++ ) {
+        QString num = QString::number( i );
+        notIdentified( "nepomuk:/res/" + num, "/home/vishesh/wd/" + num );
+    }
 
-    notIdentified( "nepomuk:/res/-1", "/home/user/" );
-    notIdentified( "nepomuk:/res/-2", "/home/user/file1" );
-    notIdentified( "nepomuk:/res/-3", "/home/user/folder/" );
-    notIdentified( "nepomuk:/res/-4", "/home/user/file2" );
-    notIdentified( "nepomuk:/res/-5", "/home/user/folder/fol-file1" );
-    notIdentified( "nepomuk:/res/-6", "/home/user/folder/fol-file2" );
 
-    m_model->identified(0, "nepomuk:/res/-5", "nepomuk:/res/-5-identified" );
+    notIdentified( "nepomuk:/res/1", "/home/vishesh/ewd/1" );
+    m_model->identified( QUrl("nepomuk:/res/0"), QUrl("nepomuk:/ident/res/0") );
+    //for( int i=0; i<5; i++ ) {
+    //    QString num = QString::number( i );
+    //    m_model->identified( "nepomuk:/res/" + num, "nepomuk:/ident/res/" + num );
+    //}
 }
 

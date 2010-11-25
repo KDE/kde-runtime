@@ -66,7 +66,7 @@ namespace Nepomuk {
     public:
         IdentifierModelTree();
 
-        virtual void add(IdentifierModelTreeItem* item);
+        virtual void add(FileSystemTreeItem* item);
         IdentifierModelTreeItem* findByUri( const QUrl& uri );
         
     private:

@@ -32,8 +32,8 @@
 
 int main( int argc, char** argv )
 {
-    KAboutData aboutData("nepomukbackup",
-                         "nepomukbackup",
+    KAboutData aboutData("nepomukbackuptest",
+                         "nepomukbackuptest",
                          ki18n("NepomukBackup"),
                          "1.0",
                          ki18n("Nepomuk Backup Tool"),
