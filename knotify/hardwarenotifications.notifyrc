@@ -284,6 +284,7 @@ Action=-Popup
 
 [Event/safetoremove]
 Name=The device can be safely removed
+Name[cs]=Zařízení může být bezpečně odebráno
 Name[et]=Seadme võib turvaliselt eemaldada
 Name[hu]=Az eszköz biztonságosan eltávolítható
 Name[ia]=Le dispositivo pote esser removite con securitate
@@ -301,6 +302,7 @@ Name[uk]=Пристрій можна безпечно від’єднувати
 Name[x-test]=xxThe device can be safely removedxx
 Name[zh_TW]=裝置已可安全移除
 Comment=The device which has been just unmounted is now safe to remove.
+Comment[cs]=Zařízení, které bylo právě odpojeno může být bezpečně odebráno.
 Comment[et]=Äsja lahutatud seadme saab nüüd turvaliselt eemaldada
 Comment[hu]=A leválasztott eszköz biztonságosan eltávolítható.
 Comment[ia]=Le dispositivo que ha essite ora removite es ora secur de remover se.

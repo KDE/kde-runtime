@@ -168,6 +168,7 @@ Name[zh_TW]=音效輸出裝置已變更
 Comment=Notification when audio output device has automatically changed
 Comment[ast]=Notificación de cambeos automáticos nos preseos de salida d'audio
 Comment[ca]=Notificació quan canviï automàticament el dispositiu de sortida de l'àudio
+Comment[cs]=Upozornění při automatické změně výstupního audio zařízení
 Comment[de]=Benachrichtigung, wenn das Audioausgabegerät automatisch geändert worden ist
 Comment[el]=Ειδοποίηση όταν η συσκευή εξόδου ήχου έχει αυτόματα αλλάξει
 Comment[en_GB]=Notification when audio output device has automatically changed

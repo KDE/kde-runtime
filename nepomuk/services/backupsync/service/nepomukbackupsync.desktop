@@ -6,6 +6,7 @@ X-KDE-Nepomuk-autostart=true
 X-KDE-Nepomuk-start-on-demand=false
 X-KDE-Nepomuk-dependencies=nepomukstorage
 Name=Nepomuk Backup and Sync
+Name[cs]=Zálohování a synchronizace Nepomuku
 Name[et]=Nepomuki varundamine ja sünkroonimine
 Name[ia]=Retrocopia (Backup) e Sync de Nepomuk
 Name[kk]=Nepomuk сақтық көшірмелеу және қадамдастыру
