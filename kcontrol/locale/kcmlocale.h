@@ -81,7 +81,7 @@ private:
     void copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, const QStringList &type );
     void copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, int type );
     void copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, bool type );
-    void mergeSettings( const QString &countryCode, bool mergeUser );
+    void mergeSettings( const QString &countryCode );
 
     void setItem( const QString itemKey, const QString &itemValue,
                   QWidget *itemWidget, KPushButton *itemReset );
@@ -187,6 +187,7 @@ private Q_SLOTS:
 
     void defaultTranslations();
     void changeTranslations();
+    void changeTranslations( const QString &newValue );
 
     //void callTranslationsInstall();
 
@@ -321,34 +322,32 @@ private:
     QString userToPosixTime( const QString &userFormat ) const;
     QString userToPosix( const QString &userFormat, const QMap<QString, QString> &map ) const;
 
-    // The current merged Group and User global config/settings
-    // From KGlobal::config(), does NOT include the country settings
-    //KSharedConfigPtr m_globalConfig;
-    KConfigGroup m_globalSettings;
-    // The current Group global config/settings
-    // Initially from KGlobal::config(), does NOT include the User or Country settings
-    KSharedConfigPtr m_groupConfig;
-    KConfigGroup m_groupSettings;
-    // The current User global config/settings, with kcm modifications
-    // Initially from KGlobal::config(), does NOT include the Group or Country settings
+    // The current User settings from .kde/share/config/kdeglobals
+    // This gets updated with the users changes in the kcm and saved when requested
     KSharedConfigPtr m_userConfig;
     KConfigGroup m_userSettings;
-    // The KCM Default config/settings,
-    // A merger of C, Country, and Group, i.e. excluding User
-    KSharedConfigPtr m_defaultConfig;
-    KConfigGroup m_defaultSettings;
-    // The Country Locale config
-    // From l10n/<county>/entry.desktop
-    KSharedConfigPtr m_countryConfig;
-    KConfigGroup m_countrySettings;
-    // The default C Locale config/settings
-    // From l10n/C/entry.desktop
-    KSharedConfigPtr m_cConfig;
-    KConfigGroup m_cSettings;
-    // The kcm config/settings
-    // A merger of C, Country, Group and USer settings, as well as unsaved changes.
+    // The kcm config/settings, a merger of C, Country, Group and User settings
+    // This is used to build the displayed settings and to initialise the sample locale, but never saved
     KSharedConfigPtr m_kcmConfig;
     KConfigGroup m_kcmSettings;
+    // The currently saved user config/settings
+    // This is used to check if anything has changed, but never saved
+    // Wouldn't be needed if KConfig/KConfigGroup had a simple isDirty() call
+    KSharedConfigPtr m_currentConfig;
+    KConfigGroup m_currentSettings;
+
+    // The KCM Default settings, a merger of C, Country, and Group, i.e. excluding User
+    KSharedConfigPtr m_defaultConfig;
+    KConfigGroup m_defaultSettings;
+    // The current Group settings, i.e. does NOT include the User or Country settings
+    KSharedConfigPtr m_groupConfig;
+    KConfigGroup m_groupSettings;
+    // The Country Locale config from l10n/<country>/entry.desktop
+    KSharedConfigPtr m_countryConfig;
+    KConfigGroup m_countrySettings;
+    // The default C Locale config/settings from l10n/C/entry.desktop
+    KSharedConfigPtr m_cConfig;
+    KConfigGroup m_cSettings;
 
     QMap<QString, QString> m_dateFormatMap;
     QMap<QString, QString> m_timeFormatMap;
@@ -360,10 +359,14 @@ private:
     // because KLocale does not add a language if there is no translation
     // for the current application so it would not be possible to set
     // a language which has no systemsettings/kcontrol module translation
-    QStringList m_translations;
+    // The list of translations used in the kcm, is users list plus us_EN
+    QStringList m_kcmTranslations;
+    // The currently saved list of user translations, used to check if value changed
+    QString m_currentTranslations;
+    // The currently installed translations, used to check if users translations are valid
     QStringList m_installedTranslations;
 
-    // The locale we use when displaying the sample output, not used for anythign else
+    // The locale we use when displaying the sample output, not used for anything else
     KLocale *m_kcmLocale;
 
     Ui::KCMLocaleWidget *m_ui;

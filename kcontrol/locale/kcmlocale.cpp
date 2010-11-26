@@ -47,12 +47,13 @@ K_EXPORT_PLUGIN( KCMLocaleFactory( "kcmlocale" ) )
 
 KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
          : KCModule( KCMLocaleFactory::componentData(), parent, args ),
-           //m_globalConfig( 0 ),
-           m_groupConfig( 0 ),
            m_userConfig( 0 ),
+           m_kcmConfig( 0 ),
+           m_currentConfig( 0 ),
+           m_defaultConfig( 0 ),
+           m_groupConfig( 0 ),
            m_countryConfig( 0 ),
            m_cConfig( 0 ),
-           m_kcmConfig( 0 ),
            m_kcmLocale( 0 ),
            m_ui( new Ui::KCMLocaleWidget )
 {
@@ -66,36 +67,23 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
 
     m_ui->setupUi( this );
 
-    // Setup the Global Config/Settings
-    // These are the merged Group and User settings, excluding the Country and C settings
-    // This will be used to obtain the tial settings, and to save any User changes
-    //m_globalConfig = KSharedConfig::openConfig( QString(), KConfig::FullConfig );
-    m_globalSettings = KConfigGroup( KGlobal::config(), "Locale" );
-
-    // Setup the Group Config/Settings
-    // These are the Group overrides, they exclude any User, Country, or C settings
-    // This will be used in the merge to obtain the KCM Defaults
-    m_groupConfig = KSharedConfig::openConfig( "groupconfig", KConfig::NoGlobals );
-    m_groupSettings = KConfigGroup( m_groupConfig, "Locale" );
-
     // Setup the User Config/Settings
     // These are the User overrides, they exclude any Group, Country, or C settings
     // This will be used to store the User changes
-    m_userConfig = KSharedConfig::openConfig( "userconfig", KConfig::IncludeGlobals );
+    m_userConfig = KSharedConfig::openConfig( "kcmlocaleuser", KConfig::IncludeGlobals );
     m_userSettings = KConfigGroup( m_userConfig, "Locale" );
 
     // Setup the KCM Config/Settings
     // These are the effective settings merging KCM Changes, User, Group, Country, and C settings
-    // This will be used to current state of settings in the KCM
-    m_kcmConfig = KSharedConfig::openConfig( "kcmconfig", KConfig::SimpleConfig );
+    // This will be used to display current state of settings in the KCM
+    m_kcmConfig = KSharedConfig::openConfig( "kcmlocalekcm", KConfig::SimpleConfig );
     m_kcmSettings = KConfigGroup( m_kcmConfig, "Locale" );
 
-    // Setup the C Config Settings
-    // These are the C/Posix defaults and KDE defaults where a setting doesn't exist in Posix
-    // This will be used as the lowest level in the merge to obtain the KCM Defaults
-    m_cConfig = KSharedConfig::openConfig( KStandardDirs::locate( "locale",
-                                           QString::fromLatin1("l10n/C/entry.desktop") ) );
-    m_cSettings= KConfigGroup( m_cConfig, "KCM Locale" );
+    // Setup the Current Config/Settings
+    // These are the currently saved User settings
+    // This will be used to check if the kcm settings have been changed
+    m_currentConfig = KSharedConfig::openConfig( "kcmlocalecurrent", KConfig::IncludeGlobals );
+    m_currentSettings = KConfigGroup( m_currentConfig, "Locale" );
 
     // Setup the Default Config/Settings
     // These will be a merge of the C, Country and Group settings
@@ -103,7 +91,20 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
     m_defaultConfig = KSharedConfig::openConfig( "defaultconfig", KConfig::SimpleConfig );
     m_defaultSettings = KConfigGroup( m_defaultConfig, "Locale" );
 
-    // Don't setup the KCM or Country Config/Settings or do the merge, leave that for mergeSettings() during load()
+    // Setup the Group Config/Settings
+    // These are the Group overrides, they exclude any User, Country, or C settings
+    // This will be used in the merge to obtain the KCM Defaults
+    m_groupConfig = KSharedConfig::openConfig( "kcmlocalegroup", KConfig::NoGlobals );
+    m_groupSettings = KConfigGroup( m_groupConfig, "Locale" );
+
+    // Don't setup the Country Config/Settings, leave that for mergeSettings() during load()
+
+    // Setup the C Config Settings
+    // These are the C/Posix defaults and KDE defaults where a setting doesn't exist in Posix
+    // This will be used as the lowest level in the merge to obtain the KCM Defaults
+    m_cConfig = KSharedConfig::openConfig( KStandardDirs::locate( "locale",
+                                           QString::fromLatin1("l10n/C/entry.desktop") ) );
+    m_cSettings= KConfigGroup( m_cConfig, "KCM Locale" );
 
     // Find out the system country using a null config
     KLocale *nullLocale = new KLocale( QLatin1String("dummy"), m_defaultConfig );
@@ -303,12 +304,11 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
 KCMLocale::~KCMLocale()
 {
     // Throw away any unsaved changes as delete calls an unwanted sync()
-    m_globalSettings.markAsClean();
-    m_groupSettings.markAsClean();
+    m_kcmConfig->markAsClean();
     m_userSettings.markAsClean();
+    m_groupSettings.markAsClean();
     m_countryConfig->markAsClean();
     m_cConfig->markAsClean();
-    m_kcmConfig->markAsClean();
     delete m_kcmLocale;
     delete m_ui;
 }
@@ -318,11 +318,14 @@ KCMLocale::~KCMLocale()
 void KCMLocale::load()
 {
     // Throw away any unsaved changes
-    m_globalSettings.markAsClean();
     m_userSettings.markAsClean();
 
     // Then create the new settings using the default, include user settings
-    mergeSettings( KGlobal::locale()->country(), true );
+    mergeSettings( KGlobal::locale()->country() );
+
+    // Save the current translations for checking later
+    m_currentTranslations.clear();
+    m_currentTranslations = m_kcmSettings.readEntry( "Language", QString() );
 
     // The update all the widgets to use the new settings
     initAllWidgets();
@@ -336,12 +339,15 @@ void KCMLocale::load()
 void KCMLocale::defaults()
 {
     // Throw away any unsaved changes
-    m_globalSettings.markAsClean();
     m_userSettings.markAsClean();
-    m_userSettings.deleteGroup();
+    m_userSettings.deleteGroup( KConfig::Persistent | KConfig::Global );
 
     // Then create the new settings using the default, exclude user settings
-    mergeSettings( KGlobal::locale()->country(), false );
+    mergeSettings( KGlobal::locale()->country() );
+
+    // Save the current translations for checking later
+    m_currentTranslations.clear();
+    m_currentTranslations = m_kcmSettings.readEntry( "Language", QString() );
 
     // The update all the widgets to use the new settings
     initAllWidgets();
@@ -413,7 +419,7 @@ void KCMLocale::copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, con
     }
 }
 
-void KCMLocale::mergeSettings( const QString &countryCode, bool mergeUser )
+void KCMLocale::mergeSettings( const QString &countryCode )
 {
     // Load up the required country settings
     m_countryConfig = KSharedConfig::openConfig( KStandardDirs::locate( "locale",
@@ -426,52 +432,31 @@ void KCMLocale::mergeSettings( const QString &countryCode, bool mergeUser )
     copySettings( &m_cSettings, &m_defaultSettings );
     copySettings( &m_countrySettings, &m_defaultSettings );
     copySettings( &m_groupSettings, &m_defaultSettings );
-/*
-kDebug() << "c       = " << m_cSettings.entryMap();
-kDebug() << "";
-kDebug() << "country = " << m_countrySettings.entryMap();
-kDebug() << "";
-kDebug() << "group   = " << m_groupSettings.entryMap();
-kDebug() << "";
-kDebug() << "default = " << m_defaultSettings.entryMap();
-kDebug() << "";
-*/
-    // Merge the KCM settings, i.e. C, Country, Group, and optionally User
+
+    // Merge the KCM settings, i.e. C, Country, Group, and User
     m_kcmSettings.deleteGroup();
     copySettings( &m_defaultSettings, &m_kcmSettings );
-    if ( mergeUser ) {
-        copySettings( &m_userSettings, &m_kcmSettings );
-    }
-/*
-kDebug() << "user    = " << m_userSettings.entryMap();
-kDebug() << "";
-kDebug() << "kcm     = " << m_kcmSettings.entryMap();
-kDebug() << "";
-kDebug() << "global  = " << m_globalSettings.entryMap();
-kDebug() << "";
-*/
-    // Create the kcm locale from the config, it may or may not include globals
+    copySettings( &m_userSettings, &m_kcmSettings );
+
+    // Create the kcm locale from the kcm settings
     delete m_kcmLocale;
     m_kcmLocale = new KLocale( QLatin1String("kcmlocale"), m_kcmConfig );
-    m_translations = m_kcmSettings.readEntry( "Language", QString() ).split( ':', QString::SkipEmptyParts );
+
+    // Create the kcm translations list, add us_EN if not already included
+    m_kcmTranslations.clear();
+    m_kcmTranslations = m_kcmSettings.readEntry( "Language", QString() ).split( ':', QString::SkipEmptyParts );
+    if ( !m_kcmTranslations.contains( "en_US" ) ) {
+        m_kcmTranslations.append( "en_US" );
+    }
 }
 
 void KCMLocale::save()
 {
-/*
-kDebug() << "before save global = " << m_globalSettings.entryMap();
-    QStringList keyList = m_userSettings.keyList();
-    foreach ( const QString & key, keyList ) {
-        m_globalSettings.deleteEntry( key, KConfig::Persistent | KConfig::Global );
-    }
-    m_userSettings.copyTo( &m_globalSettings );
-    //m_globalSettings.sync();
-kDebug() << "after save global = " << m_globalSettings.entryMap();
-*/
-    bool langChanged = false;
+    m_userSettings.sync();
+    m_currentConfig->reparseConfiguration();
+
     // rebuild the date base if language was changed
-    if (langChanged)
-    {
+    if ( m_currentTranslations != m_kcmSettings.readEntry( "Language", QString() ) ) {
         KMessageBox::information(this, ki18n("Changed language settings apply only to "
                                             "newly started applications.\nTo change the "
                                             "language of all programs, you will have to "
@@ -612,52 +597,24 @@ void KCMLocale::initResetButtons()
 
 void KCMLocale::checkIfChanged()
 {
-    // Not the most elegant solution, but probably quicker than comparing all the values
-    // individually and simpler than maintaining a list of changed items.
-    if ( m_ui->m_buttonResetCountry->isEnabled() ||
-         m_ui->m_buttonResetCountryDivision->isEnabled() ||
-         m_ui->m_buttonResetTranslations->isEnabled() ||
-         m_ui->m_buttonResetThousandsSeparator->isEnabled() ||
-         m_ui->m_buttonResetDecimalSymbol->isEnabled() ||
-         m_ui->m_buttonResetDecimalPlaces->isEnabled() ||
-         m_ui->m_buttonResetPositiveSign->isEnabled() ||
-         m_ui->m_buttonResetNegativeSign->isEnabled() ||
-         m_ui->m_buttonResetDigitSet->isEnabled() ||
-         m_ui->m_buttonResetCurrencyCode->isEnabled() ||
-         m_ui->m_buttonResetCurrencySymbol->isEnabled() ||
-         m_ui->m_buttonResetMonetaryThousandsSeparator->isEnabled() ||
-         m_ui->m_buttonResetMonetaryDecimalSymbol->isEnabled() ||
-         m_ui->m_buttonResetMonetaryDecimalPlaces->isEnabled() ||
-         m_ui->m_buttonResetMonetaryPositiveFormat->isEnabled() ||
-         m_ui->m_buttonResetMonetaryNegativeFormat->isEnabled() ||
-         m_ui->m_buttonResetMonetaryDigitSet->isEnabled() ||
-         m_ui->m_buttonResetCalendarSystem->isEnabled() ||
-         m_ui->m_buttonResetCalendarGregorianUseCommonEra->isEnabled() ||
-         m_ui->m_buttonResetShortYearWindow->isEnabled() ||
-         m_ui->m_buttonResetWeekStartDay->isEnabled() ||
-         m_ui->m_buttonResetWorkingWeekStartDay->isEnabled() ||
-         m_ui->m_buttonResetWorkingWeekEndDay->isEnabled() ||
-         m_ui->m_buttonResetWeekDayOfPray->isEnabled() ||
-         m_ui->m_buttonResetTimeFormat->isEnabled() ||
-         m_ui->m_buttonResetAmSymbol->isEnabled() ||
-         m_ui->m_buttonResetPmSymbol->isEnabled() ||
-         m_ui->m_buttonResetDateFormat->isEnabled() ||
-         m_ui->m_buttonResetShortDateFormat->isEnabled() ||
-         m_ui->m_buttonResetMonthNamePossessive->isEnabled() ||
-         m_ui->m_buttonResetDateTimeDigitSet->isEnabled() ||
-         m_ui->m_buttonResetPageSize->isEnabled() ||
-         m_ui->m_buttonResetMeasureSystem->isEnabled() ||
-         m_ui->m_buttonResetBinaryUnitDialect->isEnabled() ) {
-            emit changed( true );
-         } else {
-            emit changed( false );
-         }
+    if ( m_userSettings.keyList() != m_currentSettings.keyList() ) {
+        emit changed( true );
+    } else {
+        foreach( const QString & key, m_currentSettings.keyList() ) {
+            if ( m_userSettings.readEntry( key, QString() ) !=
+                 m_currentSettings.readEntry( key, QString() ) ) {
+                emit changed( true );
+                return;
+            }
+        }
+        emit changed( false );
+    }
 }
 
 void KCMLocale::setItem( const QString itemKey, const QString &itemValue, QWidget *itemWidget, KPushButton *itemDefaultButton )
 {
     // If the setting is locked down by Kiosk, then don't let the user make any changes, and disable the widgets
-    if ( m_globalSettings.isEntryImmutable( itemKey ) ) {
+    if ( m_userSettings.isEntryImmutable( itemKey ) ) {
             itemWidget->setEnabled( false );
             itemDefaultButton->setEnabled( false );
     } else {
@@ -665,10 +622,10 @@ void KCMLocale::setItem( const QString itemKey, const QString &itemValue, QWidge
         // If the new value is not the default, then enable the default button
         m_kcmSettings.writeEntry( itemKey, itemValue );
         if ( itemValue != m_defaultSettings.readEntry( itemKey, QString() ) ) {
-            m_userSettings.writeEntry( itemKey, itemValue );
+            m_userSettings.writeEntry( itemKey, itemValue, KConfig::Persistent | KConfig::Global );
             itemDefaultButton->setEnabled( true );
         } else {
-            m_userSettings.deleteEntry( itemKey );
+            m_userSettings.deleteEntry( itemKey, KConfig::Persistent | KConfig::Global );
             itemDefaultButton->setEnabled( false );
         }
         checkIfChanged();
@@ -678,7 +635,7 @@ void KCMLocale::setItem( const QString itemKey, const QString &itemValue, QWidge
 void KCMLocale::setItem( const QString itemKey, int itemValue, QWidget *itemWidget, KPushButton *itemDefaultButton )
 {
     // If the setting is locked down by Kiosk, then don't let the user make any changes, and disable the widgets
-    if ( m_globalSettings.isEntryImmutable( itemKey ) ) {
+    if ( m_userSettings.isEntryImmutable( itemKey ) ) {
             itemWidget->setEnabled( false );
             itemDefaultButton->setEnabled( false );
     } else {
@@ -686,10 +643,10 @@ void KCMLocale::setItem( const QString itemKey, int itemValue, QWidget *itemWidg
         // If the new value is not the default (i.e. is set in user), then save it and enable the default button
         m_kcmSettings.writeEntry( itemKey, itemValue );
         if ( itemValue != m_defaultSettings.readEntry( itemKey, 0 ) ) {
-            m_userSettings.writeEntry( itemKey, itemValue );
+            m_userSettings.writeEntry( itemKey, itemValue, KConfig::Persistent | KConfig::Global );
             itemDefaultButton->setEnabled( true );
         } else {  // Is the default so delete any user setting
-            m_userSettings.deleteEntry( itemKey );
+            m_userSettings.deleteEntry( itemKey, KConfig::Persistent | KConfig::Global );
             itemDefaultButton->setEnabled( false );
         }
         checkIfChanged();
@@ -699,7 +656,7 @@ void KCMLocale::setItem( const QString itemKey, int itemValue, QWidget *itemWidg
 void KCMLocale::setItem( const QString itemKey, bool itemValue, QWidget *itemWidget, KPushButton *itemDefaultButton )
 {
     // If the setting is locked down by Kiosk, then don't let the user make any changes, and disable the widgets
-    if ( m_globalSettings.isEntryImmutable( itemKey ) ) {
+    if ( m_userSettings.isEntryImmutable( itemKey ) ) {
             itemWidget->setEnabled( false );
             itemDefaultButton->setEnabled( false );
     } else {
@@ -707,10 +664,10 @@ void KCMLocale::setItem( const QString itemKey, bool itemValue, QWidget *itemWid
         // If the new value is not the default, then save it and enable the default button
         m_kcmSettings.writeEntry( itemKey, itemValue );
         if ( itemValue != m_defaultSettings.readEntry( itemKey, false ) ) {
-            m_userSettings.writeEntry( itemKey, itemValue );
+            m_userSettings.writeEntry( itemKey, itemValue, KConfig::Persistent | KConfig::Global );
             itemDefaultButton->setEnabled( true );
         } else {
-            m_userSettings.deleteEntry( itemKey );
+            m_userSettings.deleteEntry( itemKey, KConfig::Persistent | KConfig::Global );
             itemDefaultButton->setEnabled( false );
         }
         checkIfChanged();
@@ -901,7 +858,7 @@ void KCMLocale::changedCountryIndex( int index )
 {
     m_ui->m_comboCountry->blockSignals( true );
     changeCountry( m_ui->m_comboCountry->itemData( index ).toString() );
-    mergeSettings( m_kcmSettings.readEntry( "Country", QString() ), true );
+    mergeSettings( m_kcmSettings.readEntry( "Country", QString() ) );
     m_ui->m_comboCountry->blockSignals( false );
     initSettingsWidgets();
 }
@@ -954,6 +911,9 @@ void KCMLocale::initTranslations()
 {
     m_ui->m_selectorTranslations->blockSignals( true );
 
+    m_ui->m_selectorTranslations->setAvailableInsertionPolicy( KActionSelector::BelowCurrent );
+    m_ui->m_selectorTranslations->setSelectedInsertionPolicy( KActionSelector::BelowCurrent );
+
     m_ui->m_selectorTranslations->setAvailableLabel( ki18n( "Available Languages:" ).toString( m_kcmLocale ) );
     QString availableHelp = ki18n( "<p>This is the list of installed KDE Workspace language "
                                    "translations not currently being used.  To use a language "
@@ -981,18 +941,22 @@ void KCMLocale::initTranslations()
     m_installedTranslations.clear();
     m_installedTranslations = m_kcmLocale->installedLanguages();
     // Get the users choice of languages
-    m_translations.clear();
-    m_translations = m_kcmSettings.readEntry( "Language" ).split( ':', QString::SkipEmptyParts );
+    m_kcmTranslations.clear();
+    m_kcmTranslations = m_kcmSettings.readEntry( "Language" ).split( ':', QString::SkipEmptyParts );
     // Set up the locale, note it will throw away invalid langauges
-    m_kcmLocale->setLanguage( m_translations );
+    m_kcmLocale->setLanguage( m_kcmTranslations );
+    // Add default of US English if not already selected
+    if ( !m_kcmTranslations.contains( "en_US" ) ) {
+        m_kcmTranslations.append( "en_US" );
+    }
 
     // Check if any of the user requested translations are no longer installed
     // If any missing remove them, we'll tell the user later
     QStringList missingLanguages;
-    foreach ( const QString &languageCode, m_translations ) {
+    foreach ( const QString &languageCode, m_kcmTranslations ) {
         if ( !m_installedTranslations.contains( languageCode ) ) {
             missingLanguages.append( languageCode );
-            m_translations.removeAll( languageCode );
+            m_kcmTranslations.removeAll( languageCode );
         }
     }
 
@@ -1001,23 +965,15 @@ void KCMLocale::initTranslations()
     m_ui->m_selectorTranslations->availableListWidget()->clear();
 
     // Load each user selected language into the selected list
-    foreach ( const QString &languageCode, m_translations ) {
+    foreach ( const QString &languageCode, m_kcmTranslations ) {
         QListWidgetItem *listItem = new QListWidgetItem( m_ui->m_selectorTranslations->selectedListWidget() );
         listItem->setText( m_kcmLocale->languageCodeToName( languageCode ) );
         listItem->setData( Qt::UserRole, languageCode );
     }
 
-    // If en_US not already selected, add it to the selected list as last option
-    if ( !m_translations.contains( "en_US" ) ) {
-        QListWidgetItem *listItem = new QListWidgetItem( m_ui->m_selectorTranslations->selectedListWidget() );
-        listItem->setText( m_kcmLocale->languageCodeToName( "en_US" ) );
-        listItem->setData( Qt::UserRole, "en_US" );
-        m_translations.append( "en_US" );
-    }
-
     // Load all the available languages the user hasn't selected into the available list
     foreach ( const QString &languageCode, m_installedTranslations ) {
-        if ( !m_translations.contains( languageCode ) ) {
+        if ( !m_kcmTranslations.contains( languageCode ) ) {
             QListWidgetItem *listItem = new QListWidgetItem( m_ui->m_selectorTranslations->availableListWidget() );
             listItem->setText( m_kcmLocale->languageCodeToName( languageCode ) );
             listItem->setData( Qt::UserRole, languageCode );
@@ -1041,32 +997,40 @@ void KCMLocale::initTranslations()
 
 void KCMLocale::defaultTranslations()
 {
-    m_translations.clear();
-    m_translations = m_defaultSettings.readEntry( "Language" ).split( ':', QString::SkipEmptyParts );
-    mergeSettings( m_kcmSettings.readEntry( "Country", QString() ), true );
-    m_kcmLocale->setLanguage( m_translations );
-    initAllWidgets();
+    changeTranslations( m_defaultSettings.readEntry( "Langauge", QString() ) );
 }
 
 void KCMLocale::changeTranslations()
 {
-    m_translations.clear();
-
+    // Read the list from the selector widget
+    QStringList selectedTranslations;
     foreach( QListWidgetItem *item, m_ui->m_selectorTranslations->selectedListWidget()->selectedItems() ) {
-        m_translations.append( item->data( Qt::UserRole ).toString() );
+        selectedTranslations.append( item->data( Qt::UserRole ).toString() );
     }
 
-    QString itemValue = m_translations.join( ":" );
-    if ( itemValue != m_defaultSettings.readEntry( "Language", QString() ) ) {
-        m_userSettings.writeEntry( "Language", itemValue );
-    } else {
-        m_userSettings.deleteEntry( "Language" );
+    // Get rid of en_US if it's still last choice, i.e. default
+    if ( selectedTranslations.last() == "en_US" ) {
+        selectedTranslations.removeLast();
     }
-    mergeSettings( m_kcmSettings.readEntry( "Country", QString() ), true );
-    m_kcmLocale->setLanguage( m_translations );
+
+    changeTranslations( selectedTranslations.join( ":" ) );
+}
+
+void KCMLocale::changeTranslations( const QString &newValue )
+{
+    setItem( "Language", newValue, m_ui->m_selectorTranslations, m_ui->m_buttonResetTranslations );
+
+    // Create the kcm translations list
+    m_kcmTranslations.clear();
+    m_kcmTranslations = m_kcmSettings.readEntry( "Language", QString() ).split( ':', QString::SkipEmptyParts );
+    // Set up the locale without en_US as will add it itself
+    m_kcmLocale->setLanguage( m_kcmTranslations );
+    // Add us_EN if not already included
+    if ( !m_kcmTranslations.contains( "en_US" ) ) {
+        m_kcmTranslations.append( "en_US" );
+    }
+
     initAllWidgets();
-
-    checkIfChanged();
 }
 
 void KCMLocale::initTranslationsInstall()
