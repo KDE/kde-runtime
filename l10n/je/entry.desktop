@@ -1,6 +1,7 @@
 [KCM Locale]
 Name=Jersey
 Name[cs]=Jersey
+Name[da]=Jersey
 Name[et]=Jersey
 Name[hu]=Jersey
 Name[ia]=Jersey
@@ -12,6 +13,7 @@ Name[nds]=Jersey
 Name[nl]=Jersey
 Name[pt]=Jersey
 Name[pt_BR]=Jersey
+Name[ru]=Джерси
 Name[sv]=Jersey
 Name[uk]=Джерсі
 Name[x-test]=xxJerseyxx

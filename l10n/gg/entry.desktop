@@ -1,6 +1,9 @@
 [KCM Locale]
 Name=Guernsey
+Name[da]=Guernsey
+Name[de]=Guernsey
 Name[et]=Guernsey
+Name[hi]=गुर्नसे
 Name[hu]=Guernsey
 Name[ia]=Guernsey
 Name[kk]=Гернсей ар.
@@ -11,6 +14,7 @@ Name[nds]=Guernsey
 Name[nl]=Guernsey
 Name[pt]=Guernsey
 Name[pt_BR]=Guernsey
+Name[ru]=Гернси
 Name[sv]=Guernsey
 Name[uk]=Острів Гернсі
 Name[x-test]=xxGuernseyxx

@@ -1,6 +1,8 @@
 [KCM Locale]
 Name=Isle of Man
 Name[cs]=Ostrov Man
+Name[da]=Isle of Man
+Name[de]=Isle of Man
 Name[et]=Mani saar
 Name[hu]=Man sziget
 Name[ia]=Insula de Man
@@ -12,6 +14,7 @@ Name[nds]=Isle of Man
 Name[nl]=Eiland Man
 Name[pt]=Ilha de Man
 Name[pt_BR]=Ilha de Man
+Name[ru]=Остров Мэн
 Name[sv]=Isle of Man
 Name[uk]=Острів Мен
 Name[x-test]=xxIsle of Manxx
