@@ -102,8 +102,14 @@ bool KSolidNotify::isSafelyRemovable(const QString &udi)
 		Solid::StorageDrive *drive = parent.as<Solid::StorageDrive>();
 		return (!drive->isInUse() && (drive->isHotpluggable() || drive->isRemovable()));
 	}
-
-	return !m_devices[udi].as<Solid::StorageAccess>()->isAccessible();
+	Solid::StorageAccess* access = m_devices[udi].as<Solid::StorageAccess>();
+	if (access) {
+		return !m_devices[udi].as<Solid::StorageAccess>()->isAccessible();
+	} else {
+		// If this check fails, the device has been already physically 
+		// ejected, so no need to say that it is safe to remove it
+		return false;
+	}
 }
 
 void KSolidNotify::connectSignals(Solid::Device* device)
