@@ -348,7 +348,9 @@ void BacktraceParser::calculateRatingData()
             functionIndex++;
         } else if (firstUsefulFound) {
             //Add "[...]" if there are invalid functions in the middle
-            d->m_simplifiedBacktrace += QLatin1String("[...]\n");
+            if (!d->m_simplifiedBacktrace.endsWith(QLatin1String("[...]\n"))) {
+                d->m_simplifiedBacktrace += QLatin1String("[...]\n");
+            }
         }
     }
 
