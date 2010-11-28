@@ -46,6 +46,14 @@ static void sighandler(int /*sig*/)
 
 extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
     {
+    // Disable Session Management the right way (C)
+    //
+    // ksmserver has global shortcuts. disableSessionManagement() does not prevent Qt from
+    // registering the app with the session manager. We remove the address to make sure we do not
+    // get a hang on kglobalaccel restart (kglobalaccel tries to register with ksmserver,
+    // ksmserver tries to register with kglobalaccel).
+    unsetenv( "SESSION_MANAGER" );
+
     KAboutData aboutdata(
             "kglobalaccel",
             0,
