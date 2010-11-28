@@ -189,7 +189,14 @@ private Q_SLOTS:
     void changeTranslations();
     void changeTranslations( const QString &newValue );
 
-    //void callTranslationsInstall();
+    void translationsAvailableSelectionChanged();
+    void translationsSelectedSelectionChanged();
+    void translationsAdd();
+    void translationsRemove();
+    void translationsUp();
+    void translationsDown();
+
+    void translationsInstall();
 
     //Numeric tab
 
