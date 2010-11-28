@@ -159,13 +159,13 @@ konqueror=filemanagement
 #---
 
 [BZGroups]
-kdeplatform=kde|kdelibs|kio|kfile|Oxygen|solid
-kdepim-base=kontact|kdepimlibs|kdepim|Akonadi|kresources|konqueror
+kdeplatform=kde|kdelibs|kio|kfile|Oxygen|solid|Phonon|Akonadi
+kdepim-base=kontact|kdepimlibs|kdepim|kresources|konqueror
 kdepim-apps=kontact|korganizer|kaddressbook|akregator|kmail
 koffice=koffice|koshell|kspread|kword|krita|karbon|kchart|kplato|kpresenter
 kdevelop=kdevelop|kdevplatform
 kdebindings=bindings
-multimedia=Phonon|kdemultimedia|taglib
+multimedia=kdemultimedia|taglib
 imaging=digikam|digikamimageplugins|kipiplugins
 networkmanager=knetworkmanager|Network Management|solid
 scanner=libksane
