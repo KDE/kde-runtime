@@ -1026,8 +1026,21 @@ void KCMLocale::initTranslations()
     m_ui->m_buttonTranslationsAdd->blockSignals( false );
     m_ui->m_buttonTranslationsRemove->blockSignals( false );
 
-    m_ui->m_listTranslationsSelected->setCurrentRow( 0 );
-    translationsSelectedSelectionChanged();
+    // Default to selecting the first Selected language,
+    // otherwise the first Available language,
+    // otherwise no languages so disable all buttons
+    if ( m_ui->m_listTranslationsSelected->count() > 1 ) {
+        m_ui->m_listTranslationsSelected->setCurrentRow( 0 );
+        translationsSelectedSelectionChanged();
+    } else if ( m_ui->m_listTranslationsAvailable->count() > 1 ) {
+        m_ui->m_listTranslationsAvailable->setCurrentRow( 0 );
+        translationsAvailableSelectionChanged();
+    } else {
+        m_ui->m_buttonTranslationsAdd->setEnabled( false );
+        m_ui->m_buttonTranslationsRemove->setEnabled( false );
+        m_ui->m_buttonTranslationsUp->setEnabled( false );
+        m_ui->m_buttonTranslationsDown->setEnabled( false );
+    }
 
     // Now tell the user about the missing languages
     foreach ( const QString &languageCode, missingLanguages ) {
@@ -1083,7 +1096,6 @@ void KCMLocale::translationsAvailableSelectionChanged()
 {
     // If user selects item in Available list, clear Selected selection, enable/disable arrows
     m_ui->m_listTranslationsSelected->clearSelection();
-    m_ui->m_buttonTranslationsRemove->setEnabled( false );
     m_ui->m_buttonTranslationsAdd->setEnabled( true );
     m_ui->m_buttonTranslationsRemove->setEnabled( false );
     m_ui->m_buttonTranslationsUp->setEnabled( false );
