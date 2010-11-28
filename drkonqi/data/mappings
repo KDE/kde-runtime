@@ -109,6 +109,7 @@ kfontview=systemsettings|kcm_fontinst
 kbluetooth4=kde-bluetooth|general
 digikamthemedesigner=digikam|general
 polkit-kde-manager=policykit-kde|manager
+polkit-kde-authentication-agent-1=policykit-kde|polkit-kde-authentication-agent-1
 kepastray=kepas|general
 kpackagekitsmarticon=kpackagekit|general
 printer-applet-kde=printer-applet|general
