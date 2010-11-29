@@ -86,9 +86,6 @@ void Nepomuk::Query::SearchRunnable::run()
     time.start();
 #endif
 
-    // we push the results in batches to lower the traffic and improve the user experience
-    QList<Result> resultCache;
-
     Soprano::QueryResultIterator hits = ResourceManager::instance()->mainModel()->executeQuery( sparql, Soprano::Query::QueryLanguageSparql );
     while ( m_folder &&
             hits.next() ) {
@@ -96,18 +93,11 @@ void Nepomuk::Query::SearchRunnable::run()
 
         kDebug() << "Found result:" << result.resource().resourceUri() << result.score();
 
-        resultCache << result;
-
-        // FIXME: does it really make sense to emit results in batches? Or do we then waste time that we could already use to stat local file results in the kio slave?
-        static const int s_resultBatchSize = 20;
-        if( resultCache.count() >= s_resultBatchSize ) {
-            lock.relock();
-            if( m_folder ) {
-                m_folder->addResults( resultCache );
-                resultCache.clear();
-            }
-            lock.unlock();
+        lock.relock();
+        if( m_folder ) {
+            m_folder->addResults( QList<Result>() << result );
         }
+        lock.unlock();
     }
 
 #ifndef NDEBUG
@@ -116,8 +106,6 @@ void Nepomuk::Query::SearchRunnable::run()
 
     lock.relock();
     if( m_folder ) {
-        if( !resultCache.isEmpty() )
-            m_folder->addResults( resultCache );
         m_folder->listingFinished();
     }
 }
