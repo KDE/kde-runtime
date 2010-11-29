@@ -145,18 +145,18 @@ are selected automatically based on the country which is currently selected.
 </para>
 
 <para>
-In the <guilabel>Group seperator</guilabel> text box you can type the character
+In the <guilabel>Group separator</guilabel> text box you can type the character
 that you want to use to separate groups of digits in numbers, usually a
 <userinput>.</userinput> or a <userinput>,</userinput>. You should ensure that
-this value is different to the <guilabel>Decimal seperator</guilabel> setting.
+this value is different to the <guilabel>Decimal separator</guilabel> setting.
 The drop-down box provides a list of common values to choose from.
 </para>
 
 <para>
-In the <guilabel>Decimal seperator</guilabel> text box you can type the
+In the <guilabel>Decimal separator</guilabel> text box you can type the
 character that you want to use to separate the decimal portion of numbers,
 usually a <userinput>.</userinput> or a <userinput>,</userinput>. You should
-ensure that this value is different to the <guilabel>Group seperator</guilabel>
+ensure that this value is different to the <guilabel>Group separator</guilabel>
 setting. The drop-down box provides a list of common values to choose from.
 </para>
 
@@ -170,14 +170,18 @@ decimal places displayed for numeric values, &ie; the number of digits
 In the <guilabel>Positive sign</guilabel> text box you can type the character
 that you want to use to indicate positive numbers.  You should ensure that this
 value is different to the <guilabel>Negative sign</guilabel> setting.  The
-drop-down box provides a list of common values to choose from.
+drop-down box provides a list of common values to choose from. This value may
+also be used for monetary values depending on the <guilabel>Positive format
+</guilabel> selected in the <guilabel>Money</guilabel> tab.
 </para>
 
 <para>
 In the <guilabel>Negative sign</guilabel> text box you can type the character
 that you want to use to indicate negative numbers.  You should ensure that this
 value is different to the <guilabel>Positive sign</guilabel> setting.  The
-drop-down box provides a list of common values to choose from.
+drop-down box provides a list of common values to choose from. This value may
+also be used for monetary values depending on the <guilabel>Negative format
+</guilabel> selected in the <guilabel>Money</guilabel> tab.
 </para>
 
 <para>
@@ -202,61 +206,187 @@ separately on the <guilabel>Money</guilabel> tab.
 
 <title>Money</title>
 
-<para>Unlike the display of ordinary numbers, conventions for
-currency values do vary from region to region. However, you will
-find that the defaults are probably fine.</para>
+<para>
+On this tab, you can select options for how monetary values are displayed. The
+defaults are selected automatically based on the country which is currently
+selected.
+</para>
 
-<para>The character or characters representing the currency symbol
-are based on the country that is currently selected.
-The decimal symbol, thousands separator, decimal places, and digit set 
-for money work as they do for numbers.</para>
+<para>
+In the <guilabel>Currency</guilabel> drop-down box you can choose the currency
+you want to use when displaying monetary values.  This will default to the main
+currency in use in your selected country. You can choose a different currency
+from the drop-down box, which displays the names of all available currencies
+their ISO 4217 standard Currency Code. The currencies used in your selected
+country are listed at the top, followed by all the other currencies. Changing
+the currency will also update the <guilabel>Currency symbol</guilabel> to use
+the default symbol for that currency, but no other format settings will be
+changed.
+</para>
 
-<para>For both positive and negative currency values, you can
-control whether the currency symbol appears before or after the
-numeric value, and how the sign of the value is distinguished
-in the display. Note that the symbols used for the sign of
-currency values are the same as those used for other numeric
-values.</para>
+<para>
+In the <guilabel>Currency symbol</guilabel> drop-down box you can choose the
+currency symbol you want to use when displaying monetary values.  This will
+default to the usual symbol fo the currency you have selected in the
+<guilabel>Currency</guilabel> drop-down box. This will only allow you to select
+a valid currency symbol for the currency code to prevent inconsistent choices,
+such as choosing US Dollars but showing the Pound Sterling symbol £ instead.
+This setting will automatically be changed when you change the <guilabel>
+Currency</guilabel> setting.
+</para>
 
-<para>If the check box labeled <guilabel>Prefix currency
-symbol</guilabel> is selected, the currency symbol appears
-before the numeric value. If this check box is cleared, then the
-currency symbol appears after the numeric value.</para>
+<para>
+In the <guilabel>Group separator</guilabel> text box you can type the character
+that you want to use to separate groups of digits in monetary values, usually a
+<userinput>.</userinput> or a <userinput>,</userinput>. You should ensure that
+this value is different to the <guilabel>Decimal separator</guilabel> setting.
+The drop-down box provides a list of common values to choose from.
+</para>
 
-<para>There are five choices for the way in which the sign of the
-currency value is handled:</para>
-<itemizedlist>
-<listitem><para>The <guilabel>Parentheses around</guilabel>
-option displays the numeric value within a pair of
-parentheses.</para></listitem>
-<listitem><para>The <guilabel>Before Quantity Money</guilabel>
-option displays the sign before the numeric value, but after any
-currency symbol that may be present.</para></listitem>
-<listitem><para>The <guilabel>After Quantity Money</guilabel>
-option displays the sign after the numeric value, but before any
-currency symbol that may be present.</para></listitem>
-<listitem><para>The <guilabel>Before Money</guilabel> option
-displays the sign before the numeric value as well as any
-currency symbol that may be present.</para></listitem>
-<listitem><para>The <guilabel>After Money</guilabel> option
-displays the sign after the numeric value as well as any
-currency symbol that may be present.</para></listitem>
-</itemizedlist>
+<para>
+In the <guilabel>Decimal separator</guilabel> text box you can type the
+character that you want to use to separate the decimal portion of monetary
+values, usually a <userinput>.</userinput> or a <userinput>,</userinput>. You
+should ensure that this value is different to the <guilabel>Group separator
+</guilabel> setting. The drop-down box provides a list of common values to
+choose from.
+</para>
+
+<para>
+In the <guilabel>Decimal places</guilabel> spinbox you can set the number of
+decimal places displayed for monetary values, &ie; the number of digits
+<emphasis>after</emphasis> the decimal separator.
+</para>
+
+<para>
+In the <guilabel>Positive format</guilabel> drop-down box you can select how
+you want positive monetary values to be displayed. The drop-down box displays a
+list of ten sample formats that you can choose from, combining the options for
+where the <guilabel>Currency symbol</guilabel> and the numeric value
+<guilabel>Positive sign</guilabel> are displayed. You can also choose to
+replace the numeric value <guilabel>Positive sign</guilabel> with brackets.
+</para>
+
+<para>
+In the <guilabel>Negative format</guilabel> drop-down box you can select how
+you want negative monetary values to be displayed. The drop-down box displays a
+list of ten sample formats that you can choose from, combining the options for
+where the <guilabel>Currency symbol</guilabel> and the numeric value
+<guilabel>Negative sign</guilabel> are displayed. You can also choose to
+replace the numeric value <guilabel>Negative sign</guilabel> with brackets.
+</para>
+
+<para>
+The <guilabel>Digit set</guilabel> drop down box lists digit sets which may be
+used instead of Arabic digits when displaying money. If you select a digit
+set other than Arabic, it will be applied only to numbers which appear in a
+language context that uses that digit set while Arabic digits are still going
+to be used elsewhere, &eg; Arabic-Indic digits will be applied to Arabic but
+not to American English.
+</para>
+
+<para>
+Note that group separator, decimal separator, decimal places, positive sign,
+negative sign and the digit set used to display numeric values has to be set
+separately on the <guilabel>Numbers</guilabel> tab.
+</para>
 
 </sect2>
 
+
+<sect2 id="locale-calendar">
+
+<title>Calendar</title>
+
+<para>
+On this tab, you can select options for how calendar information is displayed.
+The defaults are selected automatically based on the country which is currently
+selected.
+</para>
+
+<para>
+In the <guilabel>Calendar system</guilabel> drop-down box you can choose the
+calendar system to be used when displaying or inputting dates. This will
+default to the main calendar system in use in your selected country, usually
+the Gregorian calendar. Changing the calendar system will also update the
+various weekday name drop-down combos with the names of days of the week in the
+new calendar system, will enable or disable the <guilabel>Use Common Era
+</guilabel> tick box and may change the value of the <guilabel>Short year
+window</guilabel> setting.
+</para>
+
+<para>
+Note that the Gregorian calendar used is a hybrid of the Julian calendar up to
+Thursday 4 October 1582 and the Gregorian calendar from Friday 15 October 1582,
+leaving a <quote>gap</quote> of ten <quote>missing</quote> days. We are aware
+this conversion date is not factually correct for all countries, however this
+is how Qt have chosen to implement the Gregorian calendar and we wish to remain
+consistent with them.
+</para>
+
+<para>
+If you have selected the Gregorian calendar system then the <guilabel>Use
+Common Era</guilabel> tick box will be enabled. This allows you to choose to
+use the Common Era (CE/BCE) instead of the Christian Era (AD/BC) when
+displaying and inputting dates. See the <guilabel>Date &amp; Time</guilabel>
+tab for how to set this up.
+</para>
+
+<para>
+The <guilabel>Short year window</guilabel> option is only used when you choose
+to use a short two digit year format (YY) in the <guilabel>Long date format
+</guilabel> or <guilabel>Short date format</guilabel> settings in the
+<guilabel>Date &amp; Time</guilabel> tab.  When inputting a short year value,
+&eg; 10, the system must guess what centuary that year falls in. By setting
+the <guilabel>Short year window</guilabel> you tell the system how you want the
+short year to be interpreted, &eg; whether 50 is interpreted as 1950 or 2050.
+This window can be set differently for each calendar system as they all use
+different epochs (start dates). For example, the Hebrew calendar is into its
+58th centuary (2010 Gregorian is roughly 5771 Hebrew), so may use a window of
+5750 to 5850.
+</para>
+
+<para>
+In the <guilabel>First day of week</guilabel> drop-down box you can choose
+which weekday isconsidered the first day of the week.  This value is often
+used when dispalying calendar tables to determine which day is listed first.
+</para>
+
+<para>
+In the <guilabel>First working day of week</guilabel> drop-down box you can
+choose which weekday is considered the first working day of the week. This
+value is often used when dispalying calendar tables to determine when the
+weekend is.
+</para>
+
+<para>
+In the <guilabel>Last working day of week</guilabel> drop-down box you can
+choose which weekday is considered the last working day of the week. This
+value is often used when dispalying calendar tables to determine when the
+weekend is.
+</para>
+
+<para>
+In the <guilabel>Week day for special religious observance</guilabel> drop-down
+box you can choose which weekday is regularly used for special religious
+observances. This value is often used when dispalying calendar tables to
+<quote>red letter</quote> a certain day. If you do not have any particular
+weekday for religious observance then you can choose the <quote>None / None in
+particular</quote> option.
+</para>
+
+</sect2>
+
+
 <sect2 id="locale-datetime">
-<title>Time &amp; Dates</title>
 
-<para>If you use a different calendar system than Gregorian, you can
-choose this from the first drop down box.</para>
+<title>Date &amp; Time</title>
 
-<para>The next option determines if the Common Era (CE/BCE) should be 
-used instead of the Christian Era (AD/BC)</para>
-
-<para>Likewise, if numbers in date and time strings should use
-digits other than basic Arabic, another set of digits can be selected
-from the second drop down box.</para>
+<para>
+On this tab, you can select options for how calendar information is displayed.
+The defaults are selected automatically based on the country which is currently
+selected.
+</para>
 
 <para>On the rest of this page, there are text boxes for the time, long
 date, and short date, in which you can type format strings to control
@@ -320,8 +450,12 @@ and last working day of the week and the day of the week for religious observanc
 in your country.</para>
 
 </sect2>
+
+
 <sect2 id="locale-other">
+
 <title>Other</title>
+
 <para>You can select the default paper format with the combo box labeled <guilabel>Paper Format</guilabel>.</para>
 
 <para>Use the drop down box labeled <guilabel>Measure system</guilabel> to select Imperial or
@@ -342,4 +476,5 @@ counted in bytes can be changed using drop down box <guilabel>Units for byte siz
 </sect2>
 
 </sect1>
+
 </article>
