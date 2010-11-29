@@ -637,11 +637,13 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
     // Remove data which is useless but still around from before. This could happen due to some buggy version of
     // the indexer or the filewatch service or even some application messing up the data.
     // We look for indexed files that do not have a nie:url defined and thus, will never be catched by any of the
-    // other queries.
+    // other queries. In addition we check for an isPartOf relation since strigi produces EmbeddedFileDataObjects
+    // for video and audio streams.
     //
     Query::Query q(
         Strigi::Ontology::indexGraphFor() == ( Soprano::Vocabulary::RDF::type() == Query::ResourceTerm( Nepomuk::Vocabulary::NFO::FileDataObject() ) &&
-                                               !( Nepomuk::Vocabulary::NIE::url() == Query::Term() ) )
+                                               !( Nepomuk::Vocabulary::NIE::url() == Query::Term() ) &&
+                                               !( Nepomuk::Vocabulary::NIE::isPartOf() == Query::Term() ) )
         );
     q.setQueryFlags(Query::Query::NoResultRestrictions);
     query = q.toSparqlQuery();
