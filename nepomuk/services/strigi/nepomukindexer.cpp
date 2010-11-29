@@ -211,8 +211,11 @@ void Nepomuk::Indexer::clearIndexedData( const Nepomuk::Resource& res )
 
 void Nepomuk::Indexer::stop()
 {
+    kDebug();
     d->m_analyzerConfig.setStop( true );
     d->m_indexFeeder->stop();
+    d->m_indexFeeder->wait();
+    kDebug() << "done";
 }
 
 #include "nepomukindexer.moc"
