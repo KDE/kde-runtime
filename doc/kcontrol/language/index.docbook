@@ -99,8 +99,8 @@ translations need to be installed first before you can choose to use them. The
 list of <guilabel>Available Languages</guilabel> shows what KDE translations
 are available on your system. If the language you want to use is not shown in
 this list then you will need to install it using the usual method for your
-system. Your system may have enabled the <guilabel>Install more languages</guilabel> 
-button to make this easy for you.
+system. Your system may have enabled the
+<guilabel>Install more languages</guilabel> button to make this easy for you.
 </para>
 
 <para>
@@ -161,7 +161,7 @@ setting. The drop-down box provides a list of common values to choose from.
 </para>
 
 <para>
-In the <guilabel>Decimal places</guilabel> spinbox you can set the number of
+In the <guilabel>Decimal places</guilabel> spin box you can set the number of
 decimal places displayed for numeric values, &ie; the number of digits
 <emphasis>after</emphasis> the decimal separator.
 </para>
@@ -171,8 +171,9 @@ In the <guilabel>Positive sign</guilabel> text box you can type the character
 that you want to use to indicate positive numbers.  You should ensure that this
 value is different to the <guilabel>Negative sign</guilabel> setting.  The
 drop-down box provides a list of common values to choose from. This value may
-also be used for monetary values depending on the <guilabel>Positive format</guilabel> 
-selected in the <guilabel>Money</guilabel> tab.
+also be used for monetary values depending on the
+<guilabel>Positive format</guilabel> selected in the <guilabel>Money</guilabel>
+tab.
 </para>
 
 <para>
@@ -180,8 +181,9 @@ In the <guilabel>Negative sign</guilabel> text box you can type the character
 that you want to use to indicate negative numbers.  You should ensure that this
 value is different to the <guilabel>Positive sign</guilabel> setting.  The
 drop-down box provides a list of common values to choose from. This value may
-also be used for monetary values depending on the <guilabel>Negative format</guilabel> 
-selected in the <guilabel>Money</guilabel> tab.
+also be used for monetary values depending on the
+<guilabel>Negative format</guilabel> selected in the <guilabel>Money</guilabel>
+tab.
 </para>
 
 <para>
@@ -194,7 +196,7 @@ not to American English.
 </para>
 
 <para>
-Note that group Separator, decimal separator, decimal places, positive format,
+Note that group separator, decimal separator, decimal places, positive format,
 negative format and the digit set used to display monetary values has to be set
 separately on the <guilabel>Money</guilabel> tab.
 </para>
@@ -227,12 +229,12 @@ changed.
 <para>
 In the <guilabel>Currency symbol</guilabel> drop-down box you can choose the
 currency symbol you want to use when displaying monetary values.  This will
-default to the usual symbol for the currency you have selected in the
+default to the usual symbol of the currency you have selected in the
 <guilabel>Currency</guilabel> drop-down box. This will only allow you to select
 a valid currency symbol for the currency code to prevent inconsistent choices,
 such as choosing US Dollars but showing the Pound Sterling symbol £ instead.
-This setting will automatically be changed when you change the <guilabel>
-Currency</guilabel> setting.
+This setting will automatically be changed when you change the
+<guilabel>Currency</guilabel> setting.
 </para>
 
 <para>
@@ -247,13 +249,13 @@ The drop-down box provides a list of common values to choose from.
 In the <guilabel>Decimal separator</guilabel> text box you can type the
 character that you want to use to separate the decimal portion of monetary
 values, usually a <userinput>.</userinput> or a <userinput>,</userinput>. You
-should ensure that this value is different to the <guilabel>Group separator
-</guilabel> setting. The drop-down box provides a list of common values to
-choose from.
+should ensure that this value is different to the
+<guilabel>Group separator</guilabel> setting. The drop-down box provides a list
+of common values to choose from.
 </para>
 
 <para>
-In the <guilabel>Decimal places</guilabel> spinbox you can set the number of
+In the <guilabel>Decimal places</guilabel> spin box you can set the number of
 decimal places displayed for monetary values, &ie; the number of digits
 <emphasis>after</emphasis> the decimal separator.
 </para>
@@ -310,9 +312,9 @@ calendar system to be used when displaying or inputting dates. This will
 default to the main calendar system in use in your selected country, usually
 the Gregorian calendar. Changing the calendar system will also update the
 various weekday name drop-down combos with the names of days of the week in the
-new calendar system, will enable or disable the <guilabel>Use Common Era</guilabel> 
-tick box and may change the value of the <guilabel>Short year
-window</guilabel> setting.
+new calendar system, will enable or disable the <guilabel>Use Common Era</guilabel>
+tick box and may change the value of the <guilabel>Short year window</guilabel>
+setting.
 </para>
 
 <para>
@@ -334,8 +336,8 @@ tab for how to set this up.
 
 <para>
 The <guilabel>Short year window</guilabel> option is only used when you choose
-to use a short two digit year format (YY) in the <guilabel>Long date format</guilabel> 
-or <guilabel>Short date format</guilabel> settings in the
+to use a short two digit year format (YY) in the <guilabel>Long date
+format</guilabel> or <guilabel>Short date format</guilabel> settings in the
 <guilabel>Date &amp; Time</guilabel> tab.  When inputting a short year value,
 &eg; 10, the system must guess what century that year falls in. By setting
 the <guilabel>Short year window</guilabel> you tell the system how you want the
@@ -371,8 +373,8 @@ In the <guilabel>Week day for special religious observance</guilabel> drop-down
 box you can choose which weekday is regularly used for special religious
 observances. This value is often used when displaying calendar tables to
 <quote>red letter</quote> a certain day. If you do not have any particular
-weekday for religious observance then you can choose the <quote>None / None in
-particular</quote> option.
+weekday for religious observance then you can choose the
+<parameter>None / None in particular</parameter> option.
 </para>
 
 </sect2>
@@ -383,71 +385,153 @@ particular</quote> option.
 <title>Date &amp; Time</title>
 
 <para>
-On this tab, you can select options for how calendar information is displayed.
-The defaults are selected automatically based on the country which is currently
-selected.
+On this tab, you can select options for how date and time values are input or
+displayed. The defaults are selected automatically based on the country which
+is currently selected.
 </para>
 
-<para>On the rest of this page, there are text boxes for the time, long
-date, and short date, in which you can type format strings to control
-the way in which times and dates are displayed.</para>
-
-<para>Except for the special codes described below, any other characters in the
-format strings are displayed literally. The special codes consist of a
-<parameter>%</parameter> sign followed by a character, as shown in the list of
-codes below:</para>
+<para>
+In the <guilabel>Time format</guilabel> text box you can enter the format that
+you want to use to input and display times. The format entered is a combination
+of special codes representing time components and literal text used to separate
+the time components. The special time component codes are listed below. You can
+set the format to any combination of time components you like, but you should
+always include at least an hour and minutes portion to allow you to input times
+that are not ambiguous. The drop-down box provides a list of common time
+formats in your currently selected language to choose from.
+</para>
 
 <itemizedlist>
-<listitem><para>Time format codes:</para>
-  <itemizedlist>
-
-  <listitem><para><parameter>HH</parameter> - The hour according to a 24-hour
-  clock, using two digits (00 to 23).</para></listitem>
-  <listitem><para><parameter>hH</parameter> - The hour according to a 24-hour
-  clock, using one or two digits (0 to 23).</para></listitem>
-  <listitem><para><parameter>PH</parameter> (uppercase <quote>p</quote>) - The hour according
-  to a 12-hour clock, using two digits (01 to 12).</para></listitem>
-  <listitem><para><parameter>pH</parameter> (lowercase <quote>p</quote>) - The hour according
-  to a 12-hour clock, using one or two digits (1 to 12).</para></listitem>
-  <listitem><para><parameter>MM</parameter> - The current minute using two digits
-  (00 to 59).</para></listitem>
-  <listitem><para><parameter>SS</parameter> - The current second using two digits
-  (00 to 59).</para></listitem>
-  <listitem><para><parameter>AMPM</parameter> - Either <quote>am</quote> or <quote>pm</quote> depending on the hour.
-  Useful with <parameter>PH</parameter> or
-  <parameter>pH</parameter>.</para></listitem>
-  </itemizedlist>
-</listitem>
-
-<listitem><para>Date format codes:</para>
-  <itemizedlist>
-  <listitem><para><parameter>YYYY</parameter> - The year, using 4
-  digits.</para></listitem>
-  <listitem><para><parameter>YY</parameter> - The year, using 2
-  digits.</para></listitem>
-  <listitem><para><parameter>MM</parameter> - The month, using 2 digits (01 to
-  12).</para></listitem>
-  <listitem><para><parameter>mM</parameter> - The month, using 1 or 2 digits (1
-  to 12).</para></listitem>
-  <listitem><para><parameter>MONTH</parameter> - The name of the
-  month.</para></listitem>
-  <listitem><para><parameter>SHORTMONTH</parameter> - The abbreviated name of the
-  month.</para></listitem>
-  <listitem><para><parameter>DD</parameter> - The day, using 2 digits (01 to
-  31).</para></listitem>
-  <listitem><para><parameter>dD</parameter> - The day, using 1 or 2 digits (1 to
-  31).</para></listitem>
-  <listitem><para><parameter>WEEKDAY</parameter> - The name of the
-  weekday.</para></listitem>
-  <listitem><para><parameter>SHORTWEEKDAY</parameter> - The abbreviated name of the
-  weekday.</para></listitem>
-  </itemizedlist>
-</listitem>
+<listitem><para>
+<parameter>HH</parameter> - The hour as a decimal number using a 24-hour clock
+(00-23).
+</para></listitem>
+<listitem><para>
+<parameter>hH</parameter> - The hour as a decimal number using a 24-hour clock
+(0-23).
+</para></listitem>
+<listitem><para>
+<parameter>PH</parameter> - The hour as a decimal number using a 12-hour clock
+(01-12).
+</para></listitem>
+<listitem><para>
+<parameter>pH</parameter> - The hour as a decimal number using a 12-hour clock
+(1-12).
+</para></listitem>
+<listitem><para>
+<parameter>MM</parameter> - The minutes as a decimal number (00-59).
+</para></listitem>
+<listitem><para>
+<parameter>SS</parameter> - The seconds as a decimal number (00-59).
+</para></listitem>
+<listitem><para>
+<parameter>AMPM</parameter> - Either 'AM' or 'PM' according to the given time
+value. Noon is treated as 'PM' and midnight as 'AM'. You should always include
+this code if you are using the 12-hour clock codes <parameter>PH</parameter> or
+<parameter>pH</parameter> to prevent ambiguity when entering times.
+</para></listitem>
 </itemizedlist>
 
-<para>Finally, there are four combo boxes which let you select the first day, the first
-and last working day of the week and the day of the week for religious observance 
-in your country.</para>
+<para>
+In the <guilabel>AM symbol</guilabel> text box you can enter the symbol that
+you want to use to input or display for AM when using a 12-hour clock. The
+drop-down box provides a list of common symbols for your currently selected
+language to choose from.
+</para>
+
+<para>
+In the <guilabel>PM symbol</guilabel> text box you can enter the symbol that
+you want to use to input or display for PM when using a 12-hour clock. The
+drop-down box provides a list of common symbols for your currently selected
+language to choose from.
+</para>
+
+<para>
+In the <guilabel>Long date format</guilabel> text box you can enter the format
+that you want to use to input and display long dates. The format entered is a
+combination of special codes representing date components and literal text used
+to separate the date components. The special date component codes are listed
+below. You can set the format to any combination of date components you like,
+but you should always include at least enough components to uniquely identify a
+day in the year, &eg; a month and day, to allow you to input dates that are not
+ambiguous. If you don't include a year component then the current year will be
+used. The drop-down box provides a list of common date formats in your
+currently selected language to choose from.
+</para>
+
+<itemizedlist>
+<listitem><para>
+<parameter>YYYY</parameter> - The year with century as a decimal number
+(0000-9999).
+</para></listitem>
+<listitem><para>
+<parameter>YY</parameter> - The year without century as a decimal number
+(00-99).
+</para></listitem>
+<listitem><para>
+<parameter>MM</parameter> - The month as a decimal number (01-12).
+</para></listitem>
+<listitem><para>
+<parameter>mM</parameter> - The month as a decimal number (1-12).
+</para></listitem>
+<listitem><para>
+<parameter>MONTH</parameter> - The full month name.
+</para></listitem>
+<listitem><para>
+<parameter>SHORTMONTH</parameter> - The first three characters of the month
+name.
+</para></listitem>
+<listitem><para>
+<parameter>DD</parameter> - The day of month as a decimal number (01-31).
+</para></listitem>
+<listitem><para>
+<parameter>dD</parameter> - The day of month as a decimal number (1-31).
+</para></listitem>
+<listitem><para>
+<parameter>WEEKDAY</parameter> - The full weekday name.
+</para></listitem>
+<listitem><para>
+<parameter>SHORTWEEKDAY</parameter> - The first three characters of the weekday
+name.
+</para></listitem>
+<listitem><para>
+<parameter>ERAYEAR</parameter> - The Era Year in local format (&eg; 2000 AD).
+</para></listitem>
+<listitem><para>
+<parameter>SHORTERANAME</parameter> - The short Era Name (&eg; AD).
+</para></listitem>
+<listitem><para>
+<parameter>YEARINERA</parameter> - The Year in Era as a decimal number
+(&eg; 2000).
+</para></listitem>
+<listitem><para>
+<parameter>DAYOFYEAR</parameter> - The Day of Year as a decimal number.
+</para></listitem>
+<listitem><para>
+<parameter>ISOWEEK</parameter> - The ISO Week as a decimal number.
+</para></listitem>
+<listitem><para>
+<parameter>DAYOFISOWEEK</parameter> - The Day of the ISO Week as a decimal
+number.
+</para></listitem>
+</itemizedlist>
+
+<para>
+In the <guilabel>Short date format</guilabel> text box you can enter the format
+that you want to use to input and display short dates. This is in the same
+format as the <guilabel>Long date format</guilabel>, please read that section
+for more details. The drop-down box provides a list of common date formats in
+your currently selected language to choose from.
+</para>
+
+<para>
+The <guilabel>Digit set</guilabel> drop down box lists digit sets which may be
+used instead of Arabic digits when displaying dates and times. If you select a
+digit set other than Arabic, it will be applied only to numbers which appear in
+a language context that uses that digit set while Arabic digits are still going
+to be used elsewhere, &eg; Arabic-Indic digits will be applied to Arabic but
+not to American English.
+</para>
 
 </sect2>
 
@@ -456,22 +540,43 @@ in your country.</para>
 
 <title>Other</title>
 
-<para>You can select the default paper format with the combo box labeled <guilabel>Page size</guilabel>.</para>
-
-<para>Use the drop down box labeled <guilabel>Measurement system</guilabel> to select Imperial or
-Metric systems of measurement.</para>
-
-<para>The units used by most KDE programs to display numbers 
-counted in bytes can be changed using drop down box <guilabel>Byte size units</guilabel>. Traditionally <quote>kilobytes</quote> meant units of 1024, instead of the metric 1000, for most (but not all) byte sizes.
-  <itemizedlist>
-    <listitem><para>To reduce confusion you can use the recently standardized <guilabel>IEC Units</guilabel> which are always in multiples of 1024.</para>
-    </listitem>
-    <listitem><para>You can also select <guilabel>Metric Units</guilabel>, which is always in units of 1000.</para>
-    </listitem>
-    <listitem><para>Selecting <guilabel>JEDEC Units</guilabel> restores the older-style units used in &kde; 3.5 and some other operating systems.</para>
-    </listitem>
-  </itemizedlist>
+<para>
+On this tab, you can select how other options are displayed. The defaults are
+selected automatically based on the country which is currently selected.
 </para>
+
+<para>
+In the <guilabel>Page size</guilabel> drop-down box you can choose the page
+size to use as the default for new documents, &eg; in KWord. Note that this
+setting does not affect your default paper size in the print dialog, to set
+that you need to use the Printers module of the &kde; &systemsettings;.
+</para>
+
+<para>
+In the <guilabel>Page size</guilabel> drop-down box you can choose the
+measurement system to use, either metric or imperial.
+</para>
+
+<para>
+In the <guilabel>Byte size units</guilabel> drop-down box you can choose the
+unit system to use when displaying numbers counted in bytes.  Traditionally
+<quote>kilobytes</quote> meant units of 1024 instead of the metric 1000 for
+most but not all byte sizes. To reduce confusion you can choose which system
+you prefer. The available unit systems are listed below.
+</para>
+
+<itemizedlist>
+<listitem><para>
+The <parameter>IEC Units</parameter> standard is always in multiples of 1024.
+</para></listitem>
+<listitem><para>
+The <parameter>Metric Units</parameter> standard is always in multiples of 1000.
+</para></listitem>
+<listitem><para>
+The <parameter>JEDEC Units</parameter> standard uses the traditional units used
+in &kde; 3.5 and some other operating systems.
+</para></listitem>
+</itemizedlist>
 
 </sect2>
 
