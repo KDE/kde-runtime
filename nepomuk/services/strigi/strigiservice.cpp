@@ -229,7 +229,7 @@ void Nepomuk::StrigiService::updateFolder(const QString& path, bool forced)
             dirPath = info.absolutePath();
 
         if ( StrigiServiceConfig::self()->shouldFolderBeIndexed( dirPath ) ) {
-            kDebug() << "Updating : " << path;
+            kDebug() << "Updating : " << dirPath;
             m_indexScheduler->updateDir( dirPath, forced );
         }
     }
