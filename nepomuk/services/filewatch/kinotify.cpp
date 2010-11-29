@@ -204,6 +204,9 @@ public:
         if ( !pathsToWatch.isEmpty() ) {
             QMetaObject::invokeMethod( q, "_k_addWatches", Qt::QueuedConnection );
         }
+        else {
+            kDebug() << "All watches installed";
+        }
     }
 
 private:
