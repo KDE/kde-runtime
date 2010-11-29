@@ -14,7 +14,7 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
  </authorgroup>
 
-	  <date>2010-10-11</date>
+	  <date>2010-11-29</date>
 	  <releaseinfo>4.6</releaseinfo>
 
 	  <keywordset>
@@ -26,98 +26,177 @@
 	  </keywordset>
 </articleinfo>
 
+
 <sect1 id="locale">
+
 <title>Country/Region &amp; Language</title>
 
-<para>This module of the &kde; &systemsettings; allows you select
-customization options that depend on the region of the world that you
-happen to live in. There are five different tabs in this module, each
-of which is described in detail in the following sections.</para>
-
-<para>In most cases, you can simply select the country and the language, and
-the other options will be set in an appropriate manner.</para>
-
-<para>Below the tabs of this module, you can see a preview of what the
-settings look like. In addition to positive and negative numbers, you
-can see how positive and negative currency values, long and short dates,
-and times are displayed. When you change any of the settings, the
-preview shows the effects of the changes before you apply them.</para>
-
-<sect2 id="locale-locale">
-<title>Locale</title>
-
-<para>On the top of the this tab you can
-select the country or region that you want
-to use.</para>
-
-<para>When you click on <guilabel>change</guilabel>,
-a dialog pops up showing major groups of countries. You can select
-one of these regions and see a list of the countries that are
-available for that region.</para>
-
-<para>The settings for numbers, money, date and time will automatically 
-switch to the corresponding values.</para>
-
-<para>The main part of this tab is a list of all available languages. 
-The &GUI; of &kde; programs will be displayed in the first language in this list. 
-If the first language in the list is not available, the second will be used, &etc;</para>
-
-<para>Using the buttons on the left side of the list you can move the order of a 
-highlighted language up and down.</para>
-
-<para>Click on the <guilabel>Add Language</guilabel> drop down box to add a 
-language to the list. If the language is already in the 
-list, it will be moved up to the first place in the list instead.</para>
-
-<para>If only US English is available, no translations have been installed.
+<para>
+This module of the &kde; &systemsettings; allows you to select customization
+options that depend on the region of the world that you happen to live in.
+There are seven different tabs in this module, each of which is described in
+detail in the following sections.
 </para>
 
-<note><para>
-Note that some applications and documentations may not be translated to your language; in 
-this case, they will automatically fall back to US English.</para></note>
-<note><para>
-Language and Country/Region are independent settings. Changing a language
-does <emphasis>not</emphasis> automatically change the settings for numbers,
-currency &etc; to the corresponding country or region.</para></note>
+<para>
+In most cases, you can simply select the country and the language, and the
+other options will be set in an appropriate manner.
+</para>
+
+<para>
+Below the tabs of this module you can see a preview of what the settings look
+like. In addition to positive and negative numbers, you can see how positive
+and negative currency values, long and short dates, and times are displayed.
+When you change any of the settings, the preview shows the effects of the
+changes before you apply them.
+</para>
+
+<para>
+Each setting option in the various tabs has an individual Default button which
+is activated whenever that setting is different to your country default value.
+Clicking on the button will restore only that setting to your Country default.
+</para>
+
+
+<sect2 id="locale-country">
+
+<title>Country</title>
+
+<para>
+In this tab you can select the country or region that you want to use.
+</para>
+
+<para>
+The <guilabel>Country</guilabel> drop down box contains the list of available
+countries and will initially show your currently selected country. If the
+selection shows <quote>System Country</quote> then you have not set a country
+and are defaulting to the Country set by the system, which will also be shown.
+Changing the country will automatically change the settings to the defaults for
+that country, except were you have set your own settings which will be left
+unchanged.  You can easily see where your personal settings differ from the
+country settings by looking at the Default button next to the individual
+setting. If the button is enabled then your personal setting is different and
+you can click on the button to restore the country setting for that option
+only.
+</para>
+
 </sect2>
+
+
+<sect2 id="locale-languages">
+
+<title>Language</title>
+
+<para>
+In this tab you can set your preferred languages for the &kde; Workspace and
+Applications to be displayed in.
+</para>
+
+<para>
+The &kde; Workspace and Applications are written in American English and are
+translated into many different languages by teams of volunteers. These
+translations need to be installed first before you can choose to use them. The
+list of <guilabel>Available Languages</guilabel> shows what KDE translations
+are available on your system. If the language you want to use is not shown in
+this list then you will need to install it using the usual method for your
+system. Your system may have enabled the <guilabel>Install More Languages
+</guilabel> button to make this easy for you.
+</para>
+
+<para>
+The <guilabel>Preferred Languages</guilabel> list shows the languages that will
+be used when displaying the &kde; Workspace and Applications. Because not all
+of the KDE Workspace and Applications may be translated into every language
+&kde; will try to find suitable translations for you by working down the
+<guilabel>Preferred Languages</guilabel> list until it finds a translation. If
+none of your preferred languages have a required translation then the original
+American English will be used.
+</para>
+
+<para>
+You can add a language to the <guilabel>Preferred Languages</guilabel> list by
+selecting it in the <guilabel>Available Languages</guilabel> and then clicking
+on the Add arrow button. You can remove a language from the
+<guilabel>Preferred Languages</guilabel> list by selecting it and then clicking
+on the Remove arrow button. You can change the order of preference in the
+<guilabel>Preferred Languages</guilabel> list by selecting a language and
+clicking on the Up or Down arrow button.
+</para>
+
+<note>
+<para>
+Language and Country/Region are independent settings. Changing a language does
+<emphasis>not</emphasis> automatically change the settings for numbers,
+currency &etc; to the corresponding country or region. It will only change the
+language used in displaying dates, such as month names.
+</para>
+</note>
+
+</sect2>
+
 
 <sect2 id="locale-numbers">
+
 <title>Numbers</title>
 
-<para>On this page, you can select options for how numbers are
-displayed. The defaults are selected automatically based on the country
-which is currently selected.</para>
+<para>
+On this tab, you can select options for how numbers are displayed. The defaults
+are selected automatically based on the country which is currently selected.
+</para>
 
-<para>In the text box labeled <guilabel>Decimal symbol</guilabel>, you
-can type the character that you want to use to separate the decimal
-portion of numbers. You could put anything here you wanted to, but
-really, <userinput>.</userinput> and <userinput>,</userinput> are the
-two characters that make the most sense.</para>
+<para>
+In the <guilabel>Group seperator</guilabel> text box you can type the character
+that you want to use to separate groups of digits in numbers, usually a
+<userinput>.</userinput> or a <userinput>,</userinput>. You should ensure that
+this value is different to the <guilabel>Decimal seperator</guilabel> setting.
+The drop-down box provides a list of common values to choose from.
+</para>
 
-<para>Similarly, you can choose the character which is used to group
-units of thousands in numbers. If no character, not even a space, is
-present, then there will be no separator for thousands.</para>
+<para>
+In the <guilabel>Decimal seperator</guilabel> text box you can type the
+character that you want to use to separate the decimal portion of numbers,
+usually a <userinput>.</userinput> or a <userinput>,</userinput>. You should
+ensure that this value is different to the <guilabel>Group seperator</guilabel>
+setting. The drop-down box provides a list of common values to choose from.
+</para>
 
-<para>The following two text boxes allow you to choose what character
-should be prefixed to positive and negative numbers respectively.
-For example, the default for English is not to have any prefix for
-positive numbers, and a <userinput>-</userinput> for negative numbers.</para>
+<para>
+In the <guilabel>Decimal places</guilabel> spinbox you can set the number of
+decimal places displayed for numeric values, &ie; the number of digits
+<emphasis>after</emphasis> the decimal separator.
+</para>
 
-<para>In the spinbox <guilabel>Decimal places</guilabel> 
-you can set the number of decimal places displayed for numeric values, 
-&ie; the number of digits <emphasis>after</emphasis> the decimal separator.</para>
+<para>
+In the <guilabel>Positive sign</guilabel> text box you can type the character
+that you want to use to indicate positive numbers.  You should ensure that this
+value is different to the <guilabel>Negative sign</guilabel> setting.  The
+drop-down box provides a list of common values to choose from.
+</para>
 
-<para>The <guilabel>Digit set</guilabel> drop down box presents digit sets
-which may be used instead of basic Arabic when displaying numbers.
-If you select a digit set other than Arabic, it will be applied only to
-numbers which appear in language context that admits this set
-(e.g. Arabic-Indic digits in application translated to Arabic language),
-while Arabic digits are still going to be used elsewhere.</para>
+<para>
+In the <guilabel>Negative sign</guilabel> text box you can type the character
+that you want to use to indicate negative numbers.  You should ensure that this
+value is different to the <guilabel>Positive sign</guilabel> setting.  The
+drop-down box provides a list of common values to choose from.
+</para>
 
-<para>Note that decimal symbol, thousands separator, decimal places and 
-the set of digits used to display monetary values has to be set 
-separately on the <guilabel>Money</guilabel> tab.</para>
+<para>
+The <guilabel>Digit set</guilabel> drop down box lists digit sets which may be
+used instead of Arabic digits when displaying numbers. If you select a digit
+set other than Arabic, it will be applied only to numbers which appear in a
+language context that uses that digit set while Arabic digits are still going
+to be used elsewhere, &eg; Arabic-Indic digits will be applied to Arabic but
+not to American English.
+</para>
+
+<para>
+Note that group Seperator, decimal separator, decimal places, positive format,
+negative format and the digit set used to display monetary values has to be set
+separately on the <guilabel>Money</guilabel> tab.
+</para>
+
 </sect2>
+
 
 <sect2 id="locale-money">
 
