@@ -242,7 +242,17 @@ void Nepomuk::IndexScheduler::run()
     // initialization
     queueAllFoldersForUpdate();
 
+#ifndef NDEBUG
+    QTime timer;
+    timer.start();
+#endif
+
     removeOldAndUnwantedEntries();
+
+#ifndef NDEBUG
+    kDebug() << "Removed old entries:" << timer.elapsed();
+    timer.restart();
+#endif
 
     while ( waitForContinue() ) {
         // wait for more dirs to analyze in case the initial
@@ -250,9 +260,17 @@ void Nepomuk::IndexScheduler::run()
         if ( m_dirsToUpdate.isEmpty() ) {
             setIndexingStarted( false );
 
+#ifndef NDEBUG
+            kDebug() << "All folders updated:" << timer.elapsed();
+#endif
+
             m_dirsToUpdateMutex.lock();
             m_dirsToUpdateWc.wait( &m_dirsToUpdateMutex );
             m_dirsToUpdateMutex.unlock();
+
+#ifndef NDEBUG
+            timer.restart();
+#endif
 
             if ( !m_stopped )
                 setIndexingStarted( true );
