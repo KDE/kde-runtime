@@ -255,8 +255,13 @@ namespace {
             // dateTime is stored as integer (time_t) in strigi
             bool ok = false;
             uint t = s.toUInt( &ok );
-            if ( ok )
-                return LiteralValue( QDateTime::fromTime_t( t ) );
+            if ( ok ) {
+                // workaround for id3 tags which might only have a year encoded
+                if ( t >= 1900 && t <= 9999 )
+                    return LiteralValue( QDateTime( QDate(t, 1, 1), QTime(0, 0), Qt::UTC ) );
+                else
+                    return LiteralValue( QDateTime::fromTime_t( t ) );
+            }
 
             // workaround for at least nie:contentCreated which is encoded like this: "2005:06:03 17:13:33"
             QDateTime dt = QDateTime::fromString( s, QLatin1String( "yyyy:MM:dd hh:mm:ss" ) );
