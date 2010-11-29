@@ -218,6 +218,25 @@ namespace {
              m_property.range().isValid() ) {
             return createBlankOrResourceNode( value );
         }
+
+        //
+        // We handle only one special case here: relations to other files
+        //
+        else if( m_property.range().isValid() &&
+                QFile::exists(QFile::decodeName(value.c_str())) ) {
+            Nepomuk::Resource fileRes(KUrl::fromLocalFile(QFile::decodeName(value.c_str())));
+            if( fileRes.exists() ) {
+                return Soprano::Node( fileRes.resourceUri() );
+            }
+            else {
+                kDebug() << "Cannot resolve local file path" << value.c_str() << "to a file resource!";
+                return Soprano::Node();
+            }
+        }
+
+        //
+        // fallback to literals
+        //
         else {
             return createLiteralValue( value );
         }
