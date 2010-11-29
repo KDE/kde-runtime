@@ -99,8 +99,8 @@ translations need to be installed first before you can choose to use them. The
 list of <guilabel>Available Languages</guilabel> shows what KDE translations
 are available on your system. If the language you want to use is not shown in
 this list then you will need to install it using the usual method for your
-system. Your system may have enabled the <guilabel>Install More Languages
-</guilabel> button to make this easy for you.
+system. Your system may have enabled the <guilabel>Install more languages</guilabel> 
+button to make this easy for you.
 </para>
 
 <para>
@@ -171,8 +171,8 @@ In the <guilabel>Positive sign</guilabel> text box you can type the character
 that you want to use to indicate positive numbers.  You should ensure that this
 value is different to the <guilabel>Negative sign</guilabel> setting.  The
 drop-down box provides a list of common values to choose from. This value may
-also be used for monetary values depending on the <guilabel>Positive format
-</guilabel> selected in the <guilabel>Money</guilabel> tab.
+also be used for monetary values depending on the <guilabel>Positive format</guilabel> 
+selected in the <guilabel>Money</guilabel> tab.
 </para>
 
 <para>
@@ -180,8 +180,8 @@ In the <guilabel>Negative sign</guilabel> text box you can type the character
 that you want to use to indicate negative numbers.  You should ensure that this
 value is different to the <guilabel>Positive sign</guilabel> setting.  The
 drop-down box provides a list of common values to choose from. This value may
-also be used for monetary values depending on the <guilabel>Negative format
-</guilabel> selected in the <guilabel>Money</guilabel> tab.
+also be used for monetary values depending on the <guilabel>Negative format</guilabel> 
+selected in the <guilabel>Money</guilabel> tab.
 </para>
 
 <para>
@@ -194,7 +194,7 @@ not to American English.
 </para>
 
 <para>
-Note that group Seperator, decimal separator, decimal places, positive format,
+Note that group Separator, decimal separator, decimal places, positive format,
 negative format and the digit set used to display monetary values has to be set
 separately on the <guilabel>Money</guilabel> tab.
 </para>
@@ -227,7 +227,7 @@ changed.
 <para>
 In the <guilabel>Currency symbol</guilabel> drop-down box you can choose the
 currency symbol you want to use when displaying monetary values.  This will
-default to the usual symbol fo the currency you have selected in the
+default to the usual symbol for the currency you have selected in the
 <guilabel>Currency</guilabel> drop-down box. This will only allow you to select
 a valid currency symbol for the currency code to prevent inconsistent choices,
 such as choosing US Dollars but showing the Pound Sterling symbol £ instead.
@@ -310,8 +310,8 @@ calendar system to be used when displaying or inputting dates. This will
 default to the main calendar system in use in your selected country, usually
 the Gregorian calendar. Changing the calendar system will also update the
 various weekday name drop-down combos with the names of days of the week in the
-new calendar system, will enable or disable the <guilabel>Use Common Era
-</guilabel> tick box and may change the value of the <guilabel>Short year
+new calendar system, will enable or disable the <guilabel>Use Common Era</guilabel> 
+tick box and may change the value of the <guilabel>Short year
 window</guilabel> setting.
 </para>
 
@@ -334,42 +334,42 @@ tab for how to set this up.
 
 <para>
 The <guilabel>Short year window</guilabel> option is only used when you choose
-to use a short two digit year format (YY) in the <guilabel>Long date format
-</guilabel> or <guilabel>Short date format</guilabel> settings in the
+to use a short two digit year format (YY) in the <guilabel>Long date format</guilabel> 
+or <guilabel>Short date format</guilabel> settings in the
 <guilabel>Date &amp; Time</guilabel> tab.  When inputting a short year value,
-&eg; 10, the system must guess what centuary that year falls in. By setting
+&eg; 10, the system must guess what century that year falls in. By setting
 the <guilabel>Short year window</guilabel> you tell the system how you want the
 short year to be interpreted, &eg; whether 50 is interpreted as 1950 or 2050.
 This window can be set differently for each calendar system as they all use
 different epochs (start dates). For example, the Hebrew calendar is into its
-58th centuary (2010 Gregorian is roughly 5771 Hebrew), so may use a window of
+58th century (2010 Gregorian is roughly 5771 Hebrew), so may use a window of
 5750 to 5850.
 </para>
 
 <para>
 In the <guilabel>First day of week</guilabel> drop-down box you can choose
-which weekday isconsidered the first day of the week.  This value is often
-used when dispalying calendar tables to determine which day is listed first.
+which weekday is considered the first day of the week.  This value is often
+used when displaying calendar tables to determine which day is listed first.
 </para>
 
 <para>
 In the <guilabel>First working day of week</guilabel> drop-down box you can
 choose which weekday is considered the first working day of the week. This
-value is often used when dispalying calendar tables to determine when the
+value is often used when displaying calendar tables to determine when the
 weekend is.
 </para>
 
 <para>
 In the <guilabel>Last working day of week</guilabel> drop-down box you can
 choose which weekday is considered the last working day of the week. This
-value is often used when dispalying calendar tables to determine when the
+value is often used when displaying calendar tables to determine when the
 weekend is.
 </para>
 
 <para>
 In the <guilabel>Week day for special religious observance</guilabel> drop-down
 box you can choose which weekday is regularly used for special religious
-observances. This value is often used when dispalying calendar tables to
+observances. This value is often used when displaying calendar tables to
 <quote>red letter</quote> a certain day. If you do not have any particular
 weekday for religious observance then you can choose the <quote>None / None in
 particular</quote> option.
@@ -456,13 +456,13 @@ in your country.</para>
 
 <title>Other</title>
 
-<para>You can select the default paper format with the combo box labeled <guilabel>Paper Format</guilabel>.</para>
+<para>You can select the default paper format with the combo box labeled <guilabel>Page size</guilabel>.</para>
 
-<para>Use the drop down box labeled <guilabel>Measure system</guilabel> to select Imperial or
+<para>Use the drop down box labeled <guilabel>Measurement system</guilabel> to select Imperial or
 Metric systems of measurement.</para>
 
 <para>The units used by most KDE programs to display numbers 
-counted in bytes can be changed using drop down box <guilabel>Units for byte sizes</guilabel>. Traditionally <quote>kilobytes</quote> meant units of 1024, instead of the metric 1000, for most (but not all) byte sizes.
+counted in bytes can be changed using drop down box <guilabel>Byte size units</guilabel>. Traditionally <quote>kilobytes</quote> meant units of 1024, instead of the metric 1000, for most (but not all) byte sizes.
   <itemizedlist>
     <listitem><para>To reduce confusion you can use the recently standardized <guilabel>IEC Units</guilabel> which are always in multiples of 1024.</para>
     </listitem>
