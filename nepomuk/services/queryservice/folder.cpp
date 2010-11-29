@@ -36,7 +36,8 @@ Nepomuk::Query::Folder::Folder( const Query& query, QObject* parent )
     : QObject( parent ),
       m_isSparqlQueryFolder( false ),
       m_query( query ),
-      m_currentSearchRunnable( 0 )
+      m_currentSearchRunnable( 0 ),
+      m_currentCountQueryRunnable( 0 )
 {
     init();
 }
