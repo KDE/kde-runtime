@@ -27,6 +27,24 @@ class QString;
 #include <Nepomuk/Query/Query>
 
 namespace Nepomuk {
+    /**
+     * The hierarchy in timeline:/ looks as follows:
+     *
+     * /
+     * |- /today
+     * |
+     * |- /calendar
+     * |  |- /calendar/2010
+     * |     |- /calendar/2010/january
+     * |        |- /calendar/2010/january/2010-01-01
+     * |  |- /calendar/2009
+     * |
+     * |- /months
+     * |  |- /month/2010
+     * |     |- /months/2010/january
+     * |
+     * |- /weeks
+     */
     enum TimelineFolderType {
         NoFolder = 0,    /// nothing
         RootFolder,      /// the root folder
