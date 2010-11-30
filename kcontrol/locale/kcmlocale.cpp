@@ -359,9 +359,6 @@ void KCMLocale::load()
 
     // The update all the widgets to use the new settings
     initAllWidgets();
-
-    // TODO Not sure why this is needed here, but it is on first load!
-    m_ui->m_buttonResetCountry->setEnabled( false );
 }
 
 // Defaults == User has clicked on Defaults to load default settings
@@ -514,6 +511,11 @@ QString KCMLocale::quickHelp() const
 
 void KCMLocale::initAllWidgets()
 {
+    //Common
+    initTabs();
+    initSample();
+    initResetButtons();
+
     //Country tab
     initCountry();
     initCountryDivision();
@@ -528,11 +530,6 @@ void KCMLocale::initAllWidgets()
 void KCMLocale::initSettingsWidgets()
 {
     // Initialise the settings widgets with the default values whenever the country or language changes
-
-    //Common
-    initTabs();
-    initSample();
-    initResetButtons();
 
     //Numeric tab
     initNumericThousandsSeparator();
@@ -1019,13 +1016,6 @@ void KCMLocale::initTranslations()
         }
     }
 
-    m_ui->m_listTranslationsAvailable->blockSignals( false );
-    m_ui->m_listTranslationsSelected->blockSignals( false );
-    m_ui->m_buttonTranslationsUp->blockSignals( false );
-    m_ui->m_buttonTranslationsDown->blockSignals( false );
-    m_ui->m_buttonTranslationsAdd->blockSignals( false );
-    m_ui->m_buttonTranslationsRemove->blockSignals( false );
-
     // Default to selecting the first Selected language,
     // otherwise the first Available language,
     // otherwise no languages so disable all buttons
@@ -1042,6 +1032,20 @@ void KCMLocale::initTranslations()
         m_ui->m_buttonTranslationsDown->setEnabled( false );
     }
 
+    if ( m_kcmSettings.readEntry( "Language", QString() ) ==
+         m_defaultSettings.readEntry( "Language", QString() ) ) {
+        m_ui->m_buttonResetTranslations->setEnabled( false );
+    } else {
+        m_ui->m_buttonResetTranslations->setEnabled( true );
+    }
+
+    m_ui->m_listTranslationsAvailable->blockSignals( false );
+    m_ui->m_listTranslationsSelected->blockSignals( false );
+    m_ui->m_buttonTranslationsUp->blockSignals( false );
+    m_ui->m_buttonTranslationsDown->blockSignals( false );
+    m_ui->m_buttonTranslationsAdd->blockSignals( false );
+    m_ui->m_buttonTranslationsRemove->blockSignals( false );
+
     // Now tell the user about the missing languages
     foreach ( const QString &languageCode, missingLanguages ) {
         KMessageBox::information(this, ki18n("You have the language with code '%1' in your list "
@@ -1056,7 +1060,7 @@ void KCMLocale::initTranslations()
 
 void KCMLocale::defaultTranslations()
 {
-    changeTranslations( m_defaultSettings.readEntry( "Langauge", QString() ) );
+    changeTranslations( m_defaultSettings.readEntry( "Language", QString() ) );
 }
 
 void KCMLocale::changeTranslations()
@@ -2285,6 +2289,11 @@ void KCMLocale::initMonthNamePossessive()
 
     changeMonthNamePossessive( m_kcmSettings.readEntry( "DateMonthNamePossessive", false ) );
 
+    // Hide the option as it's not usable without ordinal day numbers
+    m_ui->m_labelMonthNamePossessive->setHidden( true );
+    m_ui->m_checkMonthNamePossessive->setHidden( true );
+    m_ui->m_buttonResetMonthNamePossessive->setHidden( true );
+
     m_ui->m_checkMonthNamePossessive->blockSignals( false );
 }
 
@@ -2521,7 +2530,12 @@ void KCMLocale::changeBinaryUnitDialect( int newValue )
 {
     setComboItem( "BinaryUnitDialect", newValue,
                   m_ui->m_comboBinaryUnitDialect, m_ui->m_buttonResetBinaryUnitDialect );
-    m_kcmLocale->setBinaryUnitDialect( (KLocale::BinaryUnitDialect) m_kcmSettings.readEntry( "BinaryUnitDialect", 0 ) );
+    m_kcmLocale->setBinaryUnitDialect( (KLocale::BinaryUnitDialect)
+                                       m_kcmSettings.readEntry( "BinaryUnitDialect", 0 ) );
+    m_ui->m_labelBinaryUnitSample->setText( ki18nc("Example test for binary unit dialect",
+                                                   "Example: 2000 bytes equals %1")
+                                                  .subs( m_kcmLocale->formatByteSize( 2000, 2 ) )
+                                                  .toString( m_kcmLocale ) );
 }
 
 KLocale::CalendarSystem KCMLocale::calendarTypeToCalendarSystem(const QString &calendarType) const

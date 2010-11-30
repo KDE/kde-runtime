@@ -1374,6 +1374,9 @@
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="m_labelMonthNamePossessive">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="toolTip">
           <string/>
          </property>
@@ -1410,7 +1413,11 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetMonthNamePossessive"/>
+          <widget class="KPushButton" name="m_buttonResetMonthNamePossessive">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -1532,7 +1539,7 @@
          </item>
         </layout>
        </item>
-       <item row="2" column="1">
+       <item row="3" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_36">
          <item>
           <widget class="KComboBox" name="m_comboBinaryUnitDialect">
@@ -1555,13 +1562,20 @@
          </item>
         </layout>
        </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QLabel" name="m_labelBinaryUnitDialect">
          <property name="text">
           <string>Byte size units</string>
          </property>
          <property name="buddy">
           <cstring>m_comboBinaryUnitDialect</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLabel" name="m_labelBinaryUnitSample">
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>
