@@ -707,9 +707,6 @@
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="m_labelMonetaryPositiveFormat">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="toolTip">
           <string/>
          </property>
@@ -728,9 +725,6 @@
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
           <widget class="KComboBox" name="m_comboMonetaryPositiveFormat">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -746,19 +740,12 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetMonetaryPositiveFormat">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-          </widget>
+          <widget class="KPushButton" name="m_buttonResetMonetaryPositiveFormat"/>
          </item>
         </layout>
        </item>
        <item row="6" column="0">
         <widget class="QLabel" name="m_labelMonetaryNegativeFormat">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="toolTip">
           <string/>
          </property>
@@ -777,9 +764,6 @@
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
           <widget class="KComboBox" name="m_comboMonetaryNegativeFormat">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -795,11 +779,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetMonetaryNegativeFormat">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-          </widget>
+          <widget class="KPushButton" name="m_buttonResetMonetaryNegativeFormat"/>
          </item>
         </layout>
        </item>

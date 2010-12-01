@@ -101,12 +101,17 @@ private:
                      KIntNumInput *itemInput, KPushButton *itemDefaultButton );
     void setCheckItem( const QString itemKey, bool itemValue,
                        QCheckBox *itemCheck, KPushButton *itemDefaultButton );
+    void setMonetaryFormat( const QString prefixCurrencySymbolKey, bool prefixCurrencySymbol,
+                            const QString signPositionKey, KLocale::SignPosition signPosition,
+                            QWidget *formatWidget, KPushButton *formatDefaultButton );
     void checkIfChanged();
 
     //Common init utilities
     void initSeparatorCombo( KComboBox *separatorCombo );
     void initWeekDayCombo( KComboBox *dayCombo );
     void initDigitSetCombo( KComboBox *digitSetCombo );
+    void insertMonetaryPositiveFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition );
+    void insertMonetaryNegativeFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition );
 
     void initAllWidgets();
     void initSettingsWidgets();
@@ -240,11 +245,11 @@ private Q_SLOTS:
 
     void defaultMonetaryPositiveFormat();
     void changedMonetaryPositiveFormatIndex( int index );
-    void changeMonetaryPositiveFormat( int newValue );
+    void changeMonetaryPositiveFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition );
 
     void defaultMonetaryNegativeFormat();
     void changedMonetaryNegativeFormatIndex( int index );
-    void changeMonetaryNegativeFormat( int newValue );
+    void changeMonetaryNegativeFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition );
 
     void defaultMonetaryDigitSet();
     void changedMonetaryDigitSetIndex( int index );

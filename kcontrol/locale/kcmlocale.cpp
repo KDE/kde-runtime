@@ -1323,6 +1323,9 @@ void KCMLocale::changeNumericPositiveSign( const QString &newValue )
     setEditComboItem( "PositiveSign", useValue,
                       m_ui->m_comboPositiveSign, m_ui->m_buttonResetPositiveSign );
     m_kcmLocale->setPositiveSign( m_kcmSettings.readEntry( "PositiveSign", QString() ) );
+
+    // Update the monetary format samples to relect new setting
+    initMonetaryPositiveFormat();
 }
 
 void KCMLocale::initNumericNegativeSign()
@@ -1362,6 +1365,9 @@ void KCMLocale::changeNumericNegativeSign( const QString &newValue )
     setEditComboItem( "NegativeSign", useValue,
                       m_ui->m_comboNegativeSign, m_ui->m_buttonResetNegativeSign );
     m_kcmLocale->setNegativeSign( m_kcmSettings.readEntry( "NegativeSign", QString() ) );
+
+    // Update the monetary format samples to relect new setting
+    initMonetaryNegativeFormat();
 }
 
 void KCMLocale::initNumericDigitSet()
@@ -1509,6 +1515,10 @@ void KCMLocale::changeCurrencySymbol( const QString &newValue )
     } else {
         m_kcmLocale->setCurrencySymbol( m_kcmLocale->currency()->defaultSymbol() );
     }
+
+    // Update the monetary format samples to relect new setting
+    initMonetaryPositiveFormat();
+    initMonetaryNegativeFormat();
 }
 
 void KCMLocale::initMonetaryThousandsSeparator()
@@ -1545,6 +1555,10 @@ void KCMLocale::changeMonetaryThousandsSeparator( const QString &newValue )
     setEditComboItem( "MonetaryThousandsSeparator", useValue,
                       m_ui->m_comboMonetaryThousandsSeparator, m_ui->m_buttonResetMonetaryThousandsSeparator );
     m_kcmLocale->setMonetaryThousandsSeparator( m_kcmSettings.readEntry( "MonetaryThousandsSeparator", QString() ) );
+
+    // Update the monetary format samples to relect new setting
+    initMonetaryPositiveFormat();
+    initMonetaryNegativeFormat();
 }
 
 void KCMLocale::initMonetaryDecimalSymbol()
@@ -1581,6 +1595,10 @@ void KCMLocale::changeMonetaryDecimalSymbol( const QString &newValue )
     setEditComboItem( "MonetaryDecimalSymbol", useValue,
                       m_ui->m_comboMonetaryDecimalSymbol, m_ui->m_buttonResetMonetaryDecimalSymbol );
     m_kcmLocale->setMonetaryDecimalSymbol( m_kcmSettings.readEntry( "MonetaryDecimalSymbol", QString() ) );
+
+    // Update the monetary format samples to relect new setting
+    initMonetaryPositiveFormat();
+    initMonetaryNegativeFormat();
 }
 
 void KCMLocale::initMonetaryDecimalPlaces()
@@ -1611,6 +1629,21 @@ void KCMLocale::changeMonetaryDecimalPlaces( int newValue )
     setIntItem( "MonetaryDecimalPlaces", newValue,
                 m_ui->m_intMonetaryDecimalPlaces, m_ui->m_buttonResetMonetaryDecimalPlaces );
     m_kcmLocale->setMonetaryDecimalPlaces( m_kcmSettings.readEntry( "MonetaryDecimalPlaces", 0 ) );
+
+    // Update the monetary format samples to relect new setting
+    initMonetaryPositiveFormat();
+    initMonetaryNegativeFormat();
+}
+
+void KCMLocale::insertMonetaryPositiveFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition )
+{
+    KLocale custom( *m_kcmLocale );
+    custom.setPositivePrefixCurrencySymbol( prefixCurrencySymbol );
+    custom.setPositiveMonetarySignPosition( signPosition );
+    QVariantList options;
+    options.append( QVariant( prefixCurrencySymbol ) );
+    options.append( QVariant( signPosition ) );
+    m_ui->m_comboMonetaryPositiveFormat->addItem( custom.formatMoney( 123456.78 ), options );
 }
 
 void KCMLocale::initMonetaryPositiveFormat()
@@ -1624,6 +1657,51 @@ void KCMLocale::initMonetaryPositiveFormat()
     m_ui->m_comboMonetaryPositiveFormat->setToolTip( helpText );
     m_ui->m_comboMonetaryPositiveFormat->setWhatsThis( helpText );
 
+    m_ui->m_comboMonetaryPositiveFormat->clear();
+    // If the positive sign is null, then all the sign options will look the same, so only show a
+    // choice between parens and no sign, but preserve original position in case they do set sign
+    // Also keep options in same order, i.e. sign options then parens option
+    if ( m_kcmSettings.readEntry( "PositiveSign", QString() ).isEmpty() ) {
+        KLocale::SignPosition currentSignPosition = (KLocale::SignPosition) m_currentSettings.readEntry( "PositiveMonetarySignPosition", 0 );
+        KLocale::SignPosition kcmSignPosition = (KLocale::SignPosition) m_kcmSettings.readEntry( "PositiveMonetarySignPosition", 0 );
+        if ( currentSignPosition == KLocale::ParensAround && kcmSignPosition == KLocale::ParensAround ) {
+            //Both are parens, so also give a sign option
+            insertMonetaryPositiveFormat( true, KLocale::BeforeQuantityMoney );
+            insertMonetaryPositiveFormat( false, KLocale::BeforeQuantityMoney );
+            insertMonetaryPositiveFormat( true, kcmSignPosition );
+            insertMonetaryPositiveFormat( false, kcmSignPosition );
+        } else if ( kcmSignPosition == KLocale::ParensAround ) {
+            //kcm is parens, current is sign, use both in right order
+            insertMonetaryPositiveFormat( true, currentSignPosition );
+            insertMonetaryPositiveFormat( false, currentSignPosition );
+            insertMonetaryPositiveFormat( true, kcmSignPosition );
+            insertMonetaryPositiveFormat( false, kcmSignPosition );
+        } else {
+            // kcm is sign, current is parens, use both in right order
+            insertMonetaryPositiveFormat( true, kcmSignPosition );
+            insertMonetaryPositiveFormat( false, kcmSignPosition );
+            insertMonetaryPositiveFormat( true, currentSignPosition );
+            insertMonetaryPositiveFormat( false, currentSignPosition );
+        }
+    } else {
+        // Show the sign options first, then parens
+        // Could do a loop, but lets keep it simple
+        insertMonetaryPositiveFormat( true, KLocale::BeforeQuantityMoney );
+        insertMonetaryPositiveFormat( false, KLocale::BeforeQuantityMoney );
+        insertMonetaryPositiveFormat( true, KLocale::AfterQuantityMoney );
+        insertMonetaryPositiveFormat( false, KLocale::AfterQuantityMoney );
+        insertMonetaryPositiveFormat( true, KLocale::BeforeMoney );
+        insertMonetaryPositiveFormat( false, KLocale::BeforeMoney );
+        insertMonetaryPositiveFormat( true, KLocale::AfterMoney );
+        insertMonetaryPositiveFormat( false, KLocale::AfterMoney );
+        insertMonetaryPositiveFormat( true, KLocale::ParensAround );
+        insertMonetaryPositiveFormat( false, KLocale::ParensAround );
+    }
+
+    changeMonetaryPositiveFormat( m_kcmSettings.readEntry( "PositivePrefixCurrencySymbol", false ),
+                                  (KLocale::SignPosition) m_defaultSettings.readEntry( "PositiveMonetarySignPosition", 0 ) );
+
+    // These are the old strings, keep around for now in case new implementation isn't usable
     QString format = ki18n( "Sign position:" ).toString( m_kcmLocale );
     format = ki18n( "Parentheses Around" ).toString( m_kcmLocale );
     format = ki18n( "Before Quantity Money" ).toString( m_kcmLocale );
@@ -1644,14 +1722,83 @@ void KCMLocale::initMonetaryPositiveFormat()
 
 void KCMLocale::defaultMonetaryPositiveFormat()
 {
+    changeMonetaryPositiveFormat( m_defaultSettings.readEntry( "PositivePrefixCurrencySymbol", false ),
+                                  (KLocale::SignPosition) m_defaultSettings.readEntry( "PositiveMonetarySignPosition", 0 ) );
 }
 
 void KCMLocale::changedMonetaryPositiveFormatIndex( int index )
 {
+    QVariantList options = m_ui->m_comboMonetaryPositiveFormat->itemData( index ).toList();
+    bool prefixCurrencySymbol = options.at( 0 ).toBool();
+    KLocale::SignPosition signPosition = (KLocale::SignPosition) options.at( 1 ).toInt();
+    changeMonetaryPositiveFormat( prefixCurrencySymbol, signPosition );
 }
 
-void KCMLocale::changeMonetaryPositiveFormat( int newValue )
+void KCMLocale::setMonetaryFormat( const QString prefixCurrencySymbolKey, bool prefixCurrencySymbol,
+                                   const QString signPositionKey, KLocale::SignPosition signPosition,
+                                   QWidget *formatWidget, KPushButton *formatDefaultButton )
 {
+    // If either setting is locked down by Kiosk, then don't let the user make any changes, and disable the widgets
+    if ( m_userSettings.isEntryImmutable( prefixCurrencySymbolKey ) ||
+         m_userSettings.isEntryImmutable( signPositionKey ) ) {
+            formatWidget->setEnabled( false );
+            formatDefaultButton->setEnabled( false );
+    } else {
+        formatWidget->setEnabled( true );
+        formatDefaultButton->setEnabled( false );
+
+        m_kcmSettings.writeEntry( prefixCurrencySymbolKey, prefixCurrencySymbol );
+        m_kcmSettings.writeEntry( signPositionKey, (int) signPosition );
+
+        // If the new value is not the default (i.e. is set in user), then save it and enable the default button
+        if ( prefixCurrencySymbol != m_defaultSettings.readEntry( prefixCurrencySymbolKey, false ) ) {
+            m_userSettings.writeEntry( prefixCurrencySymbolKey, prefixCurrencySymbol, KConfig::Persistent | KConfig::Global );
+            formatDefaultButton->setEnabled( true );
+        } else {  // Is the default so delete any user setting
+            m_userSettings.deleteEntry( prefixCurrencySymbolKey, KConfig::Persistent | KConfig::Global );
+        }
+
+        // If the new value is not the default (i.e. is set in user), then save it and enable the default button
+        if ( signPosition != m_defaultSettings.readEntry( signPositionKey, 0 ) ) {
+            m_userSettings.writeEntry( signPositionKey, (int) signPosition, KConfig::Persistent | KConfig::Global );
+            formatDefaultButton->setEnabled( true );
+        } else {  // Is the default so delete any user setting
+            m_userSettings.deleteEntry( signPositionKey, KConfig::Persistent | KConfig::Global );
+        }
+
+        checkIfChanged();
+    }
+}
+
+void KCMLocale::changeMonetaryPositiveFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition )
+{
+    setMonetaryFormat( "PositivePrefixCurrencySymbol", prefixCurrencySymbol,
+                       "PositiveMonetarySignPosition", signPosition,
+                       m_ui->m_comboMonetaryPositiveFormat, m_ui->m_buttonResetMonetaryPositiveFormat );
+
+    // Read back the kcm values and use them in the sample locale
+    prefixCurrencySymbol = m_kcmSettings.readEntry( "PositivePrefixCurrencySymbol", false );
+    signPosition = (KLocale::SignPosition) m_kcmSettings.readEntry( "PositiveMonetarySignPosition", 0 );
+    m_kcmLocale->setPositivePrefixCurrencySymbol( prefixCurrencySymbol );
+    m_kcmLocale->setPositiveMonetarySignPosition( signPosition );
+
+    // Set the combo to the kcm value
+    QVariantList options;
+    options.append( QVariant( prefixCurrencySymbol ) );
+    options.append( QVariant( signPosition ) );
+    int index = m_ui->m_comboMonetaryPositiveFormat->findData( options );
+    m_ui->m_comboMonetaryPositiveFormat->setCurrentIndex( index );
+}
+
+void KCMLocale::insertMonetaryNegativeFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition )
+{
+    KLocale custom( *m_kcmLocale );
+    custom.setNegativePrefixCurrencySymbol( prefixCurrencySymbol );
+    custom.setNegativeMonetarySignPosition( signPosition );
+    QVariantList options;
+    options.append( QVariant( prefixCurrencySymbol ) );
+    options.append( QVariant( signPosition ) );
+    m_ui->m_comboMonetaryNegativeFormat->addItem( custom.formatMoney( -123456.78 ), options );
 }
 
 void KCMLocale::initMonetaryNegativeFormat()
@@ -1681,19 +1828,84 @@ void KCMLocale::initMonetaryNegativeFormat()
                     "value) for all negative monetary values. If "
                     "not, it will be postfixed (i.e. to the right)." ).toString( m_kcmLocale );
 
+    m_ui->m_comboMonetaryNegativeFormat->clear();
+    // If the negative sign is null, then all the sign options will look the same, so only show a
+    // choice between parens and no sign, but preserve original position in case they do set sign
+    // Also keep options in same order, i.e. sign options then parens option
+    if ( m_kcmSettings.readEntry( "NegativeSign", QString() ).isEmpty() ) {
+        KLocale::SignPosition currentSignPosition = (KLocale::SignPosition) m_currentSettings.readEntry( "NegativeMonetarySignPosition", 0 );
+        KLocale::SignPosition kcmSignPosition = (KLocale::SignPosition) m_kcmSettings.readEntry( "NegativeMonetarySignPosition", 0 );
+        if ( currentSignPosition == KLocale::ParensAround && kcmSignPosition == KLocale::ParensAround ) {
+            //Both are parens, so also give a sign option
+            insertMonetaryNegativeFormat( true, KLocale::BeforeQuantityMoney );
+            insertMonetaryNegativeFormat( false, KLocale::BeforeQuantityMoney );
+            insertMonetaryNegativeFormat( true, kcmSignPosition );
+            insertMonetaryNegativeFormat( false, kcmSignPosition );
+        } else if ( kcmSignPosition == KLocale::ParensAround ) {
+            //kcm is parens, current is sign, use both in right order
+            insertMonetaryNegativeFormat( true, currentSignPosition );
+            insertMonetaryNegativeFormat( false, currentSignPosition );
+            insertMonetaryNegativeFormat( true, kcmSignPosition );
+            insertMonetaryNegativeFormat( false, kcmSignPosition );
+        } else {
+            // kcm is sign, current is parens, use both in right order
+            insertMonetaryNegativeFormat( true, kcmSignPosition );
+            insertMonetaryNegativeFormat( false, kcmSignPosition );
+            insertMonetaryNegativeFormat( true, currentSignPosition );
+            insertMonetaryNegativeFormat( false, currentSignPosition );
+        }
+    } else {
+        // Show the sign options first, then parens
+        insertMonetaryNegativeFormat( true, KLocale::BeforeQuantityMoney );
+        insertMonetaryNegativeFormat( false, KLocale::BeforeQuantityMoney );
+        insertMonetaryNegativeFormat( true, KLocale::AfterQuantityMoney );
+        insertMonetaryNegativeFormat( false, KLocale::AfterQuantityMoney );
+        insertMonetaryNegativeFormat( true, KLocale::BeforeMoney );
+        insertMonetaryNegativeFormat( false, KLocale::BeforeMoney );
+        insertMonetaryNegativeFormat( true, KLocale::AfterMoney );
+        insertMonetaryNegativeFormat( false, KLocale::AfterMoney );
+        insertMonetaryNegativeFormat( true, KLocale::ParensAround );
+        insertMonetaryNegativeFormat( false, KLocale::ParensAround );
+    }
+
+    changeMonetaryNegativeFormat( m_kcmSettings.readEntry( "NegativePrefixCurrencySymbol", false ),
+                                  (KLocale::SignPosition) m_defaultSettings.readEntry( "NegativeMonetarySignPosition", 0 ) );
+
     m_ui->m_comboMonetaryNegativeFormat->blockSignals( false );
 }
 
 void KCMLocale::defaultMonetaryNegativeFormat()
 {
+    changeMonetaryNegativeFormat( m_defaultSettings.readEntry( "NegativePrefixCurrencySymbol", false ),
+                                  (KLocale::SignPosition) m_defaultSettings.readEntry( "NegativeMonetarySignPosition", 0 ) );
 }
 
 void KCMLocale::changedMonetaryNegativeFormatIndex( int index )
 {
+    QVariantList options = m_ui->m_comboMonetaryNegativeFormat->itemData( index ).toList();
+    bool prefixCurrencySymbol = options.at( 0 ).toBool();
+    KLocale::SignPosition signPosition = (KLocale::SignPosition) options.at( 1 ).toInt();
+    changeMonetaryNegativeFormat( prefixCurrencySymbol, signPosition );
 }
 
-void KCMLocale::changeMonetaryNegativeFormat( int newValue )
+void KCMLocale::changeMonetaryNegativeFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition )
 {
+    setMonetaryFormat( "NegativePrefixCurrencySymbol", prefixCurrencySymbol,
+                       "NegativeMonetarySignPosition", signPosition,
+                       m_ui->m_comboMonetaryNegativeFormat, m_ui->m_buttonResetMonetaryNegativeFormat );
+
+    // Read back the kcm values and use them in the sample locale
+    prefixCurrencySymbol = m_kcmSettings.readEntry( "NegativePrefixCurrencySymbol", false );
+    signPosition = (KLocale::SignPosition) m_kcmSettings.readEntry( "NegativeMonetarySignPosition", 0 );
+    m_kcmLocale->setNegativePrefixCurrencySymbol( prefixCurrencySymbol );
+    m_kcmLocale->setNegativeMonetarySignPosition( signPosition );
+
+    // Set the combo to the kcm value
+    QVariantList options;
+    options.append( QVariant( prefixCurrencySymbol ) );
+    options.append( QVariant( signPosition ) );
+    int index = m_ui->m_comboMonetaryNegativeFormat->findData( options );
+    m_ui->m_comboMonetaryNegativeFormat->setCurrentIndex( index );
 }
 
 void KCMLocale::initMonetaryDigitSet()
