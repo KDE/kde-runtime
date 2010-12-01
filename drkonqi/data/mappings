@@ -55,6 +55,7 @@ knotificationareaitemtest=plasma|widget-systemtray
 knotificationicontest=plasma|widget-systemtray
 lancelot=plasma|widget-lancelot
 plasma-netbook=plasma|plasma-netbook
+kactivitymanagerd=plasma|activities
 #KDE Plasma Desktop (KWin)
 kwin_killer_helper=kwin|general
 kwin_rules_dialog=kwin|general
