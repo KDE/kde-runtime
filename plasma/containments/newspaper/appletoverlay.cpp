@@ -36,7 +36,7 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 {
     Q_UNUSED(widget)
 
-    QColor c = QColor(0, 0, 0, 98);
+    QColor c = QColor(0, 0, 0, 48);
 
     painter->fillRect(option->exposedRect, c);
 }

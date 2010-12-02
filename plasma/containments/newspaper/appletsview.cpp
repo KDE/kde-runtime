@@ -91,6 +91,9 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
 
     if (event->type() == QEvent::GraphicsSceneMousePress) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
+        if (!(me->buttons() & Qt::LeftButton)) {
+            return Plasma::ScrollWidget::sceneEventFilter(watched, event);
+        }
 
         bool found = false;
 
