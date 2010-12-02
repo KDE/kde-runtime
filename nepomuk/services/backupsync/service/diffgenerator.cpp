@@ -46,19 +46,23 @@ Nepomuk::DiffGenerator::DiffGenerator( QObject* parent )
 {
     m_model = Nepomuk::ResourceManager::instance()->mainModel();
 
-    connect( m_model, SIGNAL(statementAdded(Soprano::Statement)),
+    // vhanda:
+    // Disabled cause this hogs up too many resources. Specially when loads
+    // of statements are being added/removed to Nepomuk. It's not worth it right
+    // now. Specially since this is only required for syncing.
+    /*connect( m_model, SIGNAL(statementAdded(Soprano::Statement)),
              this, SLOT(statementAdded(Soprano::Statement)), Qt::QueuedConnection );
     connect( m_model, SIGNAL(statementRemoved(Soprano::Statement)),
              this, SLOT(statementRemoved(Soprano::Statement)), Qt::QueuedConnection );
 
-    start();
+    start();*/
 }
 
 
 Nepomuk::DiffGenerator::~DiffGenerator()
 {
-    stop();
-    wait();
+    //stop();
+    //wait();
 }
 
 
