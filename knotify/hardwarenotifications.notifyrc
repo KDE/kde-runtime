@@ -2,6 +2,7 @@
 Name=Hardware notifications
 Name[ar]=إشعارات العتاد
 Name[ast]=Notificaciones d'hardware
+Name[bg]=Хардуерни wведомления
 Name[bn]=হার্ডওয়্যার বিজ্ঞপ্তি
 Name[ca]=Notificacions de maquinari
 Name[ca@valencia]=Notificacions de maquinari
@@ -58,6 +59,7 @@ Name[zh_CN]=硬件通知
 Name[zh_TW]=硬體通知
 IconName=emblem-mounted
 Comment=Notifications triggered by hardware devices
+Comment[bg]=Уведомления от хардуерните устройства
 Comment[ca]=Notificacions activades per dispositius del maquinari
 Comment[da]=Bekendtgørelser udløst af hardware-enheder
 Comment[en_GB]=Notifications triggered by hardware devices
