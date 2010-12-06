@@ -939,7 +939,7 @@
             <bool>true</bool>
            </property>
            <property name="text">
-            <string>to</string>
+            <string comment="label between two year inputs, i.e. 1930 to 2029">to</string>
            </property>
           </widget>
          </item>
