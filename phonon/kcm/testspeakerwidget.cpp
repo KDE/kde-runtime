@@ -54,6 +54,7 @@ void TestSpeakerWidget::clicked()
         if (ca_context_play_full(m_Canberra, 0, proplist, NULL, NULL) < 0) {
             // Finaly try this... if this doesn't work, then stuff it.
             ca_proplist_sets(proplist, CA_PROP_EVENT_ID, "bell-window-system");
+            ca_context_play_full(m_Canberra, 0, proplist, NULL, NULL);
         }
     }
 
