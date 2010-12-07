@@ -250,7 +250,7 @@ void Nepomuk::IndexScheduler::run()
     removeOldAndUnwantedEntries();
 
 #ifndef NDEBUG
-    kDebug() << "Removed old entries:" << timer.elapsed();
+    kDebug() << "Removed old entries: " << timer.elapsed()/1000.0 << "secs";
     timer.restart();
 #endif
 
@@ -261,7 +261,7 @@ void Nepomuk::IndexScheduler::run()
             setIndexingStarted( false );
 
 #ifndef NDEBUG
-            kDebug() << "All folders updated:" << timer.elapsed();
+            kDebug() << "All folders updated: " << timer.elapsed()/1000.0 << "sec";
 #endif
 
             m_dirsToUpdateMutex.lock();
