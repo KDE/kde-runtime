@@ -94,6 +94,7 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   m_iconThemes->setAllColumnsShowFocus( true );
   m_iconThemes->setRootIsDecorated(false);
   m_iconThemes->setSortingEnabled(true);
+  m_iconThemes->sortByColumn(0, Qt::AscendingOrder);
   connect(m_iconThemes,SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
 		SLOT(themeSelected(QTreeWidgetItem *)));
 
@@ -178,6 +179,7 @@ void IconThemesConfig::loadThemes()
 
     themeNames.insert(name, *it);
   }
+  m_iconThemes->resizeColumnToContents(0);
 }
 
 void IconThemesConfig::installNewTheme()
