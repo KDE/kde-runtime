@@ -64,6 +64,7 @@ kwin_rules_dialog=kwin|general
 akonadi_benchmarker=Akonadi|general
 akonadi_birthdays_resource=Akonadi|general
 akonadi_control=Akonadi|general
+akonadi_contacts_resource=Akonadi|Contacts resource
 akonadi_distlist_resource=Akonadi|general
 akonadi_ical_resource=Akonadi|ICal file resource
 akonadi_imaplib_resource=Akonadi|general
