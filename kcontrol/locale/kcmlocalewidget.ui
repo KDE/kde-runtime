@@ -112,6 +112,9 @@
          <property name="selectedLabel">
           <string>Preferred Languages:</string>
          </property>
+         <property name="availableInsertionPolicy">
+          <enum>KActionSelector::BelowCurrent</enum>
+         </property>
         </widget>
        </item>
        <item>

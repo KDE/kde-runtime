@@ -84,13 +84,13 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
 
     // User has changed the translations selection in some way
     connect( m_ui->m_selectTranslations,         SIGNAL( added( QListWidgetItem* ) ),
-             this,                               SLOT( changeTranslations() ) );
+             this,                               SLOT( changeTranslationsSelected( QListWidgetItem* ) ) );
     connect( m_ui->m_selectTranslations,         SIGNAL( removed( QListWidgetItem* ) ),
-             this,                               SLOT( changeTranslations() ) );
+             this,                               SLOT( changeTranslationsAvailable( QListWidgetItem* ) ) );
     connect( m_ui->m_selectTranslations,         SIGNAL( movedUp( QListWidgetItem* ) ),
-             this,                               SLOT( changeTranslations() ) );
+             this,                               SLOT( changeTranslationsSelected( QListWidgetItem* ) ) );
     connect( m_ui->m_selectTranslations,         SIGNAL( movedDown( QListWidgetItem* ) ),
-             this,                               SLOT( changeTranslations() ) );
+             this,                               SLOT( changeTranslationsSelected( QListWidgetItem* ) ) );
     // User has clicked Install button, trigger distro specific install routine
     connect( m_ui->m_buttonTranslationsInstall,  SIGNAL( clicked() ),
              this,                               SLOT( installTranslations() ) );
@@ -1069,7 +1069,6 @@ void KCMLocale::changeCountryDivision( const QString &newValue )
 
 void KCMLocale::initTranslations()
 {
-kDebug() << "initTranslations()";
     m_ui->m_selectTranslations->blockSignals( true );
 
     m_ui->m_selectTranslations->setAvailableLabel( ki18n( "Available Languages:" ).toString( m_kcmLocale ) );
@@ -1137,13 +1136,14 @@ kDebug() << "initTranslations()";
             ++i;
         }
     }
+    m_ui->m_selectTranslations->availableListWidget()->sortItems();
 
     // Default to selecting the first Selected language,
     // otherwise the first Available language,
     // otherwise no languages so disable all buttons
-    if ( m_ui->m_selectTranslations->selectedListWidget()->count() > 1 ) {
+    if ( m_ui->m_selectTranslations->selectedListWidget()->count() > 0 ) {
         m_ui->m_selectTranslations->selectedListWidget()->setCurrentRow( 0 );
-    } else if ( m_ui->m_selectTranslations->availableListWidget()->count() > 1 ) {
+    } else if ( m_ui->m_selectTranslations->availableListWidget()->count() > 0 ) {
         m_ui->m_selectTranslations->availableListWidget()->setCurrentRow( 0 );
     }
 
@@ -1166,12 +1166,28 @@ kDebug() << "initTranslations()";
                                              "localization files for it and add the language again.")
                                              .subs( languageCode ).toString( m_kcmLocale ) );
     }
-kDebug() << "  done init";
 }
 
 void KCMLocale::defaultTranslations()
 {
     changeTranslations( m_defaultSettings.readEntry( "Language", QString() ) );
+}
+
+void KCMLocale::changeTranslationsAvailable( QListWidgetItem *item )
+{
+    Q_UNUSED( item );
+    m_ui->m_selectTranslations->availableListWidget()->sortItems();
+    int row = m_ui->m_selectTranslations->availableListWidget()->currentRow();
+    changeTranslations();
+    m_ui->m_selectTranslations->availableListWidget()->setCurrentRow( row );
+}
+
+void KCMLocale::changeTranslationsSelected( QListWidgetItem *item )
+{
+    Q_UNUSED( item );
+    int row = m_ui->m_selectTranslations->selectedListWidget()->currentRow();
+    changeTranslations();
+    m_ui->m_selectTranslations->selectedListWidget()->setCurrentRow( row );
 }
 
 void KCMLocale::changeTranslations()

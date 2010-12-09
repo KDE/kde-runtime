@@ -203,6 +203,8 @@ private Q_SLOTS:
     //Translations/Languages tab
 
     void defaultTranslations();
+    void changeTranslationsAvailable( QListWidgetItem * item );
+    void changeTranslationsSelected( QListWidgetItem * item );
     void changeTranslations();
     void changeTranslations( const QString &newValue );
 
