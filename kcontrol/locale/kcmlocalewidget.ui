@@ -870,9 +870,6 @@
         <layout class="QHBoxLayout" name="horizontalLayout_27">
          <item>
           <widget class="QCheckBox" name="m_checkCalendarGregorianUseCommonEra">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -891,19 +888,12 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetCalendarGregorianUseCommonEra">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-          </widget>
+          <widget class="KPushButton" name="m_buttonResetCalendarGregorianUseCommonEra"/>
          </item>
         </layout>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="m_labelShortYearWindow">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="text">
           <string>Short year window:</string>
          </property>
@@ -913,9 +903,6 @@
         <layout class="QHBoxLayout" name="horizontalLayout_29">
          <item>
           <widget class="KIntNumInput" name="m_intShortYearWindowStartYear">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -935,9 +922,6 @@
          </item>
          <item>
           <widget class="QLabel" name="m_labelShortYearWindowTo">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
            <property name="text">
             <string comment="label between two year inputs, i.e. 1930 to 2029">to</string>
            </property>
@@ -945,9 +929,6 @@
          </item>
          <item>
           <widget class="KIntSpinBox" name="m_spinShortYearWindowEndYear">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -972,11 +953,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetShortYearWindow">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-          </widget>
+          <widget class="KPushButton" name="m_buttonResetShortYearWindow"/>
          </item>
         </layout>
        </item>

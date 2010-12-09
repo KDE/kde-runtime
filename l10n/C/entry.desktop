@@ -132,6 +132,6 @@ BinaryUnitDialect=0
 PageSize=0
 MeasureSystem=0
 
-[KCalendarSystem gregorian]
+[KCM Locale][KCalendarSystem gregorian]
 UseCommonEra=false
 ShortYearWindowStartYear=2000

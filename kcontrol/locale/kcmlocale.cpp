@@ -67,49 +67,7 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
 
     m_ui->setupUi( this );
 
-    // Setup the User Config/Settings
-    // These are the User overrides, they exclude any Group, Country, or C settings
-    // This will be used to store the User changes
-    m_userConfig = KSharedConfig::openConfig( "kcmlocaleuser", KConfig::IncludeGlobals );
-    m_userSettings = KConfigGroup( m_userConfig, "Locale" );
-
-    // Setup the KCM Config/Settings
-    // These are the effective settings merging KCM Changes, User, Group, Country, and C settings
-    // This will be used to display current state of settings in the KCM
-    m_kcmConfig = KSharedConfig::openConfig( "kcmlocalekcm", KConfig::SimpleConfig );
-    m_kcmSettings = KConfigGroup( m_kcmConfig, "Locale" );
-
-    // Setup the Current Config/Settings
-    // These are the currently saved User settings
-    // This will be used to check if the kcm settings have been changed
-    m_currentConfig = KSharedConfig::openConfig( "kcmlocalecurrent", KConfig::IncludeGlobals );
-    m_currentSettings = KConfigGroup( m_currentConfig, "Locale" );
-
-    // Setup the Default Config/Settings
-    // These will be a merge of the C, Country and Group settings
-    // If the user clicks on the Defaults button, these are the settings that will be used
-    m_defaultConfig = KSharedConfig::openConfig( "defaultconfig", KConfig::SimpleConfig );
-    m_defaultSettings = KConfigGroup( m_defaultConfig, "Locale" );
-
-    // Setup the Group Config/Settings
-    // These are the Group overrides, they exclude any User, Country, or C settings
-    // This will be used in the merge to obtain the KCM Defaults
-    m_groupConfig = KSharedConfig::openConfig( "kcmlocalegroup", KConfig::NoGlobals );
-    m_groupSettings = KConfigGroup( m_groupConfig, "Locale" );
-
-    // Don't setup the Country Config/Settings, leave that for mergeSettings() during load()
-
-    // Setup the C Config Settings
-    // These are the C/Posix defaults and KDE defaults where a setting doesn't exist in Posix
-    // This will be used as the lowest level in the merge to obtain the KCM Defaults
-    m_cConfig = KSharedConfig::openConfig( KStandardDirs::locate( "locale",
-                                           QString::fromLatin1("l10n/C/entry.desktop") ) );
-    m_cSettings= KConfigGroup( m_cConfig, "KCM Locale" );
-
-    // Find out the system country using a null config
-    KLocale *nullLocale = new KLocale( QLatin1String("dummy"), m_defaultConfig );
-    m_systemCountry = nullLocale->country();
-    delete nullLocale;
+    initSettings();
 
     // Country tab
     connect( m_ui->m_comboCountry,       SIGNAL( activated( int ) ),
@@ -246,15 +204,15 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
     connect( m_ui->m_buttonResetCalendarSystem, SIGNAL( clicked() ),
              this,                              SLOT( defaultCalendarSystem() ) );
 
-    connect( m_ui->m_checkCalendarGregorianUseCommonEra,       SIGNAL( clicked() ),
-             this,                                             SLOT( changeUseCommonEra() ) );
+    connect( m_ui->m_checkCalendarGregorianUseCommonEra,       SIGNAL( clicked( bool ) ),
+             this,                                             SLOT( changeUseCommonEra( bool ) ) );
     connect( m_ui->m_buttonResetCalendarGregorianUseCommonEra, SIGNAL( clicked() ),
              this,                                             SLOT( defaultUseCommonEra() ) );
 
     connect( m_ui->m_intShortYearWindowStartYear, SIGNAL( valueChanged( int ) ),
              this,                                SLOT( changeShortYearWindow( int ) ) );
     connect( m_ui->m_buttonResetShortYearWindow,  SIGNAL( clicked() ),
-             this,                                SLOT( defaultUseCommonEra() ) );
+             this,                                SLOT( defaultShortYearWindow() ) );
 
     connect( m_ui->m_comboWeekStartDay,       SIGNAL( currentIndexChanged( int ) ),
              this,                            SLOT( changedWeekStartDayIndex( int ) ) );
@@ -335,23 +293,141 @@ KCMLocale::~KCMLocale()
 {
     // Throw away any unsaved changes as delete calls an unwanted sync()
     m_kcmConfig->markAsClean();
-    m_userSettings.markAsClean();
-    m_groupSettings.markAsClean();
-    m_countryConfig->markAsClean();
-    m_cConfig->markAsClean();
+    m_userConfig->markAsClean();
+    m_defaultConfig->markAsClean();
     delete m_kcmLocale;
     delete m_ui;
+}
+
+// Init all the config/settings objects, only called at the very start but inits everything so
+// load() and mergeSettings() can assume everything exists every time they are called
+void KCMLocale::initSettings()
+{
+    // Setup the KCM Config/Settings
+    // These are the effective settings merging KCM Changes, User, Group, Country, and C settings
+    // This will be used to display current state of settings in the KCM
+    // These settings should never be saved anywhere
+    m_kcmConfig = KSharedConfig::openConfig( "kcmlocale-kcm", KConfig::SimpleConfig );
+    m_kcmSettings = KConfigGroup( m_kcmConfig, "Locale" );
+    m_kcmSettings.deleteGroup();
+    m_kcmSettings.markAsClean();
+
+    // Setup the Default Config/Settings
+    // These will be a merge of the C, Country and Group settings
+    // If the user clicks on the Defaults button, these are the settings that will be used
+    // These settings should never be saved anywhere
+    m_defaultConfig = KSharedConfig::openConfig( "kcmlocale-default", KConfig::SimpleConfig );
+    m_defaultSettings = KConfigGroup( m_defaultConfig, "Locale" );
+
+    // Setup the User Config/Settings
+    // These are the User overrides, they exclude any Group, Country, or C settings
+    // This will be used to store the User changes
+    // These are the only settings that should ever be saved
+    m_userConfig = KSharedConfig::openConfig( "kcmlocale-user", KConfig::IncludeGlobals );
+    m_userSettings = KConfigGroup( m_userConfig, "Locale" );
+
+    // Setup the Current Config/Settings
+    // These are the currently saved User settings
+    // This will be used to check if the kcm settings have been changed
+    // These settings should never be saved anywhere
+    m_currentConfig = KSharedConfig::openConfig( "kcmlocale-current", KConfig::IncludeGlobals );
+    m_currentSettings = KConfigGroup( m_currentConfig, "Locale" );
+
+    // Setup the Group Config/Settings
+    // These are the Group overrides, they exclude any User, Country, or C settings
+    // This will be used in the merge to obtain the KCM Defaults
+    // These settings should never be saved anywhere
+    m_groupConfig = new KConfig( "kcmlocale-group", KConfig::NoGlobals );
+    m_groupSettings = KConfigGroup( m_groupConfig, "Locale" );
+
+    // Setup the C Config Settings
+    // These are the C/Posix defaults and KDE defaults where a setting doesn't exist in Posix
+    // This will be used as the lowest level in the merge to obtain the KCM Defaults
+    // These settings should never be saved anywhere
+    m_cConfig = new KConfig( KStandardDirs::locate( "locale",
+                             QString::fromLatin1("l10n/C/entry.desktop") ) );
+    m_cSettings= KConfigGroup( m_cConfig, "KCM Locale" );
+
+    initCountrySettings( KGlobal::locale()->country() );
+
+    initCalendarSettings();
+
+    m_kcmLocale = new KLocale( QLatin1String("kcmlocale"), m_kcmConfig );
+    // Find out the system country using a null config
+    m_systemCountry = m_kcmLocale->country();
+}
+
+void KCMLocale::initCountrySettings( const QString &countryCode )
+{
+    // Setup a the Country Config/Settings
+    // These are the Country overrides, they exclude any User, Group, or C settings
+    // This will be used in the merge to obtain the KCM Defaults
+    // These settings should never be saved anywhere
+    delete m_countryConfig;
+    m_countryConfig = new KConfig( KStandardDirs::locate( "locale",
+                                   QString::fromLatin1("l10n/%1/entry.desktop")
+                                   .arg( countryCode ) ) );
+    m_countrySettings = KConfigGroup( m_countryConfig, "KCM Locale" );
+    QString calendarType = m_countrySettings.readEntry( "CalendarSystem", "gregorian" );
+    QString calendarGroup = QString::fromLatin1( "KCalendarSystem %1" ).arg( calendarType );
+    m_countryCalendarSettings = m_countrySettings.group( calendarGroup );
+}
+
+// Init all the calendar settings sub-group objects, called both at the start and whenever the
+// calendar system is changed
+void KCMLocale::initCalendarSettings()
+{
+    // Setup the User Config/Settings
+    // These are the User overrides, they exclude any Group, Country, or C settings
+    // This will be used to store the User changes
+    QString calendarType = m_kcmSettings.readEntry( "CalendarSystem", QString() );
+    QString calendarGroup = QString::fromLatin1( "KCalendarSystem %1" ).arg( calendarType );
+    m_userCalendarSettings = m_userSettings.group( calendarGroup );
+
+    // Setup the Current Config/Settings
+    // These are the currently saved User settings
+    // This will be used to check if the kcm settings have been changed
+    calendarType = m_currentSettings.readEntry( "CalendarSystem", KGlobal::locale()->calendar()->calendarType() );
+    calendarGroup = QString::fromLatin1( "KCalendarSystem %1" ).arg( calendarType );
+    m_currentCalendarSettings = m_currentSettings.group( calendarGroup );
+
+    // Setup the Group Config/Settings
+    // These are the Group overrides, they exclude any User, Country, or C settings
+    // This will be used in the merge to obtain the KCM Defaults
+    // These settings should never be saved anywhere
+    calendarType = m_groupSettings.readEntry( "CalendarSystem", KGlobal::locale()->calendar()->calendarType() );
+    calendarGroup = QString::fromLatin1( "KCalendarSystem %1" ).arg( calendarType );
+    m_groupCalendarSettings = m_groupSettings.group( calendarGroup );
+
+    // Setup the C Config Settings
+    // These are the C/Posix defaults and KDE defaults where a setting doesn't exist in Posix
+    // This will be used as the lowest level in the merge to obtain the KCM Defaults
+    // These settings should never be saved anywhere
+    calendarType = m_cSettings.readEntry( "CalendarSystem", QString() );
+    calendarGroup = QString::fromLatin1( "KCalendarSystem %1" ).arg( calendarType );
+    m_cCalendarSettings = m_cSettings.group( calendarGroup );
+
+    // Setup a the Country Config/Settings
+    // These are the Country overrides, they exclude any User, Group, or C settings
+    // This will be used in the merge to obtain the KCM Defaults
+    // These settings should never be saved anywhere
+    calendarType = m_countrySettings.readEntry( "CalendarSystem", "gregorian" );
+    calendarGroup = QString::fromLatin1( "KCalendarSystem %1" ).arg( calendarType );
+    m_countryCalendarSettings = m_countrySettings.group( calendarGroup );
+
 }
 
 // Load == User has clicked on Reset to restore load saved settings
 // Also gets called automatically called after constructor
 void KCMLocale::load()
 {
-    // Throw away any unsaved changes
-    m_userSettings.markAsClean();
+    // Throw away any unsaved changes then reload from file
+    m_userConfig->markAsClean();
+    m_userConfig->reparseConfiguration();
+    m_currentConfig->reparseConfiguration();
 
     // Then create the new settings using the default, include user settings
-    mergeSettings( KGlobal::locale()->country() );
+    mergeSettings();
 
     // Save the current translations for checking later
     m_currentTranslations.clear();
@@ -362,15 +438,18 @@ void KCMLocale::load()
 }
 
 // Defaults == User has clicked on Defaults to load default settings
-// We interpret this to mean the defaults for the current global country and language
+// We interpret this to mean the defaults for the system country and language
 void KCMLocale::defaults()
 {
-    // Throw away any unsaved changes
-    m_userSettings.markAsClean();
+    // Clear out the user config but dont sync or reparse as we want to ignore the user settings
+    m_userCalendarSettings.deleteGroup( KConfig::Persistent | KConfig::Global );
     m_userSettings.deleteGroup( KConfig::Persistent | KConfig::Global );
 
+    // Reload the system country
+    initCountrySettings( m_systemCountry );
+
     // Then create the new settings using the default, exclude user settings
-    mergeSettings( KGlobal::locale()->country() );
+    mergeSettings();
 
     // Save the current translations for checking later
     m_currentTranslations.clear();
@@ -382,92 +461,83 @@ void KCMLocale::defaults()
 
 // Write our own copy routine as we need to be selective about what values get copied, e.g. exclude
 // Name, Region, etc, and copyTo() seems to barf on some uses
-void KCMLocale::copySettings( KConfigGroup *fromGroup, KConfigGroup *toGroup )
+void KCMLocale::copySettings( KConfigGroup *fromGroup, KConfigGroup *toGroup, KConfig::WriteConfigFlags flags )
 {
-    copySetting( fromGroup, toGroup, "Country", QString() );
-    copySetting( fromGroup, toGroup, "CountryDivision", QString() );
-    copySetting( fromGroup, toGroup, "Language", QString() );
-    copySetting( fromGroup, toGroup, "DecimalPlaces", 0 );
-    copySetting( fromGroup, toGroup, "DecimalSymbol", QString() );
-    copySetting( fromGroup, toGroup, "ThousandsSeparator", QString() );
-    copySetting( fromGroup, toGroup, "PositiveSign", QString() );
-    copySetting( fromGroup, toGroup, "NegativeSign", QString() );
-    copySetting( fromGroup, toGroup, "DigitSet", 0 );
-    copySetting( fromGroup, toGroup, "CurrencyCode", QString() );
-    copySetting( fromGroup, toGroup, "CurrencySymbol", QString() );
-    copySetting( fromGroup, toGroup, "MonetaryDecimalPlaces", 0 );
-    copySetting( fromGroup, toGroup, "MonetaryDecimalSymbol", QString() );
-    copySetting( fromGroup, toGroup, "MonetaryThousandsSeparator", QString() );
-    copySetting( fromGroup, toGroup, "PositivePrefixCurrencySymbol", false );
-    copySetting( fromGroup, toGroup, "NegativePrefixCurrencySymbol", false );
-    copySetting( fromGroup, toGroup, "PositiveMonetarySignPosition", 0 );
-    copySetting( fromGroup, toGroup, "NegativeMonetarySignPosition", 0 );
-    copySetting( fromGroup, toGroup, "MonetaryDigitSet", 0 );
-    copySetting( fromGroup, toGroup, "CalendarSystem", QString() );
-    copySetting( fromGroup, toGroup, "TimeFormat", QString() );
-    copySetting( fromGroup, toGroup, "DateFormat", QString() );
-    copySetting( fromGroup, toGroup, "DateFormatShort", QString() );
-    copySetting( fromGroup, toGroup, "DateMonthNamePossessive", false );
-    copySetting( fromGroup, toGroup, "WeekStartDay", 0 );
-    copySetting( fromGroup, toGroup, "WorkingWeekStartDay", 0 );
-    copySetting( fromGroup, toGroup, "WorkingWeekEndDay", 0 );
-    copySetting( fromGroup, toGroup, "WeekDayOfPray", 0 );
-    copySetting( fromGroup, toGroup, "DateTimeDigitSet", 0 );
-    copySetting( fromGroup, toGroup, "BinaryUnitDialect", 0 );
-    copySetting( fromGroup, toGroup, "PageSize", 0 );
-    copySetting( fromGroup, toGroup, "MeasureSystem", 0 );
+    copySetting( fromGroup, toGroup, "Country", flags );
+    copySetting( fromGroup, toGroup, "CountryDivision", flags );
+    copySetting( fromGroup, toGroup, "Language", flags );
+    copySetting( fromGroup, toGroup, "DecimalPlaces", flags );
+    copySetting( fromGroup, toGroup, "DecimalSymbol", flags );
+    copySetting( fromGroup, toGroup, "ThousandsSeparator", flags );
+    copySetting( fromGroup, toGroup, "PositiveSign", flags );
+    copySetting( fromGroup, toGroup, "NegativeSign", flags );
+    copySetting( fromGroup, toGroup, "DigitSet", flags );
+    copySetting( fromGroup, toGroup, "CurrencyCode", flags );
+    copySetting( fromGroup, toGroup, "CurrencySymbol", flags );
+    copySetting( fromGroup, toGroup, "MonetaryDecimalPlaces", flags );
+    copySetting( fromGroup, toGroup, "MonetaryDecimalSymbol", flags );
+    copySetting( fromGroup, toGroup, "MonetaryThousandsSeparator", flags );
+    copySetting( fromGroup, toGroup, "PositivePrefixCurrencySymbol", flags );
+    copySetting( fromGroup, toGroup, "NegativePrefixCurrencySymbol", flags );
+    copySetting( fromGroup, toGroup, "PositiveMonetarySignPosition", flags );
+    copySetting( fromGroup, toGroup, "NegativeMonetarySignPosition", flags );
+    copySetting( fromGroup, toGroup, "MonetaryDigitSet", flags );
+    copySetting( fromGroup, toGroup, "CalendarSystem", flags );
+    copySetting( fromGroup, toGroup, "TimeFormat", flags );
+    copySetting( fromGroup, toGroup, "DateFormat", flags );
+    copySetting( fromGroup, toGroup, "DateFormatShort", flags );
+    copySetting( fromGroup, toGroup, "DateMonthNamePossessive", flags );
+    copySetting( fromGroup, toGroup, "WeekStartDay", flags );
+    copySetting( fromGroup, toGroup, "WorkingWeekStartDay", flags );
+    copySetting( fromGroup, toGroup, "WorkingWeekEndDay", flags );
+    copySetting( fromGroup, toGroup, "WeekDayOfPray", flags );
+    copySetting( fromGroup, toGroup, "DateTimeDigitSet", flags );
+    copySetting( fromGroup, toGroup, "BinaryUnitDialect", flags );
+    copySetting( fromGroup, toGroup, "PageSize", flags );
+    copySetting( fromGroup, toGroup, "MeasureSystem", flags );
 }
 
-void KCMLocale::copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, const QString &type )
+void KCMLocale::copyCalendarSettings( KConfigGroup *fromGroup, KConfigGroup *toGroup, KConfig::WriteConfigFlags flags )
 {
-    if ( fromGroup->hasKey( key ) ) {
-        toGroup->writeEntry( key, fromGroup->readEntry( key, type ) );
+    copySetting( fromGroup, toGroup, "ShortYearWindowStartYear", flags );
+    copySetting( fromGroup, toGroup, "UseCommonEra", flags );
+    QString eraKey = QString::fromLatin1("Era1");
+    int i = 1;
+    while ( fromGroup->hasKey( eraKey ) ) {
+        copySetting( fromGroup, toGroup, eraKey, flags );
+        ++i;
+        eraKey = QString::fromLatin1("Era%1").arg( i );
     }
 }
 
-void KCMLocale::copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, const QStringList &type )
+void KCMLocale::copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, KConfig::WriteConfigFlags flags )
 {
     if ( fromGroup->hasKey( key ) ) {
-        toGroup->writeEntry( key, fromGroup->readEntry( key, type ) );
+        toGroup->writeEntry( key, fromGroup->readEntry( key, QString() ), flags );
     }
 }
 
-void KCMLocale::copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, int type )
+void KCMLocale::mergeSettings()
 {
-    if ( fromGroup->hasKey( key ) ) {
-        toGroup->writeEntry( key, fromGroup->readEntry( key, type ) );
-    }
-}
-
-void KCMLocale::copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, bool type )
-{
-    if ( fromGroup->hasKey( key ) ) {
-        toGroup->writeEntry( key, fromGroup->readEntry( key, type ) );
-    }
-}
-
-void KCMLocale::mergeSettings( const QString &countryCode )
-{
-    // Load up the required country settings
-    m_countryConfig = KSharedConfig::openConfig( KStandardDirs::locate( "locale",
-                                                 QString::fromLatin1("l10n/%1/entry.desktop")
-                                                 .arg( countryCode ) ) );
-    m_countrySettings = KConfigGroup( m_countryConfig, "KCM Locale" );
-
     // Merge the default settings, i.e. C, Country, and Group
     m_defaultSettings.deleteGroup();
     copySettings( &m_cSettings, &m_defaultSettings );
     copySettings( &m_countrySettings, &m_defaultSettings );
     copySettings( &m_groupSettings, &m_defaultSettings );
+    m_defaultConfig->markAsClean();
 
     // Merge the KCM settings, i.e. C, Country, Group, and User
     m_kcmSettings.deleteGroup();
     copySettings( &m_defaultSettings, &m_kcmSettings );
     copySettings( &m_userSettings, &m_kcmSettings );
 
-    // Create the kcm locale from the kcm settings
-    delete m_kcmLocale;
-    m_kcmLocale = new KLocale( QLatin1String("kcmlocale"), m_kcmConfig );
+    // Merge the calendar settings sub-groups
+    mergeCalendarSettings();
+
+    // Reload the kcm locale from the kcm settings
+    // Need to mark as clean before passing into a KLocale, as that will force a setLocale() which does a sync()
+    m_kcmConfig->markAsClean();
+    m_kcmLocale->setCountry( m_kcmSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
 
     // Create the kcm translations list, add us_EN if not already included
     m_kcmTranslations.clear();
@@ -477,10 +547,29 @@ void KCMLocale::mergeSettings( const QString &countryCode )
     }
 }
 
+void KCMLocale::mergeCalendarSettings()
+{
+    // Merge the default settings, i.e. C, Country, and Group
+    QString calendarType = m_defaultSettings.readEntry( "CalendarSystem", "gregorian" );
+    QString calendarGroup = QString::fromLatin1( "KCalendarSystem %1" ).arg( calendarType );
+    m_defaultCalendarSettings = m_defaultSettings.group( calendarGroup );
+    m_defaultCalendarSettings.deleteGroup();
+    copyCalendarSettings( &m_cCalendarSettings, &m_defaultCalendarSettings );
+    copyCalendarSettings( &m_countryCalendarSettings, &m_defaultCalendarSettings );
+    copyCalendarSettings( &m_groupCalendarSettings, &m_defaultCalendarSettings );
+
+    // Merge the KCM settings, i.e. C, Country, Group, and User
+    calendarType = m_kcmSettings.readEntry( "CalendarSystem", "gregorian" );
+    calendarGroup = QString::fromLatin1( "KCalendarSystem %1" ).arg( calendarType );
+    m_kcmCalendarSettings = m_kcmSettings.group( calendarGroup );
+    m_kcmCalendarSettings.deleteGroup();
+    copyCalendarSettings( &m_defaultCalendarSettings, &m_kcmCalendarSettings );
+    copyCalendarSettings( &m_userCalendarSettings, &m_kcmCalendarSettings );
+}
+
 void KCMLocale::save()
 {
-    m_userSettings.sync();
-    m_currentConfig->reparseConfiguration();
+    m_userConfig->sync();
 
     // rebuild the date base if language was changed
     if ( m_currentTranslations != m_kcmSettings.readEntry( "Language", QString() ) ) {
@@ -624,12 +713,20 @@ void KCMLocale::initResetButtons()
 
 void KCMLocale::checkIfChanged()
 {
-    if ( m_userSettings.keyList() != m_currentSettings.keyList() ) {
+    if ( m_userSettings.keyList() != m_currentSettings.keyList() ||
+         m_userCalendarSettings.keyList() != m_currentCalendarSettings.keyList() ) {
         emit changed( true );
     } else {
         foreach( const QString & key, m_currentSettings.keyList() ) {
             if ( m_userSettings.readEntry( key, QString() ) !=
                  m_currentSettings.readEntry( key, QString() ) ) {
+                emit changed( true );
+                return;
+            }
+        }
+        foreach( const QString & key, m_currentCalendarSettings.keyList() ) {
+            if ( m_userCalendarSettings.readEntry( key, QString() ) !=
+                 m_currentCalendarSettings.readEntry( key, QString() ) ) {
                 emit changed( true );
                 return;
             }
@@ -695,6 +792,69 @@ void KCMLocale::setItem( const QString itemKey, bool itemValue, QWidget *itemWid
             itemDefaultButton->setEnabled( true );
         } else {
             m_userSettings.deleteEntry( itemKey, KConfig::Persistent | KConfig::Global );
+            itemDefaultButton->setEnabled( false );
+        }
+        checkIfChanged();
+    }
+}
+
+void KCMLocale::setCalendarItem( const QString itemKey, const QString &itemValue, QWidget *itemWidget, KPushButton *itemDefaultButton )
+{
+    // If the setting is locked down by Kiosk, then don't let the user make any changes, and disable the widgets
+    if ( m_userCalendarSettings.isEntryImmutable( itemKey ) ) {
+            itemWidget->setEnabled( false );
+            itemDefaultButton->setEnabled( false );
+    } else {
+        itemWidget->setEnabled( true );
+        // If the new value is not the default, then enable the default button
+        m_kcmCalendarSettings.writeEntry( itemKey, itemValue );
+        if ( itemValue != m_defaultCalendarSettings.readEntry( itemKey, QString() ) ) {
+            m_userCalendarSettings.writeEntry( itemKey, itemValue, KConfig::Persistent | KConfig::Global );
+            itemDefaultButton->setEnabled( true );
+        } else {
+            m_userCalendarSettings.deleteEntry( itemKey, KConfig::Persistent | KConfig::Global );
+            itemDefaultButton->setEnabled( false );
+        }
+        checkIfChanged();
+    }
+}
+
+void KCMLocale::setCalendarItem( const QString itemKey, int itemValue, QWidget *itemWidget, KPushButton *itemDefaultButton )
+{
+    // If the setting is locked down by Kiosk, then don't let the user make any changes, and disable the widgets
+    if ( m_userCalendarSettings.isEntryImmutable( itemKey ) ) {
+            itemWidget->setEnabled( false );
+            itemDefaultButton->setEnabled( false );
+    } else {
+        itemWidget->setEnabled( true );
+        // If the new value is not the default, then enable the default button
+        m_kcmCalendarSettings.writeEntry( itemKey, itemValue );
+        if ( itemValue != m_defaultCalendarSettings.readEntry( itemKey, 0 ) ) {
+            m_userCalendarSettings.writeEntry( itemKey, itemValue, KConfig::Persistent | KConfig::Global );
+            itemDefaultButton->setEnabled( true );
+        } else {
+            m_userCalendarSettings.deleteEntry( itemKey, KConfig::Persistent | KConfig::Global );
+            itemDefaultButton->setEnabled( false );
+        }
+        checkIfChanged();
+    }
+}
+
+void KCMLocale::setCalendarItem( const QString itemKey, bool itemValue, QWidget *itemWidget, KPushButton *itemDefaultButton )
+{
+    // If the setting is locked down by Kiosk, then don't let the user make any changes, and disable the widgets
+    if ( m_userCalendarSettings.isEntryImmutable( itemKey ) ) {
+            itemWidget->setEnabled( false );
+            itemDefaultButton->setEnabled( false );
+    } else {
+        itemWidget->setEnabled( true );
+        // If the new value is not the default, then enable the default button
+        m_kcmCalendarSettings.writeEntry( itemKey, itemValue );
+        if ( itemValue != m_defaultCalendarSettings.readEntry( itemKey, false ) ) {
+            m_userCalendarSettings.writeEntry( itemKey, itemValue, KConfig::Persistent | KConfig::Global );
+            itemDefaultButton->setEnabled( true );
+        } else {
+            m_userCalendarSettings.deleteEntry( itemKey, KConfig::Persistent | KConfig::Global );
             itemDefaultButton->setEnabled( false );
         }
         checkIfChanged();
@@ -885,7 +1045,8 @@ void KCMLocale::changedCountryIndex( int index )
 {
     m_ui->m_comboCountry->blockSignals( true );
     changeCountry( m_ui->m_comboCountry->itemData( index ).toString() );
-    mergeSettings( m_kcmSettings.readEntry( "Country", QString() ) );
+    initCountrySettings( m_kcmSettings.readEntry( "Country", QString() ) );
+    mergeSettings();
     m_ui->m_comboCountry->blockSignals( false );
     initSettingsWidgets();
 }
@@ -1425,7 +1586,9 @@ void KCMLocale::initCurrencyCode()
     QStringList currencyCodeList = m_kcmLocale->currencyCodeList();
     foreach ( const QString &currencyCode, currencyCodeList ) {
         QString text = ki18nc( "@item currency name and currency code", "%1 (%2)")
-        .subs( m_kcmLocale->currency()->currencyCodeToName( currencyCode ) ) .subs( currencyCode ).toString( m_kcmLocale );
+                       .subs( m_kcmLocale->currency()->currencyCodeToName( currencyCode ) )
+                       .subs( currencyCode )
+                       .toString( m_kcmLocale );
         m_ui->m_comboCurrencyCode->addItem( text, QVariant( currencyCode ) );
     }
     //Next put all currencies available in alphabetical name order
@@ -1433,8 +1596,10 @@ void KCMLocale::initCurrencyCode()
     currencyCodeList = m_kcmLocale->currency()->allCurrencyCodesList();
     QStringList currencyNameList;
     foreach ( const QString &currencyCode, currencyCodeList ) {
-        currencyNameList.append( ki18nc( "@item currency name and currency code", "%1 (%2)").subs(
-        m_kcmLocale->currency()->currencyCodeToName( currencyCode ) ).subs( currencyCode ).toString( m_kcmLocale ) );
+        currencyNameList.append( ki18nc( "@item currency name and currency code", "%1 (%2)")
+                                 .subs( m_kcmLocale->currency()->currencyCodeToName( currencyCode ) )
+                                 .subs( currencyCode )
+                                 .toString( m_kcmLocale ) );
     }
     currencyNameList.sort();
     foreach ( const QString &name, currencyNameList ) {
@@ -1488,7 +1653,7 @@ void KCMLocale::initCurrencySymbol()
 
     if ( !currencySymbolList.contains( m_kcmSettings.readEntry( "CurrencySymbol", QString() ) ) ) {
         m_kcmSettings.deleteEntry( "CurrencySymbol" );
-        m_userSettings.deleteEntry( "CurrencySymbol" );
+        m_userSettings.deleteEntry( "CurrencySymbol", KConfig::Persistent | KConfig::Global );
     }
 
     changeCurrencySymbol( m_kcmSettings.readEntry( "CurrencySymbol", QString() ) );
@@ -1959,10 +2124,9 @@ void KCMLocale::initCalendarSystem()
 
     QStringList calendarSystems = KCalendarSystem::calendarSystems();
 
-    foreach ( const QString &calendarType, calendarSystems )
-    {
+    foreach ( const QString &calendarType, calendarSystems ) {
         m_ui->m_comboCalendarSystem->addItem( KCalendarSystem::calendarLabel(
-                                                calendarTypeToCalendarSystem( calendarType ), m_kcmLocale ),
+                                              KCalendarSystem::calendarSystemForCalendarType( calendarType ), m_kcmLocale ),
                                               QVariant( calendarType ) );
     }
 
@@ -1985,8 +2149,14 @@ void KCMLocale::changeCalendarSystem( const QString &newValue )
 {
     setComboItem( "CalendarSystem", newValue,
                   m_ui->m_comboCalendarSystem, m_ui->m_buttonResetCalendarSystem );
+
+    // Load the correct settings group for the new calendar
+    initCalendarSettings();
+    mergeCalendarSettings();
+
     // If item was changed, i.e. not immutable, then update locale
     m_kcmLocale->setCalendar( m_kcmSettings.readEntry( "CalendarSystem", QString() ) );
+
     // Update the Calendar dependent widgets with the new Calendar System details
     initUseCommonEra();
     initShortYearWindow();
@@ -2006,13 +2176,32 @@ void KCMLocale::initUseCommonEra()
     m_ui->m_checkCalendarGregorianUseCommonEra->setToolTip( helpText );
     m_ui->m_checkCalendarGregorianUseCommonEra->setWhatsThis( helpText );
 
-    // ???
-    KConfigGroup calendarGroup( m_kcmConfig, QString( "KCalendarSystem %1" ).arg( m_kcmLocale->calendarType() ) );
-    m_ui->m_checkCalendarGregorianUseCommonEra->setChecked( calendarGroup.readEntry( "UseCommonEra", false ) );
-    setCheckItem( "UseCommonEra", m_kcmSettings.readEntry( "UseCommonEra", false ),
-                  m_ui->m_checkCalendarGregorianUseCommonEra, m_ui->m_buttonResetCalendarGregorianUseCommonEra );
+    QString calendarType = m_kcmSettings.readEntry( "CalendarSystem", QString() );
+    if ( calendarType == "gregorian" || calendarType == "gregorian-proleptic" ) {
+        changeUseCommonEra( m_kcmCalendarSettings.readEntry( "UseCommonEra", false ) );
+    } else {
+        m_ui->m_checkCalendarGregorianUseCommonEra->setChecked( false );
+        m_ui->m_checkCalendarGregorianUseCommonEra->setEnabled( false );
+        m_ui->m_buttonResetCalendarGregorianUseCommonEra->setEnabled( false );
+    }
 
     m_ui->m_checkCalendarGregorianUseCommonEra->blockSignals( false );
+}
+
+void KCMLocale::defaultUseCommonEra()
+{
+    changeUseCommonEra( m_defaultCalendarSettings.readEntry( "UseCommonEra", false ) );
+}
+
+void KCMLocale::changeUseCommonEra( bool newValue )
+{
+    setCalendarItem( "UseCommonEra", newValue,
+                     m_ui->m_checkCalendarGregorianUseCommonEra, m_ui->m_buttonResetCalendarGregorianUseCommonEra );
+    m_ui->m_checkCalendarGregorianUseCommonEra->setChecked( m_kcmCalendarSettings.readEntry( "UseCommonEra", false ) );
+
+    // No api to set, so need to force reload the locale
+    m_kcmLocale->setCountry( m_kcmCalendarSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
+    m_kcmLocale->setCalendar( m_kcmCalendarSettings.readEntry( "CalendarSystem", QString() ) );
 }
 
 void KCMLocale::initShortYearWindow()
@@ -2030,10 +2219,27 @@ void KCMLocale::initShortYearWindow()
     m_ui->m_spinShortYearWindowEndYear->setToolTip( helpText );
     m_ui->m_spinShortYearWindowEndYear->setWhatsThis( helpText );
 
-    m_ui->m_intShortYearWindowStartYear->setValue( m_kcmLocale->calendar()->shortYearWindowStartYear() );
-    m_ui->m_spinShortYearWindowEndYear->setValue( m_kcmLocale->calendar()->shortYearWindowStartYear() + 99 );
+    changeShortYearWindow( m_kcmCalendarSettings.readEntry( "ShortYearWindowStartYear", 0 ) );
 
     m_ui->m_intShortYearWindowStartYear->blockSignals( false );
+}
+
+void KCMLocale::defaultShortYearWindow()
+{
+    changeShortYearWindow( m_defaultCalendarSettings.readEntry( "ShortYearWindowStartYear", 0 ) );
+}
+
+void KCMLocale::changeShortYearWindow( int newValue )
+{
+    setCalendarItem( "ShortYearWindowStartYear", newValue,
+                     m_ui->m_intShortYearWindowStartYear, m_ui->m_buttonResetShortYearWindow );
+    int startYear = m_kcmCalendarSettings.readEntry( "ShortYearWindowStartYear", 0 );
+    m_ui->m_intShortYearWindowStartYear->setValue( startYear );
+    m_ui->m_spinShortYearWindowEndYear->setValue( startYear + 99 );
+
+    // No api to set, so need to force reload the locale and calendar
+    m_kcmLocale->setCountry( m_kcmCalendarSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
+    m_kcmLocale->setCalendar( m_kcmCalendarSettings.readEntry( "CalendarSystem", QString() ) );
 }
 
 void KCMLocale::initWeekStartDay()
@@ -2748,69 +2954,6 @@ void KCMLocale::changeBinaryUnitDialect( int newValue )
                                                    "Example: 2000 bytes equals %1")
                                                   .subs( m_kcmLocale->formatByteSize( 2000, 2 ) )
                                                   .toString( m_kcmLocale ) );
-}
-
-KLocale::CalendarSystem KCMLocale::calendarTypeToCalendarSystem(const QString &calendarType) const
-{
-    if (calendarType == "coptic") {
-        return KLocale::CopticCalendar;
-    } else if (calendarType == "ethiopian") {
-        return KLocale::EthiopianCalendar;
-    } else if (calendarType == "gregorian") {
-        return KLocale::QDateCalendar;
-    } else if (calendarType == "gregorian-proleptic") {
-        return KLocale::GregorianCalendar;
-    } else if (calendarType == "hebrew") {
-        return KLocale::HebrewCalendar;
-    } else if (calendarType == "hijri") {
-        return KLocale::IslamicCivilCalendar;
-    } else if (calendarType == "indian-national") {
-        return KLocale::IndianNationalCalendar;
-    } else if (calendarType == "jalali") {
-        return KLocale::JalaliCalendar;
-    } else if (calendarType == "japanese") {
-        return KLocale::JapaneseCalendar;
-    } else if (calendarType == "julian") {
-        return KLocale::JulianCalendar;
-    } else if (calendarType == "minguo") {
-        return KLocale::MinguoCalendar;
-    } else if (calendarType == "thai") {
-        return KLocale::ThaiCalendar;
-    } else {
-        return KLocale::QDateCalendar;
-    }
-}
-
-QString KCMLocale::calendarSystemToCalendarType(KLocale::CalendarSystem calendarSystem) const
-{
-    switch (calendarSystem) {
-    case KLocale::QDateCalendar:
-        return "gregorian";
-    case KLocale::CopticCalendar:
-        return "coptic";
-    case KLocale::EthiopianCalendar:
-        return "ethiopian";
-    case KLocale::GregorianCalendar:
-        return "gregorian-proleptic";
-    case KLocale::HebrewCalendar:
-        return "hebrew";
-    case KLocale::IslamicCivilCalendar:
-        return "hijri";
-    case KLocale::IndianNationalCalendar:
-        return "indian-national";
-    case KLocale::JalaliCalendar:
-        return "jalali";
-    case KLocale::JapaneseCalendar:
-        return "japanese";
-    case KLocale::JulianCalendar:
-        return "julian";
-    case KLocale::MinguoCalendar:
-        return "minguo";
-    case KLocale::ThaiCalendar:
-        return "thai";
-    default:
-        return "gregorian";
-    }
 }
 
 QString KCMLocale::posixToUserTime( const QString &posixFormat ) const

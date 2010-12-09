@@ -76,12 +76,16 @@ private:
 
     //Common load/save utilities
 
-    void copySettings( KConfigGroup *fromGroup, KConfigGroup *toGroup );
-    void copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, const QString &type );
-    void copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, const QStringList &type );
-    void copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, int type );
-    void copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, bool type );
-    void mergeSettings( const QString &countryCode );
+    void initSettings();
+    void initCountrySettings( const QString &countryCode );
+    void initCalendarSettings();
+
+    void mergeSettings();
+    void mergeCalendarSettings();
+
+    void copySettings( KConfigGroup *fromGroup, KConfigGroup *toGroup, KConfig::WriteConfigFlags flags = KConfig::Normal );
+    void copyCalendarSettings( KConfigGroup *fromGroup, KConfigGroup *toGroup, KConfig::WriteConfigFlags flags = KConfig::Normal );
+    void copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, KConfig::WriteConfigFlags flags = KConfig::Normal );
 
     void setItem( const QString itemKey, const QString &itemValue,
                   QWidget *itemWidget, KPushButton *itemReset );
@@ -89,6 +93,12 @@ private:
                   QWidget *itemWidget, KPushButton *itemReset );
     void setItem( const QString itemKey, bool itemValue,
                   QWidget *itemWidget, KPushButton *itemReset );
+    void setCalendarItem( const QString itemKey, const QString &itemValue,
+                          QWidget *itemWidget, KPushButton *itemReset );
+    void setCalendarItem( const QString itemKey, int itemValue,
+                          QWidget *itemWidget, KPushButton *itemReset );
+    void setCalendarItem( const QString itemKey, bool itemValue,
+                          QWidget *itemWidget, KPushButton *itemReset );
     void setComboItem( const QString itemKey, const QString &itemValue,
                        KComboBox *itemCombo, KPushButton *itemDefaultButton );
     void setComboItem( const QString itemKey, int itemValue,
@@ -101,9 +111,11 @@ private:
                      KIntNumInput *itemInput, KPushButton *itemDefaultButton );
     void setCheckItem( const QString itemKey, bool itemValue,
                        QCheckBox *itemCheck, KPushButton *itemDefaultButton );
+
     void setMonetaryFormat( const QString prefixCurrencySymbolKey, bool prefixCurrencySymbol,
                             const QString signPositionKey, KLocale::SignPosition signPosition,
                             QWidget *formatWidget, KPushButton *formatDefaultButton );
+
     void checkIfChanged();
 
     //Common init utilities
@@ -261,11 +273,11 @@ private Q_SLOTS:
     void changedCalendarSystemIndex( int index );
     void changeCalendarSystem( const QString &newValue );
 
-    //void defaultUseCommonEra();
-    //void changeUseCommonEra();
+    void defaultUseCommonEra();
+    void changeUseCommonEra( bool newValue );
 
-    //void defaultShortYearWindow();
-    //void changeShortYearWindow( int newStartYear );
+    void defaultShortYearWindow();
+    void changeShortYearWindow( int newValue );
 
     void defaultWeekStartDay();
     void changedWeekStartDayIndex( int index );
@@ -338,28 +350,35 @@ private:
     // This gets updated with the users changes in the kcm and saved when requested
     KSharedConfigPtr m_userConfig;
     KConfigGroup m_userSettings;
+    KConfigGroup m_userCalendarSettings;
     // The kcm config/settings, a merger of C, Country, Group and User settings
     // This is used to build the displayed settings and to initialise the sample locale, but never saved
     KSharedConfigPtr m_kcmConfig;
     KConfigGroup m_kcmSettings;
+    KConfigGroup m_kcmCalendarSettings;
     // The currently saved user config/settings
     // This is used to check if anything has changed, but never saved
-    // Wouldn't be needed if KConfig/KConfigGroup had a simple isDirty() call
     KSharedConfigPtr m_currentConfig;
     KConfigGroup m_currentSettings;
-
+    KConfigGroup m_currentCalendarSettings;
     // The KCM Default settings, a merger of C, Country, and Group, i.e. excluding User
     KSharedConfigPtr m_defaultConfig;
     KConfigGroup m_defaultSettings;
+    KConfigGroup m_defaultCalendarSettings;
+
+    // These configs are const as they don't need to change and it prevents accidentally saving them
     // The current Group settings, i.e. does NOT include the User or Country settings
-    KSharedConfigPtr m_groupConfig;
+    KConfig const *m_groupConfig;
     KConfigGroup m_groupSettings;
+    KConfigGroup m_groupCalendarSettings;
     // The Country Locale config from l10n/<country>/entry.desktop
-    KSharedConfigPtr m_countryConfig;
+    KConfig const *m_countryConfig;
     KConfigGroup m_countrySettings;
+    KConfigGroup m_countryCalendarSettings;
     // The default C Locale config/settings from l10n/C/entry.desktop
-    KSharedConfigPtr m_cConfig;
+    KConfig const *m_cConfig;
     KConfigGroup m_cSettings;
+    KConfigGroup m_cCalendarSettings;
 
     QMap<QString, QString> m_dateFormatMap;
     QMap<QString, QString> m_timeFormatMap;
