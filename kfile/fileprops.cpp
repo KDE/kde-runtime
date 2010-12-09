@@ -279,7 +279,7 @@ int main( int argc, char **argv )
 
     if ( args->isSet( "dialog" ) ) {
         showPropertiesDialog( args );
-        return true;
+        return 0;
     }
 
     QString mimeType;
