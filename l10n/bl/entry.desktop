@@ -1,9 +1,11 @@
 [KCM Locale]
 Name=Saint Barthélemy
+Name[bg]=Сен Бартелеми
 Name[ca]=Saint Barthélemy
 Name[da]=Saint Barthélemy
 Name[en_GB]=Saint Barthélemy
 Name[et]=Saint Barthélemy
+Name[eu]=San Bartolome
 Name[hi]=सेयंट बार्थलेमि
 Name[hu]=Saint-Barthélemy 
 Name[ia]=Saint Barthélemy
@@ -15,6 +17,7 @@ Name[nds]=St. Bartholomäus
 Name[nl]=Saint Barthélemy
 Name[pt]=Saint Barthélemy
 Name[pt_BR]=Saint Barthélemy
+Name[ru]=Сен-Бартельми
 Name[sv]=Saint-Barthélemy
 Name[uk]=Сен-Бартельмі
 Name[x-test]=xxSaint Barthélemyxx
