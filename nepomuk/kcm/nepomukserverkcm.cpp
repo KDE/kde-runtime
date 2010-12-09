@@ -338,12 +338,28 @@ void Nepomuk::ServerConfigModule::save()
     strigiConfig.group( "General" ).writeEntry( "index newly mounted", m_checkIndexRemovableMedia->isChecked() );
 
 
-    // 3. update the current state of the nepomuk server
+    // 3. update kio_nepomuksearch config
+    KConfig kio_nepomuksearchConfig( "kio_nepomuksearchrc" );
+    kio_nepomuksearchConfig.group( "General" ).writeEntry( "Root query limit", m_spinMaxResults->value() );
+    kio_nepomuksearchConfig.group( "General" ).writeEntry( "Root query", queryForButton( m_rootQueryButtonGroup->checkedButton() ).toString() );
+    kio_nepomuksearchConfig.group( "General" ).writeEntry( "Custom query", m_customQuery );
+
+
+    // 4. Update backup config
+    KConfig backup("nepomukbackuprc");
+    KConfigGroup backupCfg = backup.group("Backup");
+    backupCfg.writeEntry("backup frequency", backupFrequencyToString(BackupFrequency(m_comboBackupFrequency->currentIndex())));
+    backupCfg.writeEntry("backup day", m_comboBackupDay->itemData(m_comboBackupDay->currentIndex()).toInt());
+    backupCfg.writeEntry("backup time", m_editBackupTime->time().toString(Qt::ISODate));
+    backupCfg.writeEntry("max backups", m_spinBackupMax->value());
+
+
+    // 5. update the current state of the nepomuk server
     if ( m_serverInterface->isValid() ) {
         m_serverInterface->enableNepomuk( m_checkEnableNepomuk->isChecked() );
         m_serverInterface->enableStrigi( m_checkEnableStrigi->isChecked() );
     }
-    else {
+    else if( m_checkEnableNepomuk->isChecked() ) {
         if ( !QProcess::startDetached( QLatin1String( "nepomukserver" ) ) ) {
             KMessageBox::error( this,
                                 i18n( "Failed to start Nepomuk Server. The settings have been saved "
@@ -351,22 +367,6 @@ void Nepomuk::ServerConfigModule::save()
                                 i18n( "Nepomuk server not running" ) );
         }
     }
-
-
-    // 4. update kio_nepomuksearch config
-    KConfig kio_nepomuksearchConfig( "kio_nepomuksearchrc" );
-    kio_nepomuksearchConfig.group( "General" ).writeEntry( "Root query limit", m_spinMaxResults->value() );
-    kio_nepomuksearchConfig.group( "General" ).writeEntry( "Root query", queryForButton( m_rootQueryButtonGroup->checkedButton() ).toString() );
-    kio_nepomuksearchConfig.group( "General" ).writeEntry( "Custom query", m_customQuery );
-
-
-    // 5. Update backup config
-    KConfig backup("nepomukbackuprc");
-    KConfigGroup backupCfg = backup.group("Backup");
-    backupCfg.writeEntry("backup frequency", backupFrequencyToString(BackupFrequency(m_comboBackupFrequency->currentIndex())));
-    backupCfg.writeEntry("backup day", m_comboBackupDay->itemData(m_comboBackupDay->currentIndex()).toInt());
-    backupCfg.writeEntry("backup time", m_editBackupTime->time().toString(Qt::ISODate));
-    backupCfg.writeEntry("max backups", m_spinBackupMax->value());
 
 
     // 6. update state
