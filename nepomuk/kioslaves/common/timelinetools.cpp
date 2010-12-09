@@ -149,9 +149,9 @@ Nepomuk::TimelineFolderType Nepomuk::parseTimelineUrl( const KUrl& url, QDate* d
 }
 
 
-Nepomuk::Query::Query Nepomuk::buildTimelineQuery( const QDate& date )
+Nepomuk::Query::Query Nepomuk::buildTimelineQuery( const QDate& from, const QDate& to )
 {
-    Nepomuk::Query::FileQuery query = Nepomuk::Query::dateRangeQuery( date, date );
+    Nepomuk::Query::FileQuery query = Nepomuk::Query::dateRangeQuery( from, to.isValid() ? to : from );
     query.setFileMode( Query::FileQuery::QueryFiles );
     return query;
 }

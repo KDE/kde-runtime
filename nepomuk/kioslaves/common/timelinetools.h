@@ -20,9 +20,10 @@
 #ifndef _NEPOMUK_TIMELINE_TOOLS_H_
 #define _NEPOMUK_TIMELINE_TOOLS_H_
 
-class QDate;
 class KUrl;
 class QString;
+
+#include <QtCore/QDate>
 
 #include <Nepomuk/Query/Query>
 
@@ -62,9 +63,9 @@ namespace Nepomuk {
     TimelineFolderType parseTimelineUrl( const KUrl& url, QDate* date, QString* filename = 0 );
 
     /**
-     * Create a nepomuksearch:/ URL that lists all files modified at \p date.
+     * Create a nepomuksearch:/ URL that lists all files modified or accessed between \p from and \p to.
      */
-    Query::Query buildTimelineQuery( const QDate& date );
+    Query::Query buildTimelineQuery( const QDate& from, const QDate& to = QDate() );
 }
 
 #endif
