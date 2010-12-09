@@ -22,6 +22,7 @@
 #include "nepomukservicecontrolinterface.h"
 #include "timelinetools.h"
 
+#include <Nepomuk/ResourceManager>
 #include <Nepomuk/Vocabulary/NFO>
 #include <Nepomuk/Vocabulary/NIE>
 #include <Nepomuk/Vocabulary/NUAO>
@@ -93,6 +94,13 @@ namespace {
                                                   date );
         uds.insert( KIO::UDSEntry::UDS_NEPOMUK_QUERY, Nepomuk::buildTimelineQuery( date ).toString() );
         return uds;
+    }
+
+    bool filesInDateRange( const QDate& from, const QDate& to = QDate() )
+    {
+        return Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(
+                    Nepomuk::buildTimelineQuery( from, to ).toSparqlQuery(Nepomuk::Query::Query::CreateAskQuery),
+                    Soprano::Query::QueryLanguageSparql ).boolValue();
     }
 }
 
@@ -292,7 +300,8 @@ void Nepomuk::TimelineProtocol::listDays( int month, int year )
     const int days = KGlobal::locale()->calendar()->daysInMonth( QDate( year, month, 1 ) );
     for( int day = 1; day <= days; ++day ) {
         QDate date(year, month, day);
-        if( date <= QDate::currentDate() ) {
+        if( date <= QDate::currentDate() &&
+                filesInDateRange(date) ) {
             listEntry( createDayUDSEntry( date ), false );
         }
     }
@@ -304,7 +313,11 @@ void Nepomuk::TimelineProtocol::listThisYearsMonths()
     kDebug();
     int currentMonth = QDate::currentDate().month();
     for( int month = 1; month <= currentMonth; ++month ) {
-        listEntry( createMonthUDSEntry( month, QDate::currentDate().year() ), false );
+        const QDate dateInMonth( QDate::currentDate().year(), month, 1 );
+        if( filesInDateRange( KGlobal::locale()->calendar()->firstDayOfMonth(dateInMonth),
+                              KGlobal::locale()->calendar()->lastDayOfMonth(dateInMonth) ) ) {
+            listEntry( createMonthUDSEntry( month, QDate::currentDate().year() ), false );
+        }
     }
 }
 
@@ -312,7 +325,7 @@ void Nepomuk::TimelineProtocol::listThisYearsMonths()
 void Nepomuk::TimelineProtocol::listPreviousYears()
 {
     kDebug();
-    // TODO: list years before this year that have files
+    // TODO: list years before this year that have files, but first get the smallest date
     // Using a query like: "select ?date where { ?r a nfo:FileDataObject . ?r nie:lastModified ?date . } ORDER BY ?date LIMIT 1" (this would have to be cached)
 }
 
