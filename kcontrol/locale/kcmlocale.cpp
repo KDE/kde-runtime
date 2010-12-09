@@ -80,48 +80,23 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
     connect( m_ui->m_buttonResetCountryDivision, SIGNAL( clicked() ),
              this,                               SLOT( defaultCountryDivision() ) );
 
-    // Languages tab
+    // Translations tab
 
-    if ( QApplication::isRightToLeft ) {
-        m_ui->m_buttonTranslationsAdd->setIcon( KIcon( "go-next" ) );
-        m_ui->m_buttonTranslationsRemove->setIcon( KIcon( "go-previous" ) );
-    } else {
-        m_ui->m_buttonTranslationsAdd->setIcon( KIcon( "go-previous" ) );
-        m_ui->m_buttonTranslationsRemove->setIcon( KIcon( "go-next" ) );
-    }
-    m_ui->m_buttonTranslationsUp->setIcon( KIcon( "go-up" ) );
-    m_ui->m_buttonTranslationsDown->setIcon( KIcon( "go-down" ) );
-
-    m_ui->m_listTranslationsAvailable->setSortingEnabled( true );
-    m_ui->m_listTranslationsAvailable->setSelectionMode( QAbstractItemView::SingleSelection );
-
-    m_ui->m_listTranslationsSelected->setSortingEnabled( false );
-    m_ui->m_listTranslationsSelected->setSelectionMode( QAbstractItemView::SingleSelection );
-
-    // If user selects different item in Available list, clear Selected selection and disable Remove
-    connect( m_ui->m_listTranslationsAvailable,  SIGNAL( itemSelectionChanged() ),
-             this,                               SLOT( translationsAvailableSelectionChanged() ) );
-    // If user selects different item in Selected list, clear Available selection and disable Add
-    connect( m_ui->m_listTranslationsSelected,   SIGNAL( itemSelectionChanged() ),
-             this,                               SLOT( translationsSelectedSelectionChanged() ) );
-    // User has clicked Add button, move selected translations from Available to Selected
-    connect( m_ui->m_buttonTranslationsAdd,      SIGNAL( clicked() ),
-             this,                               SLOT( translationsAdd() ) );
-    // User has clicked Remove button, move selected translations from Selected to Available
-    connect( m_ui->m_buttonTranslationsRemove,   SIGNAL( clicked() ),
-             this,                               SLOT( translationsRemove() ) );
-    // User has clicked Up button, move selected translation up Selected list
-    connect( m_ui->m_buttonTranslationsUp,       SIGNAL( clicked() ),
-             this,                               SLOT( translationsUp() ) );
-    // User has clicked Down button, move selected translation down Selected list
-    connect( m_ui->m_buttonTranslationsDown,     SIGNAL( clicked() ),
-             this,                               SLOT( translationsDown() ) );
+    // User has changed the translations selection in some way
+    connect( m_ui->m_selectTranslations,         SIGNAL( added( QListWidgetItem* ) ),
+             this,                               SLOT( changeTranslations() ) );
+    connect( m_ui->m_selectTranslations,         SIGNAL( removed( QListWidgetItem* ) ),
+             this,                               SLOT( changeTranslations() ) );
+    connect( m_ui->m_selectTranslations,         SIGNAL( movedUp( QListWidgetItem* ) ),
+             this,                               SLOT( changeTranslations() ) );
+    connect( m_ui->m_selectTranslations,         SIGNAL( movedDown( QListWidgetItem* ) ),
+             this,                               SLOT( changeTranslations() ) );
     // User has clicked Install button, trigger distro specific install routine
-    connect( m_ui->m_buttonTranslationInstall,   SIGNAL( clicked() ),
-             this,                               SLOT( translationsInstall() ) );
+    connect( m_ui->m_buttonTranslationsInstall,  SIGNAL( clicked() ),
+             this,                               SLOT( installTranslations() ) );
     // User has clicked Default button, resest lists to Defaults
-    connect( m_ui->m_buttonResetTranslations, SIGNAL( clicked() ),
-             this,                            SLOT( defaultTranslations() ) );
+    connect( m_ui->m_buttonResetTranslations,    SIGNAL( clicked() ),
+             this,                               SLOT( defaultTranslations() ) );
 
     // Numbers tab
 
@@ -539,12 +514,9 @@ void KCMLocale::mergeSettings()
     m_kcmConfig->markAsClean();
     m_kcmLocale->setCountry( m_kcmSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
 
-    // Create the kcm translations list, add us_EN if not already included
+    // Create the kcm translations list
     m_kcmTranslations.clear();
     m_kcmTranslations = m_kcmSettings.readEntry( "Language", QString() ).split( ':', QString::SkipEmptyParts );
-    if ( !m_kcmTranslations.contains( "en_US" ) ) {
-        m_kcmTranslations.append( "en_US" );
-    }
 }
 
 void KCMLocale::mergeCalendarSettings()
@@ -1097,32 +1069,28 @@ void KCMLocale::changeCountryDivision( const QString &newValue )
 
 void KCMLocale::initTranslations()
 {
-    m_ui->m_listTranslationsAvailable->blockSignals( true );
-    m_ui->m_listTranslationsSelected->blockSignals( true );
-    m_ui->m_buttonTranslationsUp->blockSignals( true );
-    m_ui->m_buttonTranslationsDown->blockSignals( true );
-    m_ui->m_buttonTranslationsAdd->blockSignals( true );
-    m_ui->m_buttonTranslationsRemove->blockSignals( true );
+kDebug() << "initTranslations()";
+    m_ui->m_selectTranslations->blockSignals( true );
 
-    m_ui->m_labelTranslationsAvailable->setText( ki18n( "Available Languages:" ).toString( m_kcmLocale ) );
+    m_ui->m_selectTranslations->setAvailableLabel( ki18n( "Available Languages:" ).toString( m_kcmLocale ) );
     QString availableHelp = ki18n( "<p>This is the list of installed KDE Workspace language "
                                    "translations not currently being used.  To use a language "
                                    "translation move it to the 'Preferred Languages' list in "
                                    "the order of preference.  If no suitable languages are "
                                    "listed, then you may need to install more language packages "
                                    "using your usual installation method.</p>" ).toString( m_kcmLocale );
-    m_ui->m_listTranslationsAvailable->setToolTip( availableHelp );
-    m_ui->m_listTranslationsAvailable->setWhatsThis( availableHelp );
+    m_ui->m_selectTranslations->availableListWidget()->setToolTip( availableHelp );
+    m_ui->m_selectTranslations->availableListWidget()->setWhatsThis( availableHelp );
 
-    m_ui->m_labelTranslationsSelected->setText( ki18n( "Preferred Languages:" ).toString( m_kcmLocale ) );
+    m_ui->m_selectTranslations->setSelectedLabel( ki18n( "Preferred Languages:" ).toString( m_kcmLocale ) );
     QString selectedHelp = ki18n( "<p>This is the list of installed KDE Workspace language "
                                   "translations currently being used, listed in order of "
                                   "preference.  If a translation is not available for the "
                                   "first language in the list, the next language will be used.  "
                                   "If no other translations are available then US English will "
                                   "be used.</p>").toString( m_kcmLocale );
-    m_ui->m_listTranslationsSelected->setToolTip( selectedHelp );
-    m_ui->m_listTranslationsSelected->setWhatsThis( selectedHelp );
+    m_ui->m_selectTranslations->selectedListWidget()->setToolTip( selectedHelp );
+    m_ui->m_selectTranslations->selectedListWidget()->setWhatsThis( selectedHelp );
 
     QString enUS;
     QString defaultLang = ki18nc( "%1 = default language name", "%1 (Default)" ).subs( enUS ).toString( m_kcmLocale );
@@ -1135,10 +1103,6 @@ void KCMLocale::initTranslations()
     m_kcmTranslations = m_kcmSettings.readEntry( "Language" ).split( ':', QString::SkipEmptyParts );
     // Set up the locale, note it will throw away invalid langauges
     m_kcmLocale->setLanguage( m_kcmTranslations );
-    // Add default of US English if not already selected
-    if ( !m_kcmTranslations.contains( "en_US" ) ) {
-        m_kcmTranslations.append( "en_US" );
-    }
 
     // Check if any of the user requested translations are no longer installed
     // If any missing remove them, we'll tell the user later
@@ -1151,18 +1115,15 @@ void KCMLocale::initTranslations()
     }
 
     // Clear the selector before reloading
-    m_ui->m_listTranslationsAvailable->clear();
-    m_ui->m_listTranslationsSelected->clear();
+    m_ui->m_selectTranslations->availableListWidget()->clear();
+    m_ui->m_selectTranslations->selectedListWidget()->clear();
 
     // Load each user selected language into the selected list
     int i = 0;
     foreach ( const QString &languageCode, m_kcmTranslations ) {
-        QListWidgetItem *listItem = new QListWidgetItem( m_ui->m_listTranslationsSelected );
+        QListWidgetItem *listItem = new QListWidgetItem( m_ui->m_selectTranslations->selectedListWidget() );
         listItem->setText( m_kcmLocale->languageCodeToName( languageCode ) );
         listItem->setData( Qt::UserRole, languageCode );
-        if ( languageCode == "en_US" ) {
-            listItem->setFlags( Qt::NoItemFlags );
-        }
         ++i;
     }
 
@@ -1170,7 +1131,7 @@ void KCMLocale::initTranslations()
     i = 0;
     foreach ( const QString &languageCode, m_installedTranslations ) {
         if ( !m_kcmTranslations.contains( languageCode ) ) {
-            QListWidgetItem *listItem = new QListWidgetItem( m_ui->m_listTranslationsAvailable );
+            QListWidgetItem *listItem = new QListWidgetItem( m_ui->m_selectTranslations->availableListWidget() );
             listItem->setText( m_kcmLocale->languageCodeToName( languageCode ) );
             listItem->setData( Qt::UserRole, languageCode );
             ++i;
@@ -1180,17 +1141,10 @@ void KCMLocale::initTranslations()
     // Default to selecting the first Selected language,
     // otherwise the first Available language,
     // otherwise no languages so disable all buttons
-    if ( m_ui->m_listTranslationsSelected->count() > 1 ) {
-        m_ui->m_listTranslationsSelected->setCurrentRow( 0 );
-        translationsSelectedSelectionChanged();
-    } else if ( m_ui->m_listTranslationsAvailable->count() > 1 ) {
-        m_ui->m_listTranslationsAvailable->setCurrentRow( 0 );
-        translationsAvailableSelectionChanged();
-    } else {
-        m_ui->m_buttonTranslationsAdd->setEnabled( false );
-        m_ui->m_buttonTranslationsRemove->setEnabled( false );
-        m_ui->m_buttonTranslationsUp->setEnabled( false );
-        m_ui->m_buttonTranslationsDown->setEnabled( false );
+    if ( m_ui->m_selectTranslations->selectedListWidget()->count() > 1 ) {
+        m_ui->m_selectTranslations->selectedListWidget()->setCurrentRow( 0 );
+    } else if ( m_ui->m_selectTranslations->availableListWidget()->count() > 1 ) {
+        m_ui->m_selectTranslations->availableListWidget()->setCurrentRow( 0 );
     }
 
     if ( m_kcmSettings.readEntry( "Language", QString() ) ==
@@ -1200,12 +1154,7 @@ void KCMLocale::initTranslations()
         m_ui->m_buttonResetTranslations->setEnabled( true );
     }
 
-    m_ui->m_listTranslationsAvailable->blockSignals( false );
-    m_ui->m_listTranslationsSelected->blockSignals( false );
-    m_ui->m_buttonTranslationsUp->blockSignals( false );
-    m_ui->m_buttonTranslationsDown->blockSignals( false );
-    m_ui->m_buttonTranslationsAdd->blockSignals( false );
-    m_ui->m_buttonTranslationsRemove->blockSignals( false );
+    m_ui->m_selectTranslations->blockSignals( false );
 
     // Now tell the user about the missing languages
     foreach ( const QString &languageCode, missingLanguages ) {
@@ -1217,6 +1166,7 @@ void KCMLocale::initTranslations()
                                              "localization files for it and add the language again.")
                                              .subs( languageCode ).toString( m_kcmLocale ) );
     }
+kDebug() << "  done init";
 }
 
 void KCMLocale::defaultTranslations()
@@ -1228,13 +1178,8 @@ void KCMLocale::changeTranslations()
 {
     // Read the list of all Selected translations from the selector widget
     QStringList selectedTranslations;
-    for ( int i = 0; i < m_ui->m_listTranslationsSelected->count(); ++i ) {
-        selectedTranslations.append( m_ui->m_listTranslationsSelected->item( i )->data( Qt::UserRole ).toString() );
-    }
-
-    // Get rid of en_US if it's still last choice, i.e. default
-    if ( !selectedTranslations.isEmpty() && selectedTranslations.last() == "en_US" ) {
-        selectedTranslations.removeLast();
+    for ( int i = 0; i < m_ui->m_selectTranslations->selectedListWidget()->count(); ++i ) {
+        selectedTranslations.append(  m_ui->m_selectTranslations->selectedListWidget()->item( i )->data( Qt::UserRole ).toString() );
     }
 
     changeTranslations( selectedTranslations.join( ":" ) );
@@ -1242,107 +1187,27 @@ void KCMLocale::changeTranslations()
 
 void KCMLocale::changeTranslations( const QString &newValue )
 {
-    setItem( "Language", newValue, m_ui->m_listTranslationsSelected, m_ui->m_buttonResetTranslations );
+    setItem( "Language", newValue, m_ui->m_selectTranslations, m_ui->m_buttonResetTranslations );
 
     // Create the kcm translations list
     m_kcmTranslations.clear();
     m_kcmTranslations = m_kcmSettings.readEntry( "Language", QString() ).split( ':', QString::SkipEmptyParts );
-    // Set up the locale without en_US as will add it itself
     m_kcmLocale->setLanguage( m_kcmTranslations );
-    // Add us_EN if not already included
-    if ( !m_kcmTranslations.contains( "en_US" ) ) {
-        m_kcmTranslations.append( "en_US" );
-    }
 
     initAllWidgets();
 }
 
-void KCMLocale::translationsAvailableSelectionChanged()
-{
-    // If user selects item in Available list, clear Selected selection, enable/disable arrows
-    m_ui->m_listTranslationsSelected->clearSelection();
-    m_ui->m_buttonTranslationsAdd->setEnabled( true );
-    m_ui->m_buttonTranslationsRemove->setEnabled( false );
-    m_ui->m_buttonTranslationsUp->setEnabled( false );
-    m_ui->m_buttonTranslationsDown->setEnabled( false );
-}
-
-void KCMLocale::translationsSelectedSelectionChanged()
-{
-    // If user selects item in Selected list, clear Available selection, enable/disable arrows
-    m_ui->m_listTranslationsAvailable->clearSelection();
-    m_ui->m_buttonTranslationsRemove->setEnabled( true );
-    m_ui->m_buttonTranslationsAdd->setEnabled( false );
-    if ( m_ui->m_listTranslationsSelected->currentRow() == 0 ) {
-        m_ui->m_buttonTranslationsUp->setEnabled( false );
-    } else {
-        m_ui->m_buttonTranslationsUp->setEnabled( true );
-    }
-    // Is minus 2 as you can't select or move down past the last item in the list en_US
-    if ( m_ui->m_listTranslationsSelected->currentRow() == m_ui->m_listTranslationsSelected->count() - 2 ) {
-        m_ui->m_buttonTranslationsDown->setEnabled( false );
-    } else {
-        m_ui->m_buttonTranslationsDown->setEnabled( true );
-    }
-}
-
-void KCMLocale::translationsAdd()
-{
-    // User has clicked Add button, move selected translation from Available to Selected
-    int takeRow = m_ui->m_listTranslationsAvailable->currentRow();
-    int insertRow = qMax( m_ui->m_listTranslationsSelected->count() - 1, 0 );
-    m_ui->m_listTranslationsSelected->insertItem( insertRow, m_ui->m_listTranslationsAvailable->takeItem( takeRow ) );
-    changeTranslations();
-    m_ui->m_listTranslationsSelected->setCurrentRow( insertRow );
-    translationsSelectedSelectionChanged();
-}
-
-void KCMLocale::translationsRemove()
-{
-    // User has clicked Remove button, move selected translation from Selected to Available
-    int takeRow = m_ui->m_listTranslationsSelected->currentRow();
-    QString takeName = m_ui->m_listTranslationsSelected->currentItem()->text();
-    int insertRow = qMax( m_ui->m_listTranslationsAvailable->count(), 0 );
-    m_ui->m_listTranslationsAvailable->insertItem( insertRow, m_ui->m_listTranslationsSelected->takeItem( takeRow ) );
-    changeTranslations();
-    // List is sorted so item not actually inserted at insertRow, so need to find t to select it
-    m_ui->m_listTranslationsAvailable->setCurrentItem( m_ui->m_listTranslationsAvailable->findItems( takeName, Qt::MatchExactly ).at( 0 ) );
-    translationsAvailableSelectionChanged();
-}
-
-void KCMLocale::translationsUp()
-{
-    // User has clicked Up button, move selected translation up Selected list
-    int takeRow = m_ui->m_listTranslationsSelected->currentRow();
-    int insertRow = qMax( takeRow - 1, 0 );
-    m_ui->m_listTranslationsSelected->insertItem( insertRow, m_ui->m_listTranslationsSelected->takeItem( takeRow ) );
-    changeTranslations();
-    m_ui->m_listTranslationsSelected->setCurrentRow( insertRow );
-    translationsSelectedSelectionChanged();
-}
-
-void KCMLocale::translationsDown()
-{
-    // User has clicked Down button, move selected translation down Selected list
-    int takeRow = m_ui->m_listTranslationsSelected->currentRow();
-    int insertRow = qMin( takeRow + 1, m_ui->m_listTranslationsSelected->count() -2 );
-    m_ui->m_listTranslationsSelected->insertItem( insertRow, m_ui->m_listTranslationsSelected->takeItem( takeRow ) );
-    changeTranslations();
-    m_ui->m_listTranslationsSelected->setCurrentRow( insertRow );
-    translationsSelectedSelectionChanged();
-}
-
 void KCMLocale::initTranslationsInstall()
 {
-    m_ui->m_buttonTranslationInstall->blockSignals( true );
-    m_ui->m_buttonTranslationInstall->setText( ki18n( "Install more languages" ).toString( m_kcmLocale ) );
+    m_ui->m_buttonTranslationsInstall->blockSignals( true );
+    m_ui->m_buttonTranslationsInstall->setText( ki18n( "Install more languages" ).toString( m_kcmLocale ) );
     QString helpText = ki18n( "<p>Click here to install more languages</p>" ).toString( m_kcmLocale );
-    m_ui->m_buttonTranslationInstall->setToolTip( helpText );
-    m_ui->m_buttonTranslationInstall->setWhatsThis( helpText );
-    m_ui->m_buttonTranslationInstall->blockSignals( false );
+    m_ui->m_buttonTranslationsInstall->setToolTip( helpText );
+    m_ui->m_buttonTranslationsInstall->setWhatsThis( helpText );
+    m_ui->m_buttonTranslationsInstall->blockSignals( false );
 }
 
-void KCMLocale::translationsInstall()
+void KCMLocale::installTranslations()
 {
     // User has clicked Install Languages button, trigger distro specific install routine
 }
