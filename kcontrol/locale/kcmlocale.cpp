@@ -72,12 +72,12 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
     // Country tab
     connect( m_ui->m_comboCountry,       SIGNAL( activated( int ) ),
              this,                       SLOT( changedCountryIndex( int ) ) );
-    connect( m_ui->m_buttonResetCountry, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultCountry, SIGNAL( clicked() ),
              this,                       SLOT( defaultCountry() ) );
 
     connect( m_ui->m_comboCountryDivision,       SIGNAL( activated( int ) ),
              this,                               SLOT( changedCountryDivisionIndex( int ) ) );
-    connect( m_ui->m_buttonResetCountryDivision, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultCountryDivision, SIGNAL( clicked() ),
              this,                               SLOT( defaultCountryDivision() ) );
 
     // Translations tab
@@ -95,172 +95,172 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
     connect( m_ui->m_buttonTranslationsInstall,  SIGNAL( clicked() ),
              this,                               SLOT( installTranslations() ) );
     // User has clicked Default button, resest lists to Defaults
-    connect( m_ui->m_buttonResetTranslations,    SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultTranslations,    SIGNAL( clicked() ),
              this,                               SLOT( defaultTranslations() ) );
 
     // Numbers tab
 
     connect( m_ui->m_comboThousandsSeparator,       SIGNAL( editTextChanged( const QString & ) ),
              this,                                  SLOT( changedNumericThousandsSeparator( const QString & ) ) );
-    connect( m_ui->m_buttonResetThousandsSeparator, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultThousandsSeparator, SIGNAL( clicked() ),
              this,                                  SLOT( defaultNumericThousandsSeparator() ) );
 
     connect( m_ui->m_comboDecimalSymbol,       SIGNAL( editTextChanged( const QString & ) ),
              this,                             SLOT( changedNumericDecimalSymbol( const QString & ) ) );
-    connect( m_ui->m_buttonResetDecimalSymbol, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultDecimalSymbol, SIGNAL( clicked() ),
              this,                             SLOT( defaultNumericDecimalSymbol() ) );
 
     connect( m_ui->m_intDecimalPlaces,         SIGNAL( valueChanged( int ) ),
              this,                             SLOT( changedNumericDecimalPlaces( int ) ) );
-    connect( m_ui->m_buttonResetDecimalPlaces, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultDecimalPlaces, SIGNAL( clicked() ),
              this,                             SLOT( defaultNumericDecimalPlaces() ) );
 
     connect( m_ui->m_comboPositiveSign,       SIGNAL( editTextChanged( const QString & ) ),
              this,                            SLOT( changedNumericPositiveSign( const QString & ) ) );
-    connect( m_ui->m_buttonResetPositiveSign, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultPositiveSign, SIGNAL( clicked() ),
              this,                            SLOT( defaultNumericPositiveSign() ) );
 
     connect( m_ui->m_comboNegativeSign,       SIGNAL( editTextChanged( const QString & ) ),
              this,                            SLOT( changedNumericNegativeSign( const QString & ) ) );
-    connect( m_ui->m_buttonResetNegativeSign, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultNegativeSign, SIGNAL( clicked() ),
              this,                            SLOT( defaultNumericNegativeSign() ) );
 
     connect( m_ui->m_comboDigitSet,       SIGNAL( currentIndexChanged( int ) ),
              this,                        SLOT( changedNumericDigitSetIndex( int ) ) );
-    connect( m_ui->m_buttonResetDigitSet, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultDigitSet, SIGNAL( clicked() ),
              this,                        SLOT( defaultNumericDigitSet() ) );
 
     // Money tab
 
     connect( m_ui->m_comboCurrencyCode,       SIGNAL( currentIndexChanged( int ) ),
              this,                              SLOT( changedCurrencyCodeIndex( int ) ) );
-    connect( m_ui->m_buttonResetCurrencyCode, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultCurrencyCode, SIGNAL( clicked() ),
              this,                              SLOT( defaultCurrencyCode() ) );
 
     connect( m_ui->m_comboCurrencySymbol,       SIGNAL( currentIndexChanged( int ) ),
              this,                              SLOT( changedCurrencySymbolIndex( int ) ) );
-    connect( m_ui->m_buttonResetCurrencySymbol, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultCurrencySymbol, SIGNAL( clicked() ),
              this,                              SLOT( defaultCurrencySymbol() ) );
 
     connect( m_ui->m_comboMonetaryThousandsSeparator,       SIGNAL( editTextChanged( const QString & ) ),
              this,                                          SLOT( changedMonetaryThousandsSeparator( const QString & ) ) );
-    connect( m_ui->m_buttonResetMonetaryThousandsSeparator, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultMonetaryThousandsSeparator, SIGNAL( clicked() ),
              this,                                          SLOT( defaultMonetaryThousandsSeparator() ) );
 
     connect( m_ui->m_comboMonetaryDecimalSymbol,       SIGNAL( editTextChanged( const QString & ) ),
              this,                                     SLOT( changedMonetaryDecimalSymbol( const QString & ) ) );
-    connect( m_ui->m_buttonResetMonetaryDecimalSymbol, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultMonetaryDecimalSymbol, SIGNAL( clicked() ),
              this,                                     SLOT( defaultMonetaryDecimalSymbol() ) );
 
     connect( m_ui->m_intMonetaryDecimalPlaces,         SIGNAL( valueChanged( int ) ),
              this,                                     SLOT( changedMonetaryDecimalPlaces( int ) ) );
-    connect( m_ui->m_buttonResetMonetaryDecimalPlaces, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultMonetaryDecimalPlaces, SIGNAL( clicked() ),
              this,                                     SLOT( defaultMonetaryDecimalPlaces() ) );
 
     connect( m_ui->m_comboMonetaryPositiveFormat,       SIGNAL( currentIndexChanged( int ) ),
              this,                                      SLOT( changedMonetaryPositiveFormatIndex( int ) ) );
-    connect( m_ui->m_buttonResetMonetaryPositiveFormat, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultMonetaryPositiveFormat, SIGNAL( clicked() ),
              this,                                      SLOT( defaultMonetaryPositiveFormat() ) );
 
     connect( m_ui->m_comboMonetaryNegativeFormat,       SIGNAL( currentIndexChanged( int ) ),
              this,                                      SLOT( changedMonetaryNegativeFormatIndex( int ) ) );
-    connect( m_ui->m_buttonResetMonetaryNegativeFormat, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultMonetaryNegativeFormat, SIGNAL( clicked() ),
              this,                                      SLOT( defaultMonetaryNegativeFormat() ) );
 
     connect( m_ui->m_comboMonetaryDigitSet,       SIGNAL( currentIndexChanged( int ) ),
              this,                                SLOT( changedMonetaryDigitSetIndex( int ) ) );
-    connect( m_ui->m_buttonResetMonetaryDigitSet, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultMonetaryDigitSet, SIGNAL( clicked() ),
              this,                                SLOT( defaultMonetaryDigitSet() ) );
 
     // Calendar tab
 
     connect( m_ui->m_comboCalendarSystem,       SIGNAL( currentIndexChanged( int ) ),
              this,                              SLOT( changedCalendarSystemIndex( int ) ) );
-    connect( m_ui->m_buttonResetCalendarSystem, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultCalendarSystem, SIGNAL( clicked() ),
              this,                              SLOT( defaultCalendarSystem() ) );
 
     connect( m_ui->m_checkCalendarGregorianUseCommonEra,       SIGNAL( clicked( bool ) ),
              this,                                             SLOT( changedUseCommonEra( bool ) ) );
-    connect( m_ui->m_buttonResetCalendarGregorianUseCommonEra, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultCalendarGregorianUseCommonEra, SIGNAL( clicked() ),
              this,                                             SLOT( defaultUseCommonEra() ) );
 
     connect( m_ui->m_intShortYearWindowStartYear, SIGNAL( valueChanged( int ) ),
              this,                                SLOT( changedShortYearWindow( int ) ) );
-    connect( m_ui->m_buttonResetShortYearWindow,  SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultShortYearWindow,  SIGNAL( clicked() ),
              this,                                SLOT( defaultShortYearWindow() ) );
 
     connect( m_ui->m_comboWeekStartDay,       SIGNAL( currentIndexChanged( int ) ),
              this,                            SLOT( changedWeekStartDayIndex( int ) ) );
-    connect( m_ui->m_buttonResetWeekStartDay, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultWeekStartDay, SIGNAL( clicked() ),
              this,                            SLOT( defaultWeekStartDay() ) );
 
     connect( m_ui->m_comboWorkingWeekStartDay,       SIGNAL( currentIndexChanged( int ) ),
              this,                                   SLOT( changedWorkingWeekStartDayIndex( int ) ) );
-    connect( m_ui->m_buttonResetWorkingWeekStartDay, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultWorkingWeekStartDay, SIGNAL( clicked() ),
              this,                                   SLOT( defaultWorkingWeekStartDay() ) );
 
     connect( m_ui->m_comboWorkingWeekEndDay,       SIGNAL( currentIndexChanged( int ) ),
              this,                                 SLOT( changedWorkingWeekEndDayIndex( int ) ) );
-    connect( m_ui->m_buttonResetWorkingWeekEndDay, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultWorkingWeekEndDay, SIGNAL( clicked() ),
              this,                                 SLOT( defaultWorkingWeekEndDay() ) );
 
     connect( m_ui->m_comboWeekDayOfPray,       SIGNAL( currentIndexChanged( int ) ),
              this,                             SLOT( changedWeekDayOfPrayIndex( int ) ) );
-    connect( m_ui->m_buttonResetWeekDayOfPray, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultWeekDayOfPray, SIGNAL( clicked() ),
              this,                             SLOT( defaultWeekDayOfPray() ) );
 
     // Date / Time tab
 
     connect( m_ui->m_comboTimeFormat,       SIGNAL( editTextChanged( const QString & ) ),
              this,                          SLOT( changedTimeFormat( const QString & ) ) );
-    connect( m_ui->m_buttonResetTimeFormat, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultTimeFormat, SIGNAL( clicked() ),
              this,                          SLOT( defaultTimeFormat() ) );
 
     connect( m_ui->m_comboAmSymbol,       SIGNAL( editTextChanged( const QString & ) ),
              this,                        SLOT( changedAmSymbol( const QString & ) ) );
-    connect( m_ui->m_buttonResetAmSymbol, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultAmSymbol, SIGNAL( clicked() ),
              this,                        SLOT( defaultAmSymbol() ) );
 
     connect( m_ui->m_comboPmSymbol,       SIGNAL( editTextChanged( const QString & ) ),
              this,                        SLOT( changedPmSymbol( const QString & ) ) );
-    connect( m_ui->m_buttonResetPmSymbol, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultPmSymbol, SIGNAL( clicked() ),
              this,                        SLOT( defaultPmSymbol() ) );
 
     connect( m_ui->m_comboDateFormat,       SIGNAL( editTextChanged( const QString & ) ),
              this,                          SLOT( changedDateFormat( const QString & ) ) );
-    connect( m_ui->m_buttonResetDateFormat, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultDateFormat, SIGNAL( clicked() ),
              this,                          SLOT( defaultDateFormat() ) );
 
     connect( m_ui->m_comboShortDateFormat,       SIGNAL( editTextChanged( const QString & ) ),
              this,                               SLOT( changedShortDateFormat( const QString & ) ) );
-    connect( m_ui->m_buttonResetShortDateFormat, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultShortDateFormat, SIGNAL( clicked() ),
              this,                               SLOT( defaultShortDateFormat() ) );
 
     connect( m_ui->m_checkMonthNamePossessive,       SIGNAL( clicked( bool ) ),
              this,                                   SLOT( changedMonthNamePossessive( bool ) ) );
-    connect( m_ui->m_buttonResetMonthNamePossessive, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultMonthNamePossessive, SIGNAL( clicked() ),
              this,                                   SLOT( defaultMonthNamePossessive() ) );
 
     connect( m_ui->m_comboDateTimeDigitSet,       SIGNAL( currentIndexChanged( int ) ),
              this,                                SLOT( changedDateTimeDigitSetIndex( int ) ) );
-    connect( m_ui->m_buttonResetDateTimeDigitSet, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultDateTimeDigitSet, SIGNAL( clicked() ),
              this,                                SLOT( defaultDateTimeDigitSet() ) );
 
     // Other tab
 
     connect( m_ui->m_comboPageSize,       SIGNAL( currentIndexChanged( int ) ),
              this,                        SLOT( changedPageSizeIndex( int ) ) );
-    connect( m_ui->m_buttonResetPageSize, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultPageSize, SIGNAL( clicked() ),
              this,                        SLOT( defaultPageSize() ) );
 
     connect( m_ui->m_comboMeasureSystem,       SIGNAL( currentIndexChanged( int ) ),
              this,                             SLOT( changedMeasureSystemIndex( int ) ) );
-    connect( m_ui->m_buttonResetMeasureSystem, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultMeasureSystem, SIGNAL( clicked() ),
              this,                             SLOT( defaultMeasureSystem() ) );
 
     connect( m_ui->m_comboBinaryUnitDialect,       SIGNAL( currentIndexChanged( int ) ),
              this,                                 SLOT( changedBinaryUnitDialectIndex( int ) ) );
-    connect( m_ui->m_buttonResetBinaryUnitDialect, SIGNAL( clicked() ),
+    connect( m_ui->m_buttonDefaultBinaryUnitDialect, SIGNAL( clicked() ),
              this,                                 SLOT( defaultBinaryUnitDialect() ) );
 }
 
@@ -635,52 +635,52 @@ void KCMLocale::initResetButtons()
     KGuiItem defaultItem( QString(), "document-revert", ki18n( "Reset item to its default value" ).toString( m_kcmLocale ) );
 
     //Country tab
-    m_ui->m_buttonResetCountry->setGuiItem( defaultItem );
-    m_ui->m_buttonResetCountryDivision->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultCountry->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultCountryDivision->setGuiItem( defaultItem );
 
     //Translations tab
-    m_ui->m_buttonResetTranslations->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultTranslations->setGuiItem( defaultItem );
 
     //Numeric tab
-    m_ui->m_buttonResetThousandsSeparator->setGuiItem( defaultItem );
-    m_ui->m_buttonResetDecimalSymbol->setGuiItem( defaultItem );
-    m_ui->m_buttonResetDecimalPlaces->setGuiItem( defaultItem );
-    m_ui->m_buttonResetPositiveSign->setGuiItem( defaultItem );
-    m_ui->m_buttonResetNegativeSign->setGuiItem( defaultItem );
-    m_ui->m_buttonResetDigitSet->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultThousandsSeparator->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultDecimalSymbol->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultDecimalPlaces->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultPositiveSign->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultNegativeSign->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultDigitSet->setGuiItem( defaultItem );
 
     //Monetary tab
-    m_ui->m_buttonResetCurrencyCode->setGuiItem( defaultItem );
-    m_ui->m_buttonResetCurrencySymbol->setGuiItem( defaultItem );
-    m_ui->m_buttonResetMonetaryThousandsSeparator->setGuiItem( defaultItem );
-    m_ui->m_buttonResetMonetaryDecimalSymbol->setGuiItem( defaultItem );
-    m_ui->m_buttonResetMonetaryDecimalPlaces->setGuiItem( defaultItem );
-    m_ui->m_buttonResetMonetaryPositiveFormat->setGuiItem( defaultItem );
-    m_ui->m_buttonResetMonetaryNegativeFormat->setGuiItem( defaultItem );
-    m_ui->m_buttonResetMonetaryDigitSet->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultCurrencyCode->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultCurrencySymbol->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultMonetaryThousandsSeparator->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultMonetaryDecimalSymbol->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultMonetaryDecimalPlaces->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultMonetaryPositiveFormat->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultMonetaryNegativeFormat->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultMonetaryDigitSet->setGuiItem( defaultItem );
 
     //Calendar tab
-    m_ui->m_buttonResetCalendarSystem->setGuiItem( defaultItem );
-    m_ui->m_buttonResetCalendarGregorianUseCommonEra->setGuiItem( defaultItem );
-    m_ui->m_buttonResetShortYearWindow->setGuiItem( defaultItem );
-    m_ui->m_buttonResetWeekStartDay->setGuiItem( defaultItem );
-    m_ui->m_buttonResetWorkingWeekStartDay->setGuiItem( defaultItem );
-    m_ui->m_buttonResetWorkingWeekEndDay->setGuiItem( defaultItem );
-    m_ui->m_buttonResetWeekDayOfPray->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultCalendarSystem->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultCalendarGregorianUseCommonEra->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultShortYearWindow->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultWeekStartDay->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultWorkingWeekStartDay->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultWorkingWeekEndDay->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultWeekDayOfPray->setGuiItem( defaultItem );
 
     //Date/Time tab
-    m_ui->m_buttonResetTimeFormat->setGuiItem( defaultItem );
-    m_ui->m_buttonResetAmSymbol->setGuiItem( defaultItem );
-    m_ui->m_buttonResetPmSymbol->setGuiItem( defaultItem );
-    m_ui->m_buttonResetDateFormat->setGuiItem( defaultItem );
-    m_ui->m_buttonResetShortDateFormat->setGuiItem( defaultItem );
-    m_ui->m_buttonResetMonthNamePossessive->setGuiItem( defaultItem );
-    m_ui->m_buttonResetDateTimeDigitSet->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultTimeFormat->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultAmSymbol->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultPmSymbol->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultDateFormat->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultShortDateFormat->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultMonthNamePossessive->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultDateTimeDigitSet->setGuiItem( defaultItem );
 
     //Other tab
-    m_ui->m_buttonResetPageSize->setGuiItem( defaultItem );
-    m_ui->m_buttonResetMeasureSystem->setGuiItem( defaultItem );
-    m_ui->m_buttonResetBinaryUnitDialect->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultPageSize->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultMeasureSystem->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultBinaryUnitDialect->setGuiItem( defaultItem );
 }
 
 void KCMLocale::checkIfChanged()
@@ -986,7 +986,7 @@ void KCMLocale::changedCountryIndex( int index )
 void KCMLocale::setCountry( const QString &newValue )
 {
     setComboItem( "Country", newValue,
-                  m_ui->m_comboCountry, m_ui->m_buttonResetCountry );
+                  m_ui->m_comboCountry, m_ui->m_buttonDefaultCountry );
 }
 
 void KCMLocale::initCountryDivision()
@@ -1004,8 +1004,8 @@ void KCMLocale::initCountryDivision()
 
     m_ui->m_labelCountryDivision->setHidden( true );
     m_ui->m_comboCountryDivision->setHidden( true );
-    m_ui->m_buttonResetCountryDivision->setEnabled( false );
-    m_ui->m_buttonResetCountryDivision->setHidden( true );
+    m_ui->m_buttonDefaultCountryDivision->setEnabled( false );
+    m_ui->m_buttonDefaultCountryDivision->setHidden( true );
 
     m_ui->m_comboCountryDivision->blockSignals( false );
 }
@@ -1023,7 +1023,7 @@ void KCMLocale::changedCountryDivisionIndex( int index )
 void KCMLocale::setCountryDivision( const QString &newValue )
 {
     setComboItem( "CountryDivision", newValue,
-                m_ui->m_comboCountryDivision, m_ui->m_buttonResetCountryDivision );
+                m_ui->m_comboCountryDivision, m_ui->m_buttonDefaultCountryDivision );
     m_kcmLocale->setCountryDivisionCode( m_kcmSettings.readEntry( "CountryDivision", QString() ) );
 }
 
@@ -1109,7 +1109,7 @@ void KCMLocale::initTranslations()
 
     enableItemWidgets( "Language",
                        &m_userSettings, &m_kcmSettings, &m_defaultSettings,
-                       m_ui->m_selectTranslations, m_ui->m_buttonResetTranslations );
+                       m_ui->m_selectTranslations, m_ui->m_buttonDefaultTranslations );
 
     m_ui->m_selectTranslations->blockSignals( false );
 
@@ -1160,7 +1160,7 @@ void KCMLocale::changedTranslations()
 
 void KCMLocale::setTranslations( const QString &newValue )
 {
-    setItem( "Language", newValue, m_ui->m_selectTranslations, m_ui->m_buttonResetTranslations );
+    setItem( "Language", newValue, m_ui->m_selectTranslations, m_ui->m_buttonDefaultTranslations );
 
     // Create the kcm translations list
     m_kcmTranslations.clear();
@@ -1217,7 +1217,7 @@ void KCMLocale::changedNumericThousandsSeparator( const QString &newValue )
         useValue = m_ui->m_comboThousandsSeparator->itemData( item ).toString();
     }
     setItem( "ThousandsSeparator", useValue,
-             m_ui->m_comboThousandsSeparator, m_ui->m_buttonResetThousandsSeparator );
+             m_ui->m_comboThousandsSeparator, m_ui->m_buttonDefaultThousandsSeparator );
     m_kcmLocale->setThousandsSeparator( m_kcmSettings.readEntry( "ThousandsSeparator", QString() ) );
 }
 
@@ -1225,7 +1225,7 @@ void KCMLocale::changedNumericThousandsSeparator( const QString &newValue )
 void KCMLocale::setNumericThousandsSeparator( const QString &newValue )
 {
     setEditComboItem( "ThousandsSeparator", newValue,
-                       m_ui->m_comboThousandsSeparator, m_ui->m_buttonResetThousandsSeparator );
+                       m_ui->m_comboThousandsSeparator, m_ui->m_buttonDefaultThousandsSeparator );
     m_kcmLocale->setThousandsSeparator( m_kcmSettings.readEntry( "ThousandsSeparator", QString() ) );
 }
 
@@ -1262,7 +1262,7 @@ void KCMLocale::changedNumericDecimalSymbol( const QString &newValue )
         useValue = m_ui->m_comboDecimalSymbol->itemData( item ).toString();
     }
     setItem( "DecimalSymbol", useValue,
-             m_ui->m_comboDecimalSymbol, m_ui->m_buttonResetDecimalSymbol );
+             m_ui->m_comboDecimalSymbol, m_ui->m_buttonDefaultDecimalSymbol );
     m_kcmLocale->setDecimalSymbol( m_kcmSettings.readEntry( "DecimalSymbol", QString() ) );
 }
 
@@ -1270,7 +1270,7 @@ void KCMLocale::changedNumericDecimalSymbol( const QString &newValue )
 void KCMLocale::setNumericDecimalSymbol( const QString &newValue )
 {
     setEditComboItem( "DecimalSymbol", newValue,
-                      m_ui->m_comboDecimalSymbol, m_ui->m_buttonResetDecimalSymbol );
+                      m_ui->m_comboDecimalSymbol, m_ui->m_buttonDefaultDecimalSymbol );
     m_kcmLocale->setDecimalSymbol( m_kcmSettings.readEntry( "DecimalSymbol", QString() ) );
 }
 
@@ -1305,7 +1305,7 @@ void KCMLocale::changedNumericDecimalPlaces( int newValue )
 void KCMLocale::setNumericDecimalPlaces( int newValue )
 {
     setIntItem( "DecimalPlaces", newValue,
-                m_ui->m_intDecimalPlaces, m_ui->m_buttonResetDecimalPlaces );
+                m_ui->m_intDecimalPlaces, m_ui->m_buttonDefaultDecimalPlaces );
     m_kcmLocale->setDecimalPlaces( m_kcmSettings.readEntry( "DecimalPlaces", 0 ) );
 }
 
@@ -1344,7 +1344,7 @@ void KCMLocale::changedNumericPositiveSign( const QString &newValue )
         useValue = m_ui->m_comboPositiveSign->itemData( item ).toString();
     }
     setItem( "PositiveSign", useValue,
-             m_ui->m_comboPositiveSign, m_ui->m_buttonResetPositiveSign );
+             m_ui->m_comboPositiveSign, m_ui->m_buttonDefaultPositiveSign );
     m_kcmLocale->setPositiveSign( m_kcmSettings.readEntry( "PositiveSign", QString() ) );
 
     // Update the monetary format samples to relect new setting
@@ -1355,7 +1355,7 @@ void KCMLocale::changedNumericPositiveSign( const QString &newValue )
 void KCMLocale::setNumericPositiveSign( const QString &newValue )
 {
     setEditComboItem( "PositiveSign", newValue,
-                      m_ui->m_comboPositiveSign, m_ui->m_buttonResetPositiveSign );
+                      m_ui->m_comboPositiveSign, m_ui->m_buttonDefaultPositiveSign );
     m_kcmLocale->setPositiveSign( m_kcmSettings.readEntry( "PositiveSign", QString() ) );
 
     // Update the monetary format samples to relect new setting
@@ -1398,7 +1398,7 @@ void KCMLocale::changedNumericNegativeSign( const QString &newValue )
         useValue = m_ui->m_comboNegativeSign->itemData( item ).toString();
     }
     setItem( "NegativeSign", useValue,
-             m_ui->m_comboNegativeSign, m_ui->m_buttonResetNegativeSign );
+             m_ui->m_comboNegativeSign, m_ui->m_buttonDefaultNegativeSign );
     m_kcmLocale->setNegativeSign( m_kcmSettings.readEntry( "NegativeSign", QString() ) );
 
     // Update the monetary format samples to relect new setting
@@ -1409,7 +1409,7 @@ void KCMLocale::changedNumericNegativeSign( const QString &newValue )
 void KCMLocale::setNumericNegativeSign( const QString &newValue )
 {
     setEditComboItem( "NegativeSign", newValue,
-                      m_ui->m_comboNegativeSign, m_ui->m_buttonResetNegativeSign );
+                      m_ui->m_comboNegativeSign, m_ui->m_buttonDefaultNegativeSign );
     m_kcmLocale->setNegativeSign( m_kcmSettings.readEntry( "NegativeSign", QString() ) );
 
     // Update the monetary format samples to relect new setting
@@ -1450,7 +1450,7 @@ void KCMLocale::changedNumericDigitSetIndex( int index )
 void KCMLocale::setNumericDigitSet( int newValue )
 {
     setComboItem( "DigitSet", newValue,
-                  m_ui->m_comboDigitSet, m_ui->m_buttonResetDigitSet );
+                  m_ui->m_comboDigitSet, m_ui->m_buttonDefaultDigitSet );
     m_kcmLocale->setDigitSet( (KLocale::DigitSet) m_kcmSettings.readEntry( "DigitSet", 0 ) );
 }
 
@@ -1509,7 +1509,7 @@ void KCMLocale::changedCurrencyCodeIndex( int index )
 void KCMLocale::setCurrencyCode( const QString &newValue )
 {
     setComboItem( "CurrencyCode", newValue,
-                  m_ui->m_comboCurrencyCode, m_ui->m_buttonResetCurrencyCode );
+                  m_ui->m_comboCurrencyCode, m_ui->m_buttonDefaultCurrencyCode );
     m_kcmLocale->setCurrencyCode( m_kcmSettings.readEntry( "CurrencyCode", QString() ) );
     // Update the Currency dependent widgets with the new Currency details
     initCurrencySymbol();
@@ -1559,7 +1559,7 @@ void KCMLocale::changedCurrencySymbolIndex( int index )
 void KCMLocale::setCurrencySymbol( const QString &newValue )
 {
     setComboItem( "CurrencySymbol", newValue,
-                  m_ui->m_comboCurrencySymbol, m_ui->m_buttonResetCurrencySymbol );
+                  m_ui->m_comboCurrencySymbol, m_ui->m_buttonDefaultCurrencySymbol );
     if ( m_kcmSettings.readEntry( "CurrencySymbol", QString() ) != QString() ) {
         m_kcmLocale->setCurrencySymbol( m_kcmSettings.readEntry( "CurrencySymbol", QString() ) );
     } else {
@@ -1603,7 +1603,7 @@ void KCMLocale::changedMonetaryThousandsSeparator( const QString &newValue )
         useValue = m_ui->m_comboMonetaryThousandsSeparator->itemData( item ).toString();
     }
     setItem( "MonetaryThousandsSeparator", useValue,
-             m_ui->m_comboMonetaryThousandsSeparator, m_ui->m_buttonResetMonetaryThousandsSeparator );
+             m_ui->m_comboMonetaryThousandsSeparator, m_ui->m_buttonDefaultMonetaryThousandsSeparator );
     m_kcmLocale->setMonetaryThousandsSeparator( m_kcmSettings.readEntry( "MonetaryThousandsSeparator", QString() ) );
 
     // Update the monetary format samples to relect new setting
@@ -1614,7 +1614,7 @@ void KCMLocale::changedMonetaryThousandsSeparator( const QString &newValue )
 void KCMLocale::setMonetaryThousandsSeparator( const QString &newValue )
 {
     setEditComboItem( "MonetaryThousandsSeparator", newValue,
-                      m_ui->m_comboMonetaryThousandsSeparator, m_ui->m_buttonResetMonetaryThousandsSeparator );
+                      m_ui->m_comboMonetaryThousandsSeparator, m_ui->m_buttonDefaultMonetaryThousandsSeparator );
     m_kcmLocale->setMonetaryThousandsSeparator( m_kcmSettings.readEntry( "MonetaryThousandsSeparator", QString() ) );
 
     // Update the monetary format samples to relect new setting
@@ -1654,7 +1654,7 @@ void KCMLocale::changedMonetaryDecimalSymbol( const QString &newValue )
         useValue = m_ui->m_comboMonetaryDecimalSymbol->itemData( item ).toString();
     }
     setItem( "MonetaryDecimalSymbol", useValue,
-             m_ui->m_comboMonetaryDecimalSymbol, m_ui->m_buttonResetMonetaryDecimalSymbol );
+             m_ui->m_comboMonetaryDecimalSymbol, m_ui->m_buttonDefaultMonetaryDecimalSymbol );
     m_kcmLocale->setMonetaryDecimalSymbol( m_kcmSettings.readEntry( "MonetaryDecimalSymbol", QString() ) );
 
     // Update the monetary format samples to relect new setting
@@ -1665,7 +1665,7 @@ void KCMLocale::changedMonetaryDecimalSymbol( const QString &newValue )
 void KCMLocale::setMonetaryDecimalSymbol( const QString &newValue )
 {
     setEditComboItem( "MonetaryDecimalSymbol", newValue,
-                      m_ui->m_comboMonetaryDecimalSymbol, m_ui->m_buttonResetMonetaryDecimalSymbol );
+                      m_ui->m_comboMonetaryDecimalSymbol, m_ui->m_buttonDefaultMonetaryDecimalSymbol );
     m_kcmLocale->setMonetaryDecimalSymbol( m_kcmSettings.readEntry( "MonetaryDecimalSymbol", QString() ) );
 
     // Update the monetary format samples to relect new setting
@@ -1704,7 +1704,7 @@ void KCMLocale::changedMonetaryDecimalPlaces( int newValue )
 void KCMLocale::setMonetaryDecimalPlaces( int newValue )
 {
     setIntItem( "MonetaryDecimalPlaces", newValue,
-                m_ui->m_intMonetaryDecimalPlaces, m_ui->m_buttonResetMonetaryDecimalPlaces );
+                m_ui->m_intMonetaryDecimalPlaces, m_ui->m_buttonDefaultMonetaryDecimalPlaces );
     m_kcmLocale->setMonetaryDecimalPlaces( m_kcmSettings.readEntry( "MonetaryDecimalPlaces", 0 ) );
 
     // Update the monetary format samples to relect new setting
@@ -1851,7 +1851,7 @@ void KCMLocale::setMonetaryPositiveFormat( bool prefixCurrencySymbol, KLocale::S
 {
     setMonetaryFormat( "PositivePrefixCurrencySymbol", prefixCurrencySymbol,
                        "PositiveMonetarySignPosition", signPosition,
-                       m_ui->m_comboMonetaryPositiveFormat, m_ui->m_buttonResetMonetaryPositiveFormat );
+                       m_ui->m_comboMonetaryPositiveFormat, m_ui->m_buttonDefaultMonetaryPositiveFormat );
 
     // Read back the kcm values and use them in the sample locale
     prefixCurrencySymbol = m_kcmSettings.readEntry( "PositivePrefixCurrencySymbol", false );
@@ -1969,7 +1969,7 @@ void KCMLocale::setMonetaryNegativeFormat( bool prefixCurrencySymbol, KLocale::S
 {
     setMonetaryFormat( "NegativePrefixCurrencySymbol", prefixCurrencySymbol,
                        "NegativeMonetarySignPosition", signPosition,
-                       m_ui->m_comboMonetaryNegativeFormat, m_ui->m_buttonResetMonetaryNegativeFormat );
+                       m_ui->m_comboMonetaryNegativeFormat, m_ui->m_buttonDefaultMonetaryNegativeFormat );
 
     // Read back the kcm values and use them in the sample locale
     prefixCurrencySymbol = m_kcmSettings.readEntry( "NegativePrefixCurrencySymbol", false );
@@ -2008,7 +2008,7 @@ void KCMLocale::initMonetaryDigitSet()
 
 void KCMLocale::defaultMonetaryDigitSet()
 {
-    setNumericDigitSet( m_defaultSettings.readEntry( "MonetaryDigitSet", 0 ) );
+    setMonetaryDigitSet( m_defaultSettings.readEntry( "MonetaryDigitSet", 0 ) );
 }
 
 void KCMLocale::changedMonetaryDigitSetIndex( int index )
@@ -2019,7 +2019,7 @@ void KCMLocale::changedMonetaryDigitSetIndex( int index )
 void KCMLocale::setMonetaryDigitSet( int newValue )
 {
     setComboItem( "MonetaryDigitSet", newValue,
-                  m_ui->m_comboMonetaryDigitSet, m_ui->m_buttonResetMonetaryDigitSet );
+                  m_ui->m_comboMonetaryDigitSet, m_ui->m_buttonDefaultMonetaryDigitSet );
     m_kcmLocale->setMonetaryDigitSet( (KLocale::DigitSet) m_kcmSettings.readEntry( "MonetaryDigitSet", 0 ) );
 }
 
@@ -2060,7 +2060,7 @@ void KCMLocale::changedCalendarSystemIndex( int index )
 void KCMLocale::setCalendarSystem( const QString &newValue )
 {
     setComboItem( "CalendarSystem", newValue,
-                  m_ui->m_comboCalendarSystem, m_ui->m_buttonResetCalendarSystem );
+                  m_ui->m_comboCalendarSystem, m_ui->m_buttonDefaultCalendarSystem );
 
     // Load the correct settings group for the new calendar
     initCalendarSettings();
@@ -2094,7 +2094,7 @@ void KCMLocale::initUseCommonEra()
     } else {
         setUseCommonEra( false );
         m_ui->m_checkCalendarGregorianUseCommonEra->setEnabled( false );
-        m_ui->m_buttonResetCalendarGregorianUseCommonEra->setEnabled( false );
+        m_ui->m_buttonDefaultCalendarGregorianUseCommonEra->setEnabled( false );
     }
 
     m_ui->m_checkCalendarGregorianUseCommonEra->blockSignals( false );
@@ -2113,7 +2113,7 @@ void KCMLocale::changedUseCommonEra( bool newValue )
 void KCMLocale::setUseCommonEra( bool newValue )
 {
     setCalendarItem( "UseCommonEra", newValue,
-                     m_ui->m_checkCalendarGregorianUseCommonEra, m_ui->m_buttonResetCalendarGregorianUseCommonEra );
+                     m_ui->m_checkCalendarGregorianUseCommonEra, m_ui->m_buttonDefaultCalendarGregorianUseCommonEra );
     m_ui->m_checkCalendarGregorianUseCommonEra->setChecked( m_kcmCalendarSettings.readEntry( "UseCommonEra", false ) );
 
     // No api to set, so need to force reload the locale
@@ -2154,7 +2154,7 @@ void KCMLocale::changedShortYearWindow( int newValue )
 void KCMLocale::setShortYearWindow( int newValue )
 {
     setCalendarItem( "ShortYearWindowStartYear", newValue,
-                     m_ui->m_intShortYearWindowStartYear, m_ui->m_buttonResetShortYearWindow );
+                     m_ui->m_intShortYearWindowStartYear, m_ui->m_buttonDefaultShortYearWindow );
     int startYear = m_kcmCalendarSettings.readEntry( "ShortYearWindowStartYear", 0 );
     m_ui->m_intShortYearWindowStartYear->setValue( startYear );
     m_ui->m_spinShortYearWindowEndYear->setValue( startYear + 99 );
@@ -2194,7 +2194,7 @@ void KCMLocale::changedWeekStartDayIndex( int index )
 void KCMLocale::setWeekStartDay( int newValue )
 {
     setComboItem( "WeekStartDay", newValue,
-                  m_ui->m_comboWeekStartDay, m_ui->m_buttonResetWeekStartDay );
+                  m_ui->m_comboWeekStartDay, m_ui->m_buttonDefaultWeekStartDay );
     m_kcmLocale->setWeekStartDay( m_kcmSettings.readEntry( "WeekStartDay", 0 ) );
 }
 
@@ -2228,7 +2228,7 @@ void KCMLocale::changedWorkingWeekStartDayIndex( int index )
 void KCMLocale::setWorkingWeekStartDay( int newValue )
 {
     setComboItem( "WorkingWeekStartDay", newValue,
-                  m_ui->m_comboWorkingWeekStartDay, m_ui->m_buttonResetWorkingWeekStartDay );
+                  m_ui->m_comboWorkingWeekStartDay, m_ui->m_buttonDefaultWorkingWeekStartDay );
     m_kcmLocale->setWorkingWeekStartDay( m_kcmSettings.readEntry( "WorkingWeekStartDay", 0 ) );
 }
 
@@ -2262,7 +2262,7 @@ void KCMLocale::changedWorkingWeekEndDayIndex( int index )
 void KCMLocale::setWorkingWeekEndDay( int newValue )
 {
     setComboItem( "WorkingWeekEndDay", newValue,
-                  m_ui->m_comboWorkingWeekEndDay, m_ui->m_buttonResetWorkingWeekEndDay );
+                  m_ui->m_comboWorkingWeekEndDay, m_ui->m_buttonDefaultWorkingWeekEndDay );
     m_kcmLocale->setWorkingWeekEndDay( m_kcmSettings.readEntry( "WorkingWeekEndDay", 0 ) );
 }
 
@@ -2297,7 +2297,7 @@ void KCMLocale::changedWeekDayOfPrayIndex( int index )
 void KCMLocale::setWeekDayOfPray( int newValue )
 {
     setComboItem( "WeekDayOfPray", newValue,
-                  m_ui->m_comboWeekDayOfPray, m_ui->m_buttonResetWeekDayOfPray );
+                  m_ui->m_comboWeekDayOfPray, m_ui->m_buttonDefaultWeekDayOfPray );
     m_kcmLocale->setWeekDayOfPray( m_kcmSettings.readEntry( "WeekDayOfPray", 0 ) );
 }
 
@@ -2354,14 +2354,14 @@ void KCMLocale::defaultTimeFormat()
 void KCMLocale::changedTimeFormat( const QString &newValue )
 {
     setItem( "TimeFormat", userToPosixTime( newValue ),
-             m_ui->m_comboTimeFormat, m_ui->m_buttonResetTimeFormat );
+             m_ui->m_comboTimeFormat, m_ui->m_buttonDefaultTimeFormat );
     m_kcmLocale->setTimeFormat( m_kcmSettings.readEntry( "TimeFormat", QString() ) );
 }
 
 void KCMLocale::setTimeFormat( const QString &newValue )
 {
     setItem( "TimeFormat", newValue,
-             m_ui->m_comboTimeFormat, m_ui->m_buttonResetTimeFormat );
+             m_ui->m_comboTimeFormat, m_ui->m_buttonDefaultTimeFormat );
     QString value = m_kcmSettings.readEntry( "TimeFormat", QString() );
     m_ui->m_comboTimeFormat->setEditText( posixToUserTime( value ) );
     m_kcmLocale->setTimeFormat( value );
@@ -2498,14 +2498,14 @@ void KCMLocale::defaultDateFormat()
 void KCMLocale::changedDateFormat( const QString &newValue )
 {
     setItem( "DateFormat", userToPosixDate( newValue ),
-             m_ui->m_comboDateFormat, m_ui->m_buttonResetDateFormat );
+             m_ui->m_comboDateFormat, m_ui->m_buttonDefaultDateFormat );
     m_kcmLocale->setDateFormat( m_kcmSettings.readEntry( "DateFormat", QString() ) );
 }
 
 void KCMLocale::setDateFormat( const QString &newValue )
 {
     setItem( "DateFormat", newValue,
-             m_ui->m_comboDateFormat, m_ui->m_buttonResetDateFormat );
+             m_ui->m_comboDateFormat, m_ui->m_buttonDefaultDateFormat );
     QString value = m_kcmSettings.readEntry( "DateFormat", QString() );
     m_ui->m_comboDateFormat->setEditText( posixToUserDate( value ) );
     m_kcmLocale->setDateFormat( value );
@@ -2606,14 +2606,14 @@ void KCMLocale::defaultShortDateFormat()
 void KCMLocale::changedShortDateFormat( const QString &newValue )
 {
     setItem( "DateFormatShort", userToPosixDate( newValue ),
-             m_ui->m_comboShortDateFormat, m_ui->m_buttonResetShortDateFormat );
+             m_ui->m_comboShortDateFormat, m_ui->m_buttonDefaultShortDateFormat );
     m_kcmLocale->setDateFormatShort( m_kcmSettings.readEntry( "DateFormatShort", QString() ) );
 }
 
 void KCMLocale::setShortDateFormat( const QString &newValue )
 {
     setItem( "DateFormatShort", newValue,
-             m_ui->m_comboShortDateFormat, m_ui->m_buttonResetShortDateFormat );
+             m_ui->m_comboShortDateFormat, m_ui->m_buttonDefaultShortDateFormat );
     QString value = m_kcmSettings.readEntry( "DateFormatShort", QString() );
     m_ui->m_comboShortDateFormat->setEditText( posixToUserDate( value ) );
     m_kcmLocale->setDateFormatShort( value );
@@ -2631,14 +2631,14 @@ void KCMLocale::initMonthNamePossessive()
 
     m_ui->m_checkMonthNamePossessive->setChecked( m_kcmLocale->dateMonthNamePossessive() );
     setCheckItem( "DateMonthNamePossessive", m_kcmSettings.readEntry( "DateMonthNamePossessive", false ),
-                  m_ui->m_checkMonthNamePossessive, m_ui->m_buttonResetMonthNamePossessive );
+                  m_ui->m_checkMonthNamePossessive, m_ui->m_buttonDefaultMonthNamePossessive );
 
     setMonthNamePossessive( m_kcmSettings.readEntry( "DateMonthNamePossessive", false ) );
 
     // Hide the option as it's not usable without ordinal day numbers
     m_ui->m_labelMonthNamePossessive->setHidden( true );
     m_ui->m_checkMonthNamePossessive->setHidden( true );
-    m_ui->m_buttonResetMonthNamePossessive->setHidden( true );
+    m_ui->m_buttonDefaultMonthNamePossessive->setHidden( true );
 
     m_ui->m_checkMonthNamePossessive->blockSignals( false );
 }
@@ -2656,7 +2656,7 @@ void KCMLocale::changedMonthNamePossessive( bool newValue )
 void KCMLocale::setMonthNamePossessive( bool newValue )
 {
     setCheckItem( "DateMonthNamePossessive", newValue,
-                  m_ui->m_checkMonthNamePossessive, m_ui->m_buttonResetMonthNamePossessive );
+                  m_ui->m_checkMonthNamePossessive, m_ui->m_buttonDefaultMonthNamePossessive );
     m_kcmLocale->setDateMonthNamePossessive( m_kcmSettings.readEntry( "DateMonthNamePossessive", 0 ) );
 }
 
@@ -2694,7 +2694,7 @@ void KCMLocale::changedDateTimeDigitSetIndex( int index )
 void KCMLocale::setDateTimeDigitSet( int newValue )
 {
     setComboItem( "DateTimeDigitSet", newValue,
-                  m_ui->m_comboDateTimeDigitSet, m_ui->m_buttonResetDateTimeDigitSet );
+                  m_ui->m_comboDateTimeDigitSet, m_ui->m_buttonDefaultDateTimeDigitSet );
     m_kcmLocale->setDateTimeDigitSet( (KLocale::DigitSet) m_kcmSettings.readEntry( "DateTimeDigitSet", 0 ) );
 }
 
@@ -2796,7 +2796,7 @@ void KCMLocale::changedPageSizeIndex( int index )
 void KCMLocale::setPageSize( int newValue )
 {
     setComboItem( "PageSize", newValue,
-                  m_ui->m_comboPageSize, m_ui->m_buttonResetPageSize );
+                  m_ui->m_comboPageSize, m_ui->m_buttonDefaultPageSize );
     m_kcmLocale->setPageSize( m_kcmSettings.readEntry( "PageSize", 0 ) );
 }
 
@@ -2832,7 +2832,7 @@ void KCMLocale::changedMeasureSystemIndex( int index )
 void KCMLocale::setMeasureSystem( int newValue )
 {
     setComboItem( "MeasureSystem", newValue,
-                  m_ui->m_comboMeasureSystem, m_ui->m_buttonResetMeasureSystem );
+                  m_ui->m_comboMeasureSystem, m_ui->m_buttonDefaultMeasureSystem );
     m_kcmLocale->setMeasureSystem( (KLocale::MeasureSystem) m_kcmSettings.readEntry( "MeasureSystem", 0 ) );
 }
 
@@ -2881,7 +2881,7 @@ void KCMLocale::changedBinaryUnitDialectIndex( int index )
 void KCMLocale::setBinaryUnitDialect( int newValue )
 {
     setComboItem( "BinaryUnitDialect", newValue,
-                  m_ui->m_comboBinaryUnitDialect, m_ui->m_buttonResetBinaryUnitDialect );
+                  m_ui->m_comboBinaryUnitDialect, m_ui->m_buttonDefaultBinaryUnitDialect );
     m_kcmLocale->setBinaryUnitDialect( (KLocale::BinaryUnitDialect)
                                        m_kcmSettings.readEntry( "BinaryUnitDialect", 0 ) );
     m_ui->m_labelBinaryUnitSample->setText( ki18nc("Example test for binary unit dialect",

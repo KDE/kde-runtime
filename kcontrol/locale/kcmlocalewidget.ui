@@ -56,7 +56,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetCountry"/>
+          <widget class="KPushButton" name="m_buttonDefaultCountry"/>
          </item>
         </layout>
        </item>
@@ -89,7 +89,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetCountryDivision">
+          <widget class="KPushButton" name="m_buttonDefaultCountryDivision">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -143,7 +143,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetTranslations"/>
+          <widget class="KPushButton" name="m_buttonDefaultTranslations"/>
          </item>
         </layout>
        </item>
@@ -189,7 +189,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetThousandsSeparator"/>
+          <widget class="KPushButton" name="m_buttonDefaultThousandsSeparator"/>
          </item>
         </layout>
        </item>
@@ -225,7 +225,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetDecimalSymbol"/>
+          <widget class="KPushButton" name="m_buttonDefaultDecimalSymbol"/>
          </item>
         </layout>
        </item>
@@ -273,7 +273,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetDecimalPlaces"/>
+          <widget class="KPushButton" name="m_buttonDefaultDecimalPlaces"/>
          </item>
         </layout>
        </item>
@@ -315,7 +315,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetPositiveSign"/>
+          <widget class="KPushButton" name="m_buttonDefaultPositiveSign"/>
          </item>
         </layout>
        </item>
@@ -357,7 +357,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetNegativeSign"/>
+          <widget class="KPushButton" name="m_buttonDefaultNegativeSign"/>
          </item>
         </layout>
        </item>
@@ -390,7 +390,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetDigitSet"/>
+          <widget class="KPushButton" name="m_buttonDefaultDigitSet"/>
          </item>
         </layout>
        </item>
@@ -442,7 +442,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetCurrencyCode"/>
+          <widget class="KPushButton" name="m_buttonDefaultCurrencyCode"/>
          </item>
         </layout>
        </item>
@@ -478,7 +478,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetCurrencySymbol"/>
+          <widget class="KPushButton" name="m_buttonDefaultCurrencySymbol"/>
          </item>
         </layout>
        </item>
@@ -517,7 +517,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetMonetaryThousandsSeparator"/>
+          <widget class="KPushButton" name="m_buttonDefaultMonetaryThousandsSeparator"/>
          </item>
         </layout>
        </item>
@@ -556,7 +556,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetMonetaryDecimalSymbol"/>
+          <widget class="KPushButton" name="m_buttonDefaultMonetaryDecimalSymbol"/>
          </item>
         </layout>
        </item>
@@ -604,7 +604,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetMonetaryDecimalPlaces"/>
+          <widget class="KPushButton" name="m_buttonDefaultMonetaryDecimalPlaces"/>
          </item>
         </layout>
        </item>
@@ -643,7 +643,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetMonetaryPositiveFormat"/>
+          <widget class="KPushButton" name="m_buttonDefaultMonetaryPositiveFormat"/>
          </item>
         </layout>
        </item>
@@ -682,7 +682,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetMonetaryNegativeFormat"/>
+          <widget class="KPushButton" name="m_buttonDefaultMonetaryNegativeFormat"/>
          </item>
         </layout>
        </item>
@@ -699,7 +699,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetMonetaryDigitSet"/>
+          <widget class="KPushButton" name="m_buttonDefaultMonetaryDigitSet"/>
          </item>
         </layout>
        </item>
@@ -755,7 +755,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetCalendarSystem"/>
+          <widget class="KPushButton" name="m_buttonDefaultCalendarSystem"/>
          </item>
         </layout>
        </item>
@@ -791,7 +791,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetCalendarGregorianUseCommonEra"/>
+          <widget class="KPushButton" name="m_buttonDefaultCalendarGregorianUseCommonEra"/>
          </item>
         </layout>
        </item>
@@ -856,7 +856,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetShortYearWindow"/>
+          <widget class="KPushButton" name="m_buttonDefaultShortYearWindow"/>
          </item>
         </layout>
        </item>
@@ -895,7 +895,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetWeekStartDay"/>
+          <widget class="KPushButton" name="m_buttonDefaultWeekStartDay"/>
          </item>
         </layout>
        </item>
@@ -934,7 +934,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetWorkingWeekStartDay"/>
+          <widget class="KPushButton" name="m_buttonDefaultWorkingWeekStartDay"/>
          </item>
         </layout>
        </item>
@@ -973,7 +973,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetWorkingWeekEndDay"/>
+          <widget class="KPushButton" name="m_buttonDefaultWorkingWeekEndDay"/>
          </item>
         </layout>
        </item>
@@ -1012,7 +1012,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetWeekDayOfPray"/>
+          <widget class="KPushButton" name="m_buttonDefaultWeekDayOfPray"/>
          </item>
         </layout>
        </item>
@@ -1064,7 +1064,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetTimeFormat"/>
+          <widget class="KPushButton" name="m_buttonDefaultTimeFormat"/>
          </item>
         </layout>
        </item>
@@ -1100,7 +1100,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetAmSymbol">
+          <widget class="KPushButton" name="m_buttonDefaultAmSymbol">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -1140,7 +1140,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetPmSymbol">
+          <widget class="KPushButton" name="m_buttonDefaultPmSymbol">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -1186,7 +1186,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetDateFormat"/>
+          <widget class="KPushButton" name="m_buttonDefaultDateFormat"/>
          </item>
         </layout>
        </item>
@@ -1228,7 +1228,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetShortDateFormat"/>
+          <widget class="KPushButton" name="m_buttonDefaultShortDateFormat"/>
          </item>
         </layout>
        </item>
@@ -1273,7 +1273,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetMonthNamePossessive">
+          <widget class="KPushButton" name="m_buttonDefaultMonthNamePossessive">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -1310,7 +1310,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetDateTimeDigitSet"/>
+          <widget class="KPushButton" name="m_buttonDefaultDateTimeDigitSet"/>
          </item>
         </layout>
        </item>
@@ -1356,7 +1356,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetPageSize"/>
+          <widget class="KPushButton" name="m_buttonDefaultPageSize"/>
          </item>
         </layout>
        </item>
@@ -1395,7 +1395,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetMeasureSystem"/>
+          <widget class="KPushButton" name="m_buttonDefaultMeasureSystem"/>
          </item>
         </layout>
        </item>
@@ -1418,7 +1418,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonResetBinaryUnitDialect"/>
+          <widget class="KPushButton" name="m_buttonDefaultBinaryUnitDialect"/>
          </item>
         </layout>
        </item>
@@ -1574,70 +1574,70 @@
  <tabstops>
   <tabstop>m_tabWidgetSettings</tabstop>
   <tabstop>m_comboCountry</tabstop>
-  <tabstop>m_buttonResetCountry</tabstop>
+  <tabstop>m_buttonDefaultCountry</tabstop>
   <tabstop>m_comboCountryDivision</tabstop>
-  <tabstop>m_buttonResetCountryDivision</tabstop>
-  <tabstop>m_buttonResetThousandsSeparator</tabstop>
-  <tabstop>m_buttonResetDecimalSymbol</tabstop>
+  <tabstop>m_buttonDefaultCountryDivision</tabstop>
+  <tabstop>m_buttonDefaultThousandsSeparator</tabstop>
+  <tabstop>m_buttonDefaultDecimalSymbol</tabstop>
   <tabstop>m_intDecimalPlaces</tabstop>
-  <tabstop>m_buttonResetDecimalPlaces</tabstop>
+  <tabstop>m_buttonDefaultDecimalPlaces</tabstop>
   <tabstop>m_comboPositiveSign</tabstop>
-  <tabstop>m_buttonResetPositiveSign</tabstop>
+  <tabstop>m_buttonDefaultPositiveSign</tabstop>
   <tabstop>m_comboNegativeSign</tabstop>
-  <tabstop>m_buttonResetNegativeSign</tabstop>
+  <tabstop>m_buttonDefaultNegativeSign</tabstop>
   <tabstop>m_comboDigitSet</tabstop>
-  <tabstop>m_buttonResetDigitSet</tabstop>
+  <tabstop>m_buttonDefaultDigitSet</tabstop>
   <tabstop>m_comboCurrencyCode</tabstop>
-  <tabstop>m_buttonResetCurrencyCode</tabstop>
+  <tabstop>m_buttonDefaultCurrencyCode</tabstop>
   <tabstop>m_comboCurrencySymbol</tabstop>
-  <tabstop>m_buttonResetCurrencySymbol</tabstop>
+  <tabstop>m_buttonDefaultCurrencySymbol</tabstop>
   <tabstop>m_comboMonetaryThousandsSeparator</tabstop>
-  <tabstop>m_buttonResetMonetaryThousandsSeparator</tabstop>
+  <tabstop>m_buttonDefaultMonetaryThousandsSeparator</tabstop>
   <tabstop>m_comboMonetaryDecimalSymbol</tabstop>
-  <tabstop>m_buttonResetMonetaryDecimalSymbol</tabstop>
+  <tabstop>m_buttonDefaultMonetaryDecimalSymbol</tabstop>
   <tabstop>m_intMonetaryDecimalPlaces</tabstop>
-  <tabstop>m_buttonResetMonetaryDecimalPlaces</tabstop>
+  <tabstop>m_buttonDefaultMonetaryDecimalPlaces</tabstop>
   <tabstop>m_comboMonetaryPositiveFormat</tabstop>
-  <tabstop>m_buttonResetMonetaryPositiveFormat</tabstop>
+  <tabstop>m_buttonDefaultMonetaryPositiveFormat</tabstop>
   <tabstop>m_comboMonetaryNegativeFormat</tabstop>
-  <tabstop>m_buttonResetMonetaryNegativeFormat</tabstop>
+  <tabstop>m_buttonDefaultMonetaryNegativeFormat</tabstop>
   <tabstop>m_comboMonetaryDigitSet</tabstop>
-  <tabstop>m_buttonResetMonetaryDigitSet</tabstop>
+  <tabstop>m_buttonDefaultMonetaryDigitSet</tabstop>
   <tabstop>m_comboCalendarSystem</tabstop>
-  <tabstop>m_buttonResetCalendarSystem</tabstop>
+  <tabstop>m_buttonDefaultCalendarSystem</tabstop>
   <tabstop>m_checkCalendarGregorianUseCommonEra</tabstop>
-  <tabstop>m_buttonResetCalendarGregorianUseCommonEra</tabstop>
+  <tabstop>m_buttonDefaultCalendarGregorianUseCommonEra</tabstop>
   <tabstop>m_intShortYearWindowStartYear</tabstop>
   <tabstop>m_spinShortYearWindowEndYear</tabstop>
-  <tabstop>m_buttonResetShortYearWindow</tabstop>
+  <tabstop>m_buttonDefaultShortYearWindow</tabstop>
   <tabstop>m_comboWeekStartDay</tabstop>
-  <tabstop>m_buttonResetWeekStartDay</tabstop>
+  <tabstop>m_buttonDefaultWeekStartDay</tabstop>
   <tabstop>m_comboWorkingWeekStartDay</tabstop>
-  <tabstop>m_buttonResetWorkingWeekStartDay</tabstop>
+  <tabstop>m_buttonDefaultWorkingWeekStartDay</tabstop>
   <tabstop>m_comboWorkingWeekEndDay</tabstop>
-  <tabstop>m_buttonResetWorkingWeekEndDay</tabstop>
+  <tabstop>m_buttonDefaultWorkingWeekEndDay</tabstop>
   <tabstop>m_comboWeekDayOfPray</tabstop>
-  <tabstop>m_buttonResetWeekDayOfPray</tabstop>
+  <tabstop>m_buttonDefaultWeekDayOfPray</tabstop>
   <tabstop>m_comboTimeFormat</tabstop>
-  <tabstop>m_buttonResetTimeFormat</tabstop>
+  <tabstop>m_buttonDefaultTimeFormat</tabstop>
   <tabstop>m_comboAmSymbol</tabstop>
-  <tabstop>m_buttonResetAmSymbol</tabstop>
+  <tabstop>m_buttonDefaultAmSymbol</tabstop>
   <tabstop>m_comboPmSymbol</tabstop>
-  <tabstop>m_buttonResetPmSymbol</tabstop>
+  <tabstop>m_buttonDefaultPmSymbol</tabstop>
   <tabstop>m_comboDateFormat</tabstop>
-  <tabstop>m_buttonResetDateFormat</tabstop>
+  <tabstop>m_buttonDefaultDateFormat</tabstop>
   <tabstop>m_comboShortDateFormat</tabstop>
-  <tabstop>m_buttonResetShortDateFormat</tabstop>
+  <tabstop>m_buttonDefaultShortDateFormat</tabstop>
   <tabstop>m_checkMonthNamePossessive</tabstop>
-  <tabstop>m_buttonResetMonthNamePossessive</tabstop>
+  <tabstop>m_buttonDefaultMonthNamePossessive</tabstop>
   <tabstop>m_comboDateTimeDigitSet</tabstop>
-  <tabstop>m_buttonResetDateTimeDigitSet</tabstop>
+  <tabstop>m_buttonDefaultDateTimeDigitSet</tabstop>
   <tabstop>m_comboPageSize</tabstop>
-  <tabstop>m_buttonResetPageSize</tabstop>
+  <tabstop>m_buttonDefaultPageSize</tabstop>
   <tabstop>m_comboMeasureSystem</tabstop>
-  <tabstop>m_buttonResetMeasureSystem</tabstop>
+  <tabstop>m_buttonDefaultMeasureSystem</tabstop>
   <tabstop>m_comboBinaryUnitDialect</tabstop>
-  <tabstop>m_buttonResetBinaryUnitDialect</tabstop>
+  <tabstop>m_buttonDefaultBinaryUnitDialect</tabstop>
   <tabstop>m_buttonTranslationsInstall</tabstop>
  </tabstops>
  <resources/>
