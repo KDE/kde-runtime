@@ -111,6 +111,8 @@ namespace Nepomuk {
          */
         void stop();
 
+        void start();
+        
     Q_SIGNALS:
         /**
          * Emitted once the indexing for a file or resource has finished.

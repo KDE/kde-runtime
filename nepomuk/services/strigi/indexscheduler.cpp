@@ -283,7 +283,8 @@ void Nepomuk::IndexScheduler::run()
 {
     // set lowest priority for this thread
     setPriority( QThread::IdlePriority );
-
+    m_indexer->start();
+    
     setIndexingStarted( true );
 
     // initialization
