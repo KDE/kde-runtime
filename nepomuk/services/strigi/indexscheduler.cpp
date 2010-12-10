@@ -257,6 +257,7 @@ void Nepomuk::IndexScheduler::run()
     while ( waitForContinue() ) {
         // wait for more dirs to analyze in case the initial
         // indexing is done
+        m_dirsToUpdateMutex.lock();
         if ( m_dirsToUpdate.isEmpty() ) {
             setIndexingStarted( false );
 
@@ -264,9 +265,7 @@ void Nepomuk::IndexScheduler::run()
             kDebug() << "All folders updated: " << timer.elapsed()/1000.0 << "sec";
 #endif
 
-            m_dirsToUpdateMutex.lock();
             m_dirsToUpdateWc.wait( &m_dirsToUpdateMutex );
-            m_dirsToUpdateMutex.unlock();
 
 #ifndef NDEBUG
             timer.restart();
@@ -275,6 +274,7 @@ void Nepomuk::IndexScheduler::run()
             if ( !m_stopped )
                 setIndexingStarted( true );
         }
+        m_dirsToUpdateMutex.unlock();
 
         // wait for resume or stop (or simply continue)
         if ( !waitForContinue() ) {
@@ -303,9 +303,15 @@ void Nepomuk::IndexScheduler::run()
 }
 
 
-bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir, UpdateDirFlags flags )
+bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, UpdateDirFlags flags )
 {
 //    kDebug() << dir << analyzer << recursive;
+
+    // normalize the dir name, otherwise things might break below
+    QString dir( dir_ );
+    if( dir.endsWith(QLatin1String("/")) ) {
+        dir.truncate( dir.length()-1 );
+    }
 
     // inform interested clients
     emit indexingFolder( dir );
