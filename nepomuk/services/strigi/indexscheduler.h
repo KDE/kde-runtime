@@ -22,7 +22,7 @@
 #include <QtCore/QThread>
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
-#include <QtCore/QSet>
+#include <QtCore/QQueue>
 #include <QtCore/QDateTime>
 
 #include <vector>
@@ -219,8 +219,16 @@ namespace Nepomuk {
 
         Indexer* m_indexer;
 
-        // set of folders to update (+flags defined in the source file) - changed by updateDir
-        QSet<QPair<QString, UpdateDirFlags> > m_dirsToUpdate;
+        // A specialized queue that gives priority to dirs that do not use the AutoUpdateFolder flag.
+        class UpdateDirQueue : public QQueue<QPair<QString, UpdateDirFlags> >
+        {
+        public:
+            void enqueueDir( const QString& dir, UpdateDirFlags flags );
+            void prependDir( const QString& dir, UpdateDirFlags flags );
+            void clearByFlags( UpdateDirFlags mask );
+        };
+        // queue of folders to update (+flags defined in the source file) - changed by updateDir
+        UpdateDirQueue m_dirsToUpdate;
 
         QMutex m_dirsToUpdateMutex;
         QWaitCondition m_dirsToUpdateWc;

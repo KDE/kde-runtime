@@ -110,6 +110,53 @@ namespace {
 }
 
 
+void Nepomuk::IndexScheduler::UpdateDirQueue::enqueueDir( const QString& dir, UpdateDirFlags flags )
+{
+    if( contains( qMakePair( dir, flags ) ) )
+        return;
+
+    if( !(flags & AutoUpdateFolder) ) {
+        int i = 0;
+        while( i < count() && !(at(i).second & AutoUpdateFolder) )
+            ++i;
+        insert( i, qMakePair( dir, flags ) );
+    }
+    else {
+        enqueue( qMakePair( dir, flags ) );
+    }
+}
+
+
+void Nepomuk::IndexScheduler::UpdateDirQueue::prependDir( const QString& dir, UpdateDirFlags flags )
+{
+    if( contains( qMakePair( dir, flags ) ) )
+        return;
+
+    if( flags & AutoUpdateFolder ) {
+        int i = 0;
+        while( i < count() && !(at(i).second & AutoUpdateFolder) )
+            ++i;
+        insert( i, qMakePair( dir, flags ) );
+    }
+    else {
+        prepend( qMakePair( dir, flags ) );
+    }
+}
+
+
+void Nepomuk::IndexScheduler::UpdateDirQueue::clearByFlags( UpdateDirFlags mask )
+{
+    QQueue<QPair<QString, UpdateDirFlags> >::iterator it = begin();
+    while ( it != end() ) {
+        if ( it->second & mask )
+            it = erase( it );
+        else
+            ++it;
+    }
+}
+
+
+
 Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
     : QThread( parent ),
       m_suspended( false ),
@@ -283,8 +330,7 @@ void Nepomuk::IndexScheduler::run()
 
         // get the next folder
         m_dirsToUpdateMutex.lock();
-        QPair<QString, UpdateDirFlags> dir = *m_dirsToUpdate.begin();
-        m_dirsToUpdate.erase( m_dirsToUpdate.begin() );
+        QPair<QString, UpdateDirFlags> dir = m_dirsToUpdate.dequeue();
         m_dirsToUpdateMutex.unlock();
 
         // update until stopped
@@ -334,7 +380,6 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, UpdateDirFlags fl
     QHash<QString, QDateTime>::iterator filesInStoreEnd = filesInStore.end();
 
     QList<QFileInfo> filesToIndex;
-    QStringList subFolders;
     QStringList filesToDelete;
 
     // iterate over all files in the dir
@@ -360,6 +405,8 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, UpdateDirFlags fl
         bool fileChanged = !newFile && fileInfo.lastModified() != filesInStoreIt.value();
         if ( fileChanged )
             kDebug() << "CHANGED:" << path << fileInfo.lastModified() << filesInStoreIt.value();
+        else if( forceUpdate )
+            kDebug() << "UPDATE FORCED:" << path;
 
         if ( indexFile && ( newFile || fileChanged || forceUpdate ) )
             filesToIndex << fileInfo;
@@ -373,8 +420,15 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, UpdateDirFlags fl
         if ( !newFile )
             filesInStore.erase( filesInStoreIt );
 
-        if ( indexFile && recursive && fileInfo.isDir() && !fileInfo.isSymLink() )
-            subFolders << path;
+        // prepend sub folders to the dir queue
+        if ( indexFile &&
+                recursive &&
+                fileInfo.isDir() &&
+                !fileInfo.isSymLink() &&
+                StrigiServiceConfig::self()->shouldFolderBeIndexed( path ) ) {
+            QMutexLocker lock( &m_dirsToUpdateMutex );
+            m_dirsToUpdate.prependDir( path, flags );
+        }
     }
 
     // all the files left in filesInStore are not in the current
@@ -394,16 +448,6 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, UpdateDirFlags fl
         m_currentUrl = file.filePath();
         m_indexer->indexFile( file );
         m_currentUrl = KUrl();
-    }
-
-    // recurse into subdirs (we do this in a separate loop to always keep a proper state:
-    // compare m_currentFolder)
-    if ( recursive ) {
-        foreach( const QString& folder, subFolders ) {
-            if ( StrigiServiceConfig::self()->shouldFolderBeIndexed( folder ) &&
-                 !analyzeDir( folder, flags ) )
-                return false;
-        }
     }
 
     return true;
@@ -429,7 +473,7 @@ bool Nepomuk::IndexScheduler::waitForContinue( bool disableDelay )
 void Nepomuk::IndexScheduler::updateDir( const QString& path, bool forceUpdate )
 {
     QMutexLocker lock( &m_dirsToUpdateMutex );
-    m_dirsToUpdate << qMakePair( path, UpdateDirFlags( forceUpdate ? ForceUpdate : NoUpdateFlags ) );
+    m_dirsToUpdate.prependDir( path, UpdateDirFlags( forceUpdate ? ForceUpdate : NoUpdateFlags ) );
     m_dirsToUpdateWc.wakeAll();
 }
 
@@ -446,21 +490,16 @@ void Nepomuk::IndexScheduler::queueAllFoldersForUpdate( bool forceUpdate )
     QMutexLocker lock( &m_dirsToUpdateMutex );
 
     // remove previously added folders to not index stuff we are not supposed to
-    QSet<QPair<QString, UpdateDirFlags> >::iterator it = m_dirsToUpdate.begin();
-    while ( it != m_dirsToUpdate.end() ) {
-        if ( it->second & AutoUpdateFolder )
-            it = m_dirsToUpdate.erase( it );
-        else
-            ++it;
-    }
+    m_dirsToUpdate.clearByFlags( AutoUpdateFolder );
 
     UpdateDirFlags flags = UpdateRecursive|AutoUpdateFolder;
     if ( forceUpdate )
         flags |= ForceUpdate;
 
     // update everything again in case the folders changed
-    foreach( const QString& f, StrigiServiceConfig::self()->includeFolders() )
-        m_dirsToUpdate << qMakePair( f, flags );
+    foreach( const QString& f, StrigiServiceConfig::self()->includeFolders() ) {
+        m_dirsToUpdate.enqueueDir( f, flags );
+    }
 }
 
 
