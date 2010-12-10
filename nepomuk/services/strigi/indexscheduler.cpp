@@ -302,7 +302,7 @@ void Nepomuk::IndexScheduler::run()
     timer.restart();
 #endif
 
-    while ( waitForContinue() ) {
+    while ( waitForContinue(true) ) {
         // wait for more dirs to analyze in case the initial
         // indexing is done
         m_dirsToUpdateMutex.lock();
