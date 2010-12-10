@@ -2337,9 +2337,19 @@ void KCMLocale::initTimeFormat()
     m_timeFormatMap.insert( QString( 'S' ), ki18n( "SS" ).toString( m_kcmLocale ) );
     m_timeFormatMap.insert( QString( 'p' ), ki18n( "AMPM" ).toString( m_kcmLocale ) );
 
+    QStringList formatList;
+    QString cValue = m_cSettings.readEntry( "TimeFormat", QString() );
+    formatList.append( posixToUserTime( m_kcmSettings.readEntry( "TimeFormat", cValue ) ) );
+    formatList.append( posixToUserTime( m_defaultSettings.readEntry( "TimeFormat", cValue ) ) );
+    formatList.append( posixToUserTime( m_countrySettings.readEntry( "TimeFormat", cValue ) ) );
+    formatList.append( posixToUserTime( cValue ) );
+    // TODO convert these to POSIX and US format!
     QString formats =ki18nc( "some reasonable time formats for the language",
-               "HH:MM:SS\n"
-               "pH:MM:SS AMPM").toString( m_kcmLocale );
+                             "HH:MM:SS\n"
+                             "pH:MM:SS AMPM").toString( m_kcmLocale );
+    formatList.append( formats.split( QString::fromLatin1("\n") ) );
+    formatList.removeDuplicates();
+    m_ui->m_comboTimeFormat->addItems( formatList );
 
     setTimeFormat( m_kcmSettings.readEntry( "TimeFormat", QString() ) );
 
@@ -2481,9 +2491,19 @@ void KCMLocale::initDateFormat()
     m_dateFormatMap.insert( QString( 'V' ), ki18n( "ISOWEEK" ).toString( m_kcmLocale ) );
     m_dateFormatMap.insert( QString( 'u' ), ki18n( "DAYOFISOWEEK" ).toString( m_kcmLocale ) );
 
+    QStringList formatList;
+    QString cValue = m_cSettings.readEntry( "DateFormat", QString() );
+    formatList.append( posixToUserDate( m_kcmSettings.readEntry( "DateFormat", cValue ) ) );
+    formatList.append( posixToUserDate( m_defaultSettings.readEntry( "DateFormat", cValue ) ) );
+    formatList.append( posixToUserDate( m_countrySettings.readEntry( "DateFormat", cValue ) ) );
+    formatList.append( posixToUserDate( cValue ) );
+    // TODO convert these to POSIX and US format!
     QString formats = ki18nc("some reasonable date formats for the language",
-              "WEEKDAY MONTH dD YYYY\n"
-              "SHORTWEEKDAY MONTH dD YYYY").toString( m_kcmLocale );
+                             "WEEKDAY MONTH dD YYYY\n"
+                             "SHORTWEEKDAY MONTH dD YYYY").toString( m_kcmLocale );
+    formatList.append( formats.split( QString::fromLatin1("\n") ) );
+    formatList.removeDuplicates();
+    m_ui->m_comboDateFormat->addItems( formatList );
 
     setDateFormat( m_kcmSettings.readEntry( "DateFormat", QString() ) );
 
@@ -2588,10 +2608,22 @@ void KCMLocale::initShortDateFormat()
     m_ui->m_comboShortDateFormat->setToolTip( helpText );
     m_ui->m_comboShortDateFormat->setWhatsThis( helpText );
 
+    QStringList formatList;
+    QString cValue = m_cSettings.readEntry( "DateFormatShort", QString() );
+    formatList.append( posixToUserDate( m_kcmSettings.readEntry( "DateFormatShort", cValue ) ) );
+    formatList.append( posixToUserDate( m_defaultSettings.readEntry( "DateFormatShort", cValue ) ) );
+    formatList.append( posixToUserDate( m_countrySettings.readEntry( "DateFormatShort", cValue ) ) );
+    formatList.append( posixToUserDate( cValue ) );
+    formatList.append( "YYYY-MM-DD" );
+    // TODO convert these to POSIX and US format!
     QString formats = ki18nc("some reasonable short date formats for the language",
-              "YYYY-MM-DD\n"
-              "dD.mM.YYYY\n"
-              "DD.MM.YYYY").toString( m_kcmLocale );
+                             "YYYY-MM-DD\n"
+                             "dD.mM.YYYY\n"
+                             "DD.MM.YYYY").toString( m_kcmLocale );
+    formatList.append( formats.split( QString::fromLatin1("\n") ) );
+    formatList.removeDuplicates();
+    m_ui->m_comboShortDateFormat->clear();
+    m_ui->m_comboShortDateFormat->addItems( formatList );
 
     setShortDateFormat( m_kcmSettings.readEntry( "DateFormatShort", QString() ) );
 
