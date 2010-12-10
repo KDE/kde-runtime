@@ -204,11 +204,10 @@ bool Nepomuk::ServiceController::start()
                      this, SLOT( slotProcessFinished( bool ) ) );
         }
 
-        // wait for the service to be registered with DBus before creating the service interface
-
-        d->processControl->setCrashPolicy( ProcessControl::RestartOnCrash );
+        // we wait for the service to be registered with DBus before creating the service interface
         return d->processControl->start( KGlobal::dirs()->locate( "exe", "nepomukservicestub" ),
-                                         QStringList() << name() );
+                                         QStringList() << name(),
+                                         ProcessControl::RestartOnCrash );
     }
 }
 

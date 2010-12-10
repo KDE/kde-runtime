@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2006 by Tobias Koenig <tokoe@kde.org>                   *
- *   Copyright (C) 2008 by Sebastian Trueg <trueg@kde.org>                 *
+ *   Copyright (C) 2008-2010 by Sebastian Trueg <trueg@kde.org>            *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -86,7 +86,10 @@ void ProcessControl::slotError( QProcess::ProcessError error )
 
 void ProcessControl::slotFinished( int exitCode, QProcess::ExitStatus exitStatus )
 {
-    if ( exitStatus == QProcess::CrashExit ) {
+    // Since Nepomuk services are KApplications and, thus, use DrKonqi QProcess does not
+    // see a crash as an actual CrashExit but as a normal exit with an exit code != 0
+    if ( exitStatus == QProcess::CrashExit ||
+            exitCode != 0 ) {
         if ( mPolicy == RestartOnCrash ) {
              // don't try to start an unstartable application
             if ( !mFailedToStart && --mCrashCount >= 0 ) {
@@ -104,15 +107,8 @@ void ProcessControl::slotFinished( int exitCode, QProcess::ExitStatus exitStatus
             qDebug( "Application '%s' crashed. No restart!", qPrintable( commandLine() ) );
         }
     } else {
-        if ( exitCode != 0 ) {
-            qDebug( "ProcessControl: Application '%s' returned with exit code %d (%s)",
-                    qPrintable( commandLine() ), exitCode, qPrintable( mProcess.errorString() ) );
-            mFailedToStart = true;
-            emit finished(false);
-        } else {
-            qDebug( "Application '%s' exited normally...", qPrintable( commandLine() ) );
-            emit finished(true);
-        }
+        qDebug( "Application '%s' exited normally...", qPrintable( commandLine() ) );
+        emit finished(true);
     }
 }
 
