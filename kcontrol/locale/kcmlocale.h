@@ -76,46 +76,62 @@ private:
 
     //Common load/save utilities
 
+    // Initialise the different settings groups
     void initSettings();
     void initCountrySettings( const QString &countryCode );
     void initCalendarSettings();
 
+    // Merge the different settings groups into the effective settings
     void mergeSettings();
     void mergeCalendarSettings();
 
-    void copySettings( KConfigGroup *fromGroup, KConfigGroup *toGroup, KConfig::WriteConfigFlags flags = KConfig::Normal );
-    void copyCalendarSettings( KConfigGroup *fromGroup, KConfigGroup *toGroup, KConfig::WriteConfigFlags flags = KConfig::Normal );
-    void copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key, KConfig::WriteConfigFlags flags = KConfig::Normal );
+    // Copy the supported settings between settings groups
+    void copySettings( KConfigGroup *fromGroup, KConfigGroup *toGroup,
+                       KConfig::WriteConfigFlags flags = KConfig::Normal );
+    void copyCalendarSettings( KConfigGroup *fromGroup, KConfigGroup *toGroup,
+                               KConfig::WriteConfigFlags flags = KConfig::Normal );
+    void copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, const QString &key,
+                      KConfig::WriteConfigFlags flags = KConfig::Normal );
 
-    void setItem( const QString itemKey, const QString &itemValue,
-                  QWidget *itemWidget, KPushButton *itemReset );
-    void setItem( const QString itemKey, int itemValue,
-                  QWidget *itemWidget, KPushButton *itemReset );
-    void setItem( const QString itemKey, bool itemValue,
-                  QWidget *itemWidget, KPushButton *itemReset );
-    void setCalendarItem( const QString itemKey, const QString &itemValue,
-                          QWidget *itemWidget, KPushButton *itemReset );
-    void setCalendarItem( const QString itemKey, int itemValue,
-                          QWidget *itemWidget, KPushButton *itemReset );
-    void setCalendarItem( const QString itemKey, bool itemValue,
-                          QWidget *itemWidget, KPushButton *itemReset );
-    void setComboItem( const QString itemKey, const QString &itemValue,
+    // Enable / Disable an item in the gui
+    void enableItemWidgets( const QString &itemKey, KConfigGroup *userSettings,
+                            KConfigGroup *kcmSettings, KConfigGroup *defaultSettings,
+                            QWidget *itemWidget, KPushButton *itemDefaultButton );
+
+    // Set the item value in the required settings groups
+    void setItemValue( const QString &itemKey, const QString &itemValue,
+                       KConfigGroup *userSettings, KConfigGroup *kcmSettings, KConfigGroup *defaultSettings );
+
+    // Set an item: set the item value, enable the widgets, set the changed flag, don't update the widget
+    void setItem( const QString &itemKey, const QString &itemValue,
+                  QWidget *itemWidget, KPushButton *itemDefaultButton );
+    void setItem( const QString &itemKey, int itemValue,
+                  QWidget *itemWidget, KPushButton *itemDefaultButton );
+    void setItem( const QString &itemKey, bool itemValue,
+                  QWidget *itemWidget, KPushButton *itemDefaultButton );
+    void setCalendarItem( const QString &itemKey, const QString &itemValue,
+                          QWidget *itemWidget, KPushButton *itemDefaultButton );
+    void setCalendarItem( const QString &itemKey, int itemValue,
+                          QWidget *itemWidget, KPushButton *itemDefaultButton );
+    void setCalendarItem( const QString &itemKey, bool itemValue,
+                          QWidget *itemWidget, KPushButton *itemDefaultButton );
+
+    // Set an item: set the item value, enable the widgets, set the changed flag, update the widget
+    void setComboItem( const QString &itemKey, const QString &itemValue,
                        KComboBox *itemCombo, KPushButton *itemDefaultButton );
-    void setComboItem( const QString itemKey, int itemValue,
+    void setComboItem( const QString &itemKey, int itemValue,
                        KComboBox *itemCombo, KPushButton *itemDefaultButton );
-    void setEditComboItem( const QString itemKey, const QString &itemValue,
+    void setEditComboItem( const QString &itemKey, const QString &itemValue,
                            KComboBox *itemCombo, KPushButton *itemDefaultButton );
-    void setEditComboItem( const QString itemKey, int itemValue,
-                           KComboBox *itemCombo, KPushButton *itemDefaultButton );
-    void setIntItem( const QString itemKey, int itemValue,
+    void setIntItem( const QString &itemKey, int itemValue,
                      KIntNumInput *itemInput, KPushButton *itemDefaultButton );
-    void setCheckItem( const QString itemKey, bool itemValue,
+    void setCheckItem( const QString &itemKey, bool itemValue,
                        QCheckBox *itemCheck, KPushButton *itemDefaultButton );
-
-    void setMonetaryFormat( const QString prefixCurrencySymbolKey, bool prefixCurrencySymbol,
-                            const QString signPositionKey, KLocale::SignPosition signPosition,
+    void setMonetaryFormat( const QString &prefixCurrencySymbolKey, bool prefixCurrencySymbol,
+                            const QString &signPositionKey, KLocale::SignPosition signPosition,
                             QWidget *formatWidget, KPushButton *formatDefaultButton );
 
+    // Check if the chaged flag needs to be set
     void checkIfChanged();
 
     //Common init utilities
@@ -134,57 +150,118 @@ private:
     //Country tab
 
     void initCountry();
+    void setCountry( const QString &newValue );
+
     void initCountryDivision();
+    void setCountryDivision( const QString &newValue );
 
     //Translations/Languages tab
 
     void initTranslations();
+    void setTranslations( const QString &newValue );
+
     void initTranslationsInstall();
 
     //Numeric tab
 
     void initNumericThousandsSeparator();
+    void setNumericThousandsSeparator( const QString &newValue );
+
     void initNumericDecimalSymbol();
+    void setNumericDecimalSymbol( const QString &newValue );
+
     void initNumericDecimalPlaces();
+    void setNumericDecimalPlaces( int newValue );
+
     void initNumericPositiveSign();
+    void setNumericPositiveSign( const QString &newValue );
+
     void initNumericNegativeSign();
+    void setNumericNegativeSign( const QString &newValue );
+
     void initNumericDigitSet();
+    void setNumericDigitSet( int newValue );
 
     //Monetary tab
+
     void initCurrencyCode();
+    void setCurrencyCode( const QString &newValue );
+
     void initCurrencySymbol();
+    void setCurrencySymbol( const QString &newValue );
+
     void initMonetaryThousandsSeparator();
+    void setMonetaryThousandsSeparator( const QString &newValue );
+
     void initMonetaryDecimalSymbol();
+    void setMonetaryDecimalSymbol( const QString &newValue );
+
     void initMonetaryDecimalPlaces();
+    void setMonetaryDecimalPlaces( int newValue );
+
     void initMonetaryPositiveFormat();
+    void setMonetaryPositiveFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition );
+
     void initMonetaryNegativeFormat();
+    void setMonetaryNegativeFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition );
+
     void initMonetaryDigitSet();
+    void setMonetaryDigitSet( int newValue );
 
     //Calendar Tab
 
     void initCalendarSystem();
+    void setCalendarSystem( const QString &newValue );
+
     void initUseCommonEra();
+    void setUseCommonEra( bool newValue );
+
     void initShortYearWindow();
+    void setShortYearWindow( int newValue );
+
     void initWeekStartDay();
+    void setWeekStartDay( int newValue );
+
     void initWorkingWeekStartDay();
+    void setWorkingWeekStartDay( int newValue );
+
     void initWorkingWeekEndDay();
+    void setWorkingWeekEndDay( int newValue );
+
     void initWeekDayOfPray();
+    void setWeekDayOfPray( int newValue );
 
     //Date/Time tab
 
     void initTimeFormat();
+    void setTimeFormat( const QString &newValue );
+
     void initAmSymbol();
+
     void initPmSymbol();
+
     void initDateFormat();
+    void setDateFormat( const QString &newValue );
+
     void initShortDateFormat();
+    void setShortDateFormat( const QString &newValue );
+
     void initMonthNamePossessive();
+    void setMonthNamePossessive( bool newValue );
+
     void initDateTimeDigitSet();
+    void setDateTimeDigitSet( int newValue );
 
     //Other Tab
 
     void initPageSize();
+    void setPageSize( int newValue );
+
     void initMeasureSystem();
+    void setMeasureSystem( int newValue );
+
     void initBinaryUnitDialect();
+    void setBinaryUnitDialect( int newValue );
 
 private Q_SLOTS:
 
@@ -194,106 +271,92 @@ private Q_SLOTS:
 
     void defaultCountry();
     void changedCountryIndex( int index );
-    void changeCountry( const QString &newValue );
 
     void defaultCountryDivision();
     void changedCountryDivisionIndex( int index );
-    void changeCountryDivision( const QString &newValue );
 
     //Translations/Languages tab
 
     void defaultTranslations();
-    void changeTranslationsAvailable( QListWidgetItem * item );
-    void changeTranslationsSelected( QListWidgetItem * item );
-    void changeTranslations();
-    void changeTranslations( const QString &newValue );
+    void changedTranslations();
+    void changedTranslationsAvailable( QListWidgetItem * item );
+    void changedTranslationsSelected( QListWidgetItem * item );
 
     void installTranslations();
 
     //Numeric tab
 
     void defaultNumericThousandsSeparator();
-    void changeNumericThousandsSeparator( const QString &newValue );
+    void changedNumericThousandsSeparator( const QString &newValue );
 
     void defaultNumericDecimalSymbol();
-    void changeNumericDecimalSymbol( const QString &newValue );
+    void changedNumericDecimalSymbol( const QString &newValue );
 
     void defaultNumericDecimalPlaces();
-    void changeNumericDecimalPlaces( int newValue );
+    void changedNumericDecimalPlaces( int newValue );
 
     void defaultNumericPositiveSign();
-    void changeNumericPositiveSign( const QString &newValue );
+    void changedNumericPositiveSign( const QString &newValue );
 
     void defaultNumericNegativeSign();
-    void changeNumericNegativeSign( const QString &newValue );
+    void changedNumericNegativeSign( const QString &newValue );
 
     void defaultNumericDigitSet();
     void changedNumericDigitSetIndex( int index );
-    void changeNumericDigitSet( int newValue );
 
     //Monetary tab
 
     void defaultCurrencyCode();
     void changedCurrencyCodeIndex( int index );
-    void changeCurrencyCode( const QString &newValue );
 
     void defaultCurrencySymbol();
     void changedCurrencySymbolIndex( int index );
-    void changeCurrencySymbol( const QString &newValue );
 
     void defaultMonetaryThousandsSeparator();
-    void changeMonetaryThousandsSeparator( const QString &newValue );
+    void changedMonetaryThousandsSeparator( const QString &newValue );
 
     void defaultMonetaryDecimalSymbol();
-    void changeMonetaryDecimalSymbol( const QString &newValue );
+    void changedMonetaryDecimalSymbol( const QString &newValue );
 
     void defaultMonetaryDecimalPlaces();
-    void changeMonetaryDecimalPlaces( int newValue );
+    void changedMonetaryDecimalPlaces( int newValue );
 
     void defaultMonetaryPositiveFormat();
     void changedMonetaryPositiveFormatIndex( int index );
-    void changeMonetaryPositiveFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition );
 
     void defaultMonetaryNegativeFormat();
     void changedMonetaryNegativeFormatIndex( int index );
-    void changeMonetaryNegativeFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition );
 
     void defaultMonetaryDigitSet();
     void changedMonetaryDigitSetIndex( int index );
-    void changeMonetaryDigitSet( int newValue );
 
     //Calendar Tab
 
     void defaultCalendarSystem();
     void changedCalendarSystemIndex( int index );
-    void changeCalendarSystem( const QString &newValue );
 
     void defaultUseCommonEra();
-    void changeUseCommonEra( bool newValue );
+    void changedUseCommonEra( bool newValue );
 
     void defaultShortYearWindow();
-    void changeShortYearWindow( int newValue );
+    void changedShortYearWindow( int newValue );
 
     void defaultWeekStartDay();
     void changedWeekStartDayIndex( int index );
-    void changeWeekStartDay( int newValue );
 
     void defaultWorkingWeekStartDay();
     void changedWorkingWeekStartDayIndex( int index );
-    void changeWorkingWeekStartDay( int newValue );
 
     void defaultWorkingWeekEndDay();
     void changedWorkingWeekEndDayIndex( int index );
-    void changeWorkingWeekEndDay( int newValue );
 
     void defaultWeekDayOfPray();
     void changedWeekDayOfPrayIndex( int index );
-    void changeWeekDayOfPray( int newValue );
 
     //Date/Time tab
 
     void defaultTimeFormat();
-    void changeTimeFormat( const QString &newValue );
+    void changedTimeFormat( const QString &newValue );
 
     //void defaultAmSymbol();
     //void changeAmSymbol( const QString &newValue );
@@ -302,37 +365,29 @@ private Q_SLOTS:
     //void changePmSymbol( const QString &newValue );
 
     void defaultDateFormat();
-    void changeDateFormat( const QString &newValue );
+    void changedDateFormat( const QString &newValue );
 
     void defaultShortDateFormat();
-    void changeShortDateFormat( const QString &newValue );
+    void changedShortDateFormat( const QString &newValue );
 
     void defaultMonthNamePossessive();
-    void changeMonthNamePossessive( bool newValue );
+    void changedMonthNamePossessive( bool newValue );
 
     void defaultDateTimeDigitSet();
     void changedDateTimeDigitSetIndex( int index );
-    void changeDateTimeDigitSet( int newValue );
 
     //Other Tab
 
     void defaultPageSize();
     void changedPageSizeIndex( int index );
-    void changePageSize( int newValue );
 
     void defaultMeasureSystem();
     void changedMeasureSystemIndex( int index );
-    void changeMeasureSystem( int newValue );
 
     void defaultBinaryUnitDialect();
     void changedBinaryUnitDialectIndex( int index );
-    void changeBinaryUnitDialect( int newValue );
 
 private:
-    // Calendar Type/System Conversion Utilities
-    KLocale::CalendarSystem calendarTypeToCalendarSystem(const QString &calendarType) const;
-    QString calendarSystemToCalendarType(KLocale::CalendarSystem calendarSystem) const;
-
     // Date/Time format map utilities
     QString posixToUserDate( const QString &posixFormat ) const;
     QString posixToUserTime( const QString &posixFormat ) const;

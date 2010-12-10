@@ -84,13 +84,13 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
 
     // User has changed the translations selection in some way
     connect( m_ui->m_selectTranslations,         SIGNAL( added( QListWidgetItem* ) ),
-             this,                               SLOT( changeTranslationsSelected( QListWidgetItem* ) ) );
+             this,                               SLOT( changedTranslationsSelected( QListWidgetItem* ) ) );
     connect( m_ui->m_selectTranslations,         SIGNAL( removed( QListWidgetItem* ) ),
-             this,                               SLOT( changeTranslationsAvailable( QListWidgetItem* ) ) );
+             this,                               SLOT( changedTranslationsAvailable( QListWidgetItem* ) ) );
     connect( m_ui->m_selectTranslations,         SIGNAL( movedUp( QListWidgetItem* ) ),
-             this,                               SLOT( changeTranslationsSelected( QListWidgetItem* ) ) );
+             this,                               SLOT( changedTranslationsSelected( QListWidgetItem* ) ) );
     connect( m_ui->m_selectTranslations,         SIGNAL( movedDown( QListWidgetItem* ) ),
-             this,                               SLOT( changeTranslationsSelected( QListWidgetItem* ) ) );
+             this,                               SLOT( changedTranslationsSelected( QListWidgetItem* ) ) );
     // User has clicked Install button, trigger distro specific install routine
     connect( m_ui->m_buttonTranslationsInstall,  SIGNAL( clicked() ),
              this,                               SLOT( installTranslations() ) );
@@ -101,27 +101,27 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
     // Numbers tab
 
     connect( m_ui->m_comboThousandsSeparator,       SIGNAL( editTextChanged( const QString & ) ),
-             this,                                  SLOT( changeNumericThousandsSeparator( const QString & ) ) );
+             this,                                  SLOT( changedNumericThousandsSeparator( const QString & ) ) );
     connect( m_ui->m_buttonResetThousandsSeparator, SIGNAL( clicked() ),
              this,                                  SLOT( defaultNumericThousandsSeparator() ) );
 
     connect( m_ui->m_comboDecimalSymbol,       SIGNAL( editTextChanged( const QString & ) ),
-             this,                             SLOT( changeNumericDecimalSymbol( const QString & ) ) );
+             this,                             SLOT( changedNumericDecimalSymbol( const QString & ) ) );
     connect( m_ui->m_buttonResetDecimalSymbol, SIGNAL( clicked() ),
              this,                             SLOT( defaultNumericDecimalSymbol() ) );
 
     connect( m_ui->m_intDecimalPlaces,         SIGNAL( valueChanged( int ) ),
-             this,                             SLOT( changeNumericDecimalPlaces( int ) ) );
+             this,                             SLOT( changedNumericDecimalPlaces( int ) ) );
     connect( m_ui->m_buttonResetDecimalPlaces, SIGNAL( clicked() ),
              this,                             SLOT( defaultNumericDecimalPlaces() ) );
 
     connect( m_ui->m_comboPositiveSign,       SIGNAL( editTextChanged( const QString & ) ),
-             this,                            SLOT( changeNumericPositiveSign( const QString & ) ) );
+             this,                            SLOT( changedNumericPositiveSign( const QString & ) ) );
     connect( m_ui->m_buttonResetPositiveSign, SIGNAL( clicked() ),
              this,                            SLOT( defaultNumericPositiveSign() ) );
 
     connect( m_ui->m_comboNegativeSign,       SIGNAL( editTextChanged( const QString & ) ),
-             this,                            SLOT( changeNumericNegativeSign( const QString & ) ) );
+             this,                            SLOT( changedNumericNegativeSign( const QString & ) ) );
     connect( m_ui->m_buttonResetNegativeSign, SIGNAL( clicked() ),
              this,                            SLOT( defaultNumericNegativeSign() ) );
 
@@ -143,17 +143,17 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
              this,                              SLOT( defaultCurrencySymbol() ) );
 
     connect( m_ui->m_comboMonetaryThousandsSeparator,       SIGNAL( editTextChanged( const QString & ) ),
-             this,                                          SLOT( changeMonetaryThousandsSeparator( const QString & ) ) );
+             this,                                          SLOT( changedMonetaryThousandsSeparator( const QString & ) ) );
     connect( m_ui->m_buttonResetMonetaryThousandsSeparator, SIGNAL( clicked() ),
              this,                                          SLOT( defaultMonetaryThousandsSeparator() ) );
 
     connect( m_ui->m_comboMonetaryDecimalSymbol,       SIGNAL( editTextChanged( const QString & ) ),
-             this,                                     SLOT( changeMonetaryDecimalSymbol( const QString & ) ) );
+             this,                                     SLOT( changedMonetaryDecimalSymbol( const QString & ) ) );
     connect( m_ui->m_buttonResetMonetaryDecimalSymbol, SIGNAL( clicked() ),
              this,                                     SLOT( defaultMonetaryDecimalSymbol() ) );
 
     connect( m_ui->m_intMonetaryDecimalPlaces,         SIGNAL( valueChanged( int ) ),
-             this,                                     SLOT( changeMonetaryDecimalPlaces( int ) ) );
+             this,                                     SLOT( changedMonetaryDecimalPlaces( int ) ) );
     connect( m_ui->m_buttonResetMonetaryDecimalPlaces, SIGNAL( clicked() ),
              this,                                     SLOT( defaultMonetaryDecimalPlaces() ) );
 
@@ -180,12 +180,12 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
              this,                              SLOT( defaultCalendarSystem() ) );
 
     connect( m_ui->m_checkCalendarGregorianUseCommonEra,       SIGNAL( clicked( bool ) ),
-             this,                                             SLOT( changeUseCommonEra( bool ) ) );
+             this,                                             SLOT( changedUseCommonEra( bool ) ) );
     connect( m_ui->m_buttonResetCalendarGregorianUseCommonEra, SIGNAL( clicked() ),
              this,                                             SLOT( defaultUseCommonEra() ) );
 
     connect( m_ui->m_intShortYearWindowStartYear, SIGNAL( valueChanged( int ) ),
-             this,                                SLOT( changeShortYearWindow( int ) ) );
+             this,                                SLOT( changedShortYearWindow( int ) ) );
     connect( m_ui->m_buttonResetShortYearWindow,  SIGNAL( clicked() ),
              this,                                SLOT( defaultShortYearWindow() ) );
 
@@ -212,32 +212,32 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
     // Date / Time tab
 
     connect( m_ui->m_comboTimeFormat,       SIGNAL( editTextChanged( const QString & ) ),
-             this,                          SLOT( changeTimeFormat( const QString & ) ) );
+             this,                          SLOT( changedTimeFormat( const QString & ) ) );
     connect( m_ui->m_buttonResetTimeFormat, SIGNAL( clicked() ),
              this,                          SLOT( defaultTimeFormat() ) );
 
     connect( m_ui->m_comboAmSymbol,       SIGNAL( editTextChanged( const QString & ) ),
-             this,                        SLOT( changeAmSymbol( const QString & ) ) );
+             this,                        SLOT( changedAmSymbol( const QString & ) ) );
     connect( m_ui->m_buttonResetAmSymbol, SIGNAL( clicked() ),
              this,                        SLOT( defaultAmSymbol() ) );
 
     connect( m_ui->m_comboPmSymbol,       SIGNAL( editTextChanged( const QString & ) ),
-             this,                        SLOT( changePmSymbol( const QString & ) ) );
+             this,                        SLOT( changedPmSymbol( const QString & ) ) );
     connect( m_ui->m_buttonResetPmSymbol, SIGNAL( clicked() ),
              this,                        SLOT( defaultPmSymbol() ) );
 
     connect( m_ui->m_comboDateFormat,       SIGNAL( editTextChanged( const QString & ) ),
-             this,                          SLOT( changeDateFormat( const QString & ) ) );
+             this,                          SLOT( changedDateFormat( const QString & ) ) );
     connect( m_ui->m_buttonResetDateFormat, SIGNAL( clicked() ),
              this,                          SLOT( defaultDateFormat() ) );
 
     connect( m_ui->m_comboShortDateFormat,       SIGNAL( editTextChanged( const QString & ) ),
-             this,                               SLOT( changeShortDateFormat( const QString & ) ) );
+             this,                               SLOT( changedShortDateFormat( const QString & ) ) );
     connect( m_ui->m_buttonResetShortDateFormat, SIGNAL( clicked() ),
              this,                               SLOT( defaultShortDateFormat() ) );
 
     connect( m_ui->m_checkMonthNamePossessive,       SIGNAL( clicked( bool ) ),
-             this,                                   SLOT( changeMonthNamePossessive( bool ) ) );
+             this,                                   SLOT( changedMonthNamePossessive( bool ) ) );
     connect( m_ui->m_buttonResetMonthNamePossessive, SIGNAL( clicked() ),
              this,                                   SLOT( defaultMonthNamePossessive() ) );
 
@@ -707,174 +707,133 @@ void KCMLocale::checkIfChanged()
     }
 }
 
-void KCMLocale::setItem( const QString itemKey, const QString &itemValue, QWidget *itemWidget, KPushButton *itemDefaultButton )
+// Determine if the item should be enabled or disabled
+void KCMLocale::enableItemWidgets( const QString &itemKey,
+                                   KConfigGroup *userSettings, KConfigGroup *kcmSettings, KConfigGroup *defaultSettings,
+                                   QWidget *itemWidget, KPushButton *itemDefaultButton )
 {
-    // If the setting is locked down by Kiosk, then don't let the user make any changes, and disable the widgets
-    if ( m_userSettings.isEntryImmutable( itemKey ) ) {
+    // If the setting is locked down by Kiosk, then don't let the user make any changes
+    if ( userSettings->isEntryImmutable( itemKey ) ) {
             itemWidget->setEnabled( false );
             itemDefaultButton->setEnabled( false );
     } else {
         itemWidget->setEnabled( true );
         // If the new value is not the default, then enable the default button
-        m_kcmSettings.writeEntry( itemKey, itemValue );
-        if ( itemValue != m_defaultSettings.readEntry( itemKey, QString() ) ) {
-            m_userSettings.writeEntry( itemKey, itemValue, KConfig::Persistent | KConfig::Global );
+        if ( kcmSettings->readEntry( itemKey, QString() ) !=
+             defaultSettings->readEntry( itemKey, QString() ) ) {
             itemDefaultButton->setEnabled( true );
         } else {
-            m_userSettings.deleteEntry( itemKey, KConfig::Persistent | KConfig::Global );
             itemDefaultButton->setEnabled( false );
         }
-        checkIfChanged();
     }
 }
 
-void KCMLocale::setItem( const QString itemKey, int itemValue, QWidget *itemWidget, KPushButton *itemDefaultButton )
+// Set the value of a QString item in kcm and user settings
+void KCMLocale::setItemValue( const QString &itemKey, const QString &itemValue,
+                              KConfigGroup *userSettings, KConfigGroup *kcmSettings, KConfigGroup *defaultSettings )
 {
-    // If the setting is locked down by Kiosk, then don't let the user make any changes, and disable the widgets
-    if ( m_userSettings.isEntryImmutable( itemKey ) ) {
-            itemWidget->setEnabled( false );
-            itemDefaultButton->setEnabled( false );
-    } else {
-        itemWidget->setEnabled( true );
-        // If the new value is not the default (i.e. is set in user), then save it and enable the default button
-        m_kcmSettings.writeEntry( itemKey, itemValue );
-        if ( itemValue != m_defaultSettings.readEntry( itemKey, 0 ) ) {
-            m_userSettings.writeEntry( itemKey, itemValue, KConfig::Persistent | KConfig::Global );
-            itemDefaultButton->setEnabled( true );
-        } else {  // Is the default so delete any user setting
-            m_userSettings.deleteEntry( itemKey, KConfig::Persistent | KConfig::Global );
-            itemDefaultButton->setEnabled( false );
-        }
-        checkIfChanged();
-    }
-}
-
-void KCMLocale::setItem( const QString itemKey, bool itemValue, QWidget *itemWidget, KPushButton *itemDefaultButton )
-{
-    // If the setting is locked down by Kiosk, then don't let the user make any changes, and disable the widgets
-    if ( m_userSettings.isEntryImmutable( itemKey ) ) {
-            itemWidget->setEnabled( false );
-            itemDefaultButton->setEnabled( false );
-    } else {
-        itemWidget->setEnabled( true );
-        // If the new value is not the default, then save it and enable the default button
-        m_kcmSettings.writeEntry( itemKey, itemValue );
-        if ( itemValue != m_defaultSettings.readEntry( itemKey, false ) ) {
-            m_userSettings.writeEntry( itemKey, itemValue, KConfig::Persistent | KConfig::Global );
-            itemDefaultButton->setEnabled( true );
+    if ( !userSettings->isEntryImmutable( itemKey ) ) {
+        // Always write to the kcm as the value will always exist there and needs overwriting
+        kcmSettings->writeEntry( itemKey, itemValue );
+        // If different to the default save the new value, otherwise delete and use the default
+        if ( itemValue != defaultSettings->readEntry( itemKey, QString() ) ) {
+            userSettings->writeEntry( itemKey, itemValue, KConfig::Persistent | KConfig::Global );
         } else {
-            m_userSettings.deleteEntry( itemKey, KConfig::Persistent | KConfig::Global );
-            itemDefaultButton->setEnabled( false );
+            userSettings->deleteEntry( itemKey, KConfig::Persistent | KConfig::Global );
         }
-        checkIfChanged();
     }
 }
 
-void KCMLocale::setCalendarItem( const QString itemKey, const QString &itemValue, QWidget *itemWidget, KPushButton *itemDefaultButton )
+void KCMLocale::setItem( const QString &itemKey, const QString &itemValue,
+                         QWidget *itemWidget, KPushButton *itemDefaultButton )
 {
-    // If the setting is locked down by Kiosk, then don't let the user make any changes, and disable the widgets
-    if ( m_userCalendarSettings.isEntryImmutable( itemKey ) ) {
-            itemWidget->setEnabled( false );
-            itemDefaultButton->setEnabled( false );
-    } else {
-        itemWidget->setEnabled( true );
-        // If the new value is not the default, then enable the default button
-        m_kcmCalendarSettings.writeEntry( itemKey, itemValue );
-        if ( itemValue != m_defaultCalendarSettings.readEntry( itemKey, QString() ) ) {
-            m_userCalendarSettings.writeEntry( itemKey, itemValue, KConfig::Persistent | KConfig::Global );
-            itemDefaultButton->setEnabled( true );
-        } else {
-            m_userCalendarSettings.deleteEntry( itemKey, KConfig::Persistent | KConfig::Global );
-            itemDefaultButton->setEnabled( false );
-        }
-        checkIfChanged();
-    }
+    setItemValue( itemKey, itemValue,
+                  &m_userSettings, &m_kcmSettings, &m_defaultSettings);
+    enableItemWidgets( itemKey,
+                       &m_userSettings, &m_kcmSettings, &m_defaultSettings,
+                       itemWidget, itemDefaultButton );
+    checkIfChanged();
 }
 
-void KCMLocale::setCalendarItem( const QString itemKey, int itemValue, QWidget *itemWidget, KPushButton *itemDefaultButton )
+void KCMLocale::setItem( const QString &itemKey, int itemValue,
+                         QWidget *itemWidget, KPushButton *itemDefaultButton )
 {
-    // If the setting is locked down by Kiosk, then don't let the user make any changes, and disable the widgets
-    if ( m_userCalendarSettings.isEntryImmutable( itemKey ) ) {
-            itemWidget->setEnabled( false );
-            itemDefaultButton->setEnabled( false );
-    } else {
-        itemWidget->setEnabled( true );
-        // If the new value is not the default, then enable the default button
-        m_kcmCalendarSettings.writeEntry( itemKey, itemValue );
-        if ( itemValue != m_defaultCalendarSettings.readEntry( itemKey, 0 ) ) {
-            m_userCalendarSettings.writeEntry( itemKey, itemValue, KConfig::Persistent | KConfig::Global );
-            itemDefaultButton->setEnabled( true );
-        } else {
-            m_userCalendarSettings.deleteEntry( itemKey, KConfig::Persistent | KConfig::Global );
-            itemDefaultButton->setEnabled( false );
-        }
-        checkIfChanged();
-    }
+    setItem( itemKey, QVariant( itemValue ).toString(), itemWidget, itemDefaultButton );
 }
 
-void KCMLocale::setCalendarItem( const QString itemKey, bool itemValue, QWidget *itemWidget, KPushButton *itemDefaultButton )
+void KCMLocale::setItem( const QString &itemKey, bool itemValue,
+                         QWidget *itemWidget, KPushButton *itemDefaultButton )
 {
-    // If the setting is locked down by Kiosk, then don't let the user make any changes, and disable the widgets
-    if ( m_userCalendarSettings.isEntryImmutable( itemKey ) ) {
-            itemWidget->setEnabled( false );
-            itemDefaultButton->setEnabled( false );
-    } else {
-        itemWidget->setEnabled( true );
-        // If the new value is not the default, then enable the default button
-        m_kcmCalendarSettings.writeEntry( itemKey, itemValue );
-        if ( itemValue != m_defaultCalendarSettings.readEntry( itemKey, false ) ) {
-            m_userCalendarSettings.writeEntry( itemKey, itemValue, KConfig::Persistent | KConfig::Global );
-            itemDefaultButton->setEnabled( true );
-        } else {
-            m_userCalendarSettings.deleteEntry( itemKey, KConfig::Persistent | KConfig::Global );
-            itemDefaultButton->setEnabled( false );
-        }
-        checkIfChanged();
-    }
+    setItem( itemKey, QVariant( itemValue ).toString(), itemWidget, itemDefaultButton );
 }
 
-void KCMLocale::setComboItem( const QString itemKey, const QString &itemValue, KComboBox *itemCombo, KPushButton *itemDefaultButton )
+void KCMLocale::setCalendarItem( const QString &itemKey, const QString &itemValue,
+                                 QWidget *itemWidget, KPushButton *itemDefaultButton )
+{
+    setItemValue( itemKey, itemValue,
+                  &m_userCalendarSettings, &m_kcmCalendarSettings, &m_defaultCalendarSettings );
+    enableItemWidgets( itemKey,
+                       &m_userCalendarSettings, &m_kcmCalendarSettings, &m_defaultCalendarSettings,
+                       itemWidget, itemDefaultButton );
+    checkIfChanged();
+}
+
+void KCMLocale::setCalendarItem( const QString &itemKey, int itemValue,
+                                 QWidget *itemWidget, KPushButton *itemDefaultButton )
+{
+    setCalendarItem( itemKey, QVariant( itemValue ).toString(), itemWidget, itemDefaultButton );
+}
+
+void KCMLocale::setCalendarItem( const QString &itemKey, bool itemValue,
+                                 QWidget *itemWidget, KPushButton *itemDefaultButton )
+{
+    setCalendarItem( itemKey, QVariant( itemValue ).toString(), itemWidget, itemDefaultButton );
+}
+
+// Don't use for edit combo's
+void KCMLocale::setComboItem( const QString &itemKey, const QString &itemValue,
+                              KComboBox *itemCombo, KPushButton *itemDefaultButton )
 {
     setItem( itemKey, itemValue, itemCombo, itemDefaultButton );
     // Read the entry rather than use itemValue in case setItem didn't change the value, e.g. if immutable
     itemCombo->setCurrentIndex( itemCombo->findData( m_kcmSettings.readEntry( itemKey, QString() ) ) );
 }
 
-void KCMLocale::setComboItem( const QString itemKey, int itemValue, KComboBox *itemCombo, KPushButton *itemDefaultButton )
+// Don't use for edit combo's
+void KCMLocale::setComboItem( const QString &itemKey, int itemValue,
+                              KComboBox *itemCombo, KPushButton *itemDefaultButton )
 {
     setItem( itemKey, itemValue, itemCombo, itemDefaultButton );
     // Read the entry rather than use itemValue in case setItem didn't change the value, e.g. if immutable
     itemCombo->setCurrentIndex( itemCombo->findData( m_kcmSettings.readEntry( itemKey, 0 ) ) );
 }
 
-void KCMLocale::setEditComboItem( const QString itemKey, const QString &itemValue, KComboBox *itemCombo, KPushButton *itemDefaultButton )
+// Don't use for user changes as will EOL on the entry
+void KCMLocale::setEditComboItem( const QString &itemKey, const QString &itemValue,
+                                  KComboBox *itemCombo, KPushButton *itemDefaultButton )
 {
     setItem( itemKey, itemValue, itemCombo, itemDefaultButton );
     // Read the entry rather than use itemValue in case setItem didn't change the value, e.g. if immutable
     itemCombo->setEditText( m_kcmSettings.readEntry( itemKey, QString() ) );
 }
 
-void KCMLocale::setEditComboItem( const QString itemKey, int itemValue, KComboBox *itemCombo, KPushButton *itemDefaultButton )
-{
-    setItem( itemKey, itemValue, itemCombo, itemDefaultButton );
-    // Read the entry rather than use itemValue in case setItem didn't change the value, e.g. if immutable
-    itemCombo->setEditText( QString::number( m_kcmSettings.readEntry( itemKey, 0 ) ) );
-}
-
-void KCMLocale::setIntItem( const QString itemKey, int itemValue, KIntNumInput *itemInput, KPushButton *itemDefaultButton )
+void KCMLocale::setIntItem( const QString &itemKey, int itemValue,
+                            KIntNumInput *itemInput, KPushButton *itemDefaultButton )
 {
     setItem( itemKey, itemValue, itemInput, itemDefaultButton );
     // Read the entry rather than use itemValue in case setItem didn't change the value, e.g. if immutable
     itemInput->setValue( m_kcmSettings.readEntry( itemKey, 0 ) );
 }
 
-void KCMLocale::setCheckItem( const QString itemKey, bool itemValue, QCheckBox *itemCheck, KPushButton *itemDefaultButton )
+void KCMLocale::setCheckItem( const QString &itemKey, bool itemValue,
+                              QCheckBox *itemCheck, KPushButton *itemDefaultButton )
 {
     setItem( itemKey, itemValue, itemCheck, itemDefaultButton );
     // Read the entry rather than use itemValue in case setItem didn't change the value, e.g. if immutable
     itemCheck->setChecked( m_kcmSettings.readEntry( itemKey, false ) );
 }
 
+// Add week day names to a combo
 void KCMLocale::initWeekDayCombo( KComboBox *dayCombo )
 {
     dayCombo->clear();
@@ -885,13 +844,14 @@ void KCMLocale::initWeekDayCombo( KComboBox *dayCombo )
     }
 }
 
-void KCMLocale::initSeparatorCombo( KComboBox *separatorCombo )
+// Add standard seperator symbols to a combo
+void KCMLocale::initSeparatorCombo( KComboBox *seperatorCombo )
 {
-    separatorCombo->clear();
-    separatorCombo->addItem( ki18nc( "No separator symbol" , "None" ).toString( m_kcmLocale ), QString() );
-    separatorCombo->addItem( QString(','), QString(',') );
-    separatorCombo->addItem( QString('.'), QString('.') );
-    separatorCombo->addItem( ki18nc( "Space separator symbol", "Single Space" ).toString( m_kcmLocale ), QString(' ') );
+    seperatorCombo->clear();
+    seperatorCombo->addItem( ki18nc( "No separator symbol" , "None" ).toString( m_kcmLocale ), QString() );
+    seperatorCombo->addItem( QString(','), QString(',') );
+    seperatorCombo->addItem( QString('.'), QString('.') );
+    seperatorCombo->addItem( ki18nc( "Space separator symbol", "Single Space" ).toString( m_kcmLocale ), QString(' ') );
 }
 
 // Generic utility to set up a DigitSet combo, used for numbers, dates, money
@@ -1003,27 +963,27 @@ void KCMLocale::initCountry()
         m_ui->m_comboCountry->addItem( flag, it.key(), it.value() );
     }
 
-    changeCountry( m_kcmSettings.readEntry( "Country", QString() ) );
+    setCountry( m_kcmSettings.readEntry( "Country", QString() ) );
 
     m_ui->m_comboCountry->blockSignals( false );
 }
 
 void KCMLocale::defaultCountry()
 {
-    changeCountry( m_defaultSettings.readEntry( "Country", QString() ) );
+    setCountry( m_defaultSettings.readEntry( "Country", QString() ) );
 }
 
 void KCMLocale::changedCountryIndex( int index )
 {
     m_ui->m_comboCountry->blockSignals( true );
-    changeCountry( m_ui->m_comboCountry->itemData( index ).toString() );
+    setCountry( m_ui->m_comboCountry->itemData( index ).toString() );
     initCountrySettings( m_kcmSettings.readEntry( "Country", QString() ) );
     mergeSettings();
     m_ui->m_comboCountry->blockSignals( false );
     initSettingsWidgets();
 }
 
-void KCMLocale::changeCountry( const QString &newValue )
+void KCMLocale::setCountry( const QString &newValue )
 {
     setComboItem( "Country", newValue,
                   m_ui->m_comboCountry, m_ui->m_buttonResetCountry );
@@ -1040,7 +1000,7 @@ void KCMLocale::initCountryDivision()
     m_ui->m_comboCountryDivision->setToolTip( helpText );
     m_ui->m_comboCountryDivision->setWhatsThis( helpText );
 
-    changeCountryDivision( m_kcmSettings.readEntry( "CountryDivision", QString() ) );
+    setCountryDivision( m_kcmSettings.readEntry( "CountryDivision", QString() ) );
 
     m_ui->m_labelCountryDivision->setHidden( true );
     m_ui->m_comboCountryDivision->setHidden( true );
@@ -1052,15 +1012,15 @@ void KCMLocale::initCountryDivision()
 
 void KCMLocale::defaultCountryDivision()
 {
-    changeCountryDivision( m_defaultSettings.readEntry( "CountryDivision", QString() ) );
+    setCountryDivision( m_defaultSettings.readEntry( "CountryDivision", QString() ) );
 }
 
 void KCMLocale::changedCountryDivisionIndex( int index )
 {
-    changeCountryDivision( m_ui->m_comboCountryDivision->itemData( index ).toString() );
+    setCountryDivision( m_ui->m_comboCountryDivision->itemData( index ).toString() );
 }
 
-void KCMLocale::changeCountryDivision( const QString &newValue )
+void KCMLocale::setCountryDivision( const QString &newValue )
 {
     setComboItem( "CountryDivision", newValue,
                 m_ui->m_comboCountryDivision, m_ui->m_buttonResetCountryDivision );
@@ -1147,12 +1107,9 @@ void KCMLocale::initTranslations()
         m_ui->m_selectTranslations->availableListWidget()->setCurrentRow( 0 );
     }
 
-    if ( m_kcmSettings.readEntry( "Language", QString() ) ==
-         m_defaultSettings.readEntry( "Language", QString() ) ) {
-        m_ui->m_buttonResetTranslations->setEnabled( false );
-    } else {
-        m_ui->m_buttonResetTranslations->setEnabled( true );
-    }
+    enableItemWidgets( "Language",
+                       &m_userSettings, &m_kcmSettings, &m_defaultSettings,
+                       m_ui->m_selectTranslations, m_ui->m_buttonResetTranslations );
 
     m_ui->m_selectTranslations->blockSignals( false );
 
@@ -1170,27 +1127,27 @@ void KCMLocale::initTranslations()
 
 void KCMLocale::defaultTranslations()
 {
-    changeTranslations( m_defaultSettings.readEntry( "Language", QString() ) );
+    setTranslations( m_defaultSettings.readEntry( "Language", QString() ) );
 }
 
-void KCMLocale::changeTranslationsAvailable( QListWidgetItem *item )
+void KCMLocale::changedTranslationsAvailable( QListWidgetItem *item )
 {
     Q_UNUSED( item );
     m_ui->m_selectTranslations->availableListWidget()->sortItems();
     int row = m_ui->m_selectTranslations->availableListWidget()->currentRow();
-    changeTranslations();
+    changedTranslations();
     m_ui->m_selectTranslations->availableListWidget()->setCurrentRow( row );
 }
 
-void KCMLocale::changeTranslationsSelected( QListWidgetItem *item )
+void KCMLocale::changedTranslationsSelected( QListWidgetItem *item )
 {
     Q_UNUSED( item );
     int row = m_ui->m_selectTranslations->selectedListWidget()->currentRow();
-    changeTranslations();
+    changedTranslations();
     m_ui->m_selectTranslations->selectedListWidget()->setCurrentRow( row );
 }
 
-void KCMLocale::changeTranslations()
+void KCMLocale::changedTranslations()
 {
     // Read the list of all Selected translations from the selector widget
     QStringList selectedTranslations;
@@ -1198,10 +1155,10 @@ void KCMLocale::changeTranslations()
         selectedTranslations.append(  m_ui->m_selectTranslations->selectedListWidget()->item( i )->data( Qt::UserRole ).toString() );
     }
 
-    changeTranslations( selectedTranslations.join( ":" ) );
+    setTranslations( selectedTranslations.join( ":" ) );
 }
 
-void KCMLocale::changeTranslations( const QString &newValue )
+void KCMLocale::setTranslations( const QString &newValue )
 {
     setItem( "Language", newValue, m_ui->m_selectTranslations, m_ui->m_buttonResetTranslations );
 
@@ -1241,25 +1198,34 @@ void KCMLocale::initNumericThousandsSeparator()
 
     initSeparatorCombo( m_ui->m_comboThousandsSeparator );
 
-    changeNumericThousandsSeparator( m_kcmSettings.readEntry( "ThousandsSeparator", QString() ) );
+    setNumericThousandsSeparator( m_kcmSettings.readEntry( "ThousandsSeparator", QString() ) );
 
     m_ui->m_comboThousandsSeparator->blockSignals( false );
 }
 
 void KCMLocale::defaultNumericThousandsSeparator()
 {
-    changeNumericThousandsSeparator( m_defaultSettings.readEntry( "ThousandsSeparator", QString() ) );
+    setNumericThousandsSeparator( m_defaultSettings.readEntry( "ThousandsSeparator", QString() ) );
 }
 
-void KCMLocale::changeNumericThousandsSeparator( const QString &newValue )
+// Change in response to user input, doesn't set edit text as causes cursor to EOL
+void KCMLocale::changedNumericThousandsSeparator( const QString &newValue )
 {
     QString useValue = newValue;
     int item = m_ui->m_comboThousandsSeparator->findText( newValue );
     if ( item >= 0 ) {
         useValue = m_ui->m_comboThousandsSeparator->itemData( item ).toString();
     }
-    setEditComboItem( "ThousandsSeparator", useValue,
-                      m_ui->m_comboThousandsSeparator, m_ui->m_buttonResetThousandsSeparator );
+    setItem( "ThousandsSeparator", useValue,
+             m_ui->m_comboThousandsSeparator, m_ui->m_buttonResetThousandsSeparator );
+    m_kcmLocale->setThousandsSeparator( m_kcmSettings.readEntry( "ThousandsSeparator", QString() ) );
+}
+
+// Change programatically, does set edit text so user can see it
+void KCMLocale::setNumericThousandsSeparator( const QString &newValue )
+{
+    setEditComboItem( "ThousandsSeparator", newValue,
+                       m_ui->m_comboThousandsSeparator, m_ui->m_buttonResetThousandsSeparator );
     m_kcmLocale->setThousandsSeparator( m_kcmSettings.readEntry( "ThousandsSeparator", QString() ) );
 }
 
@@ -1277,24 +1243,33 @@ void KCMLocale::initNumericDecimalSymbol()
 
     initSeparatorCombo( m_ui->m_comboDecimalSymbol );
 
-    changeNumericDecimalSymbol( m_kcmSettings.readEntry( "DecimalSymbol", QString() ) );
+    setNumericDecimalSymbol( m_kcmSettings.readEntry( "DecimalSymbol", QString() ) );
 
     m_ui->m_comboDecimalSymbol->blockSignals( false );
 }
 
 void KCMLocale::defaultNumericDecimalSymbol()
 {
-    changeNumericDecimalSymbol( m_defaultSettings.readEntry( "DecimalSymbol", QString() ) );
+    setNumericDecimalSymbol( m_defaultSettings.readEntry( "DecimalSymbol", QString() ) );
 }
 
-void KCMLocale::changeNumericDecimalSymbol( const QString &newValue )
+// Change in response to user input, doesn't set edit text as causes cursor to EOL
+void KCMLocale::changedNumericDecimalSymbol( const QString &newValue )
 {
     QString useValue = newValue;
     int item = m_ui->m_comboDecimalSymbol->findText( newValue );
     if ( item >= 0 ) {
         useValue = m_ui->m_comboDecimalSymbol->itemData( item ).toString();
     }
-    setEditComboItem( "DecimalSymbol", useValue,
+    setItem( "DecimalSymbol", useValue,
+             m_ui->m_comboDecimalSymbol, m_ui->m_buttonResetDecimalSymbol );
+    m_kcmLocale->setDecimalSymbol( m_kcmSettings.readEntry( "DecimalSymbol", QString() ) );
+}
+
+// Change programatically, does set edit text so user can see it
+void KCMLocale::setNumericDecimalSymbol( const QString &newValue )
+{
+    setEditComboItem( "DecimalSymbol", newValue,
                       m_ui->m_comboDecimalSymbol, m_ui->m_buttonResetDecimalSymbol );
     m_kcmLocale->setDecimalSymbol( m_kcmSettings.readEntry( "DecimalSymbol", QString() ) );
 }
@@ -1312,17 +1287,22 @@ void KCMLocale::initNumericDecimalPlaces()
     m_ui->m_intDecimalPlaces->setToolTip( helpText );
     m_ui->m_intDecimalPlaces->setWhatsThis( helpText );
 
-    changeNumericDecimalPlaces( m_kcmSettings.readEntry( "DecimalPlaces", 0 ) );
+    setNumericDecimalPlaces( m_kcmSettings.readEntry( "DecimalPlaces", 0 ) );
 
     m_ui->m_intDecimalPlaces->blockSignals( false );
 }
 
 void KCMLocale::defaultNumericDecimalPlaces()
 {
-    changeNumericDecimalPlaces( m_defaultSettings.readEntry( "DecimalPlaces", 0 ) );
+    setNumericDecimalPlaces( m_defaultSettings.readEntry( "DecimalPlaces", 0 ) );
 }
 
-void KCMLocale::changeNumericDecimalPlaces( int newValue )
+void KCMLocale::changedNumericDecimalPlaces( int newValue )
+{
+    setNumericDecimalPlaces( newValue );
+}
+
+void KCMLocale::setNumericDecimalPlaces( int newValue )
 {
     setIntItem( "DecimalPlaces", newValue,
                 m_ui->m_intDecimalPlaces, m_ui->m_buttonResetDecimalPlaces );
@@ -1345,24 +1325,36 @@ void KCMLocale::initNumericPositiveSign()
     m_ui->m_comboPositiveSign->addItem( ki18nc( "No positive symbol", "None" ).toString( m_kcmLocale ), QString() );
     m_ui->m_comboPositiveSign->addItem( QString('+'), QString('+') );
 
-    changeNumericPositiveSign( m_kcmSettings.readEntry( "PositiveSign", QString() ) );
+    setNumericPositiveSign( m_kcmSettings.readEntry( "PositiveSign", QString() ) );
 
     m_ui->m_comboPositiveSign->blockSignals( false );
 }
 
 void KCMLocale::defaultNumericPositiveSign()
 {
-    changeNumericPositiveSign( m_defaultSettings.readEntry( "PositiveSign", QString() ) );
+    setNumericPositiveSign( m_defaultSettings.readEntry( "PositiveSign", QString() ) );
 }
 
-void KCMLocale::changeNumericPositiveSign( const QString &newValue )
+// Change in response to user input, doesn't set edit text as causes cursor to EOL
+void KCMLocale::changedNumericPositiveSign( const QString &newValue )
 {
     QString useValue = newValue;
     int item = m_ui->m_comboPositiveSign->findText( newValue );
     if ( item >= 0 ) {
         useValue = m_ui->m_comboPositiveSign->itemData( item ).toString();
     }
-    setEditComboItem( "PositiveSign", useValue,
+    setItem( "PositiveSign", useValue,
+             m_ui->m_comboPositiveSign, m_ui->m_buttonResetPositiveSign );
+    m_kcmLocale->setPositiveSign( m_kcmSettings.readEntry( "PositiveSign", QString() ) );
+
+    // Update the monetary format samples to relect new setting
+    initMonetaryPositiveFormat();
+}
+
+// Change programatically, does set edit text so user can see it
+void KCMLocale::setNumericPositiveSign( const QString &newValue )
+{
+    setEditComboItem( "PositiveSign", newValue,
                       m_ui->m_comboPositiveSign, m_ui->m_buttonResetPositiveSign );
     m_kcmLocale->setPositiveSign( m_kcmSettings.readEntry( "PositiveSign", QString() ) );
 
@@ -1387,24 +1379,36 @@ void KCMLocale::initNumericNegativeSign()
     m_ui->m_comboNegativeSign->addItem( ki18nc("No negative symbol", "None" ).toString( m_kcmLocale ), QString() );
     m_ui->m_comboNegativeSign->addItem( QString('-'), QString('-') );
 
-    changeNumericNegativeSign( m_kcmSettings.readEntry( "NegativeSign", QString() ) );
+    setNumericNegativeSign( m_kcmSettings.readEntry( "NegativeSign", QString() ) );
 
     m_ui->m_comboNegativeSign->blockSignals( false );
 }
 
 void KCMLocale::defaultNumericNegativeSign()
 {
-    changeNumericNegativeSign( m_defaultSettings.readEntry( "NegativeSign", QString() ) );
+    setNumericNegativeSign( m_defaultSettings.readEntry( "NegativeSign", QString() ) );
 }
 
-void KCMLocale::changeNumericNegativeSign( const QString &newValue )
+// Change in response to user input, doesn't set edit text as causes cursor to EOL
+void KCMLocale::changedNumericNegativeSign( const QString &newValue )
 {
     QString useValue = newValue;
     int item = m_ui->m_comboNegativeSign->findText( newValue );
     if ( item >= 0 ) {
         useValue = m_ui->m_comboNegativeSign->itemData( item ).toString();
     }
-    setEditComboItem( "NegativeSign", useValue,
+    setItem( "NegativeSign", useValue,
+             m_ui->m_comboNegativeSign, m_ui->m_buttonResetNegativeSign );
+    m_kcmLocale->setNegativeSign( m_kcmSettings.readEntry( "NegativeSign", QString() ) );
+
+    // Update the monetary format samples to relect new setting
+    initMonetaryNegativeFormat();
+}
+
+// Change programatically, does set edit text so user can see it
+void KCMLocale::setNumericNegativeSign( const QString &newValue )
+{
+    setEditComboItem( "NegativeSign", newValue,
                       m_ui->m_comboNegativeSign, m_ui->m_buttonResetNegativeSign );
     m_kcmLocale->setNegativeSign( m_kcmSettings.readEntry( "NegativeSign", QString() ) );
 
@@ -1428,22 +1432,22 @@ void KCMLocale::initNumericDigitSet()
 
     initDigitSetCombo( m_ui->m_comboDigitSet );
 
-    changeNumericDigitSet( m_kcmSettings.readEntry( "DigitSet", 0 ) );
+    setNumericDigitSet( m_kcmSettings.readEntry( "DigitSet", 0 ) );
 
     m_ui->m_comboDigitSet->blockSignals( false );
 }
 
 void KCMLocale::defaultNumericDigitSet()
 {
-    changeNumericDigitSet( m_defaultSettings.readEntry( "DigitSet", 0 ) );
+    setNumericDigitSet( m_defaultSettings.readEntry( "DigitSet", 0 ) );
 }
 
 void KCMLocale::changedNumericDigitSetIndex( int index )
 {
-    changeNumericDigitSet( m_ui->m_comboDigitSet->itemData( index ).toInt() );
+    setNumericDigitSet( m_ui->m_comboDigitSet->itemData( index ).toInt() );
 }
 
-void KCMLocale::changeNumericDigitSet( int newValue )
+void KCMLocale::setNumericDigitSet( int newValue )
 {
     setComboItem( "DigitSet", newValue,
                   m_ui->m_comboDigitSet, m_ui->m_buttonResetDigitSet );
@@ -1487,22 +1491,22 @@ void KCMLocale::initCurrencyCode()
         m_ui->m_comboCurrencyCode->addItem( name, QVariant( name.mid( name.length()-4, 3 ) ) );
     }
 
-    changeCurrencyCode( m_kcmSettings.readEntry( "CurrencyCode", QString() ) );
+    setCurrencyCode( m_kcmSettings.readEntry( "CurrencyCode", QString() ) );
 
     m_ui->m_comboCurrencyCode->blockSignals( false );
 }
 
 void KCMLocale::defaultCurrencyCode()
 {
-    changeCurrencyCode( m_defaultSettings.readEntry( "CurrencyCode", QString() ) );
+    setCurrencyCode( m_defaultSettings.readEntry( "CurrencyCode", QString() ) );
 }
 
 void KCMLocale::changedCurrencyCodeIndex( int index )
 {
-    changeCurrencyCode( m_ui->m_comboCurrencyCode->itemData( index ).toString() );
+    setCurrencyCode( m_ui->m_comboCurrencyCode->itemData( index ).toString() );
 }
 
-void KCMLocale::changeCurrencyCode( const QString &newValue )
+void KCMLocale::setCurrencyCode( const QString &newValue )
 {
     setComboItem( "CurrencyCode", newValue,
                   m_ui->m_comboCurrencyCode, m_ui->m_buttonResetCurrencyCode );
@@ -1537,22 +1541,22 @@ void KCMLocale::initCurrencySymbol()
         m_userSettings.deleteEntry( "CurrencySymbol", KConfig::Persistent | KConfig::Global );
     }
 
-    changeCurrencySymbol( m_kcmSettings.readEntry( "CurrencySymbol", QString() ) );
+    setCurrencySymbol( m_kcmSettings.readEntry( "CurrencySymbol", QString() ) );
 
     m_ui->m_comboCurrencySymbol->blockSignals( false );
 }
 
 void KCMLocale::defaultCurrencySymbol()
 {
-    changeCurrencySymbol( m_defaultSettings.readEntry( "CurrencySymbol", QString() ) );
+    setCurrencySymbol( m_defaultSettings.readEntry( "CurrencySymbol", QString() ) );
 }
 
 void KCMLocale::changedCurrencySymbolIndex( int index )
 {
-    changeCurrencySymbol( m_ui->m_comboCurrencySymbol->itemData( index ).toString() );
+    setCurrencySymbol( m_ui->m_comboCurrencySymbol->itemData( index ).toString() );
 }
 
-void KCMLocale::changeCurrencySymbol( const QString &newValue )
+void KCMLocale::setCurrencySymbol( const QString &newValue )
 {
     setComboItem( "CurrencySymbol", newValue,
                   m_ui->m_comboCurrencySymbol, m_ui->m_buttonResetCurrencySymbol );
@@ -1581,24 +1585,35 @@ void KCMLocale::initMonetaryThousandsSeparator()
 
     initSeparatorCombo( m_ui->m_comboMonetaryThousandsSeparator );
 
-    changeMonetaryThousandsSeparator( m_kcmSettings.readEntry( "MonetaryThousandsSeparator", QString() ) );
+    setMonetaryThousandsSeparator( m_kcmSettings.readEntry( "MonetaryThousandsSeparator", QString() ) );
 
     m_ui->m_comboMonetaryThousandsSeparator->blockSignals( false );
 }
 
 void KCMLocale::defaultMonetaryThousandsSeparator()
 {
-    changeMonetaryThousandsSeparator( m_defaultSettings.readEntry( "MonetaryThousandsSeparator", QString() ) );
+    setMonetaryThousandsSeparator( m_defaultSettings.readEntry( "MonetaryThousandsSeparator", QString() ) );
 }
 
-void KCMLocale::changeMonetaryThousandsSeparator( const QString &newValue )
+void KCMLocale::changedMonetaryThousandsSeparator( const QString &newValue )
 {
     QString useValue = newValue;
     int item = m_ui->m_comboMonetaryThousandsSeparator->findText( newValue );
     if ( item >= 0 ) {
         useValue = m_ui->m_comboMonetaryThousandsSeparator->itemData( item ).toString();
     }
-    setEditComboItem( "MonetaryThousandsSeparator", useValue,
+    setItem( "MonetaryThousandsSeparator", useValue,
+             m_ui->m_comboMonetaryThousandsSeparator, m_ui->m_buttonResetMonetaryThousandsSeparator );
+    m_kcmLocale->setMonetaryThousandsSeparator( m_kcmSettings.readEntry( "MonetaryThousandsSeparator", QString() ) );
+
+    // Update the monetary format samples to relect new setting
+    initMonetaryPositiveFormat();
+    initMonetaryNegativeFormat();
+}
+
+void KCMLocale::setMonetaryThousandsSeparator( const QString &newValue )
+{
+    setEditComboItem( "MonetaryThousandsSeparator", newValue,
                       m_ui->m_comboMonetaryThousandsSeparator, m_ui->m_buttonResetMonetaryThousandsSeparator );
     m_kcmLocale->setMonetaryThousandsSeparator( m_kcmSettings.readEntry( "MonetaryThousandsSeparator", QString() ) );
 
@@ -1621,24 +1636,35 @@ void KCMLocale::initMonetaryDecimalSymbol()
 
     initSeparatorCombo( m_ui->m_comboMonetaryDecimalSymbol );
 
-    changeMonetaryDecimalSymbol( m_kcmSettings.readEntry( "MonetaryDecimalSymbol", QString() ) );
+    setMonetaryDecimalSymbol( m_kcmSettings.readEntry( "MonetaryDecimalSymbol", QString() ) );
 
     m_ui->m_comboMonetaryDecimalSymbol->blockSignals( false );
 }
 
 void KCMLocale::defaultMonetaryDecimalSymbol()
 {
-    changeMonetaryDecimalSymbol( m_defaultSettings.readEntry( "MonetaryDecimalSymbol", QString() ) );
+    setMonetaryDecimalSymbol( m_defaultSettings.readEntry( "MonetaryDecimalSymbol", QString() ) );
 }
 
-void KCMLocale::changeMonetaryDecimalSymbol( const QString &newValue )
+void KCMLocale::changedMonetaryDecimalSymbol( const QString &newValue )
 {
     QString useValue = newValue;
     int item = m_ui->m_comboMonetaryDecimalSymbol->findText( newValue );
     if ( item >= 0 ) {
         useValue = m_ui->m_comboMonetaryDecimalSymbol->itemData( item ).toString();
     }
-    setEditComboItem( "MonetaryDecimalSymbol", useValue,
+    setItem( "MonetaryDecimalSymbol", useValue,
+             m_ui->m_comboMonetaryDecimalSymbol, m_ui->m_buttonResetMonetaryDecimalSymbol );
+    m_kcmLocale->setMonetaryDecimalSymbol( m_kcmSettings.readEntry( "MonetaryDecimalSymbol", QString() ) );
+
+    // Update the monetary format samples to relect new setting
+    initMonetaryPositiveFormat();
+    initMonetaryNegativeFormat();
+}
+
+void KCMLocale::setMonetaryDecimalSymbol( const QString &newValue )
+{
+    setEditComboItem( "MonetaryDecimalSymbol", newValue,
                       m_ui->m_comboMonetaryDecimalSymbol, m_ui->m_buttonResetMonetaryDecimalSymbol );
     m_kcmLocale->setMonetaryDecimalSymbol( m_kcmSettings.readEntry( "MonetaryDecimalSymbol", QString() ) );
 
@@ -1660,17 +1686,22 @@ void KCMLocale::initMonetaryDecimalPlaces()
     m_ui->m_intMonetaryDecimalPlaces->setToolTip( helpText );
     m_ui->m_intMonetaryDecimalPlaces->setWhatsThis( helpText );
 
-    changeMonetaryDecimalPlaces( m_kcmSettings.readEntry( "MonetaryDecimalPlaces", 0 ) );
+    setMonetaryDecimalPlaces( m_kcmSettings.readEntry( "MonetaryDecimalPlaces", 0 ) );
 
     m_ui->m_intMonetaryDecimalPlaces->blockSignals( false );
 }
 
 void KCMLocale::defaultMonetaryDecimalPlaces()
 {
-    changeMonetaryDecimalPlaces( m_defaultSettings.readEntry( "MonetaryDecimalPlaces", 0 ) );
+    setMonetaryDecimalPlaces( m_defaultSettings.readEntry( "MonetaryDecimalPlaces", 0 ) );
 }
 
-void KCMLocale::changeMonetaryDecimalPlaces( int newValue )
+void KCMLocale::changedMonetaryDecimalPlaces( int newValue )
+{
+    setMonetaryDecimalPlaces( newValue );
+}
+
+void KCMLocale::setMonetaryDecimalPlaces( int newValue )
 {
     setIntItem( "MonetaryDecimalPlaces", newValue,
                 m_ui->m_intMonetaryDecimalPlaces, m_ui->m_buttonResetMonetaryDecimalPlaces );
@@ -1744,8 +1775,8 @@ void KCMLocale::initMonetaryPositiveFormat()
         insertMonetaryPositiveFormat( false, KLocale::ParensAround );
     }
 
-    changeMonetaryPositiveFormat( m_kcmSettings.readEntry( "PositivePrefixCurrencySymbol", false ),
-                                  (KLocale::SignPosition) m_defaultSettings.readEntry( "PositiveMonetarySignPosition", 0 ) );
+    setMonetaryPositiveFormat( m_kcmSettings.readEntry( "PositivePrefixCurrencySymbol", false ),
+                               (KLocale::SignPosition) m_defaultSettings.readEntry( "PositiveMonetarySignPosition", 0 ) );
 
     // These are the old strings, keep around for now in case new implementation isn't usable
     QString format = ki18n( "Sign position:" ).toString( m_kcmLocale );
@@ -1768,8 +1799,8 @@ void KCMLocale::initMonetaryPositiveFormat()
 
 void KCMLocale::defaultMonetaryPositiveFormat()
 {
-    changeMonetaryPositiveFormat( m_defaultSettings.readEntry( "PositivePrefixCurrencySymbol", false ),
-                                  (KLocale::SignPosition) m_defaultSettings.readEntry( "PositiveMonetarySignPosition", 0 ) );
+    setMonetaryPositiveFormat( m_defaultSettings.readEntry( "PositivePrefixCurrencySymbol", false ),
+                               (KLocale::SignPosition) m_defaultSettings.readEntry( "PositiveMonetarySignPosition", 0 ) );
 }
 
 void KCMLocale::changedMonetaryPositiveFormatIndex( int index )
@@ -1777,11 +1808,11 @@ void KCMLocale::changedMonetaryPositiveFormatIndex( int index )
     QVariantList options = m_ui->m_comboMonetaryPositiveFormat->itemData( index ).toList();
     bool prefixCurrencySymbol = options.at( 0 ).toBool();
     KLocale::SignPosition signPosition = (KLocale::SignPosition) options.at( 1 ).toInt();
-    changeMonetaryPositiveFormat( prefixCurrencySymbol, signPosition );
+    setMonetaryPositiveFormat( prefixCurrencySymbol, signPosition );
 }
 
-void KCMLocale::setMonetaryFormat( const QString prefixCurrencySymbolKey, bool prefixCurrencySymbol,
-                                   const QString signPositionKey, KLocale::SignPosition signPosition,
+void KCMLocale::setMonetaryFormat( const QString &prefixCurrencySymbolKey, bool prefixCurrencySymbol,
+                                   const QString &signPositionKey, KLocale::SignPosition signPosition,
                                    QWidget *formatWidget, KPushButton *formatDefaultButton )
 {
     // If either setting is locked down by Kiosk, then don't let the user make any changes, and disable the widgets
@@ -1816,7 +1847,7 @@ void KCMLocale::setMonetaryFormat( const QString prefixCurrencySymbolKey, bool p
     }
 }
 
-void KCMLocale::changeMonetaryPositiveFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition )
+void KCMLocale::setMonetaryPositiveFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition )
 {
     setMonetaryFormat( "PositivePrefixCurrencySymbol", prefixCurrencySymbol,
                        "PositiveMonetarySignPosition", signPosition,
@@ -1914,16 +1945,16 @@ void KCMLocale::initMonetaryNegativeFormat()
         insertMonetaryNegativeFormat( false, KLocale::ParensAround );
     }
 
-    changeMonetaryNegativeFormat( m_kcmSettings.readEntry( "NegativePrefixCurrencySymbol", false ),
-                                  (KLocale::SignPosition) m_defaultSettings.readEntry( "NegativeMonetarySignPosition", 0 ) );
+    setMonetaryNegativeFormat( m_kcmSettings.readEntry( "NegativePrefixCurrencySymbol", false ),
+                               (KLocale::SignPosition) m_defaultSettings.readEntry( "NegativeMonetarySignPosition", 0 ) );
 
     m_ui->m_comboMonetaryNegativeFormat->blockSignals( false );
 }
 
 void KCMLocale::defaultMonetaryNegativeFormat()
 {
-    changeMonetaryNegativeFormat( m_defaultSettings.readEntry( "NegativePrefixCurrencySymbol", false ),
-                                  (KLocale::SignPosition) m_defaultSettings.readEntry( "NegativeMonetarySignPosition", 0 ) );
+    setMonetaryNegativeFormat( m_defaultSettings.readEntry( "NegativePrefixCurrencySymbol", false ),
+                               (KLocale::SignPosition) m_defaultSettings.readEntry( "NegativeMonetarySignPosition", 0 ) );
 }
 
 void KCMLocale::changedMonetaryNegativeFormatIndex( int index )
@@ -1931,10 +1962,10 @@ void KCMLocale::changedMonetaryNegativeFormatIndex( int index )
     QVariantList options = m_ui->m_comboMonetaryNegativeFormat->itemData( index ).toList();
     bool prefixCurrencySymbol = options.at( 0 ).toBool();
     KLocale::SignPosition signPosition = (KLocale::SignPosition) options.at( 1 ).toInt();
-    changeMonetaryNegativeFormat( prefixCurrencySymbol, signPosition );
+    setMonetaryNegativeFormat( prefixCurrencySymbol, signPosition );
 }
 
-void KCMLocale::changeMonetaryNegativeFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition )
+void KCMLocale::setMonetaryNegativeFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition )
 {
     setMonetaryFormat( "NegativePrefixCurrencySymbol", prefixCurrencySymbol,
                        "NegativeMonetarySignPosition", signPosition,
@@ -1970,22 +2001,22 @@ void KCMLocale::initMonetaryDigitSet()
 
     initDigitSetCombo( m_ui->m_comboMonetaryDigitSet );
 
-    changeMonetaryDigitSet( m_kcmSettings.readEntry( "MonetaryDigitSet", 0 ) );
+    setMonetaryDigitSet( m_kcmSettings.readEntry( "MonetaryDigitSet", 0 ) );
 
     m_ui->m_comboMonetaryDigitSet->blockSignals( false );
 }
 
 void KCMLocale::defaultMonetaryDigitSet()
 {
-    changeNumericDigitSet( m_defaultSettings.readEntry( "MonetaryDigitSet", 0 ) );
+    setNumericDigitSet( m_defaultSettings.readEntry( "MonetaryDigitSet", 0 ) );
 }
 
 void KCMLocale::changedMonetaryDigitSetIndex( int index )
 {
-    changeMonetaryDigitSet( m_ui->m_comboMonetaryDigitSet->itemData( index ).toInt() );
+    setMonetaryDigitSet( m_ui->m_comboMonetaryDigitSet->itemData( index ).toInt() );
 }
 
-void KCMLocale::changeMonetaryDigitSet( int newValue )
+void KCMLocale::setMonetaryDigitSet( int newValue )
 {
     setComboItem( "MonetaryDigitSet", newValue,
                   m_ui->m_comboMonetaryDigitSet, m_ui->m_buttonResetMonetaryDigitSet );
@@ -2011,22 +2042,22 @@ void KCMLocale::initCalendarSystem()
                                               QVariant( calendarType ) );
     }
 
-    changeCalendarSystem( m_kcmSettings.readEntry( "CalendarSystem", QString() ) );
+    setCalendarSystem( m_kcmSettings.readEntry( "CalendarSystem", QString() ) );
 
     m_ui->m_comboCalendarSystem->blockSignals( false );
 }
 
 void KCMLocale::defaultCalendarSystem()
 {
-    changeCalendarSystem( m_defaultSettings.readEntry( "CalendarSystem", QString() ) );
+    setCalendarSystem( m_defaultSettings.readEntry( "CalendarSystem", QString() ) );
 }
 
 void KCMLocale::changedCalendarSystemIndex( int index )
 {
-    changeCalendarSystem( m_ui->m_comboCalendarSystem->itemData( index ).toString() );
+    setCalendarSystem( m_ui->m_comboCalendarSystem->itemData( index ).toString() );
 }
 
-void KCMLocale::changeCalendarSystem( const QString &newValue )
+void KCMLocale::setCalendarSystem( const QString &newValue )
 {
     setComboItem( "CalendarSystem", newValue,
                   m_ui->m_comboCalendarSystem, m_ui->m_buttonResetCalendarSystem );
@@ -2059,9 +2090,9 @@ void KCMLocale::initUseCommonEra()
 
     QString calendarType = m_kcmSettings.readEntry( "CalendarSystem", QString() );
     if ( calendarType == "gregorian" || calendarType == "gregorian-proleptic" ) {
-        changeUseCommonEra( m_kcmCalendarSettings.readEntry( "UseCommonEra", false ) );
+        setUseCommonEra( m_kcmCalendarSettings.readEntry( "UseCommonEra", false ) );
     } else {
-        m_ui->m_checkCalendarGregorianUseCommonEra->setChecked( false );
+        setUseCommonEra( false );
         m_ui->m_checkCalendarGregorianUseCommonEra->setEnabled( false );
         m_ui->m_buttonResetCalendarGregorianUseCommonEra->setEnabled( false );
     }
@@ -2071,18 +2102,23 @@ void KCMLocale::initUseCommonEra()
 
 void KCMLocale::defaultUseCommonEra()
 {
-    changeUseCommonEra( m_defaultCalendarSettings.readEntry( "UseCommonEra", false ) );
+    setUseCommonEra( m_defaultCalendarSettings.readEntry( "UseCommonEra", false ) );
 }
 
-void KCMLocale::changeUseCommonEra( bool newValue )
+void KCMLocale::changedUseCommonEra( bool newValue )
+{
+    setUseCommonEra( newValue );
+}
+
+void KCMLocale::setUseCommonEra( bool newValue )
 {
     setCalendarItem( "UseCommonEra", newValue,
                      m_ui->m_checkCalendarGregorianUseCommonEra, m_ui->m_buttonResetCalendarGregorianUseCommonEra );
     m_ui->m_checkCalendarGregorianUseCommonEra->setChecked( m_kcmCalendarSettings.readEntry( "UseCommonEra", false ) );
 
     // No api to set, so need to force reload the locale
-    m_kcmLocale->setCountry( m_kcmCalendarSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
-    m_kcmLocale->setCalendar( m_kcmCalendarSettings.readEntry( "CalendarSystem", QString() ) );
+    m_kcmLocale->setCountry( m_kcmSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
+    m_kcmLocale->setCalendar( m_kcmSettings.readEntry( "CalendarSystem", QString() ) );
 }
 
 void KCMLocale::initShortYearWindow()
@@ -2100,17 +2136,22 @@ void KCMLocale::initShortYearWindow()
     m_ui->m_spinShortYearWindowEndYear->setToolTip( helpText );
     m_ui->m_spinShortYearWindowEndYear->setWhatsThis( helpText );
 
-    changeShortYearWindow( m_kcmCalendarSettings.readEntry( "ShortYearWindowStartYear", 0 ) );
+    setShortYearWindow( m_kcmCalendarSettings.readEntry( "ShortYearWindowStartYear", 0 ) );
 
     m_ui->m_intShortYearWindowStartYear->blockSignals( false );
 }
 
 void KCMLocale::defaultShortYearWindow()
 {
-    changeShortYearWindow( m_defaultCalendarSettings.readEntry( "ShortYearWindowStartYear", 0 ) );
+    setShortYearWindow( m_defaultCalendarSettings.readEntry( "ShortYearWindowStartYear", 0 ) );
 }
 
-void KCMLocale::changeShortYearWindow( int newValue )
+void KCMLocale::changedShortYearWindow( int newValue )
+{
+    setShortYearWindow( newValue );
+}
+
+void KCMLocale::setShortYearWindow( int newValue )
 {
     setCalendarItem( "ShortYearWindowStartYear", newValue,
                      m_ui->m_intShortYearWindowStartYear, m_ui->m_buttonResetShortYearWindow );
@@ -2119,8 +2160,8 @@ void KCMLocale::changeShortYearWindow( int newValue )
     m_ui->m_spinShortYearWindowEndYear->setValue( startYear + 99 );
 
     // No api to set, so need to force reload the locale and calendar
-    m_kcmLocale->setCountry( m_kcmCalendarSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
-    m_kcmLocale->setCalendar( m_kcmCalendarSettings.readEntry( "CalendarSystem", QString() ) );
+    m_kcmLocale->setCountry( m_kcmSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
+    m_kcmLocale->setCalendar( m_kcmSettings.readEntry( "CalendarSystem", QString() ) );
 }
 
 void KCMLocale::initWeekStartDay()
@@ -2135,22 +2176,22 @@ void KCMLocale::initWeekStartDay()
 
     initWeekDayCombo( m_ui->m_comboWeekStartDay );
 
-    changeWeekStartDay( m_kcmSettings.readEntry( "WeekStartDay", 0 ) );
+    setWeekStartDay( m_kcmSettings.readEntry( "WeekStartDay", 0 ) );
 
     m_ui->m_comboWeekStartDay->blockSignals( false );
 }
 
 void KCMLocale::defaultWeekStartDay()
 {
-    changeWeekStartDay( m_defaultSettings.readEntry( "WeekStartDay", 0 ) );
+    setWeekStartDay( m_defaultSettings.readEntry( "WeekStartDay", 0 ) );
 }
 
 void KCMLocale::changedWeekStartDayIndex( int index )
 {
-    changeWeekStartDay( m_ui->m_comboWeekStartDay->itemData( index ).toInt() );
+    setWeekStartDay( m_ui->m_comboWeekStartDay->itemData( index ).toInt() );
 }
 
-void KCMLocale::changeWeekStartDay( int newValue )
+void KCMLocale::setWeekStartDay( int newValue )
 {
     setComboItem( "WeekStartDay", newValue,
                   m_ui->m_comboWeekStartDay, m_ui->m_buttonResetWeekStartDay );
@@ -2169,22 +2210,22 @@ void KCMLocale::initWorkingWeekStartDay()
 
     initWeekDayCombo( m_ui->m_comboWorkingWeekStartDay );
 
-    changeWorkingWeekStartDay( m_kcmSettings.readEntry( "WorkingWeekStartDay", 0 ) );
+    setWorkingWeekStartDay( m_kcmSettings.readEntry( "WorkingWeekStartDay", 0 ) );
 
     m_ui->m_comboWorkingWeekStartDay->blockSignals( false );
 }
 
 void KCMLocale::defaultWorkingWeekStartDay()
 {
-    changeWorkingWeekStartDay( m_defaultSettings.readEntry( "WorkingWeekStartDay", 0 ) );
+    setWorkingWeekStartDay( m_defaultSettings.readEntry( "WorkingWeekStartDay", 0 ) );
 }
 
 void KCMLocale::changedWorkingWeekStartDayIndex( int index )
 {
-    changeWorkingWeekStartDay( m_ui->m_comboWorkingWeekStartDay->itemData( index ).toInt() );
+    setWorkingWeekStartDay( m_ui->m_comboWorkingWeekStartDay->itemData( index ).toInt() );
 }
 
-void KCMLocale::changeWorkingWeekStartDay( int newValue )
+void KCMLocale::setWorkingWeekStartDay( int newValue )
 {
     setComboItem( "WorkingWeekStartDay", newValue,
                   m_ui->m_comboWorkingWeekStartDay, m_ui->m_buttonResetWorkingWeekStartDay );
@@ -2203,22 +2244,22 @@ void KCMLocale::initWorkingWeekEndDay()
 
     initWeekDayCombo( m_ui->m_comboWorkingWeekEndDay );
 
-    changeWorkingWeekEndDay( m_kcmSettings.readEntry( "WorkingWeekEndDay", 0 ) );
+    setWorkingWeekEndDay( m_kcmSettings.readEntry( "WorkingWeekEndDay", 0 ) );
 
     m_ui->m_comboWorkingWeekEndDay->blockSignals( false );
 }
 
 void KCMLocale::defaultWorkingWeekEndDay()
 {
-    changeWorkingWeekEndDay( m_defaultSettings.readEntry( "WorkingWeekEndDay", 0 ) );
+    setWorkingWeekEndDay( m_defaultSettings.readEntry( "WorkingWeekEndDay", 0 ) );
 }
 
 void KCMLocale::changedWorkingWeekEndDayIndex( int index )
 {
-    changeWorkingWeekEndDay( m_ui->m_comboWorkingWeekEndDay->itemData( index ).toInt() );
+    setWorkingWeekEndDay( m_ui->m_comboWorkingWeekEndDay->itemData( index ).toInt() );
 }
 
-void KCMLocale::changeWorkingWeekEndDay( int newValue )
+void KCMLocale::setWorkingWeekEndDay( int newValue )
 {
     setComboItem( "WorkingWeekEndDay", newValue,
                   m_ui->m_comboWorkingWeekEndDay, m_ui->m_buttonResetWorkingWeekEndDay );
@@ -2238,22 +2279,22 @@ void KCMLocale::initWeekDayOfPray()
     initWeekDayCombo( m_ui->m_comboWeekDayOfPray );
     m_ui->m_comboWeekDayOfPray->insertItem( 0, ki18nc( "Day name list, option for no special day of religious observance", "None / None in particular" ).toString( m_kcmLocale ) );
 
-    changeWeekDayOfPray( m_kcmSettings.readEntry( "WeekDayOfPray", 0 ) );
+    setWeekDayOfPray( m_kcmSettings.readEntry( "WeekDayOfPray", 0 ) );
 
     m_ui->m_comboWeekDayOfPray->blockSignals( false );
 }
 
 void KCMLocale::defaultWeekDayOfPray()
 {
-    changeWeekDayOfPray( m_defaultSettings.readEntry( "WeekDayOfPray", 0 ) );
+    setWeekDayOfPray( m_defaultSettings.readEntry( "WeekDayOfPray", 0 ) );
 }
 
 void KCMLocale::changedWeekDayOfPrayIndex( int index )
 {
-    changeWeekDayOfPray( m_ui->m_comboWeekDayOfPray->itemData( index ).toInt() );
+    setWeekDayOfPray( m_ui->m_comboWeekDayOfPray->itemData( index ).toInt() );
 }
 
-void KCMLocale::changeWeekDayOfPray( int newValue )
+void KCMLocale::setWeekDayOfPray( int newValue )
 {
     setComboItem( "WeekDayOfPray", newValue,
                   m_ui->m_comboWeekDayOfPray, m_ui->m_buttonResetWeekDayOfPray );
@@ -2300,28 +2341,30 @@ void KCMLocale::initTimeFormat()
                "HH:MM:SS\n"
                "pH:MM:SS AMPM").toString( m_kcmLocale );
 
-    changeTimeFormat( posixToUserTime( m_kcmSettings.readEntry( "TimeFormat", QString() ) ) );
+    setTimeFormat( m_kcmSettings.readEntry( "TimeFormat", QString() ) );
 
     m_ui->m_comboTimeFormat->blockSignals( false );
 }
 
 void KCMLocale::defaultTimeFormat()
 {
-    changeTimeFormat( posixToUserTime( m_defaultSettings.readEntry( "TimeFormat", QString() ) ) );
+    setTimeFormat( m_defaultSettings.readEntry( "TimeFormat", QString() ) );
 }
 
-void KCMLocale::changeTimeFormat( const QString &newValue )
+void KCMLocale::changedTimeFormat( const QString &newValue )
 {
-    m_ui->m_comboTimeFormat->blockSignals( true );
-
     setItem( "TimeFormat", userToPosixTime( newValue ),
              m_ui->m_comboTimeFormat, m_ui->m_buttonResetTimeFormat );
-    // Read the entry rather than use itemValue in case setItem didn't change the value, e.g. if immutable
-    m_ui->m_comboTimeFormat->setEditText( posixToUserTime( m_kcmSettings.readEntry( "TimeFormat", QString() ) ) );
-
-    m_ui->m_comboTimeFormat->blockSignals( false );
-
     m_kcmLocale->setTimeFormat( m_kcmSettings.readEntry( "TimeFormat", QString() ) );
+}
+
+void KCMLocale::setTimeFormat( const QString &newValue )
+{
+    setItem( "TimeFormat", newValue,
+             m_ui->m_comboTimeFormat, m_ui->m_buttonResetTimeFormat );
+    QString value = m_kcmSettings.readEntry( "TimeFormat", QString() );
+    m_ui->m_comboTimeFormat->setEditText( posixToUserTime( value ) );
+    m_kcmLocale->setTimeFormat( value );
 }
 
 void KCMLocale::initAmSymbol()
@@ -2442,28 +2485,30 @@ void KCMLocale::initDateFormat()
               "WEEKDAY MONTH dD YYYY\n"
               "SHORTWEEKDAY MONTH dD YYYY").toString( m_kcmLocale );
 
-    changeDateFormat( posixToUserDate( m_kcmSettings.readEntry( "DateFormat", QString() ) ) );
+    setDateFormat( m_kcmSettings.readEntry( "DateFormat", QString() ) );
 
-    m_ui->m_comboDateFormat->blockSignals( true );
+    m_ui->m_comboDateFormat->blockSignals( false );
 }
 
 void KCMLocale::defaultDateFormat()
 {
-    changeDateFormat( posixToUserDate( m_defaultSettings.readEntry( "DateFormat", QString() ) ) );
+    setDateFormat( m_defaultSettings.readEntry( "DateFormat", QString() ) );
 }
 
-void KCMLocale::changeDateFormat( const QString &newValue )
+void KCMLocale::changedDateFormat( const QString &newValue )
 {
-    m_ui->m_comboDateFormat->blockSignals( true );
-
     setItem( "DateFormat", userToPosixDate( newValue ),
              m_ui->m_comboDateFormat, m_ui->m_buttonResetDateFormat );
-    // Read the entry rather than use itemValue in case setItem didn't change the value, e.g. if immutable
-    m_ui->m_comboDateFormat->setEditText( posixToUserDate( m_kcmSettings.readEntry( "DateFormat", QString() ) ) );
-
-    m_ui->m_comboDateFormat->blockSignals( false );
-
     m_kcmLocale->setDateFormat( m_kcmSettings.readEntry( "DateFormat", QString() ) );
+}
+
+void KCMLocale::setDateFormat( const QString &newValue )
+{
+    setItem( "DateFormat", newValue,
+             m_ui->m_comboDateFormat, m_ui->m_buttonResetDateFormat );
+    QString value = m_kcmSettings.readEntry( "DateFormat", QString() );
+    m_ui->m_comboDateFormat->setEditText( posixToUserDate( value ) );
+    m_kcmLocale->setDateFormat( value );
 }
 
 void KCMLocale::initShortDateFormat()
@@ -2548,28 +2593,30 @@ void KCMLocale::initShortDateFormat()
               "dD.mM.YYYY\n"
               "DD.MM.YYYY").toString( m_kcmLocale );
 
-    changeShortDateFormat( posixToUserDate( m_kcmSettings.readEntry( "DateFormatShort", QString() ) ) );
+    setShortDateFormat( m_kcmSettings.readEntry( "DateFormatShort", QString() ) );
 
     m_ui->m_comboShortDateFormat->blockSignals( false );
 }
 
 void KCMLocale::defaultShortDateFormat()
 {
-    changeShortDateFormat( posixToUserDate( m_defaultSettings.readEntry( "DateFormatShort", QString() ) ) );
+    setShortDateFormat( m_defaultSettings.readEntry( "DateFormatShort", QString() ) );
 }
 
-void KCMLocale::changeShortDateFormat( const QString &newValue )
+void KCMLocale::changedShortDateFormat( const QString &newValue )
 {
-    m_ui->m_comboShortDateFormat->blockSignals( true );
-
     setItem( "DateFormatShort", userToPosixDate( newValue ),
              m_ui->m_comboShortDateFormat, m_ui->m_buttonResetShortDateFormat );
-    // Read the entry rather than use itemValue in case setItem didn't change the value, e.g. if immutable
-    m_ui->m_comboShortDateFormat->setEditText( posixToUserDate( m_kcmSettings.readEntry( "DateFormatShort", QString() ) ) );
-
-    m_ui->m_comboShortDateFormat->blockSignals( false );
-
     m_kcmLocale->setDateFormatShort( m_kcmSettings.readEntry( "DateFormatShort", QString() ) );
+}
+
+void KCMLocale::setShortDateFormat( const QString &newValue )
+{
+    setItem( "DateFormatShort", newValue,
+             m_ui->m_comboShortDateFormat, m_ui->m_buttonResetShortDateFormat );
+    QString value = m_kcmSettings.readEntry( "DateFormatShort", QString() );
+    m_ui->m_comboShortDateFormat->setEditText( posixToUserDate( value ) );
+    m_kcmLocale->setDateFormatShort( value );
 }
 
 void KCMLocale::initMonthNamePossessive()
@@ -2586,7 +2633,7 @@ void KCMLocale::initMonthNamePossessive()
     setCheckItem( "DateMonthNamePossessive", m_kcmSettings.readEntry( "DateMonthNamePossessive", false ),
                   m_ui->m_checkMonthNamePossessive, m_ui->m_buttonResetMonthNamePossessive );
 
-    changeMonthNamePossessive( m_kcmSettings.readEntry( "DateMonthNamePossessive", false ) );
+    setMonthNamePossessive( m_kcmSettings.readEntry( "DateMonthNamePossessive", false ) );
 
     // Hide the option as it's not usable without ordinal day numbers
     m_ui->m_labelMonthNamePossessive->setHidden( true );
@@ -2598,10 +2645,15 @@ void KCMLocale::initMonthNamePossessive()
 
 void KCMLocale::defaultMonthNamePossessive()
 {
-    changeMonthNamePossessive( m_defaultSettings.readEntry( "DateMonthNamePossessive", false ) );
+    setMonthNamePossessive( m_defaultSettings.readEntry( "DateMonthNamePossessive", false ) );
 }
 
-void KCMLocale::changeMonthNamePossessive( bool newValue )
+void KCMLocale::changedMonthNamePossessive( bool newValue )
+{
+    setMonthNamePossessive( newValue );
+}
+
+void KCMLocale::setMonthNamePossessive( bool newValue )
 {
     setCheckItem( "DateMonthNamePossessive", newValue,
                   m_ui->m_checkMonthNamePossessive, m_ui->m_buttonResetMonthNamePossessive );
@@ -2624,22 +2676,22 @@ void KCMLocale::initDateTimeDigitSet()
 
     initDigitSetCombo( m_ui->m_comboDateTimeDigitSet );
 
-    changeDateTimeDigitSet( m_kcmSettings.readEntry( "DateTimeDigitSet", 0 ) );
+    setDateTimeDigitSet( m_kcmSettings.readEntry( "DateTimeDigitSet", 0 ) );
 
     m_ui->m_comboDateTimeDigitSet->blockSignals( false );
 }
 
 void KCMLocale::defaultDateTimeDigitSet()
 {
-    changeDateTimeDigitSet( m_defaultSettings.readEntry( "DateTimeDigitSet", 0 ) );
+    setDateTimeDigitSet( m_defaultSettings.readEntry( "DateTimeDigitSet", 0 ) );
 }
 
 void KCMLocale::changedDateTimeDigitSetIndex( int index )
 {
-    changeDateTimeDigitSet( m_ui->m_comboDateTimeDigitSet->itemData( index ).toInt() );
+    setDateTimeDigitSet( m_ui->m_comboDateTimeDigitSet->itemData( index ).toInt() );
 }
 
-void KCMLocale::changeDateTimeDigitSet( int newValue )
+void KCMLocale::setDateTimeDigitSet( int newValue )
 {
     setComboItem( "DateTimeDigitSet", newValue,
                   m_ui->m_comboDateTimeDigitSet, m_ui->m_buttonResetDateTimeDigitSet );
@@ -2726,22 +2778,22 @@ void KCMLocale::initPageSize()
     m_ui->m_comboPageSize->addItem( ki18nc("Page size", "Custom").toString( m_kcmLocale ),
                                     QVariant( QPrinter::Custom ) );
 
-    changePageSize( m_kcmSettings.readEntry( "PageSize", 0 ) );
+    setPageSize( m_kcmSettings.readEntry( "PageSize", 0 ) );
 
     m_ui->m_comboPageSize->blockSignals( false );
 }
 
 void KCMLocale::defaultPageSize()
 {
-    changePageSize( m_defaultSettings.readEntry( "PageSize", 0 ) );
+    setPageSize( m_defaultSettings.readEntry( "PageSize", 0 ) );
 }
 
 void KCMLocale::changedPageSizeIndex( int index )
 {
-    changePageSize( m_ui->m_comboPageSize->itemData( index ).toInt() );
+    setPageSize( m_ui->m_comboPageSize->itemData( index ).toInt() );
 }
 
-void KCMLocale::changePageSize( int newValue )
+void KCMLocale::setPageSize( int newValue )
 {
     setComboItem( "PageSize", newValue,
                   m_ui->m_comboPageSize, m_ui->m_buttonResetPageSize );
@@ -2762,22 +2814,22 @@ void KCMLocale::initMeasureSystem()
     m_ui->m_comboMeasureSystem->addItem( ki18n("Metric System").toString( m_kcmLocale ), (int) KLocale::Metric );
     m_ui->m_comboMeasureSystem->addItem( ki18n("Imperial System").toString( m_kcmLocale ), (int) KLocale::Imperial );
 
-    changeMeasureSystem( m_kcmSettings.readEntry( "MeasureSystem", 0 ) );
+    setMeasureSystem( m_kcmSettings.readEntry( "MeasureSystem", 0 ) );
 
     m_ui->m_comboMeasureSystem->blockSignals( false );
 }
 
 void KCMLocale::defaultMeasureSystem()
 {
-    changeMeasureSystem( m_defaultSettings.readEntry( "MeasureSystem", 0 ) );
+    setMeasureSystem( m_defaultSettings.readEntry( "MeasureSystem", 0 ) );
 }
 
 void KCMLocale::changedMeasureSystemIndex( int index )
 {
-    changeMeasureSystem( m_ui->m_comboMeasureSystem->itemData( index ).toInt() );
+    setMeasureSystem( m_ui->m_comboMeasureSystem->itemData( index ).toInt() );
 }
 
-void KCMLocale::changeMeasureSystem( int newValue )
+void KCMLocale::setMeasureSystem( int newValue )
 {
     setComboItem( "MeasureSystem", newValue,
                   m_ui->m_comboMeasureSystem, m_ui->m_buttonResetMeasureSystem );
@@ -2803,6 +2855,7 @@ void KCMLocale::initBinaryUnitDialect()
     m_ui->m_comboBinaryUnitDialect->setToolTip( helpText );
     m_ui->m_comboBinaryUnitDialect->setWhatsThis( helpText );
 
+    m_ui->m_comboBinaryUnitDialect->clear(),
     m_ui->m_comboBinaryUnitDialect->addItem( ki18nc("Unit of binary measurement", "IEC Units (KiB, MiB, etc)").toString( m_kcmLocale ),
                                              QVariant( KLocale::IECBinaryDialect ) );
     m_ui->m_comboBinaryUnitDialect->addItem( ki18nc("Unit of binary measurement", "JEDEC Units (KB, MB, etc)").toString( m_kcmLocale ),
@@ -2810,22 +2863,22 @@ void KCMLocale::initBinaryUnitDialect()
     m_ui->m_comboBinaryUnitDialect->addItem( ki18nc("Unit of binary measurement", "Metric Units (kB, MB, etc)").toString( m_kcmLocale ),
                                              QVariant( KLocale::MetricBinaryDialect ) );
 
-    changeBinaryUnitDialect( m_kcmSettings.readEntry( "BinaryUnitDialect", 0 ) );
+    setBinaryUnitDialect( m_kcmSettings.readEntry( "BinaryUnitDialect", 0 ) );
 
     m_ui->m_comboBinaryUnitDialect->blockSignals( false );
 }
 
 void KCMLocale::defaultBinaryUnitDialect()
 {
-    changeBinaryUnitDialect( m_defaultSettings.readEntry( "BinaryUnitDialect", 0 ) );
+    setBinaryUnitDialect( m_defaultSettings.readEntry( "BinaryUnitDialect", 0 ) );
 }
 
 void KCMLocale::changedBinaryUnitDialectIndex( int index )
 {
-    changeBinaryUnitDialect( m_ui->m_comboBinaryUnitDialect->itemData( index ).toInt() );
+    setBinaryUnitDialect( m_ui->m_comboBinaryUnitDialect->itemData( index ).toInt() );
 }
 
-void KCMLocale::changeBinaryUnitDialect( int newValue )
+void KCMLocale::setBinaryUnitDialect( int newValue )
 {
     setComboItem( "BinaryUnitDialect", newValue,
                   m_ui->m_comboBinaryUnitDialect, m_ui->m_buttonResetBinaryUnitDialect );
