@@ -1070,9 +1070,6 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="m_labelAmSymbol">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="text">
           <string>AM symbol:</string>
          </property>
@@ -1085,9 +1082,6 @@
         <layout class="QHBoxLayout" name="horizontalLayout_18">
          <item>
           <widget class="KComboBox" name="m_comboAmSymbol">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1100,19 +1094,12 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonDefaultAmSymbol">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-          </widget>
+          <widget class="KPushButton" name="m_buttonDefaultAmSymbol"/>
          </item>
         </layout>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="m_labelPmSymbol">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="text">
           <string>PM symbol:</string>
          </property>
@@ -1125,9 +1112,6 @@
         <layout class="QHBoxLayout" name="horizontalLayout_19">
          <item>
           <widget class="KComboBox" name="m_comboPmSymbol">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1140,11 +1124,7 @@
           </widget>
          </item>
          <item>
-          <widget class="KPushButton" name="m_buttonDefaultPmSymbol">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-          </widget>
+          <widget class="KPushButton" name="m_buttonDefaultPmSymbol"/>
          </item>
         </layout>
        </item>

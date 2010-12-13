@@ -236,9 +236,8 @@ private:
     void initTimeFormat();
     void setTimeFormat( const QString &newValue );
 
-    void initAmSymbol();
-
-    void initPmSymbol();
+    void initAmPmSymbols();
+    void setAmPmPeriods( const QString &amValue, const QString &pmValue );
 
     void initDateFormat();
     void setDateFormat( const QString &newValue );
@@ -358,11 +357,11 @@ private Q_SLOTS:
     void defaultTimeFormat();
     void changedTimeFormat( const QString &newValue );
 
-    //void defaultAmSymbol();
-    //void changeAmSymbol( const QString &newValue );
+    void defaultAmSymbol();
+    void changedAmSymbol( const QString &newValue );
 
-    //void defaultPmSymbol();
-    //void changePmSymbol( const QString &newValue );
+    void defaultPmSymbol();
+    void changedPmSymbol( const QString &newValue );
 
     void defaultDateFormat();
     void changedDateFormat( const QString &newValue );
@@ -395,6 +394,11 @@ private:
     QString userToPosixDate( const QString &userFormat ) const;
     QString userToPosixTime( const QString &userFormat ) const;
     QString userToPosix( const QString &userFormat, const QMap<QString, QString> &map ) const;
+
+    // Day Period utilities
+    QString dayPeriodText( const QString &dayPeriod );
+    QString amPeriod( const QString &longName, const QString &shortName, const QString &narrowName );
+    QString pmPeriod( const QString &longName, const QString &shortName, const QString &narrowName );
 
     // The current User settings from .kde/share/config/kdeglobals
     // This gets updated with the users changes in the kcm and saved when requested
@@ -449,6 +453,8 @@ private:
 
     // The locale we use when displaying the sample output, not used for anything else
     KLocale *m_kcmLocale;
+    // The locale for the current defaults, needed for am/pm as the defaults are hard coded in KLocale
+    KLocale *m_defaultLocale;
 
     Ui::KCMLocaleWidget *m_ui;
 };

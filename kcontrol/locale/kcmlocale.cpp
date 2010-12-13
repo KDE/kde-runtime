@@ -55,6 +55,7 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
            m_countryConfig( 0 ),
            m_cConfig( 0 ),
            m_kcmLocale( 0 ),
+           m_defaultLocale( 0 ),
            m_ui( new Ui::KCMLocaleWidget )
 {
     KAboutData *about = new KAboutData( "kcmlocale", 0, ki18n( "Localization options for KDE applications" ),
@@ -271,6 +272,7 @@ KCMLocale::~KCMLocale()
     m_userConfig->markAsClean();
     m_defaultConfig->markAsClean();
     delete m_kcmLocale;
+    delete m_defaultLocale;
     delete m_ui;
 }
 
@@ -328,6 +330,8 @@ void KCMLocale::initSettings()
     initCalendarSettings();
 
     m_kcmLocale = new KLocale( QLatin1String("kcmlocale"), m_kcmConfig );
+    m_defaultLocale = new KLocale( QLatin1String("kcmlocale"), m_defaultConfig );
+
     // Find out the system country using a null config
     m_systemCountry = m_kcmLocale->country();
 }
@@ -459,6 +463,13 @@ void KCMLocale::copySettings( KConfigGroup *fromGroup, KConfigGroup *toGroup, KC
     copySetting( fromGroup, toGroup, "MonetaryDigitSet", flags );
     copySetting( fromGroup, toGroup, "CalendarSystem", flags );
     copySetting( fromGroup, toGroup, "TimeFormat", flags );
+    QString eraKey = QString::fromLatin1("DayPeriod1");
+    int i = 1;
+    while ( fromGroup->hasKey( eraKey ) ) {
+        copySetting( fromGroup, toGroup, eraKey, flags );
+        ++i;
+        eraKey = QString::fromLatin1("DayPeriod%1").arg( i );
+    }
     copySetting( fromGroup, toGroup, "DateFormat", flags );
     copySetting( fromGroup, toGroup, "DateFormatShort", flags );
     copySetting( fromGroup, toGroup, "DateMonthNamePossessive", flags );
@@ -499,6 +510,16 @@ void KCMLocale::mergeSettings()
     copySettings( &m_cSettings, &m_defaultSettings );
     copySettings( &m_countrySettings, &m_defaultSettings );
     copySettings( &m_groupSettings, &m_defaultSettings );
+    m_defaultConfig->markAsClean();
+    m_defaultLocale->setCountry( m_defaultSettings.readEntry( "Country", QString() ), m_defaultConfig.data() );
+    m_defaultSettings.writeEntry( "DayPeriod1",
+                                  amPeriod( m_defaultLocale->dayPeriodText( QTime( 0, 0, 0 ), KLocale::LongName ),
+                                            m_defaultLocale->dayPeriodText( QTime( 0, 0, 0 ), KLocale::ShortName ),
+                                            m_defaultLocale->dayPeriodText( QTime( 0, 0, 0 ), KLocale::NarrowName ) ) );
+    m_defaultSettings.writeEntry( "DayPeriod2",
+                                  pmPeriod( m_defaultLocale->dayPeriodText( QTime( 12, 0, 0 ), KLocale::LongName ),
+                                            m_defaultLocale->dayPeriodText( QTime( 12, 0, 0 ), KLocale::ShortName ),
+                                            m_defaultLocale->dayPeriodText( QTime( 12, 0, 0 ), KLocale::NarrowName ) ) );
     m_defaultConfig->markAsClean();
 
     // Merge the KCM settings, i.e. C, Country, Group, and User
@@ -615,8 +636,7 @@ void KCMLocale::initSettingsWidgets()
 
     //Date/Time tab
     initTimeFormat();
-    initAmSymbol();
-    initPmSymbol();
+    initAmPmSymbols();
     initDateFormat();
     initShortDateFormat();
     initMonthNamePossessive();
@@ -2117,6 +2137,7 @@ void KCMLocale::setUseCommonEra( bool newValue )
     m_ui->m_checkCalendarGregorianUseCommonEra->setChecked( m_kcmCalendarSettings.readEntry( "UseCommonEra", false ) );
 
     // No api to set, so need to force reload the locale
+    m_kcmConfig->markAsClean();
     m_kcmLocale->setCountry( m_kcmSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
     m_kcmLocale->setCalendar( m_kcmSettings.readEntry( "CalendarSystem", QString() ) );
 }
@@ -2160,6 +2181,7 @@ void KCMLocale::setShortYearWindow( int newValue )
     m_ui->m_spinShortYearWindowEndYear->setValue( startYear + 99 );
 
     // No api to set, so need to force reload the locale and calendar
+    m_kcmConfig->markAsClean();
     m_kcmLocale->setCountry( m_kcmSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
     m_kcmLocale->setCalendar( m_kcmSettings.readEntry( "CalendarSystem", QString() ) );
 }
@@ -2377,24 +2399,148 @@ void KCMLocale::setTimeFormat( const QString &newValue )
     m_kcmLocale->setTimeFormat( value );
 }
 
-void KCMLocale::initAmSymbol()
+QString KCMLocale::dayPeriodText( const QString &dayPeriod )
+{
+    return dayPeriod.split( QChar::fromLatin1(',') ).at( 2 );
+}
+
+QString KCMLocale::amPeriod( const QString &longName, const QString &shortName, const QString &narrowName )
+{
+    QStringList dayPeriod;
+    dayPeriod.append( QString::fromLatin1("am") );
+    dayPeriod.append( longName );
+    dayPeriod.append( shortName );
+    dayPeriod.append( narrowName );
+    dayPeriod.append( QTime( 0, 0, 0 ).toString( QString::fromLatin1("HH:mm:ss.zzz") ) );
+    dayPeriod.append( QTime( 11, 59, 59, 999 ).toString( QString::fromLatin1("HH:mm:ss.zzz") ) );
+    dayPeriod.append( QChar::fromLatin1('0') );
+    dayPeriod.append( QString::fromLatin1("12") );
+    return dayPeriod.join( QChar::fromLatin1(',') );
+}
+
+QString KCMLocale::pmPeriod( const QString &longName, const QString &shortName, const QString &narrowName )
+{
+    QStringList dayPeriod;
+    dayPeriod.append( QString::fromLatin1("pm") );
+    dayPeriod.append( longName );
+    dayPeriod.append( shortName );
+    dayPeriod.append( narrowName );
+    dayPeriod.append( QTime( 12, 0, 0 ).toString( QString::fromLatin1("HH:mm:ss.zzz") ) );
+    dayPeriod.append( QTime( 23, 59, 59, 999 ).toString( QString::fromLatin1("HH:mm:ss.zzz") ) );
+    dayPeriod.append( QChar::fromLatin1('0') );
+    dayPeriod.append( QString::fromLatin1("12") );
+    return dayPeriod.join( QChar::fromLatin1(',') );
+}
+
+void KCMLocale::initAmPmSymbols()
 {
     m_ui->m_comboAmSymbol->blockSignals( true );
+    m_ui->m_comboPmSymbol->blockSignals( true );
+
     m_ui->m_labelAmSymbol->setText( ki18n( "AM symbol:" ).toString( m_kcmLocale ) );
     QString helpText = ki18n( "<p>Here you can set the text to be displayed for AM.</p>" ).toString( m_kcmLocale );
     m_ui->m_comboAmSymbol->setToolTip( helpText );
     m_ui->m_comboAmSymbol->setWhatsThis( helpText );
-    m_ui->m_comboAmSymbol->blockSignals( false );
-}
 
-void KCMLocale::initPmSymbol()
-{
-    m_ui->m_comboPmSymbol->blockSignals( true );
     m_ui->m_labelPmSymbol->setText( ki18n( "PM symbol:" ).toString( m_kcmLocale ) );
-    QString helpText = ki18n( "<p>Here you can set the text to be displayed for PM.</p>" ).toString( m_kcmLocale );
+    helpText = ki18n( "<p>Here you can set the text to be displayed for PM.</p>" ).toString( m_kcmLocale );
     m_ui->m_comboPmSymbol->setToolTip( helpText );
     m_ui->m_comboPmSymbol->setWhatsThis( helpText );
+
+    QStringList formatList;
+    formatList.append( m_kcmLocale->dayPeriodText( QTime( 0, 0, 0 ) ) );
+    formatList.append( m_defaultLocale->dayPeriodText( QTime( 0, 0, 0 ) ) );
+    formatList.removeDuplicates();
+    m_ui->m_comboAmSymbol->addItems( formatList );
+
+    formatList.clear();
+    formatList.append( m_kcmLocale->dayPeriodText( QTime( 12, 0, 0 ) ) );
+    formatList.append( m_defaultLocale->dayPeriodText( QTime( 12, 0, 0 ) ) );
+    formatList.removeDuplicates();
+    m_ui->m_comboPmSymbol->addItems( formatList );
+
+    setAmPmPeriods( m_kcmSettings.readEntry( "DayPeriod1", QString() ),
+                    m_kcmSettings.readEntry( "DayPeriod2", QString() ) );
+
+    m_ui->m_comboAmSymbol->setEditText( dayPeriodText( m_kcmSettings.readEntry( "DayPeriod1", QString() ) ) );
+    m_ui->m_comboPmSymbol->setEditText( dayPeriodText( m_kcmSettings.readEntry( "DayPeriod2", QString() ) ) );
+
+    m_ui->m_comboAmSymbol->blockSignals( false );
     m_ui->m_comboPmSymbol->blockSignals( false );
+}
+
+void KCMLocale::setAmPmPeriods( const QString &amPeriod, const QString &pmPeriod )
+{
+    // If either setting is locked down by Kiosk, then don't let the user make any changes, and disable the widgets
+    if ( m_userSettings.isEntryImmutable( "DayPeriod1" ) ||
+         m_userSettings.isEntryImmutable( "DayPeriod2" ) ) {
+        m_ui->m_comboAmSymbol->setEnabled( false );
+        m_ui->m_buttonDefaultAmSymbol->setEnabled( false );
+        m_ui->m_comboPmSymbol->setEnabled( false );
+        m_ui->m_buttonDefaultPmSymbol->setEnabled( false );
+    } else {
+        m_ui->m_comboAmSymbol->setEnabled( true );
+        m_ui->m_comboPmSymbol->setEnabled( true );
+        m_ui->m_buttonDefaultAmSymbol->setEnabled( false );
+        m_ui->m_buttonDefaultPmSymbol->setEnabled( false );
+
+        m_kcmSettings.writeEntry( "DayPeriod1", amPeriod );
+        m_kcmSettings.writeEntry( "DayPeriod2", pmPeriod );
+
+        // If either value is not the default then both values must be set in the user settings
+        if ( amPeriod != m_defaultSettings.readEntry( "DayPeriod1", QString() ) ||
+             pmPeriod != m_defaultSettings.readEntry( "DayPeriod2", QString() ) ) {
+            m_userSettings.writeEntry( "DayPeriod1", amPeriod, KConfig::Persistent | KConfig::Global );
+            m_userSettings.writeEntry( "DayPeriod2", pmPeriod, KConfig::Persistent | KConfig::Global );
+        } else {  // Is the default so delete any user setting
+            m_userSettings.deleteEntry( "DayPeriod1", KConfig::Persistent | KConfig::Global );
+            m_userSettings.deleteEntry( "DayPeriod2", KConfig::Persistent | KConfig::Global );
+        }
+
+        if ( m_kcmSettings.readEntry( "DayPeriod1", QString() ) !=
+            m_defaultSettings.readEntry( "DayPeriod1", QString() ) ) {
+            m_ui->m_buttonDefaultAmSymbol->setEnabled( true );
+        }
+        if ( m_kcmSettings.readEntry( "DayPeriod2", QString() ) !=
+            m_defaultSettings.readEntry( "DayPeriod2", QString() ) ) {
+            m_ui->m_buttonDefaultPmSymbol->setEnabled( true );
+        }
+
+        checkIfChanged();
+
+        // No api to set, so need to force reload the locale
+        m_kcmConfig->markAsClean();
+        m_kcmLocale->setCountry( m_kcmSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
+        m_kcmLocale->setCalendar( m_kcmSettings.readEntry( "CalendarSystem", QString() ) );
+    }
+}
+
+void KCMLocale::defaultAmSymbol()
+{
+    setAmPmPeriods( m_defaultSettings.readEntry( "DayPeriod1", QString() ),
+                    m_kcmSettings.readEntry( "DayPeriod2", QString() ) );
+    m_ui->m_comboAmSymbol->setEditText( dayPeriodText( m_kcmSettings.readEntry( "DayPeriod1", QString() ) ) );
+}
+
+void KCMLocale::changedAmSymbol( const QString &newValue )
+{
+    QStringList dayPeriod = m_defaultSettings.readEntry( "DayPeriod1", QString() ).split(',');
+    dayPeriod[2] = newValue;
+    setAmPmPeriods( dayPeriod.join( QChar::fromLatin1(',') ), m_kcmSettings.readEntry( "DayPeriod2", QString() ) );
+}
+
+void KCMLocale::defaultPmSymbol()
+{
+    setAmPmPeriods( m_kcmSettings.readEntry( "DayPeriod1", QString() ),
+                    m_defaultSettings.readEntry( "DayPeriod2", QString() ) );
+    m_ui->m_comboPmSymbol->setEditText( dayPeriodText( m_kcmSettings.readEntry( "DayPeriod2", QString() ) ) );
+}
+
+void KCMLocale::changedPmSymbol( const QString &newValue )
+{
+    QStringList dayPeriod = m_defaultSettings.readEntry( "DayPeriod2", QString() ).split(',');
+    dayPeriod[2] = newValue;
+    setAmPmPeriods( m_kcmSettings.readEntry( "DayPeriod1", QString() ), dayPeriod.join( QChar::fromLatin1(',') ) );
 }
 
 void KCMLocale::initDateFormat()
