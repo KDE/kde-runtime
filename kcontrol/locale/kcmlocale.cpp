@@ -271,6 +271,9 @@ KCMLocale::~KCMLocale()
     m_kcmConfig->markAsClean();
     m_userConfig->markAsClean();
     m_defaultConfig->markAsClean();
+    m_cConfig->markAsClean();
+    m_countryConfig->markAsClean();
+    m_groupConfig->markAsClean();
     delete m_kcmLocale;
     delete m_defaultLocale;
     delete m_ui;
@@ -314,15 +317,15 @@ void KCMLocale::initSettings()
     // These are the Group overrides, they exclude any User, Country, or C settings
     // This will be used in the merge to obtain the KCM Defaults
     // These settings should never be saved anywhere
-    m_groupConfig = new KConfig( "kcmlocale-group", KConfig::NoGlobals );
+    m_groupConfig = KSharedConfig::openConfig( "kcmlocale-group", KConfig::NoGlobals );
     m_groupSettings = KConfigGroup( m_groupConfig, "Locale" );
 
     // Setup the C Config Settings
     // These are the C/Posix defaults and KDE defaults where a setting doesn't exist in Posix
     // This will be used as the lowest level in the merge to obtain the KCM Defaults
     // These settings should never be saved anywhere
-    m_cConfig = new KConfig( KStandardDirs::locate( "locale",
-                             QString::fromLatin1("l10n/C/entry.desktop") ) );
+    m_cConfig = KSharedConfig::openConfig( KStandardDirs::locate( "locale",
+                                           QString::fromLatin1("l10n/C/entry.desktop") ) );
     m_cSettings= KConfigGroup( m_cConfig, "KCM Locale" );
 
     initCountrySettings( KGlobal::locale()->country() );
@@ -334,6 +337,10 @@ void KCMLocale::initSettings()
 
     // Find out the system country using a null config
     m_systemCountry = m_kcmLocale->country();
+
+    // Set up the initial languages to use
+    m_currentTranslations = m_userSettings.readEntry( "Language", QString() );
+    m_kcmTranslations = m_currentTranslations.split( ':', QString::SkipEmptyParts );
 }
 
 void KCMLocale::initCountrySettings( const QString &countryCode )
@@ -342,10 +349,9 @@ void KCMLocale::initCountrySettings( const QString &countryCode )
     // These are the Country overrides, they exclude any User, Group, or C settings
     // This will be used in the merge to obtain the KCM Defaults
     // These settings should never be saved anywhere
-    delete m_countryConfig;
-    m_countryConfig = new KConfig( KStandardDirs::locate( "locale",
-                                   QString::fromLatin1("l10n/%1/entry.desktop")
-                                   .arg( countryCode ) ) );
+    m_countryConfig = KSharedConfig::openConfig( KStandardDirs::locate( "locale",
+                                                 QString::fromLatin1("l10n/%1/entry.desktop")
+                                                 .arg( countryCode ) ) );
     m_countrySettings = KConfigGroup( m_countryConfig, "KCM Locale" );
     QString calendarType = m_countrySettings.readEntry( "CalendarSystem", "gregorian" );
     QString calendarGroup = QString::fromLatin1( "KCalendarSystem %1" ).arg( calendarType );
@@ -393,7 +399,6 @@ void KCMLocale::initCalendarSettings()
     calendarType = m_countrySettings.readEntry( "CalendarSystem", "gregorian" );
     calendarGroup = QString::fromLatin1( "KCalendarSystem %1" ).arg( calendarType );
     m_countryCalendarSettings = m_countrySettings.group( calendarGroup );
-
 }
 
 // Load == User has clicked on Reset to restore load saved settings
@@ -404,12 +409,14 @@ void KCMLocale::load()
     m_userConfig->markAsClean();
     m_userConfig->reparseConfiguration();
     m_currentConfig->reparseConfiguration();
+    m_kcmTranslations.clear();
+    m_currentTranslations = m_userSettings.readEntry( "Language", QString() );
+    m_kcmTranslations = m_currentTranslations.split( ':', QString::SkipEmptyParts );
 
     // Then create the new settings using the default, include user settings
     mergeSettings();
 
     // Save the current translations for checking later
-    m_currentTranslations.clear();
     m_currentTranslations = m_kcmSettings.readEntry( "Language", QString() );
 
     // The update all the widgets to use the new settings
@@ -423,6 +430,8 @@ void KCMLocale::defaults()
     // Clear out the user config but dont sync or reparse as we want to ignore the user settings
     m_userCalendarSettings.deleteGroup( KConfig::Persistent | KConfig::Global );
     m_userSettings.deleteGroup( KConfig::Persistent | KConfig::Global );
+    m_kcmTranslations.clear();
+    m_currentTranslations = QString();
 
     // Reload the system country
     initCountrySettings( m_systemCountry );
@@ -431,7 +440,6 @@ void KCMLocale::defaults()
     mergeSettings();
 
     // Save the current translations for checking later
-    m_currentTranslations.clear();
     m_currentTranslations = m_kcmSettings.readEntry( "Language", QString() );
 
     // The update all the widgets to use the new settings
@@ -505,12 +513,31 @@ void KCMLocale::copySetting( KConfigGroup *fromGroup, KConfigGroup *toGroup, con
 
 void KCMLocale::mergeSettings()
 {
+    // Set the Locale for the configs to use
+    QString locale;
+    if ( m_kcmTranslations.count() >= 1 ) {
+        locale = m_kcmTranslations.first();
+    } else {
+        locale = "en_US";
+    }
+
+    m_cConfig->setLocale( locale );
+    m_countryConfig->setLocale( locale );
+    m_groupConfig->setLocale( locale );
+
     // Merge the default settings, i.e. C, Country, and Group
     m_defaultSettings.deleteGroup();
+    m_defaultSettings.markAsClean();
+    m_defaultConfig->setLocale( locale );
     copySettings( &m_cSettings, &m_defaultSettings );
     copySettings( &m_countrySettings, &m_defaultSettings );
     copySettings( &m_groupSettings, &m_defaultSettings );
+    // Mark as clean to prevent any accidental sync() via side-effect once passed to the KLocale
     m_defaultConfig->markAsClean();
+    // Need to set the language of the KLocale first, so when we pass the config into the setCountry
+    // call the implicit setLocale() will find the languages match and not force a reparse of the
+    // non-existent settings file, losing all our settings in the process.
+    m_defaultLocale->setLanguage( m_kcmTranslations );
     m_defaultLocale->setCountry( m_defaultSettings.readEntry( "Country", QString() ), m_defaultConfig.data() );
     m_defaultSettings.writeEntry( "DayPeriod1",
                                   amPeriod( m_defaultLocale->dayPeriodText( QTime( 0, 0, 0 ), KLocale::LongName ),
@@ -524,20 +551,26 @@ void KCMLocale::mergeSettings()
 
     // Merge the KCM settings, i.e. C, Country, Group, and User
     m_kcmSettings.deleteGroup();
+    m_kcmConfig->markAsClean();
+    m_kcmConfig->setLocale( locale );
     copySettings( &m_defaultSettings, &m_kcmSettings );
     copySettings( &m_userSettings, &m_kcmSettings );
 
     // Merge the calendar settings sub-groups
     mergeCalendarSettings();
 
-    // Reload the kcm locale from the kcm settings
-    // Need to mark as clean before passing into a KLocale, as that will force a setLocale() which does a sync()
-    m_kcmConfig->markAsClean();
-    m_kcmLocale->setCountry( m_kcmSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
-
-    // Create the kcm translations list
+    // Reload the kcm translations list
     m_kcmTranslations.clear();
     m_kcmTranslations = m_kcmSettings.readEntry( "Language", QString() ).split( ':', QString::SkipEmptyParts );
+
+    // Reload the kcm locale from the kcm settings
+    // Mark as clean to prevent any accidental sync() via side-effect once passed to the KLocale
+    m_kcmConfig->markAsClean();
+    // Need to set the language of the KLocale first, so when we pass the config into the setCountry
+    // call the implicit setLocale() will find the languages match and not force a reparse of the
+    // non-existent settings file, losing all our settings in the process.
+    m_kcmLocale->setLanguage( m_kcmTranslations );
+    m_kcmLocale->setCountry( m_kcmSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
 }
 
 void KCMLocale::mergeCalendarSettings()
@@ -1186,6 +1219,9 @@ void KCMLocale::setTranslations( const QString &newValue )
     m_kcmTranslations.clear();
     m_kcmTranslations = m_kcmSettings.readEntry( "Language", QString() ).split( ':', QString::SkipEmptyParts );
     m_kcmLocale->setLanguage( m_kcmTranslations );
+
+    // Do merge again as may be localized settings that need to be reloaded
+    mergeSettings();
 
     initAllWidgets();
 }

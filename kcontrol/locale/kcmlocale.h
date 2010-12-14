@@ -420,17 +420,16 @@ private:
     KConfigGroup m_defaultSettings;
     KConfigGroup m_defaultCalendarSettings;
 
-    // These configs are const as they don't need to change and it prevents accidentally saving them
     // The current Group settings, i.e. does NOT include the User or Country settings
-    KConfig const *m_groupConfig;
+    KSharedConfigPtr m_groupConfig;
     KConfigGroup m_groupSettings;
     KConfigGroup m_groupCalendarSettings;
     // The Country Locale config from l10n/<country>/entry.desktop
-    KConfig const *m_countryConfig;
+    KSharedConfigPtr m_countryConfig;
     KConfigGroup m_countrySettings;
     KConfigGroup m_countryCalendarSettings;
     // The default C Locale config/settings from l10n/C/entry.desktop
-    KConfig const *m_cConfig;
+    KSharedConfigPtr m_cConfig;
     KConfigGroup m_cSettings;
     KConfigGroup m_cCalendarSettings;
 
