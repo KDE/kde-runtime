@@ -413,8 +413,15 @@ void ActivityManagerPrivate::reallyStartActivity(const QString & id)
             if (reply.type() == QDBusMessage::ErrorMessage) {
                 kDebug() << "dbus error:" << reply.errorMessage();
             } else {
-                called = true;
-                kDebug() << "dbus succeeded";
+                QList<QVariant> ret = reply.arguments();
+                if (ret.length() == 1 && ret.first().toBool()) {
+                    called = true;
+                } else {
+                    kDebug() << "call returned false; probably ksmserver is busy";
+                    setActivityState(transitioningActivity, ActivityManager::Stopped);
+                    transitioningActivity.clear();
+                    return; //assume we're mid-logout and just don't touch anything
+                }
             }
         } else {
             kDebug() << "couldn't get kwin interface";
@@ -424,7 +431,7 @@ void ActivityManagerPrivate::reallyStartActivity(const QString & id)
     if (!called) {
         //maybe they use compiz?
         //go ahead without the session
-        setActivityState(id, ActivityManager::Running);
+        startCompleted();
     }
     configSync(); //force immediate sync
 }
@@ -472,8 +479,14 @@ void ActivityManagerPrivate::reallyStopActivity(const QString & id)
             if (reply.type() == QDBusMessage::ErrorMessage) {
                 kDebug() << "dbus error:" << reply.errorMessage();
             } else {
-                called = true;
-                kDebug() << "dbus succeeded";
+                QList<QVariant> ret = reply.arguments();
+                if (ret.length() == 1 && ret.first().toBool()) {
+                    called = true;
+                } else {
+                    kDebug() << "call returned false; probably ksmserver is busy";
+                    stopCancelled();
+                    return; //assume we're mid-logout and just don't touch anything
+                }
             }
         } else {
             kDebug() << "couldn't get kwin interface";
@@ -483,11 +496,7 @@ void ActivityManagerPrivate::reallyStopActivity(const QString & id)
     if (!called) {
         //maybe they use compiz?
         //go ahead without the session
-        setActivityState(id, ActivityManager::Stopped);
-        if (currentActivity == id) {
-            ensureCurrentActivityIsRunning();
-        }
-        configSync(); //force immediate sync
+        stopCompleted();
     }
 }
 
