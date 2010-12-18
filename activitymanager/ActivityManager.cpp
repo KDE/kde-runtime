@@ -191,9 +191,9 @@ void ActivityManagerPrivate::ensureCurrentActivityIsRunning()
 
     if (!runningActivities.contains(currentActivity)) {
         if (runningActivities.size() > 0) {
-            currentActivity = runningActivities.first();
+            setCurrentActivity(runningActivities.first());
         } else {
-            currentActivity.clear();
+            kDebug() << "there are no running activities! eek!";
         }
     }
 }
