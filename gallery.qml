@@ -49,9 +49,11 @@ Rectangle {
 
         PushButton {
             text: "Ok"
-            onClicked: print("Clicked!")
+            onClicked: {print("Clicked!"); scrollBar.value=35}
         }
-        ScrollBar {}
+        ScrollBar {
+            id: scrollBar
+        }
         
     }
 

@@ -26,6 +26,16 @@ PlasmaCore.FrameSvgItem {
     width: 200
     height: 22
 
+    property int minimum: 0
+    property int maximum: 100
+    property int value: 0
+
+    onValueChanged: {
+        if (drag.state != "dragging") {
+            drag.x = (value/(maximum-minimum))*(scrollBar.width - drag.width)
+        }
+    }
+
     imagePath: "widgets/scrollbar"
     prefix: "background-horizontal"
 
@@ -33,8 +43,14 @@ PlasmaCore.FrameSvgItem {
         id: drag
         anchors.top: parent.top
         anchors.bottom: parent.bottom
+        state: "normal"
         width: 32
-        x: 40
+        x: 0
+        onXChanged: {
+            if (state == "dragging") {
+                value = (maximum - minimum)*(x/(scrollBar.width-width))
+            }
+        }
         imagePath: "widgets/scrollbar"
         prefix: "slider"
         MouseArea {
@@ -48,8 +64,14 @@ PlasmaCore.FrameSvgItem {
             
             onEntered: drag.prefix = "mouseover-slider"
             onExited: drag.prefix = "slider"
-            onPressed: drag.prefix = "sunken-slider"
-            onReleased: containsMouse?drag.prefix = "mouseover-slider":drag.prefix = "slider"
+            onPressed: {
+                drag.prefix = "sunken-slider"
+                drag.state = "dragging"
+            }
+            onReleased: {
+                containsMouse?drag.prefix = "mouseover-slider":drag.prefix = "slider"
+                drag.state = "normal"
+            }
         }
     }
 }
