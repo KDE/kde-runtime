@@ -51,6 +51,13 @@ PlasmaCore.FrameSvgItem {
                 value = (maximum - minimum)*(x/(scrollBar.width-width))
             }
         }
+        
+        Behavior on x {
+            NumberAnimation {
+                duration: 200
+            }
+        }
+        
         imagePath: "widgets/scrollbar"
         prefix: "slider"
         MouseArea {
