@@ -27,6 +27,7 @@ Rectangle {
 
     Column {
         anchors.fill: parent
+        spacing: 5
 
         FlashingLabel {
             id: label
@@ -46,6 +47,9 @@ Rectangle {
         }
 
         PushButton {
+            x: 10
+            text: "Ok"
+            onClicked: print("Clicked!")
         }
     }
 

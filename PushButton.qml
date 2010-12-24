@@ -23,6 +23,9 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 Item {
     width: 50
     height:20
+    
+    property string text
+    signal clicked
 
     id: button
     PlasmaCore.FrameSvgItem {
@@ -61,7 +64,7 @@ Item {
     }
 
     Text {
-        text: "Ok"
+        text: button.text
         anchors.fill: parent
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
@@ -76,6 +79,7 @@ Item {
         }
         onReleased: {
             surface.prefix = "normal"
+            button.clicked()
         }
         onEntered: {
             shadow.opacity = 0
