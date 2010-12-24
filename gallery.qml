@@ -26,6 +26,7 @@ Rectangle {
     color: "tomato"
 
     Column {
+        x: 10
         anchors.fill: parent
         spacing: 5
 
@@ -47,10 +48,11 @@ Rectangle {
         }
 
         PushButton {
-            x: 10
             text: "Ok"
             onClicked: print("Clicked!")
         }
+        ScrollBar {}
+        
     }
 
     Component.onCompleted: {
