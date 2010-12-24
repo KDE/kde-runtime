@@ -54,6 +54,10 @@ Rectangle {
         ScrollBar {
             id: scrollBar
         }
+        ScrollBar {
+            id: scrollBarV
+            orientation: Qt.Vertical
+        }
         
     }
 
