@@ -40,6 +40,12 @@ PlasmaCore.FrameSvgItem {
         MouseArea {
             anchors.fill: parent
             hoverEnabled: true
+            
+            drag.target: parent;
+            drag.axis: "XAxis"
+            drag.minimumX: 0;
+            drag.maximumX: scrollBar.width-drag.width;
+            
             onEntered: drag.prefix = "mouseover-slider"
             onExited: drag.prefix = "slider"
             onPressed: drag.prefix = "sunken-slider"
