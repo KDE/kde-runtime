@@ -34,8 +34,17 @@ PlasmaCore.FrameSvgItem {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         width: 32
+        x: 40
         imagePath: "widgets/scrollbar"
         prefix: "slider"
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: drag.prefix = "mouseover-slider"
+            onExited: drag.prefix = "slider"
+            onPressed: drag.prefix = "sunken-slider"
+            onReleased: containsMouse?drag.prefix = "mouseover-slider":drag.prefix = "slider"
+        }
     }
 }
 
