@@ -23,6 +23,7 @@ knotifyconfig.cpp
 set(knotifyplugin_HEADERS
 knotifyplugin.h
 knotifyconfig.h
+knotify_export.h
 )
 
 qt4_add_dbus_interfaces(knotify_SRCS ${KDE4_DBUS_INTERFACES_DIR}/org.kde.KSpeech.xml)
