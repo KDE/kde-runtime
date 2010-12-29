@@ -60,7 +60,7 @@ Nepomuk::Sync::SimpleResource& Nepomuk::Sync::SimpleResource::operator=(const Ne
     return *this;
 }
 
-bool Nepomuk::Sync::SimpleResource::operator==(const Nepomuk::Sync::SimpleResource& res)
+bool Nepomuk::Sync::SimpleResource::operator==(const Nepomuk::Sync::SimpleResource& res) const
 {
     return d->uri == res.d->uri &&
     this->QHash<KUrl, Soprano::Node>::operator==( res );

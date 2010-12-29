@@ -51,12 +51,12 @@ namespace Nepomuk {
          * 
          * \author Vishesh Handa <handa.vish@gmail.com>
          */
-        class NEPOMUKSYNC_EXPORT SimpleResource : public QMultiHash<KUrl, Soprano::Node>
+        class SimpleResource : public QMultiHash<KUrl, Soprano::Node>
         {
         public :
             SimpleResource();
             SimpleResource( const SimpleResource & rhs );
-            virtual ~SimpleResource();
+            virtual NEPOMUKSYNC_EXPORT ~SimpleResource();
 
             /**
              * It uses the the first element's subject as the uri and ignores all further subjects.
@@ -66,9 +66,9 @@ namespace Nepomuk {
             
             QList<Soprano::Statement> toStatementList() const;
 
-            bool isFileDataObject() const;
+            bool NEPOMUKSYNC_EXPORT isFileDataObject() const;
             bool isFolder() const;
-            KUrl nieUrl() const;
+            KUrl NEPOMUKSYNC_EXPORT nieUrl() const;
 
             KUrl uri() const;
             void setUri( const KUrl & newUri );
@@ -82,7 +82,7 @@ namespace Nepomuk {
             void removeObject( const KUrl & uri );
 
             SimpleResource& operator=( const SimpleResource & rhs );
-            bool operator==( const SimpleResource & res );
+            bool operator==( const SimpleResource & res ) const;
         private:
             class Private;
             QSharedDataPointer<Private> d;
