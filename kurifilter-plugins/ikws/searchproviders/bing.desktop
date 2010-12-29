@@ -34,6 +34,7 @@ Name[pa]=ਬਿੰਗ
 Name[pt]=Bing
 Name[pt_BR]=Bing
 Name[ru]=Bing
+Name[sl]=Bing
 Name[sr]=Бинг
 Name[sr@ijekavian]=Бинг
 Name[sr@ijekavianlatin]=Bing
@@ -84,6 +85,7 @@ Query[pa]=http://www.bing.com/search?q=\\{@}
 Query[pt]=http://www.bing.com/search?q=\\{@}
 Query[pt_BR]=http://www.bing.com/search?q=\\{@}
 Query[ru]=http://www.bing.com/search?q=\\{@}
+Query[sl]=http://www.bing.com/search?q=\\{@}
 Query[sr]=http://www.bing.com/search?q=\\{@}
 Query[sr@ijekavian]=http://www.bing.com/search?q=\\{@}
 Query[sr@ijekavianlatin]=http://www.bing.com/search?q=\\{@}
