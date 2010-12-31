@@ -106,5 +106,5 @@ DateFormatShort=%d.%m.%Y
 TimeFormat=%H:%M:%S
 #DecimalPlaces=2
 #MonetaryDecimalPlaces=2
-CurrencyCodesInUse=EEK
-CurrencyCode=EEK
+CurrencyCodesInUse=EUR
+CurrencyCode=EUR
