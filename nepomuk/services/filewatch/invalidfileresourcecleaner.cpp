@@ -32,6 +32,9 @@
 #include <Nepomuk/Vocabulary/NIE>
 
 #include <KDebug>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KUrl>
 
 
 Nepomuk::InvalidFileResourceCleaner::InvalidFileResourceCleaner( QObject* parent )
@@ -49,6 +52,25 @@ Nepomuk::InvalidFileResourceCleaner::~InvalidFileResourceCleaner()
     wait();
 }
 
+namespace {
+
+    /* BUG: This is a workaround to "Removable Storage" or "Network Storage" bug, where the metadata of all
+     * the files in the NAS would be deleted if the NAS was unmounted and Nepomuk was restarted.
+     *
+     * FIXME: This is NOT a permanent fix and should be removed in 4.7
+     */ 
+    QString deletionBlacklistFilter() {
+        KConfig config("nepomukserverrc");
+        QStringList directories = config.group("Service-nepomukfilewatch").readPathEntry("Deletion Blacklist", QStringList());
+        
+        QString filter;
+        Q_FOREACH( const QString & dir, directories ) {
+            filter += QString::fromLatin1( " && !regex(str(?url), '^%1') " )
+                      .arg( KUrl(dir).url( KUrl::AddTrailingSlash ) );
+        }
+        return filter;
+    }
+}
 
 void Nepomuk::InvalidFileResourceCleaner::run()
 {
@@ -60,8 +82,9 @@ void Nepomuk::InvalidFileResourceCleaner::run()
     QList<Soprano::Node> resourcesToRemove;
     QString query = QString::fromLatin1( "select distinct ?r ?url where { "
                                          "?r %1 ?url. "
-                                         "FILTER(regex(str(?url), 'file://')) . }" )
-                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ) );
+                                         "FILTER(regex(str(?url), 'file://') %2 ). }" )
+                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                          deletionBlacklistFilter() );
     Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 
     while( it.next() && !m_stopped ) {
