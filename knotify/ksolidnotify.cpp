@@ -114,17 +114,14 @@ bool KSolidNotify::isSafelyRemovable(const QString &udi)
 
 void KSolidNotify::connectSignals(Solid::Device* device)
 {
-	if (device->is<Solid::StorageVolume>())
+	Solid::StorageAccess *access = device->as<Solid::StorageAccess>();
+	if (access)
 	{
-		Solid::StorageAccess *access = device->as<Solid::StorageAccess>();
-		if (access)
-		{
-			connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
+		connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
 					this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant , const QString &)));
-			connect(access, SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),
+		connect(access, SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),
 					this, SLOT(storageSetupDone(Solid::ErrorType, QVariant , const QString &)));
-		}
-	}
+	}	
 	if (device->is<Solid::OpticalDisc>())
 	{
 		Solid::OpticalDrive *drive = device->parent().as<Solid::OpticalDrive>();
