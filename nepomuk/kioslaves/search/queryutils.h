@@ -46,9 +46,9 @@ namespace Nepomuk {
             query = Nepomuk::Query::Query::fromQueryUrl( url );
 
             // request properties to easily create UDSEntry instances
-            QList<Query::Query::RequestProperty> reqProperties;
+            QList<Query::RequestProperty> reqProperties;
             // local URL
-            reqProperties << Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url(), !query.isFileQuery() );
+            reqProperties << Query::RequestProperty( Nepomuk::Vocabulary::NIE::url(), !query.isFileQuery() );
 #ifdef Q_OS_UNIX
             if( query.isFileQuery() ) {
                 // file size
