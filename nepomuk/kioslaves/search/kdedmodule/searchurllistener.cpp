@@ -27,11 +27,14 @@
 #include <kdebug.h>
 #include <nepomuk/result.h>
 #include <nepomuk/query.h>
+#include <nepomuk/resource.h>
 
 #include <QtCore/QHash>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusObjectPath>
 #include <QtDBus/QDBusReply>
+
+#include <Soprano/BindingSet>
 
 
 Nepomuk::SearchUrlListener::SearchUrlListener( const KUrl& queryUrl, const KUrl& notifyUrl )
@@ -92,14 +95,20 @@ void Nepomuk::SearchUrlListener::slotNewEntries( const QList<Nepomuk::Query::Res
 }
 
 
-void Nepomuk::SearchUrlListener::slotEntriesRemoved( const QStringList& entries )
+void Nepomuk::SearchUrlListener::slotEntriesRemoved( const QList<Nepomuk::Query::Result>& entries )
 {
     QStringList urls;
-    foreach( const QString& uri, entries ) {
+    foreach( const Query::Result& result, entries ) {
+        // make sure we use the exact same name used in searchfolder.cpp
+        KUrl url( result.resource().resourceUri() );
+        if( result.requestProperties().contains(Nepomuk::Vocabulary::NIE::url()) )
+            url = result[Nepomuk::Vocabulary::NIE::url()].uri();
+
         KUrl resultUrl( m_notifyUrl );
-        resultUrl.addPath( Nepomuk::resourceUriToUdsName( uri ) );
+        resultUrl.addPath( Nepomuk::resourceUriToUdsName( url ) );
         urls << resultUrl.url();
     }
+    kDebug() << urls;
     org::kde::KDirNotify::emitFilesRemoved( urls );
 }
 
@@ -149,8 +158,8 @@ void Nepomuk::SearchUrlListener::createInterface()
                                                          QDBusConnection::sessionBus() );
         connect( m_queryInterface, SIGNAL( newEntries( QList<Nepomuk::Query::Result> ) ),
                  this, SLOT( slotNewEntries( QList<Nepomuk::Query::Result> ) ) );
-        connect( m_queryInterface, SIGNAL( entriesRemoved( QStringList ) ),
-                 this, SLOT( slotEntriesRemoved( QStringList ) ) );
+        connect( m_queryInterface, SIGNAL( entriesRemoved( QList<Nepomuk::Query::Result> ) ),
+                 this, SLOT( slotEntriesRemoved( QList<Nepomuk::Query::Result> ) ) );
         m_queryInterface->listen();
     }
 }

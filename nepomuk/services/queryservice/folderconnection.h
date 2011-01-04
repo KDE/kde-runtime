@@ -62,12 +62,15 @@ namespace Nepomuk {
         Q_SIGNALS:
             void newEntries( const QList<Nepomuk::Query::Result>& );
             void entriesRemoved( const QStringList& );
+            void entriesRemoved( const QList<Nepomuk::Query::Result>& entries );
+
             void resultCount( int count );
             void totalResultCount( int count );
             void finishedListing();
 
         private Q_SLOTS:
-            void slotEntriesRemoved( const QList<QUrl>& entries );
+            void slotNewEntries( const QList<Nepomuk::Query::Result>& results );
+            void slotEntriesRemoved( const QList<Nepomuk::Query::Result>& entries );
             void slotFinishedListing();
 
         private:

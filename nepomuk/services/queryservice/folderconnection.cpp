@@ -20,6 +20,9 @@
 #include "folder.h"
 #include "queryadaptor.h"
 
+#include <nepomuk/resource.h>
+#include <nepomuk/result.h>
+
 #include <QtCore/QStringList>
 #include <QtDBus/QDBusServiceWatcher>
 #include <QtDBus/QDBusConnection>
@@ -47,8 +50,8 @@ void Nepomuk::Query::FolderConnection::list()
     m_folder->disconnect( this );
     connect( m_folder, SIGNAL( newEntries( QList<Nepomuk::Query::Result> ) ),
              this, SIGNAL( newEntries( QList<Nepomuk::Query::Result> ) ) );
-    connect( m_folder, SIGNAL( entriesRemoved( QList<QUrl> ) ),
-             this, SLOT( slotEntriesRemoved( QList<QUrl> ) ) );
+    connect( m_folder, SIGNAL( entriesRemoved( QList<Nepomuk::Query::Result> ) ),
+             this, SLOT( slotEntriesRemoved( QList<Nepomuk::Query::Result> ) ) );
 
     // report cached entries
     if ( !m_folder->entries().isEmpty() ) {
@@ -88,8 +91,8 @@ void Nepomuk::Query::FolderConnection::listen()
     if ( m_folder->initialListingDone() ) {
         connect( m_folder, SIGNAL( newEntries( QList<Nepomuk::Query::Result> ) ),
                  this, SIGNAL( newEntries( QList<Nepomuk::Query::Result> ) ) );
-        connect( m_folder, SIGNAL( entriesRemoved( QList<QUrl> ) ),
-                 this, SLOT( slotEntriesRemoved( QList<QUrl> ) ) );
+        connect( m_folder, SIGNAL( entriesRemoved( QList<Nepomuk::Query::Result> ) ),
+                 this, SLOT( slotEntriesRemoved( QList<Nepomuk::Query::Result> ) ) );
         connect( m_folder, SIGNAL( resultCount( int ) ),
                  this, SIGNAL( resultCount( int ) ) );
     }
@@ -102,13 +105,14 @@ void Nepomuk::Query::FolderConnection::listen()
 }
 
 
-void Nepomuk::Query::FolderConnection::slotEntriesRemoved( const QList<QUrl>& entries )
+void Nepomuk::Query::FolderConnection::slotEntriesRemoved( const QList<Nepomuk::Query::Result>& entries )
 {
     QStringList uris;
     for ( int i = 0; i < entries.count(); ++i ) {
-        uris.append( entries[i].toString() );
+        uris.append( entries[i].resource().resourceUri().toString() );
     }
     emit entriesRemoved( uris );
+    emit entriesRemoved( entries );
 }
 
 
@@ -118,8 +122,8 @@ void Nepomuk::Query::FolderConnection::slotFinishedListing()
     // finished we can start listening for changes
     connect( m_folder, SIGNAL( newEntries( QList<Nepomuk::Query::Result> ) ),
              this, SIGNAL( newEntries( QList<Nepomuk::Query::Result> ) ) );
-    connect( m_folder, SIGNAL( entriesRemoved( QList<QUrl> ) ),
-             this, SLOT( slotEntriesRemoved( QList<QUrl> ) ) );
+    connect( m_folder, SIGNAL( entriesRemoved( QList<Nepomuk::Query::Result> ) ),
+             this, SLOT( slotEntriesRemoved( QList<Nepomuk::Query::Result> ) ) );
 }
 
 

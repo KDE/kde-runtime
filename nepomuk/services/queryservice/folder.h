@@ -103,6 +103,7 @@ namespace Nepomuk {
         Q_SIGNALS:
             void newEntries( const QList<Nepomuk::Query::Result>& entries );
             void entriesRemoved( const QList<QUrl>& entries );
+            void entriesRemoved( const QList<Nepomuk::Query::Result>& entries );
 
             /**
              * Emitted once the result count is available.

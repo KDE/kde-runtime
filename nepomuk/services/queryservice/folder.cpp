@@ -163,10 +163,19 @@ void Nepomuk::Query::Folder::listingFinished()
 
     if ( m_initialListingDone ) {
         // inform about removed items
+        QList<Result> removedResults;
+
+        // legacy removed results
         foreach( const Result& result, m_results ) {
             if ( !m_newResults.contains( result.resource().resourceUri() ) ) {
-                emit entriesRemoved( QList<QUrl>() << result.resource().resourceUri() );
+                removedResults << result;
+                emit entriesRemoved( QList<QUrl>() << KUrl(result.resource().resourceUri()).url() );
             }
+        }
+
+        // new removed results which include all the details to be used for optimizations
+        if( !removedResults.isEmpty() ) {
+            emit entriesRemoved( removedResults );
         }
 
         // reset

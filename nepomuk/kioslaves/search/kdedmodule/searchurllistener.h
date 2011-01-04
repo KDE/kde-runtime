@@ -42,9 +42,12 @@ namespace Nepomuk {
         int ref();
         int unref();
 
+        KUrl queryUrl() const { return m_queryUrl; }
+        KUrl notificationUrl() const { return m_notifyUrl; }
+
     private Q_SLOTS:
         void slotNewEntries( const QList<Nepomuk::Query::Result>& entries );
-        void slotEntriesRemoved( const QStringList& entries );
+        void slotEntriesRemoved( const QList<Nepomuk::Query::Result>& entries );
         void slotQueryServiceInitialized( bool success );
 
     private:
