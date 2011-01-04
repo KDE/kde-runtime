@@ -59,7 +59,7 @@ namespace {
 
         QList<Soprano::Statement> statements;
         
-        Soprano::QueryResultIterator performQuery( const QStringList& uris );
+        Soprano::QueryResultIterator queryIdentifyingStatements( const QStringList& uris );
         void iterate();
         QList<Soprano::Statement> generate();
 
@@ -74,7 +74,7 @@ namespace {
 
     }
 
-    Soprano::QueryResultIterator IdentificationSetGenerator::performQuery(const QStringList& uris)
+    Soprano::QueryResultIterator IdentificationSetGenerator::queryIdentifyingStatements(const QStringList& uris)
     {
         QString query = QString::fromLatin1("select distinct ?r ?p ?o where { ?r ?p ?o. "
                                             "{ ?p %1 %2 .} "
@@ -96,16 +96,16 @@ namespace {
         QMutableSetIterator<QUrl> iter( notDone );
         while( iter.hasNext() ) {
             const QUrl & uri = iter.next();
-            iter.remove();
-
             done.insert( uri );
+            iter.remove();
+            
             uris.append( Soprano::Node::resourceToN3( uri ) );
 
             if( uris.size() == maxIterationSize )
                 break;
         }
 
-        Soprano::QueryResultIterator it = performQuery( uris );
+        Soprano::QueryResultIterator it = queryIdentifyingStatements( uris );
         while( it.next() ) {
             Soprano::Node sub = it["r"];
             Soprano::Node pred = it["p"];
