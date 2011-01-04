@@ -2,6 +2,7 @@
 Name=Newspaper Layout
 Name[ast]=Disposición de periódicu
 Name[ca]=Disposició dels diaris
+Name[ca@valencia]=Disposició dels diaris
 Name[cs]=Rozvržení novin
 Name[da]=Avislayout
 Name[de]=Zeitungs-Anordnung
@@ -43,6 +44,7 @@ Name[zh_TW]=報紙佈局
 Comment=A layout that puts widgets into columns
 Comment[ast]=Una disposición qu'alluga los elementos gráficos en columnes
 Comment[ca]=Una disposició que posa els estris en columnes
+Comment[ca@valencia]=Una disposició que posa els estris en columnes
 Comment[cs]=Rozvržení, které skládá widgety do dvou sloupců
 Comment[da]=Et layout der placerer widgets i kolonner
 Comment[de]=Anordnung der Miniprogramme in Spalten

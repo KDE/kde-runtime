@@ -3,6 +3,7 @@ Type=Service
 Name=JPEG Images (Rotated Automatically)
 Name[bg]=Изображения JPEG (автоматично завъртяни)
 Name[ca]=Imatges JPEG (Girades automàticament)
+Name[ca@valencia]=Imatges JPEG (Girades automàticament)
 Name[cs]=Obázky JPEG (automaticky rotované)
 Name[da]=JPEG-billeder (automatisk roteret)
 Name[de]=JPEG-Bilder (automatisch gedreht)

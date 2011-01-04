@@ -4,6 +4,7 @@ Name=Baidu
 Name[ast]=Baidu
 Name[bg]=Търсене в Baidu
 Name[ca]=Baidu
+Name[ca@valencia]=Baidu
 Name[cs]=Baidu
 Name[da]=Baidu
 Name[de]=Baidu
@@ -54,6 +55,7 @@ Query=http://www.baidu.com/s?wd=\\{@}
 Query[ast]=http://www.baidu.com/s?wd=\\{@}
 Query[bg]=http://www.baidu.com/s?wd=\\{@}
 Query[ca]=http://www.baidu.com/s?wd=\\{@}
+Query[ca@valencia]=http://www.baidu.com/s?wd=\\{@}
 Query[cs]=http://www.baidu.com/s?wd=\\{@}
 Query[da]=http://www.baidu.com/s?wd=\\{@}
 Query[de]=http://www.baidu.com/s?wd=\\{@}
