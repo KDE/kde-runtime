@@ -69,7 +69,7 @@ namespace Nepomuk {
             void finishedListing();
 
         private Q_SLOTS:
-            void slotNewEntries( const QList<Nepomuk::Query::Result>& results );
+            //void slotNewEntries( const QList<Nepomuk::Query::Result>& results );
             void slotEntriesRemoved( const QList<Nepomuk::Query::Result>& entries );
             void slotFinishedListing();
 
