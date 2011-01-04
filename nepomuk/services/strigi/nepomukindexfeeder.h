@@ -101,7 +101,7 @@ namespace Nepomuk {
 
         struct ResourceStruct {
             QUrl uri;
-            QHash<QUrl, Soprano::Node> propHash;
+            QMultiHash<QUrl, Soprano::Node> propHash;
         };
 
         // Maps the uri to the ResourceStuct

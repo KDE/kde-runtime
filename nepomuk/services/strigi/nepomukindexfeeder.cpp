@@ -36,7 +36,6 @@
 #include <Nepomuk/Vocabulary/NIE>
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>
-#include <Nepomuk/Types/Property>
 
 #include <KDebug>
 
@@ -88,10 +87,7 @@ void Nepomuk::IndexFeeder::addStatement(const Soprano::Statement& st)
     }
 
     ResourceStruct & rs = req.hash[ uriOrId ];
-    if( Types::Property(st.predicate().uri()).maxCardinality() == 1 )
-        rs.propHash.insert( st.predicate().uri(), st.object() );
-    else
-        rs.propHash.insertMulti( st.predicate().uri(), st.object() );
+    rs.propHash.insert( st.predicate().uri(), st.object() );
 }
 
 
