@@ -300,50 +300,9 @@ bool Nepomuk::SearchProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 
 void Nepomuk::SearchProtocol::prepareUDSEntry( KIO::UDSEntry& uds, bool listing ) const
 {
-    // for performace reasons we do encode the result's resource URI in the UDS_NAME
-    // Otherwise we would have to re-query for each stat operation
-    // This is simple for "direct" query results (SearchFolder takes care of that)
-    // but a bit harder for items in results that are folders.
-    // In the latter case we get the parent folder's resource URI (which is encoded in
-    // the UDS_NAME) and append the filename.
-    //
-    // Also note that results listed via a SearchFolder will never go through this method
-    // since they are listed directly and not via a forward. Forwarding will only happen
-    // for search results that are folders and for non-listing operations.
-
-    kDebug() << requestedUrl() << processedUrl() << uds.stringValue(KIO::UDSEntry::UDS_NAME);
-    const QString name = uds.stringValue(KIO::UDSEntry::UDS_NAME);
-    if(name != QLatin1String(".") && name != QLatin1String("..")) {
-        // let the ForwardingSlaveBase create UDS_LOCAL_PATH and mimetype entries
-        // This call depends on the original UDS_NAME which we change below. Thus, it
-        // is important to let ForwardingSlaveBase do its thing before we start ours
-        ForwardingSlaveBase::prepareUDSEntry( uds, listing );
-
-        // encode the URL in the UDS_NAME to prevent a re-query in stat and friends
-        KUrl resourceUrl(processedUrl());
-        if(listing) {
-            resourceUrl.addPath(name);
-        }
-        uds.insert(KIO::UDSEntry::UDS_NAME, Nepomuk::resourceUriToUdsName(resourceUrl));
-        if ( !uds.contains( KIO::UDSEntry::UDS_DISPLAY_NAME ) ) {
-            uds.insert(KIO::UDSEntry::UDS_DISPLAY_NAME, name);
-        }
-
-        // There is a trade-off between using UDS_TARGET_URL or not. The advantage is that we get proper
-        // file names in opening applications and non-KDE apps can handle the URLs properly. The downside
-        // is that we lose the context information, i.e. query results cannot be browsed in the opening
-        // application. We decide pro-filenames and pro-non-kde-apps here.
-        if( resourceUrl.isLocalFile() ) {
-            if ( uds.isDir() ) {
-                Query::FileQuery query;
-                query.addIncludeFolder( resourceUrl );
-                uds.insert( KIO::UDSEntry::UDS_NEPOMUK_QUERY, query.toString() );
-            }
-            else {
-                uds.insert( KIO::UDSEntry::UDS_TARGET_URL, resourceUrl.url() );
-            }
-        }
-    }
+    // do nothing - we do everything in SearchFolder::statResult
+    Q_UNUSED(uds);
+    Q_UNUSED(listing);
 }
 
 

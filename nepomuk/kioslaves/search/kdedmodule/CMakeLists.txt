@@ -14,6 +14,8 @@ set(nepomuksearchmodule_SRCS
   ../../common/timelinetools.cpp
 )
 
+soprano_add_ontology(nepomuksearchmodule_SRCS ${nepomuk_ontologies_SOURCE_DIR}/kext.trig "KExt" "Nepomuk::Vocabulary" "trig")
+
 set_source_files_properties(
   ${nepomuk_kio_slaves_SOURCE_DIR}/../interfaces/org.kde.nepomuk.Query.xml
   PROPERTIES INCLUDE "nepomuk/result.h")

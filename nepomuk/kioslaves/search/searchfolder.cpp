@@ -21,6 +21,7 @@
 #include "searchfolder.h"
 #include "nepomuksearchurltools.h"
 #include "resourcestat.h"
+#include "queryutils.h"
 
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
@@ -31,6 +32,7 @@
 #include <Nepomuk/Types/Class>
 #include <Nepomuk/Query/Query>
 #include <Nepomuk/Query/QueryParser>
+#include <Nepomuk/Query/ResourceTypeTerm>
 #include <Nepomuk/Query/QueryServiceClient>
 #include <Nepomuk/Vocabulary/NFO>
 #include <Nepomuk/Vocabulary/NIE>
@@ -60,19 +62,7 @@ Nepomuk::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
     qRegisterMetaType<QList<QUrl> >();
 
     // parse URL (this may fail in which case we fall back to pure SPARQL below)
-    m_query = Nepomuk::Query::Query::fromQueryUrl( url );
-
-    // the only request property we handle is nie:url (non-optional for file-queries)
-    m_query.setRequestProperties( QList<Query::Query::RequestProperty>() << Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url(), !m_query.isFileQuery() ) );
-
-    if ( m_query.isValid() ) {
-        kDebug() << "Extracted query" << m_query;
-    }
-    else {
-        // the URL contains pure sparql.
-        m_sparqlQuery = Nepomuk::Query::Query::sparqlFromQueryUrl( url );
-        kDebug() << "Extracted SPARQL query:" << m_sparqlQuery;
-    }
+    Query::parseQueryUrl( url, m_query, m_sparqlQuery );
 }
 
 
@@ -112,7 +102,7 @@ void Nepomuk::SearchFolder::run()
     if ( m_query.isValid() )
         m_client->query( m_query );
     else
-        m_client->sparqlQuery( m_sparqlQuery, m_query.requestPropertyMap() );
+        m_client->sparqlQuery( m_sparqlQuery );
     exec();
     delete m_client;
 
@@ -141,14 +131,13 @@ void Nepomuk::SearchFolder::list()
 // always called in search thread
 void Nepomuk::SearchFolder::slotNewEntries( const QList<Nepomuk::Query::Result>& results )
 {
-    kDebug() << m_url;
+//    kDebug() << m_url;
 
     m_resultMutex.lock();
     m_resultsQueue += results;
     m_resultMutex.unlock();
 
     if ( !m_initialListingFinished ) {
-        kDebug() << "Waking main thread";
         m_resultWaiter.wakeAll();
     }
 }
@@ -183,7 +172,7 @@ void Nepomuk::SearchFolder::statResults()
             m_resultMutex.unlock();
             KIO::UDSEntry uds = statResult( result );
             if ( uds.count() ) {
-                kDebug() << "listing" << result.resource().resourceUri();
+//                kDebug() << "listing" << result.resource().resourceUri();
                 QMutexLocker lock( &m_slaveMutex );
                 m_slave->listEntries( KIO::UDSEntryList() << uds );
             }
@@ -203,11 +192,6 @@ void Nepomuk::SearchFolder::statResults()
 namespace {
     bool statFile( const KUrl& url, const KUrl& fileUrl, KIO::UDSEntry& uds )
     {
-        // the akonadi kio slave is just way too slow and
-        // in KDE 4.4 akonadi items should have nepomuk:/res/<uuid> URIs anyway
-        if ( url.scheme() == QLatin1String( "akonadi" ) )
-            return false;
-
         if ( !fileUrl.isEmpty() ) {
             if ( KIO::StatJob* job = KIO::stat( fileUrl, KIO::HideProgressInfo ) ) {
                 // we do not want to wait for the event loop to delete the job
@@ -238,74 +222,121 @@ namespace {
 KIO::UDSEntry Nepomuk::SearchFolder::statResult( const Query::Result& result )
 {
     Resource res( result.resource() );
-    KUrl url( res.resourceUri() );
+    const KUrl uri( res.resourceUri() );
     KUrl nieUrl( result[Nepomuk::Vocabulary::NIE::url()].uri() );
-    if ( nieUrl.isEmpty() )
-        nieUrl = Nepomuk::nepomukToFileUrl( url );
 
+    // the additional bindings that we only have on unix systems
+    // Either all are bound or none of them.
+    // see also parseQueryUrl (queryutils.h)
+    const Soprano::BindingSet additionalVars = result.additionalBindings();
+
+    // the UDSEntry that will contain the final result to list
     KIO::UDSEntry uds;
-    if ( statFile( url, nieUrl, uds ) ) {
-        if ( !nieUrl.isEmpty() ) {
-            if ( nieUrl.isLocalFile() ) {
-                // There is a trade-off between using UDS_TARGET_URL or not. The advantage is that we get proper
-                // file names in opening applications and non-KDE apps can handle the URLs properly. The downside
-                // is that we lose the context information, i.e. query results cannot be browsed in the opening
-                // application. We decide pro-filenames and pro-non-kde-apps here.
-                if( !uds.isDir() )
-                    uds.insert( KIO::UDSEntry::UDS_TARGET_URL, nieUrl.url() );
-                uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, nieUrl.toLocalFile() );
-            }
 
+#ifdef Q_OS_UNIX
+    if( !nieUrl.isEmpty() &&
+            nieUrl.isLocalFile() &&
+            additionalVars[QLatin1String("mtime")].isLiteral() ) {
+        // make sure we have unique names for everything
+        uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( nieUrl ) );
+
+        // set the name the user will see
+        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, nieUrl.fileName() );
+
+        // set the basic file information which we got from Nepomuk
+        uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, additionalVars[QLatin1String("mtime")].literal().toDateTime().toTime_t() );
+        uds.insert( KIO::UDSEntry::UDS_SIZE, additionalVars[QLatin1String("size")].literal().toInt() );
+        uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, additionalVars[QLatin1String("mode")].literal().toInt() & S_IFMT );
+        uds.insert( KIO::UDSEntry::UDS_ACCESS, additionalVars[QLatin1String("mode")].literal().toInt() & 07777 );
+        uds.insert( KIO::UDSEntry::UDS_USER, additionalVars[QLatin1String("user")].toString() );
+        uds.insert( KIO::UDSEntry::UDS_GROUP, additionalVars[QLatin1String("group")].toString() );
+
+        // since we change the UDS_NAME KFileItem cannot handle mimetype and such anymore
+        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, additionalVars[QLatin1String("mime")].toString() );
+        if( uds.stringValue(KIO::UDSEntry::UDS_MIME_TYPE).isEmpty())
+            uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, KMimeType::findByUrl(nieUrl)->name() );
+    }
+    else
+#endif // Q_OS_UNIX
+    {
+        // not a simple local file result
+
+        // check if we have a pimo thing relating to a file
+        if ( nieUrl.isEmpty() )
+            nieUrl = Nepomuk::nepomukToFileUrl( uri );
+
+        // try to stat the file
+        if ( statFile( uri, nieUrl, uds ) ) {
             // make sure we have unique names for everything
-            uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( nieUrl ) );
-        }
-        else {
-            // make sure we have unique names for everything
-            uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( url ) );
-        }
-
-        // needed since the file:/ KIO slave does not create them and KFileItem::nepomukUri()
-        // cannot know that it is a local file since it is forwarded
-        uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, url.url() );
-
-        // make sure we do not use these ugly names for display
-        if ( !uds.contains( KIO::UDSEntry::UDS_DISPLAY_NAME ) ) {
-            // by checking nieUrl we avoid loading the resource for local files
-            if ( nieUrl.isEmpty() &&
-                 res.hasType( Nepomuk::Vocabulary::PIMO::Thing() ) ) {
-                if ( !res.pimoThing().groundingOccurrences().isEmpty() ) {
-                    res = res.pimoThing().groundingOccurrences().first();
-                }
-            }
-
+            // We encode the resource URL or URI into the name so subsequent calls to stat or
+            // other non-listing commands can easily forward to the appropriate slave.
             if ( !nieUrl.isEmpty() ) {
-                uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, nieUrl.fileName() );
-
-                // since we change the UDS_NAME KFileItem cannot handle mimetype and such anymore
-                QString mimetype = uds.stringValue( KIO::UDSEntry::UDS_MIME_TYPE );
-                if ( mimetype.isEmpty() ) {
-                    mimetype = KMimeType::findByUrl(nieUrl)->name();
-                    uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, mimetype );
-                }
+                uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( nieUrl ) );
             }
             else {
-                uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, res.genericLabel() );
+                uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( uri ) );
+            }
+
+            // make sure we do not use these ugly names for display
+            if ( !uds.contains( KIO::UDSEntry::UDS_DISPLAY_NAME ) ) {
+                if ( nieUrl.isEmpty() &&
+                        res.hasType( Nepomuk::Vocabulary::PIMO::Thing() ) ) {
+                    if ( !res.pimoThing().groundingOccurrences().isEmpty() ) {
+                        res = res.pimoThing().groundingOccurrences().first();
+                        nieUrl = res.property(Nepomuk::Vocabulary::NIE::url()).toUrl();
+                    }
+                }
+
+                if ( !nieUrl.isEmpty() ) {
+                    uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, nieUrl.fileName() );
+
+                    // since we change the UDS_NAME KFileItem cannot handle mimetype and such anymore
+                    QString mimetype = uds.stringValue( KIO::UDSEntry::UDS_MIME_TYPE );
+                    if ( mimetype.isEmpty() ) {
+                        mimetype = KMimeType::findByUrl(nieUrl)->name();
+                        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, mimetype );
+                    }
+                }
+                else {
+                    uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, res.genericLabel() );
+                }
             }
         }
+        else {
+            kDebug() << "Stating" << result.resource().resourceUri() << "failed";
+            return KIO::UDSEntry();
+        }
+    }
 
-        QString excerpt = result.excerpt();
-        if( !excerpt.isEmpty() ) {
-            // KFileItemDelegate cannot handle rich text yet. Thus we need to remove the formatting.
-            QTextDocument doc;
-            doc.setHtml(excerpt);
-            excerpt = doc.toPlainText();
-            uds.insert( KIO::UDSEntry::UDS_COMMENT, i18n("Search excerpt: %1", excerpt) );
+    if( !nieUrl.isEmpty() ) {
+        // There is a trade-off between using UDS_URL or not. The advantage is that we get proper
+        // file names in opening applications and non-KDE apps can handle the URLs properly. The downside
+        // is that we lose the context information, i.e. query results cannot be browsed in the opening
+        // application. We decide pro-filenames and pro-non-kde-apps here.
+        if( !uds.isDir() ) {
+            uds.insert( KIO::UDSEntry::UDS_TARGET_URL, nieUrl.url() );
         }
 
-        return uds;
+        // set the local path so that KIO can handle the rest
+        if( nieUrl.isLocalFile() )
+            uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, nieUrl.toLocalFile() );
     }
     else {
-        kDebug() << "Stating" << result.resource().resourceUri() << "failed";
-        return KIO::UDSEntry();
+        uds.insert( KIO::UDSEntry::UDS_TARGET_URL, uri.url() );
     }
+
+    // Tell KIO which Nepomuk resource this actually is
+    uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, uri.url() );
+
+    // add optional full-text search excerpts
+    QString excerpt = result.excerpt();
+    if( !excerpt.isEmpty() ) {
+        // KFileItemDelegate cannot handle rich text yet. Thus we need to remove the formatting.
+        QTextDocument doc;
+        doc.setHtml(excerpt);
+        excerpt = doc.toPlainText();
+        uds.insert( KIO::UDSEntry::UDS_COMMENT, i18n("Search excerpt: %1", excerpt) );
+    }
+
+    return uds;
 }

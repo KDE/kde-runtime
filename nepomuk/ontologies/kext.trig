@@ -39,49 +39,50 @@
 @prefix nie:     <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix kuvo:    <http://nepomuk.kde.org/ontologies/2010/08/18/kuvo#> .
-@prefix nuao:    <http://www.semanticdesktop.org/ontologies/2010/01/25/nuao#> .
+@prefix kext:    <http://nepomuk.kde.org/ontologies/2010/11/29/kext#> .
 @prefix nfo:     <http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#> .
 
-kuvo: {
-    # Setting a baseline calms down the algorithm that creates all the entries.
-    rdfs:Resource
-        nao:userVisible true .
+kext: {
+    kext:unixFileMode
+          a      rdf:Property ;
+          rdfs:label "Unix file mode" ;
+          rdfs:comment "The file mode value as seen on unix file systems." ;
+          rdfs:domain nfo:FileDataObject ;
+          rdfs:range xsd:integer ;
+          nao:userVisible false .
 
-    nuao:Event
-        nao:userVisible false .
+    kext:unixFileOwner
+          a      rdf:Property ;
+          rdfs:label "Unix file owner" ;
+          rdfs:comment "The owner of the file as seen on unix file systems. This is intended as the low-level counterpart to nfo:owner." ;
+          rdfs:domain nfo:FileDataObject ;
+          rdfs:range xsd:string ;
+          nao:userVisible false .
 
-    nao:score
-        nao:userVisible false .
-
-    nie:hasPart
-        nao:userVisible false .
-
-    nrl:Graph
-        nao:userVisible false .
-
-    rdf:Property
-        nao:userVisible false .
-
-    rdfs:Class
-        nao:userVisible false .
+    kext:unixFileGroup
+          a      rdf:Property ;
+          rdfs:label "Unix file group" ;
+          rdfs:comment "The group of the file as seen on unix file systems." ;
+          rdfs:domain nfo:FileDataObject ;
+          rdfs:range xsd:integer ;
+          nao:userVisible false .
 }
 
-<http://nepomuk.kde.org/ontologies/2010/08/18/kuvo/metadata> {
-    <http://nepomuk.kde.org/ontologies/2010/08/18/kuvo/metadata>
+<http://nepomuk.kde.org/ontologies/2010/11/29/kext/metadata> {
+    <http://nepomuk.kde.org/ontologies/2010/11/29/kext/metadata>
           a       nrl:GraphMetadata ;
-          nrl:coreGraphMetadataFor kuvo: .
+          nrl:coreGraphMetadataFor kext: .
 
 
-    kuvo:
+    kext:
           a       nrl:Ontology , nrl:DocumentGraph ;
-          nao:prefLabel "KDE User Visibility Ontology" ;
-          nao:hasDefaultNamespace "http://nepomuk.kde.org/ontologies/2010/08/18/kuvo#" ;
-          nao:hasDefaultNamespaceAbbreviation "kuvo" ;
+          nao:prefLabel "KDE Extensions Ontology" ;
+          nao:hasDefaultNamespace "http://nepomuk.kde.org/ontologies/2010/11/29/kext#" ;
+          nao:hasDefaultNamespaceAbbreviation "kext" ;
           nao:lastModified "2010-11-29T12:31:43Z" ;
           nao:serializationLanguage "TriG" ;
           nao:status "Unstable" ;
           nrl:updatable "0" ;
-          nao:version "2" .
+          nao:version "1" .
 }
 

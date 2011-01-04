@@ -36,6 +36,7 @@
 #include <Nepomuk/Vocabulary/NIE>
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>
+#include <Nepomuk/Types/Property>
 
 #include <KDebug>
 
@@ -87,7 +88,10 @@ void Nepomuk::IndexFeeder::addStatement(const Soprano::Statement& st)
     }
 
     ResourceStruct & rs = req.hash[ uriOrId ];
-    rs.propHash.insert( st.predicate().uri(), st.object() );
+    if( Types::Property(st.predicate().uri()).maxCardinality() == 1 )
+        rs.propHash.insert( st.predicate().uri(), st.object() );
+    else
+        rs.propHash.insertMulti( st.predicate().uri(), st.object() );
 }
 
 
@@ -128,6 +132,7 @@ QString Nepomuk::IndexFeeder::buildResourceQuery(const Nepomuk::IndexFeeder::Res
 {
     QString query = QString::fromLatin1("select distinct ?r where { ");
 
+    // TODO: trueg: use an iterator instead of creating temp lists. That seems like wasted resources.
     QList<QUrl> keys = rs.propHash.uniqueKeys();
     foreach( const QUrl & prop, keys ) {
         const QList<Soprano::Node>& values = rs.propHash.values( prop );

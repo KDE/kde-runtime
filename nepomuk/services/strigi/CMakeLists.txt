@@ -35,6 +35,8 @@ set(strigiservice_SRCS
   nepomukindexer.cpp
   )
 
+soprano_add_ontology(strigiservice_SRCS ${nepomuk_ontologies_SOURCE_DIR}/kext.trig "KExt" "Nepomuk::Vocabulary" "trig")
+
 qt4_add_dbus_adaptor(strigiservice_SRCS ../../interfaces/org.kde.nepomuk.Strigi.xml strigiservice.h Nepomuk::StrigiService )
 
 qt4_add_dbus_interface(strigiservice_SRCS ../../interfaces/org.kde.nepomuk.RemovableStorage.xml removablestorageserviceinterface)

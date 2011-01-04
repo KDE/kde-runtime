@@ -21,6 +21,7 @@
 #include "nepomukindexwriter.h"
 #include "nepomukindexfeeder.h"
 #include "util.h"
+#include "kext.h"
 
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/LiteralValue>
@@ -39,6 +40,8 @@
 
 #include <KUrl>
 #include <KDebug>
+#include <KMimeType>
+#include <kde_file.h>
 
 #include <sys/stat.h>
 #include <stdlib.h>
@@ -594,6 +597,27 @@ void Nepomuk::StrigiIndexWriter::finishAnalysis( const AnalysisResult* idx )
         d->feeder->addStatement( md->resourceUri,
                                  Nepomuk::Vocabulary::NIE::plainTextContent(),
                                  LiteralValue( QString::fromUtf8( md->content.c_str() ) ) );
+    }
+
+    // write the mimetype for local files
+    if( md->fileInfo.exists() ) {
+        d->feeder->addStatement( md->resourceUri,
+                                 Nepomuk::Vocabulary::NIE::mimeType(),
+                                 LiteralValue( KMimeType::findByUrl(md->fileUrl)->name() ) );
+#ifdef Q_OS_UNIX
+        KDE_struct_stat statBuf;
+        if( KDE_stat( QFile::encodeName(md->fileInfo.absoluteFilePath()).data(), &statBuf ) == 0 ) {
+            d->feeder->addStatement( md->resourceUri,
+                                    Nepomuk::Vocabulary::KExt::unixFileMode(),
+                                    LiteralValue( int(statBuf.st_mode) ) );
+        }
+        d->feeder->addStatement( md->resourceUri,
+                                Nepomuk::Vocabulary::KExt::unixFileOwner(),
+                                LiteralValue( md->fileInfo.owner() ) );
+        d->feeder->addStatement( md->resourceUri,
+                                Nepomuk::Vocabulary::KExt::unixFileGroup(),
+                                LiteralValue( md->fileInfo.group() ) );
+#endif // Q_OS_UNIX
     }
 
     d->feeder->end( md->fileInfo.isDir() );

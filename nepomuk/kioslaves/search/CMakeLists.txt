@@ -10,6 +10,7 @@ include_directories(
   ${KDE4_KIO_INCLUDES}
   ${SOPRANO_INCLUDE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
   ${nepomuk_kio_slaves_SOURCE_DIR}/common
 )
 
@@ -20,6 +21,8 @@ set(kio_nepomuksearch_PART_SRCS
   searchfolder.cpp
   ../common/resourcestat.cpp
 )
+
+soprano_add_ontology(kio_nepomuksearch_PART_SRCS ${nepomuk_ontologies_SOURCE_DIR}/kext.trig "KExt" "Nepomuk::Vocabulary" "trig")
 
 kde4_add_plugin(kio_nepomuksearch
   ${kio_nepomuksearch_PART_SRCS})
