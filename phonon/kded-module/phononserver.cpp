@@ -72,6 +72,9 @@ PhononServer::~PhononServer()
 
 static QString uniqueId(const Solid::Device &device, int deviceNumber)
 {
+    Q_UNUSED(deviceNumber);
+    return device.udi();
+#if 0
     const Solid::GenericInterface *genericIface = device.as<Solid::GenericInterface>();
     Q_ASSERT(genericIface);
     const QString &subsystem = genericIface->propertyExists(QLatin1String("info.subsystem")) ?
@@ -115,6 +118,7 @@ static QString uniqueId(const Solid::Device &device, int deviceNumber)
         }
     }
     return QString();
+#endif
 }
 
 static void renameDevices(QList<PS::AudioDevice> *devicelist)
