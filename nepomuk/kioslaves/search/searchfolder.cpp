@@ -21,6 +21,7 @@
 #include "searchfolder.h"
 #include "nepomuksearchurltools.h"
 #include "resourcestat.h"
+#include "queryutils.h"
 
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
@@ -31,6 +32,7 @@
 #include <Nepomuk/Types/Class>
 #include <Nepomuk/Query/Query>
 #include <Nepomuk/Query/QueryParser>
+#include <Nepomuk/Query/ResourceTypeTerm>
 #include <Nepomuk/Query/QueryServiceClient>
 #include <Nepomuk/Vocabulary/NFO>
 #include <Nepomuk/Vocabulary/NIE>
@@ -60,19 +62,7 @@ Nepomuk::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
     qRegisterMetaType<QList<QUrl> >();
 
     // parse URL (this may fail in which case we fall back to pure SPARQL below)
-    m_query = Nepomuk::Query::Query::fromQueryUrl( url );
-
-    // the only request property we handle is nie:url (non-optional for file-queries)
-    m_query.setRequestProperties( QList<Query::Query::RequestProperty>() << Query::Query::RequestProperty( Nepomuk::Vocabulary::NIE::url(), !m_query.isFileQuery() ) );
-
-    if ( m_query.isValid() ) {
-        kDebug() << "Extracted query" << m_query;
-    }
-    else {
-        // the URL contains pure sparql.
-        m_sparqlQuery = Nepomuk::Query::Query::sparqlFromQueryUrl( url );
-        kDebug() << "Extracted SPARQL query:" << m_sparqlQuery;
-    }
+    Query::parseQueryUrl( url, m_query, m_sparqlQuery );
 }
 
 
@@ -112,7 +102,7 @@ void Nepomuk::SearchFolder::run()
     if ( m_query.isValid() )
         m_client->query( m_query );
     else
-        m_client->sparqlQuery( m_sparqlQuery, m_query.requestPropertyMap() );
+        m_client->sparqlQuery( m_sparqlQuery );
     exec();
     delete m_client;
 
@@ -141,14 +131,13 @@ void Nepomuk::SearchFolder::list()
 // always called in search thread
 void Nepomuk::SearchFolder::slotNewEntries( const QList<Nepomuk::Query::Result>& results )
 {
-    kDebug() << m_url;
+//    kDebug() << m_url;
 
     m_resultMutex.lock();
     m_resultsQueue += results;
     m_resultMutex.unlock();
 
     if ( !m_initialListingFinished ) {
-        kDebug() << "Waking main thread";
         m_resultWaiter.wakeAll();
     }
 }
@@ -183,7 +172,7 @@ void Nepomuk::SearchFolder::statResults()
             m_resultMutex.unlock();
             KIO::UDSEntry uds = statResult( result );
             if ( uds.count() ) {
-                kDebug() << "listing" << result.resource().resourceUri();
+//                kDebug() << "listing" << result.resource().resourceUri();
                 QMutexLocker lock( &m_slaveMutex );
                 m_slave->listEntries( KIO::UDSEntryList() << uds );
             }

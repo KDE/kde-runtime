@@ -21,6 +21,7 @@
 #include "nepomuksearchurltools.h"
 #include "queryserviceinterface.h"
 #include "queryinterface.h"
+#include "../queryutils.h"
 
 #include <kdirnotify.h>
 #include <kdebug.h>
@@ -31,20 +32,6 @@
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusObjectPath>
 #include <QtDBus/QDBusReply>
-
-
-namespace {
-    /**
-     * The nepomuksearch KIO slave always requests nie:url as request property, thus, we need to do the same
-     * to enforce proper Result instances
-     */
-    QHash<QString, QString> nieUriReqProp()
-    {
-        QHash<QString, QString> encodedRps;
-        encodedRps.insert( QLatin1String( "reqProp1" ), KUrl( Nepomuk::Vocabulary::NIE::url() ).url() );
-        return encodedRps;
-    }
-}
 
 
 Nepomuk::SearchUrlListener::SearchUrlListener( const KUrl& queryUrl, const KUrl& notifyUrl )
@@ -142,8 +129,19 @@ void Nepomuk::SearchUrlListener::createInterface()
                                                            "/nepomukqueryservice",
                                                            QDBusConnection::sessionBus() );
 
-    QDBusReply<QDBusObjectPath> r = queryServiceInterface.sparqlQuery( Nepomuk::Query::Query::sparqlFromQueryUrl( m_queryUrl ),
-                                                                       nieUriReqProp() );
+    // parse the query URL the exact same way as the kio slave so we can share the query folder in the
+    // query service.
+    Query::Query query;
+    QString sparqlQuery;
+    Query::parseQueryUrl( m_queryUrl, query, sparqlQuery );
+
+    QDBusReply<QDBusObjectPath> r;
+    if( query.isValid() ) {
+        r = queryServiceInterface.query( query.toString() );
+    }
+    else {
+        r = queryServiceInterface.sparqlQuery( sparqlQuery, QHash<QString, QString>() );
+    }
 
     if ( r.isValid() ) {
         m_queryInterface = new org::kde::nepomuk::Query( queryService,
