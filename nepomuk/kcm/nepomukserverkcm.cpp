@@ -33,6 +33,7 @@
 #include <KProcess>
 #include <KStandardDirs>
 #include <KCalendarSystem>
+#include <KDirWatch>
 
 #include <Nepomuk/Query/QueryParser>
 #include <Nepomuk/Query/FileQuery>
@@ -216,6 +217,9 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
         connect( m_buttonRestoreBackup, SIGNAL(clicked(bool)),
                  this, SLOT(slotRestoreBackup()) );
 
+        // update backup status whenever manual backups are created
+        KDirWatch::self()->addDir( KStandardDirs::locateLocal( "data", "nepomuk/backupsync/backups/" ) );
+        connect( KDirWatch::self(), SIGNAL(dirty(QString)), this, SLOT(updateBackupStatus()) );
     }
     else {
         QLabel* label = new QLabel( i18n( "The Nepomuk installation is not complete. No Nepomuk settings can be provided." ) );
@@ -286,21 +290,7 @@ void Nepomuk::ServerConfigModule::load()
     m_spinBackupMax->setValue( backupCfg.readEntry("max backups", 10) );
 
     slotBackupFrequencyChanged();
-
-    QString backupUrl = KStandardDirs::locateLocal( "data", "nepomuk/backupsync/backups/" );
-    QDir dir( backupUrl );
-    QStringList backupFiles = dir.entryList( QDir::Files | QDir::NoDotAndDotDot, QDir::Name );
-
-    QString text = i18np("1 existing backup", "%1 existing backups", backupFiles.size() );
-    if( !backupFiles.isEmpty() ) {
-        text += QLatin1String(" (");
-        text += i18nc("@info %1 is the creation date of a backup formatted vi KLocale::formatDateTime",
-                      "Oldest: %1",
-                      KGlobal::locale()->formatDateTime(QFileInfo(backupUrl+QLatin1String("/")+backupFiles.last()).created(), KLocale::FancyShortDate));
-        text += QLatin1String(")");
-    }
-    
-    m_labelBackupStats->setText( text );
+    updateBackupStatus();
 
     // 6. update state
     m_labelIndexFolders->setText( buildFolderLabel( m_indexFolderSelectionDialog->includeFolders(),
@@ -432,6 +422,25 @@ void Nepomuk::ServerConfigModule::updateStrigiStatus()
     else if ( !m_failedToInitialize ) {
         m_labelStrigiStatus->setText( i18nc( "@info:status", "Strigi service not running." ) );
     }
+}
+
+
+void Nepomuk::ServerConfigModule::updateBackupStatus()
+{
+    const QString backupUrl = KStandardDirs::locateLocal( "data", "nepomuk/backupsync/backups/" );
+    QDir dir( backupUrl );
+    const QStringList backupFiles = dir.entryList( QDir::Files | QDir::NoDotAndDotDot, QDir::Name );
+
+    QString text = i18np("1 existing backup", "%1 existing backups", backupFiles.size() );
+    if( !backupFiles.isEmpty() ) {
+        text += QLatin1String(" (");
+        text += i18nc("@info %1 is the creation date of a backup formatted vi KLocale::formatDateTime",
+                      "Oldest: %1",
+                      KGlobal::locale()->formatDateTime(QFileInfo(backupUrl+QLatin1String("/")+backupFiles.last()).created(), KLocale::FancyShortDate));
+        text += QLatin1String(")");
+    }
+
+    m_labelBackupStats->setText( text );
 }
 
 
