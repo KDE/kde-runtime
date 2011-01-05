@@ -50,6 +50,7 @@ namespace Nepomuk {
     private Q_SLOTS:
         void updateNepomukServerStatus();
         void updateStrigiStatus();
+        void updateBackupStatus();
         void recreateInterfaces();
         void slotCustomQueryButtonClicked();
         void slotEditIndexFolders();
