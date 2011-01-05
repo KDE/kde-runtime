@@ -32,8 +32,10 @@ Name[nb]=Baidu
 Name[nds]=Baidu
 Name[nl]=Baidu
 Name[nn]=Baidu
+Name[pa]=ਬਿਦੂ
 Name[pt]=Baidu
 Name[pt_BR]=Baidu
+Name[ro]=Baidu
 Name[ru]=Baidu
 Name[sl]=Baidu
 Name[sr]=Бајду
@@ -86,6 +88,7 @@ Query[nn]=http://www.baidu.com/s?wd=\\{@}
 Query[pa]=http://www.baidu.com/s?wd=\\{@}
 Query[pt]=http://www.baidu.com/s?wd=\\{@}
 Query[pt_BR]=http://www.baidu.com/s?wd=\\{@}
+Query[ro]=http://www.baidu.com/s?wd=\\{@}
 Query[ru]=http://www.baidu.com/s?wd=\\{@}
 Query[sl]=http://www.baidu.com/s?wd=\\{@}
 Query[sr]=http://www.baidu.com/s?wd=\\{@}
