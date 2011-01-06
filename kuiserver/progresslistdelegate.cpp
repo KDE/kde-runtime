@@ -28,7 +28,6 @@
 #include <QHash>
 #include <QFontMetrics>
 #include <QListView>
-#include <QHBoxLayout>
 #include <QProgressBar>
 
 #include <kicon.h>

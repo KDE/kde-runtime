@@ -24,7 +24,6 @@
 #include "uiserver.h"
 #include "jobview.h"
 
-#include <QAbstractListModel>
 
 class QDBusAbstractInterface;
 class QDBusServiceWatcher;
