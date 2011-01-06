@@ -27,10 +27,7 @@
 #include <QAbstractListModel>
 
 class QDBusAbstractInterface;
-class QDBusConnectionInterface;
 class QDBusServiceWatcher;
-class JobViewServerAdaptor;
-class RequestViewCallWatcher;
 
 class ProgressListModel: public QAbstractItemModel
 {

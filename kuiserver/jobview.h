@@ -29,8 +29,6 @@
 
 #include <kuiserversettings.h>
 
-class OrgKdeJobViewV2Interface;
-class JobViewV2Adaptor;
 class QDBusAbstractInterface;
 class RequestViewCallWatcher;
 
