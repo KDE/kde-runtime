@@ -34,10 +34,6 @@ namespace KWallet {
     class Wallet;
 }
 
-namespace Ui {
-  class MainPage;
-}
-
 class AtticaModule : public KCModule
 {
     Q_OBJECT
