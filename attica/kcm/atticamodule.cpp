@@ -22,12 +22,9 @@
 
 #include "atticamodule.h"
 
-#include <QDebug>
-#include <QProgressDialog>
 
 #include <KPluginFactory>
 #include <KAboutData>
-#include <KWallet/Wallet>
 #include <KDebug>
 #include <kurlrequesterdialog.h>
 
