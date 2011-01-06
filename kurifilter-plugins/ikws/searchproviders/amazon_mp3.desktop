@@ -20,6 +20,7 @@ Name[fi]=Amazon MP3
 Name[fr]=Amazon MP3
 Name[fy]=Amazon MP3
 Name[ga]=Amazon MP3
+Name[he]=Amazon MP3
 Name[hi]=एमेज़ान MP3
 Name[hr]=Amazon MP3
 Name[hu]=Amazon MP3
@@ -77,6 +78,7 @@ Query[fi]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=digital-music&
 Query[fr]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=digital-music&field-keywords=\\{@}&x=0&y=0
 Query[fy]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=digital-music&field-keywords=\\{@}&x=0&y=0
 Query[ga]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=digital-music&field-keywords=\\{@}&x=0&y=0
+Query[he]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=digital-music&field-keywords=\\{@}&x=0&y=0
 Query[hi]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=digital-music&field-keywords=\\{@}&x=0&y=0
 Query[hr]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=digital-music&field-keywords=\\{@}&x=0&y=0
 Query[hu]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=digital-music&field-keywords=\\{@}&x=0&y=0

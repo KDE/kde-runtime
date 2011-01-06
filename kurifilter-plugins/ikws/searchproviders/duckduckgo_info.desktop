@@ -18,6 +18,7 @@ Name[fi]=Duck Duck Go -hakupalvelutiedot
 Name[fr]=Duck Duck Go Info
 Name[fy]=Duck Duck Go Ynfo
 Name[ga]=Eolas Duck Duck Go
+Name[he]=Duck Duck Go Info
 Name[hi]=बतख़ जा जा जानकारी
 Name[hr]=Duck Duck Go Info
 Name[hu]=Duck Duck Go Info
@@ -74,6 +75,7 @@ Query[fr]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[fy]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[ga]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[gu]=http://duckduckgo.com/?q=\\{@}&v=r
+Query[he]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[hi]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[hr]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[hu]=http://duckduckgo.com/?q=\\{@}&v=r

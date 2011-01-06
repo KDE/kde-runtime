@@ -20,6 +20,7 @@ Name[fi]=Amazon
 Name[fr]=Amazon
 Name[fy]=Amazon
 Name[ga]=Amazon
+Name[he]=Amazon
 Name[hi]=एमेज़ान
 Name[hr]=Amazon
 Name[hu]=Amazon
@@ -76,6 +77,7 @@ Query[fi]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=aps&field-keyw
 Query[fr]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=aps&field-keywords=\\{@}&x=0&y=0
 Query[fy]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=aps&field-keywords=\\{@}&x=0&y=0
 Query[ga]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=aps&field-keywords=\\{@}&x=0&y=0
+Query[he]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=aps&field-keywords=\\{@}&x=0&y=0
 Query[hi]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=aps&field-keywords=\\{@}&x=0&y=0
 Query[hr]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=aps&field-keywords=\\{@}&x=0&y=0
 Query[hu]=http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=aps&field-keywords=\\{@}&x=0&y=0

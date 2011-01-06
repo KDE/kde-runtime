@@ -18,6 +18,7 @@ Name[fi]=Duck Duck Go -ostokset
 Name[fr]=Duck Duck Go Shopping
 Name[fy]=Duck Duck Go Winkelje
 Name[ga]=Siopadóireacht Duck Duck Go
+Name[he]=Duck Duck Go Shopping
 Name[hi]=बतख़ जा जा खरीदारी
 Name[hr]=Duck Duck Go Shopping
 Name[hu]=Duck Duck Go Shopping
@@ -73,6 +74,7 @@ Query[fr]=http://duckduckgo.com/?q=\\{@}&v=s
 Query[fy]=http://duckduckgo.com/?q=\\{@}&v=s
 Query[ga]=http://duckduckgo.com/?q=\\{@}&v=s
 Query[gu]=http://duckduckgo.com/?q=\\{@}&v=s
+Query[he]=http://duckduckgo.com/?q=\\{@}&v=s
 Query[hi]=http://duckduckgo.com/?q=\\{@}&v=s
 Query[hr]=http://duckduckgo.com/?q=\\{@}&v=s
 Query[hu]=http://duckduckgo.com/?q=\\{@}&v=s
