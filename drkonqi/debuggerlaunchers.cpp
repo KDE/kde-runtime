@@ -20,6 +20,7 @@
 #include "crashedapplication.h"
 #include <QtDBus/QDBusConnection>
 #include <KShell>
+#include <KProcess>
 #include <KDebug>
 
 DefaultDebuggerLauncher::DefaultDebuggerLauncher(const Debugger & debugger, DebuggerManager *parent)

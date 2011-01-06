@@ -20,7 +20,6 @@
 #include "debugger.h"
 #include "debuggermanager.h"
 #include <QtDBus/QDBusAbstractAdaptor>
-#include <KProcess>
 
 class DetachedProcessMonitor;
 

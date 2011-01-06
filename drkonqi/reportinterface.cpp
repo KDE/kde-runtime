@@ -30,8 +30,6 @@
 #include "backtracegenerator.h"
 #include "applicationdetailsexamples.h"
 
-#include <KProcess>
-#include <KStandardDirs>
 #include <KDebug>
 #include <KLocale>
 

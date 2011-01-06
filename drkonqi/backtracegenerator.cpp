@@ -29,7 +29,6 @@
 #include "parser/backtraceparser.h"
 
 #include <KDebug>
-#include <KStandardDirs>
 #include <KTemporaryFile>
 #include <KShell>
 

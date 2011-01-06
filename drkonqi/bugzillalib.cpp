@@ -38,7 +38,6 @@
 #include <KIO/Job>
 #include <KUrl>
 #include <KConfig>
-#include <KConfigGroup>
 #include <KLocale>
 #include <KRandom>
 #include <KDebug>

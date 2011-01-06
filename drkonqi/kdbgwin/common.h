@@ -41,12 +41,8 @@
 
 
 // second: Qt includes
-#include <QList>
 #include <QString>
-#include <QObject>
 #include <QString>
-#include <QStringList>
-#include <QMap>
 
 
 // third: KDE includes
