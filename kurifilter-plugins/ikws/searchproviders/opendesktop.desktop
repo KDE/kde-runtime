@@ -19,6 +19,7 @@ Name[fi]=openDesktop.org
 Name[fr]=openDesktop.org
 Name[ga]=openDesktop.org
 Name[gu]=ઓપનડેસ્કટોપ.ઓર્ગ
+Name[he]=openDesktop.org
 Name[hi]=openDesktop.org
 Name[hr]=openDesktop.org
 Name[hu]=openDesktop.org
@@ -76,6 +77,7 @@ Query[fi]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[fr]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[ga]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[gu]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
+Query[he]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[hi]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[hr]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[hu]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
