@@ -62,7 +62,7 @@ void Nepomuk::Storage::slotNepomukCoreInitialized( bool success )
         m_core->registerAsDBusObject();
 
         // the faster local socket interface
-        QString socketPath = KGlobal::dirs()->locateLocal( "data", "nepomuk/socket" );
+        QString socketPath = KGlobal::dirs()->locateLocal( "socket", "nepomuk-socket" );
         QFile::remove( socketPath ); // in case we crashed
         m_core->start( socketPath );
     }
