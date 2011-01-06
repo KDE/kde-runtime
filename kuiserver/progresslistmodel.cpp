@@ -268,10 +268,8 @@ void ProgressListModel::registerService(const QString &service, const QString &o
 
             if (client->isValid()) {
 
-                if (m_uiServer) {
-                    delete m_uiServer;
-                    m_uiServer = 0;
-                }
+                delete m_uiServer;
+                m_uiServer = 0;
 
                 m_serviceWatcher->addWatchedService(service);
                 m_registeredServices.insert(service, client);
