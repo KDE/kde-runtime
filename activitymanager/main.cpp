@@ -19,7 +19,6 @@
 
 #include <ActivityManager.h>
 
-#include <QDBusConnection>
 #include <KDebug>
 
 #include <KAboutData>
