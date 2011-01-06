@@ -180,7 +180,7 @@ public:
 
     BugReport parse();
 
-    bool isValid() {
+    bool isValid() const {
         return m_valid;
     }
 
@@ -194,9 +194,9 @@ private:
 class BugListCSVParser
 {
 public:
-    BugListCSVParser(QByteArray);
+    BugListCSVParser(const QByteArray&);
 
-    bool isValid() {
+    bool isValid() const {
         return m_isValid;
     }
 

@@ -690,7 +690,7 @@ QByteArray BugzillaManager::generatePostDataForReport(BugReport report) const
 
 //BEGIN BugzillaCSVParser
 
-BugListCSVParser::BugListCSVParser(QByteArray data)
+BugListCSVParser::BugListCSVParser(const QByteArray& data)
 {
     m_data = data;
     m_isValid = false;
