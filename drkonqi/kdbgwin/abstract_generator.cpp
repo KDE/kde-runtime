@@ -26,6 +26,8 @@
 #include "abstract_generator.h"
 #include "callbacks.h"
 
+#include <QStringList>
+
 AbstractBTGenerator::AbstractBTGenerator(const Process& process)
     : m_process(process)
 {
