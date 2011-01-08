@@ -244,7 +244,7 @@ namespace {
          */
         int updateUserVisibility( QList<Soprano::Statement>& statements ) {
             if ( userVisible != 0 ) {
-                kDebug() << "User visibility already set" << uri.toString() << ( userVisible == 1 );
+                //kDebug() << "User visibility already set" << uri.toString() << ( userVisible == 1 );
                 return userVisible;
             }
             else {
