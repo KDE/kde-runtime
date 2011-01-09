@@ -56,7 +56,8 @@ Nepomuk::BackupManager::BackupManager(Nepomuk::Identifier* ident, QObject* paren
     con.registerObject( QLatin1String("/backupmanager"), this );
 
     m_backupLocation = KStandardDirs::locateLocal( "data", "nepomuk/backupsync/backups/" );
-
+    m_daysBetweenBackups = 0;
+    
     KDirWatch* dirWatch = KDirWatch::self();
     connect( dirWatch, SIGNAL( dirty( const QString& ) ),
              this, SLOT( slotConfigDirty() ) );
@@ -126,11 +127,11 @@ void Nepomuk::BackupManager::slotConfigDirty()
     QString timeString = m_config.group("Backup").readEntry( "backup time", QTime().toString( Qt::ISODate ) );
     m_backupTime = QTime::fromString( timeString, Qt::ISODate );
 
-    //if( freq == QLatin1String("daily") ) {
-    // Nothing to do    
-    //}
+    if( freq == QLatin1String("daily") ) {
+        m_daysBetweenBackups = 0;    
+    }
 
-    if( freq == QLatin1String("weekly") ) {
+    else if( freq == QLatin1String("weekly") ) {
 
         const KCalendarSystem* cal = KGlobal::locale()->calendar();
 
