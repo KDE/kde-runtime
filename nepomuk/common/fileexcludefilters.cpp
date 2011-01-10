@@ -58,6 +58,7 @@ namespace {
         "lzo",
         "litmain.sh",
         "*.orig",
+        ".histfile.*",
 
         // end of list
         0
