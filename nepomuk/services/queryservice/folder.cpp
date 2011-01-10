@@ -104,7 +104,7 @@ void Nepomuk::Query::Folder::update()
 
 QList<Nepomuk::Query::Result> Nepomuk::Query::Folder::entries() const
 {
-    return m_results.values();
+    return m_results.toList();
 }
 
 
@@ -135,23 +135,22 @@ Nepomuk::Query::RequestPropertyMap Nepomuk::Query::Folder::requestPropertyMap() 
 // called from SearchRunnable in the search thread
 void Nepomuk::Query::Folder::addResults( const QList<Nepomuk::Query::Result>& results )
 {
-    if ( m_initialListingDone ) {
-        QList<Result> newResults;
-        Q_FOREACH( const Result& result, results ) {
-            m_newResults.insert( result.resource().resourceUri(), result );
-            if ( !m_results.contains( result.resource().resourceUri() ) ) {
-                newResults << result;
-            }
-        }
-        if( !newResults.isEmpty() ) {
-            emit newEntries( newResults );
+    QSet<Result> newResults;
+    Q_FOREACH( const Result& result, results ) {
+        if ( !m_results.contains( result ) ) {
+            newResults.insert( result );
         }
     }
+
+    if ( m_initialListingDone ) {
+        m_newResults += newResults;
+    }
     else {
-        Q_FOREACH( const Result& result, results ) {
-            m_results.insert( result.resource().resourceUri(), result );
-        }
-        emit newEntries( results );
+        m_results += newResults;
+    }
+
+    if( !newResults.isEmpty() ) {
+        emit newEntries( newResults.toList() );
     }
 }
 
@@ -167,7 +166,7 @@ void Nepomuk::Query::Folder::listingFinished()
 
         // legacy removed results
         foreach( const Result& result, m_results ) {
-            if ( !m_newResults.contains( result.resource().resourceUri() ) ) {
+            if ( !m_newResults.contains( result ) ) {
                 removedResults << result;
                 emit entriesRemoved( QList<QUrl>() << KUrl(result.resource().resourceUri()).url() );
             }
@@ -255,6 +254,13 @@ void Nepomuk::Query::Folder::removeConnection( FolderConnection* conn )
 QList<Nepomuk::Query::FolderConnection*> Nepomuk::Query::Folder::openConnections() const
 {
     return m_connections;
+}
+
+
+uint Nepomuk::Query::qHash( const Result& result )
+{
+    // we only use this to ensure that we do not emit duplicates
+    return qHash(result.resource().resourceUri());
 }
 
 #include "folder.moc"

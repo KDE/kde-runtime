@@ -24,7 +24,7 @@
 #include <Nepomuk/Query/Result>
 #include <Nepomuk/Query/Query>
 
-#include <QtCore/QHash>
+#include <QtCore/QSet>
 #include <QtCore/QTimer>
 #include <QtCore/QPointer>
 
@@ -38,6 +38,8 @@ namespace Soprano {
 
 namespace Nepomuk {
     namespace Query {
+
+        uint qHash( const Result& );
 
         class SearchRunnable;
         class CountQueryRunnable;
@@ -157,10 +159,10 @@ namespace Nepomuk {
             bool m_initialListingDone;
 
             /// the actual current results
-            QHash<QUrl, Result> m_results;
+            QSet<Result> m_results;
 
             /// the results gathered during an update, needed to find removed items
-            QHash<QUrl, Result> m_newResults;
+            QSet<Result> m_newResults;
 
             /// the runnable doing work at the moment or 0 if idle
             SearchRunnable* m_currentSearchRunnable;
