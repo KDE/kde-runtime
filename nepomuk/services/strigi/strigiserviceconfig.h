@@ -22,6 +22,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QList>
 #include <QtCore/QRegExp>
+#include <QtCore/QMutex>
 
 #include <kconfig.h>
 #include <kio/global.h>
@@ -137,6 +138,8 @@ namespace Nepomuk {
         /// cache of regexp objects for all exclude filters
         /// to prevent regexp parsing over and over
         RegExpCache m_excludeFilterRegExpCache;
+
+        mutable QMutex m_folderCacheMutex;
     };
 }
 

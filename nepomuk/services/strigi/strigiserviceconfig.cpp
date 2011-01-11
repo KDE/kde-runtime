@@ -174,13 +174,16 @@ bool Nepomuk::StrigiServiceConfig::shouldFolderBeIndexed( const QString& path ) 
 bool Nepomuk::StrigiServiceConfig::shouldFileBeIndexed( const QString& fileName ) const
 {
     // check the filters
+    QMutexLocker lock( &m_folderCacheMutex );
     return !m_excludeFilterRegExpCache.exactMatch( fileName );
 }
 
 
 bool Nepomuk::StrigiServiceConfig::folderInFolderList( const QString& path, bool& exact ) const
 {
-    QString p = KUrl( path ).path( KUrl::RemoveTrailingSlash );
+    QMutexLocker lock( &m_folderCacheMutex );
+
+    const QString p = KUrl( path ).path( KUrl::RemoveTrailingSlash );
 
     // we traverse the list backwards to catch all exclude folders
     int i = m_folderCache.count();
@@ -249,6 +252,8 @@ namespace {
 
 void Nepomuk::StrigiServiceConfig::buildFolderCache()
 {
+    QMutexLocker lock( &m_folderCacheMutex );
+
     QStringList includeFoldersPlain = m_config.group( "General" ).readPathEntry( "folders", QStringList() << QDir::homePath() );
     org::kde::nepomuk::RemovableStorage removableStorageService( "org.kde.nepomuk.services.removablestorageservice",
                                                                  "/removablestorageservice",
@@ -266,6 +271,7 @@ void Nepomuk::StrigiServiceConfig::buildFolderCache()
 
 void Nepomuk::StrigiServiceConfig::buildExcludeFilterRegExpCache()
 {
+    QMutexLocker lock( &m_folderCacheMutex );
     m_excludeFilterRegExpCache.rebuildCacheFromFilterList( excludeFilters() );
 }
 
