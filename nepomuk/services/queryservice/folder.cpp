@@ -163,7 +163,7 @@ void Nepomuk::Query::Folder::listingFinished()
     if ( m_initialListingDone ) {
         // inform about removed items
         foreach( const Result& result, m_results ) {
-            if ( !m_newResults.contains( result.resource().resourceUri() ) ) {
+            if ( !m_newResults.contains( result ) ) {
                 emit entriesRemoved( QList<QUrl>() << result.resource().resourceUri() );
             }
         }
