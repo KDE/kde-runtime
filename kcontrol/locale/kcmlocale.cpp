@@ -1254,14 +1254,16 @@ void KCMLocale::initNumericThousandsSeparator()
 
     initSeparatorCombo( m_ui->m_comboThousandsSeparator );
 
-    setNumericThousandsSeparator( m_kcmSettings.readEntry( "ThousandsSeparator", QString() ) );
+    setNumericThousandsSeparator( m_kcmSettings.readEntry( "ThousandsSeparator", QString() )
+                                               .remove( QString::fromLatin1("$0") ) );
 
     m_ui->m_comboThousandsSeparator->blockSignals( false );
 }
 
 void KCMLocale::defaultNumericThousandsSeparator()
 {
-    setNumericThousandsSeparator( m_defaultSettings.readEntry( "ThousandsSeparator", QString() ) );
+    setNumericThousandsSeparator( m_defaultSettings.readEntry( "ThousandsSeparator", QString() )
+                                                   .remove( QString::fromLatin1("$0") ) );
 }
 
 // Change in response to user input, doesn't set edit text as causes cursor to EOL
@@ -1271,18 +1273,23 @@ void KCMLocale::changedNumericThousandsSeparator( const QString &newValue )
     int item = m_ui->m_comboThousandsSeparator->findText( newValue );
     if ( item >= 0 ) {
         useValue = m_ui->m_comboThousandsSeparator->itemData( item ).toString();
+        m_ui->m_comboThousandsSeparator->setEditText( useValue );
+    }
+    if ( useValue == QString(' ') ) {
+        useValue = "$0 $0";
     }
     setItem( "ThousandsSeparator", useValue,
              m_ui->m_comboThousandsSeparator, m_ui->m_buttonDefaultThousandsSeparator );
-    m_kcmLocale->setThousandsSeparator( m_kcmSettings.readEntry( "ThousandsSeparator", QString() ) );
+    m_kcmLocale->setThousandsSeparator( m_kcmSettings.readEntry( "ThousandsSeparator", QString() )
+                                                     .remove( QString::fromLatin1("$0") ) );
 }
 
 // Change programatically, does set edit text so user can see it
 void KCMLocale::setNumericThousandsSeparator( const QString &newValue )
 {
-    setEditComboItem( "ThousandsSeparator", newValue,
-                       m_ui->m_comboThousandsSeparator, m_ui->m_buttonDefaultThousandsSeparator );
-    m_kcmLocale->setThousandsSeparator( m_kcmSettings.readEntry( "ThousandsSeparator", QString() ) );
+    changedNumericThousandsSeparator( newValue );
+    m_ui->m_comboThousandsSeparator->setEditText( m_kcmSettings.readEntry( "ThousandsSeparator", QString() )
+                                                               .remove( QString::fromLatin1("$0") ) );
 }
 
 void KCMLocale::initNumericDecimalSymbol()
@@ -1641,14 +1648,16 @@ void KCMLocale::initMonetaryThousandsSeparator()
 
     initSeparatorCombo( m_ui->m_comboMonetaryThousandsSeparator );
 
-    setMonetaryThousandsSeparator( m_kcmSettings.readEntry( "MonetaryThousandsSeparator", QString() ) );
+    setMonetaryThousandsSeparator( m_kcmSettings.readEntry( "MonetaryThousandsSeparator", QString() )
+                                                .remove( QString::fromLatin1("$0") ) );
 
     m_ui->m_comboMonetaryThousandsSeparator->blockSignals( false );
 }
 
 void KCMLocale::defaultMonetaryThousandsSeparator()
 {
-    setMonetaryThousandsSeparator( m_defaultSettings.readEntry( "MonetaryThousandsSeparator", QString() ) );
+    setMonetaryThousandsSeparator( m_defaultSettings.readEntry( "MonetaryThousandsSeparator", QString() )
+                                                    .remove( QString::fromLatin1("$0") ) );
 }
 
 void KCMLocale::changedMonetaryThousandsSeparator( const QString &newValue )
@@ -1657,10 +1666,15 @@ void KCMLocale::changedMonetaryThousandsSeparator( const QString &newValue )
     int item = m_ui->m_comboMonetaryThousandsSeparator->findText( newValue );
     if ( item >= 0 ) {
         useValue = m_ui->m_comboMonetaryThousandsSeparator->itemData( item ).toString();
+        m_ui->m_comboMonetaryThousandsSeparator->setEditText( useValue );
+    }
+    if ( useValue == QString(' ') ) {
+        useValue = "$0 $0";
     }
     setItem( "MonetaryThousandsSeparator", useValue,
              m_ui->m_comboMonetaryThousandsSeparator, m_ui->m_buttonDefaultMonetaryThousandsSeparator );
-    m_kcmLocale->setMonetaryThousandsSeparator( m_kcmSettings.readEntry( "MonetaryThousandsSeparator", QString() ) );
+    m_kcmLocale->setMonetaryThousandsSeparator( m_kcmSettings.readEntry( "MonetaryThousandsSeparator", QString() )
+                                                             .remove( QString::fromLatin1("$0") ) );
 
     // Update the monetary format samples to relect new setting
     initMonetaryPositiveFormat();
@@ -1669,13 +1683,9 @@ void KCMLocale::changedMonetaryThousandsSeparator( const QString &newValue )
 
 void KCMLocale::setMonetaryThousandsSeparator( const QString &newValue )
 {
-    setEditComboItem( "MonetaryThousandsSeparator", newValue,
-                      m_ui->m_comboMonetaryThousandsSeparator, m_ui->m_buttonDefaultMonetaryThousandsSeparator );
-    m_kcmLocale->setMonetaryThousandsSeparator( m_kcmSettings.readEntry( "MonetaryThousandsSeparator", QString() ) );
-
-    // Update the monetary format samples to relect new setting
-    initMonetaryPositiveFormat();
-    initMonetaryNegativeFormat();
+    changedMonetaryThousandsSeparator( newValue );
+    m_ui->m_comboMonetaryThousandsSeparator->setEditText( m_kcmSettings.readEntry( "MonetaryThousandsSeparator", QString() )
+                                                                       .remove( QString::fromLatin1("$0") ) );
 }
 
 void KCMLocale::initMonetaryDecimalSymbol()
