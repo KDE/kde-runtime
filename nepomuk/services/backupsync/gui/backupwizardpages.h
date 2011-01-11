@@ -49,6 +49,8 @@ namespace Nepomuk {
     typedef org::kde::nepomuk::services::nepomukbackupsync::Identifier Identifier;
     
     class IntroPage : public QWizardPage, public Ui::IntroPage {
+        Q_OBJECT
+
     public:
         IntroPage(QWidget* parent = 0);
 
