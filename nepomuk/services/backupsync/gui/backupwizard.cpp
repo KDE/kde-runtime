@@ -23,12 +23,20 @@
 #include "backupwizard.h"
 #include "backupwizardpages.h"
 
+#include <kglobal.h>
+#include <kcomponentdata.h>
+#include <kaboutdata.h>
+
+// TODO: 1. "Cancel" just closes the dialog without any feedback on the backup
+//       2. If the service crashes the dialog does not notice
+
 Nepomuk::BackupWizard::BackupWizard(QWidget* parent, Qt::WindowFlags flags)
     : QWizard(parent, flags)
 {
     setPixmap(LogoPixmap, KIcon(QLatin1String("nepomuk")).pixmap(32, 32));
     setWindowIcon( KIcon(QLatin1String("nepomuk")) );
-    
+    setWindowTitle( KGlobal::activeComponent().aboutData()->shortDescription() );
+
     setPage( Id_IntroPage, new IntroPage(this) );
     setPage( Id_BackupPage, new BackupPage(this) );
     setPage( Id_BackupSettingsPage, new BackupSettingsPage(this) );
