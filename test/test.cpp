@@ -24,7 +24,6 @@
 
 #include <kdeclarative.h>
 
-#include "testobject_p.h"
 
 int main(int argc, char *argv[])
 {
@@ -45,14 +44,9 @@ int main(int argc, char *argv[])
     QScriptEngine *scriptEngine = kdeclarative.scriptEngine();
     Q_ASSERT(scriptEngine);
 
-    //Bind a test QObject in the "QtScript way"
     QScriptValue global = scriptEngine->globalObject();
-    TestObject *testObject = new TestObject();
-    QScriptValue testValue = scriptEngine->newQObject(testObject);
-    testValue.setScope(global);
-    global.setProperty("testObject", testValue);
 
-    view.setSource(QUrl::fromLocalFile("test.qml"));
+    view.setSource(QUrl::fromLocalFile("gallery.qml"));
     view.show();
 
     return app.exec();
