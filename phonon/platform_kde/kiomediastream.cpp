@@ -119,8 +119,10 @@ void KioMediaStream::enoughData()
     kDebug(600);
     // Don't suspend when using a FileJob. The FileJob is controlled by calls to
     // FileJob::read()
-    if (d->kiojob && !qobject_cast<KIO::FileJob *>(d->kiojob) && !d->kiojob->isSuspended()) {
-        d->kiojob->suspend();
+    if (d->kiojob && !qobject_cast<KIO::FileJob *>(d->kiojob)) {
+        if (!d->kiojob->isSuspended()) {
+            d->kiojob->suspend();
+        }
     } else {
         d->reading = false;
     }
