@@ -239,7 +239,7 @@ void ActivityManagerPrivate::configSync()
 }
 
 #ifdef HAVE_NEPOMUK
-Nepomuk::Resource ActivityManagerPrivate::activityResource(const QString & id) const
+Nepomuk::Resource ActivityManagerPrivate::activityResource(const QString & id)
 {
     kDebug() << "testing for nepomuk";
 
@@ -251,14 +251,26 @@ Nepomuk::Resource ActivityManagerPrivate::activityResource(const QString & id) c
 }
 
 /* lazy init of nepomuk */
-bool ActivityManagerPrivate::nepomukInitialized() const
+bool ActivityManagerPrivate::nepomukInitialized()
 {
     if (m_nepomukInitCalled) return
         Nepomuk::ResourceManager::instance()->initialized();
 
     m_nepomukInitCalled = true;
 
+    connect(Nepomuk::ResourceManager::instance(), SIGNAL(nepomukSystemStarted()), this, SLOT(backstoreAvailable()));
+
     return (Nepomuk::ResourceManager::instance()->init() == 0);
+}
+
+void ActivityManagerPrivate::backstoreAvailable()
+{
+    //emit q->BackstoreAvailable();
+    //kick the icons, so that clients don't need to know that they depend on nepomuk
+    for (QHash<QString, ActivityManager::State>::const_iterator i = activities.constBegin();
+         i != activities.constEnd(); ++i) {
+        emit q->ActivityChanged(i.key());
+    }
 }
 #endif // HAVE_NEPOMUK
 

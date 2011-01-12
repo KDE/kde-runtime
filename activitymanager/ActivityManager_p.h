@@ -82,8 +82,8 @@ public:
     QString activityName(const QString & id);
 
 #ifdef HAVE_NEPOMUK
-    Nepomuk::Resource activityResource(const QString & id) const;
-    bool nepomukInitialized() const;
+    Nepomuk::Resource activityResource(const QString & id);
+    bool nepomukInitialized();
     mutable bool m_nepomukInitCalled;
 #endif // HAVE_NEPOMUK
 
@@ -91,6 +91,7 @@ public Q_SLOTS:
     void scheduleConfigSync();
     void configSync();
     void windowClosed(WId windowId);
+
     void startCompleted();
     void stopCompleted();
     void stopCancelled();
@@ -98,6 +99,10 @@ public Q_SLOTS:
     //for avoiding dbus deadlocks
     void reallyStartActivity(const QString & id);
     void reallyStopActivity(const QString & id);
+
+#ifdef HAVE_NEPOMUK
+    void backstoreAvailable();
+#endif // HAVE_NEPOMUK
 
 private:
     ActivityManager * const q;
