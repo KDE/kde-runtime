@@ -19,6 +19,8 @@
 
 import Qt 4.7
 import org.kde.plasma.components 0.1 as PlasmaComponents
+import org.kde.plasma.core 0.1 as PlasmaCore
+import org.kde.qtextracomponents 0.1 as QtExtraComponents
 
 Rectangle {
     id: test
@@ -59,10 +61,17 @@ Rectangle {
             id: scrollBarV
             orientation: Qt.Vertical
         }
-        
+        QtExtraComponents.QPixmapItem {
+            id: pixmapTest
+        }
     }
 
+    PlasmaCore.Svg {
+        id: svgTest
+        imagePath: "widgets/clock"
+    }
     Component.onCompleted: {
         label.flash("I am a FlashingLabel!!!");
+        pixmapTest.pixmap = svgTest.pixmap();
     }
 }
