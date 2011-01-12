@@ -18,6 +18,7 @@
  */
 
 import Qt 4.7
+import org.kde.plasma.components 0.1 as PlasmaComponents
 
 Rectangle {
     id: test
@@ -30,7 +31,7 @@ Rectangle {
         anchors.fill: parent
         spacing: 5
 
-        FlashingLabel {
+        PlasmaComponents.FlashingLabel {
             id: label
             font: "Times"
         }
@@ -40,21 +41,21 @@ Rectangle {
 
             Repeater {
                 model: 8
-                BusyWidget {
+                PlasmaComponents.BusyWidget {
                     width: 50
                     height: 50
                 }
             }
         }
 
-        PushButton {
+        PlasmaComponents.PushButton {
             text: "Ok"
             onClicked: {print("Clicked!"); scrollBar.value=35}
         }
-        ScrollBar {
+        PlasmaComponents.ScrollBar {
             id: scrollBar
         }
-        ScrollBar {
+        PlasmaComponents.ScrollBar {
             id: scrollBarV
             orientation: Qt.Vertical
         }
