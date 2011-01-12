@@ -36,6 +36,7 @@ Item {
         width: root.width
         height: root.height
         anchors.horizontalCenter: root.horizontalCenter
+        smooth: true
         svg: PlasmaCore.Svg { imagePath: ("widgets/busywidget") }
 
         RotationAnimation on rotation {
