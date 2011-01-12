@@ -28,6 +28,8 @@ class QPixmapItem : public QDeclarativeItem
 
     Q_PROPERTY(QPixmap pixmap READ pixmap WRITE setPixmap)
     Q_PROPERTY(bool smooth READ smooth WRITE setSmooth)
+    Q_PROPERTY(int nativeWidth READ nativeWidth NOTIFY nativeWidthChanged)
+    Q_PROPERTY(int nativeHeight READ nativeHeight NOTIFY nativeHeightChanged)
 
 public:
     QPixmapItem(QDeclarativeItem *parent=0);
@@ -39,7 +41,14 @@ public:
     void setSmooth(const bool smooth);
     bool smooth() const;
 
+    int nativeWidth() const;
+    int nativeHeight() const;
+
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+Q_SIGNALS:
+    void nativeWidthChanged();
+    void nativeHeightChanged();
 
 private:
     QPixmap m_pixmap;

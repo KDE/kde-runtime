@@ -38,6 +38,8 @@ void QPixmapItem::setPixmap(const QPixmap &pixmap)
 {
     m_pixmap = pixmap;
     update();
+    emit nativeWidthChanged();
+    emit nativeHeightChanged();
 }
 
 QPixmap QPixmapItem::pixmap() const
@@ -59,6 +61,16 @@ bool QPixmapItem::smooth() const
     return m_smooth;
 }
 
+int QPixmapItem::nativeWidth() const
+{
+    return m_pixmap.size().width();
+}
+
+int QPixmapItem::nativeHeight() const
+{
+    return m_pixmap.size().height();
+}
+
 void QPixmapItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option);
@@ -73,7 +85,7 @@ void QPixmapItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     painter->setRenderHint(QPainter::Antialiasing, m_smooth);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, m_smooth);
 
-    painter->drawPixmap(0, 0, m_pixmap);
+    painter->drawPixmap(boundingRect(), m_pixmap, m_pixmap.rect());
     painter->setRenderHint(QPainter::Antialiasing, wasAntiAlias);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, wasSmoothTransform);
 }
