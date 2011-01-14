@@ -15,12 +15,6 @@ set(servicestub_SRCS
   priority.cpp
 )
 
-if (Q_WS_MAC)
-    set_target_properties(knotify PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/runtime/Info.plist.template)
-    set_target_properties(knotify PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "org.kde.knotify4")
-    set_target_properties(knotify PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "KDE Notify")
-endif (Q_WS_MAC)
-
 qt4_add_dbus_adaptor(servicestub_SRCS
   ../interfaces/org.kde.nepomuk.ServiceControl.xml
   servicecontrol.h
@@ -29,6 +23,13 @@ qt4_add_dbus_adaptor(servicestub_SRCS
 kde4_add_executable(nepomukservicestub
   ${servicestub_SRCS}
 )
+
+if (Q_WS_MAC)
+    set_target_properties(nepomukservicestub PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/runtime/Info.plist.template)
+    set_target_properties(nepomukservicestub PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "org.kde.nepomuk.servicestub")
+    set_target_properties(nepomukservicestub PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "KDE Nepomuk Service Stub")
+endif (Q_WS_MAC)
+
 
 target_link_libraries(nepomukservicestub
   ${QT_QTCORE_LIBRARY}
