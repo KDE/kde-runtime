@@ -25,7 +25,6 @@ qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.RemovableStorage.xm
 
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
-  message("wtf: ${CMAKE_SYSTEM_NAME}")
   set(SRCS
     ${SRCS}
     kinotify.cpp
