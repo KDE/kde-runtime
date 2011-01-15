@@ -25,7 +25,7 @@ import org.kde.qtextracomponents 0.1 as QtExtraComponents
 Rectangle {
     id: test
     width: 400
-    height: 400
+    height: 500
     color: "tomato"
 
     Column {
@@ -62,6 +62,8 @@ Rectangle {
             orientation: Qt.Vertical
         }
         QtExtraComponents.QPixmapItem {
+            width:200
+            height:100
             id: pixmapTest
         }
     }
