@@ -142,12 +142,7 @@ void Nepomuk::Query::Folder::addResults( const QList<Nepomuk::Query::Result>& re
         }
     }
 
-    if ( m_initialListingDone ) {
-        m_newResults += newResults;
-    }
-    else {
-        m_results += newResults;
-    }
+    m_newResults += newResults;
 
     if( !newResults.isEmpty() ) {
         emit newEntries( newResults.toList() );
@@ -160,28 +155,27 @@ void Nepomuk::Query::Folder::listingFinished()
 {
     m_currentSearchRunnable = 0;
 
-    if ( m_initialListingDone ) {
-        // inform about removed items
-        QList<Result> removedResults;
+    // inform about removed items
+    QList<Result> removedResults;
 
-        // legacy removed results
-        foreach( const Result& result, m_results ) {
-            if ( !m_newResults.contains( result ) ) {
-                removedResults << result;
-                emit entriesRemoved( QList<QUrl>() << KUrl(result.resource().resourceUri()).url() );
-            }
+    // legacy removed results
+    foreach( const Result& result, m_results ) {
+        if ( !m_newResults.contains( result ) ) {
+            removedResults << result;
+            emit entriesRemoved( QList<QUrl>() << KUrl(result.resource().resourceUri()).url() );
         }
-
-        // new removed results which include all the details to be used for optimizations
-        if( !removedResults.isEmpty() ) {
-            emit entriesRemoved( removedResults );
-        }
-
-        // reset
-        m_results = m_newResults;
-        m_newResults.clear();
     }
-    else {
+
+    // new removed results which include all the details to be used for optimizations
+    if( !removedResults.isEmpty() ) {
+        emit entriesRemoved( removedResults );
+    }
+
+    // reset
+    m_results = m_newResults;
+    m_newResults.clear();
+
+    if ( !m_initialListingDone ) {
         kDebug() << "Listing done. Total:" << m_results.count();
         m_initialListingDone = true;
         emit finishedListing();
