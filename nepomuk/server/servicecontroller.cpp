@@ -25,6 +25,7 @@
 #include <QtCore/QTimer>
 
 #include <QtDBus/QDBusServiceWatcher>
+#include <QtDBus/QDBusPendingReply>
 
 #include <KStandardDirs>
 #include <KConfigGroup>
@@ -321,18 +322,26 @@ void Nepomuk::ServiceController::slotServiceUnregistered( const QString& service
 void Nepomuk::ServiceController::createServiceControlInterface()
 {
     delete d->serviceControlInterface;
-
     d->serviceControlInterface = new OrgKdeNepomukServiceControlInterface( dbusServiceName( name() ),
-                                                                           "/servicecontrol",
+                                                                           QLatin1String("/servicecontrol"),
                                                                            QDBusConnection::sessionBus(),
-                                                                           this );
-    if( d->serviceControlInterface->isInitialized() ) {
-        slotServiceInitialized( true );
+                                                                          this );
+    QDBusPendingReply<bool> isInitializedReply = d->serviceControlInterface->isInitialized();
+    isInitializedReply.waitForFinished();
+    if( isInitializedReply.isError() ) {
+        kDebug() << "Failed to check service init state for" << name() << "Retrying.";
+        QMetaObject::invokeMethod( this, "createServiceControlInterface", Qt::QueuedConnection );
     }
     else {
-        connect( d->serviceControlInterface, SIGNAL( serviceInitialized( bool ) ),
-                 this, SLOT( slotServiceInitialized( bool ) ),
-                 Qt::QueuedConnection );
+        if( isInitializedReply.value() ) {
+            slotServiceInitialized( true );
+        }
+        else {
+            kDebug() << "Service" << name() << "not initialized yet. Listening for signal.";
+            connect( d->serviceControlInterface, SIGNAL( serviceInitialized( bool ) ),
+                    this, SLOT( slotServiceInitialized( bool ) ),
+                    Qt::QueuedConnection );
+        }
     }
 }
 
