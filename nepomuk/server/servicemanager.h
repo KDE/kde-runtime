@@ -124,6 +124,7 @@ namespace Nepomuk {
         Private* const d;
 
         Q_PRIVATE_SLOT( d, void _k_serviceInitialized(ServiceController*) )
+        Q_PRIVATE_SLOT( d, void _k_serviceStopped(ServiceController*) )
     };
 }
 

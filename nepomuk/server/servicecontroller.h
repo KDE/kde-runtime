@@ -78,15 +78,21 @@ namespace Nepomuk {
          */
         void serviceInitialized( ServiceController* );
         
+        /**
+         * Emitted once the service has stopped, i.e.
+         * once its DBus service is gone.
+         */
+        void serviceStopped( ServiceController* );
+
     private Q_SLOTS:
         void slotProcessFinished( bool );
         void slotServiceRegistered( const QString& serviceName );
         void slotServiceUnregistered( const QString& serviceName );
         void slotServiceInitialized( bool success );
         
-    private:
         void createServiceControlInterface();
 
+    private:
         class Private;
         Private* const d;
     };

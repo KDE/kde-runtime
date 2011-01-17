@@ -170,6 +170,12 @@ public:
      */
     void _k_serviceInitialized( ServiceController* );
 
+    /**
+     * Slot connected to all ServiceController::serviceStopped
+     * signals.
+     */
+    void _k_serviceStopped( ServiceController* );
+
 private:
     bool m_initialized;
     ServiceManager* q;
@@ -198,6 +204,8 @@ void Nepomuk::ServiceManager::Private::buildServiceMap()
                 ServiceController* sc = new ServiceController( service, q );
                 connect( sc, SIGNAL(serviceInitialized(ServiceController*)),
                          q, SLOT(_k_serviceInitialized(ServiceController*)) );
+                connect( sc, SIGNAL(serviceStopped(ServiceController*)),
+                         q, SLOT(_k_serviceStopped(ServiceController*)) );
                 services.insert( sc->name(), sc );
             }
         }
@@ -226,7 +234,7 @@ void Nepomuk::ServiceManager::Private::startService( ServiceController* sc )
         bool needToQueue = false;
         foreach( const QString &dependency, dependencyTree[sc->name()] ) {
             ServiceController* depSc = findService( dependency );
-            if ( !depSc->isInitialized() ) {
+            if ( !needToQueue && !depSc->isInitialized() ) {
                 kDebug() << "Queueing" << sc->name() << "due to dependency" << dependency;
                 pendingServices.insert( sc );
                 needToQueue = true;
@@ -247,16 +255,13 @@ void Nepomuk::ServiceManager::Private::startService( ServiceController* sc )
 
 bool Nepomuk::ServiceManager::Private::stopService( ServiceController* sc )
 {
-    // make sure the service is not scheduled to be started later anymore
-    pendingServices.remove( sc );
+    // shut down any service depending of this one first
+    foreach( const QString &dep, dependencyTree.servicesDependingOn( sc->name() ) ) {
+        stopService( services[dep] );
+    }
 
     // stop it if already running
     if( sc->isRunning() ) {
-        // shut down any service depending of this one first
-        foreach( const QString &dep, dependencyTree.servicesDependingOn( sc->name() ) ) {
-            stopService( services[dep] );
-        }
-
         sc->stop();
         return true;
     }
@@ -268,6 +273,8 @@ bool Nepomuk::ServiceManager::Private::stopService( ServiceController* sc )
 
 void Nepomuk::ServiceManager::Private::startPendingServices( ServiceController* newService )
 {
+    kDebug() << newService->name() << pendingServices;
+
     // check the list of pending services and start as many as possible
     // (we can start services whose dependencies are initialized)
     QList<ServiceController*> sl = pendingServices.toList();
@@ -284,12 +291,27 @@ void Nepomuk::ServiceManager::Private::startPendingServices( ServiceController* 
 void Nepomuk::ServiceManager::Private::_k_serviceInitialized( ServiceController* sc )
 {
     kDebug() << "Service initialized:" << sc->name();
-    if ( !pendingServices.isEmpty() ) {
-        startPendingServices( sc );
-    }
+
+    startPendingServices( sc );
     emit q->serviceInitialized( sc->name() );
 }
 
+
+void Nepomuk::ServiceManager::Private::_k_serviceStopped( ServiceController* sc )
+{
+    kDebug() << "Service stopped:" << sc->name();
+
+    // stop and queue all services depending on the stopped one
+    // this will re-trigger this method until all reverse-deps are stopped
+    foreach( const QString &dep, dependencyTree.servicesDependingOn( sc->name() ) ) {
+        ServiceController* depsc = services[dep];
+        if( depsc->isRunning() ) {
+            kDebug() << "Stopping and queuing rev-dep" << depsc->name();
+            depsc->stop();
+            pendingServices.insert( depsc );
+        }
+    }
+}
 
 
 Nepomuk::ServiceManager::ServiceManager( QObject* parent )
@@ -350,6 +372,9 @@ bool Nepomuk::ServiceManager::startService( const QString& name )
 bool Nepomuk::ServiceManager::stopService( const QString& name )
 {
     if( ServiceController* sc = d->findService( name ) ) {
+        // make sure the service is not scheduled to be started later anymore
+        d->pendingServices.remove( sc );
+
         return d->stopService( sc );
     }
     return false;

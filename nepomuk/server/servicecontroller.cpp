@@ -305,6 +305,9 @@ void Nepomuk::ServiceController::slotServiceUnregistered( const QString& service
     // on its restart-on-crash feature and have to do it manually. Afterwards it is back
     // to normal
     if( serviceName == dbusServiceName( name() ) ) {
+
+        emit serviceStopped( this );
+
         if( d->attached && d->started ) {
             kDebug() << "Attached service" << name() << "went down. Restarting ourselves.";
             start();
