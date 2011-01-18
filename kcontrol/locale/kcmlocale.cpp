@@ -95,6 +95,8 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
     // User has clicked Install button, trigger distro specific install routine
     connect( m_ui->m_buttonTranslationsInstall,  SIGNAL( clicked() ),
              this,                               SLOT( installTranslations() ) );
+    // Hide the Install button, this will be activated by those distros that support this feature.
+    m_ui->m_buttonTranslationsInstall->setHidden( true );
     // User has clicked Default button, resest lists to Defaults
     connect( m_ui->m_buttonDefaultTranslations,    SIGNAL( clicked() ),
              this,                               SLOT( defaultTranslations() ) );
