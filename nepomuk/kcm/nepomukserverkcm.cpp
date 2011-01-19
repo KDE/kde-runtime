@@ -104,8 +104,7 @@ namespace {
     enum BackupFrequency {
         DisableAutomaticBackups = 0,
         DailyBackup = 1,
-        WeeklyBackup = 2,
-        MonthlyBackup = 3
+        WeeklyBackup = 2
     };
 
 
@@ -115,8 +114,6 @@ namespace {
             return QLatin1String("daily");
         case WeeklyBackup:
             return QLatin1String("weekly");
-        case MonthlyBackup:
-            return QLatin1String("monthly");
         default:
             return QLatin1String("disabled");
         }
@@ -196,7 +193,6 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
         m_comboBackupFrequency->addItem(i18nc("@item:inlistbox", "Disable Automatic Backups"));
         m_comboBackupFrequency->addItem(i18nc("@item:inlistbox", "Daily Backup"));
         m_comboBackupFrequency->addItem(i18nc("@item:inlistbox", "Weekly Backup"));
-        m_comboBackupFrequency->addItem(i18nc("@item:inlistbox", "Monthly Backup"));
 
         for( int i = 1; i <= 7; ++i )
             m_comboBackupDay->addItem(KGlobal::locale()->calendar()->weekDayName(i), i);
