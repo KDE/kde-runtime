@@ -84,9 +84,9 @@ namespace Nepomuk {
         void slotServiceUnregistered( const QString& serviceName );
         void slotServiceInitialized( bool success );
         
-    private:
         void createServiceControlInterface();
 
+    private:
         class Private;
         Private* const d;
     };
