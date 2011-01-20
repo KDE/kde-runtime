@@ -28,13 +28,13 @@ Item {
     signal clicked
 
     id: button
-    opacity: 0
 
     PlasmaCore.FrameSvgItem {
         id: surface
         anchors.fill: parent
         imagePath: "widgets/button"
         prefix: "normal"
+        opacity: 0
         Behavior on opacity {
             PropertyAnimation { duration: 250 }
         }
