@@ -47,6 +47,8 @@ public:
      */
     bool isVisible( const QUrl& type ) const;
 
+    QList<QUrl> visibleTypes() const;
+
 private:
     Soprano::Model* m_model;
     class TypeVisibilityNode;
