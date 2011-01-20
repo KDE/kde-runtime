@@ -28,6 +28,7 @@ Item {
     signal clicked
 
     id: button
+    opacity: 0
 
     PlasmaCore.FrameSvgItem {
         id: surface
