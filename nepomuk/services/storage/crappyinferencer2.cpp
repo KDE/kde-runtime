@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2010-2011 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -41,70 +41,6 @@
 #include <kdebug.h>
 
 
-/**
- * Simple helper thread which updates the subclass and visibility inference on all resources
- * in the database. This is done in a separate thread since it takes up to half an hour the first time.
- */
-class CrappyInferencer2::UpdateAllResourcesThread : public QThread
-{
-public:
-    UpdateAllResourcesThread( CrappyInferencer2* parent )
-        : QThread(parent),
-          m_canceled(false),
-          m_model(parent) {
-    }
-
-    void cancel() {
-        kDebug();
-        m_canceled = true;
-    }
-
-    void run() {
-        kDebug();
-        m_canceled = false;
-#ifndef NDEBUG
-        QTime timer;
-        timer.start();
-        int cnt = 0;
-#endif
-        // for performance improvement we only handle resources in InstanceBases. The rest we almost never query anyway.
-        Soprano::QueryResultIterator it = m_model->executeQuery( QString::fromLatin1("select distinct ?r where { graph ?g { ?r a ?t . } . "
-                                                                                     "FILTER(?g != %1) . "
-                                                                                     "{ ?g a %2 . } UNION { ?g a %3 . } . }" )
-                                                                .arg( Soprano::Node::resourceToN3( m_model->crappyInferenceContext() ),
-                                                                      Soprano::Node::resourceToN3( Soprano::Vocabulary::NRL::DiscardableInstanceBase() ),
-                                                                      Soprano::Node::resourceToN3( Soprano::Vocabulary::NRL::InstanceBase() ) ),
-                                                                Soprano::Query::QueryLanguageSparql );
-        while( !m_canceled && it.next() ) {
-#ifndef NDEBUG
-            ++cnt;
-#endif
-            const QUrl res = it[0].uri();
-            // we skip already handled resources (the Virtuoso query engine seems to choke when we add the bif:exists condition in the query above)
-            Soprano::QueryResultIterator typeIt = m_model->executeQuery( QString::fromLatin1("select distinct ?t where { %1 a ?t . "
-                                                                                             "FILTER(!bif:exists((select (1) where { graph %2 { %1 a ?tt . } . }))) . }")
-                                                                        .arg( Soprano::Node::resourceToN3(res),
-                                                                              Soprano::Node::resourceToN3( m_model->crappyInferenceContext() )),
-                                                                        Soprano::Query::QueryLanguageSparql );
-            QSet<QUrl> baseTypes;
-            while(typeIt.next()) {
-                baseTypes << typeIt[0].uri();
-            }
-            if( !baseTypes.isEmpty() ) {
-                m_model->addInferenceStatements( res, baseTypes );
-            }
-        }
-#ifndef NDEBUG
-        kDebug() << cnt << "resources updated. Elapsed:" << timer.elapsed();
-#endif
-    }
-
-private:
-    bool m_canceled;
-    CrappyInferencer2* m_model;
-};
-
-
 class CrappyInferencer2::Private
 {
 public:
@@ -133,6 +69,86 @@ public:
     QUrl m_inferenceContext;
 
     CrappyInferencer2* q;
+};
+
+
+/**
+ * Simple helper thread which updates the subclass and visibility inference on all resources
+ * in the database. This is done in a separate thread since it takes up to half an hour the first time.
+ */
+class CrappyInferencer2::UpdateAllResourcesThread : public QThread
+{
+public:
+    UpdateAllResourcesThread( CrappyInferencer2* parent )
+        : QThread(parent),
+          m_canceled(false),
+          m_model(parent) {
+    }
+
+    void cancel() {
+        kDebug();
+        m_canceled = true;
+    }
+
+    void run() {
+        kDebug();
+        m_canceled = false;
+#ifndef NDEBUG
+        QTime timer;
+        timer.start();
+#endif
+
+        // Update visibility for all visible resources the fast way
+        // resources that do not have visibility set are treated as invisible, thus there is no need
+        // to write their visibility value
+        Q_FOREACH(const QUrl& type, m_model->d->m_typeVisibilityTree->visibleTypes()) {
+            const QString query = QString::fromLatin1("insert into graph %1 { ?r %2 1 . } where { "
+                                                      "graph ?g { ?r a %3 . } . "
+                                                      "FILTER(?g!=%1) . "
+                                                      "FILTER(!bif:exists((select (1) where { ?r %2 ?v . }))) . } ")
+                    .arg( Soprano::Node::resourceToN3( m_model->crappyInferenceContext() ),
+                          Soprano::Node::resourceToN3( Soprano::Vocabulary::NAO::userVisible() ),
+                          Soprano::Node::resourceToN3( type ) );
+            m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+        }
+
+#ifndef NDEBUG
+        kDebug() << "All resources with visible type updated. Elapsed:" << timer.elapsed()/1000.0 << "sec";
+#endif
+
+        // update the resource type inference on all resources that were created before KDE 4.6.1
+        Soprano::QueryResultIterator it = m_model->executeQuery(QString::fromLatin1("select distinct ?t where { ?t a %1 . "
+                                                                                    "FILTER(bif:exists((select (1) where { graph ?g { ?r a ?t . } . FILTER(?g!=%2) . }))) . }")
+                                                                .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::Class()),
+                                                                     Soprano::Node::resourceToN3(m_model->crappyInferenceContext())),
+                                                                Soprano::Query::QueryLanguageSparql);
+        while(it.next()) {
+            const QUrl type = it["t"].uri();
+            const QSet<QUrl> superClasses = m_model->d->m_superClasses[type];
+            QString superTypeTerms;
+            Q_FOREACH(const QUrl& superType, superClasses) {
+                superTypeTerms += QString::fromLatin1("?r a %1 . ").arg(Soprano::Node::resourceToN3(superType));
+            }
+
+            // we cannot restrict to resources that already have types in the crappy inferencer 2 graph
+            // since one resource could have more than one type and thus, needs to be updated with more
+            // than one query here.
+            const QString query = QString::fromLatin1("insert into graph %1 { %2 } where { "
+                                                      "graph ?g { ?r a %3 . } . FILTER(?g!=%1) . }")
+                    .arg(Soprano::Node::resourceToN3( m_model->crappyInferenceContext()),
+                         superTypeTerms,
+                         Soprano::Node::resourceToN3(type));
+            m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+        }
+
+#ifndef NDEBUG
+        kDebug() << "All resources' subClassOf inference updated. Elapsed:" << timer.elapsed()/1000.0 << "sec";
+#endif
+    }
+
+private:
+    bool m_canceled;
+    CrappyInferencer2* m_model;
 };
 
 
@@ -521,9 +537,8 @@ void CrappyInferencer2::addInferenceStatements( const QUrl& resource, const QSet
     }
 
     // the visibility can only change if we add a visible type
-    // otherwise there is no need to perform the additional query
     if( haveVisibleType ) {
-        setVisibility( resource, d->isVisibleFromTypes(d->queryResourceTypes(resource)) );
+        setVisibility( resource, true );
     }
 }
 
@@ -540,6 +555,7 @@ void CrappyInferencer2::removeInferenceStatements( const QUrl& resource, const Q
     removeInferenceStatements( resource, uris );
 }
 
+// Always called *after* removing the actual statements
 void CrappyInferencer2::removeInferenceStatements(const QUrl &resource, const QList<QUrl> &types)
 {
     // we cannot simply remove all super types since the resource might still have types that are somewhere in that hierarchy
@@ -570,7 +586,7 @@ void CrappyInferencer2::removeInferenceStatements(const QUrl &resource, const QL
     // remove the visibility if necessary
     // only be removing visible types we can change the actual visibility
     if( haveVisibleType ) {
-        setVisibility( resource, d->isVisibleFromTypes(correctTypes) );
+        setVisibility( resource, !correctTypes.isEmpty() && d->isVisibleFromTypes(correctTypes) );
     }
 }
 
@@ -584,10 +600,10 @@ void CrappyInferencer2::setVisibility(const QUrl &resource, bool visible)
                                     crappyInferenceContext());
     }
     else {
-        parentModel()->removeStatement(resource,
-                                       Soprano::Vocabulary::NAO::userVisible(),
-                                       Soprano::LiteralValue(1),
-                                       crappyInferenceContext());
+        parentModel()->removeAllStatements(resource,
+                                           Soprano::Vocabulary::NAO::userVisible(),
+                                           Soprano::Node(),
+                                           crappyInferenceContext());
     }
 }
 

@@ -99,11 +99,8 @@ void TypeVisibilityTree::rebuildTree()
 
     const QString query
         = QString::fromLatin1( "select distinct ?r ?p ?v where { "
-                               "{ ?r a rdfs:Class . "
-                               "OPTIONAL { ?r rdfs:subClassOf ?p . ?p a rdfs:Class . } . } "
-                               "UNION "
-                               "{ ?r a rdf:Property . "
-                               "OPTIONAL { ?r rdfs:subPropertyOf ?p . ?p a rdf:Property . } . } "
+                               "?r a rdfs:Class . "
+                               "OPTIONAL { ?r rdfs:subClassOf ?p . ?p a rdfs:Class . } . "
                                "OPTIONAL { ?r %1 ?v . } . "
                                "FILTER(?r!=rdfs:Resource) . "
                                "}" )
@@ -180,4 +177,15 @@ bool TypeVisibilityTree::isVisible(const QUrl &type) const
         kDebug() << "Could not find type" << type << "in tree. Defaulting to visible.";
         return true;
     }
+}
+
+QList<QUrl> TypeVisibilityTree::visibleTypes() const
+{
+    QList<QUrl> types;
+    for( QHash<QUrl, bool>::const_iterator it = m_visibilityHash.constBegin();
+         it != m_visibilityHash.constEnd(); ++it ) {
+        if( it.value() )
+            types << it.key();
+    }
+    return types;
 }
