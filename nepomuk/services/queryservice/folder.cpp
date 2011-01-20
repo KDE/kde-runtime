@@ -93,8 +93,10 @@ void Nepomuk::Query::Folder::update()
         QueryService::searchThreadPool()->start( m_currentSearchRunnable, 1 );
 
         // we only need the count for initialListingDone
+        // count with a limit is pointless since Virtuoso will ignore the limit
         if ( !m_initialListingDone &&
-             !m_isSparqlQueryFolder ) {
+             !m_isSparqlQueryFolder &&
+             m_query.limit() == 0 ) {
             m_currentCountQueryRunnable = new CountQueryRunnable( this );
             QueryService::searchThreadPool()->start( m_currentCountQueryRunnable, 0 );
         }
