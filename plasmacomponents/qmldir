@@ -4,3 +4,4 @@ Frame 0.1 Frame.qml
 IconWidget 0.1 IconWidget.qml
 PushButton 0.1 PushButton.qml
 ScrollBar 0.1 ScrollBar.qml
+ToolButton 0.1 ToolButton.qml
