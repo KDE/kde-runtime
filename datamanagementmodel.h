@@ -141,7 +141,8 @@ public Q_SLOTS:
      * \param additionalMetadata Additional metadata for the added resources. This can include
      * such details as the creator of the data or details on the method of data recovery.
      * One typical usecase is that the file indexer uses (rdf:type, nrl:DiscardableInstanceBase)
-     * to state that the provided information can be recreated at any time.
+     * to state that the provided information can be recreated at any time. Only built-in types
+     * such as int, string, or url are supported.
      */
     void mergeResources(const SimpleResourceGraph& resources,
                         const QString& app,
@@ -157,6 +158,14 @@ public Q_SLOTS:
     //@}
 
 private:
+    QUrl createGraph(const QString& app, const QHash<QUrl, QVariant>& additionalMetadata);
+
+    enum UriType {
+        GraphUri,
+        ResourceUri
+    };
+    QUrl createUri(UriType type);
+
     class Private;
     Private* const d;
 };

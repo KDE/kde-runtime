@@ -20,11 +20,40 @@
 */
 
 #include "datamanagementmodel.h"
+#include "classandpropertytree.h"
+
+#include <Soprano/Vocabulary/NRL>
+#include <Soprano/Vocabulary/NAO>
+#include <Soprano/Vocabulary/RDF>
+#include <Soprano/Vocabulary/RDFS>
+#include <Soprano/QueryResultIterator>
+
+#include <QtCore/QHash>
+#include <QtCore/QUrl>
+#include <QtCore/QVariant>
+#include <QtCore/QDateTime>
+#include <QtCore/QUuid>
+
+
+namespace {
+Soprano::Node variantToNode(const QVariant& v) {
+    if(v.type() == QVariant::Url) {
+        return v.toUrl();
+    }
+    else {
+        Soprano::LiteralValue slv(v);
+        if(slv.isValid())
+            return slv;
+        else
+            return Soprano::Node();
+    }
+}
+}
 
 class Nepomuk::DataManagementModel::Private
 {
 public:
-
+    ClassAndPropertyTree m_classAndPropertyTree;
 };
 
 Nepomuk::DataManagementModel::DataManagementModel(Soprano::Model* model, QObject *parent)
@@ -117,6 +146,96 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
 Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(const QList<QUrl> &resources, bool includeSubResources)
 {
     return SimpleResourceGraph();
+}
+
+QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
+{
+    QHash<QUrl, Soprano::Node> graphMetaData;
+
+    // determine the graph type
+    bool haveGraphType = false;
+    for(QHash<QUrl, QVariant>::const_iterator it = additionalMetadata.constBegin();
+        it != additionalMetadata.constEnd(); ++it) {
+        const QUrl& property = it.key();
+
+        if(property == Soprano::Vocabulary::RDF::type()) {
+            // check if it is a valid type
+            if(!it.value().type() == QVariant::Url) {
+                // FIXME: set some error
+                return QUrl();
+            }
+            else {
+                if(d->m_classAndPropertyTree.isSubClassOf(it.value().toUrl(), Soprano::Vocabulary::NRL::Graph()))
+                    haveGraphType = true;
+            }
+        }
+
+        else if(property == Soprano::Vocabulary::NAO::created()) {
+            if(!it.value().type() == QVariant::DateTime) {
+                // FIXME: set some error
+                return QUrl();
+            }
+        }
+
+        Soprano::Node node = variantToNode(it.value());
+        if(node.isValid()) {
+            graphMetaData.insert(it.key(), node);
+        }
+        else {
+            // FIXME: set some error
+            return QUrl();
+        }
+    }
+
+    // add missing metadata
+    if(!haveGraphType) {
+        graphMetaData.insert(Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::InstanceBase());
+    }
+    if(!graphMetaData.contains(Soprano::Vocabulary::NAO::created())) {
+        graphMetaData.insert(Soprano::Vocabulary::NAO::created(), Soprano::LiteralValue(QDateTime::currentDateTime()));
+    }
+
+    // FIXME: handle app
+
+    const QUrl graph = createUri(GraphUri);
+    const QUrl metadatagraph = createUri(GraphUri);
+
+    // add metadata graph itself
+    FilterModel::addStatement( metadatagraph, Soprano::Vocabulary::NRL::coreGraphMetadataFor(), graph, metadatagraph );
+    FilterModel::addStatement( metadatagraph, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::GraphMetadata(), metadatagraph );
+
+    for(QHash<QUrl, Soprano::Node>::const_iterator it = graphMetaData.constBegin();
+        it != graphMetaData.constEnd(); ++it) {
+        FilterModel::addStatement(graph, it.key(), it.value(), metadatagraph);
+    }
+
+    return graph;
+}
+
+QUrl Nepomuk::DataManagementModel::createUri(Nepomuk::DataManagementModel::UriType type)
+{
+    QString typeToken;
+    if(type == GraphUri)
+        typeToken = QLatin1String("ctx");
+    else
+        typeToken = QLatin1String("res");
+
+    while( 1 ) {
+        const QString uuid = QUuid::createUuid().toString().mid(1, uuid.length()-2);;
+        const QUrl uri = QUrl( QLatin1String("nepomuk:/") + typeToken + QLatin1String("/") + uuid );
+        if ( !FilterModel::executeQuery( QString::fromLatin1("ask where { "
+                                                             "{ %1 ?p1 ?o1 . } "
+                                                             "UNION "
+                                                             "{ ?s2 %1 ?o2 . } "
+                                                             "UNION "
+                                                             "{ ?s3 ?p3 %1 . } "
+                                                             "UNION "
+                                                             "{ graph %1 { ?s4 ?4 ?o4 . } . } "
+                                                             "}")
+                                        .arg( Soprano::Node::resourceToN3(uri) ), Soprano::Query::QueryLanguageSparql ).boolValue() ) {
+            return uri;
+        }
+    }
 }
 
 #include "datamanagementmodel.moc"
