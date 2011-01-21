@@ -51,5 +51,18 @@
       <arg name="properties" type="as" direction="in"/>
       <arg name="app" type="s" direction="in"/>
     </method>
+    <method name="mergeResources">
+      <arg name="resources" type="a(sa{sv})" direction="in"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Nepomuk::SimpleResourceGraph"/>
+      <arg name="app" type="s" direction="in"/>
+      <arg name="additionalMetadata" type="a{sv}" direction="in"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In2" value="QHash&lt;QString, QVariant&gt;"/>
+    </method>
+    <method name="describeResources">
+      <arg name="resources" type="as" direction="in"/>
+      <arg name="includeSubResources" type="b" direction="in"/>
+      <arg type="a(sa{sv})" direction="out"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Nepomuk::SimpleResourceGraph"/>
+    </method>
   </interface>
 </node>

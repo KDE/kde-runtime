@@ -43,8 +43,6 @@ Nepomuk::DataManagementService::DataManagementService(QObject *parent, const QVa
     : Service(parent),
       d(new Private())
 {
-    qDBusRegisterMetaType<QUrl>();
-    qDBusRegisterMetaType<QList<QUrl> >();
     qDBusRegisterMetaType<QVariant>();
     qDBusRegisterMetaType<Nepomuk::PropertyHash>();
     qDBusRegisterMetaType<Nepomuk::SimpleResource>();

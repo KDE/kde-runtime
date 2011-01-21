@@ -9,8 +9,8 @@
  * before re-generating it.
  */
 
-#ifndef DATAMANAGEMENTADAPTOR_H_1295626440
-#define DATAMANAGEMENTADAPTOR_H_1295626440
+#ifndef DATAMANAGEMENTADAPTOR_H_1295631236
+#define DATAMANAGEMENTADAPTOR_H_1295631236
 
 #include <QtCore/QObject>
 #include <QtDBus/QtDBus>
@@ -79,6 +79,19 @@ class DataManagementAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"as\" name=\"properties\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"app\"/>\n"
 "    </method>\n"
+"    <method name=\"mergeResources\">\n"
+"      <arg direction=\"in\" type=\"a(sa{sv})\" name=\"resources\"/>\n"
+"      <annotation value=\"Nepomuk::SimpleResourceGraph\" name=\"com.trolltech.QtDBus.QtTypeName.In0\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"app\"/>\n"
+"      <arg direction=\"in\" type=\"a{sv}\" name=\"additionalMetadata\"/>\n"
+"      <annotation value=\"QHash&lt;QString, QVariant>\" name=\"com.trolltech.QtDBus.QtTypeName.In2\"/>\n"
+"    </method>\n"
+"    <method name=\"describeResources\">\n"
+"      <arg direction=\"in\" type=\"as\" name=\"resources\"/>\n"
+"      <arg direction=\"in\" type=\"b\" name=\"includeSubResources\"/>\n"
+"      <arg direction=\"out\" type=\"a(sa{sv})\"/>\n"
+"      <annotation value=\"Nepomuk::SimpleResourceGraph\" name=\"com.trolltech.QtDBus.QtTypeName.Out0\"/>\n"
+"    </method>\n"
 "  </interface>\n"
         "")
 public:
@@ -89,6 +102,8 @@ public: // PROPERTIES
 public Q_SLOTS: // METHODS
     void addProperty(const QString &resources, const QString &property, const QVariantList &values, const QString &app);
     QString createResource(const QStringList &types, const QString &label, const QString &description, const QString &app);
+    Nepomuk::SimpleResourceGraph describeResources(const QStringList &resources, bool includeSubResources);
+    void mergeResources(Nepomuk::SimpleResourceGraph resources, const QString &app, const QHash<QString, QVariant> &additionalMetadata);
     void removeDataByApplication(const QString &app, bool force);
     void removeDataByApplication(const QStringList &resources, const QString &app, bool force);
     void removeProperties(const QStringList &resources, const QStringList &properties, const QString &app);

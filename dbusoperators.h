@@ -27,20 +27,6 @@
 
 #include "simpleresource.h"
 
-QDBusArgument& operator<<( QDBusArgument& arg, const QUrl& url )
-{
-    arg << QString::fromAscii( url.toEncoded() );
-    return arg;
-}
-
-const QDBusArgument& operator>>( const QDBusArgument& arg, QUrl& url )
-{
-    QString s;
-    arg >> s;
-    url = QUrl::fromEncoded( s.toAscii() );
-    return arg;
-}
-
 QDBusArgument& operator<<( QDBusArgument& arg, const QVariant& v )
 {
     return arg << QDBusVariant(v);
@@ -54,10 +40,41 @@ const QDBusArgument& operator>>( const QDBusArgument& arg, QVariant& v )
     return arg;
 }
 
+QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::PropertyHash& ph )
+{
+    arg.beginMap( QVariant::String, qMetaTypeId<QDBusVariant>());
+    for(Nepomuk::PropertyHash::const_iterator it = ph.constBegin();
+        it != ph.constEnd(); ++it) {
+        arg.beginMapEntry();
+        arg << QString::fromAscii(it.key().toEncoded());
+        arg << QDBusVariant(it.value());
+        arg.endMapEntry();
+    }
+    arg.endMap();
+    return arg;
+}
+
+const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::PropertyHash& ph )
+{
+    ph.clear();
+    arg.beginMap();
+    while(!arg.atEnd()) {
+        QString key;
+        QDBusVariant value;
+        arg.beginMapEntry();
+        arg >> key >> value;
+        ph.insert( QUrl::fromEncoded(key.toAscii()), value.variant() );
+        arg.endMapEntry();
+    }
+    arg.endMap();
+    return arg;
+}
+
 QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::SimpleResource& res )
 {
     arg.beginStructure();
-    arg << res.m_uri << res.m_properties;
+    arg << QString::fromAscii(res.m_uri.toEncoded());
+    arg << res.m_properties;
     arg.endStructure();
     return arg;
 }
@@ -65,7 +82,9 @@ QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::SimpleResource& re
 const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::SimpleResource& res )
 {
     arg.beginStructure();
-    arg >> res.m_uri;
+    QString uriS;
+    arg >> uriS;
+    res.m_uri = QUrl::fromEncoded(uriS.toAscii());
     arg >> res.m_properties;
     arg.endStructure();
     return arg;

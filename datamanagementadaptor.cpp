@@ -47,6 +47,20 @@ QString DataManagementAdaptor::createResource(const QStringList &types, const QS
     return out0;
 }
 
+Nepomuk::SimpleResourceGraph DataManagementAdaptor::describeResources(const QStringList &resources, bool includeSubResources)
+{
+    // handle method call org.kde.nepomuk.DataManagement.describeResources
+    Nepomuk::SimpleResourceGraph out0;
+    QMetaObject::invokeMethod(parent(), "describeResources", Q_RETURN_ARG(Nepomuk::SimpleResourceGraph, out0), Q_ARG(QStringList, resources), Q_ARG(bool, includeSubResources));
+    return out0;
+}
+
+void DataManagementAdaptor::mergeResources(Nepomuk::SimpleResourceGraph resources, const QString &app, const QHash<QString, QVariant> &additionalMetadata)
+{
+    // handle method call org.kde.nepomuk.DataManagement.mergeResources
+    QMetaObject::invokeMethod(parent(), "mergeResources", Q_ARG(Nepomuk::SimpleResourceGraph, resources), Q_ARG(QString, app), Q_ARG(QHash<QString, QVariant>, additionalMetadata));
+}
+
 void DataManagementAdaptor::removeDataByApplication(const QString &app, bool force)
 {
     // handle method call org.kde.nepomuk.DataManagement.removeDataByApplication
