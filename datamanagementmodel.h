@@ -32,7 +32,7 @@ class DataManagementModel : public Soprano::FilterModel
     Q_OBJECT
 
 public:
-    DataManagementModel(QObject *parent = 0);
+    DataManagementModel(Soprano::Model* model, QObject *parent = 0);
     ~DataManagementModel();
 
 public Q_SLOTS:

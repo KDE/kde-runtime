@@ -27,8 +27,8 @@ public:
 
 };
 
-Nepomuk::DataManagementModel::DataManagementModel(QObject *parent)
-    : Soprano::FilterModel(),
+Nepomuk::DataManagementModel::DataManagementModel(Soprano::Model* model, QObject *parent)
+    : Soprano::FilterModel(model),
       d(new Private())
 {
     setParent(parent);

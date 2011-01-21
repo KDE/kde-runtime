@@ -20,11 +20,24 @@
 */
 
 #include "datamanagementservice.h"
+#include "datamanagementmodel.h"
+#include "dbusoperators.h"
+
+#include <QtDBus/QDBusMetaType>
+#include <QtDBus/QDBusConnection>
+
+namespace Nepomuk {
+typedef QHash<QUrl, QVariant> PropertyHash;
+}
+
+Q_DECLARE_METATYPE(QList<QUrl>)
+Q_DECLARE_METATYPE(Nepomuk::PropertyHash)
+Q_DECLARE_METATYPE(Nepomuk::SimpleResource)
 
 class Nepomuk::DataManagementService::Private
 {
 public:
-
+    DataManagementModel* m_model;
 };
 
 
@@ -32,6 +45,13 @@ Nepomuk::DataManagementService::DataManagementService(QObject *parent, const QVa
     : Service(parent),
       d(new Private())
 {
+    qDBusRegisterMetaType<QUrl>();
+    qDBusRegisterMetaType<QList<QUrl> >();
+    qDBusRegisterMetaType<Nepomuk::PropertyHash>();
+    qDBusRegisterMetaType<Nepomuk::SimpleResource>();
+
+    d->m_model = new DataManagementModel(mainModel(), this);
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagementmodel"), d->m_model, QDBusConnection::ExportAllSlots);
 }
 
 
