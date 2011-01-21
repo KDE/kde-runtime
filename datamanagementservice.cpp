@@ -26,9 +26,6 @@
 #include <QtDBus/QDBusMetaType>
 #include <QtDBus/QDBusConnection>
 
-namespace Nepomuk {
-typedef QHash<QUrl, QVariant> PropertyHash;
-}
 
 Q_DECLARE_METATYPE(QList<QUrl>)
 Q_DECLARE_METATYPE(Nepomuk::PropertyHash)
@@ -47,6 +44,7 @@ Nepomuk::DataManagementService::DataManagementService(QObject *parent, const QVa
 {
     qDBusRegisterMetaType<QUrl>();
     qDBusRegisterMetaType<QList<QUrl> >();
+    qDBusRegisterMetaType<QVariant>();
     qDBusRegisterMetaType<Nepomuk::PropertyHash>();
     qDBusRegisterMetaType<Nepomuk::SimpleResource>();
 

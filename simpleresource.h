@@ -29,14 +29,14 @@
 
 namespace Nepomuk {
 
+typedef QHash<QUrl, QVariant> PropertyHash;
+
 class SimpleResource
 {
 public:
-    SimpleResource();
-
     QUrl m_uri;
 
-    QHash<QUrl, QVariant> m_properties;
+    PropertyHash m_properties;
 };
 
 typedef QList<SimpleResource> SimpleResourceGraph;
