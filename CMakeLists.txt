@@ -16,6 +16,7 @@ include_directories(
 
 set( datamanagement_BIN_SRCS
   datamanagementservice.cpp
+  datamanagementmodel.cpp
 )
 
 kde4_add_plugin(nepomukdatamanagementservice ${datamanagement_BIN_SRCS})
@@ -25,6 +26,7 @@ target_link_libraries(nepomukdatamanagementservice
   ${KDE4_KDEUI_LIBS}
   ${KDE4_KIO_LIBS}
   ${SOPRANO_LIBRARIES}
+  ${NEPOMUK_LIBRARIES}
 )
 
 install(TARGETS nepomukdatamanagementservice

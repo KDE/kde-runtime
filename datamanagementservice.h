@@ -28,139 +28,19 @@
 #include <QtCore/QUrl>
 #include <QtCore/QVariant>
 
+#include <Nepomuk/Service>
 
 /**
  *
  * \author Sebastian Trueg <trueg@kde.org>, Vishesh Handa <handa.vish@gmail.com>
  */
-class DataManagementService : public QObject
+class DataManagementService : public Nepomuk::Service
 {
     Q_OBJECT
 
 public:
-    DataManagementService(QObject *parent = 0);
+    DataManagementService(QObject *parent = 0, const QList<QVariant>& args = QList<QVariant>());
     ~DataManagementService();
-
-public Q_SLOTS:
-    /**
-     * \name Basic API
-     */
-    //@{
-    /**
-     * Add \p property with \p values to each resource
-     * from \p resources. Existing values will not be touched.
-     * If a cardinality is breached an error will be thrown.
-     */
-    void addProperty(const QList<QUrl>& resources,
-                     const QUrl& property,
-                     const QVariantList& values,
-                     const QString& app);
-
-    /**
-     * Set, ie. overwrite properties. Set \p property with
-     * \p values for each resource from \p resources. Existing
-     * values will be replaced.
-     */
-    void setProperty(const QList<QUrl>& resources,
-                     const QUrl& property,
-                     const QVariantList& values,
-                     const QString& app);
-
-    /**
-     * Remove the property \p property with \p values from each
-     * resource in \p resources.
-     */
-    void removeProperty(const QList<QUrl>& resources,
-                        const QUrl& property,
-                        const QVariantList& values,
-                        const QString& app);
-
-    /**
-     * Remove all statements involving any proerty from \p properties from
-     * all resources in \p resources.
-     */
-    void removeProperties(const QList<QUrl>& resources,
-                          const QList<QUrl>& properties,
-                          const QString& app);
-
-    /**
-     * Create a new resource with several \p types.
-     */
-    QUrl createResource(const QList<QUrl>& types,
-                        const QString& label,
-                        const QString& description,
-                        const QString& app);
-
-    /**
-     * Remove resources from the database.
-     * \param resources The URIs of the resources to be removed.
-     * \param app The calling application.
-     * \param force Force deletion of the resource and all sub-resources.
-     * If false sub-resources will be kept if they are still referenced by
-     * other resources.
-     */
-    void removeResources(const QList<QUrl>& resources,
-                         const QString& app,
-                         bool force);
-    //@}
-
-    /**
-     * \name Advanced API
-     */
-    //@{
-    /**
-     * Remove all information about resources from the database which
-     * have been created by a specific application.
-     * \param resources The URIs of the resources to be removed.
-     * \param app The application for which data should be removed.
-     * \param force Force deletion of the resource and all sub-resources.
-     * If false sub-resources will be kept if they are still referenced by
-     * other resources.
-     */
-    void removeDataByApplication(const QList<QUrl>& resources,
-                                 const QString& app,
-                                 bool force);
-
-    /**
-     * Remove all information from the database which
-     * has been created by a specific application.
-     * \param app The application for which data should be removed.
-     * \param force Force deletion of the resource and all sub-resources.
-     * If false sub-resources will be kept if they are still referenced by
-     * resources that have been created by other applications.
-     */
-    void removeDataByApplication(const QString& app,
-                                 bool force);
-
-    /**
-     * Remove all statements involving any proerty from \p properties from
-     * all resources in \p resources if it was created by application \p app.
-     */
-    void removePropertiesByApplication(const QList<QUrl>& resources,
-                                       const QList<QUrl>& properties,
-                                       const QString& app);
-
-    /**
-     * \param resources The resources to be merged. Blank nodes will be converted into new
-     * URIs (unless the corresponding resource already exists).
-     * \param app The calling application
-     * \param additionalMetadata Additional metadata for the added resources. This can include
-     * such details as the creator of the data or details on the method of data recovery.
-     * One typical usecase is that the file indexer uses (rdf:type, nrl:DiscardableInstanceBase)
-     * to state that the provided information can be recreated at any time.
-     */
-    void mergeResources(const SimpleResourceGraph& resources,
-                        const QString& app,
-                        const QHash<QUrl, QVariant>& additionalMetadata);
-
-    /**
-     * Describe a set of resources, i.e. retrieve all their properties.
-     * \param resources The resource URIs of the resources to describe.
-     * \param includeSubResources If \p true sub resources will be included.
-     */
-    SimpleResourceGraph describeResources(const QList<QUrl>& resources,
-                                          bool includeSubResources);
-    //@}
 
 private:
     class Private;

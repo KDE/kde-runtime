@@ -29,7 +29,7 @@ public:
 
 
 DataManagementService::DataManagementService(QObject *parent)
-    : QObject(parent),
+    : Service(parent),
       d(new Private())
 {
 }
@@ -40,60 +40,4 @@ DataManagementService::~DataManagementService()
     delete d;
 }
 
-void DataManagementService::addProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
-{
-    // 1. check cardinality (via property cache/tree)
-    // 2. if cardinality 1 (we only have 1 and none):
-    //    2.1. make sure values.count() == 1 - otherwise fail
-    //    2.2. make sure no value exists - otherwise fail
-    // 3. create a new graph with all the necessary data and the app
-    // 4. check if the app exists, if not create it in the new graph
-    // 5. add the new triples to the new graph
-    // 6. update resources' mtime
-
-}
-
-void DataManagementService::setProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
-{
-    // 1. check cardinality (via property cache/tree)
-    // 2. if cardinality 1 (we only have 1 and none):
-    //    2.1. make sure values.count() == 1 - otherwise fail
-    // 3. get existing values
-    // 4. make the diffs between existing and new ones
-    // 5. remove the ones that are not valid anymore
-    // 6. create a new graph with all the necessary data and the app
-    // 7. check if the app exists, if not create it in the new graph
-    // 8. add the new triples to the new graph
-    // 9. update resources' mtime
-}
-
-void DataManagementService::removeProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
-{
-    // 1. remove the triples
-    // 2. remove trailing graphs
-    // 3. update resource mtime
-}
-
-void DataManagementService::removeProperties(const QList<QUrl> &resources, const QList<QUrl> &properties, const QString &app)
-{
-    // 1. remove the triples
-    // 2. remove trailing graphs
-    // 3. update resource mtime
-}
-
-QUrl DataManagementService::createResource(const QList<QUrl> &types, const QString &label, const QString &description, const QString &app)
-{
-    // 1. create an new graph
-    // 2. check if the app exists, if not create it in the new graph
-    // 3. create the new resource in the new graph
-    // 4. return the resource's URI
-}
-
-void DataManagementService::removeResources(const QList<QUrl> &resources, const QString &app, bool force)
-{
-    Q_UNUSED(app);
-    // 1. get all sub-resources and check if they are used by some other resource (not in the list of resources to remove)
-    //    for the latter one can use a bif:exists and a !filter(?s in <s>, <s>, ...) - based on the value of force
-    // 2. remove the resources and the sub-resources
-    // 3. drop trailing graphs (could be optimized by enumerating the graphs up front)
-}
+NEPOMUK_EXPORT_SERVICE( Nepomuk::DataManagementService, "nepomukdatamanagementservice" )
