@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=NepomukService
+X-KDE-Library=nepomukdatamanagementservice
+X-KDE-Nepomuk-autostart=true
+Name=Nepomuk Data Management Service
