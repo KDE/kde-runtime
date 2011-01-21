@@ -29,7 +29,8 @@
 
 QDBusArgument& operator<<( QDBusArgument& arg, const QUrl& url )
 {
-    return arg << QString::fromAscii( url.toEncoded() );
+    arg << QString::fromAscii( url.toEncoded() );
+    return arg;
 }
 
 const QDBusArgument& operator>>( const QDBusArgument& arg, QUrl& url )
@@ -56,11 +57,8 @@ const QDBusArgument& operator>>( const QDBusArgument& arg, QVariant& v )
 QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::SimpleResource& res )
 {
     arg.beginStructure();
-
     arg << res.m_uri << res.m_properties;
-
     arg.endStructure();
-
     return arg;
 }
 

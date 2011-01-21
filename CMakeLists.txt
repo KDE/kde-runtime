@@ -17,6 +17,7 @@ include_directories(
 set( datamanagement_BIN_SRCS
   datamanagementservice.cpp
   datamanagementmodel.cpp
+  datamanagementadaptor.cpp
 )
 
 kde4_add_plugin(nepomukdatamanagementservice ${datamanagement_BIN_SRCS})

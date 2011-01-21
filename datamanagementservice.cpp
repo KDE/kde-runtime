@@ -21,6 +21,7 @@
 
 #include "datamanagementservice.h"
 #include "datamanagementmodel.h"
+#include "datamanagementadaptor.h"
 #include "dbusoperators.h"
 
 #include <QtDBus/QDBusMetaType>
@@ -49,7 +50,8 @@ Nepomuk::DataManagementService::DataManagementService(QObject *parent, const QVa
     qDBusRegisterMetaType<Nepomuk::SimpleResource>();
 
     d->m_model = new DataManagementModel(mainModel(), this);
-    QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagementmodel"), d->m_model, QDBusConnection::ExportAllSlots);
+    (void)new DataManagementAdaptor( d->m_model );
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagementmodel"), d->m_model, QDBusConnection::ExportAdaptors);
 }
 
 

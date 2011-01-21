@@ -1,0 +1,55 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.nepomuk.DataManagement">
+    <method name="addProperty">
+      <arg name="resources" type="s" direction="in"/>
+      <arg name="property" type="s" direction="in"/>
+      <arg name="values" type="av" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+    </method>
+    <method name="setProperty">
+      <arg name="resources" type="s" direction="in"/>
+      <arg name="property" type="s" direction="in"/>
+      <arg name="values" type="av" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+    </method>
+    <method name="removeProperty">
+      <arg name="resources" type="as" direction="in"/>
+      <arg name="property" type="s" direction="in"/>
+      <arg name="values" type="av" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+    </method>
+    <method name="removeProperties">
+      <arg name="resources" type="as" direction="in"/>
+      <arg name="properties" type="as" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+    </method>
+    <method name="createResource">
+      <arg type="s" direction="out"/>
+      <arg name="types" type="as" direction="in"/>
+      <arg name="label" type="s" direction="in"/>
+      <arg name="description" type="s" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+    </method>
+    <method name="removeResources">
+      <arg name="resources" type="as" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+      <arg name="force" type="b" direction="in"/>
+    </method>
+    <method name="removeDataByApplication">
+      <arg name="resources" type="as" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+      <arg name="force" type="b" direction="in"/>
+    </method>
+    <method name="removeDataByApplication">
+      <arg name="app" type="s" direction="in"/>
+      <arg name="force" type="b" direction="in"/>
+    </method>
+    <method name="removePropertiesByApplication">
+      <arg name="resources" type="as" direction="in"/>
+      <arg name="properties" type="as" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+    </method>
+  </interface>
+</node>
