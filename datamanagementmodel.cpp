@@ -118,3 +118,5 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
 {
     return SimpleResourceGraph();
 }
+
+#include "datamanagementmodel.moc"

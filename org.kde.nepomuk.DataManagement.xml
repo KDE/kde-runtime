@@ -3,13 +3,13 @@
 <node>
   <interface name="org.kde.nepomuk.DataManagement">
     <method name="addProperty">
-      <arg name="resources" type="s" direction="in"/>
+      <arg name="resources" type="as" direction="in"/>
       <arg name="property" type="s" direction="in"/>
       <arg name="values" type="av" direction="in"/>
       <arg name="app" type="s" direction="in"/>
     </method>
     <method name="setProperty">
-      <arg name="resources" type="s" direction="in"/>
+      <arg name="resources" type="as" direction="in"/>
       <arg name="property" type="s" direction="in"/>
       <arg name="values" type="av" direction="in"/>
       <arg name="app" type="s" direction="in"/>

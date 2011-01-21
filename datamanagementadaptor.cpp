@@ -9,6 +9,8 @@
  */
 
 #include "datamanagementadaptor.h"
+#include "datamanagementmodel.h"
+
 #include <QtCore/QMetaObject>
 #include <QtCore/QByteArray>
 #include <QtCore/QList>
@@ -17,91 +19,93 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 
-/*
- * Implementation of adaptor class DataManagementAdaptor
- */
 
-DataManagementAdaptor::DataManagementAdaptor(QObject *parent)
-    : QDBusAbstractAdaptor(parent)
+namespace {
+inline QUrl decodeUrl(const QString& urlsString) {
+    return QUrl::fromEncoded(urlsString.toAscii());
+}
+
+QList<QUrl> decodeUrls(const QStringList& urlStrings) {
+    QList<QUrl> urls;
+    Q_FOREACH(const QString& urlString, urlStrings) {
+        urls << decodeUrl(urlString);
+    }
+    return urls;
+}
+
+inline QString encodeUrl(const QUrl& url) {
+    return QString::fromAscii(url.toEncoded());
+}
+}
+
+DataManagementAdaptor::DataManagementAdaptor(Nepomuk::DataManagementModel *parent)
+    : QDBusAbstractAdaptor(parent),
+      m_model(parent)
 {
-    // constructor
-    setAutoRelaySignals(true);
 }
 
 DataManagementAdaptor::~DataManagementAdaptor()
 {
-    // destructor
 }
 
-void DataManagementAdaptor::addProperty(const QString &resources, const QString &property, const QVariantList &values, const QString &app)
+void DataManagementAdaptor::addProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app)
 {
-    // handle method call org.kde.nepomuk.DataManagement.addProperty
-    QMetaObject::invokeMethod(parent(), "addProperty", Q_ARG(QString, resources), Q_ARG(QString, property), Q_ARG(QVariantList, values), Q_ARG(QString, app));
+    m_model->addProperty(decodeUrls(resources), decodeUrl(property), values, app);
 }
 
 QString DataManagementAdaptor::createResource(const QStringList &types, const QString &label, const QString &description, const QString &app)
 {
-    // handle method call org.kde.nepomuk.DataManagement.createResource
-    QString out0;
-    QMetaObject::invokeMethod(parent(), "createResource", Q_RETURN_ARG(QString, out0), Q_ARG(QStringList, types), Q_ARG(QString, label), Q_ARG(QString, description), Q_ARG(QString, app));
-    return out0;
+    return encodeUrl(m_model->createResource(decodeUrls(types), label, description, app));
 }
 
 Nepomuk::SimpleResourceGraph DataManagementAdaptor::describeResources(const QStringList &resources, bool includeSubResources)
 {
-    // handle method call org.kde.nepomuk.DataManagement.describeResources
-    Nepomuk::SimpleResourceGraph out0;
-    QMetaObject::invokeMethod(parent(), "describeResources", Q_RETURN_ARG(Nepomuk::SimpleResourceGraph, out0), Q_ARG(QStringList, resources), Q_ARG(bool, includeSubResources));
-    return out0;
+    return m_model->describeResources(decodeUrls(resources), includeSubResources);
 }
 
 void DataManagementAdaptor::mergeResources(Nepomuk::SimpleResourceGraph resources, const QString &app, const QHash<QString, QVariant> &additionalMetadata)
 {
-    // handle method call org.kde.nepomuk.DataManagement.mergeResources
-    QMetaObject::invokeMethod(parent(), "mergeResources", Q_ARG(Nepomuk::SimpleResourceGraph, resources), Q_ARG(QString, app), Q_ARG(QHash<QString, QVariant>, additionalMetadata));
+    QHash<QUrl, QVariant> decodedMetaData;
+    for(QHash<QString, QVariant>::const_iterator it = additionalMetadata.constBegin();
+        it != additionalMetadata.constEnd(); ++it) {
+        decodedMetaData.insert(decodeUrl(it.key()), it.value());
+    }
+    m_model->mergeResources(resources, app, decodedMetaData);
 }
 
 void DataManagementAdaptor::removeDataByApplication(const QString &app, bool force)
 {
-    // handle method call org.kde.nepomuk.DataManagement.removeDataByApplication
-    QMetaObject::invokeMethod(parent(), "removeDataByApplication", Q_ARG(QString, app), Q_ARG(bool, force));
+    m_model->removeDataByApplication(app, force);
 }
 
 void DataManagementAdaptor::removeDataByApplication(const QStringList &resources, const QString &app, bool force)
 {
-    // handle method call org.kde.nepomuk.DataManagement.removeDataByApplication
-    QMetaObject::invokeMethod(parent(), "removeDataByApplication", Q_ARG(QStringList, resources), Q_ARG(QString, app), Q_ARG(bool, force));
+    m_model->removeDataByApplication(decodeUrls(resources), app, force);
 }
 
 void DataManagementAdaptor::removeProperties(const QStringList &resources, const QStringList &properties, const QString &app)
 {
-    // handle method call org.kde.nepomuk.DataManagement.removeProperties
-    QMetaObject::invokeMethod(parent(), "removeProperties", Q_ARG(QStringList, resources), Q_ARG(QStringList, properties), Q_ARG(QString, app));
+    m_model->removeProperties(decodeUrls(resources), decodeUrls(properties), app);
 }
 
 void DataManagementAdaptor::removePropertiesByApplication(const QStringList &resources, const QStringList &properties, const QString &app)
 {
-    // handle method call org.kde.nepomuk.DataManagement.removePropertiesByApplication
-    QMetaObject::invokeMethod(parent(), "removePropertiesByApplication", Q_ARG(QStringList, resources), Q_ARG(QStringList, properties), Q_ARG(QString, app));
+    m_model->removePropertiesByApplication(decodeUrls(resources), decodeUrls(properties), app);
 }
 
 void DataManagementAdaptor::removeProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app)
 {
-    // handle method call org.kde.nepomuk.DataManagement.removeProperty
-    QMetaObject::invokeMethod(parent(), "removeProperty", Q_ARG(QStringList, resources), Q_ARG(QString, property), Q_ARG(QVariantList, values), Q_ARG(QString, app));
+    m_model->removeProperty(decodeUrls(resources), decodeUrl(property), values, app);
 }
 
 void DataManagementAdaptor::removeResources(const QStringList &resources, const QString &app, bool force)
 {
-    // handle method call org.kde.nepomuk.DataManagement.removeResources
-    QMetaObject::invokeMethod(parent(), "removeResources", Q_ARG(QStringList, resources), Q_ARG(QString, app), Q_ARG(bool, force));
+    m_model->removeResources(decodeUrls(resources), app, force);
 }
 
-void DataManagementAdaptor::setProperty(const QString &resources, const QString &property, const QVariantList &values, const QString &app)
+void DataManagementAdaptor::setProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app)
 {
-    // handle method call org.kde.nepomuk.DataManagement.setProperty
-    QMetaObject::invokeMethod(parent(), "setProperty", Q_ARG(QString, resources), Q_ARG(QString, property), Q_ARG(QVariantList, values), Q_ARG(QString, app));
+    m_model->setProperty(decodeUrls(resources), decodeUrl(property), values, app);
 }
-
 
 #include "datamanagementadaptor.moc"
