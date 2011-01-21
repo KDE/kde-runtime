@@ -24,6 +24,8 @@
 
 #include <Soprano/FilterModel>
 
+#include "simpleresource.h"
+
 namespace Nepomuk {
 class DataManagementModel : public Soprano::FilterModel
 {

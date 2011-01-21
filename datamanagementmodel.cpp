@@ -28,9 +28,10 @@ public:
 };
 
 Nepomuk::DataManagementModel::DataManagementModel(QObject *parent)
-    : Soprano::FilterModel(parent),
+    : Soprano::FilterModel(),
       d(new Private())
 {
+    setParent(parent);
 }
 
 Nepomuk::DataManagementModel::~DataManagementModel()
@@ -84,6 +85,8 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
     // 2. check if the app exists, if not create it in the new graph
     // 3. create the new resource in the new graph
     // 4. return the resource's URI
+
+    return QUrl();
 }
 
 void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources, const QString &app, bool force)
@@ -105,4 +108,13 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QString &app, b
 
 void Nepomuk::DataManagementModel::removePropertiesByApplication(const QList<QUrl> &resources, const QList<QUrl> &properties, const QString &app)
 {
+}
+
+void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceGraph &resources, const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
+{
+}
+
+Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(const QList<QUrl> &resources, bool includeSubResources)
+{
+    return SimpleResourceGraph();
 }

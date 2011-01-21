@@ -1,7 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2011 Sebastian Trueg <trueg@kde.org>
-             (C) 2011 Vishesh Handa <handa.vish@gmail.com>
+   Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -20,33 +19,27 @@
    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DATAMANAGEMENTSERVICE_H
-#define DATAMANAGEMENTSERVICE_H
+#ifndef SIMPLERESOURCE_H
+#define SIMPLERESOURCE_H
 
-#include <QtCore/QObject>
-#include <QtCore/QList>
 #include <QtCore/QUrl>
-#include <QtCore/QVariant>
+#include <QtCore/QHash>
+#include <QtCore/QList>
 
-#include <Nepomuk/Service>
 
 namespace Nepomuk {
-/**
- *
- * \author Sebastian Trueg <trueg@kde.org>, Vishesh Handa <handa.vish@gmail.com>
- */
-class DataManagementService : public Nepomuk::Service
+
+class SimpleResource
 {
-    Q_OBJECT
-
 public:
-    DataManagementService(QObject *parent = 0, const QList<QVariant>& args = QList<QVariant>());
-    ~DataManagementService();
+    SimpleResource();
 
-private:
-    class Private;
-    Private* const d;
+    QUrl m_uri;
+
+    QHash<QUrl, QVariant> m_properties;
 };
+
+typedef QList<SimpleResource> SimpleResourceGraph;
 }
 
-#endif // DATAMANAGEMENTSERVICE_H
+#endif

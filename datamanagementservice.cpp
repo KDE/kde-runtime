@@ -21,23 +21,27 @@
 
 #include "datamanagementservice.h"
 
-class DataManagementService::Private
+class Nepomuk::DataManagementService::Private
 {
 public:
 
 };
 
 
-DataManagementService::DataManagementService(QObject *parent)
+Nepomuk::DataManagementService::DataManagementService(QObject *parent, const QVariantList& )
     : Service(parent),
       d(new Private())
 {
 }
 
 
-DataManagementService::~DataManagementService()
+Nepomuk::DataManagementService::~DataManagementService()
 {
     delete d;
 }
+
+
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
 NEPOMUK_EXPORT_SERVICE( Nepomuk::DataManagementService, "nepomukdatamanagementservice" )
