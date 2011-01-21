@@ -46,10 +46,10 @@ target_link_libraries(nepomuksync
 
 install(TARGETS nepomuksync EXPORT kdelibsLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS})
 
-install(FILES
-    resourceidentifier.h
-    resourcemerger.h
-    simpleresource.h
-    nepomuksync_export.h
-    DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk COMPONENT Devel
-)
+#install(FILES
+#    resourceidentifier.h
+#    resourcemerger.h
+#    simpleresource.h
+#    nepomuksync_export.h
+#    DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk COMPONENT Devel
+#)
