@@ -41,6 +41,8 @@
 #include <QtCore/QSet>
 
 #include <Nepomuk/Resource>
+#include <Soprano/StatementIterator>
+#include <Soprano/NodeIterator>
 
 
 namespace {
@@ -152,6 +154,38 @@ namespace {
     Nepomuk::Sync::SimpleResource convert( const Nepomuk::SimpleResource & s ) {
         return Nepomuk::Sync::SimpleResource::fromStatementList( s.toStatementList() );
     }
+
+    class ResourceMerger : public Nepomuk::Sync::ResourceMerger {
+    protected:
+        virtual void resolveDuplicate(const Soprano::Statement& newSt);
+    };
+
+    void ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
+    {
+        using namespace Soprano::Vocabulary;
+        
+        // Merge rules
+        // 1. If old graph is of type discardable and new is non-discardable
+        //    -> Then update the graph
+        // 2. Otherwsie
+        //    -> Keep the old graph
+
+        const QUrl oldGraph = model()->listStatements( newSt.subject(), newSt.predicate(), newSt.object() ).iterateContexts().allNodes().first().uri();
+        const QUrl newGraph = newSt.context().uri();
+
+        // Case 1
+        if( model()->containsAnyStatement( oldGraph, RDFS::subClassOf(), NRL::DiscardableInstanceBase() )
+            && model()->containsAnyStatement( newGraph, RDFS::subClassOf(), NRL::InstanceBase() )
+            && !model()->containsAnyStatement( newGraph, RDFS::subClassOf(), NRL::DiscardableInstanceBase() ) ) {
+            model()->removeStatement( newSt.subject(), newSt.predicate(), newSt.object() );
+            model()->addStatement( newSt );
+        }
+
+        // Case 2
+        // keep the old graph -> do nothing
+        
+    }
+
 }
 
 void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceGraph &resources, const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
@@ -166,7 +200,8 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
 
     QUrl graph = createGraph( app, additionalMetadata );
 
-    Sync::ResourceMerger merger;
+    ResourceMerger merger;
+    merger.setModel( this );
     merger.setGraph( graph );
     
     foreach( const KUrl & url, resIdent.unidentified() ) {
