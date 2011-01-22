@@ -22,17 +22,25 @@
 #include "datamanagementmodel.h"
 #include "classandpropertytree.h"
 
+#include "synclib/simpleresource.h"
+#include "synclib/resourceidentifier.h"
+#include "synclib/resourcemerger.h"
+
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
 #include <Soprano/QueryResultIterator>
+#include <Soprano/Graph>
 
 #include <QtCore/QHash>
 #include <QtCore/QUrl>
 #include <QtCore/QVariant>
 #include <QtCore/QDateTime>
 #include <QtCore/QUuid>
+#include <QtCore/QSet>
+
+#include <Nepomuk/Resource>
 
 
 namespace {
@@ -139,9 +147,33 @@ void Nepomuk::DataManagementModel::removePropertiesByApplication(const QList<QUr
 {
 }
 
+
+namespace {
+    Nepomuk::Sync::SimpleResource convert( const Nepomuk::SimpleResource & s ) {
+        return Nepomuk::Sync::SimpleResource::fromStatementList( s.toStatementList() );
+    }
+}
+
 void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceGraph &resources, const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
 {
+    Sync::ResourceIdentifier resIdent;
+    foreach( const SimpleResource & res, resources ) {
+        resIdent.addSimpleResource( convert(res) );
+    }
+
+    resIdent.setMinScore( 1.0 );
+    resIdent.identifyAll();
+
+    QUrl graph = createGraph( app, additionalMetadata );
+
+    Sync::ResourceMerger merger;
+    merger.setGraph( graph );
+    
+    foreach( const KUrl & url, resIdent.unidentified() ) {
+        merger.merge( resIdent.statements(url), resIdent.mappings() );
+    }
 }
+
 
 Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(const QList<QUrl> &resources, bool includeSubResources)
 {

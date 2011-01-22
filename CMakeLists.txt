@@ -32,6 +32,7 @@ target_link_libraries(nepomukdatamanagementservice
   ${KDE4_KIO_LIBS}
   ${SOPRANO_LIBRARIES}
   ${NEPOMUK_LIBRARIES}
+  nepomuksync
 )
 
 install(TARGETS nepomukdatamanagementservice
