@@ -54,6 +54,7 @@ protected:
     void manageMouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void manageMouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void showSpacer(const QPointF &pos);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 protected Q_SLOTS:
     void appletDragRequested();
