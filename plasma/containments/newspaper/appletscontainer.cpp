@@ -107,6 +107,25 @@ void AppletsContainer::syncColumnSizes()
     const int margin = 4 + (m_mainLayout->count() - 1) * m_mainLayout->spacing();
 
     QSizeF viewportSize = m_scrollWidget->viewportGeometry().size();
+    QSizeF maxSize;
+
+    //try to figure out the column size from the applets size hints
+    if (m_orientation == Qt::Vertical && m_containment) {
+        foreach (Plasma::Applet *applet, m_containment->applets()) {
+            QSizeF appletSize = applet->effectiveSizeHint(Qt::PreferredSize);
+            if (appletSize.width() > maxSize.width()) {
+                maxSize.setWidth(appletSize.width());
+            }
+            if (appletSize.height() > maxSize.height()) {
+                maxSize.setHeight(appletSize.height());
+            }
+        }
+        const QSizeF sizeFromHints = maxSize * m_mainLayout->count();
+        //a bit of snap to avoid contents just too large
+        if (qAbs(sizeFromHints.width() - viewportSize.width()) > 128) {
+            viewportSize = sizeFromHints;
+        }
+    }
 
     for (int i = 0; i < m_mainLayout->count(); ++i) {
         QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout *>(m_mainLayout->itemAt(i));
