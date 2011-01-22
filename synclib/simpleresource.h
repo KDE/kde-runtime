@@ -62,7 +62,7 @@ namespace Nepomuk {
              * It uses the the first element's subject as the uri and ignores all further subjects.
              * Please make sure all the subjects are the same cause no kind of checks are made.
              */
-            static SimpleResource fromStatementList(const QList<Soprano::Statement> & list);
+            static SimpleResource NEPOMUKSYNC_EXPORT fromStatementList(const QList<Soprano::Statement> & list);
             
             QList<Soprano::Statement> toStatementList() const;
 
