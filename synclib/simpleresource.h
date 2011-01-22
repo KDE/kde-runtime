@@ -71,8 +71,13 @@ namespace Nepomuk {
             KUrl NEPOMUKSYNC_EXPORT nieUrl() const;
 
             KUrl uri() const;
-            void setUri( const KUrl & newUri );
 
+            /**
+             * If \p node is resource node the uri is set to the node's uri
+             * Otherwise if \p node is a blank node then the uri
+             * is set to its identifier
+             */
+            void setUri( const Soprano::Node & node );
             
             QList<Soprano::Node> property( const KUrl & url ) const;
 
