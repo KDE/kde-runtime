@@ -188,6 +188,12 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
     }
 }
 
+void AppletsView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    Plasma::ScrollWidget::mouseReleaseEvent(event);
+    m_appletsContainer->setCurrentApplet(0);
+}
+
 void AppletsView::appletDragRequested()
 {
     if (!m_appletMoved) {
