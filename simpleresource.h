@@ -26,6 +26,9 @@
 #include <QtCore/QHash>
 #include <QtCore/QList>
 
+namespace Soprano {
+    class Statement;
+}
 
 namespace Nepomuk {
 
@@ -39,6 +42,8 @@ public:
     void setUri( const QUrl & uri );
 
     PropertyHash m_properties;
+
+    QList<Soprano::Statement> toStatementList() const;
 private :
     QUrl m_uri;    
 };
