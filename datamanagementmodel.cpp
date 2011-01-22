@@ -37,18 +37,20 @@
 #include <Nepomuk/Types/Property>
 
 namespace {
-Soprano::Node variantToNode(const QVariant& v) {
-    if(v.type() == QVariant::Url) {
-        return v.toUrl();
+    
+    //vHanda: How about using a Nepomuk::Variant internally? Nepomuk::Variant has a toNode() 
+    Soprano::Node variantToNode(const QVariant& v) {
+        if(v.type() == QVariant::Url) {
+            return v.toUrl();
+        }
+        else {
+            Soprano::LiteralValue slv(v);
+            if(slv.isValid())
+                return slv;
+            else
+                return Soprano::Node();
+        }
     }
-    else {
-        Soprano::LiteralValue slv(v);
-        if(slv.isValid())
-            return slv;
-        else
-            return Soprano::Node();
-    }
-}
 }
 
 class Nepomuk::DataManagementModel::Private
