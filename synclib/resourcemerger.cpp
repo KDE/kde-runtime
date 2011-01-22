@@ -174,15 +174,15 @@ void Nepomuk::Sync::ResourceMerger::setGraph(const KUrl& graph)
 
 void Nepomuk::Sync::ResourceMerger::Private::push(const Soprano::Statement& st, const KUrl& graphUri)
 {
-    if( m_model->containsAnyStatement( st.subject(), st.predicate(), st.object() ) ) {
-        // Already exists. Ignore
-        return;
-    }
-
     Soprano::Statement statement( st );
     if( statement.context().isEmpty() )
         statement.setContext( graphUri );
     
+    if( m_model->containsAnyStatement( st.subject(), st.predicate(), st.object() ) ) {
+        q->resolveDuplicate( statement );
+        return;
+    }
+
     m_model->addStatement( statement );
 }
 
@@ -199,6 +199,10 @@ KUrl Nepomuk::Sync::ResourceMerger::Private::resolve(const Soprano::Node& n)
         Nepomuk::Resource res = q->resolveUnidentifiedResource( oldUri );
         return res.resourceUri();
     }
+}
+
+void Nepomuk::Sync::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
+{
 }
 
 void Nepomuk::Sync::ResourceMerger::push(const Soprano::Statement& st)

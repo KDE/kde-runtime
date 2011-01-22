@@ -112,10 +112,19 @@ namespace Nepomuk {
             virtual KUrl createGraph();
 
             /**
-             * Push the statement into the Nepomuk repository if it doesn't already exist!
+             * Push the statement into the Nepomuk repository.
+             * If the statement exists then resolveDuplicate is called
+             *
+             * \sa resolveDuplicate
              */
             void push( const Soprano::Statement & st );
 
+            /**
+             * If the statement being pushed already exists this method is called.
+             * By default it does nothing which means keeping the old statement
+             */ 
+            virtual void resolveDuplicate( const Soprano::Statement & newSt );
+            
         private:
             class Private;
             Private * d;
