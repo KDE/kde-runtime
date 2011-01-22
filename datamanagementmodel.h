@@ -24,6 +24,8 @@
 
 #include <Soprano/FilterModel>
 
+#include <QtCore/QDateTime>
+
 #include "simpleresource.h"
 
 namespace Nepomuk {
@@ -159,6 +161,12 @@ public Q_SLOTS:
 
 private:
     QUrl createGraph(const QString& app, const QHash<QUrl, QVariant>& additionalMetadata);
+
+    /**
+     * Updates the modification date of \p resource to \p date.
+     * Adds the new statement in \p graph
+     */
+    Soprano::Error::ErrorCode updateModificationDate( const QUrl& resource, const QUrl& graph, const QDateTime& date = QDateTime::currentDateTime() );
 
     enum UriType {
         GraphUri,

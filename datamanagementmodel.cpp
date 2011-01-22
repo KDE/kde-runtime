@@ -34,6 +34,7 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QUuid>
 
+#include <Nepomuk/Types/Property>
 
 namespace {
 Soprano::Node variantToNode(const QVariant& v) {
@@ -68,6 +69,16 @@ Nepomuk::DataManagementModel::~DataManagementModel()
     delete d;
 }
 
+// Mostly Copied from Nepomuk::ResourceFilterModel::updateModificationDate
+Soprano::Error::ErrorCode Nepomuk::DataManagementModel::updateModificationDate(const QUrl& resource, const QUrl & graph, const QDateTime& date)
+{
+    Soprano::Error::ErrorCode c = removeAllStatements( resource, Soprano::Vocabulary::NAO::lastModified(), Soprano::Node() );
+    if ( c != Soprano::Error::ErrorNone )
+        return c;
+    
+    return addStatement( resource, Soprano::Vocabulary::NAO::lastModified(), Soprano::LiteralValue( date ), graph  );
+}
+
 void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
 {
     // 1. check cardinality (via property cache/tree)
@@ -78,6 +89,32 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     // 4. check if the app exists, if not create it in the new graph
     // 5. add the new triples to the new graph
     // 6. update resources' mtime
+
+    int maxCardinality = Types::Property( property ).maxCardinality();
+    if( maxCardinality == 1 ) {
+        if( values.size() != 1 ) {
+            //FIXME: Report some error
+            return;
+        }
+    }
+
+    // 3 & 4 both should get done by this
+    QUrl graph = createGraph( app, QHash<QUrl, QVariant>() );
+
+    foreach( const QUrl & res, resources ) {
+        // Case 2.2
+        if( maxCardinality == 1 && containsAnyStatement( res, property, Soprano::Node() ) ) {
+            //FIXME: Report some error
+            continue;
+        }
+
+        // 5 & 6
+        addStatement( res, property, variantToNode( values.first() ), graph );
+
+        //TODO: Do something with the error codes over here!
+        updateModificationDate( res, graph );
+    }
+
 }
 
 void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
