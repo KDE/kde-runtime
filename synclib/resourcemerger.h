@@ -68,6 +68,7 @@ namespace Nepomuk {
             ResourceManager * resourceManager() const;
             void setResourceManager( ResourceManager * rm );
 
+            void setModel( Soprano::Model * model );
             Soprano::Model * model() const;
 
             /**
@@ -90,7 +91,7 @@ namespace Nepomuk {
             Types::Class graphType() const;
 
             /**
-             * Set the graph to be used while pushing as \p
+             * Set the graph to be used while pushing as \p graph
              */
             void setGraph( const KUrl & graph );
             KUrl graph();

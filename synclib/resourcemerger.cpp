@@ -89,6 +89,12 @@ Nepomuk::ResourceManager* Nepomuk::Sync::ResourceMerger::resourceManager() const
     return d->m_resourceManager;
 }
 
+void Nepomuk::Sync::ResourceMerger::setModel(Soprano::Model* model)
+{
+    d->m_model = model;
+    delete d->m_nrlModel;
+    d->m_nrlModel = new Soprano::NRLModel( d->m_model );
+}
 
 Soprano::Model* Nepomuk::Sync::ResourceMerger::model() const
 {
