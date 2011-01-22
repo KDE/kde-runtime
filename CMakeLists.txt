@@ -21,6 +21,7 @@ set( datamanagement_BIN_SRCS
   datamanagementmodel.cpp
   datamanagementadaptor.cpp
   classandpropertytree.cpp
+  simpleresource.cpp
 )
 
 kde4_add_plugin(nepomukdatamanagementservice ${datamanagement_BIN_SRCS})

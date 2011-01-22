@@ -23,8 +23,15 @@
 
 namespace Nepomuk {
 
-SimpleResource::SimpleResource()
+QUrl SimpleResource::uri() const
 {
+    return m_uri;
 }
+
+void SimpleResource::setUri(const QUrl& uri)
+{
+    m_uri = uri;
+}
+
 
 } // namespace Nepomuk

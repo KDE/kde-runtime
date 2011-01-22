@@ -34,9 +34,13 @@ typedef QHash<QUrl, QVariant> PropertyHash;
 class SimpleResource
 {
 public:
-    QUrl m_uri;
+
+    QUrl uri() const;
+    void setUri( const QUrl & uri );
 
     PropertyHash m_properties;
+private :
+    QUrl m_uri;    
 };
 
 typedef QList<SimpleResource> SimpleResourceGraph;
