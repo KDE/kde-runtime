@@ -42,6 +42,7 @@ AppletsView::AppletsView(QGraphicsItem *parent)
       m_dragTimeout(1000)
 {
     m_dragCountdown = new DragCountdown(this);
+    setAlignment(Qt::AlignCenter);
 
     connect(m_dragCountdown, SIGNAL(dragRequested()), this, SLOT(appletDragRequested()));
 
