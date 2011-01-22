@@ -27,12 +27,15 @@
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
 #include <Soprano/QueryResultIterator>
+#include <Soprano/StatementIterator>
+#include <Soprano/NodeIterator>
 
 #include <QtCore/QHash>
 #include <QtCore/QUrl>
 #include <QtCore/QVariant>
 #include <QtCore/QDateTime>
 #include <QtCore/QUuid>
+#include <QtCore/QSet>
 
 #include <Nepomuk/Types/Property>
 
@@ -138,6 +141,22 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
     // 1. remove the triples
     // 2. remove trailing graphs
     // 3. update resource mtime
+
+    //vHanda: Why the app value? Does that mean only the statements created by that 'app' will
+    //        be removed?
+    
+    QSet<QUrl> graphs;
+    foreach( const QUrl & res, resources ) {
+        foreach( const QVariant value, values ) {
+            Soprano::Node valueNode = variantToNode( value );
+            const QUrl graph = listStatements( res, property, valueNode ).iterateContexts().allNodes().first().uri();
+            graphs.insert( graph );
+
+            removeAllStatements( res, property, valueNode );
+        }
+    }
+
+    removeTrailingGraphs( graphs );
 }
 
 void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources, const QList<QUrl> &properties, const QString &app)
@@ -145,7 +164,41 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
     // 1. remove the triples
     // 2. remove trailing graphs
     // 3. update resource mtime
+
+    QSet<QUrl> graphs;
+    foreach( const QUrl & res, resources ) {
+        foreach( const QUrl & prop, properties ) {
+            const QUrl graph = listStatements( res, prop, Soprano::Node() ).iterateContexts().allNodes().first().uri();
+            graphs.insert( graph );
+
+            removeAllStatements( res, prop, Soprano::Node() );
+        }
+    }
+
+    removeTrailingGraphs( graphs );
 }
+
+void Nepomuk::DataManagementModel::removeTrailingGraphs(const QSet<QUrl> graphs)
+{
+    using namespace Soprano::Vocabulary;
+    
+    // Remove trailing graphs
+    foreach( const QUrl& graph, graphs ) {
+        if( !containsAnyStatement( Soprano::Node(), Soprano::Node(), Soprano::Node(), graph) ) {
+            
+            const QString query = QString::fromLatin1("select ?g where { %1 %2 ?g . }")
+                                  .arg( Soprano::Node::resourceToN3( graph ),
+                                        Soprano::Node::resourceToN3( NRL::coreGraphMetadataFor() ) );
+            Soprano::QueryResultIterator it = executeQuery( query, Soprano::Query::QueryLanguageSparql );
+            
+            while( it.next() ) {
+                removeAllStatements( it["g"].uri(), Soprano::Node(), Soprano::Node() );
+            }
+            removeAllStatements( graph, Soprano::Node(), Soprano::Node() );
+        }
+    }
+}
+
 
 QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, const QString &label, const QString &description, const QString &app)
 {

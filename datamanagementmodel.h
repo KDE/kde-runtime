@@ -168,6 +168,11 @@ private:
      */
     Soprano::Error::ErrorCode updateModificationDate( const QUrl& resource, const QUrl& graph, const QDateTime& date = QDateTime::currentDateTime() );
 
+    /**
+     * Removes all the graphs from \p graphs which do not contain any statements
+     */
+    void removeTrailingGraphs( const QSet<QUrl> graphs );
+    
     enum UriType {
         GraphUri,
         ResourceUri
