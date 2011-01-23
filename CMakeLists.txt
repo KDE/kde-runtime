@@ -18,6 +18,7 @@ set( datamanagement_BIN_SRCS
   datamanagementservice.cpp
   datamanagementmodel.cpp
   datamanagementadaptor.cpp
+  datamanagementcommand.cpp
   classandpropertytree.cpp
 )
 
