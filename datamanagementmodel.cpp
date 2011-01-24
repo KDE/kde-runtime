@@ -26,7 +26,10 @@
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
+
 #include <Soprano/QueryResultIterator>
+#include <Soprano/StatementIterator>
+#include <Soprano/NodeIterator>
 #include <Soprano/Error/ErrorCode>
 
 #include <QtCore/QHash>
@@ -34,21 +37,33 @@
 #include <QtCore/QVariant>
 #include <QtCore/QDateTime>
 #include <QtCore/QUuid>
+#include <QtCore/QSet>
 
+#include <Nepomuk/Types/Property>
 
 namespace {
-Soprano::Node variantToNode(const QVariant& v) {
-    if(v.type() == QVariant::Url) {
-        return v.toUrl();
+    
+    //vHanda: How about using a Nepomuk::Variant internally? Nepomuk::Variant has a toNode() 
+    Soprano::Node variantToNode(const QVariant& v) {
+        if(v.type() == QVariant::Url) {
+            return v.toUrl();
+        }
+        else {
+            Soprano::LiteralValue slv(v);
+            if(slv.isValid())
+                return slv;
+            else
+                return Soprano::Node();
+        }
     }
-    else {
-        Soprano::LiteralValue slv(v);
-        if(slv.isValid())
-            return slv;
-        else
-            return Soprano::Node();
+
+    QSet<Soprano::Node> variantListToNodeSet( const QVariantList & vl ) {
+        QSet<Soprano::Node> nodes;
+        foreach( const QVariant & var, vl ) {
+            nodes.insert( variantToNode( var ) );
+        }
+        return nodes;
     }
-}
 }
 
 class Nepomuk::DataManagementModel::Private
@@ -69,6 +84,16 @@ Nepomuk::DataManagementModel::~DataManagementModel()
     delete d;
 }
 
+// Mostly Copied from Nepomuk::ResourceFilterModel::updateModificationDate
+Soprano::Error::ErrorCode Nepomuk::DataManagementModel::updateModificationDate(const QUrl& resource, const QUrl & graph, const QDateTime& date)
+{
+    Soprano::Error::ErrorCode c = removeAllStatements( resource, Soprano::Vocabulary::NAO::lastModified(), Soprano::Node() );
+    if ( c != Soprano::Error::ErrorNone )
+        return c;
+    
+    return addStatement( resource, Soprano::Vocabulary::NAO::lastModified(), Soprano::LiteralValue( date ), graph  );
+}
+
 void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
 {
     // 1. check cardinality (via property cache/tree)
@@ -79,7 +104,31 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     // 4. check if the app exists, if not create it in the new graph
     // 5. add the new triples to the new graph
     // 6. update resources' mtime
-    setError("Not implemented yet");
+
+    int maxCardinality = Types::Property( property ).maxCardinality();
+    if( maxCardinality == 1 ) {
+        if( values.size() != 1 ) {
+            //FIXME: Report some error
+            return;
+        }
+    }
+
+    // 3 & 4 both should get done by this
+    QUrl graph = createGraph( app, QHash<QUrl, QVariant>() );
+
+    foreach( const QUrl & res, resources ) {
+        // Case 2.2
+        if( maxCardinality == 1 && containsAnyStatement( res, property, Soprano::Node() ) ) {
+            //FIXME: Report some error
+            continue;
+        }
+
+        // 5 & 6
+        addStatement( res, property, variantToNode( values.first() ), graph );
+
+        //TODO: Do something with the error codes over here!
+        updateModificationDate( res, graph );
+    }
 }
 
 void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
@@ -94,7 +143,45 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     // 7. check if the app exists, if not create it in the new graph
     // 8. add the new triples to the new graph
     // 9. update resources' mtime
-    setError("Not implemented yet");
+
+    // trueg: TODO: if we use the type classes then we need to build the complete tree on startup
+    int maxCardinality = Types::Property( property ).maxCardinality();
+    if( maxCardinality == 1 ) {
+        if( values.size() != 1 ) {
+            //FIXME: Report some error
+            return;
+        }
+    }
+
+    QUrl graph = createGraph( app, QHash<QUrl, QVariant>() );
+    foreach( const QUrl & res, resources ) {
+        QSet<Soprano::Node> existingValuesSet = listStatements( res, property, Soprano::Node() ).iterateObjects().allNodes().toSet();
+        QSet<Soprano::Node> valuesSet = variantListToNodeSet( values );
+        
+        Soprano::Error::ErrorCode c = Soprano::Error::ErrorNone;
+        foreach( const Soprano::Node &node, existingValuesSet - valuesSet ) {
+            c = removeAllStatements( res, property, node );
+            if ( c != Soprano::Error::ErrorNone ) {
+                //TODO: Report this error
+                //return c;
+                // trueg: there is no need to report the error as it will already be reported automatically
+            }
+        }
+        
+        QSet<Soprano::Node> newNodes = valuesSet - existingValuesSet;
+        if ( !newNodes.isEmpty() ) {
+            foreach( const Soprano::Node &node, newNodes ) {
+                c = addStatement( res, property, node, graph );
+                if ( c != Soprano::Error::ErrorNone ) {
+                    //TODO: Report this error
+                    //return c;
+                    // trueg: there is no need to report the error as it will already be reported automatically
+                }
+            }
+            
+            c = updateModificationDate( res, graph );
+        }
+    }
 }
 
 void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
@@ -102,7 +189,23 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
     // 1. remove the triples
     // 2. remove trailing graphs
     // 3. update resource mtime
-    setError("Not implemented yet");
+
+    //vHanda: Why the app value? Does that mean only the statements created by that 'app' will
+    //        be removed?
+    // trueg: no, it is just there to complete the API but will not be used yet (or ever)
+    
+    QSet<QUrl> graphs;
+    foreach( const QUrl & res, resources ) {
+        foreach( const QVariant value, values ) {
+            Soprano::Node valueNode = variantToNode( value );
+            const QUrl graph = listStatements( res, property, valueNode ).iterateContexts().allNodes().first().uri();
+            graphs.insert( graph );
+
+            removeAllStatements( res, property, valueNode );
+        }
+    }
+
+    removeTrailingGraphs( graphs );
 }
 
 void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources, const QList<QUrl> &properties, const QString &app)
@@ -110,8 +213,41 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
     // 1. remove the triples
     // 2. remove trailing graphs
     // 3. update resource mtime
-    setError("Not implemented yet");
+
+    QSet<QUrl> graphs;
+    foreach( const QUrl & res, resources ) {
+        foreach( const QUrl & prop, properties ) {
+            const QUrl graph = listStatements( res, prop, Soprano::Node() ).iterateContexts().allNodes().first().uri();
+            graphs.insert( graph );
+
+            removeAllStatements( res, prop, Soprano::Node() );
+        }
+    }
+
+    removeTrailingGraphs( graphs );
 }
+
+void Nepomuk::DataManagementModel::removeTrailingGraphs(const QSet<QUrl> graphs)
+{
+    using namespace Soprano::Vocabulary;
+    
+    // Remove trailing graphs
+    foreach( const QUrl& graph, graphs ) {
+        if( !containsAnyStatement( Soprano::Node(), Soprano::Node(), Soprano::Node(), graph) ) {
+            
+            const QString query = QString::fromLatin1("select ?g where { %1 %2 ?g . }")
+                                  .arg( Soprano::Node::resourceToN3( graph ),
+                                        Soprano::Node::resourceToN3( NRL::coreGraphMetadataFor() ) );
+            Soprano::QueryResultIterator it = executeQuery( query, Soprano::Query::QueryLanguageSparql );
+            
+            while( it.next() ) {
+                removeAllStatements( it["g"].uri(), Soprano::Node(), Soprano::Node() );
+            }
+            removeAllStatements( graph, Soprano::Node(), Soprano::Node() );
+        }
+    }
+}
+
 
 QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, const QString &label, const QString &description, const QString &app)
 {
