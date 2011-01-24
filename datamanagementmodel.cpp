@@ -30,6 +30,7 @@
 #include <Soprano/QueryResultIterator>
 #include <Soprano/StatementIterator>
 #include <Soprano/NodeIterator>
+#include <Soprano/Error/ErrorCode>
 
 #include <QtCore/QHash>
 #include <QtCore/QUrl>
@@ -298,8 +299,8 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
 
         if(property == Soprano::Vocabulary::RDF::type()) {
             // check if it is a valid type
-            if(!it.value().type() == QVariant::Url) {
-                // FIXME: set some error
+            if(it.value().type() != QVariant::Url) {
+                setError(QString::fromLatin1("rdf:type has resource range. %1 was provided.").arg(it.value().type()), Soprano::Error::ErrorInvalidArgument);
                 return QUrl();
             }
             else {
@@ -310,7 +311,7 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
 
         else if(property == Soprano::Vocabulary::NAO::created()) {
             if(!it.value().type() == QVariant::DateTime) {
-                // FIXME: set some error
+                setError(QString::fromLatin1("nao:created has dateTime range. %1 was provided.").arg(it.value().type()), Soprano::Error::ErrorInvalidArgument);
                 return QUrl();
             }
         }
@@ -320,7 +321,7 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
             graphMetaData.insert(it.key(), node);
         }
         else {
-            // FIXME: set some error
+            setError(QString::fromLatin1("Cannot convert %1 to literal value.").arg(it.value().type()), Soprano::Error::ErrorInvalidArgument);
             return QUrl();
         }
     }
@@ -334,6 +335,11 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
     }
 
     // FIXME: handle app
+    // We basically only need:
+    // 1. app id (name)
+    // 2. App label
+    // 3. app description
+    // 4. icon
 
     const QUrl graph = createUri(GraphUri);
     const QUrl metadatagraph = createUri(GraphUri);

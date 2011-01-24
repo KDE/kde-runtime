@@ -42,4 +42,6 @@ public:
 typedef QList<SimpleResource> SimpleResourceGraph;
 }
 
+Q_DECLARE_METATYPE(Nepomuk::SimpleResourceGraph)
+
 #endif
