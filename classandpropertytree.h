@@ -25,6 +25,10 @@
 #include <QtCore/QObject>
 #include <QtCore/QUrl>
 
+namespace Soprano {
+class Model;
+}
+
 namespace Nepomuk {
 class ClassAndPropertyTree : public QObject
 {
@@ -35,9 +39,20 @@ public:
     ~ClassAndPropertyTree();
 
     bool isSubClassOf(const QUrl& type, const QUrl& superClass) const;
+    int maxCardinality(const QUrl& type) const;
+    bool isUserVisible(const QUrl& type) const;
 
-    // add more...
+public Q_SLOTS:
+    void rebuildTree(Soprano::Model* model);
 
+private:
+    class ClassOrProperty;
+
+    const ClassOrProperty* findClassOrProperty(const QUrl& uri) const;
+    int updateUserVisibility(ClassOrProperty *cop, QSet<QUrl> &visitedNodes);
+    QSet<QUrl> getAllParents(ClassOrProperty *cop, QSet<QUrl> &visitedNodes);
+
+    QHash<QUrl, ClassOrProperty*> m_tree;
 };
 }
 

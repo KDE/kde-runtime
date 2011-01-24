@@ -39,11 +39,8 @@
 #include <QtCore/QUuid>
 #include <QtCore/QSet>
 
-#include <Nepomuk/Types/Property>
 
 namespace {
-    
-    //vHanda: How about using a Nepomuk::Variant internally? Nepomuk::Variant has a toNode() 
     Soprano::Node variantToNode(const QVariant& v) {
         if(v.type() == QVariant::Url) {
             return v.toUrl();
@@ -77,6 +74,7 @@ Nepomuk::DataManagementModel::DataManagementModel(Soprano::Model* model, QObject
       d(new Private())
 {
     setParent(parent);
+    d->m_classAndPropertyTree.rebuildTree(model);
 }
 
 Nepomuk::DataManagementModel::~DataManagementModel()
@@ -105,7 +103,7 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     // 5. add the new triples to the new graph
     // 6. update resources' mtime
 
-    int maxCardinality = Types::Property( property ).maxCardinality();
+    const int maxCardinality = d->m_classAndPropertyTree.maxCardinality(property);
     if( maxCardinality == 1 ) {
         if( values.size() != 1 ) {
             //FIXME: Report some error
@@ -145,7 +143,7 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     // 9. update resources' mtime
 
     // trueg: TODO: if we use the type classes then we need to build the complete tree on startup
-    int maxCardinality = Types::Property( property ).maxCardinality();
+    const int maxCardinality = d->m_classAndPropertyTree.maxCardinality(property);
     if( maxCardinality == 1 ) {
         if( values.size() != 1 ) {
             //FIXME: Report some error
