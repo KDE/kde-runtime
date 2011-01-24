@@ -76,6 +76,12 @@ AppletsContainer::AppletsContainer(AppletsView *parent)
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
     connect(m_scrollWidget, SIGNAL(scrollStateChanged(QAbstractAnimation::State, QAbstractAnimation::State)), this, SLOT(scrollStateChanged(QAbstractAnimation::State, QAbstractAnimation::State)));
     themeChanged();
+
+    m_background = new Plasma::FrameSvg(this);
+    m_background->setImagePath("widgets/newspaper-background");
+    syncBorders();
+
+    connect(m_background, SIGNAL(repaintNeeded()), SLOT(syncBorders()));
 }
 
 AppletsContainer::~AppletsContainer()
@@ -636,6 +642,35 @@ Plasma::Applet *AppletsContainer::currentApplet() const
     return m_currentApplet.data();
 }
 
+void AppletsContainer::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+    m_background->resizeFrame(event->newSize());
+
+    QGraphicsWidget::resizeEvent(event);
+}
+
+
+void AppletsContainer::syncBorders()
+{
+    qreal left, top, right, bottom = 0;
+    if (m_background->isValid()) {
+        setFlag(QGraphicsItem::ItemHasNoContents, false);
+
+        m_background->getMargins(left, top, right, bottom);
+    } else {
+        setFlag(QGraphicsItem::ItemHasNoContents);
+    }
+
+    setContentsMargins(left, top, right, bottom);
+}
+
+void AppletsContainer::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
+
+    m_background->paintFrame(painter);
+}
 
 #include "appletscontainer.moc"
 

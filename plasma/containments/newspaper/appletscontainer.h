@@ -34,6 +34,7 @@ namespace Plasma
     class AbstractToolBox;
     class Applet;
     class Containment;
+    class FrameSvg;
 }
 
 class QGraphicsLinearLayout;
@@ -79,12 +80,15 @@ public:
 
     Plasma::Containment *containment() const;
 
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
 protected:
     QSizeF optimalAppletSize(Plasma::Applet *applet, const bool maximized) const;
     void updateSnapSize();
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void resizeEvent(QGraphicsSceneResizeEvent *event);
 
 public Q_SLOTS:
     void layoutApplet(Plasma::Applet *applet, const QPointF &post);
@@ -97,6 +101,7 @@ private Q_SLOTS:
     void updateViewportGeometry();
     void scrollStateChanged(QAbstractAnimation::State newState, QAbstractAnimation::State oldState);
     void syncView();
+    void syncBorders();
 
 Q_SIGNALS:
     void appletSizeHintChanged();
@@ -121,6 +126,7 @@ private:
     QAbstractAnimation::State m_viewScrollState;
     QTimer *m_viewSyncTimer;
     Plasma::AbstractToolBox *m_toolBox;
+    Plasma::FrameSvg *m_background;
 };
 
 #endif
