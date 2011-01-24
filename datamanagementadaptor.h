@@ -33,6 +33,8 @@
 
 #include "simpleresource.h"
 
+class QThreadPool;
+
 namespace Nepomuk {
 class DataManagementModel;
 class DataManagementCommand;
@@ -66,6 +68,7 @@ private:
     void enqueueCommand(Nepomuk::DataManagementCommand* cmd);
 
     Nepomuk::DataManagementModel* m_model;
+    QThreadPool* m_threadPool;
 };
 }
 

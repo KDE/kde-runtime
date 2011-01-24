@@ -42,6 +42,13 @@ Nepomuk::DataManagementAdaptor::DataManagementAdaptor(Nepomuk::DataManagementMod
     : QObject(parent),
       m_model(parent)
 {
+    m_threadPool = new QThreadPool(this);
+
+    // never let go of our threads - that is just pointless apu cycles wasted
+    m_threadPool->setExpiryTimeout(-1);
+
+    // N threads means N connections to Virtuoso
+    m_threadPool->setMaxThreadCount(10);
 }
 
 Nepomuk::DataManagementAdaptor::~DataManagementAdaptor()
@@ -136,8 +143,7 @@ void Nepomuk::DataManagementAdaptor::setProperty(const QStringList &resources, c
 
 void Nepomuk::DataManagementAdaptor::enqueueCommand(DataManagementCommand *cmd)
 {
-    // TODO: maybe our own instance would be a good idea.
-    QThreadPool::globalInstance()->start(cmd);
+    m_threadPool->start(cmd);
 }
 
 #include "datamanagementadaptor.moc"
