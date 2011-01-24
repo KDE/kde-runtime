@@ -26,6 +26,7 @@
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
+
 #include <Soprano/QueryResultIterator>
 #include <Soprano/StatementIterator>
 #include <Soprano/NodeIterator>
@@ -53,6 +54,14 @@ namespace {
             else
                 return Soprano::Node();
         }
+    }
+
+    QSet<Soprano::Node> variantListToNodeSet( const QVariantList & vl ) {
+        QSet<Soprano::Node> nodes;
+        foreach( const QVariant & var, vl ) {
+            nodes.insert( variantToNode( var ) );
+        }
+        return nodes;
     }
 }
 
@@ -134,6 +143,43 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     // 7. check if the app exists, if not create it in the new graph
     // 8. add the new triples to the new graph
     // 9. update resources' mtime
+
+    int maxCardinality = Types::Property( property ).maxCardinality();
+    if( maxCardinality == 1 ) {
+        if( values.size() != 1 ) {
+            //FIXME: Report some error
+            return;
+        }
+    }
+
+    QUrl graph = createGraph( app, QHash<QUrl, QVariant>() );
+    foreach( const QUrl & res, resources ) {
+        QSet<Soprano::Node> existingValuesSet = listStatements( res, property, Soprano::Node() ).iterateObjects().allNodes().toSet();
+        QSet<Soprano::Node> valuesSet = variantListToNodeSet( values );
+        
+        Soprano::Error::ErrorCode c = Soprano::Error::ErrorNone;
+        foreach( const Soprano::Node &node, existingValuesSet - valuesSet ) {
+            c = removeAllStatements( res, property, node );
+            if ( c != Soprano::Error::ErrorNone ) {
+                //TODO: Report this error
+                //return c;
+            }
+        }
+        
+        QSet<Soprano::Node> newNodes = valuesSet - existingValuesSet;
+        if ( !newNodes.isEmpty() ) {
+            foreach( const Soprano::Node &node, newNodes ) {
+                c = addStatement( res, property, node, graph );
+                if ( c != Soprano::Error::ErrorNone ) {
+                    //TODO: Report this error
+                    //return c;
+                }
+            }
+            
+            c = updateModificationDate( res, graph );
+        }
+    }
+
 }
 
 void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
