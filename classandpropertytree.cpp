@@ -98,14 +98,15 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
     m_tree.clear();
 
     const QString query
-            = QString::fromLatin1("select distinct ?r ?p ?v "
-                                  "(select (1) where { { ?r %1 1 }  UNION { ?r %2 1 . } . }) as ?c "
+            = QString::fromLatin1("select distinct ?r ?p ?v ?mc ?c "
                                   "where { "
                                   "{ ?r a rdfs:Class . "
                                   "OPTIONAL { ?r rdfs:subClassOf ?p . ?p a rdfs:Class . } . } "
                                   "UNION "
                                   "{ ?r a rdf:Property . "
                                   "OPTIONAL { ?r rdfs:subPropertyOf ?p . ?p a rdf:Property . } . } "
+                                  "OPTIONAL { ?r %1 ?mc . } . "
+                                  "OPTIONAL { ?r %2 ?c . } . "
                                   "OPTIONAL { ?r %3 ?v . } . "
                                   "FILTER(?r!=%4) . "
                                   "}" )
@@ -120,6 +121,7 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
         const QUrl r = it["r"].uri();
         const Soprano::Node p = it["p"];
         const Soprano::Node v = it["v"];
+        int mc = it["mc"].literal().toInt();
         int c = it["c"].literal().toInt();
 
         ClassOrProperty* r_cop = 0;
@@ -135,6 +137,10 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
 
         if( v.isLiteral() ) {
             r_cop->userVisible = (v.literal().toBool() ? 1 : -1);
+        }
+
+        if(mc > 0 || c > 0) {
+            r_cop->maxCardinality = qMax(mc, c);
         }
 
         if ( p.isResource() &&
@@ -167,8 +173,8 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
     // add rdfs:Resource as parent for all top-level classes
     for ( QHash<QUrl, ClassOrProperty*>::iterator it = m_tree.begin();
           it != m_tree.end(); ++it ) {
-        if( it.value() != rdfsResourceNode && it.value()->allParents.isEmpty() ) {
-            it.value()->allParents.insert( Soprano::Vocabulary::RDFS::Resource() );
+        if( it.value() != rdfsResourceNode && it.value()->directParents.isEmpty() ) {
+            it.value()->directParents.insert( Soprano::Vocabulary::RDFS::Resource() );
         }
     }
 

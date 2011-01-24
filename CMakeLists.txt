@@ -36,3 +36,5 @@ install(TARGETS nepomukdatamanagementservice
   DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES nepomukdatamanagementservice.desktop
   DESTINATION ${SERVICES_INSTALL_DIR})
+
+add_subdirectory(test)
