@@ -311,7 +311,7 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
                 return QUrl();
             }
             else {
-                if(d->m_classAndPropertyTree.isSubClassOf(it.value().toUrl(), Soprano::Vocabulary::NRL::Graph()))
+                if(d->m_classAndPropertyTree.isChildOf(it.value().toUrl(), Soprano::Vocabulary::NRL::Graph()))
                     haveGraphType = true;
             }
         }

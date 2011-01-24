@@ -38,7 +38,8 @@ public:
     ClassAndPropertyTree(QObject *parent = 0);
     ~ClassAndPropertyTree();
 
-    bool isSubClassOf(const QUrl& type, const QUrl& superClass) const;
+    QSet<QUrl> allParents(const QUrl& uri) const;
+    bool isChildOf(const QUrl& type, const QUrl& superClass) const;
     int maxCardinality(const QUrl& type) const;
     bool isUserVisible(const QUrl& type) const;
 

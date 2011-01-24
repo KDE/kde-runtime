@@ -138,4 +138,62 @@ void ClassAndPropertyTreeTest::testVisibility()
 
 QTEST_KDEMAIN_CORE(ClassAndPropertyTreeTest)
 
+void ClassAndPropertyTreeTest::testParents()
+{
+    QCOMPARE(m_typeTree->allParents(QUrl("onto:/A")).count(), 1);
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/A"), Soprano::Vocabulary::RDFS::Resource()));
+
+    QCOMPARE(m_typeTree->allParents(QUrl("onto:/B")).count(), 2);
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/B"), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/B"), QUrl("onto:/A")));
+
+    QCOMPARE(m_typeTree->allParents(QUrl("onto:/C")).count(), 3);
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/C"), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/C"), QUrl("onto:/A")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/C"), QUrl("onto:/B")));
+
+    QCOMPARE(m_typeTree->allParents(QUrl("onto:/D")).count(), 4);
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/D"), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/D"), QUrl("onto:/A")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/D"), QUrl("onto:/B")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/D"), QUrl("onto:/C")));
+
+    QCOMPARE(m_typeTree->allParents(QUrl("onto:/E")).count(), 5);
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/E"), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/E"), QUrl("onto:/A")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/E"), QUrl("onto:/B")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/E"), QUrl("onto:/C")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/E"), QUrl("onto:/D")));
+
+    QCOMPARE(m_typeTree->allParents(QUrl("onto:/F")).count(), 7);
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/F"), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/F"), QUrl("onto:/A")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/F"), QUrl("onto:/B")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/F"), QUrl("onto:/C")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/F"), QUrl("onto:/D")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/F"), QUrl("onto:/E")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/F"), QUrl("onto:/AA")));
+
+    QCOMPARE(m_typeTree->allParents(QUrl("onto:/G")).count(), 4);
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/G"), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/G"), QUrl("onto:/AA")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/G"), QUrl("onto:/A")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/G"), QUrl("onto:/B")));
+
+    QCOMPARE(m_typeTree->allParents(QUrl("onto:/X")).count(), 3);
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/X"), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/X"), QUrl("onto:/Y")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/X"), QUrl("onto:/Z")));
+
+    QCOMPARE(m_typeTree->allParents(QUrl("onto:/Y")).count(), 3);
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/Y"), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/Y"), QUrl("onto:/X")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/Y"), QUrl("onto:/Z")));
+
+    QCOMPARE(m_typeTree->allParents(QUrl("onto:/Z")).count(), 3);
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/Z"), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/Z"), QUrl("onto:/X")));
+    QVERIFY(m_typeTree->isChildOf(QUrl("onto:/Z"), QUrl("onto:/Y")));
+}
+
 #include "classandpropertytreetest.moc"

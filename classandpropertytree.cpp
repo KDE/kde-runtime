@@ -68,10 +68,18 @@ Nepomuk::ClassAndPropertyTree::~ClassAndPropertyTree()
     qDeleteAll(m_tree);
 }
 
-bool Nepomuk::ClassAndPropertyTree::isSubClassOf(const QUrl &type, const QUrl &superClass) const
+QSet<QUrl> Nepomuk::ClassAndPropertyTree::allParents(const QUrl &uri) const
+{
+    if(const ClassOrProperty* cop = findClassOrProperty(uri))
+        return cop->allParents;
+    else
+        return QSet<QUrl>();
+}
+
+bool Nepomuk::ClassAndPropertyTree::isChildOf(const QUrl &type, const QUrl &superClass) const
 {
     if(const ClassOrProperty* cop = findClassOrProperty(type))
-        return cop->directParents.contains(superClass);
+        return cop->allParents.contains(superClass);
     else
         return 0;
 }
@@ -244,6 +252,11 @@ QSet<QUrl> Nepomuk::ClassAndPropertyTree::getAllParents(ClassOrProperty* cop, QS
             visitedNodes.insert( *it );
             cop->allParents += getAllParents(m_tree[*it], visitedNodes);
         }
+        cop->allParents += cop->directParents;
+
+        // some cleanup to fix inheritance loops
+        cop->allParents << Soprano::Vocabulary::RDFS::Resource();
+        cop->allParents.remove(cop->uri);
     }
     return cop->allParents;
 }
