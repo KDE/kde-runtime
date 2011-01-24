@@ -48,8 +48,8 @@ Nepomuk::DataManagementService::DataManagementService(QObject *parent, const QVa
     qDBusRegisterMetaType<Nepomuk::SimpleResource>();
 
     d->m_model = new DataManagementModel(mainModel(), this);
-    (void)new DataManagementAdaptor( d->m_model );
-    QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagementmodel"), d->m_model, QDBusConnection::ExportAdaptors);
+    Nepomuk::DataManagementAdaptor* adaptor = new Nepomuk::DataManagementAdaptor(d->m_model);
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagementmodel"), adaptor, QDBusConnection::ExportAllSlots);
 }
 
 

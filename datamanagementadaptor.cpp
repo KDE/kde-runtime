@@ -39,7 +39,7 @@
 
 
 Nepomuk::DataManagementAdaptor::DataManagementAdaptor(Nepomuk::DataManagementModel *parent)
-    : QDBusAbstractAdaptor(parent),
+    : QObject(parent),
       m_model(parent)
 {
 }
@@ -50,12 +50,14 @@ Nepomuk::DataManagementAdaptor::~DataManagementAdaptor()
 
 void Nepomuk::DataManagementAdaptor::addProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app)
 {
+    Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new AddPropertyCommand(decodeUrls(resources), decodeUrl(property), values, app, m_model, message()));
 }
 
 QString Nepomuk::DataManagementAdaptor::createResource(const QStringList &types, const QString &label, const QString &description, const QString &app)
 {
+    Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new CreateResourceCommand(decodeUrls(types), label, description, app, m_model, message()));
     // QtDBus will ignore this return value
@@ -64,6 +66,7 @@ QString Nepomuk::DataManagementAdaptor::createResource(const QStringList &types,
 
 Nepomuk::SimpleResourceGraph Nepomuk::DataManagementAdaptor::describeResources(const QStringList &resources, bool includeSubResources)
 {
+    Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new DescribeResourcesCommand(decodeUrls(resources), includeSubResources, m_model, message()));
     // QtDBus will ignore this return value
@@ -72,6 +75,7 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementAdaptor::describeResources(c
 
 void Nepomuk::DataManagementAdaptor::mergeResources(Nepomuk::SimpleResourceGraph resources, const QString &app, const QHash<QString, QVariant> &additionalMetadata)
 {
+    Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     QHash<QUrl, QVariant> decodedMetaData;
     for(QHash<QString, QVariant>::const_iterator it = additionalMetadata.constBegin();
@@ -83,42 +87,49 @@ void Nepomuk::DataManagementAdaptor::mergeResources(Nepomuk::SimpleResourceGraph
 
 void Nepomuk::DataManagementAdaptor::removeDataByApplication(const QString &app, bool force)
 {
+    Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new RemoveDataByApplicationCommand(QList<QUrl>(), app, force, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::removeDataByApplication(const QStringList &resources, const QString &app, bool force)
 {
+    Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new RemoveDataByApplicationCommand(decodeUrls(resources), app, force, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::removeProperties(const QStringList &resources, const QStringList &properties, const QString &app)
 {
+    Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new RemovePropertiesCommand(decodeUrls(resources), decodeUrls(properties), app, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::removePropertiesByApplication(const QStringList &resources, const QStringList &properties, const QString &app)
 {
+    Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new RemovePropertiesByApplicationCommand(decodeUrls(resources), decodeUrls(properties), app, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::removeProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app)
 {
+    Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new RemovePropertyCommand(decodeUrls(resources), decodeUrl(property), values, app, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::removeResources(const QStringList &resources, const QString &app, bool force)
 {
+    Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new RemoveResourcesCommand(decodeUrls(resources), app, force, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::setProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app)
 {
+    Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new SetPropertyCommand(decodeUrls(resources), decodeUrl(property), values, app, m_model, message()));
 }

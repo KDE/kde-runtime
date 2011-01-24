@@ -37,7 +37,7 @@ QDBusError::ErrorType convertSopranoErrorCode(int code)
     case Soprano::Error::ErrorInvalidArgument:
         return QDBusError::InvalidArgs;
     default:
-        return QDBusError::Other;
+        return QDBusError::Failed;
     }
 }
 }

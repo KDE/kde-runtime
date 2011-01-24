@@ -79,6 +79,7 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     // 4. check if the app exists, if not create it in the new graph
     // 5. add the new triples to the new graph
     // 6. update resources' mtime
+    setError("Not implemented yet");
 }
 
 void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
@@ -93,6 +94,7 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     // 7. check if the app exists, if not create it in the new graph
     // 8. add the new triples to the new graph
     // 9. update resources' mtime
+    setError("Not implemented yet");
 }
 
 void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
@@ -100,6 +102,7 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
     // 1. remove the triples
     // 2. remove trailing graphs
     // 3. update resource mtime
+    setError("Not implemented yet");
 }
 
 void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources, const QList<QUrl> &properties, const QString &app)
@@ -107,6 +110,7 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
     // 1. remove the triples
     // 2. remove trailing graphs
     // 3. update resource mtime
+    setError("Not implemented yet");
 }
 
 QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, const QString &label, const QString &description, const QString &app)
@@ -116,6 +120,7 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
     // 3. create the new resource in the new graph
     // 4. return the resource's URI
 
+    setError("Not implemented yet");
     return QUrl();
 }
 
@@ -126,26 +131,32 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
     //    for the latter one can use a bif:exists and a !filter(?s in <s>, <s>, ...) - based on the value of force
     // 2. remove the resources and the sub-resources
     // 3. drop trailing graphs (could be optimized by enumerating the graphs up front)
+    setError("Not implemented yet");
 }
 
 void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &resources, const QString &app, bool force)
 {
+    setError("Not implemented yet");
 }
 
 void Nepomuk::DataManagementModel::removeDataByApplication(const QString &app, bool force)
 {
+    setError("Not implemented yet");
 }
 
 void Nepomuk::DataManagementModel::removePropertiesByApplication(const QList<QUrl> &resources, const QList<QUrl> &properties, const QString &app)
 {
+    setError("Not implemented yet");
 }
 
 void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceGraph &resources, const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
 {
+    setError("Not implemented yet");
 }
 
 Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(const QList<QUrl> &resources, bool includeSubResources)
 {
+    setError("Not implemented yet");
     return SimpleResourceGraph();
 }
 
