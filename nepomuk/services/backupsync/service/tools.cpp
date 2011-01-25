@@ -35,24 +35,24 @@
 #include <KDebug>
 
 
-void Nepomuk::saveBackupChangeLog(const QUrl& url)
+int Nepomuk::saveBackupChangeLog(const QUrl& url)
 {
     const int step = 100;
-    
-    ChangeLog changeLog;
-    
     const QString query = QString::fromLatin1("select ?r ?p ?o ?g where { graph ?g { ?r ?p ?o. } ?g a nrl:InstanceBase . FILTER(!bif:exists( ( select (1) where { ?g a nrl:DiscardableInstanceBase . } ) )) . }");
     
     Soprano::Model * model = Nepomuk::ResourceManager::instance()->mainModel();
     
     Soprano::QueryResultIterator iter= model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    
-    int i=0;
+
+    int totalNumRecords = 0;
+    int i = 0;
+    ChangeLog changeLog;
     while( iter.next() ) {
         Soprano::Statement st( iter["r"], iter["p"], iter["o"], iter["g"] );
          //kDebug() << st;
         changeLog += ChangeLogRecord( st );
-
+        totalNumRecords++;
+        
         if( ++i >= step ) {
             //kDebug() << "Saving .. " << changeLog.size();
             changeLog.save( url );
@@ -62,6 +62,8 @@ void Nepomuk::saveBackupChangeLog(const QUrl& url)
     }
 
     changeLog.save( url );
+    kDebug() << "Total Records : " << totalNumRecords;
+    return totalNumRecords;
 }
 
 //TODO: This doesn't really solve the problem that the backup maybe huge and
@@ -74,9 +76,10 @@ bool Nepomuk::saveBackupSyncFile(const QUrl& url)
     KTemporaryFile file;
     file.open();
 
-    saveBackupChangeLog( file.fileName() );
+    int numRecords = saveBackupChangeLog( file.fileName() );
     ChangeLog log = ChangeLog::fromUrl( file.fileName() );
     kDebug() << "Log size: " << log.size();
+    Q_ASSERT( numRecords == log.size() );
 
     if( log.empty() ) {
         kDebug() << "Nothing to save..";

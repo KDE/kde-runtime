@@ -36,8 +36,10 @@ namespace Nepomuk {
     /**
      * Saves a changeLog with the list of all the statements that should be backed up.
      * It's useful in when doing a first sync or first backup.
+     *
+     * Returns the numbers of records in the changelog
      */
-    void saveBackupChangeLog( const QUrl& url );
+    int saveBackupChangeLog( const QUrl& url );
 
     bool saveBackupSyncFile( const QUrl& url );
 }

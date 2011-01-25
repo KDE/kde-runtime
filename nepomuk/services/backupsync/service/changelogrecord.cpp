@@ -128,7 +128,10 @@ QString Nepomuk::ChangeLogRecord::toString() const
     QString statement;
     QTextStream ts( &statement );
 
-    Private::serializer->serialize( it, ts, Soprano::SerializationNQuads);
+    if( !Private::serializer->serialize( it, ts, Soprano::SerializationNQuads) ) {
+        kWarning() << "Serialization using NQuads failed for " << d->st;
+        return QString();
+    }
 
     return s + statement;
 }
