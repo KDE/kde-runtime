@@ -25,6 +25,7 @@ Item {
     height:20
 
     property string text
+    property bool down: false
     signal clicked
 
     id: button
@@ -33,8 +34,8 @@ Item {
         id: surface
         anchors.fill: parent
         imagePath: "widgets/button"
-        prefix: "normal"
-        opacity: 0
+        prefix: down?"pressed":"normal"
+        opacity: down?1:0
         Behavior on opacity {
             PropertyAnimation { duration: 250 }
         }
@@ -52,17 +53,25 @@ Item {
         hoverEnabled: true
 
         onPressed: {
-            surface.prefix = "pressed"
+            if (!down) {
+                surface.prefix = "pressed"
+            }
         }
         onReleased: {
-            surface.prefix = "normal"
+            if (!down) {
+                surface.prefix = "normal"
+            }
             button.clicked()
         }
         onEntered: {
-            surface.opacity = 1
+            if (!down) {
+                surface.opacity = 1
+            }
         }
         onExited: {
-            surface.opacity = 0
+            if (!down) {
+                surface.opacity = 0
+            }
         }
     }
 
