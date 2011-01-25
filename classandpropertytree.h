@@ -43,6 +43,9 @@ public:
     int maxCardinality(const QUrl& type) const;
     bool isUserVisible(const QUrl& type) const;
 
+    QUrl propertyDomain(const QUrl& uri) const;
+    QUrl propertyRange(const QUrl& uri) const;
+
 public Q_SLOTS:
     void rebuildTree(Soprano::Model* model);
 

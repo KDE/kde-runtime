@@ -56,6 +56,10 @@ public:
 
     /// 0 - undecided, 1 - visible, -1 - non-visible
     int userVisible;
+
+    /// only valid for properties
+    QUrl domain;
+    QUrl range;
 };
 
 Nepomuk::ClassAndPropertyTree::ClassAndPropertyTree(QObject *parent)
@@ -100,13 +104,29 @@ bool Nepomuk::ClassAndPropertyTree::isUserVisible(const QUrl &type) const
         return true;
 }
 
+QUrl Nepomuk::ClassAndPropertyTree::propertyDomain(const QUrl &uri) const
+{
+    if(const ClassOrProperty* cop = findClassOrProperty(uri))
+        return cop->domain;
+    else
+        return QUrl();
+}
+
+QUrl Nepomuk::ClassAndPropertyTree::propertyRange(const QUrl &uri) const
+{
+    if(const ClassOrProperty* cop = findClassOrProperty(uri))
+        return cop->range;
+    else
+        return QUrl();
+}
+
 void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
 {
     qDeleteAll(m_tree);
     m_tree.clear();
 
     const QString query
-            = QString::fromLatin1("select distinct ?r ?p ?v ?mc ?c "
+            = QString::fromLatin1("select distinct ?r ?p ?v ?mc ?c ?domain ?range "
                                   "where { "
                                   "{ ?r a rdfs:Class . "
                                   "OPTIONAL { ?r rdfs:subClassOf ?p . ?p a rdfs:Class . } . } "
@@ -116,11 +136,15 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
                                   "OPTIONAL { ?r %1 ?mc . } . "
                                   "OPTIONAL { ?r %2 ?c . } . "
                                   "OPTIONAL { ?r %3 ?v . } . "
-                                  "FILTER(?r!=%4) . "
+                                  "OPTIONAL { ?r %4 ?domain . } . "
+                                  "OPTIONAL { ?r %5 ?range . } . "
+                                  "FILTER(?r!=%6) . "
                                   "}" )
             .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::maxCardinality()),
                  Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::cardinality()),
                  Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::userVisible()),
+                 Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::domain()),
+                 Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::range()),
                  Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::Resource()));
     kDebug() << query;
     Soprano::QueryResultIterator it
@@ -131,6 +155,8 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
         const Soprano::Node v = it["v"];
         int mc = it["mc"].literal().toInt();
         int c = it["c"].literal().toInt();
+        const QUrl domain = it["domain"].uri();
+        const QUrl range = it["range"].uri();
 
         ClassOrProperty* r_cop = 0;
         QHash<QUrl, ClassOrProperty*>::iterator it = m_tree.find(r);
@@ -149,6 +175,14 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
 
         if(mc > 0 || c > 0) {
             r_cop->maxCardinality = qMax(mc, c);
+        }
+
+        if(!domain.isEmpty()) {
+            r_cop->domain = domain;
+        }
+
+        if(!range.isEmpty()) {
+            r_cop->range = range;
         }
 
         if ( p.isResource() &&

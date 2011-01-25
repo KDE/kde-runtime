@@ -159,8 +159,16 @@ public Q_SLOTS:
                                           bool includeSubResources);
     //@}
 
+    /**
+     * Update any internal structures which are used for optimization purposes
+     * like the type tree.
+     */
+    void updateTypeCachesAndSoOn();
+
 private:
-    QUrl createGraph(const QString& app, const QHash<QUrl, QVariant>& additionalMetadata);
+    bool checkRange(const QUrl& property, const QSet<Soprano::Node>& values) const;
+    QUrl createGraph(const QString& app, const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>());
+    QUrl createApplication(const QString& app);
 
     /**
      * Updates the modification date of \p resource to \p date.
@@ -172,7 +180,13 @@ private:
      * Removes all the graphs from \p graphs which do not contain any statements
      */
     void removeTrailingGraphs( const QSet<QUrl> graphs );
-    
+
+    /**
+     * Adds for each resource in \p resources a property for each node in nodes. \p nodes cannot be empty.
+     * This method is used in the public setProperty and addProperty slots to avoid a lot of code duplication.
+     */
+    void addProperty(const QList<QUrl>& resources, const QUrl& property, const QSet<Soprano::Node>& nodes, const QString& app);
+
     enum UriType {
         GraphUri,
         ResourceUri
