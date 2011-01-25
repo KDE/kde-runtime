@@ -136,8 +136,6 @@ void ClassAndPropertyTreeTest::testVisibility()
     QVERIFY(!m_typeTree->isUserVisible(QUrl("onto:/Z")));
 }
 
-QTEST_KDEMAIN_CORE(ClassAndPropertyTreeTest)
-
 void ClassAndPropertyTreeTest::testParents()
 {
     QCOMPARE(m_typeTree->allParents(QUrl("onto:/A")).count(), 1);
@@ -195,5 +193,7 @@ void ClassAndPropertyTreeTest::testParents()
     QVERIFY(m_typeTree->isChildOf(QUrl("onto:/Z"), QUrl("onto:/X")));
     QVERIFY(m_typeTree->isChildOf(QUrl("onto:/Z"), QUrl("onto:/Y")));
 }
+
+QTEST_KDEMAIN_CORE(ClassAndPropertyTreeTest)
 
 #include "classandpropertytreetest.moc"

@@ -7,3 +7,13 @@ target_link_libraries(classandpropertytreetest
   ${QT_QTTEST_LIBRARY}
   ${SOPRANO_LIBRARIES}
   ${KDE4_KDECORE_LIBS})
+
+
+kde4_add_unit_test(datamanagementmodeltest
+  datamanagementmodeltest.cpp
+  ../classandpropertytree.cpp
+  ../datamanagementmodel.cpp)
+target_link_libraries(datamanagementmodeltest
+  ${QT_QTTEST_LIBRARY}
+  ${SOPRANO_LIBRARIES}
+  ${KDE4_KDECORE_LIBS})
