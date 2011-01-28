@@ -302,10 +302,20 @@ void removeObsolateInstallations()
     }
 }
 
+void installStartMenuLinks()
+{
+    removeDirectory(getKDEStartMenuPath());
+
+    // create list of currently available link files 
+    QList<LinkFile> newFiles;
+    generateMenuEntries(newFiles,KUrl("applications:/"));
+
+    // create new links 
+    LinkFiles::create(newFiles);
+}
+
 void updateStartMenuLinks()
 {
-    removeObsolateInstallations();
-
     // generate list of installed linkfiles 
     QList<LinkFile> oldFiles;
     LinkFiles::scan(oldFiles, getKDEStartMenuPath());
@@ -322,8 +332,11 @@ void updateStartMenuLinks()
 
 void removeStartMenuLinks()
 {
-    removeObsolateInstallations();
     removeDirectory(getKDEStartMenuPath());
 }
 
+void cleanupStartMenuLinks()
+{
+    removeObsolateInstallations();
+}
  // vim: ts=4 sw=4 et

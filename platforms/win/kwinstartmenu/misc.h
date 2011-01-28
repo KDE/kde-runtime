@@ -44,8 +44,21 @@ bool removeDirectory(const QString& aDir);
 QString getStartMenuPath(bool bAllUsers=false);
 QString getKDEStartMenuPath();
 bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString &relPathTranslated=QString());
+
+// unconditional install start menu links for  current installation
+void installStartMenuLinks();
+
+// update start menu links for current installation
 void updateStartMenuLinks();
+
+// remove start menu links from current installation
 void removeStartMenuLinks();
+
+/** 
+  remove unused start menu links from different installation
+  This function searches for start menu entries not backed by a real installation
+*/
+void cleanupStartMenuLinks();
 
 #endif
 // vim: ts=4 sw=4 et

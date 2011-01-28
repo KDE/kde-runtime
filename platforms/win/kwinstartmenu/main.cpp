@@ -48,6 +48,8 @@ int main(int argc, char **argv)
     KCmdLineOptions options;
     options.add("remove",     ki18n("remove installed start menu entries"));
     options.add("install",    ki18n("install start menu entries"));
+    options.add("update",     ki18n("update start menu entries"));
+    options.add("cleanup",    ki18n("remove start menu entries from unused kde installation"));
     options.add("query-path", ki18n("query root path of start menu entries"));
     options.add("nocategories", ki18n("don't use categories for start menu entries"));
     options.add("set-root-custom-string <argument>", ki18n("set custom string for root start menu entry"));
@@ -96,11 +98,14 @@ int main(int argc, char **argv)
         fprintf(stdout,"%s",qPrintable(QDir::toNativeSeparators(getKDEStartMenuPath())));
     else if (args->isSet("remove"))
         removeStartMenuLinks();
-    else
+    else if (args->isSet("update"))
         updateStartMenuLinks();
+    else if (args->isSet("install"))
+        updateStartMenuLinks();
+    else if (args->isSet("cleanup"))
+        cleanupStartMenuLinks();
 
     return 0;
 }
-
-    
+   
 // vim: ts=4 sw=4 et
