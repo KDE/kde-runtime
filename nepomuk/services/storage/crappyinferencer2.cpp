@@ -594,12 +594,15 @@ void CrappyInferencer2::setVisibility(const QUrl &resource, bool visible)
 {
     // we use an integer instead of a boolean for performance reasons: virtuoso does not support bool and Soprano converts them to strings
     if( visible ) {
-        parentModel()->addStatement(resource,
-                                    Soprano::Vocabulary::NAO::userVisible(),
-                                    Soprano::LiteralValue(1),
-                                    crappyInferenceContext());
+        // we only set the visibility if it is not set yet
+        executeQuery(QString::fromLatin1("insert into graph %1 { %2 %3 1 . } where { FILTER(!bif:exists((select (1) where { %2 %3 ?v . }))) }")
+                     .arg( Soprano::Node::resourceToN3( crappyInferenceContext() ),
+                           Soprano::Node::resourceToN3( resource ),
+                           Soprano::Node::resourceToN3( Soprano::Vocabulary::NAO::userVisible() ) ),
+                     Soprano::Query::QueryLanguageSparql);
     }
     else {
+        // we only remove the visibility value we created ourselves
         parentModel()->removeAllStatements(resource,
                                            Soprano::Vocabulary::NAO::userVisible(),
                                            Soprano::Node(),
