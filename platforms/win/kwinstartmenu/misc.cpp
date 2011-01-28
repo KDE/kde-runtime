@@ -1,6 +1,6 @@
 /* This file is part of the KDE project
 
-   Copyright (C) 2006-2010 Ralf Habacker <ralf.habacker@freenet.de>
+   Copyright (C) 2006-2011 Ralf Habacker <ralf.habacker@freenet.de>
    All rights reserved.
 
    This library is free software; you can redistribute it and/or
@@ -108,12 +108,13 @@ QString getKDEStartMenuRootEntry()
 {
     QString version = KDE::versionString();
     QStringList versions = version.split(' '); 
+    QString addOn = !globalOptions.rootCustomString.isEmpty() ?  globalOptions.rootCustomString + ' ' : "";
 #ifdef QT_NO_DEBUG
     QString compileMode = "Release"; 
 #else
     QString compileMode = "Debug"; 
 #endif
-    return "KDE " + versions[0] + ' ' + compileMode;
+    return "KDE " + versions[0] + ' ' + addOn + compileMode;
 }
 
 inline QString getWorkingDir() 
