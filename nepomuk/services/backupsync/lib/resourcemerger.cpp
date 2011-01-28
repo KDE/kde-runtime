@@ -51,7 +51,7 @@ public:
     QHash<KUrl, Resource> m_newMappings;
 
     void push( const Soprano::Statement & st, const KUrl & graphUri );
-    KUrl resolve( const KUrl& oldUri );
+    KUrl resolve( const Soprano::Node & n );
 };
 
 Nepomuk::Sync::ResourceMerger::Private::Private(Nepomuk::Sync::ResourceMerger* resMerger)
@@ -134,11 +134,11 @@ void Nepomuk::Sync::ResourceMerger::merge(const Soprano::Graph& graph, const QHa
         if( !st.isValid() )
             continue;
 
-        st.setSubject( d->resolve( st.subject().uri() ) );
-        if( st.object().isResource() ) {
-            KUrl resolvedObject = d->resolve( st.object().uri() );
+        st.setSubject( d->resolve( st.subject() ) );
+        if( st.object().isResource() || st.object().isBlank() ) {
+            KUrl resolvedObject = d->resolve( st.object() );
             if( resolvedObject.isEmpty() ) {
-                kDebug() << st.object().uri() << " resolution failed!";
+                kDebug() << st.object() << " resolution failed!";
                 continue;
             }
             st.setObject( resolvedObject );
@@ -170,8 +170,10 @@ void Nepomuk::Sync::ResourceMerger::Private::push(const Soprano::Statement& st, 
 }
 
 
-KUrl Nepomuk::Sync::ResourceMerger::Private::resolve(const KUrl& oldUri)
+KUrl Nepomuk::Sync::ResourceMerger::Private::resolve(const Soprano::Node& n)
 {
+    const QUrl oldUri = n.isResource() ? n.uri() : QUrl(n.identifier());
+    
     // Find in mappings
     QHash< KUrl, Resource >::const_iterator it = m_oldMappings.constFind( oldUri );
     if( it != m_oldMappings.constEnd() ) {
