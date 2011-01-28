@@ -97,10 +97,10 @@ namespace {
         while( iter.hasNext() ) {
             const QUrl & uri = iter.next();
             done.insert( uri );
-            iter.remove();
-
+            
             uris.append( Soprano::Node::resourceToN3( uri ) );
-
+            
+            iter.remove();
             if( uris.size() == maxIterationSize )
                 break;
         }
