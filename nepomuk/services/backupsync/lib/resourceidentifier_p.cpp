@@ -65,20 +65,6 @@ void Nepomuk::Sync::ResourceIdentifier::Private::init(Nepomuk::ResourceManager* 
 }
 
 
-namespace {
-
-    //TODO: Use Nepomuk::Type::Property
-    bool isIdentifyingProperty( KUrl prop, Soprano::Model * model ) {
-        QString query = QString::fromLatin1( "ask { %1 %2 %3 }" )
-        .arg( Soprano::Node::resourceToN3( prop ) )
-        .arg( Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::subPropertyOf()) )
-        .arg( Soprano::Node::resourceToN3(Nepomuk::Vocabulary::backupsync::identifyingProperty()) );
-        return model->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
-    }
-}
-
-
-
 bool Nepomuk::Sync::ResourceIdentifier::Private::identify( const KUrl& oldUri )
 {
     kDebug() << oldUri;
