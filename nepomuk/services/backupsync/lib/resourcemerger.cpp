@@ -44,6 +44,7 @@ public:
 
     Soprano::NRLModel * m_nrlModel;
     KUrl m_graphType;
+    KUrl graph;
 
     ResourceMerger * q;
     
@@ -127,7 +128,7 @@ void Nepomuk::Sync::ResourceMerger::merge(const Soprano::Graph& graph, const QHa
 {
     d->m_oldMappings = mappings;
 
-    KUrl graphUri = createGraph();
+    KUrl graphUri = d->graph.isValid() ? d->graph : createGraph();
     
     QList<Soprano::Statement> statements = graph.toList();
     foreach( Soprano::Statement st, statements ) {
@@ -154,6 +155,16 @@ KUrl Nepomuk::Sync::ResourceMerger::createGraph()
     return d->m_nrlModel->createGraph( d->m_graphType );
 }
 
+
+KUrl Nepomuk::Sync::ResourceMerger::graph()
+{
+    return d->graph;
+}
+
+void Nepomuk::Sync::ResourceMerger::setGraph(const KUrl& graph)
+{
+    d->graph = graph;
+}
 
 void Nepomuk::Sync::ResourceMerger::Private::push(const Soprano::Statement& st, const KUrl& graphUri)
 {

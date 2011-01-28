@@ -89,6 +89,12 @@ namespace Nepomuk {
             
             Types::Class graphType() const;
 
+            /**
+             * Set the graph to be used while pushing as \p
+             */
+            void setGraph( const KUrl & graph );
+            KUrl graph();
+            
         protected:
             
             /**
