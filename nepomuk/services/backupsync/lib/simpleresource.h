@@ -55,6 +55,7 @@ namespace Nepomuk {
         {
         public :
             SimpleResource();
+            SimpleResource( const KUrl & uri );
             SimpleResource( const SimpleResource & rhs );
             virtual NEPOMUKSYNC_EXPORT ~SimpleResource();
 

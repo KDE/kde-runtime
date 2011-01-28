@@ -44,6 +44,12 @@ Nepomuk::Sync::SimpleResource::SimpleResource()
 {
 }
 
+Nepomuk::Sync::SimpleResource::SimpleResource(const KUrl& uri)
+    : d( new Nepomuk::Sync::SimpleResource::Private )
+{
+    setUri( uri );
+}
+
 Nepomuk::Sync::SimpleResource::SimpleResource(const Nepomuk::Sync::SimpleResource& rhs)
     : QMultiHash< KUrl, Soprano::Node >(rhs),
       d( rhs.d )
