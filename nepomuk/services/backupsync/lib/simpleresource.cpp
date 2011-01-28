@@ -107,9 +107,15 @@ KUrl Nepomuk::Sync::SimpleResource::nieUrl() const
 }
 
 
-void Nepomuk::Sync::SimpleResource::setUri(const KUrl& newUri)
+void Nepomuk::Sync::SimpleResource::setUri(const Soprano::Node& node)
 {
-    d->uri = newUri;
+    if( node.isResource() ) {
+        d->uri = node.uri();
+    }
+    else if( node.isBlank() ) {
+        d->uri = KUrl( node.identifier() );
+        d->uri.setScheme("");
+    }
 }
 
 KUrl Nepomuk::Sync::SimpleResource::uri() const
