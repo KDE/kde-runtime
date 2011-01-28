@@ -62,11 +62,8 @@ namespace Nepomuk {
         class NEPOMUKSYNC_EXPORT ResourceMerger
         {
         public:
-            ResourceMerger( ResourceManager * rm = 0 );
+            ResourceMerger();
             virtual ~ResourceMerger();
-
-            ResourceManager * resourceManager() const;
-            void setResourceManager( ResourceManager * rm );
 
             void setModel( Soprano::Model * model );
             Soprano::Model * model() const;

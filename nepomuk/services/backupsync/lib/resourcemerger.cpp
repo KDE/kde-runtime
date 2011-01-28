@@ -40,7 +40,6 @@ public:
     Private( ResourceMerger * resMerger );
     
     Soprano::Model * m_model;
-    ResourceManager * m_resourceManager;
 
     Soprano::NRLModel * m_nrlModel;
     KUrl m_graphType;
@@ -61,32 +60,16 @@ Nepomuk::Sync::ResourceMerger::Private::Private(Nepomuk::Sync::ResourceMerger* r
 }
 
 
-Nepomuk::Sync::ResourceMerger::ResourceMerger(Nepomuk::ResourceManager* rm)
+Nepomuk::Sync::ResourceMerger::ResourceMerger()
     : d( new Nepomuk::Sync::ResourceMerger::Private( this ) )
 {
     d->m_nrlModel = 0;
-    setResourceManager( rm );
     d->m_graphType = Soprano::Vocabulary::NRL::InstanceBase();
 }
 
 Nepomuk::Sync::ResourceMerger::~ResourceMerger()
 {
     delete d;
-}
-
-void Nepomuk::Sync::ResourceMerger::setResourceManager(Nepomuk::ResourceManager* rm)
-{
-    if( !rm )
-        d->m_resourceManager = ResourceManager::instance();
-    d->m_model = d->m_resourceManager->mainModel();
-    
-    delete d->m_nrlModel;
-    d->m_nrlModel = new Soprano::NRLModel( d->m_model );
-}
-
-Nepomuk::ResourceManager* Nepomuk::Sync::ResourceMerger::resourceManager() const
-{
-    return d->m_resourceManager;
 }
 
 void Nepomuk::Sync::ResourceMerger::setModel(Soprano::Model* model)
@@ -98,7 +81,7 @@ void Nepomuk::Sync::ResourceMerger::setModel(Soprano::Model* model)
 
 Soprano::Model* Nepomuk::Sync::ResourceMerger::model() const
 {
-    return d->m_resourceManager->mainModel();
+    return d->m_model;
 }
 
 
@@ -124,7 +107,7 @@ Nepomuk::Resource Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource(con
     if( it != d->m_newMappings.constEnd() )
         return it.value();
     
-    KUrl newUri = d->m_resourceManager->generateUniqueUri( QString("res") );
+    KUrl newUri = ResourceManager::instance()->generateUniqueUri( QString("res") );
     d->m_newMappings.insert( uri, newUri );
     return Nepomuk::Resource( newUri );
 }
