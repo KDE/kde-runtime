@@ -99,14 +99,12 @@ namespace Nepomuk {
              */
             KUrl mappedUri( const KUrl & resourceUri ) const;
 
-            Resource mappedResource( const KUrl & resourceUri ) const;
-
             KUrl::List mappedUris() const;
             
             /**
              * Returns mappings of the identified uri
              */
-            QHash<KUrl, Resource> mappings() const;
+            QHash<KUrl, KUrl> mappings() const;
 
             /**
              * Returns urls that were not successfully identified

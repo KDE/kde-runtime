@@ -174,17 +174,12 @@ bool Nepomuk::Sync::ResourceIdentifier::allIdentified() const
 // Getting the info
 //
 
-Nepomuk::Resource Nepomuk::Sync::ResourceIdentifier::mappedResource(const KUrl& resourceUri) const
-{
-    QHash< KUrl, Resource >::iterator it = d->m_hash.find( resourceUri );
-    if( it != d->m_hash.end() )
-        return it.value();
-    return Resource();
-}
-
 KUrl Nepomuk::Sync::ResourceIdentifier::mappedUri(const KUrl& resourceUri) const
 {
-    return mappedResource( resourceUri ).resourceUri();
+    QHash< KUrl, KUrl >::iterator it = d->m_hash.find( resourceUri );
+    if( it != d->m_hash.end() )
+        return it.value();
+    return KUrl();
 }
 
 KUrl::List Nepomuk::Sync::ResourceIdentifier::mappedUris() const
@@ -192,7 +187,7 @@ KUrl::List Nepomuk::Sync::ResourceIdentifier::mappedUris() const
     return d->m_hash.uniqueKeys();
 }
 
-QHash< KUrl, Nepomuk::Resource > Nepomuk::Sync::ResourceIdentifier::mappings() const
+QHash<KUrl, KUrl> Nepomuk::Sync::ResourceIdentifier::mappings() const
 {
     return d->m_hash;
 }
@@ -286,7 +281,7 @@ namespace {
 
 void Nepomuk::Sync::ResourceIdentifier::forceResource(const KUrl& oldUri, const Nepomuk::Resource& res)
 {
-    d->m_hash[ oldUri ] = res;
+    d->m_hash[ oldUri ] = res.resourceUri();
     d->m_notIdentified.remove( oldUri );
 
     if( res.isFile() ) {

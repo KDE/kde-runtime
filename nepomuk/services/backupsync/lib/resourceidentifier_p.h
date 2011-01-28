@@ -50,8 +50,7 @@ namespace Nepomuk {
             /**
              * Contstructor.
              * It will initialize all pointers with NULL and all values that
-             * has a incorrect value with this value. For example -1 will be
-             * assigned for m_id.
+             * has a incorrect value with this value.
              */
             Private( ResourceIdentifier * parent );
             void init( ResourceManager * rm );
@@ -65,7 +64,7 @@ namespace Nepomuk {
              * The main identification hash which maps external ResourceUris
              * with the internal ones
              */
-            QHash<KUrl, Nepomuk::Resource> m_hash;
+            QHash<KUrl, KUrl> m_hash;
             
             QSet<KUrl> m_notIdentified;
             

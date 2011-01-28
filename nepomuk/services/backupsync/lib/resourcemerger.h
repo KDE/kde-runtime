@@ -77,7 +77,7 @@ namespace Nepomuk {
              *
              * \sa setGraphType graphType
              */
-            virtual void merge( const Soprano::Graph & graph, const QHash<KUrl, Resource> & mappings );
+            virtual void merge( const Soprano::Graph & graph, const QHash<KUrl, KUrl> & mappings );
 
             /**
              * The graph type by default is nrl:InstanceBase. If \p type is not a subclass of

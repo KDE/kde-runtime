@@ -47,8 +47,8 @@ public:
 
     ResourceMerger * q;
     
-    QHash<KUrl, Resource> m_oldMappings;
-    QHash<KUrl, Resource> m_newMappings;
+    QHash<KUrl, KUrl> m_oldMappings;
+    QHash<KUrl, KUrl> m_newMappings;
 
     void push( const Soprano::Statement & st, const KUrl & graphUri );
     KUrl resolve( const Soprano::Node & n );
@@ -103,7 +103,7 @@ bool Nepomuk::Sync::ResourceMerger::setGraphType(const Nepomuk::Types::Class& ty
 Nepomuk::Resource Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
 {
     // The default implementation is to create it.
-    QHash< KUrl, Resource >::const_iterator it = d->m_newMappings.constFind( uri );
+    QHash< KUrl, KUrl >::const_iterator it = d->m_newMappings.constFind( uri );
     if( it != d->m_newMappings.constEnd() )
         return it.value();
     
@@ -113,7 +113,7 @@ Nepomuk::Resource Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource(con
 }
 
 
-void Nepomuk::Sync::ResourceMerger::merge(const Soprano::Graph& graph, const QHash< KUrl, Nepomuk::Resource >& mappings)
+void Nepomuk::Sync::ResourceMerger::merge(const Soprano::Graph& graph, const QHash< KUrl, KUrl >& mappings)
 {
     d->m_oldMappings = mappings;
 
@@ -175,9 +175,9 @@ KUrl Nepomuk::Sync::ResourceMerger::Private::resolve(const Soprano::Node& n)
     const QUrl oldUri = n.isResource() ? n.uri() : QUrl(n.identifier());
     
     // Find in mappings
-    QHash< KUrl, Resource >::const_iterator it = m_oldMappings.constFind( oldUri );
+    QHash< KUrl, KUrl >::const_iterator it = m_oldMappings.constFind( oldUri );
     if( it != m_oldMappings.constEnd() ) {
-        return it.value().resourceUri();
+        return it.value();
     } else {
         Nepomuk::Resource res = q->resolveUnidentifiedResource( oldUri );
         return res.resourceUri();
