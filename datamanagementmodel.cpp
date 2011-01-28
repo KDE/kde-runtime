@@ -22,9 +22,9 @@
 #include "datamanagementmodel.h"
 #include "classandpropertytree.h"
 
-#include "synclib/simpleresource.h"
-#include "synclib/resourceidentifier.h"
-#include "synclib/resourcemerger.h"
+#include <nepomuk/simpleresource.h>
+#include <nepomuk/resourceidentifier.h>
+#include <nepomuk/resourcemerger.h>
 
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/NAO>

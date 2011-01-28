@@ -1,7 +1,5 @@
 project(nepomukdatamanagement)
 
-add_subdirectory( synclib )
-
 set(KDE_MIN_VERSION "4.5.80")  # for the < 4.2 macro
 find_package(KDE4 4.5.80 REQUIRED)
 find_package(Nepomuk REQUIRED)
