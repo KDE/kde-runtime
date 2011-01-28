@@ -62,20 +62,21 @@ Nepomuk::Sync::ResourceIdentifier::~ResourceIdentifier()
 
 void Nepomuk::Sync::ResourceIdentifier::addStatement(const Soprano::Statement& st)
 {
-    QHash<KUrl, SimpleResource>::iterator it = d->m_resourceHash.find( st.subject().uri() );
+    SimpleResource res;
+    res.setUri( st.subject() );
+    
+    QHash<KUrl, SimpleResource>::iterator it = d->m_resourceHash.find( res.uri() );
     if( it != d->m_resourceHash.end() ) {
         SimpleResource & res = it.value();
         res.insert( st.predicate().uri(), st.object() );
         return;
     }
 
-   // Doesn't exist. Create it
-   SimpleResource res;
-   res.setUri( st.subject().uri() );
+   // Doesn't exist - Create it and insert it into the resourceHash
    res.insert( st.predicate().uri(), st.object() );
 
-   d->m_resourceHash.insert( st.subject().uri(), res );
-   d->m_notIdentified.insert( st.subject().uri() );
+   d->m_resourceHash.insert( res.uri(), res );
+   d->m_notIdentified.insert( res.uri() );
 }
 
 void Nepomuk::Sync::ResourceIdentifier::addStatements(const Soprano::Graph& graph)
