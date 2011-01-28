@@ -1,6 +1,6 @@
 /* This file is part of the KDE Project
 
-   Copyright (C) 2006-2010 Ralf Habacker <ralf.habacker@freenet.de>
+   Copyright (C) 2006-2011 Ralf Habacker <ralf.habacker@freenet.de>
    All rights reserved.
 
    This library is free software; you can redistribute it and/or
@@ -35,6 +35,7 @@ public:
     GlobalOptions() : useCategories(true) {}
 
     bool useCategories;
+    QString rootCustomString;
 };
 
 extern GlobalOptions globalOptions;

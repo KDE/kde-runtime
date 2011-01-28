@@ -1,6 +1,6 @@
 /* This file is part of the KDE Project
 
-   Copyright (C) 2006-2010 Ralf Habacker <ralf.habacker@freenet.de>
+   Copyright (C) 2006-2011 Ralf Habacker <ralf.habacker@freenet.de>
    All rights reserved.
 
    This library is free software; you can redistribute it and/or
@@ -24,6 +24,8 @@
 #include <QFileInfo>
 
 #include <KAboutData>
+#include <KConfig>
+#include <KConfigGroup>
 #include <kapplication.h>
 #include <kcmdlineargs.h>
 #include <kconfig.h>
@@ -37,17 +39,20 @@
 
 int main(int argc, char **argv)
 {
-    KAboutData about("kwinstartmenu", "kdebase-runtime", ki18n("kwinstartmenu"), "1.1",
+    KAboutData about("kwinstartmenu", "kdebase-runtime", ki18n("kwinstartmenu"), "1.2",
                      ki18n("An application to create/update or remove Windows Start Menu entries"),
                      KAboutData::License_GPL,
                      ki18n("(C) 2008-2010 Ralf Habacker"));
     KCmdLineArgs::init( argc, argv, &about);
 
     KCmdLineOptions options;
-    options.add("remove",     ki18n("Remove installed Start Menu entries"));
-    options.add("install",    ki18n("Install Start Menu entries (this is also the default when this option is not used)"));
-    options.add("query-path", ki18n("query root path of Start Menu entries"));
+    options.add("remove",     ki18n("remove installed start menu entries"));
+    options.add("install",    ki18n("install start menu entries"));
+    options.add("query-path", ki18n("query root path of start menu entries"));
     options.add("nocategories", ki18n("don't use categories for start menu entries"));
+    options.add("set-root-custom-string <argument>", ki18n("set custom string for root start menu entry"));
+    options.add("remove-root-custom-string", ki18n("remove custom string from root start menu entry"));
+    options.add("root-custom-string", ki18n("query current value of root start menu entry custom string"));
     KCmdLineArgs::addCmdLineOptions( options ); // Add my own options.
 
     KComponentData a(&about);
@@ -56,8 +61,36 @@ int main(int argc, char **argv)
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     KApplication app(false);
-
-    globalOptions.useCategories = args->isSet("categories");
+    
+    // set global options from config file
+    // @todo merge with related stuff in kwinstartmenu.cpp 
+    KConfig config("kwinstartmenurc");
+    KConfigGroup group( &config, "General" );
+    globalOptions.useCategories = group.readEntry("useCategories", true);
+    globalOptions.rootCustomString = group.readEntry("rootCustomString", "");
+    
+    // override global settings from command line 
+    if (args->isSet("categories"))
+    {
+        globalOptions.useCategories = args->isSet("categories");
+        group.writeEntry("useCategories",globalOptions.useCategories);
+    }
+    if (args->isSet("root-custom-string"))
+        fprintf(stdout,"%s",qPrintable(globalOptions.rootCustomString));
+    else if (args->isSet("remove-root-custom-string"))
+    {
+        globalOptions.rootCustomString = "";
+        group.writeEntry("rootCustomString",globalOptions.rootCustomString);
+    }
+    else 
+    {
+        QString rootCustomString = args->getOption("set-root-custom-string");
+        if (!rootCustomString.isEmpty())
+        {
+            globalOptions.rootCustomString = rootCustomString;
+            group.writeEntry("rootCustomString",rootCustomString);
+        }
+    }
     
     if (args->isSet("query-path"))
         fprintf(stdout,"%s",qPrintable(QDir::toNativeSeparators(getKDEStartMenuPath())));
