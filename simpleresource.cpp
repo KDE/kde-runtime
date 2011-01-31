@@ -23,11 +23,19 @@
 
 #include <QtCore/QHashIterator>
 
-#include <Soprano/Statement>
-
 #include <Nepomuk/Variant>
 
 namespace Nepomuk {
+
+SimpleResource::SimpleResource()
+{
+
+}
+
+SimpleResource::~SimpleResource()
+{
+
+}
 
 QUrl SimpleResource::uri() const
 {
