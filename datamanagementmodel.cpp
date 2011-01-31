@@ -326,6 +326,7 @@ namespace {
 
     void ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
     {
+        kDebug() << newSt;
         using namespace Soprano::Vocabulary;
         
         // Merge rules
@@ -356,21 +357,41 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
 {
     Sync::ResourceIdentifier resIdent;
     foreach( const SimpleResource & res, resources ) {
-        resIdent.addSimpleResource( convert(res) );
+        Sync::SimpleResource simpleRes = convert(res);
+        //kDebug() << simpleRes.uri();
+        //kDebug() << simpleRes;
+        
+        resIdent.addSimpleResource( simpleRes );
     }
 
+    kDebug() << this->statementCount();
+    
+    resIdent.setModel( this );
     resIdent.setMinScore( 1.0 );
     resIdent.identifyAll();
 
+    kDebug() << this->statementCount();
+    
+    if( resIdent.mappings().empty() ) {
+        kDebug() << "Nothing was mapped";
+        //vHanda: This means that everything should be pushed, right?
+        //return;
+    }
+
+    //FIXME: They may be cases where this graph is created just for the heck of it!
     QUrl graph = createGraph( app, additionalMetadata );
 
     ResourceMerger merger;
     merger.setModel( this );
     merger.setGraph( graph );
-    
+
+    kDebug() << "MERGING!";
     foreach( const KUrl & url, resIdent.unidentified() ) {
+        kDebug() << "Merging - " << url;
         merger.merge( resIdent.statements(url), resIdent.mappings() );
     }
+    kDebug() << listStatements( QUrl(), QUrl(), QUrl(), graph ).allStatements();
+    
     //// TODO: do not allow to create properties or classes this way
     //setError("Not implemented yet");
 }
