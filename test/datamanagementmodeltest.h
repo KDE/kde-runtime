@@ -41,6 +41,7 @@ private Q_SLOTS:
     void cleanupTestCase();
     void init();
     void testSetProperty();
+    void testMergeResources();
 
 private:
     KTempDir* m_storageDir;

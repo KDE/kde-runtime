@@ -22,6 +22,7 @@
 #include "datamanagementmodeltest.h"
 #include "../datamanagementmodel.h"
 #include "../classandpropertytree.h"
+#include "../simpleresource.h"
 
 #include <QtTest>
 #include "qtest_kde.h"
@@ -29,6 +30,9 @@
 #include <Soprano/Soprano>
 
 #include <ktempdir.h>
+#include <KDebug>
+
+#include <Nepomuk/Vocabulary/NFO>
 
 using namespace Soprano;
 
@@ -77,6 +81,36 @@ void DataManagementModelTest::testSetProperty()
 
     QTextStream s(stderr);
     m_model->write(s);
+}
+
+
+void DataManagementModelTest::testMergeResources()
+{
+    //Nepomuk::ResourceManager::instance()->setOverrideMainModel( m_model );
+    using namespace Soprano::Vocabulary;
+    using namespace Nepomuk::Vocabulary;
+    
+    QUrl resUri("nepomuk:/mergeTest/res1");
+    QUrl graphUri("nepomuk:/ctx:/TestGraph");
+
+    int stCount = m_model->statementCount();
+    m_model->addStatement( resUri, RDF::type(), NFO::FileDataObject(), graphUri );
+    m_model->addStatement( resUri, QUrl("nepomuk:/mergeTest/prop1"),
+                           Soprano::LiteralValue(10), graphUri );
+    QVERIFY( stCount + 2 == m_model->statementCount() );
+
+    Nepomuk::SimpleResource res;
+    res.setUri( QUrl("nepomuk:/mergeTest/res2") );
+    res.m_properties.insert( RDF::type(), NFO::FileDataObject() );
+    res.m_properties.insert( QUrl("nepomuk:/mergeTest/prop1"), QVariant(10) );
+
+    Nepomuk::SimpleResourceGraph graph;
+    graph.append( res );
+    
+    m_dmModel->mergeResources( graph, QLatin1String("Testapp"), QHash<QUrl, QVariant>() );
+
+    QVERIFY( !m_model->containsAnyStatement( QUrl("nepomuk:/mergeTest/res2"), QUrl(), QUrl() ) );
+    
 }
 
 QTEST_KDEMAIN_CORE(DataManagementModelTest)
