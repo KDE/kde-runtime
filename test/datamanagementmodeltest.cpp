@@ -33,6 +33,10 @@
 #include <KDebug>
 
 #include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk/Vocabulary/NMM>
+#include <Nepomuk/Vocabulary/NCO>
+#include <Nepomuk/Variant>
+#include <Nepomuk/ResourceManager>
 
 using namespace Soprano;
 
@@ -83,12 +87,34 @@ void DataManagementModelTest::testSetProperty()
     m_model->write(s);
 }
 
+namespace {
+    int push( Soprano::Model * model, Nepomuk::SimpleResource res, QUrl graph ) {
+        QHashIterator<QUrl, QVariant> it( res.m_properties );
+        if( !res.uri().isValid() )
+            return 0;
 
+        int numPushed = 0;
+        Soprano::Statement st( res.uri(), Soprano::Node(), Soprano::Node(), graph );
+        while( it.hasNext() ) {
+            it.next();
+            st.setPredicate( it.key() );
+            st.setObject( Nepomuk::Variant(it.value()).toNode() );
+            if( model->addStatement( st ) != Soprano::Error::ErrorNone )
+                numPushed++;
+        }
+        return numPushed;
+    }
+}
 void DataManagementModelTest::testMergeResources()
 {
-    //Nepomuk::ResourceManager::instance()->setOverrideMainModel( m_model );
+    Nepomuk::ResourceManager::instance()->setOverrideMainModel( m_model );
+    
     using namespace Soprano::Vocabulary;
     using namespace Nepomuk::Vocabulary;
+
+    //
+    // Test Identification
+    //
     
     QUrl resUri("nepomuk:/mergeTest/res1");
     QUrl graphUri("nepomuk:/ctx:/TestGraph");
@@ -106,11 +132,76 @@ void DataManagementModelTest::testMergeResources()
 
     Nepomuk::SimpleResourceGraph graph;
     graph.append( res );
-    
-    m_dmModel->mergeResources( graph, QLatin1String("Testapp"), QHash<QUrl, QVariant>() );
 
-    QVERIFY( !m_model->containsAnyStatement( QUrl("nepomuk:/mergeTest/res2"), QUrl(), QUrl() ) );
+    // Try merging it.
+    m_dmModel->mergeResources( graph, QLatin1String("Testapp") );
     
+    // res2 shouldn't exists as it is the same as res1 and should have gotten merged.
+    QVERIFY( !m_model->containsAnyStatement( QUrl("nepomuk:/mergeTest/res2"), QUrl(), QUrl() ) );
+
+    // Try merging it as a blank uri
+    res.setUri( QUrl("_:blah") );
+    graph.clear();
+    graph << res;
+
+    m_dmModel->mergeResources( graph, QLatin1String("Testapp") );
+    QVERIFY( !m_model->containsAnyStatement( QUrl("_:blah"), QUrl(), QUrl() ) );
+
+    //
+    // Test 2 -
+    // This is for testing exactly how Strigi will use mergeResources ie
+    // have some blank nodes ( some of which may already exists ) and a
+    // main resources which does not exist
+    //
+    {
+        kDebug() << "Starting Strigi merge test";
+        
+        QUrl graphUri("nepomuk:/ctx/afd"); // TODO: Actually Create one
+        
+        Nepomuk::SimpleResource coldplay;
+        coldplay.m_properties.insert( RDF::type(), NCO::Contact() );
+        coldplay.m_properties.insert( NCO::fullname(), "Coldplay" );
+
+        // Push it into the model with a proper uri
+        coldplay.setUri( QUrl("nepomuk:/res/coldplay") );
+        push( m_model, coldplay, graphUri );
+
+        // Now keep it as a blank node
+        coldplay.setUri( QUrl("_:coldplay") );
+        
+        Nepomuk::SimpleResource res1;
+        res1.setUri( QUrl("nepomuk:/res/m/Res1") );
+        res1.m_properties.insert( RDF::type(), NFO::FileDataObject() );
+        res1.m_properties.insert( NFO::fileName(), "Yellow.mp3" );
+        res1.m_properties.insert( NMM::performer(), QUrl("_:coldplay") );
+
+        Nepomuk::SimpleResourceGraph resGraph;
+        resGraph << res1 << coldplay;
+
+        //
+        // Do the actual merging
+        //
+        kDebug() << "Perform the merge";
+        m_dmModel->mergeResources( resGraph, "TestApp" );
+
+        QVERIFY( m_model->containsAnyStatement( QUrl("nepomuk:/res/m/Res1"), Soprano::Node(),
+                                                Soprano::Node() ) );
+        QVERIFY( m_model->containsAnyStatement( QUrl("nepomuk:/res/m/Res1"), NFO::fileName(),
+                                                Soprano::LiteralValue("Yellow.mp3") ) );
+
+        QList< Node > objects = m_model->listStatements( QUrl("nepomuk:/res/m/Res1"), NMM::performer(), Soprano::Node() ).iterateObjects().allNodes();
+
+        QVERIFY( objects.size() == 1 );
+        QVERIFY( objects.first().isResource() );
+        
+        QUrl coldplayUri = objects.first().uri();
+        QVERIFY( coldplayUri == QUrl("nepomuk:/res/coldplay") );
+        QList< Soprano::Statement > stList = coldplay.toStatementList();
+        foreach( Soprano::Statement st, stList ) {
+            st.setSubject( coldplayUri );
+            QVERIFY( m_model->containsAnyStatement( st ) );
+        }
+    }
 }
 
 QTEST_KDEMAIN_CORE(DataManagementModelTest)
