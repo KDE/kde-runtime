@@ -321,6 +321,9 @@ void Nepomuk::ServiceController::slotServiceUnregistered( const QString& service
 
 void Nepomuk::ServiceController::createServiceControlInterface()
 {
+    if(!d->attached && !d->started)
+        return;
+
     delete d->serviceControlInterface;
     d->serviceControlInterface = new OrgKdeNepomukServiceControlInterface( dbusServiceName( name() ),
                                                                            QLatin1String("/servicecontrol"),
