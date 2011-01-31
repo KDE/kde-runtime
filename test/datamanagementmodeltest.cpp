@@ -35,6 +35,7 @@
 #include <Nepomuk/Vocabulary/NFO>
 #include <Nepomuk/Vocabulary/NMM>
 #include <Nepomuk/Vocabulary/NCO>
+#include <Nepomuk/Vocabulary/NIE>
 #include <Nepomuk/Variant>
 #include <Nepomuk/ResourceManager>
 
@@ -99,7 +100,7 @@ namespace {
             it.next();
             st.setPredicate( it.key() );
             st.setObject( Nepomuk::Variant(it.value()).toNode() );
-            if( model->addStatement( st ) != Soprano::Error::ErrorNone )
+            if( model->addStatement( st ) == Soprano::Error::ErrorNone )
                 numPushed++;
         }
         return numPushed;
@@ -155,28 +156,38 @@ void DataManagementModelTest::testMergeResources()
     //
     {
         kDebug() << "Starting Strigi merge test";
-        
+
         QUrl graphUri("nepomuk:/ctx/afd"); // TODO: Actually Create one
-        
+
         Nepomuk::SimpleResource coldplay;
         coldplay.m_properties.insert( RDF::type(), NCO::Contact() );
         coldplay.m_properties.insert( NCO::fullname(), "Coldplay" );
 
         // Push it into the model with a proper uri
         coldplay.setUri( QUrl("nepomuk:/res/coldplay") );
-        push( m_model, coldplay, graphUri );
+        QVERIFY( push( m_model, coldplay, graphUri ) == coldplay.m_properties.size() );
 
         // Now keep it as a blank node
         coldplay.setUri( QUrl("_:coldplay") );
-        
+
+        Nepomuk::SimpleResource album;
+        album.m_properties.insert( RDF::type(), NMM::MusicAlbum() );
+        album.m_properties.insert( NIE::title(), "X&Y" );
+
+        album.setUri( QUrl("nepomuk:/res/xandy") );
+        QVERIFY( push( m_model, album, graphUri ) == album.m_properties.size() );
+
+        album.setUri( QUrl("_:XandY") );
+
         Nepomuk::SimpleResource res1;
         res1.setUri( QUrl("nepomuk:/res/m/Res1") );
         res1.m_properties.insert( RDF::type(), NFO::FileDataObject() );
+        res1.m_properties.insert( RDF::type(), NMM::MusicPiece() );
         res1.m_properties.insert( NFO::fileName(), "Yellow.mp3" );
         res1.m_properties.insert( NMM::performer(), QUrl("_:coldplay") );
-
+        res1.m_properties.insert( NMM::musicAlbum(), QUrl("_:XandY") );
         Nepomuk::SimpleResourceGraph resGraph;
-        resGraph << res1 << coldplay;
+        resGraph << res1 << coldplay << album;
 
         //
         // Do the actual merging
@@ -184,21 +195,36 @@ void DataManagementModelTest::testMergeResources()
         kDebug() << "Perform the merge";
         m_dmModel->mergeResources( resGraph, "TestApp" );
 
-        QVERIFY( m_model->containsAnyStatement( QUrl("nepomuk:/res/m/Res1"), Soprano::Node(),
+        QVERIFY( m_model->containsAnyStatement( res1.uri(), Soprano::Node(),
                                                 Soprano::Node() ) );
-        QVERIFY( m_model->containsAnyStatement( QUrl("nepomuk:/res/m/Res1"), NFO::fileName(),
+        QVERIFY( m_model->containsAnyStatement( res1.uri(), NFO::fileName(),
                                                 Soprano::LiteralValue("Yellow.mp3") ) );
+        kDebug() << m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements();
+        QVERIFY( m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements().size() == res1.m_properties.size() );
 
-        QList< Node > objects = m_model->listStatements( QUrl("nepomuk:/res/m/Res1"), NMM::performer(), Soprano::Node() ).iterateObjects().allNodes();
+        QList< Node > objects = m_model->listStatements( res1.uri(), NMM::performer(), Soprano::Node() ).iterateObjects().allNodes();
 
         QVERIFY( objects.size() == 1 );
         QVERIFY( objects.first().isResource() );
-        
+
         QUrl coldplayUri = objects.first().uri();
         QVERIFY( coldplayUri == QUrl("nepomuk:/res/coldplay") );
         QList< Soprano::Statement > stList = coldplay.toStatementList();
         foreach( Soprano::Statement st, stList ) {
             st.setSubject( coldplayUri );
+            QVERIFY( m_model->containsAnyStatement( st ) );
+        }
+
+        objects = m_model->listStatements( res1.uri(), NMM::musicAlbum(), Soprano::Node() ).iterateObjects().allNodes();
+
+        QVERIFY( objects.size() == 1 );
+        QVERIFY( objects.first().isResource() );
+
+        QUrl albumUri = objects.first().uri();
+        QVERIFY( albumUri == QUrl("nepomuk:/res/xandy") );
+        stList = album.toStatementList();
+        foreach( Soprano::Statement st, stList ) {
+            st.setSubject( albumUri );
             QVERIFY( m_model->containsAnyStatement( st ) );
         }
     }
