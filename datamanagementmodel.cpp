@@ -322,6 +322,7 @@ namespace {
     class ResourceMerger : public Nepomuk::Sync::ResourceMerger {
     protected:
         virtual void resolveDuplicate(const Soprano::Statement& newSt);
+        virtual KUrl resolveUnidentifiedResource(const KUrl& uri);
     };
 
     void ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
@@ -349,6 +350,14 @@ namespace {
         // Case 2
         // keep the old graph -> do nothing
         
+    }
+
+    KUrl ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
+    {
+        // If it is a nepomuk:/ uri, just add it as it is.
+        if( uri.scheme() == QLatin1String("nepomuk") )
+            return uri;
+        return KUrl();
     }
 
 }
