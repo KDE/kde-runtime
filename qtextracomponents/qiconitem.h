@@ -16,42 +16,33 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
-#ifndef QPIXMAPITEM_H
-#define QPIXMAPITEM_H
+#ifndef QICONITEM_H
+#define QICONITEM_H
 
 #include <QDeclarativeItem>
 #include <QPixmap>
 
-class QPixmapItem : public QDeclarativeItem
+class QIconItem : public QDeclarativeItem
 {
     Q_OBJECT
 
-    Q_PROPERTY(QPixmap pixmap READ pixmap WRITE setPixmap)
+    Q_PROPERTY(QIcon icon READ icon WRITE setIcon)
     Q_PROPERTY(bool smooth READ smooth WRITE setSmooth)
-    Q_PROPERTY(int nativeWidth READ nativeWidth NOTIFY nativeWidthChanged)
-    Q_PROPERTY(int nativeHeight READ nativeHeight NOTIFY nativeHeightChanged)
 
 public:
-    QPixmapItem(QDeclarativeItem *parent=0);
-    ~QPixmapItem();
+    QIconItem(QDeclarativeItem *parent=0);
+    ~QIconItem();
 
-    void setPixmap(const QPixmap &pixmap);
-    QPixmap pixmap() const;
+    void setIcon(const QIcon &icon);
+    QIcon icon() const;
 
     void setSmooth(const bool smooth);
     bool smooth() const;
 
-    int nativeWidth() const;
-    int nativeHeight() const;
-
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-Q_SIGNALS:
-    void nativeWidthChanged();
-    void nativeHeightChanged();
-
 private:
-    QPixmap m_pixmap;
+    QIcon m_icon;
     bool m_smooth;
 };
 

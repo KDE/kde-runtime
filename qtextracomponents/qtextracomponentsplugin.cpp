@@ -24,12 +24,16 @@
 #include <QtDeclarative/qdeclarative.h>
 
 #include "qpixmapitem.h"
+#include "qimageitem.h"
+#include "qiconitem.h"
 
 void QtExtraComponentsPlugin::registerTypes(const char *uri)
 {
     Q_ASSERT(uri == QLatin1String("org.kde.qtextracomponents"));
 
     qmlRegisterType<QPixmapItem>(uri, 0, 1, "QPixmapItem");
+    qmlRegisterType<QImageItem>(uri, 0, 1, "QImageItem");
+    qmlRegisterType<QIconItem>(uri, 0, 1, "QIconItem");
 }
 
 

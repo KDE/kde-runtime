@@ -5,6 +5,8 @@ include(KDE4Defaults)
 set(qtextracomponents_SRCS
     qtextracomponentsplugin.cpp
     qpixmapitem.cpp
+    qimageitem.cpp
+    qiconitem.cpp
     )
 
 INCLUDE_DIRECTORIES(
