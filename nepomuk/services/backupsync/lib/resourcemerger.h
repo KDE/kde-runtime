@@ -101,7 +101,7 @@ namespace Nepomuk {
              * 
              * The default implementation of this creates the resource in the main model.
              */
-            virtual Resource resolveUnidentifiedResource( const KUrl & uri );
+            virtual KUrl resolveUnidentifiedResource( const KUrl & uri );
 
             /**
              * Creates a new graph of type graphType()

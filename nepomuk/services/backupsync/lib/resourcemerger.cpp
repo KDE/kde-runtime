@@ -29,8 +29,8 @@
 #include <Soprano/NRLModel>
 #include <Soprano/Graph>
 
-#include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
+#include <Nepomuk/Types/Class>
 
 #include <KUrl>
 #include <KDebug>
@@ -100,7 +100,7 @@ bool Nepomuk::Sync::ResourceMerger::setGraphType(const Nepomuk::Types::Class& ty
 }
 
 
-Nepomuk::Resource Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
+KUrl Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
 {
     // The default implementation is to create it.
     QHash< KUrl, KUrl >::const_iterator it = d->m_newMappings.constFind( uri );
@@ -109,7 +109,7 @@ Nepomuk::Resource Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource(con
     
     KUrl newUri = ResourceManager::instance()->generateUniqueUri( QString("res") );
     d->m_newMappings.insert( uri, newUri );
-    return Nepomuk::Resource( newUri );
+    return newUri;
 }
 
 
@@ -179,8 +179,7 @@ KUrl Nepomuk::Sync::ResourceMerger::Private::resolve(const Soprano::Node& n)
     if( it != m_oldMappings.constEnd() ) {
         return it.value();
     } else {
-        Nepomuk::Resource res = q->resolveUnidentifiedResource( oldUri );
-        return res.resourceUri();
+        return q->resolveUnidentifiedResource( oldUri );
     }
 }
 
