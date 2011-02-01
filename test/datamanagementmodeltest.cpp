@@ -171,13 +171,9 @@ void DataManagementModelTest::testMergeResources()
         coldplay.setUri( QUrl("_:coldplay") );
 
         Nepomuk::SimpleResource album;
+        album.setUri( QUrl("_:XandY") );
         album.m_properties.insert( RDF::type(), NMM::MusicAlbum() );
         album.m_properties.insert( NIE::title(), "X&Y" );
-
-        album.setUri( QUrl("nepomuk:/res/xandy") );
-        QVERIFY( push( m_model, album, graphUri ) == album.m_properties.size() );
-
-        album.setUri( QUrl("_:XandY") );
 
         Nepomuk::SimpleResource res1;
         res1.setUri( QUrl("nepomuk:/res/m/Res1") );
@@ -221,7 +217,6 @@ void DataManagementModelTest::testMergeResources()
         QVERIFY( objects.first().isResource() );
 
         QUrl albumUri = objects.first().uri();
-        QVERIFY( albumUri == QUrl("nepomuk:/res/xandy") );
         stList = album.toStatementList();
         foreach( Soprano::Statement st, stList ) {
             st.setSubject( albumUri );
