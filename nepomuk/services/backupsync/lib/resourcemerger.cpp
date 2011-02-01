@@ -125,7 +125,8 @@ void Nepomuk::Sync::ResourceMerger::merge(const Soprano::Graph& graph, const QHa
             continue;
 
         st.setSubject( d->resolve( st.subject() ) );
-        if( st.object().isResource() || st.object().isBlank() ) {
+        if( (st.object().isResource() && st.object().uri().scheme() == QLatin1String("nepomuk") )
+            || st.object().isBlank() ) {
             KUrl resolvedObject = d->resolve( st.object() );
             if( resolvedObject.isEmpty() ) {
                 kDebug() << st.object() << " resolution failed!";
