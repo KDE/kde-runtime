@@ -20,6 +20,7 @@ set( datamanagement_BIN_SRCS
   datamanagementadaptor.cpp
   datamanagementcommand.cpp
   classandpropertytree.cpp
+  simpleresource.cpp
 )
 
 kde4_add_plugin(nepomukdatamanagementservice ${datamanagement_BIN_SRCS})
@@ -30,6 +31,7 @@ target_link_libraries(nepomukdatamanagementservice
   ${KDE4_KIO_LIBS}
   ${SOPRANO_LIBRARIES}
   ${NEPOMUK_LIBRARIES}
+  nepomuksync
 )
 
 install(TARGETS nepomukdatamanagementservice

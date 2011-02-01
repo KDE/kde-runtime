@@ -21,10 +21,45 @@
 
 #include "simpleresource.h"
 
+#include <QtCore/QHashIterator>
+
+#include <Nepomuk/Variant>
+
 namespace Nepomuk {
 
 SimpleResource::SimpleResource()
 {
+
 }
+
+SimpleResource::~SimpleResource()
+{
+
+}
+
+QUrl SimpleResource::uri() const
+{
+    return m_uri;
+}
+
+void SimpleResource::setUri(const QUrl& uri)
+{
+    m_uri = uri;
+}
+
+QList< Soprano::Statement > SimpleResource::toStatementList() const
+{
+    QList<Soprano::Statement> list;
+    QHashIterator<QUrl, QVariant> it( m_properties );
+    while( it.hasNext() ) {
+        it.next();
+        // vHanda : Maybe we should internally use Nepomuk::Variant only?
+        Nepomuk::Variant v = Nepomuk::Variant( it.value() );
+
+        list << Soprano::Statement( m_uri, it.key(), v.toNode() );
+    }
+    return list;
+}
+
 
 } // namespace Nepomuk

@@ -26,6 +26,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QList>
 
+#include <Soprano/Statement>
 
 namespace Nepomuk {
 
@@ -34,9 +35,17 @@ typedef QHash<QUrl, QVariant> PropertyHash;
 class SimpleResource
 {
 public:
-    QUrl m_uri;
+    SimpleResource();
+    virtual ~SimpleResource();
+    
+    QUrl uri() const;
+    void setUri( const QUrl & uri );
 
     PropertyHash m_properties;
+
+    QList<Soprano::Statement> toStatementList() const;
+private :
+    QUrl m_uri;    
 };
 
 typedef QList<SimpleResource> SimpleResourceGraph;

@@ -12,8 +12,12 @@ target_link_libraries(classandpropertytreetest
 kde4_add_unit_test(datamanagementmodeltest
   datamanagementmodeltest.cpp
   ../classandpropertytree.cpp
-  ../datamanagementmodel.cpp)
+  ../datamanagementmodel.cpp
+  ../simpleresource.cpp)
+
 target_link_libraries(datamanagementmodeltest
   ${QT_QTTEST_LIBRARY}
   ${SOPRANO_LIBRARIES}
-  ${KDE4_KDECORE_LIBS})
+  ${KDE4_KDECORE_LIBS}
+  nepomuksync
+)
