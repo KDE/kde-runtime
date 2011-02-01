@@ -363,29 +363,27 @@ namespace {
 
 void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceGraph &resources, const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
 {
+    QList<Soprano::Statement> allStatements;
     Sync::ResourceIdentifier resIdent;
+    
     foreach( const SimpleResource & res, resources ) {
-        Sync::SimpleResource simpleRes = convert(res);
-        //kDebug() << simpleRes.uri();
-        //kDebug() << simpleRes;
+        QList< Soprano::Statement > stList = res.toStatementList();
+        allStatements << stList;
         
+        Sync::SimpleResource simpleRes = Sync::SimpleResource::fromStatementList( stList );
         resIdent.addSimpleResource( simpleRes );
     }
-
-    kDebug() << this->statementCount();
     
     resIdent.setModel( this );
     resIdent.setMinScore( 1.0 );
     resIdent.identifyAll();
 
-    kDebug() << this->statementCount();
-    
     if( resIdent.mappings().empty() ) {
-        kDebug() << "Nothing was mapped";
+        kDebug() << "Nothing was mapped merging everything as it is.";
         //vHanda: This means that everything should be pushed, right?
         //return;
     }
-
+    
     //FIXME: They may be cases where this graph is created just for the heck of it!
     QUrl graph = createGraph( app, additionalMetadata );
 
@@ -393,12 +391,7 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
     merger.setModel( this );
     merger.setGraph( graph );
 
-    kDebug() << "MERGING!";
-    foreach( const KUrl & url, resIdent.unidentified() ) {
-        kDebug() << "Merging - " << url;
-        merger.merge( resIdent.statements(url), resIdent.mappings() );
-    }
-    kDebug() << listStatements( QUrl(), QUrl(), QUrl(), graph ).allStatements();
+    merger.merge( Soprano::Graph(allStatements), resIdent.mappings() );
     
     //// TODO: do not allow to create properties or classes this way
     //setError("Not implemented yet");
