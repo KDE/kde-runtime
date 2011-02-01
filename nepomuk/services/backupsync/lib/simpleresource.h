@@ -51,25 +51,25 @@ namespace Nepomuk {
          * 
          * \author Vishesh Handa <handa.vish@gmail.com>
          */
-        class SimpleResource : public QMultiHash<KUrl, Soprano::Node>
+        class NEPOMUKSYNC_EXPORT SimpleResource : public QMultiHash<KUrl, Soprano::Node>
         {
         public :
             SimpleResource();
             SimpleResource( const KUrl & uri );
             SimpleResource( const SimpleResource & rhs );
-            virtual NEPOMUKSYNC_EXPORT ~SimpleResource();
+            virtual ~SimpleResource();
 
             /**
              * It uses the the first element's subject as the uri and ignores all further subjects.
              * Please make sure all the subjects are the same cause no kind of checks are made.
              */
-            static SimpleResource NEPOMUKSYNC_EXPORT fromStatementList(const QList<Soprano::Statement> & list);
+            static SimpleResource fromStatementList(const QList<Soprano::Statement> & list);
             
             QList<Soprano::Statement> toStatementList() const;
 
-            bool NEPOMUKSYNC_EXPORT isFileDataObject() const;
+            bool isFileDataObject() const;
             bool isFolder() const;
-            KUrl NEPOMUKSYNC_EXPORT nieUrl() const;
+            KUrl nieUrl() const;
 
             KUrl uri() const;
 
