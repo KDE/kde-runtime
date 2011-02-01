@@ -315,10 +315,7 @@ void Nepomuk::DataManagementModel::removePropertiesByApplication(const QList<QUr
 
 
 namespace {
-    Nepomuk::Sync::SimpleResource convert( const Nepomuk::SimpleResource & s ) {
-        return Nepomuk::Sync::SimpleResource::fromStatementList( s.toStatementList() );
-    }
-
+  
     class ResourceMerger : public Nepomuk::Sync::ResourceMerger {
     protected:
         virtual void resolveDuplicate(const Soprano::Statement& newSt);
@@ -327,7 +324,6 @@ namespace {
 
     void ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
     {
-        kDebug() << newSt;
         using namespace Soprano::Vocabulary;
         
         // Merge rules
@@ -340,10 +336,11 @@ namespace {
         const QUrl newGraph = newSt.context().uri();
 
         // Case 1
-        if( model()->containsAnyStatement( oldGraph, RDFS::subClassOf(), NRL::DiscardableInstanceBase() )
-            && model()->containsAnyStatement( newGraph, RDFS::subClassOf(), NRL::InstanceBase() )
-            && !model()->containsAnyStatement( newGraph, RDFS::subClassOf(), NRL::DiscardableInstanceBase() ) ) {
-            model()->removeStatement( newSt.subject(), newSt.predicate(), newSt.object() );
+        if( model()->containsAnyStatement( oldGraph, RDF::type(), NRL::DiscardableInstanceBase() )
+            && model()->containsAnyStatement( newGraph, RDF::type(), NRL::InstanceBase() )
+            && !model()->containsAnyStatement( newGraph, RDF::type(), NRL::DiscardableInstanceBase() ) ) {
+
+            model()->removeAllStatements( newSt.subject(), newSt.predicate(), newSt.object() );
             model()->addStatement( newSt );
         }
 
