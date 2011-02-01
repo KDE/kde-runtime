@@ -49,16 +49,13 @@
 Nepomuk::Sync::ResourceIdentifier::Private::Private( ResourceIdentifier * parent )
     : q( parent ),
       m_model(0),
-      m_resourceManger(0),
       m_minScore( 0.60 )
 {;}
 
 
-void Nepomuk::Sync::ResourceIdentifier::Private::init(Nepomuk::ResourceManager* rm)
+void Nepomuk::Sync::ResourceIdentifier::Private::init( Soprano::Model * model )
 {
-    if( !rm )
-        m_resourceManger = ResourceManager::instance();
-    m_model = m_resourceManger->mainModel();
+    m_model = model ? model : ResourceManager::instance()->mainModel();
 
     // rdf:type is by default vital
     m_vitalProperties.append( Soprano::Vocabulary::RDF::type() );

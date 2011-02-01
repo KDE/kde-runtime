@@ -31,12 +31,12 @@
 namespace Soprano {
     class Statement;
     class Graph;
+    class Model;
 }
 
 namespace Nepomuk {
 
     class Resource;
-    class ResourceManager;
 
     namespace Types {
         class Property;
@@ -58,11 +58,11 @@ namespace Nepomuk {
         class NEPOMUKSYNC_EXPORT ResourceIdentifier
         {
         public:
-            ResourceIdentifier( ResourceManager * rm = 0 );
+            ResourceIdentifier( Soprano::Model * model = 0 );
             virtual ~ResourceIdentifier();
 
-            ResourceManager * resourceManager() const;
-            void setResourceManager( ResourceManager * rm );
+            Soprano::Model * model();
+            void setModel( Soprano::Model * model );
 
             //
             // Processing

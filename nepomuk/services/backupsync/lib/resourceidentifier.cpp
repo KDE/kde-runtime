@@ -47,10 +47,10 @@
 #include <KDebug>
 #include <KUrl>
 
-Nepomuk::Sync::ResourceIdentifier::ResourceIdentifier(Nepomuk::ResourceManager* rm)
+Nepomuk::Sync::ResourceIdentifier::ResourceIdentifier(Soprano::Model * model)
     : d( new Nepomuk::Sync::ResourceIdentifier::Private(this) )
 {
-    d->init( rm );
+    d->init( model );
 }
 
 
@@ -118,19 +118,6 @@ void Nepomuk::Sync::ResourceIdentifier::addSimpleResource(const Nepomuk::Sync::S
 }
 
 
-Nepomuk::ResourceManager* Nepomuk::Sync::ResourceIdentifier::resourceManager() const
-{
-    return d->m_resourceManger;
-}
-
-void Nepomuk::Sync::ResourceIdentifier::setResourceManager(ResourceManager* rm)
-{
-    Q_ASSERT( rm );
-    d->m_resourceManger = rm;
-    d->m_model = rm->mainModel();
-}
-
-
 //
 // Identification
 //
@@ -175,6 +162,16 @@ bool Nepomuk::Sync::ResourceIdentifier::allIdentified() const
 //
 // Getting the info
 //
+
+Soprano::Model* Nepomuk::Sync::ResourceIdentifier::model()
+{
+    return d->m_model;
+}
+
+void Nepomuk::Sync::ResourceIdentifier::setModel(Soprano::Model* model)
+{
+    d->m_model = model ? model : ResourceManager::instance()->mainModel();
+}
 
 KUrl Nepomuk::Sync::ResourceIdentifier::mappedUri(const KUrl& resourceUri) const
 {

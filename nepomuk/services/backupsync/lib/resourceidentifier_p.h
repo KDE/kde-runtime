@@ -52,13 +52,12 @@ namespace Nepomuk {
              * It will initialize all pointers with NULL and all values that
              * has a incorrect value with this value.
              */
-            Private( ResourceIdentifier * parent );
-            void init( ResourceManager * rm );
+            Private( Nepomuk::Sync::ResourceIdentifier* parent );
+            void init( Soprano::Model* model );
             
             ResourceIdentifier * q;
             
             Soprano::Model * m_model;
-            ResourceManager * m_resourceManger;
             
             /**
              * The main identification hash which maps external ResourceUris
