@@ -172,20 +172,26 @@ private:
 
     /**
      * Updates the modification date of \p resource to \p date.
-     * Adds the new statement in \p graph
+     * Adds the new statement in \p graph.
      */
     Soprano::Error::ErrorCode updateModificationDate( const QUrl& resource, const QUrl& graph, const QDateTime& date = QDateTime::currentDateTime() );
 
     /**
      * Removes all the graphs from \p graphs which do not contain any statements
      */
-    void removeTrailingGraphs( const QSet<QUrl> graphs );
+    void removeTrailingGraphs( const QSet<QUrl>& graphs );
 
     /**
      * Adds for each resource in \p resources a property for each node in nodes. \p nodes cannot be empty.
      * This method is used in the public setProperty and addProperty slots to avoid a lot of code duplication.
      */
     void addProperty(const QList<QUrl>& resources, const QUrl& property, const QSet<Soprano::Node>& nodes, const QString& app);
+
+    /**
+     * Checks if resource \p res actually exists. A resource exists if any information other than the standard metadata
+     * (nao:created, nao:creator, nao:lastModified, nao:userVisible) is defined.
+     */
+    bool doesResourceExist(const QUrl& res) const;
 
     enum UriType {
         GraphUri,

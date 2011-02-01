@@ -41,8 +41,11 @@ private Q_SLOTS:
     void cleanupTestCase();
     void init();
     void testSetProperty();
+    void testRemoveProperty();
 
 private:
+    void resetModel();
+
     KTempDir* m_storageDir;
     Soprano::Model* m_model;
     Nepomuk::DataManagementModel* m_dmModel;
