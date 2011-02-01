@@ -357,6 +357,8 @@ namespace {
         // If it is a nepomuk:/ uri, just add it as it is.
         if( uri.scheme() == QLatin1String("nepomuk") )
             return uri;
+        else if( uri.url().startsWith("_:") ) // Blank node
+            return Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource( uri );
         return KUrl();
     }
 
