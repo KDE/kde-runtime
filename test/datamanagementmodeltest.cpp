@@ -28,6 +28,7 @@
 #include "qtest_kde.h"
 
 #include <Soprano/Soprano>
+#include <Soprano/Graph>
 #define USING_SOPRANO_NRLMODEL_UNSTABLE_API
 #include <Soprano/NRLModel>
 
@@ -110,6 +111,8 @@ void DataManagementModelTest::testSetProperty()
     // check the number of graphs (two for the app, two for the actual data, and one for the ontology)
     QCOMPARE(m_model->listContexts().allElements().count(), 5);
 }
+
+// TODO: add tests that check handling of nie:url
 
 void DataManagementModelTest::testRemoveProperty()
 {
@@ -206,13 +209,13 @@ void DataManagementModelTest::testMergeResources()
     //
     
     QUrl resUri("nepomuk:/mergeTest/res1");
-    QUrl graphUri("nepomuk:/ctx:/TestGraph");
+    QUrl graphUri("nepomuk:/ctx/TestGraph");
 
     int stCount = m_model->statementCount();
     m_model->addStatement( resUri, RDF::type(), NFO::FileDataObject(), graphUri );
     m_model->addStatement( resUri, QUrl("nepomuk:/mergeTest/prop1"),
                            Soprano::LiteralValue(10), graphUri );
-    QVERIFY( stCount + 2 == m_model->statementCount() );
+    QCOMPARE( m_model->statementCount(), stCount + 2 );
 
     Nepomuk::SimpleResource res;
     res.setUri( QUrl("nepomuk:/mergeTest/res2") );
@@ -386,6 +389,77 @@ void DataManagementModelTest::testMergeResources()
 
         QVERIFY( !m_model->containsAnyStatement( graphNode, RDF::type(), NRL::DiscardableInstanceBase() ) );
     }
+}
+
+void DataManagementModelTest::testMergeResources_createResource()
+{
+    using namespace Nepomuk;
+
+    ResourceManager::instance()->setOverrideMainModel( m_model );
+
+    //
+    // Simple case: create a resource by merging it
+    //
+    SimpleResource res;
+    res.setUri(QUrl("_:A"));
+    res.m_properties.insert(Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NAO::Tag());
+    res.m_properties.insert(Soprano::Vocabulary::NAO::prefLabel(), QLatin1String("Foobar"));
+
+    m_dmModel->mergeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
+
+    // check if the resource exists
+    m_model->containsAnyStatement(Soprano::Node(), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NAO::Tag());
+    m_model->containsAnyStatement(Soprano::Node(), Soprano::Vocabulary::NAO::prefLabel(), Soprano::LiteralValue(QLatin1String("Foobar")));
+
+    // check if all the correct metadata graphs exist
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
+                                                      "graph ?g { ?r a %1 . ?r %2 %3 . } . "
+                                                      "graph ?mg { ?g a %4 . ?mg a %5 . ?mg %6 ?g . } . "
+                                                      "?g %7 ?a . ?a %8 %9 . "
+                                                      "}")
+                                  .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::Tag()),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::prefLabel()),
+                                       Soprano::Node::literalToN3(QLatin1String("Foobar")),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::InstanceBase()),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::GraphMetadata()),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::coreGraphMetadataFor()),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::maintainedBy()),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::identifier()),
+                                       Soprano::Node::literalToN3(QLatin1String("testapp"))),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
+
+    //
+    // Now create the same resource again
+    //
+    Soprano::Graph existingStatements = m_model->listStatements().allStatements();
+    m_dmModel->mergeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
+
+    // nothing should have happened
+    QCOMPARE(existingStatements, Soprano::Graph(m_model->listStatements().allStatements()));
+
+    //
+    // Now create the same resource with a different app
+    //
+    m_dmModel->mergeResources(SimpleResourceGraph() << res, QLatin1String("testapp2"));
+
+    // only one thing should have been added: the new app Agent and its role as maintainer for the existing graph
+    Q_FOREACH(const Soprano::Statement& s, existingStatements.toList()) {
+        QVERIFY(m_model->containsStatement(s));
+    }
+
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
+                                                      "graph ?g { ?r a %1 . ?r %2 %3 . } . "
+                                                      "?g %4 ?a1 . ?a1 %5 %6 . "
+                                                      "?g %4 ?a2 . ?a2 %5 %7 . "
+                                                      "}")
+                                  .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::Tag()),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::prefLabel()),
+                                       Soprano::Node::literalToN3(QLatin1String("Foobar")),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::maintainedBy()),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::identifier()),
+                                       Soprano::Node::literalToN3(QLatin1String("testapp")),
+                                       Soprano::Node::literalToN3(QLatin1String("testapp2"))),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
 }
 
 QTEST_KDEMAIN_CORE(DataManagementModelTest)
