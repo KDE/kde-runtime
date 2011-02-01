@@ -664,7 +664,6 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
         //return;
     }
     
-    //FIXME: They may be cases where this graph is created just for the heck of it!
     QUrl graph = createGraph( app, additionalMetadata );
     if(lastError()) {
         return;
@@ -675,6 +674,14 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
     merger.setGraph( graph );
 
     merger.merge( Soprano::Graph(allStatements), resIdent.mappings() );
+
+    // Delete the graph if it was not used
+    if( !containsAnyStatement( Soprano::Node(), Soprano::Node(), Soprano::Node(), graph ) ) {
+        Soprano::Node metadataGraph = listStatements( graph, Soprano::Node(), Soprano::Node() ).iterateContexts().allNodes().first();
+
+        removeAllStatements( Soprano::Node(), Soprano::Node(),
+                             Soprano::Node(), metadataGraph );
+    }
     
     //// TODO: do not allow to create properties or classes this way
     //setError("Not implemented yet");
