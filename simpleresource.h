@@ -23,14 +23,14 @@
 #define SIMPLERESOURCE_H
 
 #include <QtCore/QUrl>
-#include <QtCore/QHash>
+#include <QtCore/QMultiHash>
 #include <QtCore/QList>
 
 #include <Soprano/Statement>
 
 namespace Nepomuk {
 
-typedef QHash<QUrl, QVariant> PropertyHash;
+typedef QMultiHash<QUrl, QVariant> PropertyHash;
 
 class SimpleResource
 {

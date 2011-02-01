@@ -148,7 +148,7 @@ public Q_SLOTS:
      */
     void mergeResources(const SimpleResourceGraph& resources,
                         const QString& app,
-                        const QHash<QUrl, QVariant>& additionalMetadata);
+                        const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>() );
 
     /**
      * Describe a set of resources, i.e. retrieve all their properties.

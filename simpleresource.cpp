@@ -47,16 +47,26 @@ void SimpleResource::setUri(const QUrl& uri)
     m_uri = uri;
 }
 
+namespace {
+    Soprano::Node convertIfBlankNode( const Soprano::Node & n ) {
+        if( n.isResource() && n.uri().toString().startsWith("_:") ) {
+            return Soprano::Node( n.uri().toString().mid(2) ); // "_:" take 2 characters
+        }
+        return n;
+    }
+}
+
 QList< Soprano::Statement > SimpleResource::toStatementList() const
 {
     QList<Soprano::Statement> list;
     QHashIterator<QUrl, QVariant> it( m_properties );
     while( it.hasNext() ) {
         it.next();
-        // vHanda : Maybe we should internally use Nepomuk::Variant only?
-        Nepomuk::Variant v = Nepomuk::Variant( it.value() );
-
-        list << Soprano::Statement( m_uri, it.key(), v.toNode() );
+        
+        Soprano::Node object = Nepomuk::Variant( it.value() ).toNode();
+        list << Soprano::Statement( convertIfBlankNode( m_uri ),
+                                    it.key(),
+                                    convertIfBlankNode( object ) );
     }
     return list;
 }

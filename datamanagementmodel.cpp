@@ -585,13 +585,11 @@ void Nepomuk::DataManagementModel::removePropertiesByApplication(const QList<QUr
 
 
 namespace {
-    Nepomuk::Sync::SimpleResource convert( const Nepomuk::SimpleResource & s ) {
-        return Nepomuk::Sync::SimpleResource::fromStatementList( s.toStatementList() );
-    }
-
+  
     class ResourceMerger : public Nepomuk::Sync::ResourceMerger {
     protected:
         virtual void resolveDuplicate(const Soprano::Statement& newSt);
+        virtual KUrl resolveUnidentifiedResource(const KUrl& uri);
     };
 
     void ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
@@ -604,16 +602,15 @@ namespace {
         // 2. Otherwsie
         //    -> Keep the old graph
 
-        // FIXME: trueg: this crashes if the returned list is empty!
         const QUrl oldGraph = model()->listStatements( newSt.subject(), newSt.predicate(), newSt.object() ).iterateContexts().allNodes().first().uri();
         const QUrl newGraph = newSt.context().uri();
 
         // Case 1
-        if( model()->containsAnyStatement( oldGraph, RDFS::subClassOf(), NRL::DiscardableInstanceBase() )
-            && model()->containsAnyStatement( newGraph, RDFS::subClassOf(), NRL::InstanceBase() )
-            && !model()->containsAnyStatement( newGraph, RDFS::subClassOf(), NRL::DiscardableInstanceBase() ) ) {
-            // FIXME: trueg: how can this be? Nepomuk does not support the empty graph, ie. each triple has to be in a named graph
-            model()->removeStatement( newSt.subject(), newSt.predicate(), newSt.object() );
+        if( model()->containsAnyStatement( oldGraph, RDF::type(), NRL::DiscardableInstanceBase() )
+            && model()->containsAnyStatement( newGraph, RDF::type(), NRL::InstanceBase() )
+            && !model()->containsAnyStatement( newGraph, RDF::type(), NRL::DiscardableInstanceBase() ) ) {
+
+            model()->removeAllStatements( newSt.subject(), newSt.predicate(), newSt.object() );
             model()->addStatement( newSt );
         }
 
@@ -622,10 +619,23 @@ namespace {
         
     }
 
+    KUrl ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
+    {
+        // If it is a nepomuk:/ uri, just add it as it is.
+        if( uri.scheme() == QLatin1String("nepomuk") )
+            return uri;
+        else if( uri.url().startsWith("_:") ) // Blank node
+            return Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource( uri );
+        return KUrl();
+    }
+
 }
 
 void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceGraph &resources, const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
 {
+
+    QList<Soprano::Statement> allStatements;
+
     if(app.isEmpty()) {
         setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
         return;
@@ -634,14 +644,27 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
     clearError();
 
     Sync::ResourceIdentifier resIdent;
+    
     foreach( const SimpleResource & res, resources ) {
+        QList< Soprano::Statement > stList = res.toStatementList();
+        allStatements << stList;
+        
+        Sync::SimpleResource simpleRes = Sync::SimpleResource::fromStatementList( stList );
+        resIdent.addSimpleResource( simpleRes );
         // TODO: check if res is valid and if not: setError...
-        resIdent.addSimpleResource( convert(res) );
     }
-
+    
+    resIdent.setModel( this );
     resIdent.setMinScore( 1.0 );
     resIdent.identifyAll();
 
+    if( resIdent.mappings().empty() ) {
+        kDebug() << "Nothing was mapped merging everything as it is.";
+        //vHanda: This means that everything should be pushed, right?
+        //return;
+    }
+    
+    //FIXME: They may be cases where this graph is created just for the heck of it!
     QUrl graph = createGraph( app, additionalMetadata );
     if(lastError()) {
         return;
@@ -650,10 +673,9 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
     ResourceMerger merger;
     merger.setModel( this );
     merger.setGraph( graph );
+
+    merger.merge( Soprano::Graph(allStatements), resIdent.mappings() );
     
-    foreach( const KUrl & url, resIdent.unidentified() ) {
-        merger.merge( resIdent.statements(url), resIdent.mappings() );
-    }
     //// TODO: do not allow to create properties or classes this way
     //setError("Not implemented yet");
 }
