@@ -394,6 +394,8 @@ void DataManagementModelTest::testMergeResources()
 void DataManagementModelTest::testMergeResources_createResource()
 {
     using namespace Nepomuk;
+    using namespace Nepomuk::Vocabulary;
+    using namespace Soprano::Vocabulary;
 
     ResourceManager::instance()->setOverrideMainModel( m_model );
 
@@ -402,14 +404,14 @@ void DataManagementModelTest::testMergeResources_createResource()
     //
     SimpleResource res;
     res.setUri(QUrl("_:A"));
-    res.m_properties.insert(Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NAO::Tag());
-    res.m_properties.insert(Soprano::Vocabulary::NAO::prefLabel(), QLatin1String("Foobar"));
+    res.m_properties.insert(RDF::type(), NAO::Tag());
+    res.m_properties.insert(NAO::prefLabel(), QLatin1String("Foobar"));
 
     m_dmModel->mergeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
 
     // check if the resource exists
-    m_model->containsAnyStatement(Soprano::Node(), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NAO::Tag());
-    m_model->containsAnyStatement(Soprano::Node(), Soprano::Vocabulary::NAO::prefLabel(), Soprano::LiteralValue(QLatin1String("Foobar")));
+    m_model->containsAnyStatement(Soprano::Node(), RDF::type(), NAO::Tag());
+    m_model->containsAnyStatement(Soprano::Node(), NAO::prefLabel(), Soprano::LiteralValue(QLatin1String("Foobar")));
 
     // check if all the correct metadata graphs exist
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
@@ -417,14 +419,14 @@ void DataManagementModelTest::testMergeResources_createResource()
                                                       "graph ?mg { ?g a %4 . ?mg a %5 . ?mg %6 ?g . } . "
                                                       "?g %7 ?a . ?a %8 %9 . "
                                                       "}")
-                                  .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::Tag()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::prefLabel()),
+                                  .arg(Soprano::Node::resourceToN3(NAO::Tag()),
+                                       Soprano::Node::resourceToN3(NAO::prefLabel()),
                                        Soprano::Node::literalToN3(QLatin1String("Foobar")),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::InstanceBase()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::GraphMetadata()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::coreGraphMetadataFor()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::maintainedBy()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::identifier()),
+                                       Soprano::Node::resourceToN3(NRL::InstanceBase()),
+                                       Soprano::Node::resourceToN3(NRL::GraphMetadata()),
+                                       Soprano::Node::resourceToN3(NRL::coreGraphMetadataFor()),
+                                       Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                       Soprano::Node::resourceToN3(NAO::identifier()),
                                        Soprano::Node::literalToN3(QLatin1String("testapp"))),
                                   Soprano::Query::QueryLanguageSparql).boolValue());
 
@@ -452,11 +454,11 @@ void DataManagementModelTest::testMergeResources_createResource()
                                                       "?g %4 ?a1 . ?a1 %5 %6 . "
                                                       "?g %4 ?a2 . ?a2 %5 %7 . "
                                                       "}")
-                                  .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::Tag()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::prefLabel()),
+                                  .arg(Soprano::Node::resourceToN3(NAO::Tag()),
+                                       Soprano::Node::resourceToN3(NAO::prefLabel()),
                                        Soprano::Node::literalToN3(QLatin1String("Foobar")),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::maintainedBy()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::identifier()),
+                                       Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                       Soprano::Node::resourceToN3(NAO::identifier()),
                                        Soprano::Node::literalToN3(QLatin1String("testapp")),
                                        Soprano::Node::literalToN3(QLatin1String("testapp2"))),
                                   Soprano::Query::QueryLanguageSparql).boolValue());
