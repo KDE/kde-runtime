@@ -149,7 +149,24 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     // 5. add the new triples to the new graph
     // 6. update resources' mtime
 
-    clearError();
+    //
+    // Check parameters
+    //
+    if(app.isEmpty()) {
+        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
+    foreach( const QUrl & res, resources ) {
+        if(res.isEmpty()) {
+            setError(QLatin1String("Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
+            return;
+        }
+    }
+    if(property.isEmpty()) {
+        setError(QLatin1String("Property needs to be specified."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
+
 
     //
     // Check cardinality conditions
@@ -185,20 +202,36 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
         return;
     }
 
+
     //
     // Do the actual work
     //
     addProperty(resources, property, nodes, app);
 }
 
+
+// setting a property can be implemented by way of addProperty. All we have to do before calling addProperty is to remove all
+// the values that are not in the setProperty call
 void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
 {
-    // setting a property can be implemented by way of addProperty. All we have to do before calling addProperty is to remove all
-    // the values that are not in the setProperty call
+    //
+    // Check parameters
+    //
+    if(app.isEmpty()) {
+        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
+    foreach( const QUrl & res, resources ) {
+        if(res.isEmpty()) {
+            setError(QLatin1String("Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
+            return;
+        }
+    }
+    if(property.isEmpty()) {
+        setError(QLatin1String("Property needs to be specified."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
 
-    //
-    // Check the integrity of the values
-    //
     const QSet<Soprano::Node> nodes = variantListToNodeSet(values);
     if(nodes.isEmpty()) {
         setError(QString::fromLatin1("At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
@@ -234,6 +267,10 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
     //
     // Check arguments
     //
+    if(app.isEmpty()) {
+        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
     foreach( const QUrl & res, resources ) {
         if(res.isEmpty()) {
             setError(QLatin1String("Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
@@ -300,6 +337,10 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
     //
     // Check arguments
     //
+    if(app.isEmpty()) {
+        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
     foreach( const QUrl & res, resources ) {
         if(res.isEmpty()) {
             setError(QLatin1String("Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
@@ -374,10 +415,35 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
     // 3. create the new resource in the new graph
     // 4. return the resource's URI
 
+    //
+    // Check parameters
+    //
+    if(app.isEmpty()) {
+        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        return QUrl();
+    }
+    foreach(const QUrl& type, types) {
+        if(type.isEmpty()) {
+            setError(QLatin1String("Encountered empty type URI."), Soprano::Error::ErrorInvalidArgument);
+            return QUrl();
+        }
+    }
 
+    clearError();
 
-    setError("Not implemented yet");
-    return QUrl();
+    const QUrl graph = createGraph(app);
+    const QUrl resUri = createUri(ResourceUri);
+
+    foreach(const QUrl& type, types) {
+        addStatement(resUri, Soprano::Vocabulary::RDF::type(), type, graph);
+    }
+    if(!label.isEmpty()) {
+        addStatement(resUri, Soprano::Vocabulary::NAO::prefLabel(), Soprano::LiteralValue(label), graph);
+    }
+    if(!description.isEmpty()) {
+        addStatement(resUri, Soprano::Vocabulary::NAO::description(), Soprano::LiteralValue(description), graph);
+    }
+    return resUri;
 }
 
 void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources, const QString &app, bool force)
@@ -393,6 +459,10 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
     //
     // Check parameters
     //
+    if(app.isEmpty()) {
+        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
     foreach( const QUrl & res, resources ) {
         if(res.isEmpty()) {
             setError(QLatin1String("Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
@@ -463,6 +533,7 @@ namespace {
         // 2. Otherwsie
         //    -> Keep the old graph
 
+        // FIXME: trueg: this crashes if the returned list is empty!
         const QUrl oldGraph = model()->listStatements( newSt.subject(), newSt.predicate(), newSt.object() ).iterateContexts().allNodes().first().uri();
         const QUrl newGraph = newSt.context().uri();
 
@@ -470,6 +541,7 @@ namespace {
         if( model()->containsAnyStatement( oldGraph, RDFS::subClassOf(), NRL::DiscardableInstanceBase() )
             && model()->containsAnyStatement( newGraph, RDFS::subClassOf(), NRL::InstanceBase() )
             && !model()->containsAnyStatement( newGraph, RDFS::subClassOf(), NRL::DiscardableInstanceBase() ) ) {
+            // FIXME: trueg: how can this be? Nepomuk does not support the empty graph, ie. each triple has to be in a named graph
             model()->removeStatement( newSt.subject(), newSt.predicate(), newSt.object() );
             model()->addStatement( newSt );
         }
@@ -483,8 +555,16 @@ namespace {
 
 void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceGraph &resources, const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
 {
+    if(app.isEmpty()) {
+        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
+
+    clearError();
+
     Sync::ResourceIdentifier resIdent;
     foreach( const SimpleResource & res, resources ) {
+        // TODO: check if res is valid and if not: setError...
         resIdent.addSimpleResource( convert(res) );
     }
 
@@ -492,6 +572,9 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
     resIdent.identifyAll();
 
     QUrl graph = createGraph( app, additionalMetadata );
+    if(lastError()) {
+        return;
+    }
 
     ResourceMerger merger;
     merger.setModel( this );
@@ -678,6 +761,9 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
         setError(QString::fromLatin1("At least one value has a type incompatible with property %1").arg(Soprano::Node::resourceToN3(property)), Soprano::Error::ErrorInvalidArgument);
         return;
     }
+
+
+    clearError();
 
 
     //
