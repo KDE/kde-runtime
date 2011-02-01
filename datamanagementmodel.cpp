@@ -45,7 +45,7 @@
 #include <QtCore/QSet>
 #include <QtCore/QPair>
 
-#include <Nepomuk/Resource>
+#include <Nepomuk/Vocabulary/NIE>
 
 #include <KDebug>
 #include <KService>
@@ -394,20 +394,6 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
 }
 
 
-void Nepomuk::DataManagementModel::removeTrailingGraphs(const QSet<QUrl>& graphs)
-{
-    kDebug() << graphs;
-
-    // The underlying Soprano::NRLModel will take care of the metadata graphs
-    foreach( const QUrl& graph, graphs ) {
-        Q_ASSERT(!graph.isEmpty());
-        if( !containsAnyStatement( Soprano::Node(), Soprano::Node(), Soprano::Node(), graph) ) {
-            removeContext(graph);
-        }
-    }
-}
-
-
 QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, const QString &label, const QString &description, const QString &app)
 {
     // 1. create an new graph
@@ -499,7 +485,92 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
 
 void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &resources, const QString &app, bool force)
 {
-    setError("Not implemented yet");
+    //
+    // Check parameters
+    //
+    if(app.isEmpty()) {
+        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
+    foreach( const QUrl & res, resources ) {
+        if(res.isEmpty()) {
+            setError(QLatin1String("Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
+            return;
+        }
+    }
+
+
+    clearError();
+
+
+    // Get the graphs we need to check with removeTrailingGraphs later on.
+    QHash<QUrl, QPair<int, QUrl> > graphs;
+    Soprano::QueryResultIterator it
+            = executeQuery(QString::fromLatin1("select distinct ?g (select count(distinct ?app) where { ?g %1 ?app . }) as ?c ?a where { "
+                                               "graph ?g { ?r ?p ?o . } . "
+                                               "?g %1 ?a . "
+                                               "?a %2 %3 . "
+                                               "FILTER(?r in (%4)) . }")
+                           .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::maintainedBy()),
+                                Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::identifier()),
+                                Soprano::Node::literalToN3(app),
+                                resourcesToN3(resources).join(QLatin1String(","))),
+                           Soprano::Query::QueryLanguageSparql);
+    while(it.next()) {
+        graphs.insert(it["g"].uri(), qMakePair(it["c"].literal().toInt(), it["a"].uri()));
+    }
+
+
+    // remove the resources
+    // Other apps might be maintainer, too. In that case only remove the app as a maintainer but keep the data
+    for(QHash<QUrl, QPair<int, QUrl> >::const_iterator it = graphs.constBegin(); it != graphs.constEnd(); ++it) {
+        const QUrl& g = it.key();
+        const int appCnt = it.value().first;
+        const QUrl& appUri = it.value().second;
+        if(appCnt == 1) {
+            foreach(const QUrl& res, resources) {
+                // we cannot remove the nie:url since that would remove the tie to the desktop resource
+                // thus, we remember it and re-add it later on
+                QUrl nieUrl;
+                Soprano::QueryResultIterator nieUrlIt
+                        = executeQuery(QString::fromLatin1("select ?u where { graph %1 { %2 %3 ?u . } . } limit 1")
+                                       .arg(Soprano::Node::resourceToN3(g),
+                                            Soprano::Node::resourceToN3(res),
+                                            Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NIE::url())),
+                                       Soprano::Query::QueryLanguageSparql);
+                if(nieUrlIt.next()) {
+                    nieUrl = nieUrlIt[0].uri();
+                }
+
+                removeAllStatements(res, Soprano::Node(), Soprano::Node(), g);
+                removeAllStatements(Soprano::Node(), Soprano::Node(), res, g);
+
+                if(!nieUrl.isEmpty()) {
+                    addStatement(res, Nepomuk::Vocabulary::NIE::url(), nieUrl, g);
+                }
+            }
+        }
+        else {
+            removeAllStatements(g, Soprano::Vocabulary::NAO::maintainedBy(), appUri);
+        }
+    }
+
+    // make sure we do not leave anything empty trailing around
+    QList<QUrl> resourcesToRemoveCompletely;
+    foreach(const QUrl& res, resources) {
+        if(!doesResourceExist(res)) {
+            resourcesToRemoveCompletely << res;
+        }
+    }
+    if(!resourcesToRemoveCompletely.isEmpty()){
+        removeResources(resourcesToRemoveCompletely, app, force);
+    }
+
+
+    // FIXME: handle the sub-resources.
+
+
+    removeTrailingGraphs(QSet<QUrl>::fromList(graphs.keys()));
 }
 
 void Nepomuk::DataManagementModel::removeDataByApplication(const QString &app, bool force)
@@ -593,6 +664,21 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
     setError("Not implemented yet");
     return SimpleResourceGraph();
 }
+
+
+void Nepomuk::DataManagementModel::removeTrailingGraphs(const QSet<QUrl>& graphs)
+{
+    kDebug() << graphs;
+
+    // The underlying Soprano::NRLModel will take care of the metadata graphs
+    foreach( const QUrl& graph, graphs ) {
+        Q_ASSERT(!graph.isEmpty());
+        if( !containsAnyStatement( Soprano::Node(), Soprano::Node(), Soprano::Node(), graph) ) {
+            removeContext(graph);
+        }
+    }
+}
+
 
 QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
 {
@@ -858,12 +944,13 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
 
 bool Nepomuk::DataManagementModel::doesResourceExist(const QUrl &res) const
 {
-    return executeQuery(QString::fromLatin1("ask where { %1 ?p ?v . FILTER(?p!=%2 && ?p!=%3 && ?p!=%4 && ?p!=%5) . }")
+    return executeQuery(QString::fromLatin1("ask where { %1 ?p ?v . FILTER(?p!=%2 && ?p!=%3 && ?p!=%4 && ?p!=%5 && ?p!=%6) . }")
                         .arg(Soprano::Node::resourceToN3(res),
                              Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::created()),
                              Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::lastModified()),
                              Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::creator()),
-                             Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::userVisible())),
+                             Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::userVisible()),
+                             Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NIE::url())),
                         Soprano::Query::QueryLanguageSparql).boolValue();
 }
 

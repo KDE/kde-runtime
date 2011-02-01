@@ -189,7 +189,7 @@ private:
 
     /**
      * Checks if resource \p res actually exists. A resource exists if any information other than the standard metadata
-     * (nao:created, nao:creator, nao:lastModified, nao:userVisible) is defined.
+     * (nao:created, nao:creator, nao:lastModified, nao:userVisible) or the nie:url is defined.
      */
     bool doesResourceExist(const QUrl& res) const;
 
