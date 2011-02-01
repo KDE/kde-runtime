@@ -106,9 +106,11 @@ void Nepomuk::Sync::ResourceIdentifier::addStatements(const QList< Soprano::Stat
 
 void Nepomuk::Sync::ResourceIdentifier::addSimpleResource(const Nepomuk::Sync::SimpleResource& res)
 {
+    Q_ASSERT( !res.uri().isEmpty() );
     QHash<KUrl, SimpleResource>::iterator it = d->m_resourceHash.find( res.uri() );
     if( it == d->m_resourceHash.end() ) {
         d->m_resourceHash.insert( res.uri(), res );
+        d->m_notIdentified.insert( res.uri() );
     }
     else {
         it.value().unite( res );
