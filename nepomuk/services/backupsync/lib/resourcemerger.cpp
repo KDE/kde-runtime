@@ -172,7 +172,7 @@ void Nepomuk::Sync::ResourceMerger::Private::push(const Soprano::Statement& st, 
 
 KUrl Nepomuk::Sync::ResourceMerger::Private::resolve(const Soprano::Node& n)
 {
-    const QUrl oldUri = n.isResource() ? n.uri() : QUrl(n.identifier());
+    const QUrl oldUri = n.isResource() ? n.uri() : QUrl( n.toN3() );
     
     // Find in mappings
     QHash< KUrl, KUrl >::const_iterator it = m_oldMappings.constFind( oldUri );

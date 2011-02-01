@@ -78,7 +78,8 @@ QList< Soprano::Statement > Nepomuk::Sync::SimpleResource::toStatementList() con
     const QList<KUrl> & keys = uniqueKeys();
     foreach( const KUrl & key, keys ) {
         Soprano::Statement st;
-        st.setSubject( Soprano::Node( d->uri ) );
+        Soprano::Node sub = d->uri.url().startsWith("_:") ? Soprano::Node(d->uri.url().mid(2)) : d->uri; 
+        st.setSubject( sub );
         st.setPredicate( Soprano::Node( key ) );
 
         const QList<Soprano::Node>& objects = values( key );
@@ -120,7 +121,6 @@ void Nepomuk::Sync::SimpleResource::setUri(const Soprano::Node& node)
     }
     else if( node.isBlank() ) {
         d->uri = KUrl( node.identifier() );
-        d->uri.setScheme("");
     }
 }
 
@@ -145,15 +145,28 @@ void Nepomuk::Sync::SimpleResource::removeObject(const KUrl& uri)
     }
 }
 
+namespace {
+    // Blank nodes are stored as "_:identifier" in urls
+    QUrl getUri( const Soprano::Node & n ) {
+        if( n.isBlank() )
+            return QUrl( n.toN3() );
+        else
+            return n.uri();
+    }
+}
 // static
 Nepomuk::Sync::SimpleResource Nepomuk::Sync::SimpleResource::fromStatementList(const QList< Soprano::Statement >& list)
 {
     Q_ASSERT( !list.isEmpty() );
     
     SimpleResource res;
-    res.setUri( list.first().subject().uri() );
+    Soprano::Node subject = list.first().subject();
+    res.setUri( getUri(subject) );
     
     foreach( const Soprano::Statement & st, list ) {
+        if( st.subject() != subject )
+            continue;
+        
         KUrl pred = st.predicate().uri();
         Soprano::Node obj = st.object();
         
@@ -183,7 +196,7 @@ Nepomuk::Sync::ResourceHash Nepomuk::Sync::ResourceHash::fromStatementList(const
     QMultiHash<KUrl, Soprano::Statement> stHash;
     stHash.reserve( allStatements.size() );
     foreach( const Soprano::Statement & st, allStatements ) {
-        KUrl uri = st.subject().uri();
+        KUrl uri = getUri( st.subject() );
         stHash.insert( uri, st );
     }
     
