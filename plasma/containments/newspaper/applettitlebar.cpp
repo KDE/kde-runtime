@@ -41,7 +41,9 @@ class AppletActivationOverlay : public QGraphicsWidget
 public:
     AppletActivationOverlay(QGraphicsItem *parent = 0)
         : QGraphicsWidget(parent)
-    {}
+    {
+        setFlag(QGraphicsItem::ItemHasNoContents);
+    }
     ~AppletActivationOverlay()
     {}
 
@@ -62,7 +64,7 @@ public:
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
-        event->accept();
+        event->ignore();
     }
 };
 
