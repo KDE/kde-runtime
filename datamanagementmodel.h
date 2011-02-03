@@ -166,7 +166,6 @@ public Q_SLOTS:
     void updateTypeCachesAndSoOn();
 
 private:
-    bool checkRange(const QUrl& property, const QSet<Soprano::Node>& values) const;
     QUrl createGraph(const QString& app, const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>());
     QUrl createApplication(const QString& app);
 
@@ -185,13 +184,19 @@ private:
      * Adds for each resource in \p resources a property for each node in nodes. \p nodes cannot be empty.
      * This method is used in the public setProperty and addProperty slots to avoid a lot of code duplication.
      */
-    void addProperty(const QList<QUrl>& resources, const QUrl& property, const QSet<Soprano::Node>& nodes, const QString& app);
+    void addProperty(const QHash<QUrl, QUrl>& resources, const QUrl& property, const QSet<Soprano::Node>& nodes, const QString& app);
 
     /**
      * Checks if resource \p res actually exists. A resource exists if any information other than the standard metadata
      * (nao:created, nao:creator, nao:lastModified, nao:userVisible) or the nie:url is defined.
      */
     bool doesResourceExist(const QUrl& res) const;
+
+    /**
+     * Resolves local file and http URLs through nie:url.
+     * \return a Hash mapping \p urls to their actual resource URIs or an empty QUrl if the resource does not exist.
+     */
+    QHash<QUrl, QUrl> resolveUrls(const QList<QUrl>& urls) const;
 
     enum UriType {
         GraphUri,

@@ -44,6 +44,8 @@
 
 using namespace Soprano;
 using namespace Soprano::Vocabulary;
+using namespace Nepomuk;
+using namespace Nepomuk::Vocabulary;
 
 void DataManagementModelTest::initTestCase()
 {
@@ -73,15 +75,18 @@ void DataManagementModelTest::init()
 }
 
 
+// TODO: 1. test file URLs both as resource and as property value
+//       2. test file URLs encoded as strings in property values
+
 void DataManagementModelTest::testAddProperty()
 {
     // we start by simply adding a property
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/A"), QVariantList() << QVariant(QLatin1String("foobar")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("foobar")), QLatin1String("Testapp"));
 
     QVERIFY(!m_dmModel->lastError());
 
     // check that the actual data is there
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(QLatin1String("foobar"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
 
     // check that the app resource has been created with its corresponding graphs
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
@@ -97,7 +102,7 @@ void DataManagementModelTest::testAddProperty()
 
     // check that we have an InstanceBase with a GraphMetadata graph
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
-                                                      "graph ?g { <res:/A> <prop:/A> %1 . } . "
+                                                      "graph ?g { <res:/A> <prop:/string> %1 . } . "
                                                       "graph ?mg { ?g a %2 . ?mg a %3 . ?mg %4 ?g . } . "
                                                       "}")
                                   .arg(Soprano::Node::literalToN3(QLatin1String("foobar")),
@@ -113,12 +118,12 @@ void DataManagementModelTest::testAddProperty()
     //
     // add another property value on top of the existing one
     //
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/A"), QVariantList() << QVariant(QLatin1String("hello world")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("hello world")), QLatin1String("Testapp"));
 
     // verify the values
-    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/A"), Node()).allStatements().count(), 2);
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(QLatin1String("foobar"))));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(QLatin1String("hello world"))));
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/string"), Node()).allStatements().count(), 2);
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world"))));
 
     // check that we only have one agent instance
     QCOMPARE(m_model->listStatements(Node(), RDF::type(), NAO::Agent()).allStatements().count(), 1);
@@ -127,7 +132,7 @@ void DataManagementModelTest::testAddProperty()
     // rewrite the same property with the same app
     //
     Soprano::Graph existingStatements = m_model->listStatements().allStatements();
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/A"), QVariantList() << QVariant(QLatin1String("hello world")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("hello world")), QLatin1String("Testapp"));
 
     // nothing should have changed
     QCOMPARE(existingStatements, Soprano::Graph(m_model->listStatements().allStatements()));
@@ -136,7 +141,7 @@ void DataManagementModelTest::testAddProperty()
     //
     // rewrite the same property with another app
     //
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/A"), QVariantList() << QVariant(QLatin1String("hello world")), QLatin1String("Otherapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("hello world")), QLatin1String("Otherapp"));
 
     // there should only be the new app, nothing else
     // thus, all previous statements need to be there
@@ -169,15 +174,28 @@ void DataManagementModelTest::testAddProperty()
 }
 
 
+void DataManagementModelTest::testAddProperty_file()
+{
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("file:/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("foobar")), QLatin1String("Testapp"));
+
+    // make sure the nie:url relation has been created
+    QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl("file:/A")));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("file:/A"), Node(), Node()));
+
+    // make sure the actual value is there
+    QVERIFY(m_model->containsAnyStatement(m_model->listStatements(Node(), NIE::url(), QUrl("file:/A")).allStatements().first().subject(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+}
+
+
 void DataManagementModelTest::testSetProperty()
 {
     // adding the most basic property
-    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/A"), QVariantList() << QVariant(QLatin1String("foobar")), QLatin1String("Testapp"));
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("foobar")), QLatin1String("Testapp"));
 
     QVERIFY(!m_dmModel->lastError());
 
     // check that the actual data is there
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(QLatin1String("foobar"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
 
     // check that the app resource has been created with its corresponding graphs
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
@@ -193,7 +211,7 @@ void DataManagementModelTest::testSetProperty()
 
     // check that we have an InstanceBase with a GraphMetadata graph
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
-                                                      "graph ?g { <res:/A> <prop:/A> %1 . } . "
+                                                      "graph ?g { <res:/A> <prop:/string> %1 . } . "
                                                       "graph ?mg { ?g a %2 . ?mg a %3 . ?mg %4 ?g . } . "
                                                       "}")
                                   .arg(Soprano::Node::literalToN3(QLatin1String("foobar")),
@@ -223,30 +241,30 @@ void DataManagementModelTest::testSetProperty_overwrite()
     m_model->addStatement(g2, NAO::maintainedBy(), QUrl("app:/A"), mg2);
 
     m_model->addStatement(QUrl("res:/A"), RDF::type(), NAO::Tag(), g);
-    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(42), g);
-    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/B"), LiteralValue(42), g);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int2"), LiteralValue(42), g);
 
-    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/C"), LiteralValue(42), g2);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int3"), LiteralValue(42), g2);
 
 
     //
     // now overwrite the one property
     //
-    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/A"), QVariantList() << 12, QLatin1String("testapp"));
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/int"), QVariantList() << 12, QLatin1String("testapp"));
 
     // now the model should have replaced the old value and added the new value in a new graph
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(12)));
-    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(42)));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(12)));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42)));
 
     // a new graph
-    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(12)).allStatements().count(), 1);
-    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/B"), LiteralValue(42)).allStatements().count(), 1);
-    QVERIFY(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(12)).allStatements().first().context().uri() != g);
-    QVERIFY(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/B"), LiteralValue(42)).allStatements().first().context().uri() == g);
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(12)).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/int2"), LiteralValue(42)).allStatements().count(), 1);
+    QVERIFY(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(12)).allStatements().first().context().uri() != g);
+    QVERIFY(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/int2"), LiteralValue(42)).allStatements().first().context().uri() == g);
 
     // the testapp Agent as maintainer of the new graph
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
-                                                      "graph ?g { <res:/A> <prop:/A> %1 . } . "
+                                                      "graph ?g { <res:/A> <prop:/int> %1 . } . "
                                                       "graph ?mg { ?g a %2 . ?mg a %3 . ?mg %4 ?g . } . "
                                                       "?g %5 ?a . ?a %6 %7 . "
                                                       "}")
@@ -263,17 +281,17 @@ void DataManagementModelTest::testSetProperty_overwrite()
     //
     // Rewrite the same value
     //
-    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/B"), QVariantList() << 42, QLatin1String("testapp"));
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/int2"), QVariantList() << 42, QLatin1String("testapp"));
 
     // the value should only be there once
-    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/B"), LiteralValue(42)).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/int2"), LiteralValue(42)).allStatements().count(), 1);
 
     // in a new graph since the old one still contains the type
-    QVERIFY(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/B"), LiteralValue(42)).allStatements().first().context().uri() != g);
+    QVERIFY(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/int2"), LiteralValue(42)).allStatements().first().context().uri() != g);
 
     // there should be one graph now which contains the value and which is marked as being maintained by both apps
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
-                                                      "graph ?g { <res:/A> <prop:/B> %1 . } . "
+                                                      "graph ?g { <res:/A> <prop:/int2> %1 . } . "
                                                       "graph ?mg { ?g a %2 . ?mg a %3 . ?mg %4 ?g . } . "
                                                       "?g %5 ?a1 . ?a1 %6 %7 . "
                                                       "?g %5 ?a2 . ?a2 %6 %8 . "
@@ -327,36 +345,36 @@ void DataManagementModelTest::testRemoveProperty()
 
     const QUrl g1("graph:/A");
     const QUrl mg1("graph:/B");
-    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(QLatin1String("foobar")), g1);
-    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(QLatin1String("hello world")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
     m_model->addStatement(QUrl("res:/A"), Soprano::Vocabulary::NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g1);
     m_model->addStatement(g1, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::InstanceBase(), mg1);
     m_model->addStatement(g1, Soprano::Vocabulary::NAO::created(), Soprano::LiteralValue(QDateTime::currentDateTime()), mg1);
     m_model->addStatement(mg1, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::GraphMetadata(), mg1);
     m_model->addStatement(mg1, Soprano::Vocabulary::NRL::coreGraphMetadataFor(), g1, mg1);
 
-    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/A"), QVariantList() << QLatin1String("hello world"), QLatin1String("Testapp"));
+    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QLatin1String("hello world"), QLatin1String("Testapp"));
 
     QVERIFY(!m_dmModel->lastError());
 
     // test that the data has been removed
-    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(QLatin1String("hello world"))));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world"))));
 
     // test that the mtime has been updated (and is thus in another graph)
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Soprano::Vocabulary::NAO::lastModified(), Soprano::Node(), g1));
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), Soprano::Vocabulary::NAO::lastModified(), Soprano::Node()));
 
     // test that the other property value is still valid
-    QVERIFY(m_model->containsStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(QLatin1String("foobar")), g1));
+    QVERIFY(m_model->containsStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1));
 
 
     // step 2: remove the second value
-    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/A"), QVariantList() << QLatin1String("foobar"), QLatin1String("Testapp"));
+    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QLatin1String("foobar"), QLatin1String("Testapp"));
 
     QVERIFY(!m_dmModel->lastError());
 
     // the property should be gone entirely
-    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/A"), Soprano::Node()));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), Soprano::Node()));
 
     // even the resource should be gone since the NAO mtime does not count as a "real" property
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Soprano::Node(), Soprano::Node()));
@@ -377,8 +395,17 @@ void DataManagementModelTest::resetModel()
     QUrl graph("graph:/onto");
     m_model->addStatement( graph, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::Ontology(), graph );
 
-    m_model->addStatement( QUrl("prop:/A"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/A"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::string(), graph );
+    m_model->addStatement( QUrl("prop:/int"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/int"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdInt(), graph );
+
+    m_model->addStatement( QUrl("prop:/int2"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/int2"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdInt(), graph );
+
+    m_model->addStatement( QUrl("prop:/int3"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/int3"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdInt(), graph );
+
+    m_model->addStatement( QUrl("prop:/string"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/string"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::string(), graph );
 
 
     // rebuild the internals of the data management model
@@ -408,9 +435,6 @@ void DataManagementModelTest::testMergeResources()
 {
     Nepomuk::ResourceManager::instance()->setOverrideMainModel( m_model );
     
-    using namespace Soprano::Vocabulary;
-    using namespace Nepomuk::Vocabulary;
-
     //
     // Test Identification
     //
@@ -600,10 +624,6 @@ void DataManagementModelTest::testMergeResources()
 
 void DataManagementModelTest::testMergeResources_createResource()
 {
-    using namespace Nepomuk;
-    using namespace Nepomuk::Vocabulary;
-    using namespace Soprano::Vocabulary;
-
     ResourceManager::instance()->setOverrideMainModel( m_model );
 
     //

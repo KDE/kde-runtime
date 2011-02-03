@@ -29,7 +29,16 @@
 
 #include <ktempdir.h>
 
+namespace QTest {
+template<>
+char* toString(const Soprano::Node& node) {
+    return qstrdup( node.toN3().toLatin1().data() );
+}
+}
+
 using namespace Soprano;
+
+Q_DECLARE_METATYPE(Soprano::Node)
 
 void ClassAndPropertyTreeTest::initTestCase()
 {
@@ -118,6 +127,19 @@ void ClassAndPropertyTreeTest::init()
     m_model->addStatement( QUrl("onto:/AA"), Soprano::Vocabulary::NAO::userVisible(), LiteralValue(false), graph );
     m_model->addStatement( QUrl("onto:/Y"), Soprano::Vocabulary::NAO::userVisible(), LiteralValue(false), graph );
 
+    // a few properties for node conversion testing and range checking
+    m_model->addStatement( QUrl("prop:/A"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/B"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/C"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/D"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/E"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+
+    m_model->addStatement( QUrl("prop:/A"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::string(), graph );
+    m_model->addStatement( QUrl("prop:/B"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdInt(), graph );
+    m_model->addStatement( QUrl("prop:/C"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdDouble(), graph );
+    m_model->addStatement( QUrl("prop:/D"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::dateTime(), graph );
+    m_model->addStatement( QUrl("prop:/E"), Soprano::Vocabulary::RDFS::range(), QUrl("onto:/A"), graph );
+
     m_typeTree->rebuildTree(m_model);
 }
 
@@ -192,6 +214,50 @@ void ClassAndPropertyTreeTest::testParents()
     QVERIFY(m_typeTree->isChildOf(QUrl("onto:/Z"), Soprano::Vocabulary::RDFS::Resource()));
     QVERIFY(m_typeTree->isChildOf(QUrl("onto:/Z"), QUrl("onto:/X")));
     QVERIFY(m_typeTree->isChildOf(QUrl("onto:/Z"), QUrl("onto:/Y")));
+}
+
+void ClassAndPropertyTreeTest::testVariantToNode_data()
+{
+    QTest::addColumn<QVariant>( "value" );
+    QTest::addColumn<QUrl>( "property" );
+    QTest::addColumn<Soprano::Node>( "node" );
+
+    // simple literal values
+    QTest::newRow("string-simple") << QVariant("foobar") << QUrl("prop:/A") << Soprano::Node(LiteralValue(QLatin1String("foobar")));
+    QTest::newRow("int-simple") << QVariant(42) << QUrl("prop:/B") << Soprano::Node(LiteralValue(42));
+    QTest::newRow("double-simple") << QVariant(42.1) << QUrl("prop:/C") << Soprano::Node(LiteralValue(42.1));
+    const QDateTime now = QDateTime::currentDateTime();
+    QTest::newRow("datatime-simple") << QVariant(now) << QUrl("prop:/D") << Soprano::Node(LiteralValue(now));
+
+    // literal values that can be converted to strings
+    QTest::newRow("string-int") << QVariant(42) << QUrl("prop:/A") << Soprano::Node(LiteralValue(QLatin1String("42")));
+    QTest::newRow("string-double") << QVariant(42.2) << QUrl("prop:/A") << Soprano::Node(LiteralValue(QLatin1String("42.2")));
+    QTest::newRow("string-datetime") << QVariant(now) << QUrl("prop:/A") << Soprano::Node(LiteralValue(QVariant(now).toString()));
+
+    // literal values that can be converted from strings
+    QTest::newRow("int-string") << QVariant("42") << QUrl("prop:/B") << Soprano::Node(LiteralValue(42));
+    QTest::newRow("double-string") << QVariant("42.2") << QUrl("prop:/C") << Soprano::Node(LiteralValue(42.2));
+    QTest::newRow("datetime-string") << QVariant(LiteralValue(now).toString()) << QUrl("prop:/D") << Soprano::Node(LiteralValue(now));
+
+    // literal values that cannot be converted
+    QTest::newRow("int-invalid") << QVariant("43g") << QUrl("prop:/B") << Soprano::Node();
+    QTest::newRow("double-invalid") << QVariant("43g") << QUrl("prop:/C") << Soprano::Node();
+
+    // resource URI
+    QTest::newRow("res-uri") << QVariant(QUrl("res:/A")) << QUrl("prop:/E") << Soprano::Node(QUrl("res:/A"));
+    QTest::newRow("res-string") << QVariant(QLatin1String("res:/A")) << QUrl("prop:/E") << Soprano::Node(QUrl("res:/A"));
+
+    // local file
+    QTest::newRow("file-path") << QVariant(QLatin1String("/tmp")) << QUrl("prop:/E") << Soprano::Node(QUrl("file:///tmp"));
+}
+
+void ClassAndPropertyTreeTest::testVariantToNode()
+{
+    QFETCH(QVariant, value);
+    QFETCH(QUrl, property);
+    QFETCH(Soprano::Node, node);
+
+    QCOMPARE(m_typeTree->variantToNode(value, property), node);
 }
 
 QTEST_KDEMAIN_CORE(ClassAndPropertyTreeTest)

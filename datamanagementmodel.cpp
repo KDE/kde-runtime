@@ -53,36 +53,22 @@
 
 
 namespace {
-    /// returns an invalid node if the variant could not be converted
-    Soprano::Node variantToNode(const QVariant& v) {
-        if(v.type() == QVariant::Url) {
-            return v.toUrl();
-        }
-        else {
-            Soprano::LiteralValue slv(v);
-            if(slv.isValid())
-                return slv;
-            else
-                return Soprano::Node();
-        }
-    }
-
-    /// returns an empty set if at least one of the values could not be converted
-    QSet<Soprano::Node> variantListToNodeSet( const QVariantList & vl ) {
-        QSet<Soprano::Node> nodes;
-        foreach( const QVariant & var, vl ) {
-            Soprano::Node node = variantToNode(var);
-            if(!node.isValid())
-                return QSet<Soprano::Node>();
-            nodes.insert( node );
-        }
-        return nodes;
-    }
-
     QStringList resourcesToN3(const QList<QUrl>& urls) {
         QStringList n3;
         Q_FOREACH(const QUrl& url, urls) {
             n3 << Soprano::Node::resourceToN3(url);
+        }
+        return n3;
+    }
+
+    // convert a hash of URL->URI mappings to N3, omitting empty URIs.
+    // This is a helper for the return type of DataManagementModel::resolveUrls
+    QStringList resourcesToN3(const QHash<QUrl, QUrl>& urls) {
+        QStringList n3;
+        QHash<QUrl, QUrl>::const_iterator end = urls.constEnd();
+        for(QHash<QUrl, QUrl>::const_iterator it = urls.constBegin(); it != end; ++it) {
+            if(!it.value().isEmpty())
+                n3 << Soprano::Node::resourceToN3(it.value());
         }
         return n3;
     }
@@ -179,6 +165,12 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
 
 
     //
+    // Resolve local file URLs
+    //
+    QHash<QUrl, QUrl> uriHash = resolveUrls(resources);
+
+
+    //
     // Check cardinality conditions
     //
     const int maxCardinality = d->m_classAndPropertyTree.maxCardinality(property);
@@ -186,10 +178,12 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
         // check if any of the resources already has a value set
         QStringList terms;
         Q_FOREACH(const QUrl& res, resources) {
-            terms << QString::fromLatin1("%1 %2 ?v . FILTER(?v!=%3) . ")
-                     .arg(Soprano::Node::resourceToN3(res),
-                          Soprano::Node::resourceToN3(property),
-                          variantToNode(values.first()).toN3());
+            if(uriHash.contains(res)) {
+                terms << QString::fromLatin1("%1 %2 ?v . FILTER(?v!=%3) . ")
+                         .arg(Soprano::Node::resourceToN3(res),
+                              Soprano::Node::resourceToN3(property),
+                              d->m_classAndPropertyTree.variantToNode(values.first(), property).toN3());
+            }
         }
 
         const QString cardinalityQuery = QString::fromLatin1("ask where { { %1 } }")
@@ -206,7 +200,8 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     //
     // Check the integrity of the values
     //
-    const QSet<Soprano::Node> nodes = variantListToNodeSet(values);
+    // FIXME: add the property as parameter for range checking (most importantly: convert local file paths and URIs which are encoded as strings into QUrls)
+    const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
     if(nodes.isEmpty()) {
         setError(QString::fromLatin1("At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
         return;
@@ -216,7 +211,7 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     //
     // Do the actual work
     //
-    addProperty(resources, property, nodes, app);
+    addProperty(uriHash, property, nodes, app);
 }
 
 
@@ -242,11 +237,18 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
         return;
     }
 
-    const QSet<Soprano::Node> nodes = variantListToNodeSet(values);
+    const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
     if(nodes.isEmpty()) {
         setError(QString::fromLatin1("At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
+
+
+    //
+    // Resolve local file URLs
+    //
+    QHash<QUrl, QUrl> uriHash = resolveUrls(resources);
+
 
     //
     // Remove values that are not wanted anymore
@@ -254,7 +256,7 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     QList<Soprano::BindingSet> existing
             = executeQuery(QString::fromLatin1("select ?r ?v where { ?r %1 ?v . FILTER(?r in (%2)) . }")
                            .arg(Soprano::Node::resourceToN3(property),
-                                resourcesToN3(resources).join(QLatin1String(","))),
+                                resourcesToN3(uriHash).join(QLatin1String(","))),
                            Soprano::Query::QueryLanguageSparql).allBindings();
     Q_FOREACH(const Soprano::BindingSet& binding, existing) {
         if(!nodes.contains(binding["v"])) {
@@ -265,7 +267,7 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     //
     // And finally add the rest of the statements
     //
-    addProperty(resources, property, nodes, app);
+    addProperty(uriHash, property, nodes, app);
 }
 
 void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
@@ -291,7 +293,7 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
         setError(QLatin1String("Property needs to be specified."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
-    const QSet<Soprano::Node> valueNodes = variantListToNodeSet(values);
+    const QSet<Soprano::Node> valueNodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
     if(valueNodes.isEmpty()) {
         setError(QString::fromLatin1("At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
         return;
@@ -750,7 +752,7 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
             // FIXME: check property, domain, and range
         }
 
-        Soprano::Node node = variantToNode(it.value());
+        Soprano::Node node = d->m_classAndPropertyTree.variantToNode(it.value(), property);
         if(node.isValid()) {
             graphMetaData.insert(it.key(), node);
         }
@@ -854,14 +856,8 @@ void Nepomuk::DataManagementModel::updateTypeCachesAndSoOn()
     d->m_classAndPropertyTree.rebuildTree(parentModel());
 }
 
-bool Nepomuk::DataManagementModel::checkRange(const QUrl &property, const QSet<Soprano::Node> &values) const
-{
-    const QUrl range = d->m_classAndPropertyTree.propertyRange(property);
 
-    return true;
-}
-
-void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, const QUrl &property, const QSet<Soprano::Node> &nodes, const QString &app)
+void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resources, const QUrl &property, const QSet<Soprano::Node> &nodes, const QString &app)
 {
     Q_ASSERT(!nodes.isEmpty());
 
@@ -877,15 +873,6 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     }
 
 
-    //
-    // Check the integrity of the values
-    //
-    if(!checkRange(property, nodes)) {
-        setError(QString::fromLatin1("At least one value has a type incompatible with property %1").arg(Soprano::Node::resourceToN3(property)), Soprano::Error::ErrorInvalidArgument);
-        return;
-    }
-
-
     clearError();
 
 
@@ -893,72 +880,92 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     // Check if values already exist. If so remove the resources from the resourceSet and only add the application
     // as maintainedBy in a new graph (except if its the only statement in the graph)
     //
+    QUrl graph;
     QSet<QPair<QUrl, Soprano::Node> > finalProperties;
-    Q_FOREACH(const QUrl& res, resources) {
+    QList<QUrl> knownResources;
+    for(QHash<QUrl, QUrl>::const_iterator it = resources.constBegin();
+        it != resources.constEnd(); ++it) {
+        QUrl uri = it.value();
+        if(uri.isEmpty()) {
+            if(graph.isEmpty()) {
+                graph = createGraph( app );
+                if(!graph.isValid()) {
+                    // error has been set in createGraph
+                    return;
+                }
+            }
+            uri = createUri(ResourceUri);
+            addStatement(uri, Vocabulary::NIE::url(), it.key(), graph);
+        }
+        else {
+            knownResources << uri;
+        }
         Q_FOREACH(const Soprano::Node& node, nodes) {
-            finalProperties << qMakePair(res,node);
+            finalProperties << qMakePair(uri, node);
         }
     }
 
     const QUrl appRes = createApplication(app);
 
-    const QString existingValuesQuery = QString::fromLatin1("select distinct ?r ?v ?g ?m "
-                                                            "(select count(*) where { graph ?g { ?s ?p ?o . } . %5 . }) as ?cnt "
-                                                            "where { "
-                                                            "graph ?g { ?r %2 ?v . } . "
-                                                            "?m %1 ?g . "
-                                                            "FILTER(?r in (%3)) . "
-                                                            "FILTER(?v in (%4)) . }")
-            .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::coreGraphMetadataFor()),
-                 Soprano::Node::resourceToN3(property),
-                 resourcesToN3(resources).join(QLatin1String(",")),
-                 nodesToN3(nodes).join(QLatin1String(",")),
-                 createResourceMetadataPropertyFilter(QLatin1String("?p")));
-    QList<Soprano::BindingSet> existingValueBindings = executeQuery(existingValuesQuery, Soprano::Query::QueryLanguageSparql).allBindings();
-    Q_FOREACH(const Soprano::BindingSet& binding, existingValueBindings) {
-        kDebug() << "Existing value" << binding;
-        const QUrl r = binding["r"].uri();
-        const Soprano::Node v = binding["v"];
-        const QUrl g = binding["g"].uri();
-        const QUrl m = binding["m"].uri();
-        const int cnt = binding["cnt"].literal().toInt();
+    if(!knownResources.isEmpty()) {
+        const QString existingValuesQuery = QString::fromLatin1("select distinct ?r ?v ?g ?m "
+                                                                "(select count(*) where { graph ?g { ?s ?p ?o . } . %5 . }) as ?cnt "
+                                                                "where { "
+                                                                "graph ?g { ?r %2 ?v . } . "
+                                                                "?m %1 ?g . "
+                                                                "FILTER(?r in (%3)) . "
+                                                                "FILTER(?v in (%4)) . }")
+                .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::coreGraphMetadataFor()),
+                     Soprano::Node::resourceToN3(property),
+                     resourcesToN3(knownResources).join(QLatin1String(",")),
+                     nodesToN3(nodes).join(QLatin1String(",")),
+                     createResourceMetadataPropertyFilter(QLatin1String("?p")));
+        QList<Soprano::BindingSet> existingValueBindings = executeQuery(existingValuesQuery, Soprano::Query::QueryLanguageSparql).allBindings();
+        Q_FOREACH(const Soprano::BindingSet& binding, existingValueBindings) {
+            kDebug() << "Existing value" << binding;
+            const QUrl r = binding["r"].uri();
+            const Soprano::Node v = binding["v"];
+            const QUrl g = binding["g"].uri();
+            const QUrl m = binding["m"].uri();
+            const int cnt = binding["cnt"].literal().toInt();
 
-        // we handle this property here - thus, no need to handle it below
-        finalProperties.remove(qMakePair(r, v));
+            // we handle this property here - thus, no need to handle it below
+            finalProperties.remove(qMakePair(r, v));
 
-        // in case the app is the same there is no need to do anything
-        if(containsStatement(g, Soprano::Vocabulary::NAO::maintainedBy(), appRes, m)) {
-            continue;
-        }
-        else if(cnt == 1) {
-            // we can reuse the graph
-            addStatement(g, Soprano::Vocabulary::NAO::maintainedBy(), appRes, m);
-        }
-        else {
-            // we need to split the graph
-            const QUrl graph = createUri(GraphUri);
-            const QUrl metadataGraph = createUri(GraphUri);
+            // in case the app is the same there is no need to do anything
+            if(containsStatement(g, Soprano::Vocabulary::NAO::maintainedBy(), appRes, m)) {
+                continue;
+            }
+            else if(cnt == 1) {
+                // we can reuse the graph
+                addStatement(g, Soprano::Vocabulary::NAO::maintainedBy(), appRes, m);
+            }
+            else {
+                // we need to split the graph
+                const QUrl graph = createUri(GraphUri);
+                const QUrl metadataGraph = createUri(GraphUri);
 
-            // FIXME: do not split the same graph again and again. Check if the graph in question already is the one we created.
+                // FIXME: do not split the same graph again and again. Check if the graph in question already is the one we created.
 
-            // add metadata graph
-            addStatement( metadataGraph, Soprano::Vocabulary::NRL::coreGraphMetadataFor(), graph, metadataGraph );
-            addStatement( metadataGraph, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::GraphMetadata(), metadataGraph );
+                // add metadata graph
+                addStatement( metadataGraph, Soprano::Vocabulary::NRL::coreGraphMetadataFor(), graph, metadataGraph );
+                addStatement( metadataGraph, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::GraphMetadata(), metadataGraph );
 
-            // copy the metadata from the old graph to the new one
-            executeQuery(QString::fromLatin1("insert into %1 { %2 ?p ?o . } where { graph %3 { %4 ?p ?o . } . }")
-                         .arg(Soprano::Node::resourceToN3(metadataGraph),
-                              Soprano::Node::resourceToN3(graph),
-                              Soprano::Node::resourceToN3(m),
-                              Soprano::Node::resourceToN3(g)),
-                         Soprano::Query::QueryLanguageSparql);
+                // copy the metadata from the old graph to the new one
+                executeQuery(QString::fromLatin1("insert into %1 { %2 ?p ?o . } where { graph %3 { %4 ?p ?o . } . }")
+                             .arg(Soprano::Node::resourceToN3(metadataGraph),
+                                  Soprano::Node::resourceToN3(graph),
+                                  Soprano::Node::resourceToN3(m),
+                                  Soprano::Node::resourceToN3(g)),
+                             Soprano::Query::QueryLanguageSparql);
 
-            // add the new app
-            addStatement(graph, Soprano::Vocabulary::NAO::maintainedBy(), appRes, metadataGraph);
+                // add the new app
+                addStatement(graph, Soprano::Vocabulary::NAO::maintainedBy(), appRes, metadataGraph);
 
-            // and finally move the actual property over to the new graph
-            removeStatement(r, property, v, g);
-            addStatement(r, property, v, graph);
+                // and finally move the actual property over to the new graph
+                removeStatement(r, property, v, g);
+                addStatement(r, property, v, graph);
+            }
         }
     }
 
@@ -967,10 +974,12 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     // All conditions have been checked - create the actual data
     //
     if(!finalProperties.isEmpty()) {
-        const QUrl graph = createGraph( app );
-        if(!graph.isValid()) {
-            // error has been set in createGraph
-            return;
+        if(graph.isEmpty()) {
+            graph = createGraph( app );
+            if(!graph.isValid()) {
+                // error has been set in createGraph
+                return;
+            }
         }
 
         // add all the data
@@ -994,6 +1003,30 @@ bool Nepomuk::DataManagementModel::doesResourceExist(const QUrl &res) const
                         .arg(Soprano::Node::resourceToN3(res),
                              createResourceMetadataPropertyFilter(QLatin1String("?p"))),
                         Soprano::Query::QueryLanguageSparql).boolValue();
+}
+
+QHash<QUrl, QUrl> Nepomuk::DataManagementModel::resolveUrls(const QList<QUrl> &urls) const
+{
+    QHash<QUrl, QUrl> uriHash;
+    Q_FOREACH(const QUrl& url, urls) {
+        if(url.scheme() == QLatin1String("file")) {
+            Soprano::QueryResultIterator it
+                    = executeQuery(QString::fromLatin1("select ?r where { ?r %1 %2 . } limit 1")
+                                   .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NIE::url()),
+                                        Soprano::Node::resourceToN3(url)),
+                                   Soprano::Query::QueryLanguageSparql);
+            if(it.next()) {
+                uriHash.insert(url, it[0].uri());
+            }
+            else {
+                uriHash.insert(url, QUrl());
+            }
+        }
+        else {
+            uriHash.insert(url, url);
+        }
+    }
+    return uriHash;
 }
 
 //void Nepomuk::DataManagementModel::insertStatements(const QSet<QUrl> &resources, const QUrl &property, const QSet<Soprano::Node> &values, const QUrl &graph)

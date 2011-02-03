@@ -24,10 +24,13 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QUrl>
+#include <QtCore/QVariant>
 
 namespace Soprano {
 class Model;
+class Node;
 }
+
 
 namespace Nepomuk {
 class ClassAndPropertyTree : public QObject
@@ -45,6 +48,10 @@ public:
 
     QUrl propertyDomain(const QUrl& uri) const;
     QUrl propertyRange(const QUrl& uri) const;
+
+    /// will try very hard to convert a variant into a node. Supports literal XML types and QUrl
+    Soprano::Node variantToNode(const QVariant& value, const QUrl& property) const;
+    QSet<Soprano::Node> variantListToNodeSet(const QVariantList& vl, const QUrl& property) const;
 
 public Q_SLOTS:
     void rebuildTree(Soprano::Model* model);

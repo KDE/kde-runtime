@@ -22,6 +22,8 @@
 #include "classandpropertytree.h"
 
 #include <QtCore/QSet>
+#include <QtCore/QDir>
+#include <QtCore/QFile>
 
 #include <Soprano/Node>
 #include <Soprano/LiteralValue>
@@ -120,6 +122,70 @@ QUrl Nepomuk::ClassAndPropertyTree::propertyRange(const QUrl &uri) const
         return QUrl();
 }
 
+Soprano::Node Nepomuk::ClassAndPropertyTree::variantToNode(const QVariant &value, const QUrl &property) const
+{
+    QSet<Soprano::Node> nodes = variantListToNodeSet(QVariantList() << value, property);
+    if(nodes.isEmpty())
+        return Soprano::Node();
+    else
+        return *nodes.begin();
+}
+
+QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QVariantList &vl, const QUrl &property) const
+{
+    const QUrl range = propertyRange(property);
+    const QVariant::Type literalType = Soprano::LiteralValue::typeFromDataTypeUri(range);
+    QSet<Soprano::Node> nodes;
+    if(literalType == QVariant::Invalid) {
+        Q_FOREACH(const QVariant& value, vl) {
+            // treat as a resource range for now
+            if(value.type() == QVariant::Url) {
+                nodes.insert(value.toUrl());
+            }
+            else if(value.type() == QVariant::String) {
+                QString s = value.toString();
+                if(!s.isEmpty()) {
+                    // for convinience we support local file paths
+                    if(s[0] == QDir::separator() && QFile::exists(s)) {
+                        nodes.insert(QUrl::fromLocalFile(s));
+                    }
+                    else {
+                        // treat it as a URI
+                        nodes.insert(QUrl(s));
+                    }
+                }
+                else {
+                    // empty string
+                    return QSet<Soprano::Node>();
+                }
+            }
+            else {
+                // invalid type
+                return QSet<Soprano::Node>();
+            }
+        }
+    }
+    else {
+        Q_FOREACH(const QVariant& value, vl) {
+            if(value.type() == literalType) {
+                nodes.insert(Soprano::LiteralValue(value));
+            }
+            else {
+                Soprano::LiteralValue v = Soprano::LiteralValue::fromString(value.toString(), range);
+                if(v.isValid()) {
+                    nodes.insert(v);
+                }
+                else {
+                    // failed literal conversion
+                    return QSet<Soprano::Node>();
+                }
+            }
+        }
+    }
+
+    return nodes;
+}
+
 void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
 {
     qDeleteAll(m_tree);
@@ -146,7 +212,7 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
                  Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::domain()),
                  Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::range()),
                  Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::Resource()));
-    kDebug() << query;
+//    kDebug() << query;
     Soprano::QueryResultIterator it
             = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
     while( it.next() ) {
@@ -270,7 +336,7 @@ int Nepomuk::ClassAndPropertyTree::updateUserVisibility( ClassOrProperty* cop, Q
             // default to invisible
             cop->userVisible = -1;
         }
-        kDebug() << "Setting nao:userVisible of" << cop->uri.toString() << ( cop->userVisible == 1 );
+        //kDebug() << "Setting nao:userVisible of" << cop->uri.toString() << ( cop->userVisible == 1 );
         return cop->userVisible;
     }
 }
