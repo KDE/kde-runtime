@@ -26,6 +26,7 @@
 
 namespace Soprano {
 class Model;
+class NRLModel;
 }
 namespace Nepomuk {
 class DataManagementModel;
@@ -40,7 +41,9 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
     void init();
+    void testAddProperty();
     void testSetProperty();
+    void testSetProperty_overwrite();
     void testMergeResources();
     void testMergeResources_createResource();
     void testRemoveProperty();
@@ -50,6 +53,7 @@ private:
 
     KTempDir* m_storageDir;
     Soprano::Model* m_model;
+    Soprano::NRLModel* m_nrlModel;
     Nepomuk::DataManagementModel* m_dmModel;
 };
 

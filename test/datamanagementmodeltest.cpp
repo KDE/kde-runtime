@@ -43,6 +43,7 @@
 #include <Nepomuk/ResourceManager>
 
 using namespace Soprano;
+using namespace Soprano::Vocabulary;
 
 void DataManagementModelTest::initTestCase()
 {
@@ -53,15 +54,15 @@ void DataManagementModelTest::initTestCase()
     QVERIFY( m_model );
 
     // DataManagementModel relies on the ussage of a NRLModel in the storage service
-    Soprano::NRLModel* nrlModel = new Soprano::NRLModel(m_model);
-    nrlModel->setParent(m_model);
+    m_nrlModel = new Soprano::NRLModel(m_model);
 
-    m_dmModel = new Nepomuk::DataManagementModel( nrlModel );
+    m_dmModel = new Nepomuk::DataManagementModel( m_nrlModel );
 }
 
 void DataManagementModelTest::cleanupTestCase()
 {
     delete m_dmModel;
+    delete m_nrlModel;
     delete m_model;
     delete m_storageDir;
 }
@@ -72,18 +73,15 @@ void DataManagementModelTest::init()
 }
 
 
-void DataManagementModelTest::testSetProperty()
+void DataManagementModelTest::testAddProperty()
 {
-    // adding the most basic property
+    // we start by simply adding a property
     m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/A"), QVariantList() << QVariant(QLatin1String("foobar")), QLatin1String("Testapp"));
 
     QVERIFY(!m_dmModel->lastError());
 
     // check that the actual data is there
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(QLatin1String("foobar"))));
-
-    QTextStream s(stderr);
-    m_model->write(s);
 
     // check that the app resource has been created with its corresponding graphs
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
@@ -110,6 +108,215 @@ void DataManagementModelTest::testSetProperty()
 
     // check the number of graphs (two for the app, two for the actual data, and one for the ontology)
     QCOMPARE(m_model->listContexts().allElements().count(), 5);
+
+
+    //
+    // add another property value on top of the existing one
+    //
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/A"), QVariantList() << QVariant(QLatin1String("hello world")), QLatin1String("Testapp"));
+
+    // verify the values
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/A"), Node()).allStatements().count(), 2);
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(QLatin1String("foobar"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(QLatin1String("hello world"))));
+
+    // check that we only have one agent instance
+    QCOMPARE(m_model->listStatements(Node(), RDF::type(), NAO::Agent()).allStatements().count(), 1);
+
+    //
+    // rewrite the same property with the same app
+    //
+    Soprano::Graph existingStatements = m_model->listStatements().allStatements();
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/A"), QVariantList() << QVariant(QLatin1String("hello world")), QLatin1String("Testapp"));
+
+    // nothing should have changed
+    QCOMPARE(existingStatements, Soprano::Graph(m_model->listStatements().allStatements()));
+
+
+    //
+    // rewrite the same property with another app
+    //
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/A"), QVariantList() << QVariant(QLatin1String("hello world")), QLatin1String("Otherapp"));
+
+    // there should only be the new app, nothing else
+    // thus, all previous statements need to be there
+    foreach(const Statement& s, existingStatements.toList()) {
+        QVERIFY(m_model->containsStatement(s));
+    }
+
+
+    // plus the new app
+    existingStatements.addStatements(
+                m_model->executeQuery(QString::fromLatin1("select ?g ?s ?p ?o where { graph ?g { ?s ?p ?o . } . filter(bif:exists((select (1) where { graph ?g { ?a a %1 . ?a %2 %3 . } . })))}")
+                                      .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::Agent()),
+                                           Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::identifier()),
+                                           Soprano::Node::literalToN3(QLatin1String("Otherapp"))),
+                                      Soprano::Query::QueryLanguageSparql)
+                .iterateStatementsFromBindings(QLatin1String("s"), QLatin1String("p"), QLatin1String("o"), QLatin1String("g"))
+                .allStatements()
+                + m_model->executeQuery(QString::fromLatin1("select ?g ?s ?p ?o where { graph ?g { ?s ?p ?o . } . filter(bif:exists((select (1) where { graph ?gg { ?a a %1 . ?a %2 %3 . } . ?g %4 ?gg . })))}")
+                                        .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::Agent()),
+                                             Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::identifier()),
+                                             Soprano::Node::literalToN3(QLatin1String("Otherapp")),
+                                             Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::coreGraphMetadataFor())),
+                                        Soprano::Query::QueryLanguageSparql)
+                .iterateStatementsFromBindings(QLatin1String("s"), QLatin1String("p"), QLatin1String("o"), QLatin1String("g"))
+                .allStatements()
+                + m_model->listStatements(Node(), NAO::maintainedBy(), Node(), Node()).allStatements()
+                );
+
+    QCOMPARE(existingStatements, Soprano::Graph(m_model->listStatements().allStatements()));
+}
+
+
+void DataManagementModelTest::testSetProperty()
+{
+    // adding the most basic property
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/A"), QVariantList() << QVariant(QLatin1String("foobar")), QLatin1String("Testapp"));
+
+    QVERIFY(!m_dmModel->lastError());
+
+    // check that the actual data is there
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(QLatin1String("foobar"))));
+
+    // check that the app resource has been created with its corresponding graphs
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
+                                                      "graph ?g { ?r a %1 . ?r %2 %3 . } . "
+                                                      "graph ?mg { ?g a %4 . ?mg a %5 . ?mg %6 ?g . } . }")
+                                  .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::Agent()),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::identifier()),
+                                       Soprano::Node::literalToN3(QLatin1String("Testapp")),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::InstanceBase()),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::GraphMetadata()),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::coreGraphMetadataFor())),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
+
+    // check that we have an InstanceBase with a GraphMetadata graph
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
+                                                      "graph ?g { <res:/A> <prop:/A> %1 . } . "
+                                                      "graph ?mg { ?g a %2 . ?mg a %3 . ?mg %4 ?g . } . "
+                                                      "}")
+                                  .arg(Soprano::Node::literalToN3(QLatin1String("foobar")),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::InstanceBase()),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::GraphMetadata()),
+                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::coreGraphMetadataFor())),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
+
+    // check the number of graphs (two for the app, two for the actual data, and one for the ontology)
+    QCOMPARE(m_model->listContexts().allElements().count(), 5);
+}
+
+void DataManagementModelTest::testSetProperty_overwrite()
+{
+    // create an app graph
+    const QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+
+    // add a resource with 2 properties
+    QUrl mg;
+    const QUrl g = m_nrlModel->createGraph(NRL::InstanceBase(), &mg);
+    QUrl mg2;
+    const QUrl g2 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg2);
+
+    m_model->addStatement(g, NAO::maintainedBy(), QUrl("app:/A"), mg);
+    m_model->addStatement(g2, NAO::maintainedBy(), QUrl("app:/A"), mg2);
+
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), NAO::Tag(), g);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(42), g);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/B"), LiteralValue(42), g);
+
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/C"), LiteralValue(42), g2);
+
+
+    //
+    // now overwrite the one property
+    //
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/A"), QVariantList() << 12, QLatin1String("testapp"));
+
+    // now the model should have replaced the old value and added the new value in a new graph
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(12)));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(42)));
+
+    // a new graph
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(12)).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/B"), LiteralValue(42)).allStatements().count(), 1);
+    QVERIFY(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/A"), LiteralValue(12)).allStatements().first().context().uri() != g);
+    QVERIFY(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/B"), LiteralValue(42)).allStatements().first().context().uri() == g);
+
+    // the testapp Agent as maintainer of the new graph
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
+                                                      "graph ?g { <res:/A> <prop:/A> %1 . } . "
+                                                      "graph ?mg { ?g a %2 . ?mg a %3 . ?mg %4 ?g . } . "
+                                                      "?g %5 ?a . ?a %6 %7 . "
+                                                      "}")
+                                  .arg(Soprano::Node::literalToN3(12),
+                                       Soprano::Node::resourceToN3(NRL::InstanceBase()),
+                                       Soprano::Node::resourceToN3(NRL::GraphMetadata()),
+                                       Soprano::Node::resourceToN3(NRL::coreGraphMetadataFor()),
+                                       Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                       Soprano::Node::resourceToN3(NAO::identifier()),
+                                       Soprano::Node::literalToN3(QLatin1String("testapp"))),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
+
+
+    //
+    // Rewrite the same value
+    //
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/B"), QVariantList() << 42, QLatin1String("testapp"));
+
+    // the value should only be there once
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/B"), LiteralValue(42)).allStatements().count(), 1);
+
+    // in a new graph since the old one still contains the type
+    QVERIFY(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/B"), LiteralValue(42)).allStatements().first().context().uri() != g);
+
+    // there should be one graph now which contains the value and which is marked as being maintained by both apps
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
+                                                      "graph ?g { <res:/A> <prop:/B> %1 . } . "
+                                                      "graph ?mg { ?g a %2 . ?mg a %3 . ?mg %4 ?g . } . "
+                                                      "?g %5 ?a1 . ?a1 %6 %7 . "
+                                                      "?g %5 ?a2 . ?a2 %6 %8 . "
+                                                      "}")
+                                  .arg(Soprano::Node::literalToN3(42),
+                                       Soprano::Node::resourceToN3(NRL::InstanceBase()),
+                                       Soprano::Node::resourceToN3(NRL::GraphMetadata()),
+                                       Soprano::Node::resourceToN3(NRL::coreGraphMetadataFor()),
+                                       Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                       Soprano::Node::resourceToN3(NAO::identifier()),
+                                       Soprano::Node::literalToN3(QLatin1String("testapp")),
+                                       Soprano::Node::literalToN3(QLatin1String("A"))),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
+
+    //
+    // Now we rewrite the type which should result in reusing the old graph but with the new app as maintainer
+    //
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), RDF::type(), QVariantList() << NAO::Tag(), QLatin1String("testapp"));
+
+    // the type should only be define once
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), RDF::type(), NAO::Tag()).allStatements().count(), 1);
+
+    // the graph should be the same
+    QVERIFY(m_model->listStatements(QUrl("res:/A"), RDF::type(), NAO::Tag()).allStatements().first().context().uri() == g);
+
+    // the new app should be listed as maintainer as should be the old one
+    QCOMPARE(m_model->listStatements(g, NAO::maintainedBy(), Node(), mg).allStatements().count(), 2);
+
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
+                                                      "graph ?g { <res:/A> a %1 . } . "
+                                                      "graph ?mg { ?g a %2 . ?mg a %3 . ?mg %4 ?g . } . "
+                                                      "?g %5 ?a1 . ?a1 %6 %7 . "
+                                                      "?g %5 ?a2 . ?a2 %6 %8 . "
+                                                      "}")
+                                  .arg(Soprano::Node::resourceToN3(NAO::Tag()),
+                                       Soprano::Node::resourceToN3(NRL::InstanceBase()),
+                                       Soprano::Node::resourceToN3(NRL::GraphMetadata()),
+                                       Soprano::Node::resourceToN3(NRL::coreGraphMetadataFor()),
+                                       Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                       Soprano::Node::resourceToN3(NAO::identifier()),
+                                       Soprano::Node::literalToN3(QLatin1String("testapp")),
+                                       Soprano::Node::literalToN3(QLatin1String("A"))),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
 }
 
 // TODO: add tests that check handling of nie:url
