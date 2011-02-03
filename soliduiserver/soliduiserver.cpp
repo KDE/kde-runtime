@@ -1,7 +1,8 @@
-/* This file is part of the KDE Project
+﻿/* This file is part of the KDE Project
    Copyright (c) 2005 Jean-Remy Falleri <jr.falleri@laposte.net>
    Copyright (c) 2005-2007 Kevin Ottens <ervin@kde.org>
    Copyright (c) 2007 Alexis Ménard <darktears31@gmail.com>
+   Copyright (c) 2011 Lukas Tinkl <ltinkl@redhat.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -37,6 +38,8 @@
 #include <kdesktopfileactions.h>
 #include <kwindowsystem.h>
 #include <kpassworddialog.h>
+#include <kwallet.h>
+#include <solid/storagevolume.h>
 
 #include "deviceactionsdialog.h"
 #include "deviceaction.h"
@@ -139,7 +142,7 @@ void SolidUiServer::showPassphraseDialog(const QString &udi,
 
     Solid::Device device(udi);
 
-    KPasswordDialog *dialog = new KPasswordDialog();
+    KPasswordDialog *dialog = new KPasswordDialog(0, KPasswordDialog::ShowKeepPassword);
 
     QString label = device.vendor();
     if (!label.isEmpty()) label+=' ';
@@ -150,6 +153,29 @@ void SolidUiServer::showPassphraseDialog(const QString &udi,
     dialog->setProperty("soliduiserver.udi", udi);
     dialog->setProperty("soliduiserver.returnService", returnService);
     dialog->setProperty("soliduiserver.returnObject", returnObject);
+
+    QString uuid;
+    if (device.is<Solid::StorageVolume>())
+        uuid = device.as<Solid::StorageVolume>()->uuid();
+
+    // read the password from wallet and prefill it to the dialog
+    if (!uuid.isEmpty()) {
+        dialog->setProperty("soliduiserver.uuid", uuid);
+
+        KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), (WId) wId);
+        const QString folderName = QString::fromLatin1("SolidLuks");
+        if (wallet && wallet->hasFolder(folderName)) {
+            wallet->setFolder(folderName);
+            QString savedPassword;
+            if (wallet->readPassword(uuid, savedPassword) == 0) {
+                dialog->setKeepPassword(true);
+                dialog->setPassword(savedPassword);
+            }
+            wallet->closeWallet(wallet->walletName(), false);
+        }
+        delete wallet;
+    }
+
 
     connect(dialog, SIGNAL(gotPassword(const QString&, bool)),
             this, SLOT(onPassphraseDialogCompleted(const QString&, bool)));
@@ -164,7 +190,6 @@ void SolidUiServer::showPassphraseDialog(const QString &udi,
 
 void SolidUiServer::onPassphraseDialogCompleted(const QString &pass, bool keep)
 {
-    Q_UNUSED(keep);
     KPasswordDialog *dialog = qobject_cast<KPasswordDialog*>(sender());
 
     if (dialog) {
@@ -180,6 +205,21 @@ void SolidUiServer::onPassphraseDialogCompleted(const QString &pass, bool keep)
         if (!reply.isValid()) {
             kWarning() << "Impossible to send the passphrase to the application, D-Bus said: "
                        << reply.error().name() << ", " << reply.error().message() << endl;
+            return;  // don't save into wallet if an error occurs
+        }
+
+        if (keep)  { // save the password into the wallet
+            KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), 0);
+            if (wallet) {
+                const QString folderName = QString::fromLatin1("SolidLuks");
+                const QString uuid = dialog->property("soliduiserver.uuid").toString();
+                if (!wallet->hasFolder(folderName))
+                    wallet->createFolder(folderName);
+                if (wallet->setFolder(folderName))
+                    wallet->writePassword(uuid, pass);
+                wallet->closeWallet(wallet->walletName(), false);
+                delete wallet;
+            }
         }
     }
 }
