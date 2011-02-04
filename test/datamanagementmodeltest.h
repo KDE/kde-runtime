@@ -50,6 +50,7 @@ private Q_SLOTS:
     void testMergeResources_createResource();
     void testRemoveProperty();
     void testRemoveProperty_file();
+    void testRemoveProperties();
 
 private:
     void resetModel();

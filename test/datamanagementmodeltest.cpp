@@ -47,6 +47,43 @@ using namespace Soprano::Vocabulary;
 using namespace Nepomuk;
 using namespace Nepomuk::Vocabulary;
 
+
+// TODO: test error conditions: provide invalid parameters in all variations and then check for lastError() and ensure that nothing was changed in the model.
+
+void DataManagementModelTest::resetModel()
+{
+    // remove all the junk from previous tests
+    m_model->removeAllStatements();
+
+    // add some classes and properties
+    QUrl graph("graph:/onto");
+    m_model->addStatement( graph, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::Ontology(), graph );
+
+    m_model->addStatement( QUrl("prop:/int"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/int"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdInt(), graph );
+
+    m_model->addStatement( QUrl("prop:/int2"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/int2"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdInt(), graph );
+
+    m_model->addStatement( QUrl("prop:/int3"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/int3"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdInt(), graph );
+
+    m_model->addStatement( QUrl("prop:/string"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/string"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::string(), graph );
+
+    m_model->addStatement( QUrl("prop:/res"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/res"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::RDFS::Resource(), graph );
+
+    m_model->addStatement( QUrl("prop:/res_c1"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/res_c1"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::RDFS::Resource(), graph );
+    m_model->addStatement( QUrl("prop:/res_c1"), Soprano::Vocabulary::NRL::maxCardinality(), LiteralValue(1), graph );
+
+
+    // rebuild the internals of the data management model
+    m_dmModel->updateTypeCachesAndSoOn();
+}
+
+
 void DataManagementModelTest::initTestCase()
 {
     const Soprano::Backend* backend = Soprano::PluginManager::instance()->discoverBackendByName( "virtuosobackend" );
@@ -473,37 +510,63 @@ void DataManagementModelTest::testRemoveProperty_file()
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/res"), Node()).allStatements().count(), 1);
 }
 
-void DataManagementModelTest::resetModel()
+void DataManagementModelTest::testRemoveProperties()
 {
-    // remove all the junk from previous tests
-    m_model->removeAllStatements();
+    // prepare some test data
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
 
-    // add some classes and properties
-    QUrl graph("graph:/onto");
-    m_model->addStatement( graph, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::Ontology(), graph );
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl("file:/A"), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("whatever")), g1);
 
-    m_model->addStatement( QUrl("prop:/int"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdInt(), graph );
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(12), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(2), g1);
 
-    m_model->addStatement( QUrl("prop:/int2"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int2"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdInt(), graph );
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int2"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int2"), LiteralValue(12), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int2"), LiteralValue(2), g1);
 
-    m_model->addStatement( QUrl("prop:/int3"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int3"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdInt(), graph );
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("whatever")), g1);
 
-    m_model->addStatement( QUrl("prop:/string"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/string"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::string(), graph );
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(6), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(12), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(2), g1);
 
-    m_model->addStatement( QUrl("prop:/res"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::RDFS::Resource(), graph );
-
-    m_model->addStatement( QUrl("prop:/res_c1"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::RDFS::Resource(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), Soprano::Vocabulary::NRL::maxCardinality(), LiteralValue(1), graph );
+    m_model->addStatement(QUrl("res:/B"), NIE::url(), QUrl("file:/B"), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/C"), g1);
 
 
-    // rebuild the internals of the data management model
-    m_dmModel->updateTypeCachesAndSoOn();
+    // test removing one property from one resource
+    m_dmModel->removeProperties(QList<QUrl>() << QUrl("res:/A"), QList<QUrl>() << QUrl("prop:/string"), QLatin1String("testapp"));
+
+    // check that all values are gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), Node()));
+
+    // check that all other values from that prop are still there
+    QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/string"), Node()).allStatements().count(), 3);
+    QCOMPARE(m_model->listStatements(QUrl("res:/B"), QUrl("prop:/string"), Node()).allStatements().count(), 3);
+
+
+    // test removing a property from more than one resource
+    m_dmModel->removeProperties(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/B"), QList<QUrl>() << QUrl("prop:/int"), QLatin1String("testapp"));
+
+    // check that all values are gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int"), Node()));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), QUrl("prop:/int"), Node()));
+
+    // check that other properties from res:/B are still there
+    QCOMPARE(m_model->listStatements(QUrl("res:/B"), QUrl("prop:/string"), Node()).allStatements().count(), 3);
+
+
+    // test file URLs in the resources
+    m_dmModel->removeProperties(QList<QUrl>() << QUrl("file:/A"), QList<QUrl>() << QUrl("prop:/int2"), QLatin1String("testapp"));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int2"), Node()));
 }
 
 
