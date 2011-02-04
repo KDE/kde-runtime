@@ -49,6 +49,7 @@ using namespace Nepomuk::Vocabulary;
 
 
 // TODO: test error conditions: provide invalid parameters in all variations and then check for lastError() and ensure that nothing was changed in the model.
+// TODO: test nao:created and nao:lastModified, these should always be correct for existing resources. This is especially important in the removeDataByApplication methods.
 
 void DataManagementModelTest::resetModel()
 {
@@ -612,6 +613,139 @@ void DataManagementModelTest::testRemoveResources()
     QCOMPARE(m_model->listStatements(QUrl("res:/C"), Node(), Node()).allStatements().count(), 2);
 }
 
+// the isolated test: create one graph with one resource, delete that resource
+void DataManagementModelTest::testRemoveDataByApplication1()
+{
+    // create our app
+    const QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+
+    // create the resource to delete
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+
+    // delete the resource
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), QLatin1String("A"), false);
+
+    // verify that nothing is left, not even the graph
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(Node(), NAO::maintainedBy(), QUrl("app:/A")));
+    QCOMPARE(m_model->listStatements(Node(), RDF::type(), NRL::InstanceBase()).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(Node(), RDF::type(), NRL::GraphMetadata()).allStatements().count(), 1);
+}
+
+// scatter resource over two graphs, only one of which is supposed to be removed
+void DataManagementModelTest::testRemoveDataByApplication2()
+{
+    // create our apps
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+    appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/B"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/B"), NAO::identifier(), LiteralValue(QLatin1String("B")), appG);
+
+    // create the resource to delete
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    QUrl mg2;
+    const QUrl g2 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg2);
+    m_model->addStatement(g2, NAO::maintainedBy(), QUrl("app:/B"), mg2);
+
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
+
+    // delete the resource
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), QLatin1String("A"), false);
+
+    // verify that graph1 is gone completely
+    QVERIFY(!m_model->containsAnyStatement(Node(), Node(), Node(), g1));
+
+    // only two statements left: the one in the second graph and the last modification date
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), Node(), Node()).allStatements().count(), 2);
+    QVERIFY(m_model->containsStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::lastModified(), Node()));
+
+    // four graphs: g2, the 2 app graphs, and the mtime graph
+    QCOMPARE(m_model->listStatements(Node(), RDF::type(), NRL::InstanceBase()).allStatements().count(), 4);
+}
+
+// two apps that maintain a graph should keep the data when one removes it
+void DataManagementModelTest::testRemoveDataByApplication3()
+{
+    // create our apps
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+    appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/B"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/B"), NAO::identifier(), LiteralValue(QLatin1String("B")), appG);
+
+    // create the resource to delete
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/B"), mg1);
+
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+
+    // delete the resource
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), QLatin1String("A"), false);
+
+    // the resource should still be there, without any changes, not even a changed mtime
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), Node(), Node()).allStatements().count(), 2);
+
+    QVERIFY(!m_model->containsAnyStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1));
+    QCOMPARE(m_model->listStatements(g1, NAO::maintainedBy(), Node()).allStatements().count(), 1);
+}
+
+// test file URLs + not removing nie:url
+void DataManagementModelTest::testRemoveDataByApplication4()
+{
+    // create our apps
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+    appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/B"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/B"), NAO::identifier(), LiteralValue(QLatin1String("B")), appG);
+
+    // create the resource to delete
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+    QUrl mg2;
+    const QUrl g2 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg2);
+    m_model->addStatement(g2, NAO::maintainedBy(), QUrl("app:/B"), mg2);
+
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl("file:/A"), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
+
+    // delete the resource
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("file:/A"), QLatin1String("A"), false);
+
+    // now the nie:url should still be there even though A created it
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl("file:/A")));
+
+    // creation time should have been created
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::lastModified(), Node()));
+
+    // the foobar value should be gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+
+    // the "hello world" should still be there
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world"))));
+}
+
 namespace {
     int push( Soprano::Model * model, Nepomuk::SimpleResource res, QUrl graph ) {
         QHashIterator<QUrl, QVariant> it( res.m_properties );
@@ -890,7 +1024,7 @@ void DataManagementModelTest::testMergeResources_createResource()
                                   Soprano::Query::QueryLanguageSparql).boolValue());
 }
 
-QTEST_KDEMAIN_CORE(DataManagementModelTest)
 
+QTEST_KDEMAIN_CORE(DataManagementModelTest)
 
 #include "datamanagementmodeltest.moc"

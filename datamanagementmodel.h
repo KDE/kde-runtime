@@ -198,7 +198,7 @@ private:
      * Checks if resource \p res actually exists. A resource exists if any information other than the standard metadata
      * (nao:created, nao:creator, nao:lastModified, nao:userVisible) or the nie:url is defined.
      */
-    bool doesResourceExist(const QUrl& res) const;
+    bool doesResourceExist(const QUrl& res, const QUrl& graph = QUrl()) const;
 
     /**
      * Resolves a local file url to its resource URI. Returns \p url if it is not a file URL and

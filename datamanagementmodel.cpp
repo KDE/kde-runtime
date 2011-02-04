@@ -550,6 +550,13 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     clearError();
 
 
+    //
+    // Resolve file URLs, we can simply ignore the non-existing file resources which are reflected by empty resolved URIs
+    //
+    QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources).values());
+    resolvedResources.remove(QUrl());
+
+
     // Get the graphs we need to check with removeTrailingGraphs later on.
     QHash<QUrl, QPair<int, QUrl> > graphs;
     Soprano::QueryResultIterator it
@@ -561,7 +568,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                            .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::maintainedBy()),
                                 Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::identifier()),
                                 Soprano::Node::literalToN3(app),
-                                resourcesToN3(resources).join(QLatin1String(","))),
+                                resourcesToN3(resolvedResources).join(QLatin1String(","))),
                            Soprano::Query::QueryLanguageSparql);
     while(it.next()) {
         graphs.insert(it["g"].uri(), qMakePair(it["c"].literal().toInt(), it["a"].uri()));
@@ -570,30 +577,43 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
 
     // remove the resources
     // Other apps might be maintainer, too. In that case only remove the app as a maintainer but keep the data
+    const QDateTime now = QDateTime::currentDateTime();
+    QUrl mtimeGraph;
     for(QHash<QUrl, QPair<int, QUrl> >::const_iterator it = graphs.constBegin(); it != graphs.constEnd(); ++it) {
         const QUrl& g = it.key();
         const int appCnt = it.value().first;
         const QUrl& appUri = it.value().second;
         if(appCnt == 1) {
-            foreach(const QUrl& res, resources) {
-                // we cannot remove the nie:url since that would remove the tie to the desktop resource
-                // thus, we remember it and re-add it later on
-                QUrl nieUrl;
-                Soprano::QueryResultIterator nieUrlIt
-                        = executeQuery(QString::fromLatin1("select ?u where { graph %1 { %2 %3 ?u . } . } limit 1")
-                                       .arg(Soprano::Node::resourceToN3(g),
-                                            Soprano::Node::resourceToN3(res),
-                                            Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NIE::url())),
-                                       Soprano::Query::QueryLanguageSparql);
-                if(nieUrlIt.next()) {
-                    nieUrl = nieUrlIt[0].uri();
-                }
+            foreach(const QUrl& res, resolvedResources) {
+                if(doesResourceExist(res, g)) {
+                    // we cannot remove the nie:url since that would remove the tie to the desktop resource
+                    // thus, we remember it and re-add it later on
+                    QUrl nieUrl;
+                    Soprano::QueryResultIterator nieUrlIt
+                            = executeQuery(QString::fromLatin1("select ?u where { graph %1 { %2 %3 ?u . } . } limit 1")
+                                           .arg(Soprano::Node::resourceToN3(g),
+                                                Soprano::Node::resourceToN3(res),
+                                                Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NIE::url())),
+                                           Soprano::Query::QueryLanguageSparql);
+                    if(nieUrlIt.next()) {
+                        nieUrl = nieUrlIt[0].uri();
+                    }
 
-                removeAllStatements(res, Soprano::Node(), Soprano::Node(), g);
-                removeAllStatements(Soprano::Node(), Soprano::Node(), res, g);
+                    removeAllStatements(res, Soprano::Node(), Soprano::Node(), g);
+                    removeAllStatements(Soprano::Node(), Soprano::Node(), res, g);
 
-                if(!nieUrl.isEmpty()) {
-                    addStatement(res, Nepomuk::Vocabulary::NIE::url(), nieUrl, g);
+                    if(!nieUrl.isEmpty()) {
+                        addStatement(res, Nepomuk::Vocabulary::NIE::url(), nieUrl, g);
+                    }
+
+                    // update mtime
+                    if(mtimeGraph.isEmpty()) {
+                        mtimeGraph = createGraph(app);
+                        if(lastError()) {
+                            return;
+                        }
+                    }
+                    updateModificationDate(res, mtimeGraph, now);
                 }
             }
         }
@@ -602,9 +622,9 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
         }
     }
 
-    // make sure we do not leave anything empty trailing around
+    // make sure we do not leave anything empty trailing around and propery update the mtime
     QList<QUrl> resourcesToRemoveCompletely;
-    foreach(const QUrl& res, resources) {
+    foreach(const QUrl& res, resolvedResources) {
         if(!doesResourceExist(res)) {
             resourcesToRemoveCompletely << res;
         }
@@ -1067,12 +1087,21 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
     }
 }
 
-bool Nepomuk::DataManagementModel::doesResourceExist(const QUrl &res) const
+bool Nepomuk::DataManagementModel::doesResourceExist(const QUrl &res, const QUrl& graph) const
 {
-    return executeQuery(QString::fromLatin1("ask where { %1 ?p ?v . %2 . }")
-                        .arg(Soprano::Node::resourceToN3(res),
-                             createResourceMetadataPropertyFilter(QLatin1String("?p"))),
-                        Soprano::Query::QueryLanguageSparql).boolValue();
+    if(graph.isEmpty()) {
+        return executeQuery(QString::fromLatin1("ask where { %1 ?p ?v . %2 . }")
+                            .arg(Soprano::Node::resourceToN3(res),
+                                 createResourceMetadataPropertyFilter(QLatin1String("?p"))),
+                            Soprano::Query::QueryLanguageSparql).boolValue();
+    }
+    else {
+        return executeQuery(QString::fromLatin1("ask where { graph %1 { %2 ?p ?v . %3 . } . }")
+                            .arg(Soprano::Node::resourceToN3(graph),
+                                 Soprano::Node::resourceToN3(res),
+                                 createResourceMetadataPropertyFilter(QLatin1String("?p"))),
+                            Soprano::Query::QueryLanguageSparql).boolValue();
+    }
 }
 
 QHash<QUrl, QUrl> Nepomuk::DataManagementModel::resolveUrls(const QList<QUrl> &urls) const

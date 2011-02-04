@@ -52,6 +52,10 @@ private Q_SLOTS:
     void testRemoveProperty_file();
     void testRemoveProperties();
     void testRemoveResources();
+    void testRemoveDataByApplication1();
+    void testRemoveDataByApplication2();
+    void testRemoveDataByApplication3();
+    void testRemoveDataByApplication4();
 
 private:
     void resetModel();
