@@ -183,8 +183,16 @@ private:
     /**
      * Adds for each resource in \p resources a property for each node in nodes. \p nodes cannot be empty.
      * This method is used in the public setProperty and addProperty slots to avoid a lot of code duplication.
+     *
+     * \param resources A hash mapping the resources provided by the client to the actual resource URIs. This hash is created via resolveUrls() and can
+     *                  contain empty values which means that the resource corresponding to a file URL does not exist yet.
+     *                  This hash cannot be empty.
+     * \param property The property to use. This cannot be empty.
+     * \param nodes A hash mapping value nodes as created via resolveNodes from the output of ClassAndPropertyTree::variantToNodeSet. Like \p resources
+     *              this hash might contain empty values which refer to non-existing file resources. This cannot be empty.
+     * \param app The calling application.
      */
-    void addProperty(const QHash<QUrl, QUrl>& resources, const QUrl& property, const QSet<Soprano::Node>& nodes, const QString& app);
+    void addProperty(const QHash<QUrl, QUrl>& resources, const QUrl& property, const QHash<Soprano::Node, Soprano::Node>& nodes, const QString& app);
 
     /**
      * Checks if resource \p res actually exists. A resource exists if any information other than the standard metadata
@@ -193,10 +201,23 @@ private:
     bool doesResourceExist(const QUrl& res) const;
 
     /**
-     * Resolves local file and http URLs through nie:url.
+     * Resolves a local file url to its resource URI. Returns \p url if it is not a file URL and
+     * an empty QUrl in case \p url is a file URL but has no resource URI in the model.
+     */
+    QUrl resolveUrl(const QUrl& url) const;
+
+    /**
+     * Resolves local file URLs through nie:url.
      * \return a Hash mapping \p urls to their actual resource URIs or an empty QUrl if the resource does not exist.
      */
     QHash<QUrl, QUrl> resolveUrls(const QList<QUrl>& urls) const;
+
+    /**
+     * Resolves local file URLs through nie:url.
+     * \return a Hash mapping \p nodes to the nodes that should actually be added to the model or an empty node if the resource for a file URL
+     * does not exist yet.
+     */
+    QHash<Soprano::Node, Soprano::Node> resolveNodes(const QSet<Soprano::Node>& nodes) const;
 
     enum UriType {
         GraphUri,

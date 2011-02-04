@@ -173,6 +173,24 @@ void DataManagementModelTest::testAddProperty()
     QCOMPARE(existingStatements, Soprano::Graph(m_model->listStatements().allStatements()));
 }
 
+void DataManagementModelTest::testAddProperty_cardinality()
+{
+    // adding the same value twice in one call should result in one insert. This also includes the cardinality check
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/AA"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("res:/B")) << QVariant(QUrl("res:/B")), QLatin1String("Testapp"));
+    QVERIFY(!m_dmModel->lastError());
+    QCOMPARE(m_model->listStatements(QUrl("res:/AA"), QUrl("prop:/res_c1"), QUrl("res:/B")).allStatements().count(), 1);
+
+    // we now add two values for a property with cardinality 1
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("res:/B")) << QVariant(QUrl("res:/C")), QLatin1String("Testapp"));
+    QVERIFY(m_dmModel->lastError());
+
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("res:/B")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("res:/C")), QLatin1String("Testapp"));
+
+    // the second call needs to fail
+    QVERIFY(m_dmModel->lastError());
+}
+
 
 void DataManagementModelTest::testAddProperty_file()
 {
@@ -184,6 +202,50 @@ void DataManagementModelTest::testAddProperty_file()
 
     // make sure the actual value is there
     QVERIFY(m_model->containsAnyStatement(m_model->listStatements(Node(), NIE::url(), QUrl("file:/A")).allStatements().first().subject(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+
+
+    // add relation from file to file
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("file:/A"), QUrl("prop:/res"), QVariantList() << QVariant(QUrl("file:/B")), QLatin1String("Testapp"));
+
+    // make sure the nie:url relation has been created
+    QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl("file:/B")));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("file:/B"), Node(), Node()));
+
+    // make sure the actual value is there
+    QVERIFY(m_model->containsAnyStatement(m_model->listStatements(Node(), NIE::url(), QUrl("file:/A")).allStatements().first().subject(),
+                                          QUrl("prop:/res"),
+                                          m_model->listStatements(Node(), NIE::url(), QUrl("file:/B")).allStatements().first().subject()));
+
+
+    // add the same relation but with another app
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("file:/A"), QUrl("prop:/res"), QVariantList() << QVariant(QUrl("file:/B")), QLatin1String("Otherapp"));
+
+    // there is only one prop:/res relation defined
+    QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/res"), Node()).allStatements().count(), 1);
+
+    // we now add two values for a property with cardinality 1
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("file:/A"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("file:/B")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("file:/A"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("file:/C")), QLatin1String("Testapp"));
+
+    // the second call needs to fail
+    QVERIFY(m_dmModel->lastError());
+
+
+    // get the res URI for file:/A
+    const QUrl fileAUri = m_model->listStatements(Soprano::Node(), NIE::url(), QUrl("file:/A")).allStatements().first().subject().uri();
+
+    // test adding a property to both the file and the resource URI. The result should be the exact same as doing it with only one of them
+    m_dmModel->addProperty(QList<QUrl>() << fileAUri << QUrl("file:/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("Whatever")), QLatin1String("Testapp"));
+
+    QCOMPARE(m_model->listStatements(fileAUri, QUrl("prop:/string"), LiteralValue(QLatin1String("Whatever"))).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(Node(), NIE::url(), QUrl("file:/A")).allStatements().count(), 1);
+
+    // test the same with the file as object
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res"), QVariantList() << QVariant(QUrl(QLatin1String("file:/A"))) << QVariant(fileAUri), QLatin1String("Testapp"));
+
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/res"), fileAUri).allStatements().count(), 1);
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("file:/A")));
+    QCOMPARE(m_model->listStatements(Node(), NIE::url(), QUrl("file:/A")).allStatements().count(), 1);
 }
 
 
@@ -406,6 +468,13 @@ void DataManagementModelTest::resetModel()
 
     m_model->addStatement( QUrl("prop:/string"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
     m_model->addStatement( QUrl("prop:/string"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::string(), graph );
+
+    m_model->addStatement( QUrl("prop:/res"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/res"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::RDFS::Resource(), graph );
+
+    m_model->addStatement( QUrl("prop:/res_c1"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/res_c1"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::RDFS::Resource(), graph );
+    m_model->addStatement( QUrl("prop:/res_c1"), Soprano::Vocabulary::NRL::maxCardinality(), LiteralValue(1), graph );
 
 
     // rebuild the internals of the data management model

@@ -42,6 +42,7 @@ private Q_SLOTS:
     void cleanupTestCase();
     void init();
     void testAddProperty();
+    void testAddProperty_cardinality();
     void testAddProperty_file();
     void testSetProperty();
     void testSetProperty_overwrite();

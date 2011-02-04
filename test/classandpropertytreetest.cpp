@@ -140,6 +140,9 @@ void ClassAndPropertyTreeTest::init()
     m_model->addStatement( QUrl("prop:/D"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::dateTime(), graph );
     m_model->addStatement( QUrl("prop:/E"), Soprano::Vocabulary::RDFS::range(), QUrl("onto:/A"), graph );
 
+    m_model->addStatement( QUrl("prop:/C"), Soprano::Vocabulary::NRL::maxCardinality(), LiteralValue(1), graph );
+    m_model->addStatement( QUrl("prop:/D"), Soprano::Vocabulary::NRL::cardinality(), LiteralValue(1), graph );
+
     m_typeTree->rebuildTree(m_model);
 }
 
@@ -258,6 +261,12 @@ void ClassAndPropertyTreeTest::testVariantToNode()
     QFETCH(Soprano::Node, node);
 
     QCOMPARE(m_typeTree->variantToNode(value, property), node);
+}
+
+void ClassAndPropertyTreeTest::testProperties()
+{
+    QCOMPARE(m_typeTree->maxCardinality(QUrl("prop:/C")), 1);
+    QCOMPARE(m_typeTree->maxCardinality(QUrl("prop:/D")), 1);
 }
 
 QTEST_KDEMAIN_CORE(ClassAndPropertyTreeTest)
