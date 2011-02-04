@@ -1,4 +1,4 @@
-﻿/* This file is part of the KDE Project
+/* This file is part of the KDE Project
    Copyright (c) 2005 Jean-Remy Falleri <jr.falleri@laposte.net>
    Copyright (c) 2005-2007 Kevin Ottens <ervin@kde.org>
    Copyright (c) 2007 Alexis Ménard <darktears31@gmail.com>
