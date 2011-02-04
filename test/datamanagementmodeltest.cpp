@@ -567,8 +567,50 @@ void DataManagementModelTest::testRemoveProperties()
     // test file URLs in the resources
     m_dmModel->removeProperties(QList<QUrl>() << QUrl("file:/A"), QList<QUrl>() << QUrl("prop:/int2"), QLatin1String("testapp"));
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int2"), Node()));
+
+    // TODO: verify graphs
 }
 
+
+void DataManagementModelTest::testRemoveResources()
+{
+    // prepare some test data
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl("file:/A"), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("whatever")), g1);
+
+    QUrl mg2;
+    const QUrl g2 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg2);
+
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(6), g2);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(12), g2);
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/int"), LiteralValue(2), g2);
+    m_model->addStatement(QUrl("res:/B"), NIE::url(), QUrl("file:/B"), g2);
+
+
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), QLatin1String("testapp"), false);
+
+    // verify that the resource is gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
+
+    // verify that other resources were not touched
+    QCOMPARE(m_model->listStatements(QUrl("res:/B"), Node(), Node()).allStatements().count(), 4);
+    QCOMPARE(m_model->listStatements(QUrl("res:/C"), Node(), Node()).allStatements().count(), 2);
+
+    // verify that removing resources by file URL works
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("file:/B"), QLatin1String("testapp"), false);
+
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
+
+    // verify that other resources were not touched
+    QCOMPARE(m_model->listStatements(QUrl("res:/C"), Node(), Node()).allStatements().count(), 2);
+}
 
 namespace {
     int push( Soprano::Model * model, Nepomuk::SimpleResource res, QUrl graph ) {
@@ -849,5 +891,6 @@ void DataManagementModelTest::testMergeResources_createResource()
 }
 
 QTEST_KDEMAIN_CORE(DataManagementModelTest)
+
 
 #include "datamanagementmodeltest.moc"

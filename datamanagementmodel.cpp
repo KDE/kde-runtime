@@ -53,7 +53,8 @@
 
 
 namespace {
-    QStringList resourcesToN3(const QList<QUrl>& urls) {
+    /// used to handle sets and lists of QUrls
+    template<typename T> QStringList resourcesToN3(const T& urls) {
         QStringList n3;
         Q_FOREACH(const QUrl& url, urls) {
             n3 << Soprano::Node::resourceToN3(url);
@@ -499,18 +500,25 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
     clearError();
 
 
+    //
+    // Resolve file URLs, we can simply ignore the non-existing file resources which are reflected by empty resolved URIs
+    //
+    QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources).values());
+    resolvedResources.remove(QUrl());
+
+
     // get the graphs we need to check with removeTrailingGraphs later on
     QSet<QUrl> graphs;
     Soprano::QueryResultIterator it
             = executeQuery(QString::fromLatin1("select distinct ?g where { graph ?g { ?r ?p ?o . } . FILTER(?r in (%1)) . }")
-                           .arg(resourcesToN3(resources).join(QLatin1String(","))),
+                           .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
                            Soprano::Query::QueryLanguageSparql);
     while(it.next()) {
         graphs << it[0].uri();
     }
 
     // remove the resources
-    foreach( const QUrl & res, resources ) {
+    foreach(const QUrl & res, resolvedResources) {
         removeAllStatements(res, Soprano::Node(), Soprano::Node());
         removeAllStatements(Soprano::Node(), Soprano::Node(), res);
     }
