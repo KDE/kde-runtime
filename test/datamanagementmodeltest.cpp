@@ -399,21 +399,15 @@ void DataManagementModelTest::testSetProperty_overwrite()
                                   Soprano::Query::QueryLanguageSparql).boolValue());
 }
 
-// TODO: add tests that check handling of nie:url
-
 void DataManagementModelTest::testRemoveProperty()
 {
     const int cleanCount = m_model->statementCount();
 
-    const QUrl g1("graph:/A");
-    const QUrl mg1("graph:/B");
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
     m_model->addStatement(QUrl("res:/A"), Soprano::Vocabulary::NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g1);
-    m_model->addStatement(g1, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::InstanceBase(), mg1);
-    m_model->addStatement(g1, Soprano::Vocabulary::NAO::created(), Soprano::LiteralValue(QDateTime::currentDateTime()), mg1);
-    m_model->addStatement(mg1, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::GraphMetadata(), mg1);
-    m_model->addStatement(mg1, Soprano::Vocabulary::NRL::coreGraphMetadataFor(), g1, mg1);
 
     m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QLatin1String("hello world"), QLatin1String("Testapp"));
 
@@ -446,6 +440,37 @@ void DataManagementModelTest::testRemoveProperty()
 
     // nothing except the ontology and the Testapp Agent should be left
     QCOMPARE(m_model->statementCount(), cleanCount+6);
+}
+
+void DataManagementModelTest::testRemoveProperty_file()
+{
+    // prepare some test data
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl("file:/A"), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("whatever")), g1);
+
+    m_model->addStatement(QUrl("res:/B"), NIE::url(), QUrl("file:/B"), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/C"), g1);
+
+
+
+    // now we remove one value via the file URL
+    m_dmModel->removeProperty(QList<QUrl>() << QUrl("file:/A"), QUrl("prop:/string"), QVariantList() << QLatin1String("hello world"), QLatin1String("Testapp"));
+
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/string"), Node()).allStatements().count(), 2);
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NIE::url(), Node()).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NIE::url(), QUrl("file:/A")).allStatements().count(), 1);
+
+
+    // test the same with a file URL value
+    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res"), QVariantList() << QUrl("file:/B"), QLatin1String("Testapp"));
+
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/res"), Node()).allStatements().count(), 1);
 }
 
 void DataManagementModelTest::resetModel()

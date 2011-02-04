@@ -315,17 +315,26 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
 
 
     //
+    // Resolve file URLs, we can simply ignore the non-existing file resources which are reflected by empty resolved URIs
+    //
+    QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources).values());
+    QSet<Soprano::Node> resolvedNodes = QSet<Soprano::Node>::fromList(resolveNodes(valueNodes).values());
+    resolvedResources.remove(QUrl());
+    resolvedNodes.remove(Soprano::Node());
+
+
+    //
     // Actually change data
     //
     QUrl mtimeGraph;
     QSet<QUrl> graphs;
     const QString propertyN3 = Soprano::Node::resourceToN3(property);
-    foreach( const QUrl & res, resources ) {
+    foreach( const QUrl & res, resolvedResources ) {
         const QList<Soprano::BindingSet> valueGraphs
                 = executeQuery(QString::fromLatin1("select ?g ?v where { graph ?g { %1 %2 ?v . } . FILTER(?v in (%3)) . }")
                                .arg(Soprano::Node::resourceToN3(res),
                                     propertyN3,
-                                    nodesToN3(valueNodes).join(QLatin1String(","))),
+                                    nodesToN3(resolvedNodes).join(QLatin1String(","))),
                                Soprano::Query::QueryLanguageSparql).allBindings();
 
         foreach(const Soprano::BindingSet& binding, valueGraphs) {
