@@ -167,7 +167,7 @@ public Q_SLOTS:
 
 private:
     QUrl createGraph(const QString& app, const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>());
-    QUrl createApplication(const QString& app);
+    QUrl findApplicationResource(const QString& app, bool create = true);
 
     /**
      * Updates the modification date of \p resource to \p date.

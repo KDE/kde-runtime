@@ -56,6 +56,7 @@ private Q_SLOTS:
     void testRemoveDataByApplication2();
     void testRemoveDataByApplication3();
     void testRemoveDataByApplication4();
+    void testRemoveDataByApplication5();
 
 private:
     void resetModel();
