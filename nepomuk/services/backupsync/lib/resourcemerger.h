@@ -34,6 +34,7 @@ namespace Soprano {
     class Statement;
     class Model;
     class Graph;
+    class Node;
 }
 
 namespace Nepomuk {
@@ -83,15 +84,9 @@ namespace Nepomuk {
              * The graph type by default is nrl:InstanceBase. If \p type is not a subclass of
              * nrl:Graph then it is ignored.
              */
-            bool setGraphType( const Types::Class & type );
+            void setAdditionalGraphMetadata( const QHash< QUrl, Soprano::Node >& additionalMetadata );
             
-            Types::Class graphType() const;
-
-            /**
-             * Set the graph to be used while pushing as \p graph
-             */
-            void setGraph( const KUrl & graph );
-            KUrl graph();
+            QHash<QUrl, Soprano::Node> additionalMetadata() const;
             
         protected:
             
@@ -104,7 +99,7 @@ namespace Nepomuk {
             virtual KUrl resolveUnidentifiedResource( const KUrl & uri );
 
             /**
-             * Creates a new graph of type graphType()
+             * Creates a new graph with the additional metadata 
              */
             virtual KUrl createGraph();
 
@@ -121,6 +116,26 @@ namespace Nepomuk {
              * By default it does nothing which means keeping the old statement
              */ 
             virtual void resolveDuplicate( const Soprano::Statement & newSt );
+
+            /**
+             * Creates a new resource uri. By default this creates it using the
+             * ResourceManager::instace()
+             */
+            virtual QUrl createResourceUri();
+
+            /**
+             * Creates a new graph uri. By default this creates it using the
+             * ResourceManager::instace()
+             */
+            virtual QUrl createGraphUri();
+
+            /**
+             * Returns the graph that is being used to add new statements.
+             * If this graph does not exist it is created using createGraph
+             *
+             * \sa createGraph
+             */
+            KUrl graph();
             
         private:
             class Private;

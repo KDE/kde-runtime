@@ -22,15 +22,13 @@
 
 #include "resourcemerger.h"
 
-#define USING_SOPRANO_NRLMODEL_UNSTABLE_API
-
 #include <Soprano/Model>
-#include <Soprano/Vocabulary/NRL>
-#include <Soprano/NRLModel>
 #include <Soprano/Graph>
 
+#include <Soprano/Vocabulary/NRL>
+#include <Soprano/Vocabulary/RDF>
+
 #include <Nepomuk/ResourceManager>
-#include <Nepomuk/Types/Class>
 
 #include <KUrl>
 #include <KDebug>
@@ -41,16 +39,16 @@ public:
     
     Soprano::Model * m_model;
 
-    Soprano::NRLModel * m_nrlModel;
-    KUrl m_graphType;
-    KUrl graph;
+    KUrl m_graph;
 
     ResourceMerger * q;
     
     QHash<KUrl, KUrl> m_oldMappings;
     QHash<KUrl, KUrl> m_newMappings;
 
-    void push( const Soprano::Statement & st, const KUrl & graphUri );
+    QHash<QUrl, Soprano::Node> m_additionalMetadata;
+
+    void push( const Soprano::Statement & st );
     KUrl resolve( const Soprano::Node & n );
 };
 
@@ -63,8 +61,6 @@ Nepomuk::Sync::ResourceMerger::Private::Private(Nepomuk::Sync::ResourceMerger* r
 Nepomuk::Sync::ResourceMerger::ResourceMerger()
     : d( new Nepomuk::Sync::ResourceMerger::Private( this ) )
 {
-    d->m_nrlModel = 0;
-    d->m_graphType = Soprano::Vocabulary::NRL::InstanceBase();
 }
 
 Nepomuk::Sync::ResourceMerger::~ResourceMerger()
@@ -75,8 +71,6 @@ Nepomuk::Sync::ResourceMerger::~ResourceMerger()
 void Nepomuk::Sync::ResourceMerger::setModel(Soprano::Model* model)
 {
     d->m_model = model;
-    delete d->m_nrlModel;
-    d->m_nrlModel = new Soprano::NRLModel( d->m_model );
 }
 
 Soprano::Model* Nepomuk::Sync::ResourceMerger::model() const
@@ -84,21 +78,15 @@ Soprano::Model* Nepomuk::Sync::ResourceMerger::model() const
     return d->m_model;
 }
 
-
-Nepomuk::Types::Class Nepomuk::Sync::ResourceMerger::graphType() const
+void Nepomuk::Sync::ResourceMerger::setAdditionalGraphMetadata(const QHash< QUrl, Soprano::Node >& additionalMetadata)
 {
-    return d->m_graphType;
+    d->m_additionalMetadata = additionalMetadata;
 }
 
-bool Nepomuk::Sync::ResourceMerger::setGraphType(const Nepomuk::Types::Class& type)
+QHash< QUrl, Soprano::Node > Nepomuk::Sync::ResourceMerger::additionalMetadata() const
 {
-    if( type.isSubClassOf( Soprano::Vocabulary::NRL::Graph() ) ){
-        d->m_graphType = type.uri();
-        return true;
-    }
-    return false;
+    return d->m_additionalMetadata;
 }
-
 
 KUrl Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
 {
@@ -107,7 +95,7 @@ KUrl Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
     if( it != d->m_newMappings.constEnd() )
         return it.value();
     
-    KUrl newUri = ResourceManager::instance()->generateUniqueUri( QString("res") );
+    KUrl newUri = createResourceUri();
     d->m_newMappings.insert( uri, newUri );
     return newUri;
 }
@@ -116,57 +104,77 @@ KUrl Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
 void Nepomuk::Sync::ResourceMerger::merge(const Soprano::Graph& graph, const QHash< KUrl, KUrl >& mappings)
 {
     d->m_oldMappings = mappings;
-
-    KUrl graphUri = d->graph.isValid() ? d->graph : createGraph();
     
-    QList<Soprano::Statement> statements = graph.toList();
+    const QList<Soprano::Statement> statements = graph.toList();
     foreach( Soprano::Statement st, statements ) {
         if( !st.isValid() )
             continue;
 
-        st.setSubject( d->resolve( st.subject() ) );
-        if( (st.object().isResource() && st.object().uri().scheme() == QLatin1String("nepomuk") )
-            || st.object().isBlank() ) {
-            KUrl resolvedObject = d->resolve( st.object() );
+        KUrl resolvedSubject = d->resolve( st.subject() );
+        if( !resolvedSubject.isValid() ) {
+            kDebug() << "Subject - " << st.subject() << " resolution failed";
+            continue;
+        }
+        
+        st.setSubject( resolvedSubject );
+        Soprano::Node object = st.object();
+        if( (object.isResource() && object.uri().scheme() == QLatin1String("nepomuk") )
+            || object.isBlank() ) {
+            KUrl resolvedObject = d->resolve( object );
             if( resolvedObject.isEmpty() ) {
-                kDebug() << st.object() << " resolution failed!";
+                kDebug() << object << " resolution failed!";
                 continue;
             }
             st.setObject( resolvedObject );
         }
 
-        d->push( st, graphUri );
+        d->push( st );
     }
 }
 
 
 KUrl Nepomuk::Sync::ResourceMerger::createGraph()
 {
-    return d->m_nrlModel->createGraph( d->m_graphType );
+    KUrl graphUri = createGraphUri();
+    KUrl metadataGraph = createResourceUri();
+
+    using namespace Soprano::Vocabulary;
+
+    d->m_model->addStatement( metadataGraph, RDF::type(), NRL::GraphMetadata(), metadataGraph );
+    d->m_model->addStatement( metadataGraph, NRL::coreGraphMetadataFor(), graphUri, metadataGraph );
+
+    if( d->m_additionalMetadata.find( RDF::type() ).value() != NRL::InstanceBase() )
+        d->m_additionalMetadata.insert( RDF::type(), NRL::InstanceBase() );
+    
+    for(QHash<QUrl, Soprano::Node>::const_iterator it = d->m_additionalMetadata.constBegin();
+        it != d->m_additionalMetadata.constEnd(); ++it) {
+        d->m_model->addStatement(graphUri, it.key(), it.value(), metadataGraph);
+    }
+    
+    return graphUri;
 }
 
 
 KUrl Nepomuk::Sync::ResourceMerger::graph()
 {
-    return d->graph;
+    if( !d->m_graph.isValid() )
+        d->m_graph = createGraph();
+    return d->m_graph;
 }
 
-void Nepomuk::Sync::ResourceMerger::setGraph(const KUrl& graph)
-{
-    d->graph = graph;
-}
 
-void Nepomuk::Sync::ResourceMerger::Private::push(const Soprano::Statement& st, const KUrl& graphUri)
+void Nepomuk::Sync::ResourceMerger::Private::push(const Soprano::Statement& st)
 {
     Soprano::Statement statement( st );
-    if( statement.context().isEmpty() )
-        statement.setContext( graphUri );
-    
     if( m_model->containsAnyStatement( st.subject(), st.predicate(), st.object() ) ) {
         q->resolveDuplicate( statement );
         return;
     }
 
+    if( !m_graph.isValid() ) {
+        m_graph = q->createGraph();
+    }
+    statement.setContext( m_graph );
     m_model->addStatement( statement );
 }
 
@@ -190,6 +198,16 @@ void Nepomuk::Sync::ResourceMerger::resolveDuplicate(const Soprano::Statement& /
 
 void Nepomuk::Sync::ResourceMerger::push(const Soprano::Statement& st)
 {
-    if( !st.context().isEmpty() )
-        d->push( st, QUrl() );
+    d->push( st );
 }
+
+QUrl Nepomuk::Sync::ResourceMerger::createResourceUri()
+{
+    return ResourceManager::instance()->generateUniqueUri("res");
+}
+
+QUrl Nepomuk::Sync::ResourceMerger::createGraphUri()
+{
+    return ResourceManager::instance()->generateUniqueUri("ctx");
+}
+
