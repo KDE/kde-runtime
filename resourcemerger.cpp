@@ -97,7 +97,7 @@ QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
         return fit.value();
     
     if( m_appUri.isEmpty() )
-        m_appUri = m_model->createApplication( m_app );
+        m_appUri = m_model->findApplicationResource( m_app );
 
     //
     // If both the graphs have been made by the same application - do nothing
