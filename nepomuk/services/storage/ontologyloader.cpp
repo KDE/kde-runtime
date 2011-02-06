@@ -87,9 +87,9 @@ void Nepomuk::OntologyLoader::Private::updateOntology( const QString& filename )
         kDebug() << "Ontology" << ontoNamespace << "needs updating.";
         update = true;
     }
-    else {
-        kDebug() << "Ontology" << ontoNamespace << "up to date.";
-    }
+    //else {
+    //    kDebug() << "Ontology" << ontoNamespace << "up to date.";
+    //}
 
     if( !update && forceOntologyUpdate ) {
         kDebug() << "Ontology update forced.";

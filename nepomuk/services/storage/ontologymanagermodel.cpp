@@ -427,7 +427,7 @@ QDateTime Nepomuk::OntologyManagerModel::ontoModificationDate( const QUrl& uri )
                     .arg( Soprano::Vocabulary::XMLSchema::dateTime().toString() );
     QueryResultIterator it = executeQuery( query, Soprano::Query::QueryLanguageSparql );
     if ( it.next() ) {
-        kDebug() << "Found modification date for" << uri << it.binding( "date" ).literal().toDateTime();
+        //kDebug() << "Found modification date for" << uri << it.binding( "date" ).literal().toDateTime();
         return it.binding( "date" ).literal().toDateTime();
     }
     else {
