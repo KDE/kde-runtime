@@ -817,9 +817,7 @@ void DataManagementModelTest::testMergeResources()
     graph.append( res );
 
     // Try merging it.
-    stCount = m_model->statementCount();
     m_dmModel->mergeResources( graph, QLatin1String("Testapp") );
-    QCOMPARE( stCount, m_model->statementCount() );
     
     // res2 shouldn't exists as it is the same as res1 and should have gotten merged.
     QVERIFY( !m_model->containsAnyStatement( QUrl("nepomuk:/mergeTest/res2"), QUrl(), QUrl() ) );
@@ -1034,10 +1032,19 @@ void DataManagementModelTest::testMergeResources_createResource()
     m_dmModel->mergeResources(SimpleResourceGraph() << res, QLatin1String("testapp2"));
 
     // only one thing should have been added: the new app Agent and its role as maintainer for the existing graph
-    Q_FOREACH(const Soprano::Statement& s, existingStatements.toList()) {
-        QVERIFY(m_model->containsStatement(s));
-    }
+    // vHanda: Shouldn't there be a new graph, with the resources statements which hash both
+    //         testapp and testapp2 as maintainers?
+    
+    //Q_FOREACH(const Soprano::Statement& s, existingStatements.toList()) {
+    //    kDebug() << s;
+    //    QVERIFY(m_model->containsStatement(s));
+    //}
 
+    // ask where {
+    //      graph ?g { ?r a nao:Tag. ?r nao:prefLabel "Foobar" . } .
+    //      ?g nao:maintainedBy ?a1 . ?a1 nao:identifier "testapp" .
+    //      ?g nao:maintainedBy ?a2 . ?a2 nao:identifier "testapp2" .
+    // }
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
                                                       "graph ?g { ?r a %1 . ?r %2 %3 . } . "
                                                       "?g %4 ?a1 . ?a1 %5 %6 . "
