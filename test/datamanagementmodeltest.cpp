@@ -817,7 +817,9 @@ void DataManagementModelTest::testMergeResources()
     graph.append( res );
 
     // Try merging it.
+    stCount = m_model->statementCount();
     m_dmModel->mergeResources( graph, QLatin1String("Testapp") );
+    QCOMPARE( stCount, m_model->statementCount() );
     
     // res2 shouldn't exists as it is the same as res1 and should have gotten merged.
     QVERIFY( !m_model->containsAnyStatement( QUrl("nepomuk:/mergeTest/res2"), QUrl(), QUrl() ) );

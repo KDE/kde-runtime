@@ -21,6 +21,7 @@
 
 #include "datamanagementmodel.h"
 #include "classandpropertytree.h"
+#include "resourcemerger.h"
 
 #include <nepomuk/simpleresource.h>
 #include <nepomuk/resourceidentifier.h>
@@ -766,53 +767,6 @@ void Nepomuk::DataManagementModel::removePropertiesByApplication(const QList<QUr
 }
 
 
-namespace {
-  
-    class ResourceMerger : public Nepomuk::Sync::ResourceMerger {
-    protected:
-        virtual void resolveDuplicate(const Soprano::Statement& newSt);
-        virtual KUrl resolveUnidentifiedResource(const KUrl& uri);
-    };
-
-    void ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
-    {
-        using namespace Soprano::Vocabulary;
-        
-        // Merge rules
-        // 1. If old graph is of type discardable and new is non-discardable
-        //    -> Then update the graph
-        // 2. Otherwsie
-        //    -> Keep the old graph
-
-        const QUrl oldGraph = model()->listStatements( newSt.subject(), newSt.predicate(), newSt.object() ).iterateContexts().allNodes().first().uri();
-        const QUrl newGraph = newSt.context().uri();
-
-        // Case 1
-        if( model()->containsAnyStatement( oldGraph, RDF::type(), NRL::DiscardableInstanceBase() )
-            && model()->containsAnyStatement( newGraph, RDF::type(), NRL::InstanceBase() )
-            && !model()->containsAnyStatement( newGraph, RDF::type(), NRL::DiscardableInstanceBase() ) ) {
-
-            model()->removeAllStatements( newSt.subject(), newSt.predicate(), newSt.object() );
-            model()->addStatement( newSt );
-        }
-
-        // Case 2
-        // keep the old graph -> do nothing
-        
-    }
-
-    KUrl ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
-    {
-        // If it is a nepomuk:/ uri, just add it as it is.
-        if( uri.scheme() == QLatin1String("nepomuk") )
-            return uri;
-        else if( uri.url().startsWith("_:") ) // Blank node
-            return Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource( uri );
-        return KUrl();
-    }
-
-}
-
 void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceGraph &resources, const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
 {
 
@@ -845,24 +799,10 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
         //vHanda: This means that everything should be pushed, right?
         //return;
     }
-    
-    QUrl graph = createGraph( app, additionalMetadata );
-    if(lastError()) {
-        return;
-    }
 
-    ResourceMerger merger;
-    merger.setModel( this );
-    merger.setGraph( graph );
-
+    ResourceMerger merger( this, app, additionalMetadata );
     merger.merge( Soprano::Graph(allStatements), resIdent.mappings() );
 
-    // Delete the graph if it was not used
-    if( !containsAnyStatement( Soprano::Node(), Soprano::Node(), Soprano::Node(), graph ) ) {
-        // NRLModel takes care of deleting the metadata graph
-        removeContext(graph);
-    }
-    
     //// TODO: do not allow to create properties or classes this way
     //setError("Not implemented yet");
 }

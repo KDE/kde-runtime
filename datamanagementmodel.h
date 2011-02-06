@@ -29,6 +29,9 @@
 #include "simpleresource.h"
 
 namespace Nepomuk {
+
+class ResourceMerger;
+
 class DataManagementModel : public Soprano::FilterModel
 {
     Q_OBJECT
@@ -227,6 +230,8 @@ private:
 
     class Private;
     Private* const d;
+
+    friend class ResourceMerger;
 };
 }
 

@@ -13,7 +13,8 @@ kde4_add_unit_test(datamanagementmodeltest
   datamanagementmodeltest.cpp
   ../classandpropertytree.cpp
   ../datamanagementmodel.cpp
-  ../simpleresource.cpp)
+  ../simpleresource.cpp
+  ../resourcemerger.cpp)
 
 target_link_libraries(datamanagementmodeltest
   ${QT_QTTEST_LIBRARY}

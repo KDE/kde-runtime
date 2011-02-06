@@ -20,6 +20,7 @@ set( datamanagement_BIN_SRCS
   datamanagementadaptor.cpp
   datamanagementcommand.cpp
   classandpropertytree.cpp
+  resourcemerger.cpp
   simpleresource.cpp
 )
 
