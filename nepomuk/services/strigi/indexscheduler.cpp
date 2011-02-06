@@ -447,6 +447,7 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, UpdateDirFlags fl
             return false;
 
         m_currentUrl = file.filePath();
+        emit indexingFile( m_currentUrl.toLocalFile() );
         m_indexer->indexFile( file );
         m_currentUrl = KUrl();
     }

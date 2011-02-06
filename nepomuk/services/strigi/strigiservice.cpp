@@ -64,6 +64,8 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
              this, SIGNAL( statusStringChanged() ) );
     connect( m_indexScheduler, SIGNAL( indexingFolder(QString) ),
              this, SIGNAL( statusStringChanged() ) );
+    connect( m_indexScheduler, SIGNAL( indexingFile(QString) ),
+             this, SIGNAL( statusStringChanged() ) );
     connect( m_indexScheduler, SIGNAL( indexingSuspended(bool) ),
              this, SIGNAL( statusStringChanged() ) );
 
@@ -153,16 +155,22 @@ QString Nepomuk::StrigiService::userStatusString( bool simple ) const
 {
     bool indexing = m_indexScheduler->isIndexing();
     bool suspended = m_indexScheduler->isSuspended();
-    QString folder = m_indexScheduler->currentFolder();
 
     if ( suspended ) {
         return i18nc( "@info:status", "File indexer is suspended" );
     }
     else if ( indexing ) {
+        QString folder = m_indexScheduler->currentFolder();
+
         if ( folder.isEmpty() || simple )
             return i18nc( "@info:status", "Strigi is currently indexing files" );
-        else
-            return i18nc( "@info:status", "Strigi is currently indexing files in folder %1", folder );
+        else {
+            QString file = KUrl( m_indexScheduler->currentFile() ).fileName();
+            if( file.isEmpty() )
+                return i18nc( "@info:status", "Strigi is currently indexing files in folder %1", folder );
+            else
+                return i18nc( "@info:status", "Strigi is currently indexing files in folder %1 (%2)", folder, file );
+        }
     }
     else {
         return i18nc( "@info:status", "File indexer is idle" );

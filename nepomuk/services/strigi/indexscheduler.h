@@ -174,6 +174,7 @@ namespace Nepomuk {
         /// a combination of the two signals above
         void indexingStateChanged( bool indexing );
         void indexingFolder( const QString& );
+        void indexingFile( const QString & );
         void indexingSuspended( bool suspended );
 
     private Q_SLOTS:
