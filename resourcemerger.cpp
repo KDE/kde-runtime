@@ -87,19 +87,29 @@ QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     foreach( const Soprano::Statement & st, oldGraphStatements )
         oldPropHash.insert( st.predicate().uri(), st.object() );
 
-    QMultiHash<QUrl, Soprano::Node> newPropHash;
-    QHash< QUrl, QVariant >::const_iterator it = m_additionalMetadata.begin();
-    for( ; it != m_additionalMetadata.end(); it++ )
-        newPropHash.insert( it.key(), Nepomuk::Variant( it.value() ).toNode() );
+    QHash< QUrl, Soprano::Node >::iterator iter = oldPropHash.find( NAO::maintainedBy() );
+    QUrl oldAppUri;
+    if( iter != oldPropHash.end() )
+        oldAppUri = iter.value().uri();
+    
+    QHash< QUrl, QUrl >::const_iterator fit = m_graphHash.constFind( oldAppUri );
+    if( fit != m_graphHash.constEnd() )
+        return fit.value();
+    
+    if( m_appUri.isEmpty() )
+        m_appUri = m_model->createApplication( m_app );
 
     //
     // If both the graphs have been made by the same application - do nothing
     // FIXME: There might be an additional statement in the new graph
-    QUrl appUri = m_model->createApplication( m_app );
-    if( oldPropHash.contains( NAO::maintainedBy(), appUri ) ) {
-        kDebug() << "Returning empty graph!! Do nothing!!";
+    if( oldAppUri == m_appUri ) {
         return QUrl();
     }
+        
+    QMultiHash<QUrl, Soprano::Node> newPropHash;
+    QHash< QUrl, QVariant >::const_iterator it = m_additionalMetadata.begin();
+    for( ; it != m_additionalMetadata.end(); it++ )
+        newPropHash.insert( it.key(), Nepomuk::Variant( it.value() ).toNode() );
 
     QMultiHash<QUrl, Soprano::Node> finalPropHash;
 
@@ -115,7 +125,7 @@ QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     finalPropHash.unite( oldPropHash );
     finalPropHash.unite( newPropHash );
 
-    finalPropHash.insert( NAO::maintainedBy(), appUri );
+    finalPropHash.insert( NAO::maintainedBy(), m_appUri );
 
     const QUrl graph = createGraphUri();
     const QUrl metadatagraph = createGraphUri();
@@ -130,7 +140,8 @@ QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
         Soprano::Statement st( graph, it.key(), it.value(), metadatagraph );
         m_model->addStatement( st );
     }
-        
+
+    m_graphHash.insert( oldAppUri, graph );
     return graph;
 }
 

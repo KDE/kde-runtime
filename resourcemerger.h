@@ -40,7 +40,7 @@ namespace Nepomuk {
         ResourceMerger( Nepomuk::DataManagementModel * model, const QString & app,
                         const QHash<QUrl, QVariant> & additionalMetadata );
         virtual ~ResourceMerger();
-
+        
     protected:
         virtual KUrl createGraph();
         virtual void resolveDuplicate(const Soprano::Statement& newSt);
@@ -49,10 +49,11 @@ namespace Nepomuk {
         virtual KUrl resolveUnidentifiedResource(const KUrl& uri);
 
     private:
-        QHash<QString, QUrl> m_graphHash;
+        QHash<QUrl, QUrl> m_graphHash;
         QHash<QUrl, QVariant> m_additionalMetadata;
 
         QString m_app;
+        QUrl m_appUri;
         QUrl m_graph;
 
         Nepomuk::DataManagementModel * m_model;
