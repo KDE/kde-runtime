@@ -23,9 +23,13 @@
 
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/RDF>
+#include <Soprano/Vocabulary/NAO>
 
 #include <Soprano/StatementIterator>
 #include <Soprano/NodeIterator>
+
+#include <Nepomuk/Variant>
+#include <KDebug>
 
 Nepomuk::ResourceMerger::ResourceMerger(Nepomuk::DataManagementModel* model, const QString& app,
                                         const QHash< QUrl, QVariant >& additionalMetadata)
@@ -41,7 +45,6 @@ Nepomuk::ResourceMerger::~ResourceMerger()
 {
 }
 
-
 KUrl Nepomuk::ResourceMerger::createGraph()
 {
     return m_model->createGraph( m_app, m_additionalMetadata );
@@ -49,8 +52,7 @@ KUrl Nepomuk::ResourceMerger::createGraph()
 
 void Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
 {
-    using namespace Soprano::Vocabulary;
-    
+    kDebug() << newSt;
     // Merge rules
     // 1. If old graph is of type discardable and new is non-discardable
     //    -> Then update the graph
@@ -58,22 +60,80 @@ void Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
     //    -> Keep the old graph
     
     const QUrl oldGraph = model()->listStatements( newSt.subject(), newSt.predicate(), newSt.object() ).iterateContexts().allNodes().first().uri();
-    
-    // Case 1
-    if( model()->containsAnyStatement( oldGraph, RDF::type(), NRL::DiscardableInstanceBase() ) 
-        && m_additionalMetadata.find( RDF::type() ).value() == NRL::InstanceBase()
-        && m_additionalMetadata.find( RDF::type() ).value() != NRL::DiscardableInstanceBase() ) {
-        
-        model()->removeAllStatements( newSt.subject(), newSt.predicate(), newSt.object() );
 
+    kDebug() << m_model->statementCount();
+    QUrl newGraph = mergeGraphs( oldGraph );
+    if( newGraph.isValid() ) {
+        kDebug() << "Is valid!";
+        model()->removeAllStatements( newSt.subject(), newSt.predicate(), newSt.object() );
+        
         Soprano::Statement st( newSt );
-        st.setContext( graph() );
+        st.setContext( newGraph );
         model()->addStatement( st );
     }
-        
-    // Case 2
-    // keep the old graph -> do nothing
+    kDebug() << m_model->statementCount();
 }
+
+QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
+{
+    using namespace Soprano::Vocabulary;
+    
+    QList<Soprano::Statement> oldGraphStatements = model()->listStatements( oldGraph, Soprano::Node(), Soprano::Node() ).allStatements();
+
+    kDebug() << oldGraphStatements;
+    
+    //Convert to prop hash
+    QMultiHash<QUrl, Soprano::Node> oldPropHash;
+    foreach( const Soprano::Statement & st, oldGraphStatements )
+        oldPropHash.insert( st.predicate().uri(), st.object() );
+
+    QMultiHash<QUrl, Soprano::Node> newPropHash;
+    QHash< QUrl, QVariant >::const_iterator it = m_additionalMetadata.begin();
+    for( ; it != m_additionalMetadata.end(); it++ )
+        newPropHash.insert( it.key(), Nepomuk::Variant( it.value() ).toNode() );
+
+    //
+    // If both the graphs have been made by the same application - do nothing
+    // FIXME: There might be an additional statement in the new graph
+    QUrl appUri = m_model->createApplication( m_app );
+    if( oldPropHash.contains( NAO::maintainedBy(), appUri ) ) {
+        kDebug() << "Returning empty graph!! Do nothing!!";
+        return QUrl();
+    }
+
+    QMultiHash<QUrl, Soprano::Node> finalPropHash;
+
+    finalPropHash.insert( RDF::type(), NRL::InstanceBase() );
+    if( oldPropHash.contains( RDF::type(), NRL::DiscardableInstanceBase() ) &&
+        newPropHash.contains( RDF::type(), NRL::DiscardableInstanceBase() ) )
+        finalPropHash.insert( RDF::type(), NRL::DiscardableInstanceBase() );
+
+    oldPropHash.remove( RDF::type() );
+    newPropHash.remove( RDF::type() );
+
+    //TODO: Should check for cardinality in the properties
+    finalPropHash.unite( oldPropHash );
+    finalPropHash.unite( newPropHash );
+
+    finalPropHash.insert( NAO::maintainedBy(), appUri );
+
+    const QUrl graph = createGraphUri();
+    const QUrl metadatagraph = createGraphUri();
+    
+    // add metadata graph itself
+    m_model->addStatement( metadatagraph, NRL::coreGraphMetadataFor(), graph, metadatagraph );
+    m_model->addStatement( metadatagraph, RDF::type(), NRL::GraphMetadata(), metadatagraph );
+    
+    for(QHash<QUrl, Soprano::Node>::const_iterator it = finalPropHash.constBegin();
+        it != finalPropHash.constEnd(); ++it) {
+
+        Soprano::Statement st( graph, it.key(), it.value(), metadatagraph );
+        m_model->addStatement( st );
+    }
+        
+    return graph;
+}
+
 
 KUrl Nepomuk::ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
 {

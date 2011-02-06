@@ -56,6 +56,8 @@ namespace Nepomuk {
         QUrl m_graph;
 
         Nepomuk::DataManagementModel * m_model;
+
+        QUrl mergeGraphs( const QUrl & oldGraph );
     };
 
 }
