@@ -92,6 +92,13 @@ namespace {
                      Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::userVisible()),
                      Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NIE::url()));
     }
+
+    template<typename T> QString createResourceExcludeFilter(const T& resources, const QString& var) {
+        QStringList terms = resourcesToN3(resources);
+        for(int i = 0; i < terms.count(); ++i)
+            terms[i].prepend(QString::fromLatin1("%1!=").arg(var));
+        return terms.join(QLatin1String(" && "));
+    }
 }
 
 class Nepomuk::DataManagementModel::Private
@@ -151,17 +158,21 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     // Check parameters
     //
     if(app.isEmpty()) {
-        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        setError(QLatin1String("addProperty: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
+    if(resources.isEmpty()) {
+        setError(QLatin1String("addProperty: No resource specified."));
         return;
     }
     foreach( const QUrl & res, resources ) {
         if(res.isEmpty()) {
-            setError(QLatin1String("Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
+            setError(QLatin1String("addProperty: Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
             return;
         }
     }
     if(property.isEmpty()) {
-        setError(QLatin1String("Property needs to be specified."), Soprano::Error::ErrorInvalidArgument);
+        setError(QLatin1String("addProperty: Property needs to be specified."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
 
@@ -171,7 +182,7 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     //
     const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
     if(nodes.isEmpty()) {
-        setError(QString::fromLatin1("At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
+        setError(QString::fromLatin1("addProperty: At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
 
@@ -234,23 +245,27 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     // Check parameters
     //
     if(app.isEmpty()) {
-        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        setError(QLatin1String("setProperty: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
+    if(resources.isEmpty()) {
+        setError(QLatin1String("setProperty: No resource specified."));
         return;
     }
     foreach( const QUrl & res, resources ) {
         if(res.isEmpty()) {
-            setError(QLatin1String("Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
+            setError(QLatin1String("setProperty: Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
             return;
         }
     }
     if(property.isEmpty()) {
-        setError(QLatin1String("Property needs to be specified."), Soprano::Error::ErrorInvalidArgument);
+        setError(QLatin1String("setProperty: Property needs to be specified."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
 
     const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
-    if(nodes.isEmpty()) {
-        setError(QString::fromLatin1("At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
+    if(!values.isEmpty() && nodes.isEmpty()) {
+        setError(QString::fromLatin1("setProperty: At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
 
@@ -278,9 +293,11 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     }
 
     //
-    // And finally add the rest of the statements
+    // And finally add the rest of the statements (only if there is anything to add)
     //
-    addProperty(uriHash, property, resolvedNodes, app);
+    if(!nodes.isEmpty()) {
+        addProperty(uriHash, property, resolvedNodes, app);
+    }
 }
 
 void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
@@ -579,6 +596,12 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // and are not related by other resources.
     // this has to be done before deleting the resouces in resolvedResources. Otherwise the nao:hasSubResource relationships are already gone!
     //
+    // Explanation of the query:
+    // The query selects all subresources of the resources in resolvedResources.
+    // It then filters out those resources that are maintained by another app.
+    // It then filters out the sub-resources that have properties defined by other apps which are not metadata.
+    // It then filters out the sub-resources that are related from other resources that are not the ones being deleted.
+    //
     if(force) {
         QList<QUrl> subResources;
         Soprano::QueryResultIterator it
@@ -587,13 +610,15 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                                                    "FILTER(?parent in (%2)) . "
                                                    "?g %3 %4 . "
                                                    "FILTER(!bif:exists((select (1) where { ?g %3 ?a . FILTER(?a!=%4) . }))) . "
-                                                   "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r ?p2 ?o2 . } . ?g2 %3 ?a2 . FILTER(?a2!=%4) . }))) . "
-                                                   "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r2 ?p3 ?r . } . ?g2 %3 ?a2 . FILTER(?a2!=%4) . }))) . "
+                                                   "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r ?p2 ?o2 . } . ?g2 %3 ?a2 . FILTER(?a2!=%4) . FILTER(%6) . }))) . "
+                                                   "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r2 ?p3 ?r . } . FILTER(%5) . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
                                                    "}")
                                .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::hasSubResource()),
                                     resourcesToN3(resolvedResources).join(QLatin1String(",")),
                                     Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::maintainedBy()),
-                                    Soprano::Node::resourceToN3(appRes)),
+                                    Soprano::Node::resourceToN3(appRes),
+                                    createResourceExcludeFilter(resolvedResources, QLatin1String("?r2")),
+                                    createResourceMetadataPropertyFilter(QLatin1String("?p2"))),
                                Soprano::Query::QueryLanguageSparql);
         while(it.next()) {
             subResources << it[0].uri();
