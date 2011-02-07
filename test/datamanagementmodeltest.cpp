@@ -1518,6 +1518,15 @@ void DataManagementModelTest::testMergeResources_createResource()
                                        Soprano::Node::literalToN3(QLatin1String("testapp")),
                                        Soprano::Node::literalToN3(QLatin1String("testapp2"))),
                                   Soprano::Query::QueryLanguageSparql).boolValue());
+
+
+    // create a resource by specifying the URI
+    SimpleResource res2;
+    res2.setUri(QUrl("res:/A"));
+    res2.m_properties.insert(QUrl("prop:/string"), QVariant(QLatin1String("foobar")));
+    m_dmModel->mergeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"));
+
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
 }
 
 void DataManagementModelTest::testMergeResources_invalid_args()
@@ -1548,6 +1557,19 @@ void DataManagementModelTest::testMergeResources_invalid_args()
 
     // invalid resource in graph
     m_dmModel->mergeResources(SimpleResourceGraph() << SimpleResource(), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // invalid range used in one resource
+    SimpleResource res;
+    res.setUri(QUrl("res:/A"));
+    res.m_properties.insert(QUrl("prop:/int"), QVariant(QLatin1String("foobar")));
+    m_dmModel->mergeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());

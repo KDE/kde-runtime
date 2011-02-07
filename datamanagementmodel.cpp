@@ -53,6 +53,8 @@
 #include <KServiceTypeTrader>
 
 
+//// TODO: do not allow to create properties or classes through the "normal" methods. Instead provide methods for it.
+
 namespace {
     /// used to handle sets and lists of QUrls
     template<typename T> QStringList resourcesToN3(const T& urls) {
@@ -859,6 +861,8 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
             return;
         }
 
+        // trueg: IMHO fromStatementList should be able to handle an empty list and not assert on it.
+        //        Instead it should simply return an invalid SimpleResource.
         Sync::SimpleResource simpleRes = Sync::SimpleResource::fromStatementList( stList );
         resIdent.addSimpleResource( simpleRes );
         // TODO: check if res is valid and if not: setError...
