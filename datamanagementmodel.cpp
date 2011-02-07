@@ -310,26 +310,26 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
     // Check arguments
     //
     if(app.isEmpty()) {
-        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        setError(QLatin1String("removeProperty: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
     if(resources.isEmpty()) {
-        setError(QLatin1String("setProperty: No resource specified."), Soprano::Error::ErrorInvalidArgument);
+        setError(QLatin1String("removeProperty: No resource specified."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
     foreach( const QUrl & res, resources ) {
         if(res.isEmpty()) {
-            setError(QLatin1String("Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
+            setError(QLatin1String("removeProperty: Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
             return;
         }
     }
     if(property.isEmpty()) {
-        setError(QLatin1String("Property needs to be specified."), Soprano::Error::ErrorInvalidArgument);
+        setError(QLatin1String("removeProperty: Property needs to be specified."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
     const QSet<Soprano::Node> valueNodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
     if(valueNodes.isEmpty()) {
-        setError(QString::fromLatin1("At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
+        setError(QString::fromLatin1("removeProperty: At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
 
@@ -475,12 +475,12 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
     // Check parameters
     //
     if(app.isEmpty()) {
-        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        setError(QLatin1String("createResource: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
         return QUrl();
     }
     foreach(const QUrl& type, types) {
         if(type.isEmpty()) {
-            setError(QLatin1String("Encountered empty type URI."), Soprano::Error::ErrorInvalidArgument);
+            setError(QLatin1String("createResource: Encountered empty type URI."), Soprano::Error::ErrorInvalidArgument);
             return QUrl();
         }
     }
@@ -597,12 +597,12 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // Check parameters
     //
     if(app.isEmpty()) {
-        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        setError(QLatin1String("removeDataByApplication: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
     foreach( const QUrl & res, resources ) {
         if(res.isEmpty()) {
-            setError(QLatin1String("Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
+            setError(QLatin1String("removeDataByApplication: Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
             return;
         }
     }
@@ -751,7 +751,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QString &app, R
     // Check parameters
     //
     if(app.isEmpty()) {
-        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        setError(QLatin1String("removeDataByApplication: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
 
@@ -837,7 +837,7 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
     QList<Soprano::Statement> allStatements;
 
     if(app.isEmpty()) {
-        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        setError(QLatin1String("mergeResources: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
 
