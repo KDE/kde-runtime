@@ -843,12 +843,22 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
 
     clearError();
 
+    if(resources.isEmpty()) {
+        // nothing to do
+        return;
+    }
+
     Sync::ResourceIdentifier resIdent;
     
     foreach( const SimpleResource & res, resources ) {
         QList< Soprano::Statement > stList = res.toStatementList();
         allStatements << stList;
-        
+
+        if(stList.isEmpty()) {
+            setError(QLatin1String("mergeResources: Encountered invalid resource"), Soprano::Error::ErrorInvalidArgument);
+            return;
+        }
+
         Sync::SimpleResource simpleRes = Sync::SimpleResource::fromStatementList( stList );
         resIdent.addSimpleResource( simpleRes );
         // TODO: check if res is valid and if not: setError...

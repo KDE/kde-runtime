@@ -1520,6 +1520,41 @@ void DataManagementModelTest::testMergeResources_createResource()
                                   Soprano::Query::QueryLanguageSparql).boolValue());
 }
 
+void DataManagementModelTest::testMergeResources_invalid_args()
+{
+    // remember current state to compare later on
+    Soprano::Graph existingStatements = m_model->listStatements().allStatements();
+
+
+    // empty resources -> no error but no change either
+    m_dmModel->mergeResources(SimpleResourceGraph(), QLatin1String("testapp"));
+
+    // no error
+    QVERIFY(!m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // empty app
+    m_dmModel->mergeResources(SimpleResourceGraph(), QString());
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // invalid resource in graph
+    m_dmModel->mergeResources(SimpleResourceGraph() << SimpleResource(), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+}
 
 QTEST_KDEMAIN_CORE(DataManagementModelTest)
 

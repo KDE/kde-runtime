@@ -51,9 +51,6 @@ private Q_SLOTS:
     void testSetProperty_overwrite();
     void testSetProperty_invalid_args();
 
-    void testMergeResources();
-    void testMergeResources_createResource();
-
     void testRemoveProperty();
     void testRemoveProperty_file();
     void testRemoveProperty_invalid_args();
@@ -71,6 +68,10 @@ private Q_SLOTS:
     void testRemoveDataByApplication4();
     void testRemoveDataByApplication5();
     void testRemoveDataByApplication6();
+
+    void testMergeResources();
+    void testMergeResources_createResource();
+    void testMergeResources_invalid_args();
 
 private:
     void resetModel();
