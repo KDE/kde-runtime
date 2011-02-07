@@ -52,6 +52,7 @@ private Q_SLOTS:
     void testMergeResources_createResource();
     void testRemoveProperty();
     void testRemoveProperty_file();
+    void testRemoveProperty_invalid_args();
     void testRemoveProperties();
     void testRemoveResources();
     void testRemoveResources_subresources();

@@ -313,6 +313,10 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
         setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
+    if(resources.isEmpty()) {
+        setError(QLatin1String("setProperty: No resource specified."));
+        return;
+    }
     foreach( const QUrl & res, resources ) {
         if(res.isEmpty()) {
             setError(QLatin1String("Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
