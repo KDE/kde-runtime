@@ -527,6 +527,34 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
         return;
     }
 
+    //
+    // Handle the sub-resources:
+    // this has to be done before deleting the resouces in resolvedResources. Otherwise the nao:hasSubResource relationships are already gone!
+    //
+    // Explanation of the query:
+    // The query selects all subresources of the resources in resolvedResources.
+    // It then filters out the sub-resources that are related from other resources that are not the ones being deleted.
+    //
+    if(flags & RemoveSubResoures) {
+        QList<QUrl> subResources;
+        Soprano::QueryResultIterator it
+                = executeQuery(QString::fromLatin1("select ?r where { ?r ?p ?o . "
+                                                   "?parent %1 ?r . "
+                                                   "FILTER(?parent in (%2)) . "
+                                                   "FILTER(!bif:exists((select (1) where { ?r2 ?p3 ?r . FILTER(%3) . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
+                                                   "}")
+                               .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::hasSubResource()),
+                                    resourcesToN3(resolvedResources).join(QLatin1String(",")),
+                                    createResourceExcludeFilter(resolvedResources, QLatin1String("?r2"))),
+                               Soprano::Query::QueryLanguageSparql);
+        while(it.next()) {
+            subResources << it[0].uri();
+        }
+        if(!subResources.isEmpty()) {
+            removeResources(subResources, app, flags);
+        }
+    }
+
 
     // get the graphs we need to check with removeTrailingGraphs later on
     QSet<QUrl> graphs;
@@ -543,14 +571,6 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
         removeAllStatements(res, Soprano::Node(), Soprano::Node());
         removeAllStatements(Soprano::Node(), Soprano::Node(), res);
     }
-
-
-    // FIXME: handle the sub-resources.
-    // Sub.resources could mean one of two things: 1. resources linked via nao:hasSubResource or 2. any resource that is related
-    // In any case we should only delete what is not related from any resource we are not deleting here
-    // In the method below we should also not delete any sub-resource that has additional properties set by other apps.
-
-    // 2. is way too dangerous in this method. Two resources could simply be related. Deleting the second would be very random!
 
     removeTrailingGraphs(graphs);
 }

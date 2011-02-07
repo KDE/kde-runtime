@@ -722,6 +722,74 @@ void DataManagementModelTest::testRemoveResources()
     QCOMPARE(m_model->listStatements(QUrl("res:/C"), Node(), Node()).allStatements().count(), 2);
 }
 
+void DataManagementModelTest::testRemoveResources_subresources()
+{
+    // create our apps (we use more than one since we also test that it is ignored)
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+    appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/B"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/B"), NAO::identifier(), LiteralValue(QLatin1String("B")), appG);
+
+    // create the graphs
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+    QUrl mg2;
+    const QUrl g2 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg2);
+    m_model->addStatement(g2, NAO::maintainedBy(), QUrl("app:/B"), mg2);
+    QUrl mg3;
+    const QUrl g3 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg3);
+    m_model->addStatement(g3, NAO::maintainedBy(), QUrl("app:/A"), mg3);
+
+    // create the resource to delete
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+
+    // sub-resource 1: can be deleted
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+    // sub-resource 2: can be deleted (is defined in another graph by the same app)
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/AA"), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/AA"), g1);
+    m_model->addStatement(QUrl("res:/AA"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g3);
+
+    // sub-resource 3: can be deleted although another res refs it (we also delete the other res)
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/C"), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/C"), g1);
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/res"), QUrl("res:/C"), g1);
+
+    // sub-resource 4: cannot be deleted since another res refs it
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/D"), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/D"), g1);
+    m_model->addStatement(QUrl("res:/D"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/E"), QUrl("prop:/res"), QUrl("res:/D"), g1);
+    m_model->addStatement(QUrl("res:/E"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+    // sub-resource 5: can be deleted although another app added properties
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/F"), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/F"), g1);
+    m_model->addStatement(QUrl("res:/F"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/F"), QUrl("prop:/int"), LiteralValue(42), g2);
+
+    // delete the resource
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), QLatin1String("A"), DataManagementModel::RemoveSubResoures);
+
+    // this should have removed A, B and C
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/C"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/F"), Node(), Node()));
+
+    // E and F need to be preserved
+    QCOMPARE(m_model->listStatements(QUrl("res:/D"), Node(), Node()).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(QUrl("res:/E"), Node(), Node()).allStatements().count(), 2);
+}
+
+
 // the isolated test: create one graph with one resource, delete that resource
 void DataManagementModelTest::testRemoveDataByApplication1()
 {
