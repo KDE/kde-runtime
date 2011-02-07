@@ -516,12 +516,16 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
     // Check parameters
     //
     if(app.isEmpty()) {
-        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        setError(QLatin1String("removeResources: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
+    if(resources.isEmpty()) {
+        setError(QLatin1String("removeResources: No resource specified."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
     foreach( const QUrl & res, resources ) {
         if(res.isEmpty()) {
-            setError(QLatin1String("Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
+            setError(QLatin1String("removeResources: Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
             return;
         }
     }
