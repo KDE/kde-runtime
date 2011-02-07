@@ -54,6 +54,7 @@ private Q_SLOTS:
     void testRemoveProperty_file();
     void testRemoveProperty_invalid_args();
     void testRemoveProperties();
+    void testRemoveProperties_invalid_args();
     void testRemoveResources();
     void testRemoveResources_subresources();
     void testRemoveDataByApplication1();

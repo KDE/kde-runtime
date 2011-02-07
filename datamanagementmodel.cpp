@@ -162,7 +162,7 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
         return;
     }
     if(resources.isEmpty()) {
-        setError(QLatin1String("addProperty: No resource specified."));
+        setError(QLatin1String("addProperty: No resource specified."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
     foreach( const QUrl & res, resources ) {
@@ -249,7 +249,7 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
         return;
     }
     if(resources.isEmpty()) {
-        setError(QLatin1String("setProperty: No resource specified."));
+        setError(QLatin1String("setProperty: No resource specified."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
     foreach( const QUrl & res, resources ) {
@@ -314,7 +314,7 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
         return;
     }
     if(resources.isEmpty()) {
-        setError(QLatin1String("setProperty: No resource specified."));
+        setError(QLatin1String("setProperty: No resource specified."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
     foreach( const QUrl & res, resources ) {
@@ -393,18 +393,26 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
     // Check arguments
     //
     if(app.isEmpty()) {
-        setError(QLatin1String("Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        setError(QLatin1String("removeProperties: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
+    if(resources.isEmpty()) {
+        setError(QLatin1String("removeProperties: No resource specified."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
     foreach( const QUrl & res, resources ) {
         if(res.isEmpty()) {
-            setError(QLatin1String("Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
+            setError(QLatin1String("removeProperties: Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
             return;
         }
     }
+    if(properties.isEmpty()) {
+        setError(QLatin1String("removeProperties: No properties specified."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
     foreach(const QUrl& property, properties) {
         if(property.isEmpty()) {
-            setError(QLatin1String("Encountered empty property URI."), Soprano::Error::ErrorInvalidArgument);
+            setError(QLatin1String("removeProperties: Encountered empty property URI."), Soprano::Error::ErrorInvalidArgument);
             return;
         }
     }
