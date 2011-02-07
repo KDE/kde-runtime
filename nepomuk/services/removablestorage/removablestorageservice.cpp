@@ -367,7 +367,7 @@ void Nepomuk::RemovableStorageService::slotAccessibilityChanged( bool accessible
 
         //
         // the mount point is no longer the parent folder of the top level files on the removable device
-        // We need to delete those relations seperately
+        // We need to delete those relations separately
         //
         QUrl parentUrl = Resource( KUrl( entry.m_lastMountPath ) ).resourceUri();
         if( parentUrl.isValid() )

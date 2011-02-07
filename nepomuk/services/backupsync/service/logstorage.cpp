@@ -109,7 +109,7 @@ void Nepomuk::LogStorage::addRecord(const Nepomuk::ChangeLogRecord& record)
 
 //IMPORTANT: This function doesn't actually remove ALL the records less than min
 // This has been done purposely, as otherwise one would need to read the entire contents
-// of atleast one LogFile.
+// of at least one LogFile.
 void Nepomuk::LogStorage::removeRecords(const QDateTime& min)
 {
     QDir dir( m_dirUrl );

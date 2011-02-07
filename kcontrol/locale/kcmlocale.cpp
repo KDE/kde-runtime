@@ -429,7 +429,7 @@ void KCMLocale::load()
 // We interpret this to mean the defaults for the system country and language
 void KCMLocale::defaults()
 {
-    // Clear out the user config but dont sync or reparse as we want to ignore the user settings
+    // Clear out the user config but don't sync or reparse as we want to ignore the user settings
     m_userCalendarSettings.deleteGroup( KConfig::Persistent | KConfig::Global );
     m_userSettings.deleteGroup( KConfig::Persistent | KConfig::Global );
     m_kcmTranslations.clear();
@@ -899,7 +899,7 @@ void KCMLocale::initWeekDayCombo( KComboBox *dayCombo )
     }
 }
 
-// Add standard seperator symbols to a combo
+// Add standard separator symbols to a combo
 void KCMLocale::initSeparatorCombo( KComboBox *seperatorCombo )
 {
     seperatorCombo->clear();

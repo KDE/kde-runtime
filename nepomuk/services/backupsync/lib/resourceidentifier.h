@@ -95,7 +95,7 @@ namespace Nepomuk {
             //
             /**
              * Returns the detected uri for the given resourceUri.
-             * This method usefull only after identifyAll() method was called
+             * This method useful only after identifyAll() method was called
              */
             KUrl mappedUri( const KUrl & resourceUri ) const;
 

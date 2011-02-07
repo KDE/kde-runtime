@@ -131,7 +131,7 @@ namespace Nepomuk {
         void setIndexingSpeed( IndexingSpeed speed );
 
         /**
-         * A convinience slot which calls setIndexingSpeed
+         * A convenience slot which calls setIndexingSpeed
          * with either FullSpeed or ReducedSpeed, based on the
          * value of \p reduced.
          */

@@ -683,7 +683,7 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
     //
     // Remove data which is useless but still around from before. This could happen due to some buggy version of
     // the indexer or the filewatch service or even some application messing up the data.
-    // We look for indexed files that do not have a nie:url defined and thus, will never be catched by any of the
+    // We look for indexed files that do not have a nie:url defined and thus, will never be cached by any of the
     // other queries. In addition we check for an isPartOf relation since strigi produces EmbeddedFileDataObjects
     // for video and audio streams.
     //

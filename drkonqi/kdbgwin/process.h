@@ -68,7 +68,7 @@ public:
     Process();
 
 public:
-    /// kdbgwin needs to enable the debug priviledge in order to read from
+    /// kdbgwin needs to enable the debug privilege in order to read from
     /// another process's memory.
     static BOOL EnableDebugPrivilege();
 

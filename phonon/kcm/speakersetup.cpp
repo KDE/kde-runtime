@@ -526,7 +526,7 @@ void SpeakerSetup::profileChanged()
 
 void SpeakerSetup::updateIndependantDevices()
 {
-    // Should we display the "Independant Devices" drop down?
+    // Should we display the "Independent Devices" drop down?
     // Count all the sinks without cards
     bool showID = false;
     for (QMap<uint32_t,sinkInfo>::iterator it = s_Sinks.begin(); it != s_Sinks.end(); ++it) {

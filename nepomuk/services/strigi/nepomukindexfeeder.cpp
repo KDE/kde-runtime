@@ -57,7 +57,7 @@ Nepomuk::IndexFeeder::~IndexFeeder()
 
 void Nepomuk::IndexFeeder::begin( const QUrl & url )
 {
-    //kDebug() << "BEGINING";
+    //kDebug() << "BEGINNING";
     Request req;
     req.uri = url;
 

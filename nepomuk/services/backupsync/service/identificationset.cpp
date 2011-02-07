@@ -200,7 +200,7 @@ Nepomuk::IdentificationSet Nepomuk::IdentificationSet::fromTextStream(QTextStrea
 namespace {
 
     //
-    // Seperate all the unique URIs of scheme "nepomuk" from the subject and object in all the statements.
+    // Separate all the unique URIs of scheme "nepomuk" from the subject and object in all the statements.
     //
     // vHanda: Maybe we should separate the graphs as well. Identification isn't meant for graphs.
     QSet<QUrl> getUniqueUris( const QList<Nepomuk::ChangeLogRecord> records ) {

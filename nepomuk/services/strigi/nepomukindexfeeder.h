@@ -54,7 +54,7 @@ namespace Nepomuk {
          * This function should be called before adding any statements.
          * The function may be called repeatedly.
          *
-         * Should be preceeded by an end()
+         * Should be preceded by an end()
          *
          * \sa end
          */
@@ -117,7 +117,7 @@ namespace Nepomuk {
 
         /**
          * The stack is used to store the internal state of the Feeder, a new item is pushed into
-         * the stack everytime begin() is called, and the top most item is poped and sent into the
+         * the stack every time begin() is called, and the top most item is poped and sent into the
          * update queue when end() is called.
          */
         QStack<Request> m_stack;

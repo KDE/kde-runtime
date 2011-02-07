@@ -83,7 +83,7 @@ class KNOTIFY_EXPORT KNotifyPlugin : public QObject
 		 *
 		 * call it when the presentation is finished (because the user closed the popup or the sound is finished)
 		 *
-		 * If your presentation is syncronous, you can even call this function from the notify() call itself
+		 * If your presentation is synchronous, you can even call this function from the notify() call itself
 		 */
 		void finish(int id);
 

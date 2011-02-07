@@ -86,7 +86,7 @@ namespace Nepomuk {
         void updateAllFolders( bool forced );
 
         /**
-         * Index a folder independant of its configuration status.
+         * Index a folder independent of its configuration status.
          */
         void indexFolder( const QString& path, bool forced );
 
