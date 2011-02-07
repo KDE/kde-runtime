@@ -52,17 +52,21 @@ public:
     ~DataManagementAdaptor();
 
 public Q_SLOTS:
-    void addProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app);
-    QString createResource(const QStringList &types, const QString &label, const QString &description, const QString &app);
-    Nepomuk::SimpleResourceGraph describeResources(const QStringList &resources, bool includeSubResources);
-    void mergeResources(Nepomuk::SimpleResourceGraph resources, const QString &app, const QHash<QString, QVariant> &additionalMetadata);
-    void removeDataByApplication(const QString &app, bool force);
-    void removeDataByApplication(const QStringList &resources, const QString &app, bool force);
-    void removeProperties(const QStringList &resources, const QStringList &properties, const QString &app);
-    void removePropertiesByApplication(const QStringList &resources, const QStringList &properties, const QString &app);
-    void removeProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app);
-    void removeResources(const QStringList &resources, const QString &app, bool force);
     void setProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app);
+    void addProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app);
+    void removeProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app);
+    void removeProperties(const QStringList &resources, const QStringList &properties, const QString &app);
+
+    QString createResource(const QStringList &types, const QString &label, const QString &description, const QString &app);
+    void removeResources(const QStringList &resources, const QString &app, int flags);
+
+    Nepomuk::SimpleResourceGraph describeResources(const QStringList &resources, bool includeSubResources);
+
+    void mergeResources(Nepomuk::SimpleResourceGraph resources, const QString &app, const QHash<QString, QVariant> &additionalMetadata);
+
+    void removeDataByApplication(const QString &app, int flags);
+    void removeDataByApplication(const QStringList &resources, const QString &app, int flags);
+    void removePropertiesByApplication(const QStringList &resources, const QStringList &properties, const QString &app);
 
 private:
     void enqueueCommand(Nepomuk::DataManagementCommand* cmd);

@@ -40,6 +40,23 @@ public:
     DataManagementModel(Soprano::Model* model, QObject *parent = 0);
     ~DataManagementModel();
 
+    /**
+     * Flags to influence the behaviour of several data mangement
+     * methods.
+     */
+    enum RemovalFlag {
+        /// No flags - default behaviour
+        NoRemovalFlags = 0x0,
+
+        /**
+         * Remove sub resources of the resources specified in the parameters.
+         * This will remove sub-resources that are not referenced by any resource
+         * which will not be deleted.
+         */
+        RemoveSubResoures = 0x1
+    };
+    Q_DECLARE_FLAGS(RemovalFlags, RemovalFlag)
+
 public Q_SLOTS:
     /**
      * \name Basic API
@@ -100,7 +117,7 @@ public Q_SLOTS:
      */
     void removeResources(const QList<QUrl>& resources,
                          const QString& app,
-                         bool force);
+                         RemovalFlags flags = NoRemovalFlags);
     //@}
 
     /**
@@ -118,7 +135,7 @@ public Q_SLOTS:
      */
     void removeDataByApplication(const QList<QUrl>& resources,
                                  const QString& app,
-                                 bool force);
+                                 RemovalFlags flags = NoRemovalFlags);
 
     /**
      * Remove all information from the database which
@@ -129,7 +146,7 @@ public Q_SLOTS:
      * resources that have been created by other applications.
      */
     void removeDataByApplication(const QString& app,
-                                 bool force);
+                                 RemovalFlags flags = NoRemovalFlags);
 
     /**
      * Remove all statements involving any proerty from \p properties from
@@ -234,5 +251,7 @@ private:
     friend class ResourceMerger;
 };
 }
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Nepomuk::DataManagementModel::RemovalFlags)
 
 #endif

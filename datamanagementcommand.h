@@ -169,26 +169,26 @@ class RemoveDataByApplicationCommand : public DataManagementCommand
 public:
     RemoveDataByApplicationCommand(const QList<QUrl>& res,
                                    const QString& app,
-                                   bool force,
+                                   int flags,
                                    Nepomuk::DataManagementModel* model,
                                    const QDBusMessage& msg)
         : DataManagementCommand(model, msg),
           m_resources(res),
           m_app(app),
-          m_force(force) {}
+          m_flags(flags) {}
 
 private:
     QVariant runCommand() {
         if(m_resources.isEmpty())
-            model()->removeDataByApplication(m_app, m_force);
+            model()->removeDataByApplication(m_app, m_flags);
         else
-            model()->removeDataByApplication(m_resources, m_app, m_force);
+            model()->removeDataByApplication(m_resources, m_app, m_flags);
         return QVariant();
     }
 
     QList<QUrl> m_resources;
     QString m_app;
-    bool m_force;
+    DataManagementModel::RemovalFlags m_flags;
 };
 
 class RemovePropertiesCommand : public DataManagementCommand
@@ -271,23 +271,23 @@ class RemoveResourcesCommand : public DataManagementCommand
 public:
     RemoveResourcesCommand(const QList<QUrl>& res,
                            const QString& app,
-                           bool force,
+                           int flags,
                            Nepomuk::DataManagementModel* model,
                            const QDBusMessage& msg)
         : DataManagementCommand(model, msg),
           m_resources(res),
           m_app(app),
-          m_force(force) {}
+          m_flags(flags) {}
 
 private:
     QVariant runCommand() {
-        model()->removeResources(m_resources, m_app, m_force);
+        model()->removeResources(m_resources, m_app, m_flags);
         return QVariant();
     }
 
     QList<QUrl> m_resources;
     QString m_app;
-    bool m_force;
+    DataManagementModel::RemovalFlags m_flags;
 };
 
 class DescribeResourcesCommand : public DataManagementCommand

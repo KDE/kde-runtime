@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2010-2011 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -92,18 +92,18 @@ void Nepomuk::DataManagementAdaptor::mergeResources(Nepomuk::SimpleResourceGraph
     enqueueCommand(new MergeResourcesCommand(resources, app, decodedMetaData, m_model, message()));
 }
 
-void Nepomuk::DataManagementAdaptor::removeDataByApplication(const QString &app, bool force)
+void Nepomuk::DataManagementAdaptor::removeDataByApplication(const QString &app, int flags)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new RemoveDataByApplicationCommand(QList<QUrl>(), app, force, m_model, message()));
+    enqueueCommand(new RemoveDataByApplicationCommand(QList<QUrl>(), app, flags, m_model, message()));
 }
 
-void Nepomuk::DataManagementAdaptor::removeDataByApplication(const QStringList &resources, const QString &app, bool force)
+void Nepomuk::DataManagementAdaptor::removeDataByApplication(const QStringList &resources, const QString &app, int flags)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new RemoveDataByApplicationCommand(decodeUrls(resources), app, force, m_model, message()));
+    enqueueCommand(new RemoveDataByApplicationCommand(decodeUrls(resources), app, flags, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::removeProperties(const QStringList &resources, const QStringList &properties, const QString &app)
@@ -127,11 +127,11 @@ void Nepomuk::DataManagementAdaptor::removeProperty(const QStringList &resources
     enqueueCommand(new RemovePropertyCommand(decodeUrls(resources), decodeUrl(property), values, app, m_model, message()));
 }
 
-void Nepomuk::DataManagementAdaptor::removeResources(const QStringList &resources, const QString &app, bool force)
+void Nepomuk::DataManagementAdaptor::removeResources(const QStringList &resources, const QString &app, int flags)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new RemoveResourcesCommand(decodeUrls(resources), app, force, m_model, message()));
+    enqueueCommand(new RemoveResourcesCommand(decodeUrls(resources), app, flags, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::setProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app)

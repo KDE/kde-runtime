@@ -490,9 +490,9 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
     return resUri;
 }
 
-void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources, const QString &app, bool force)
+void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources, const QString &app, RemovalFlags flags)
 {
-    kDebug() << resources << app << force;
+    kDebug() << resources << app << flags;
 
     Q_UNUSED(app);
     // 1. get all sub-resources and check if they are used by some other resource (not in the list of resources to remove)
@@ -555,7 +555,7 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
     removeTrailingGraphs(graphs);
 }
 
-void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &resources, const QString &app, bool force)
+void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &resources, const QString &app, RemovalFlags flags)
 {
     //
     // Check parameters
@@ -602,7 +602,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // It then filters out the sub-resources that have properties defined by other apps which are not metadata.
     // It then filters out the sub-resources that are related from other resources that are not the ones being deleted.
     //
-    if(force) {
+    if(flags & RemoveSubResoures) {
         QList<QUrl> subResources;
         Soprano::QueryResultIterator it
                 = executeQuery(QString::fromLatin1("select ?r where { graph ?g { ?r ?p ?o . } . "
@@ -624,7 +624,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
             subResources << it[0].uri();
         }
         if(!subResources.isEmpty()) {
-            removeDataByApplication(subResources, app, force);
+            removeDataByApplication(subResources, app, flags);
         }
     }
 
@@ -699,15 +699,18 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
         }
     }
     if(!resourcesToRemoveCompletely.isEmpty()){
-        removeResources(resourcesToRemoveCompletely, app, force);
+        removeResources(resourcesToRemoveCompletely, app, flags);
     }
 
 
     removeTrailingGraphs(QSet<QUrl>::fromList(graphs.keys()));
 }
 
-void Nepomuk::DataManagementModel::removeDataByApplication(const QString &app, bool force)
+void Nepomuk::DataManagementModel::removeDataByApplication(const QString &app, RemovalFlags flags)
 {
+    setError("Not implemented yet");
+    return;
+
     //
     // Check parameters
     //
