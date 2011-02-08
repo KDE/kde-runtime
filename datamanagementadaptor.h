@@ -56,17 +56,21 @@ public Q_SLOTS:
     void addProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app);
     void removeProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app);
     void removeProperties(const QStringList &resources, const QStringList &properties, const QString &app);
-
     QString createResource(const QStringList &types, const QString &label, const QString &description, const QString &app);
     void removeResources(const QStringList &resources, const QString &app, int flags);
-
     Nepomuk::SimpleResourceGraph describeResources(const QStringList &resources, bool includeSubResources);
-
     void mergeResources(Nepomuk::SimpleResourceGraph resources, const QString &app, const QHash<QString, QVariant> &additionalMetadata);
-
     void removeDataByApplication(const QString &app, int flags);
     void removeDataByApplication(const QStringList &resources, const QString &app, int flags);
     void removePropertiesByApplication(const QStringList &resources, const QStringList &properties, const QString &app);
+
+    /// convinience overloads for scripts (no lists)
+    void setProperty(const QString &resource, const QString &property, const QVariant &value, const QString &app);
+    void addProperty(const QString &resource, const QString &property, const QVariant &value, const QString &app);
+    void removeProperty(const QString &resource, const QString &property, const QVariant &value, const QString &app);
+    void removeProperties(const QString &resource, const QString &property, const QString &app);
+    QString createResource(const QString &type, const QString &label, const QString &description, const QString &app);
+    void removeResources(const QString &resource, const QString &app, int flags);
 
 private:
     void enqueueCommand(Nepomuk::DataManagementCommand* cmd);

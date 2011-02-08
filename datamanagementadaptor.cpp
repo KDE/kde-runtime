@@ -62,6 +62,11 @@ void Nepomuk::DataManagementAdaptor::addProperty(const QStringList &resources, c
     enqueueCommand(new AddPropertyCommand(decodeUrls(resources), decodeUrl(property), values, app, m_model, message()));
 }
 
+void Nepomuk::DataManagementAdaptor::addProperty(const QString &resource, const QString &property, const QVariant &value, const QString &app)
+{
+    addProperty(QStringList() << resource, property, QVariantList() << value, app);
+}
+
 QString Nepomuk::DataManagementAdaptor::createResource(const QStringList &types, const QString &label, const QString &description, const QString &app)
 {
     Q_ASSERT(calledFromDBus());
@@ -69,6 +74,11 @@ QString Nepomuk::DataManagementAdaptor::createResource(const QStringList &types,
     enqueueCommand(new CreateResourceCommand(decodeUrls(types), label, description, app, m_model, message()));
     // QtDBus will ignore this return value
     return QString();
+}
+
+QString Nepomuk::DataManagementAdaptor::createResource(const QString &type, const QString &label, const QString &description, const QString &app)
+{
+    return createResource(QStringList() << type, label, description, app);
 }
 
 Nepomuk::SimpleResourceGraph Nepomuk::DataManagementAdaptor::describeResources(const QStringList &resources, bool includeSubResources)
@@ -113,6 +123,11 @@ void Nepomuk::DataManagementAdaptor::removeProperties(const QStringList &resourc
     enqueueCommand(new RemovePropertiesCommand(decodeUrls(resources), decodeUrls(properties), app, m_model, message()));
 }
 
+void Nepomuk::DataManagementAdaptor::removeProperties(const QString &resource, const QString &property, const QString &app)
+{
+    removeProperties(QStringList() << resource, QStringList() << property, app);
+}
+
 void Nepomuk::DataManagementAdaptor::removePropertiesByApplication(const QStringList &resources, const QStringList &properties, const QString &app)
 {
     Q_ASSERT(calledFromDBus());
@@ -127,6 +142,11 @@ void Nepomuk::DataManagementAdaptor::removeProperty(const QStringList &resources
     enqueueCommand(new RemovePropertyCommand(decodeUrls(resources), decodeUrl(property), values, app, m_model, message()));
 }
 
+void Nepomuk::DataManagementAdaptor::removeProperty(const QString &resource, const QString &property, const QVariant &value, const QString &app)
+{
+    removeProperty(QStringList() << resource, property, QVariantList() << value, app);
+}
+
 void Nepomuk::DataManagementAdaptor::removeResources(const QStringList &resources, const QString &app, int flags)
 {
     Q_ASSERT(calledFromDBus());
@@ -134,11 +154,21 @@ void Nepomuk::DataManagementAdaptor::removeResources(const QStringList &resource
     enqueueCommand(new RemoveResourcesCommand(decodeUrls(resources), app, flags, m_model, message()));
 }
 
+void Nepomuk::DataManagementAdaptor::removeResources(const QString &resource, const QString &app, int flags)
+{
+    removeResources(QStringList() << resource, app, flags);
+}
+
 void Nepomuk::DataManagementAdaptor::setProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new SetPropertyCommand(decodeUrls(resources), decodeUrl(property), values, app, m_model, message()));
+}
+
+void Nepomuk::DataManagementAdaptor::setProperty(const QString &resource, const QString &property, const QVariant &value, const QString &app)
+{
+    setProperty(QStringList() << resource, property, QVariantList() << value, app);
 }
 
 void Nepomuk::DataManagementAdaptor::enqueueCommand(DataManagementCommand *cmd)
