@@ -890,7 +890,7 @@ QVariant nodeToVariant(const Soprano::Node& node) {
     if(node.isResource())
         return node.uri();
     else if(node.isBlank())
-        return QUrl(node.identifier());
+        return QUrl(QLatin1String("_:") + node.identifier());
     else
         return node.literal().variant();
 }
