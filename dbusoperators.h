@@ -27,18 +27,6 @@
 
 #include "simpleresource.h"
 
-QDBusArgument& operator<<( QDBusArgument& arg, const QVariant& v )
-{
-    return arg << QDBusVariant(v);
-}
-
-const QDBusArgument& operator>>( const QDBusArgument& arg, QVariant& v )
-{
-    QDBusVariant dbusV;
-    arg >> dbusV;
-    v = dbusV.variant();
-    return arg;
-}
 
 QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::PropertyHash& ph )
 {
