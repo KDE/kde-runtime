@@ -176,7 +176,7 @@ public Q_SLOTS:
      * \param includeSubResources If \p true sub resources will be included.
      */
     SimpleResourceGraph describeResources(const QList<QUrl>& resources,
-                                          bool includeSubResources);
+                                          bool includeSubResources) const;
     //@}
 
     /**

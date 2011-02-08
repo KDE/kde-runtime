@@ -73,6 +73,8 @@ private Q_SLOTS:
     void testMergeResources_createResource();
     void testMergeResources_invalid_args();
 
+    void testDescribeResources();
+
 private:
     void resetModel();
 

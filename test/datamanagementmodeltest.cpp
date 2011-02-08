@@ -48,7 +48,6 @@ using namespace Nepomuk;
 using namespace Nepomuk::Vocabulary;
 
 
-// TODO: test error conditions: provide invalid parameters in all variations and then check for lastError() and ensure that nothing was changed in the model.
 // TODO: test nao:created and nao:lastModified, these should always be correct for existing resources. This is especially important in the removeDataByApplication methods.
 
 void DataManagementModelTest::resetModel()
@@ -1576,6 +1575,176 @@ void DataManagementModelTest::testMergeResources_invalid_args()
 
     // no data should have been changed
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+}
+
+void DataManagementModelTest::testDescribeResources()
+{
+    // create some resources
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), NAO::Tag(), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/B"), g1);
+
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+    m_model->addStatement(QUrl("res:/C"), NIE::url(), QUrl("file:/C"), g1);
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/C"), NAO::hasSubResource(), QUrl("res:/D"), g1);
+
+    m_model->addStatement(QUrl("res:/D"), QUrl("prop:/string"), LiteralValue(QLatin1String("Hello")), g1);
+
+
+    // get one resource without sub-res
+    SimpleResourceGraph g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A"), false);
+
+    // no error
+    QVERIFY(!m_dmModel->lastError());
+
+    // only one resource in the result
+    QCOMPARE(g.count(), 1);
+
+    // the one result is res:/A
+    QCOMPARE(g.first().uri(), QUrl("res:/A"));
+
+    // res:/A has 3 properties
+    QCOMPARE(g.first().m_properties.count(), 3);
+
+
+    // get one resource by file-url without sub-res
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("file:/C"), false);
+
+    // no error
+    QVERIFY(!m_dmModel->lastError());
+
+    // only one resource in the result
+    QCOMPARE(g.count(), 1);
+
+    // the one result is res:/C
+    QCOMPARE(g.first().uri(), QUrl("res:/C"));
+
+    // res:/C has 3 properties
+    QCOMPARE(g.first().m_properties.count(), 3);
+
+
+    // get one resource with sub-res
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A"), true);
+
+    // no error
+    QVERIFY(!m_dmModel->lastError());
+
+    // only one resource in the result
+    QCOMPARE(g.count(), 2);
+
+    // the results are res:/A and res:/B
+    SimpleResource r1 = g.first();
+    SimpleResource r2 = g.back();
+    QVERIFY(r1.uri() == QUrl("res:/A") || r2.uri() == QUrl("res:/A"));
+    QVERIFY(r1.uri() == QUrl("res:/B") || r2.uri() == QUrl("res:/B"));
+
+    // res:/A has 3 properties
+    if(r1.uri() == QUrl("res:/A")) {
+        QCOMPARE(r1.m_properties.count(), 3);
+        QCOMPARE(r2.m_properties.count(), 1);
+    }
+    else {
+        QCOMPARE(r1.m_properties.count(), 1);
+        QCOMPARE(r2.m_properties.count(), 3);
+    }
+
+
+    // get one resource via file URL with sub-res
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("file:/C"), true);
+
+    // no error
+    QVERIFY(!m_dmModel->lastError());
+
+    // only one resource in the result
+    QCOMPARE(g.count(), 2);
+
+    // the results are res:/C and res:/D
+    r1 = g.first();
+    r2 = g.back();
+    QVERIFY(r1.uri() == QUrl("res:/C") || r2.uri() == QUrl("res:/C"));
+    QVERIFY(r1.uri() == QUrl("res:/D") || r2.uri() == QUrl("res:/D"));
+
+    // res:/A has 3 properties
+    if(r1.uri() == QUrl("res:/C")) {
+        QCOMPARE(r1.m_properties.count(), 3);
+        QCOMPARE(r2.m_properties.count(), 1);
+    }
+    else {
+        QCOMPARE(r1.m_properties.count(), 1);
+        QCOMPARE(r2.m_properties.count(), 3);
+    }
+
+
+    // get two resources without sub-res
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"), false);
+
+    // no error
+    QVERIFY(!m_dmModel->lastError());
+
+    // only one resource in the result
+    QCOMPARE(g.count(), 2);
+
+    // the results are res:/A and res:/C
+    r1 = g.first();
+    r2 = g.back();
+    QVERIFY(r1.uri() == QUrl("res:/A") || r2.uri() == QUrl("res:/A"));
+    QVERIFY(r1.uri() == QUrl("res:/C") || r2.uri() == QUrl("res:/C"));
+
+    // res:/A has 3 properties
+    QCOMPARE(r1.m_properties.count(), 3);
+    QCOMPARE(r2.m_properties.count(), 3);
+
+
+    // get two resources with sub-res
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"), true);
+
+    // no error
+    QVERIFY(!m_dmModel->lastError());
+
+    // only one resource in the result
+    QCOMPARE(g.count(), 4);
+
+    // the results are res:/A, res:/B, res:/C and res:/D
+    SimpleResourceGraph::const_iterator it = g.constBegin();
+    r1 = *it;
+    ++it;
+    r2 = *it;
+    ++it;
+    SimpleResource r3 = *it;
+    ++it;
+    SimpleResource r4 = *it;
+    QVERIFY(r1.uri() == QUrl("res:/A") || r2.uri() == QUrl("res:/A") || r3.uri() == QUrl("res:/A") || r4.uri() == QUrl("res:/A"));
+    QVERIFY(r1.uri() == QUrl("res:/B") || r2.uri() == QUrl("res:/B") || r3.uri() == QUrl("res:/B") || r4.uri() == QUrl("res:/B"));
+    QVERIFY(r1.uri() == QUrl("res:/C") || r2.uri() == QUrl("res:/C") || r3.uri() == QUrl("res:/C") || r4.uri() == QUrl("res:/C"));
+    QVERIFY(r1.uri() == QUrl("res:/D") || r2.uri() == QUrl("res:/D") || r3.uri() == QUrl("res:/D") || r4.uri() == QUrl("res:/D"));
+
+
+    // get two resources with sub-res and mixed URL/URI
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("file:/C"), true);
+
+    // no error
+    QVERIFY(!m_dmModel->lastError());
+
+    // only one resource in the result
+    QCOMPARE(g.count(), 4);
+
+    // the results are res:/A, res:/B, res:/C and res:/D
+    it = g.constBegin();
+    r1 = *it;
+    ++it;
+    r2 = *it;
+    ++it;
+    r3 = *it;
+    ++it;
+    r4 = *it;
+    QVERIFY(r1.uri() == QUrl("res:/A") || r2.uri() == QUrl("res:/A") || r3.uri() == QUrl("res:/A") || r4.uri() == QUrl("res:/A"));
+    QVERIFY(r1.uri() == QUrl("res:/B") || r2.uri() == QUrl("res:/B") || r3.uri() == QUrl("res:/B") || r4.uri() == QUrl("res:/B"));
+    QVERIFY(r1.uri() == QUrl("res:/C") || r2.uri() == QUrl("res:/C") || r3.uri() == QUrl("res:/C") || r4.uri() == QUrl("res:/C"));
+    QVERIFY(r1.uri() == QUrl("res:/D") || r2.uri() == QUrl("res:/D") || r3.uri() == QUrl("res:/D") || r4.uri() == QUrl("res:/D"));
 }
 
 QTEST_KDEMAIN_CORE(DataManagementModelTest)

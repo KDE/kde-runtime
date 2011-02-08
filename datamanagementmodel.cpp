@@ -885,11 +885,101 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
     //setError("Not implemented yet");
 }
 
+namespace {
+QVariant nodeToVariant(const Soprano::Node& node) {
+    if(node.isResource())
+        return node.uri();
+    else if(node.isBlank())
+        return QUrl(node.identifier());
+    else
+        return node.literal().variant();
+}
+}
 
-Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(const QList<QUrl> &resources, bool includeSubResources)
+Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(const QList<QUrl> &resources, bool includeSubResources) const
 {
-    setError("Not implemented yet");
-    return SimpleResourceGraph();
+    //
+    // check parameters
+    //
+    if(resources.isEmpty()) {
+        setError(QLatin1String("describeResources: No resource specified."), Soprano::Error::ErrorInvalidArgument);
+        return SimpleResourceGraph();
+    }
+    foreach( const QUrl & res, resources ) {
+        if(res.isEmpty()) {
+            setError(QLatin1String("describeResources: Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
+            return SimpleResourceGraph();
+        }
+    }
+
+
+    clearError();
+
+
+    //
+    // Split into file and non-file URIs so we can get all data in one query
+    //
+    QSet<QUrl> fileUrls;
+    QSet<QUrl> resUris;
+    foreach( const QUrl & res, resources ) {
+        if(res.scheme() == QLatin1String("file"))
+            fileUrls.insert(res);
+        else
+            resUris.insert(res);
+    }
+
+
+    //
+    // Build the query
+    //
+    QStringList terms;
+    if(!fileUrls.isEmpty()) {
+        terms << QString::fromLatin1("?s ?p ?o . ?s %1 ?u . FILTER(?u in (%2)) . ")
+                 .arg(Soprano::Node::resourceToN3(Vocabulary::NIE::url()),
+                      resourcesToN3(fileUrls).join(QLatin1String(",")));
+        if(includeSubResources) {
+            terms << QString::fromLatin1("?s ?p ?o . ?r %1 ?s . ?r %2 ?u . FILTER(?u in (%3)) . ")
+                     .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::hasSubResource()),
+                          Soprano::Node::resourceToN3(Vocabulary::NIE::url()),
+                          resourcesToN3(fileUrls).join(QLatin1String(",")));
+        }
+    }
+    if(!resUris.isEmpty()) {
+        terms << QString::fromLatin1("?s ?p ?o . FILTER(?s in (%1)) . ")
+                 .arg(resourcesToN3(resUris).join(QLatin1String(",")));
+        if(includeSubResources) {
+            terms << QString::fromLatin1("?s ?p ?o . ?r %1 ?s . FILTER(?r in (%2)) . ")
+                     .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::hasSubResource()),
+                          resourcesToN3(resUris).join(QLatin1String(",")));
+        }
+    }
+
+    QString query = QLatin1String("select distinct ?s ?p ?o where { ");
+    if(terms.count() == 1) {
+        query += terms.first();
+    }
+    else {
+        query += QLatin1String("{ ") + terms.join(QLatin1String("} UNION { ")) + QLatin1String("}");
+    }
+    query += QLatin1String(" }");
+
+
+    //
+    // Build the graph
+    //
+    QHash<QUrl, SimpleResource> graph;
+    Soprano::QueryResultIterator it = executeQuery(query, Soprano::Query::QueryLanguageSparql);
+    while(it.next()) {
+        const QUrl r = it["s"].uri();
+        graph[r].setUri(r);
+        graph[r].m_properties.insertMulti(it["p"].uri(), nodeToVariant(it["o"]));
+    }
+    if(it.lastError()) {
+        setError(it.lastError());
+        return SimpleResourceGraph();
+    }
+
+    return graph.values();
 }
 
 
