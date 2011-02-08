@@ -1577,6 +1577,61 @@ void DataManagementModelTest::testMergeResources_invalid_args()
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
+void DataManagementModelTest::testMergeResources_file1()
+{
+    ResourceManager::instance()->setOverrideMainModel( m_model );
+
+    // merge a file URL
+    SimpleResource r1;
+    r1.setUri(QUrl("file:/A"));
+    r1.m_properties.insert(RDF::type(), NAO::Tag());
+    r1.m_properties.insert(QUrl("prop:/string"), QLatin1String("Foobar"));
+
+    m_dmModel->mergeResources(SimpleResourceGraph() << r1, QLatin1String("testapp"));
+
+    // a nie:url relation should have been created
+    QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl("file:/A")));
+
+    // the file URL should never be used as subject
+    QVERIFY(!m_model->containsAnyStatement(QUrl("file:/A"), Node(), Node()));
+
+    // make sure file URL and res URI are properly related including the properties
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { ?r %1 <file:/A> . "
+                                                      "?r a %2 . "
+                                                      "?r <prop:/string> %3 . }")
+                                  .arg(Node::resourceToN3(NIE::url()),
+                                       Node::resourceToN3(NAO::Tag()),
+                                       Node::literalToN3(LiteralValue(QLatin1String("Foobar")))),
+                                  Query::QueryLanguageSparql).boolValue());
+}
+
+void DataManagementModelTest::testMergeResources_file2()
+{
+    ResourceManager::instance()->setOverrideMainModel( m_model );
+
+    // merge a property with non-existing file value
+    SimpleResource r1;
+    r1.setUri(QUrl("res:/A"));
+    r1.m_properties.insert(QUrl("prop:/res"), QUrl("file:/B"));
+
+    m_dmModel->mergeResources(SimpleResourceGraph() << r1, QLatin1String("testapp"));
+
+    // the property should have been created
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/res"), Node()));
+
+    // but it should not be related to the file URL
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("file:/B")));
+
+    // there should be a nie:url for the file URL
+    QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl("file:/B")));
+
+    // make sure file URL and res URI are properly related including the properties
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { <res:/A> <prop:/res> ?r . "
+                                                      "?r %1 <file:/B> . }")
+                                  .arg(Node::resourceToN3(NIE::url())),
+                                  Query::QueryLanguageSparql).boolValue());
+}
+
 void DataManagementModelTest::testDescribeResources()
 {
     // create some resources
