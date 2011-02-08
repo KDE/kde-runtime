@@ -56,13 +56,48 @@
       <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Nepomuk::SimpleResourceGraph"/>
       <arg name="app" type="s" direction="in"/>
       <arg name="additionalMetadata" type="a{sv}" direction="in"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.In2" value="QHash&lt;QString, QVariant&gt;"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In2" value="QHash&lt;QString,QDBusVariant&gt;"/>
     </method>
     <method name="describeResources">
       <arg name="resources" type="as" direction="in"/>
       <arg name="includeSubResources" type="b" direction="in"/>
       <arg type="a(sa{sv})" direction="out"/>
       <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Nepomuk::SimpleResourceGraph"/>
+    </method>
+    <method name="setProperty">
+      <arg name="resource" type="s" direction="in"/>
+      <arg name="property" type="s" direction="in"/>
+      <arg name="value" type="v" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+    </method>
+    <method name="addProperty">
+      <arg name="resource" type="s" direction="in"/>
+      <arg name="property" type="s" direction="in"/>
+      <arg name="value" type="v" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+    </method>
+    <method name="removeProperty">
+      <arg name="resource" type="s" direction="in"/>
+      <arg name="property" type="s" direction="in"/>
+      <arg name="value" type="v" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+    </method>
+    <method name="removeProperties">
+      <arg name="resource" type="s" direction="in"/>
+      <arg name="property" type="s" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+    </method>
+    <method name="createResource">
+      <arg type="s" direction="out"/>
+      <arg name="type" type="s" direction="in"/>
+      <arg name="label" type="s" direction="in"/>
+      <arg name="description" type="s" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+    </method>
+    <method name="removeResources">
+      <arg name="resource" type="s" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+      <arg name="flags" type="i" direction="in"/>
     </method>
   </interface>
 </node>
