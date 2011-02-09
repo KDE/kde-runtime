@@ -37,6 +37,9 @@
 #include <QtCore/QVariant>
 #include <QtCore/QThreadPool>
 
+#define USING_SOPRANO_NRLMODEL_UNSTABLE_API
+#include <Soprano/NRLModel>
+
 namespace {
 QVariantList convertVariantList(const QList<QDBusVariant>& values) {
     QVariantList vl;
@@ -48,7 +51,8 @@ QVariantList convertVariantList(const QList<QDBusVariant>& values) {
 
 Nepomuk::DataManagementAdaptor::DataManagementAdaptor(Nepomuk::DataManagementModel *parent)
     : QObject(parent),
-      m_model(parent)
+      m_model(parent),
+      m_namespacePrefixRx(QLatin1String("(\\w+)\\:(\\w+)"))
 {
     m_threadPool = new QThreadPool(this);
 
@@ -57,6 +61,10 @@ Nepomuk::DataManagementAdaptor::DataManagementAdaptor(Nepomuk::DataManagementMod
 
     // N threads means N connections to Virtuoso
     m_threadPool->setMaxThreadCount(10);
+
+    // keep our list of namespace abbreviations up-to-date
+    updateNamespaces();
+    connect(m_model, SIGNAL(typeAndPropertyUpdate()), this, SLOT(updateNamespaces()));
 }
 
 Nepomuk::DataManagementAdaptor::~DataManagementAdaptor()
@@ -67,7 +75,7 @@ void Nepomuk::DataManagementAdaptor::addProperty(const QStringList &resources, c
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new AddPropertyCommand(decodeUrls(resources), decodeUrl(property), convertVariantList(values), app, m_model, message()));
+    enqueueCommand(new AddPropertyCommand(decodeUris(resources), decodeUri(property), convertVariantList(values), app, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::addProperty(const QString &resource, const QString &property, const QDBusVariant &value, const QString &app)
@@ -79,7 +87,7 @@ QString Nepomuk::DataManagementAdaptor::createResource(const QStringList &types,
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new CreateResourceCommand(decodeUrls(types), label, description, app, m_model, message()));
+    enqueueCommand(new CreateResourceCommand(decodeUris(types), label, description, app, m_model, message()));
     // QtDBus will ignore this return value
     return QString();
 }
@@ -93,7 +101,7 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementAdaptor::describeResources(c
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new DescribeResourcesCommand(decodeUrls(resources), includeSubResources, m_model, message()));
+    enqueueCommand(new DescribeResourcesCommand(decodeUris(resources), includeSubResources, m_model, message()));
     // QtDBus will ignore this return value
     return SimpleResourceGraph();
 }
@@ -105,7 +113,7 @@ void Nepomuk::DataManagementAdaptor::mergeResources(Nepomuk::SimpleResourceGraph
     QHash<QUrl, QVariant> decodedMetaData;
     for(QHash<QString, QDBusVariant>::const_iterator it = additionalMetadata.constBegin();
         it != additionalMetadata.constEnd(); ++it) {
-        decodedMetaData.insert(decodeUrl(it.key()), it.value().variant());
+        decodedMetaData.insert(decodeUri(it.key()), it.value().variant());
     }
     enqueueCommand(new MergeResourcesCommand(resources, app, decodedMetaData, m_model, message()));
 }
@@ -121,14 +129,14 @@ void Nepomuk::DataManagementAdaptor::removeDataByApplication(const QStringList &
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new RemoveDataByApplicationCommand(decodeUrls(resources), app, flags, m_model, message()));
+    enqueueCommand(new RemoveDataByApplicationCommand(decodeUris(resources), app, flags, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::removeProperties(const QStringList &resources, const QStringList &properties, const QString &app)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new RemovePropertiesCommand(decodeUrls(resources), decodeUrls(properties), app, m_model, message()));
+    enqueueCommand(new RemovePropertiesCommand(decodeUris(resources), decodeUris(properties), app, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::removeProperties(const QString &resource, const QString &property, const QString &app)
@@ -140,14 +148,14 @@ void Nepomuk::DataManagementAdaptor::removePropertiesByApplication(const QString
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new RemovePropertiesByApplicationCommand(decodeUrls(resources), decodeUrls(properties), app, m_model, message()));
+    enqueueCommand(new RemovePropertiesByApplicationCommand(decodeUris(resources), decodeUris(properties), app, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::removeProperty(const QStringList &resources, const QString &property, const QList<QDBusVariant> &values, const QString &app)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new RemovePropertyCommand(decodeUrls(resources), decodeUrl(property), convertVariantList(values), app, m_model, message()));
+    enqueueCommand(new RemovePropertyCommand(decodeUris(resources), decodeUri(property), convertVariantList(values), app, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::removeProperty(const QString &resource, const QString &property, const QDBusVariant &value, const QString &app)
@@ -159,7 +167,7 @@ void Nepomuk::DataManagementAdaptor::removeResources(const QStringList &resource
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new RemoveResourcesCommand(decodeUrls(resources), app, flags, m_model, message()));
+    enqueueCommand(new RemoveResourcesCommand(decodeUris(resources), app, flags, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::removeResources(const QString &resource, const QString &app, int flags)
@@ -171,7 +179,7 @@ void Nepomuk::DataManagementAdaptor::setProperty(const QStringList &resources, c
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new SetPropertyCommand(decodeUrls(resources), decodeUrl(property), convertVariantList(values), app, m_model, message()));
+    enqueueCommand(new SetPropertyCommand(decodeUris(resources), decodeUri(property), convertVariantList(values), app, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::setProperty(const QString &resource, const QString &property, const QDBusVariant &value, const QString &app)
@@ -182,6 +190,44 @@ void Nepomuk::DataManagementAdaptor::setProperty(const QString &resource, const 
 void Nepomuk::DataManagementAdaptor::enqueueCommand(DataManagementCommand *cmd)
 {
     m_threadPool->start(cmd);
+}
+
+QUrl Nepomuk::DataManagementAdaptor::decodeUri(const QString &s, bool namespaceAbbrExpansion) const
+{
+    if(namespaceAbbrExpansion) {
+        if(m_namespacePrefixRx.exactMatch(s)) {
+            const QString ns = m_namespacePrefixRx.cap(1);
+            const QString name = m_namespacePrefixRx.cap(2);
+            QHash<QString, QString>::const_iterator it = m_namespaces.constFind(ns);
+            if(it != m_namespaces.constEnd()) {
+                return QUrl::fromEncoded((it.value() + name).toAscii());
+            }
+        }
+    }
+
+    // fallback
+    return Nepomuk::decodeUrl(s);
+}
+
+QList<QUrl> Nepomuk::DataManagementAdaptor::decodeUris(const QStringList &urlStrings, bool namespaceAbbrExpansions) const
+{
+    QList<QUrl> urls;
+    Q_FOREACH(const QString& urlString, urlStrings) {
+        urls << decodeUri(urlString, namespaceAbbrExpansions);
+    }
+    return urls;
+}
+
+void Nepomuk::DataManagementAdaptor::updateNamespaces()
+{
+    Soprano::NRLModel nrlModel(m_model);
+    nrlModel.setEnableQueryPrefixExpansion(true);
+    m_namespaces.clear();
+    const QHash<QString, QUrl> namespaces = nrlModel.queryPrefixes();
+    for(QHash<QString, QUrl>::const_iterator it = namespaces.constBegin();
+        it != namespaces.constEnd(); ++it) {
+        m_namespaces.insert(it.key(), QString::fromAscii(it.value().toEncoded()));
+    }
 }
 
 #include "datamanagementadaptor.moc"

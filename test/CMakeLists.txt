@@ -22,3 +22,19 @@ target_link_libraries(datamanagementmodeltest
   ${KDE4_KDECORE_LIBS}
   nepomuksync
 )
+
+kde4_add_unit_test(datamanagementadaptortest
+  datamanagementadaptortest.cpp
+  ../classandpropertytree.cpp
+  ../datamanagementmodel.cpp
+  ../datamanagementadaptor.cpp
+  ../datamanagementcommand.cpp
+  ../simpleresource.cpp
+  ../resourcemerger.cpp)
+
+target_link_libraries(datamanagementadaptortest
+  ${QT_QTTEST_LIBRARY}
+  ${SOPRANO_LIBRARIES}
+  ${KDE4_KDECORE_LIBS}
+  nepomuksync
+)

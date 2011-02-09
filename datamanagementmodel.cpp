@@ -1135,6 +1135,7 @@ QUrl Nepomuk::DataManagementModel::createUri(Nepomuk::DataManagementModel::UriTy
 void Nepomuk::DataManagementModel::updateTypeCachesAndSoOn()
 {
     d->m_classAndPropertyTree.rebuildTree(parentModel());
+    emit typeAndPropertyUpdate();
 }
 
 

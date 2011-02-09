@@ -29,6 +29,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QHash>
+#include <QtCore/QRegExp>
 #include <QtDBus/QDBusContext>
 #include <QtDBus/QDBusVariant>
 
@@ -153,6 +154,16 @@ public:
     DataManagementAdaptor(Nepomuk::DataManagementModel* parent);
     ~DataManagementAdaptor();
 
+    /**
+     * Tries to decode a URI including namespace abbreviation lookup for known ontologies (Example: nao:Tag).
+     */
+    QUrl decodeUri(const QString& s, bool namespaceAbbrExpansion = true) const;
+
+    /**
+     * Tries to decode a list of URIs including namespace abbreviation lookup for known ontologies (Example: nao:Tag).
+     */
+    QList<QUrl> decodeUris(const QStringList& s, bool namespaceAbbrExpansion = true) const;
+
 public Q_SLOTS:
     void setProperty(const QStringList &resources, const QString &property, const QList<QDBusVariant> &values, const QString &app);
     void addProperty(const QStringList &resources, const QString &property, const QList<QDBusVariant> &values, const QString &app);
@@ -174,11 +185,16 @@ public Q_SLOTS:
     QString createResource(const QString &type, const QString &label, const QString &description, const QString &app);
     void removeResources(const QString &resource, const QString &app, int flags);
 
+private Q_SLOTS:
+    void updateNamespaces();
+
 private:
     void enqueueCommand(Nepomuk::DataManagementCommand* cmd);
 
     Nepomuk::DataManagementModel* m_model;
     QThreadPool* m_threadPool;
+    QHash<QString, QString> m_namespaces;
+    QRegExp m_namespacePrefixRx;
 };
 }
 

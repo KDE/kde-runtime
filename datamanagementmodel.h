@@ -185,6 +185,9 @@ public Q_SLOTS:
      */
     void updateTypeCachesAndSoOn();
 
+Q_SIGNALS:
+    void typeAndPropertyUpdate();
+
 private:
     QUrl createGraph(const QString& app, const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>());
     QUrl findApplicationResource(const QString& app, bool create = true);
