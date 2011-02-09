@@ -25,6 +25,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QUrl>
 #include <QtCore/QVariant>
+#include <QtCore/QMutex>
 
 namespace Soprano {
 class Model;
@@ -64,6 +65,8 @@ private:
     QSet<QUrl> getAllParents(ClassOrProperty *cop, QSet<QUrl> &visitedNodes);
 
     QHash<QUrl, ClassOrProperty*> m_tree;
+
+    mutable QMutex m_mutex;
 };
 }
 

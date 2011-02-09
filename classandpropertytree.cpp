@@ -24,6 +24,7 @@
 #include <QtCore/QSet>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
+#include <QtCore/QMutexLocker>
 
 #include <Soprano/Node>
 #include <Soprano/LiteralValue>
@@ -76,6 +77,7 @@ Nepomuk::ClassAndPropertyTree::~ClassAndPropertyTree()
 
 QSet<QUrl> Nepomuk::ClassAndPropertyTree::allParents(const QUrl &uri) const
 {
+    QMutexLocker lock(&m_mutex);
     if(const ClassOrProperty* cop = findClassOrProperty(uri))
         return cop->allParents;
     else
@@ -84,6 +86,7 @@ QSet<QUrl> Nepomuk::ClassAndPropertyTree::allParents(const QUrl &uri) const
 
 bool Nepomuk::ClassAndPropertyTree::isChildOf(const QUrl &type, const QUrl &superClass) const
 {
+    QMutexLocker lock(&m_mutex);
     if(const ClassOrProperty* cop = findClassOrProperty(type))
         return cop->allParents.contains(superClass);
     else
@@ -92,6 +95,7 @@ bool Nepomuk::ClassAndPropertyTree::isChildOf(const QUrl &type, const QUrl &supe
 
 int Nepomuk::ClassAndPropertyTree::maxCardinality(const QUrl &type) const
 {
+    QMutexLocker lock(&m_mutex);
     if(const ClassOrProperty* cop = findClassOrProperty(type))
         return cop->maxCardinality;
     else
@@ -100,6 +104,7 @@ int Nepomuk::ClassAndPropertyTree::maxCardinality(const QUrl &type) const
 
 bool Nepomuk::ClassAndPropertyTree::isUserVisible(const QUrl &type) const
 {
+    QMutexLocker lock(&m_mutex);
     if(const ClassOrProperty* cop = findClassOrProperty(type))
         return cop->userVisible == 1;
     else
@@ -108,6 +113,7 @@ bool Nepomuk::ClassAndPropertyTree::isUserVisible(const QUrl &type) const
 
 QUrl Nepomuk::ClassAndPropertyTree::propertyDomain(const QUrl &uri) const
 {
+    QMutexLocker lock(&m_mutex);
     if(const ClassOrProperty* cop = findClassOrProperty(uri))
         return cop->domain;
     else
@@ -116,6 +122,7 @@ QUrl Nepomuk::ClassAndPropertyTree::propertyDomain(const QUrl &uri) const
 
 QUrl Nepomuk::ClassAndPropertyTree::propertyRange(const QUrl &uri) const
 {
+    QMutexLocker lock(&m_mutex);
     if(const ClassOrProperty* cop = findClassOrProperty(uri))
         return cop->range;
     else
@@ -188,6 +195,8 @@ QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QV
 
 void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
 {
+    QMutexLocker lock(&m_mutex);
+
     qDeleteAll(m_tree);
     m_tree.clear();
 
