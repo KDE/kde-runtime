@@ -49,6 +49,7 @@ using namespace Nepomuk::Vocabulary;
 
 
 // TODO: test nao:created and nao:lastModified, these should always be correct for existing resources. This is especially important in the removeDataByApplication methods.
+// TODO: how about not allowing to change the nie:url of more than one resource at the same time. After all that is supposed to be unique.
 
 void DataManagementModelTest::resetModel()
 {
@@ -337,6 +338,29 @@ void DataManagementModelTest::testAddProperty_invalid_args()
 
     // nothing should have changed
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // protected properties 1
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), NAO::created(), QVariantList() << QDateTime::currentDateTime(), QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // protected properties 2
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), NAO::lastModified(), QVariantList() << QDateTime::currentDateTime(), QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // TODO: try setting protected properties like nie:url, nfo:fileName, nie:isPartOf (only applies to files)
 }
 
 void DataManagementModelTest::testSetProperty()
@@ -543,6 +567,26 @@ void DataManagementModelTest::testSetProperty_invalid_args()
 
     // nothing should have changed
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // protected property 1
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), NAO::created(), QVariantList() << QDateTime::currentDateTime(), QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // protected property 1
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), NAO::lastModified(), QVariantList() << QDateTime::currentDateTime(), QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
 void DataManagementModelTest::testRemoveProperty()
@@ -691,6 +735,26 @@ void DataManagementModelTest::testRemoveProperty_invalid_args()
 
     // no data should have been changed
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // protected property 1
+    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), NAO::created(), QVariantList() << QDateTime::currentDateTime(), QString("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // protected property 2
+    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), NAO::lastModified(), QVariantList() << QDateTime::currentDateTime(), QString("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
 void DataManagementModelTest::testRemoveProperties()
@@ -833,6 +897,26 @@ void DataManagementModelTest::testRemoveProperties_invalid_args()
 
     // empty app
     m_dmModel->removeProperties(QList<QUrl>() << QUrl("res:/A"), QList<QUrl>() << QUrl("prop:/string"), QString());
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // protected property 1
+    m_dmModel->removeProperties(QList<QUrl>() << QUrl("res:/A"), QList<QUrl>() << NAO::created(), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // protected property 2
+    m_dmModel->removeProperties(QList<QUrl>() << QUrl("res:/A"), QList<QUrl>() << NAO::lastModified(), QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());

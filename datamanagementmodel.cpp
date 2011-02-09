@@ -54,6 +54,10 @@
 
 
 //// TODO: do not allow to create properties or classes through the "normal" methods. Instead provide methods for it.
+//// IDEAS:
+//// 1. Do not allow clients to change metadata properties like nao:created, nao:creator, nao:lastModified (except when sharing data...)
+//// 2. Automatically update nfo:fileName and parent folder link when changing nie:url (basically what metadatamover does now)
+
 
 namespace {
     /// used to handle sets and lists of QUrls
@@ -107,6 +111,9 @@ class Nepomuk::DataManagementModel::Private
 {
 public:
     ClassAndPropertyTree m_classAndPropertyTree;
+
+    /// a set of properties that are maintained by the service and cannot be changed by clients
+    QSet<QUrl> m_protectedProperties;
 };
 
 Nepomuk::DataManagementModel::DataManagementModel(Soprano::Model* model, QObject *parent)
@@ -115,6 +122,11 @@ Nepomuk::DataManagementModel::DataManagementModel(Soprano::Model* model, QObject
 {
     setParent(parent);
     updateTypeCachesAndSoOn();
+
+    // meta data properties are protected as it is up to us to decide when they change
+    d->m_protectedProperties.insert(Soprano::Vocabulary::NAO::created());
+    d->m_protectedProperties.insert(Soprano::Vocabulary::NAO::creator());
+    d->m_protectedProperties.insert(Soprano::Vocabulary::NAO::lastModified());
 }
 
 Nepomuk::DataManagementModel::~DataManagementModel()
@@ -175,6 +187,11 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     }
     if(property.isEmpty()) {
         setError(QLatin1String("addProperty: Property needs to be specified."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
+    if(d->m_protectedProperties.contains(property)) {
+        setError(QString::fromLatin1("addProperty: %1 is a protected property which can only be changed by the data management service itself.").arg(property.toString()),
+                 Soprano::Error::ErrorInvalidArgument);
         return;
     }
 
@@ -264,6 +281,11 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
         setError(QLatin1String("setProperty: Property needs to be specified."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
+    if(d->m_protectedProperties.contains(property)) {
+        setError(QString::fromLatin1("setProperty: %1 is a protected property which can only be changed by the data management service itself.").arg(property.toString()),
+                 Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
 
     const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
     if(!values.isEmpty() && nodes.isEmpty()) {
@@ -329,6 +351,12 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
         setError(QLatin1String("removeProperty: Property needs to be specified."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
+    if(d->m_protectedProperties.contains(property)) {
+        setError(QString::fromLatin1("removeProperty: %1 is a protected property which can only be changed by the data management service itself.").arg(property.toString()),
+                 Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
+
     const QSet<Soprano::Node> valueNodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
     if(valueNodes.isEmpty()) {
         setError(QString::fromLatin1("removeProperty: At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
@@ -415,6 +443,11 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
     foreach(const QUrl& property, properties) {
         if(property.isEmpty()) {
             setError(QLatin1String("removeProperties: Encountered empty property URI."), Soprano::Error::ErrorInvalidArgument);
+            return;
+        }
+        else if(d->m_protectedProperties.contains(property)) {
+            setError(QString::fromLatin1("removeProperties: %1 is a protected property which can only be changed by the data management service itself.").arg(property.toString()),
+                     Soprano::Error::ErrorInvalidArgument);
             return;
         }
     }
