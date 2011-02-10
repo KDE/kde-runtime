@@ -48,9 +48,9 @@ KNetAttach::KNetAttach( QWidget* parent )
     connect(_useEncryption, SIGNAL(toggled(bool)), this, SLOT(updatePort(bool)));
     connect(_createIcon, SIGNAL(toggled(bool)), this, SLOT(updateFinishButtonText(bool)));
     connect( this, SIGNAL(helpRequested()), this, SLOT( slotHelpClicked() ) );
+    connect( this, SIGNAL(currentIdChanged(int)), this, SLOT( slotPageChanged(int) ) );
     setWindowIcon(KIcon("knetattach"));
     setOption(HaveHelpButton, true);
-    button(FinishButton)->setText(i18n("Save && C&onnect"));
     //setResizeMode(Fixed); FIXME: make the wizard fixed-geometry
     button(FinishButton)->setEnabled(false);
     KConfig crecent( "krecentconnections", KConfig::NoGlobals  );
@@ -69,6 +69,11 @@ KNetAttach::KNetAttach( QWidget* parent )
     _encoding->addItems(KGlobal::charsets()->descriptiveEncodingNames());
     const int codecForLocaleIdx = _encoding->findText(QTextCodec::codecForLocale()->name(), Qt::MatchContains);
     _encoding->setCurrentIndex(codecForLocaleIdx != -1 ? codecForLocaleIdx : 0);
+}
+
+void KNetAttach::slotPageChanged( int )
+{
+    updateFinishButtonText(true);
 }
 
 void KNetAttach::slotHelpClicked()
