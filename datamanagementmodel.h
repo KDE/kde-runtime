@@ -242,6 +242,17 @@ private:
      */
     QHash<Soprano::Node, Soprano::Node> resolveNodes(const QSet<Soprano::Node>& nodes) const;
 
+    /**
+     * Updates the nie:url of a local file resource.
+     * \return \p true if the url has been updated and nothing else needs to be done, \p false
+     * if the update was not handled. An error also results in a return value of \p true.
+     *
+     * \param resource The resource to update. Both file URLs and resource URIs are supported. Thus, there is no need to resolve the URL
+     * before calling this method.
+     * \param nieUrl The new nie:url to assign to the resource.
+     */
+    bool updateNieUrlOnLocalFile(const QUrl& resource, const QUrl& nieUrl);
+
     enum UriType {
         GraphUri,
         ResourceUri

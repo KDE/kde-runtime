@@ -589,6 +589,106 @@ void DataManagementModelTest::testSetProperty_invalid_args()
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
+void DataManagementModelTest::testSetProperty_nieUrl1()
+{
+    // setting nie:url if it is not there yet should result in a normal setProperty including graph creation
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), NIE::url(), QVariantList() << QUrl("file:///tmp/A"), QLatin1String("testapp"));
+
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl("file:///tmp/A")));
+
+    // remember the graph since it should not change later on
+    const QUrl nieUrlGraph = m_model->listStatements(QUrl("res:/A"), NIE::url(), QUrl("file:///tmp/A")).allStatements().first().context().uri();
+
+
+    // we reset the URL
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), NIE::url(), QVariantList() << QUrl("file:///tmp/B"), QLatin1String("testapp"));
+
+    // the url should have changed
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl("file:///tmp/A")));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl("file:///tmp/B")));
+
+    // the graph should have been kept
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NIE::url(), Node()).allStatements().first().context().uri(), nieUrlGraph);
+}
+
+void DataManagementModelTest::testSetProperty_nieUrl2()
+{
+    KTempDir* dir = createNieUrlTestData();
+
+    // change the nie:url of one of the top level dirs
+    const QUrl newDir1Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1");
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/dir1"), NIE::url(), QVariantList() << newDir1Url, QLatin1String("testapp"));
+
+    // this should have updated the nie:urls of all children, too
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir1"), NIE::url(), newDir1Url));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir1"), NFO::fileName(), LiteralValue(QLatin1String("dir1"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir11"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir11-old"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir12"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir12-old"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir13"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir13-old"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/file11"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/file11-old"))));
+
+    delete dir;
+}
+
+// the same test as above only using the file URL
+void DataManagementModelTest::testSetProperty_nieUrl3()
+{
+    KTempDir* dir = createNieUrlTestData();
+
+    // change the nie:url of one of the top level dirs
+    const QUrl oldDir1Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1-old");
+    const QUrl newDir1Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1");
+    m_dmModel->setProperty(QList<QUrl>() << oldDir1Url, NIE::url(), QVariantList() << newDir1Url, QLatin1String("testapp"));
+
+    // this should have updated the nie:urls of all children, too
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir1"), NIE::url(), newDir1Url));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir1"), NFO::fileName(), LiteralValue(QLatin1String("dir1"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir11"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir11-old"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir12"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir12-old"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir13"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir13-old"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/file11"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/file11-old"))));
+
+    delete dir;
+}
+
+void DataManagementModelTest::testSetProperty_nieUrl4()
+{
+    KTempDir* dir = createNieUrlTestData();
+
+    // move one of the dirs to a new parent
+    const QUrl newDir121Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1-old/dir12-old/dir121");
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/dir121"), NIE::url(), QVariantList() << newDir121Url, QLatin1String("testapp"));
+
+    // the url
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir121"), NIE::url(), newDir121Url));
+
+    // the child file
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/file1211"), NIE::url(), QUrl(newDir121Url.toString() + QLatin1String("/file1211-old"))));
+
+    // the nie:isPartOf relationship should have been updated, too
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir121"), NIE::isPartOf(), QUrl("res:/dir12")));
+}
+
+// the same test as above only using the file URL
+void DataManagementModelTest::testSetProperty_nieUrl5()
+{
+    KTempDir* dir = createNieUrlTestData();
+
+    // move one of the dirs to a new parent
+    const QUrl oldDir121Url = QLatin1String("file://") + dir->name() + QLatin1String("dir2-old/dir121-old");
+    const QUrl newDir121Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1-old/dir12-old/dir121");
+    m_dmModel->setProperty(QList<QUrl>() << oldDir121Url, NIE::url(), QVariantList() << newDir121Url, QLatin1String("testapp"));
+
+    // the url
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir121"), NIE::url(), newDir121Url));
+
+    // the child file
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/file1211"), NIE::url(), QUrl(newDir121Url.toString() + QLatin1String("/file1211-old"))));
+
+    // the nie:isPartOf relationship should have been updated, too
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir121"), NIE::isPartOf(), QUrl("res:/dir12")));
+}
+
 void DataManagementModelTest::testRemoveProperty()
 {
     const int cleanCount = m_model->statementCount();
@@ -1884,6 +1984,89 @@ void DataManagementModelTest::testDescribeResources()
     QVERIFY(r1.uri() == QUrl("res:/B") || r2.uri() == QUrl("res:/B") || r3.uri() == QUrl("res:/B") || r4.uri() == QUrl("res:/B"));
     QVERIFY(r1.uri() == QUrl("res:/C") || r2.uri() == QUrl("res:/C") || r3.uri() == QUrl("res:/C") || r4.uri() == QUrl("res:/C"));
     QVERIFY(r1.uri() == QUrl("res:/D") || r2.uri() == QUrl("res:/D") || r3.uri() == QUrl("res:/D") || r4.uri() == QUrl("res:/D"));
+}
+
+KTempDir * DataManagementModelTest::createNieUrlTestData()
+{
+    // now we create a real example with some real files:
+    // mainDir
+    // |- dir1
+    //    |- dir11
+    //       |- file111
+    //    |- dir12
+    //       |- dir121
+    //          |- file1211
+    //    |- file11
+    //    |- dir13
+    // |- dir2
+    KTempDir* mainDir = new KTempDir();
+    QDir dir(mainDir->name());
+    dir.mkdir(QLatin1String("dir1"));
+    dir.mkdir(QLatin1String("dir2"));
+    dir.cd(QLatin1String("dir1"));
+    dir.mkdir(QLatin1String("dir11"));
+    dir.mkdir(QLatin1String("dir12"));
+    dir.mkdir(QLatin1String("dir13"));
+    QFile file(dir.filePath(QLatin1String("file11")));
+    file.open(QIODevice::WriteOnly);
+    file.close();
+    dir.cd(QLatin1String("dir12"));
+    dir.mkdir(QLatin1String("dir121"));
+    dir.cd(QLatin1String("dir121"));
+    file.setFileName(dir.filePath(QLatin1String("file1211")));
+    file.open(QIODevice::WriteOnly);
+    file.close();
+    dir.cdUp();
+    dir.cdUp();
+    dir.cd(QLatin1String("dir11"));
+    file.setFileName(dir.filePath(QLatin1String("file111")));
+    file.open(QIODevice::WriteOnly);
+    file.close();
+
+    // We now create the situation in the model as if the above file structure was the new one after moving files and folders around.
+    // for that we use 2 graphs
+    // mainDir
+    // |- dir1-old
+    //    |- dir11-old
+    //       |- file111-old
+    //    |- dir12-old
+    //    |- file11-old
+    //    |- dir13-old
+    // |- dir2-old
+    //    |- dir121-old
+    //       |- file1211-old
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
+    const QUrl g2 = m_nrlModel->createGraph(NRL::InstanceBase());
+    const QString basePath = mainDir->name();
+
+    // nie:url properties for all of them (spread over both graphs)
+    m_model->addStatement(QUrl("res:/dir1"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1-old")), g1);
+    m_model->addStatement(QUrl("res:/dir2"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir2-old")), g2);
+    m_model->addStatement(QUrl("res:/dir11"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1-old/dir11-old")), g1);
+    m_model->addStatement(QUrl("res:/dir12"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1-old/dir12-old")), g2);
+    m_model->addStatement(QUrl("res:/dir13"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1-old/dir13-old")), g1);
+    m_model->addStatement(QUrl("res:/file11"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1-old/file11-old")), g2);
+    m_model->addStatement(QUrl("res:/file111"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1-old/dir11-old/file111-old")), g1);
+    m_model->addStatement(QUrl("res:/dir121"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir2-old/dir121-old")), g2);
+    m_model->addStatement(QUrl("res:/file1211"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir2-old/dir121-old/file1211-old")), g1);
+
+    // we define filename and parent folder only for some to test if the optional clause in the used query works properly
+    m_model->addStatement(QUrl("res:/dir1"), NFO::fileName(), LiteralValue(QLatin1String("dir1-old")), g1);
+    m_model->addStatement(QUrl("res:/dir2"), NFO::fileName(), LiteralValue(QLatin1String("dir2-old")), g1);
+    m_model->addStatement(QUrl("res:/dir11"), NFO::fileName(), LiteralValue(QLatin1String("dir11-old")), g2);
+    m_model->addStatement(QUrl("res:/dir12"), NFO::fileName(), LiteralValue(QLatin1String("dir12-old")), g2);
+    m_model->addStatement(QUrl("res:/file11"), NFO::fileName(), LiteralValue(QLatin1String("file11-old")), g1);
+    m_model->addStatement(QUrl("res:/file111"), NFO::fileName(), LiteralValue(QLatin1String("file111-old")), g2);
+    m_model->addStatement(QUrl("res:/dir121"), NFO::fileName(), LiteralValue(QLatin1String("dir121-old")), g2);
+
+    m_model->addStatement(QUrl("res:/dir11"), NIE::isPartOf(), QUrl("res:/dir1"), g1);
+    m_model->addStatement(QUrl("res:/dir12"), NIE::isPartOf(), QUrl(QLatin1String("res:/dir1")), g2);
+    m_model->addStatement(QUrl("res:/dir13"), NIE::isPartOf(), QUrl(QLatin1String("res:/dir1")), g1);
+    m_model->addStatement(QUrl("res:/file111"), NIE::isPartOf(), QUrl(QLatin1String("res:/dir11")), g1);
+    m_model->addStatement(QUrl("res:/dir121"), NIE::isPartOf(), QUrl(QLatin1String("res:/dir2")), g2);
+    m_model->addStatement(QUrl("res:/file1211"), NIE::isPartOf(), QUrl(QLatin1String("res:/dir121")), g1);
+
+    return mainDir;
 }
 
 QTEST_KDEMAIN_CORE(DataManagementModelTest)

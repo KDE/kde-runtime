@@ -50,6 +50,11 @@ private Q_SLOTS:
     void testSetProperty();
     void testSetProperty_overwrite();
     void testSetProperty_invalid_args();
+    void testSetProperty_nieUrl1();
+    void testSetProperty_nieUrl2();
+    void testSetProperty_nieUrl3();
+    void testSetProperty_nieUrl4();
+    void testSetProperty_nieUrl5();
 
     void testRemoveProperty();
     void testRemoveProperty_file();
@@ -78,6 +83,8 @@ private Q_SLOTS:
     void testDescribeResources();
 
 private:
+    KTempDir* createNieUrlTestData();
+
     void resetModel();
 
     KTempDir* m_storageDir;

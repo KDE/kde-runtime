@@ -45,8 +45,10 @@
 #include <QtCore/QUuid>
 #include <QtCore/QSet>
 #include <QtCore/QPair>
+#include <QtCore/QFileInfo>
 
 #include <Nepomuk/Vocabulary/NIE>
+#include <Nepomuk/Vocabulary/NFO>
 
 #include <KDebug>
 #include <KService>
@@ -161,15 +163,6 @@ Soprano::Error::ErrorCode Nepomuk::DataManagementModel::updateModificationDate(c
 
 void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
 {
-    // 1. check cardinality (via property cache/tree)
-    // 2. if cardinality 1 (we only have 1 and none):
-    //    2.1. make sure values.count() == 1 - otherwise fail
-    //    2.2. make sure no value exists - otherwise fail
-    // 3. create a new graph with all the necessary data and the app
-    // 4. check if the app exists, if not create it in the new graph
-    // 5. add the new triples to the new graph
-    // 6. update resources' mtime
-
     //
     // Check parameters
     //
@@ -209,10 +202,49 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
 
 
     //
+    // Hash to keep mapping from provided URL/URI to resource URIs
+    //
+    QHash<Soprano::Node, Soprano::Node> resolvedNodes;
+
+
+    if(property == NIE::url()) {
+        if(resources.count() != 1) {
+            setError(QLatin1String("addProperty: no two resources can have the same nie:url."), Soprano::Error::ErrorInvalidArgument);
+            return;
+        }
+        else if(nodes.count() > 1) {
+            setError(QLatin1String("addProperty: One resource can only have one nie:url."), Soprano::Error::ErrorInvalidArgument);
+            return;
+        }
+
+        if(!nodes.isEmpty()) {
+            // check if another resource already uses the URL - no two resources can have the same URL at the same time
+            // CAUTION: There is one theoretical situation in which this breaks (more than this actually):
+            //          A file is moved and before the nie:url is updated data is added to the file in the new location.
+            //          At this point the file is there twice and the data should ideally be merged. But how to decide that
+            //          and how to distiguish between that situation and a file overwrite?
+            if(containsAnyStatement(Soprano::Node(), NIE::url(), *nodes.constBegin())) {
+                setError(QLatin1String("addProperty: No two resources can have the same nie:url at the same time."), Soprano::Error::ErrorInvalidArgument);
+                return;
+            }
+            else if(containsAnyStatement(resources.first(), NIE::url(), Soprano::Node())) { // TODO: this can be removed as soon as nie:url gets a max cardinality of 1
+                setError(QLatin1String("addProperty: One resource can only have one nie:url."), Soprano::Error::ErrorInvalidArgument);
+                return;
+            }
+
+            // nie:url is the only property for which we do not want to resolve URLs
+            resolvedNodes.insert(*nodes.constBegin(), *nodes.constBegin());
+        }
+    }
+    else {
+        resolvedNodes = resolveNodes(nodes);
+    }
+
+
+    //
     // Resolve local file URLs (we need to hash the values since we do not want to write anything yet)
     //
     QHash<QUrl, QUrl> uriHash = resolveUrls(resources);
-    QHash<Soprano::Node, Soprano::Node> resolvedNodes = resolveNodes(nodes);
 
 
     //
@@ -297,10 +329,50 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
 
 
     //
+    // Hash to keep mapping from provided URL/URI to resource URIs
+    //
+    QHash<Soprano::Node, Soprano::Node> resolvedNodes;
+
+    //
+    // Setting nie:url on file resources also means updating nfo:fileName and possibly nie:isPartOf
+    //
+    if(property == NIE::url()) {
+        if(resources.count() != 1) {
+            setError(QLatin1String("setProperty: no two resources can have the same nie:url."), Soprano::Error::ErrorInvalidArgument);
+            return;
+        }
+        else if(nodes.count() > 1) {
+            setError(QLatin1String("setProperty: One resource can only have one nie:url."), Soprano::Error::ErrorInvalidArgument);
+            return;
+        }
+
+        if(!nodes.isEmpty()) {
+            // check if another resource already uses the URL - no two resources can have the same URL at the same time
+            // CAUTION: There is one theoretical situation in which this breaks (more than this actually):
+            //          A file is moved and before the nie:url is updated data is added to the file in the new location.
+            //          At this point the file is there twice and the data should ideally be merged. But how to decide that
+            //          and how to distiguish between that situation and a file overwrite?
+            if(containsAnyStatement(Soprano::Node(), NIE::url(), *nodes.constBegin())) {
+                setError(QLatin1String("setProperty: No two resources can have the same nie:url at the same time."), Soprano::Error::ErrorInvalidArgument);
+                return;
+            }
+
+            if(updateNieUrlOnLocalFile(resources.first(), nodes.constBegin()->uri())) {
+                return;
+            }
+
+            // nie:url is the only property for which we do not want to resolve URLs
+            resolvedNodes.insert(*nodes.constBegin(), *nodes.constBegin());
+        }
+    }
+    else {
+        resolvedNodes = resolveNodes(nodes);
+    }
+
+    //
     // Resolve local file URLs
     //
     QHash<QUrl, QUrl> uriHash = resolveUrls(resources);
-    QHash<Soprano::Node, Soprano::Node> resolvedNodes = resolveNodes(nodes);
 
 
     //
@@ -1402,6 +1474,150 @@ QHash<Soprano::Node, Soprano::Node> Nepomuk::DataManagementModel::resolveNodes(c
         }
     }
     return resolvedNodes;
+}
+
+bool Nepomuk::DataManagementModel::updateNieUrlOnLocalFile(const QUrl &resource, const QUrl &nieUrl)
+{
+    kDebug() << resource << "->" << nieUrl;
+
+    //
+    // Since KDE 4.4 we use nepomuk:/res/<UUID> Uris for all resources including files. Thus, moving a file
+    // means updating two things:
+    // 1. the nie:url property
+    // 2. the nie:isPartOf relation (only necessary if the file and not the whole folder was moved)
+    //
+
+    //
+    // Now update the nie:url, nfo:fileName, and nie:isPartOf relations.
+    //
+    // We do NOT use setProperty to avoid the overhead and data clutter of creating
+    // new metadata graphs for the changed data.
+    //
+
+    // remember for url, filename, and parent the graph they are defined in
+    QUrl resUri, oldNieUrl, oldNieUrlGraph, oldParentResource, oldParentResourceGraph, oldFileNameGraph;
+    QString oldFileName;
+
+    if(resource.scheme() == QLatin1String("file")) {
+        oldNieUrl = resource;
+        Soprano::QueryResultIterator it
+                = executeQuery(QString::fromLatin1("select distinct ?gu ?gf ?gp ?r ?f ?p where { "
+                                                   "graph ?gu { ?r %2 %1 . } . "
+                                                   "OPTIONAL { graph ?gf { ?r %3 ?f . } . } . "
+                                                   "OPTIONAL { graph ?gp { ?r %4 ?p . } . } . "
+                                                   "} LIMIT 1")
+                               .arg(Soprano::Node::resourceToN3(resource),
+                                    Soprano::Node::resourceToN3(NIE::url()),
+                                    Soprano::Node::resourceToN3(NFO::fileName()),
+                                    Soprano::Node::resourceToN3(NIE::isPartOf())),
+                               Soprano::Query::QueryLanguageSparql);
+        if(it.next()) {
+            resUri= it["r"].uri();
+            oldNieUrlGraph = it["gu"].uri();
+            oldParentResource = it["p"].uri();
+            oldParentResourceGraph = it["gp"].uri();
+            oldFileName = it["f"].toString();
+            oldFileNameGraph = it["gf"].uri();
+        }
+    }
+    else {
+        resUri = resource;
+        Soprano::QueryResultIterator it
+                = executeQuery(QString::fromLatin1("select distinct ?gu ?gf ?gp ?u ?f ?p where { "
+                                                   "graph ?gu { %1 %2 ?u . } . "
+                                                   "OPTIONAL { graph ?gf { %1 %3 ?f . } . } . "
+                                                   "OPTIONAL { graph ?gp { %1 %4 ?p . } . } . "
+                                                   "} LIMIT 1")
+                               .arg(Soprano::Node::resourceToN3(resource),
+                                    Soprano::Node::resourceToN3(NIE::url()),
+                                    Soprano::Node::resourceToN3(NFO::fileName()),
+                                    Soprano::Node::resourceToN3(NIE::isPartOf())),
+                               Soprano::Query::QueryLanguageSparql);
+        if(it.next()) {
+            oldNieUrl = it["u"].uri();
+            oldNieUrlGraph = it["gu"].uri();
+            oldParentResource = it["p"].uri();
+            oldParentResourceGraph = it["gp"].uri();
+            oldFileName = it["f"].toString();
+            oldFileNameGraph = it["gf"].uri();
+        }
+    }
+
+    if (!oldNieUrlGraph.isEmpty()) {
+        removeStatement(resUri, NIE::url(), oldNieUrl, oldNieUrlGraph);
+        addStatement(resUri, NIE::url(), nieUrl, oldNieUrlGraph);
+
+        if (!oldFileNameGraph.isEmpty()) {
+            // we only update the filename if it actually changed
+            if(KUrl(oldNieUrl).fileName() != KUrl(nieUrl).fileName()) {
+                removeStatement(resUri, NFO::fileName(), Soprano::LiteralValue(oldFileName), oldFileNameGraph);
+                addStatement(resUri, NFO::fileName(), Soprano::LiteralValue(KUrl(nieUrl).fileName()), oldFileNameGraph);
+            }
+        }
+
+        if (!oldParentResourceGraph.isEmpty()) {
+            // we only update the parent folder if it actually changed
+            const KUrl nieUrlParent = KUrl(nieUrl).directory(KUrl::IgnoreTrailingSlash);
+            const KUrl oldUrlParent = KUrl(oldNieUrl).directory(KUrl::IgnoreTrailingSlash);
+            if(nieUrlParent != oldUrlParent) {
+                removeStatement(resUri, NIE::isPartOf(), oldParentResource, oldParentResourceGraph);
+                const QUrl newParentRes = resolveUrl(nieUrlParent);
+                if (!newParentRes.isEmpty()) {
+                    addStatement(resUri, NIE::isPartOf(), newParentRes, oldParentResourceGraph);
+                }
+            }
+        }
+
+        //
+        // Update all children
+        // We only need to update the nie:url properties. Filenames and nie:isPartOf relations cannot change
+        // due to a renaming of the parent folder.
+        //
+        // CAUTION: The trailing slash on the from URL is essential! Otherwise we might match the newly added
+        //          URLs, too (in case a rename only added chars to the name)
+        //
+        const QString query = QString::fromLatin1("select distinct ?r ?u ?g where { "
+                                                  "graph ?g { ?r %1 ?u . } . "
+                                                  "FILTER(REGEX(STR(?u),'^%2')) . "
+                                                  "}")
+                .arg(Soprano::Node::resourceToN3(NIE::url()),
+                     KUrl(oldNieUrl).url(KUrl::AddTrailingSlash));
+
+        const QString oldBasePath = KUrl(oldNieUrl).path(KUrl::AddTrailingSlash);
+        const QString newBasePath = KUrl(nieUrl).path(KUrl::AddTrailingSlash);
+
+        //
+        // We cannot use one big loop since our updateMetadata calls below can change the iterator
+        // which could have bad effects like row skipping. Thus, we handle the urls in chunks of
+        // cached items.
+        //
+        forever {
+            const QList<Soprano::BindingSet> urls = executeQuery(query + QLatin1String( " LIMIT 500" ),
+                                                                 Soprano::Query::QueryLanguageSparql)
+                    .allBindings();
+            if (urls.isEmpty())
+                break;
+
+            for (int i = 0; i < urls.count(); ++i) {
+                const KUrl u = urls[i]["u"].uri();
+                const QUrl r = urls[i]["r"].uri();
+                const QUrl g = urls[i]["g"].uri();
+
+                // now construct the new URL
+                const QString oldRelativePath = u.path().mid(oldBasePath.length());
+                const KUrl newUrl(newBasePath + oldRelativePath);
+
+                removeStatement(r, NIE::url(), u, g);
+                addStatement(r, NIE::url(), newUrl, g);
+            }
+        }
+
+        return true;
+    }
+    else {
+        // no old nie:url found
+        return false;
+    }
 }
 
 //void Nepomuk::DataManagementModel::insertStatements(const QSet<QUrl> &resources, const QUrl &property, const QSet<Soprano::Node> &values, const QUrl &graph)
