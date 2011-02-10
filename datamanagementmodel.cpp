@@ -307,16 +307,19 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     // Remove values that are not wanted anymore
     //
     const QSet<Soprano::Node> existingValues = QSet<Soprano::Node>::fromList(resolvedNodes.values());
+    QSet<QUrl> graphs;
     QList<Soprano::BindingSet> existing
-            = executeQuery(QString::fromLatin1("select ?r ?v where { ?r %1 ?v . FILTER(?r in (%2)) . }")
+            = executeQuery(QString::fromLatin1("select ?r ?v where { graph ?g { ?r %1 ?v . FILTER(?r in (%2)) . } . }")
                            .arg(Soprano::Node::resourceToN3(property),
                                 resourcesToN3(uriHash).join(QLatin1String(","))),
                            Soprano::Query::QueryLanguageSparql).allBindings();
     Q_FOREACH(const Soprano::BindingSet& binding, existing) {
         if(!existingValues.contains(binding["v"])) {
             removeAllStatements(binding["r"], property, binding["v"]);
+            graphs.insert(binding["r"].uri());
         }
     }
+    removeTrailingGraphs(graphs);
 
     //
     // And finally add the rest of the statements (only if there is anything to add)
