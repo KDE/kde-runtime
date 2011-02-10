@@ -52,6 +52,8 @@
 #include <KService>
 #include <KServiceTypeTrader>
 
+using namespace Nepomuk::Vocabulary;
+using namespace Soprano::Vocabulary;
 
 //// TODO: do not allow to create properties or classes through the "normal" methods. Instead provide methods for it.
 //// IDEAS:
@@ -92,11 +94,11 @@ namespace {
     QString createResourceMetadataPropertyFilter(const QString& propVar) {
         return QString::fromLatin1("%1!=%2 && %1!=%3 && %1!=%4 && %1!=%5 && %1!=%6")
                 .arg(propVar,
-                     Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::created()),
-                     Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::lastModified()),
-                     Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::creator()),
-                     Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::userVisible()),
-                     Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NIE::url()));
+                     Soprano::Node::resourceToN3(NAO::created()),
+                     Soprano::Node::resourceToN3(NAO::lastModified()),
+                     Soprano::Node::resourceToN3(NAO::creator()),
+                     Soprano::Node::resourceToN3(NAO::userVisible()),
+                     Soprano::Node::resourceToN3(NIE::url()));
     }
 
     template<typename T> QString createResourceExcludeFilter(const T& resources, const QString& var) {
@@ -124,9 +126,9 @@ Nepomuk::DataManagementModel::DataManagementModel(Soprano::Model* model, QObject
     updateTypeCachesAndSoOn();
 
     // meta data properties are protected as it is up to us to decide when they change
-    d->m_protectedProperties.insert(Soprano::Vocabulary::NAO::created());
-    d->m_protectedProperties.insert(Soprano::Vocabulary::NAO::creator());
-    d->m_protectedProperties.insert(Soprano::Vocabulary::NAO::lastModified());
+    d->m_protectedProperties.insert(NAO::created());
+    d->m_protectedProperties.insert(NAO::creator());
+    d->m_protectedProperties.insert(NAO::lastModified());
 }
 
 Nepomuk::DataManagementModel::~DataManagementModel()
@@ -142,19 +144,19 @@ Soprano::Error::ErrorCode Nepomuk::DataManagementModel::updateModificationDate(c
     QSet<QUrl> mtimeGraphs;
     Soprano::QueryResultIterator it = executeQuery(QString::fromLatin1("select ?g where { graph ?g { %1 %2 ?d . } . }")
                                                    .arg(Soprano::Node::resourceToN3(resource),
-                                                        Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::lastModified())),
+                                                        Soprano::Node::resourceToN3(NAO::lastModified())),
                                                    Soprano::Query::QueryLanguageSparql);
     while(it.next()) {
         mtimeGraphs << it[0].uri();
     }
 
-    Soprano::Error::ErrorCode c = removeAllStatements(resource, Soprano::Vocabulary::NAO::lastModified(), Soprano::Node());
+    Soprano::Error::ErrorCode c = removeAllStatements(resource, NAO::lastModified(), Soprano::Node());
     if (c != Soprano::Error::ErrorNone)
         return c;
 
     removeTrailingGraphs(mtimeGraphs);
 
-    return addStatement(resource, Soprano::Vocabulary::NAO::lastModified(), Soprano::LiteralValue( date ), graph);
+    return addStatement(resource, NAO::lastModified(), Soprano::LiteralValue( date ), graph);
 }
 
 void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
@@ -526,13 +528,13 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
     const QUrl resUri = createUri(ResourceUri);
 
     foreach(const QUrl& type, types) {
-        addStatement(resUri, Soprano::Vocabulary::RDF::type(), type, graph);
+        addStatement(resUri, RDF::type(), type, graph);
     }
     if(!label.isEmpty()) {
-        addStatement(resUri, Soprano::Vocabulary::NAO::prefLabel(), Soprano::LiteralValue(label), graph);
+        addStatement(resUri, NAO::prefLabel(), Soprano::LiteralValue(label), graph);
     }
     if(!description.isEmpty()) {
-        addStatement(resUri, Soprano::Vocabulary::NAO::description(), Soprano::LiteralValue(description), graph);
+        addStatement(resUri, NAO::description(), Soprano::LiteralValue(description), graph);
     }
     return resUri;
 }
@@ -594,7 +596,7 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
                                                    "FILTER(?parent in (%2)) . "
                                                    "FILTER(!bif:exists((select (1) where { ?r2 ?p3 ?r . FILTER(%3) . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
                                                    "}")
-                               .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::hasSubResource()),
+                               .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
                                     resourcesToN3(resolvedResources).join(QLatin1String(",")),
                                     createResourceExcludeFilter(resolvedResources, QLatin1String("?r2"))),
                                Soprano::Query::QueryLanguageSparql);
@@ -684,9 +686,9 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                                                    "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r ?p2 ?o2 . } . ?g2 %3 ?a2 . FILTER(?a2!=%4) . FILTER(%6) . }))) . "
                                                    "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r2 ?p3 ?r . } . FILTER(%5) . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
                                                    "}")
-                               .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::hasSubResource()),
+                               .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
                                     resourcesToN3(resolvedResources).join(QLatin1String(",")),
-                                    Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::maintainedBy()),
+                                    Soprano::Node::resourceToN3(NAO::maintainedBy()),
                                     Soprano::Node::resourceToN3(appRes),
                                     createResourceExcludeFilter(resolvedResources, QLatin1String("?r2")),
                                     createResourceMetadataPropertyFilter(QLatin1String("?p2"))),
@@ -707,7 +709,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                                                "graph ?g { ?r ?p ?o . } . "
                                                "?g %1 %2 . "
                                                "FILTER(?r in (%3)) . }")
-                           .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::maintainedBy()),
+                           .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
                                 Soprano::Node::resourceToN3(appRes),
                                 resourcesToN3(resolvedResources).join(QLatin1String(","))),
                            Soprano::Query::QueryLanguageSparql);
@@ -733,7 +735,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                             = executeQuery(QString::fromLatin1("select ?u where { graph %1 { %2 %3 ?u . } . } limit 1")
                                            .arg(Soprano::Node::resourceToN3(g),
                                                 Soprano::Node::resourceToN3(res),
-                                                Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NIE::url())),
+                                                Soprano::Node::resourceToN3(NIE::url())),
                                            Soprano::Query::QueryLanguageSparql);
                     if(nieUrlIt.next()) {
                         nieUrl = nieUrlIt[0].uri();
@@ -743,7 +745,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                     removeAllStatements(Soprano::Node(), Soprano::Node(), res, g);
 
                     if(!nieUrl.isEmpty()) {
-                        addStatement(res, Nepomuk::Vocabulary::NIE::url(), nieUrl, g);
+                        addStatement(res, NIE::url(), nieUrl, g);
                     }
 
                     // update mtime
@@ -758,7 +760,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
             }
         }
         else {
-            removeAllStatements(g, Soprano::Vocabulary::NAO::maintainedBy(), appRes);
+            removeAllStatements(g, NAO::maintainedBy(), appRes);
         }
     }
 
@@ -811,7 +813,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QString &app, R
                                                "?g %1 %2 . FILTER(!bif:exists((select (1) where { ?g %1 ?a . FILTER(?a!=%2) . }))) . "
                                                "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r ?p2 ?o2 . } . ?g2 %1 ?a2 . FILTER(?a2!=%2) . FILTER(%3)})) || %4) . " // %4 is incorrect. What we actually want is to check that there is no metadata ?p in the graph
                                                "}")
-                           .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::maintainedBy()),
+                           .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
                                 Soprano::Node::resourceToN3(appRes),
                                 createResourceMetadataPropertyFilter(QLatin1String("?p2")),
                                 createResourceMetadataPropertyFilter(QLatin1String("?p"))),
@@ -834,8 +836,8 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QString &app, R
                                           "graph ?g { ?r ?p ?o . } . "
                                           "?g %1 ?a . "
                                           "?a %2 %3 . }")
-                      .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::maintainedBy()),
-                           Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::identifier()),
+                      .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                           Soprano::Node::resourceToN3(NAO::identifier()),
                            Soprano::Node::literalToN3(app)),
                       Soprano::Query::QueryLanguageSparql);
     while(it.next()) {
@@ -853,7 +855,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QString &app, R
 
         }
         else {
-            removeAllStatements(g, Soprano::Vocabulary::NAO::maintainedBy(), appUri);
+            removeAllStatements(g, NAO::maintainedBy(), appUri);
         }
     }
 
@@ -972,7 +974,7 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
                       resourcesToN3(fileUrls).join(QLatin1String(",")));
         if(includeSubResources) {
             terms << QString::fromLatin1("?s ?p ?o . ?r %1 ?s . ?r %2 ?u . FILTER(?u in (%3)) . ")
-                     .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::hasSubResource()),
+                     .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
                           Soprano::Node::resourceToN3(Vocabulary::NIE::url()),
                           resourcesToN3(fileUrls).join(QLatin1String(",")));
         }
@@ -982,7 +984,7 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
                  .arg(resourcesToN3(resUris).join(QLatin1String(",")));
         if(includeSubResources) {
             terms << QString::fromLatin1("?s ?p ?o . ?r %1 ?s . FILTER(?r in (%2)) . ")
-                     .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::hasSubResource()),
+                     .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
                           resourcesToN3(resUris).join(QLatin1String(",")));
         }
     }
@@ -1040,19 +1042,19 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
         it != additionalMetadata.constEnd(); ++it) {
         const QUrl& property = it.key();
 
-        if(property == Soprano::Vocabulary::RDF::type()) {
+        if(property == RDF::type()) {
             // check if it is a valid type
             if(it.value().type() != QVariant::Url) {
                 setError(QString::fromLatin1("rdf:type has resource range. %1 was provided.").arg(it.value().type()), Soprano::Error::ErrorInvalidArgument);
                 return QUrl();
             }
             else {
-                if(d->m_classAndPropertyTree.isChildOf(it.value().toUrl(), Soprano::Vocabulary::NRL::Graph()))
+                if(d->m_classAndPropertyTree.isChildOf(it.value().toUrl(), NRL::Graph()))
                     haveGraphType = true;
             }
         }
 
-        else if(property == Soprano::Vocabulary::NAO::created()) {
+        else if(property == NAO::created()) {
             if(!it.value().type() == QVariant::DateTime) {
                 setError(QString::fromLatin1("nao:created has dateTime range. %1 was provided.").arg(it.value().type()), Soprano::Error::ErrorInvalidArgument);
                 return QUrl();
@@ -1075,21 +1077,21 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
 
     // add missing metadata
     if(!haveGraphType) {
-        graphMetaData.insert(Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::InstanceBase());
+        graphMetaData.insert(RDF::type(), NRL::InstanceBase());
     }
-    if(!graphMetaData.contains(Soprano::Vocabulary::NAO::created())) {
-        graphMetaData.insert(Soprano::Vocabulary::NAO::created(), Soprano::LiteralValue(QDateTime::currentDateTime()));
+    if(!graphMetaData.contains(NAO::created())) {
+        graphMetaData.insert(NAO::created(), Soprano::LiteralValue(QDateTime::currentDateTime()));
     }
-    if(!graphMetaData.contains(Soprano::Vocabulary::NAO::maintainedBy())) {
-        graphMetaData.insert(Soprano::Vocabulary::NAO::maintainedBy(), findApplicationResource(app));
+    if(!graphMetaData.contains(NAO::maintainedBy())) {
+        graphMetaData.insert(NAO::maintainedBy(), findApplicationResource(app));
     }
 
     const QUrl graph = createUri(GraphUri);
     const QUrl metadatagraph = createUri(GraphUri);
 
     // add metadata graph itself
-    addStatement( metadatagraph, Soprano::Vocabulary::NRL::coreGraphMetadataFor(), graph, metadatagraph );
-    addStatement( metadatagraph, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::GraphMetadata(), metadatagraph );
+    addStatement( metadatagraph, NRL::coreGraphMetadataFor(), graph, metadatagraph );
+    addStatement( metadatagraph, RDF::type(), NRL::GraphMetadata(), metadatagraph );
 
     for(QHash<QUrl, Soprano::Node>::const_iterator it = graphMetaData.constBegin();
         it != graphMetaData.constEnd(); ++it) {
@@ -1103,8 +1105,8 @@ QUrl Nepomuk::DataManagementModel::findApplicationResource(const QString &app, b
 {
     Soprano::QueryResultIterator it =
             executeQuery(QString::fromLatin1("select ?r where { ?r a %1 . ?r %2 %3 . } LIMIT 1")
-                         .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::Agent()),
-                              Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::identifier()),
+                         .arg(Soprano::Node::resourceToN3(NAO::Agent()),
+                              Soprano::Node::resourceToN3(NAO::identifier()),
                               Soprano::Node::literalToN3(app)),
                          Soprano::Query::QueryLanguageSparql);
     if(it.next()) {
@@ -1116,19 +1118,19 @@ QUrl Nepomuk::DataManagementModel::findApplicationResource(const QString &app, b
         const QUrl uri = createUri(ResourceUri);
 
         // graph metadata
-        addStatement( metadatagraph, Soprano::Vocabulary::NRL::coreGraphMetadataFor(), graph, metadatagraph );
-        addStatement( metadatagraph, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::GraphMetadata(), metadatagraph );
-        addStatement( graph, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::InstanceBase(), metadatagraph );
-        addStatement( graph, Soprano::Vocabulary::NAO::created(), Soprano::LiteralValue(QDateTime::currentDateTime()), metadatagraph );
+        addStatement( metadatagraph, NRL::coreGraphMetadataFor(), graph, metadatagraph );
+        addStatement( metadatagraph, RDF::type(), NRL::GraphMetadata(), metadatagraph );
+        addStatement( graph, RDF::type(), NRL::InstanceBase(), metadatagraph );
+        addStatement( graph, NAO::created(), Soprano::LiteralValue(QDateTime::currentDateTime()), metadatagraph );
 
         // the app itself
-        addStatement( uri, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NAO::Agent(), graph );
-        addStatement( uri, Soprano::Vocabulary::NAO::identifier(), Soprano::LiteralValue(app), graph );
+        addStatement( uri, RDF::type(), NAO::Agent(), graph );
+        addStatement( uri, NAO::identifier(), Soprano::LiteralValue(app), graph );
 
         KService::List services = KServiceTypeTrader::self()->query(QLatin1String("Application"),
                                                                     QString::fromLatin1("DesktopEntryName=='%1'").arg(app));
         if(services.count() == 1) {
-            addStatement(uri, Soprano::Vocabulary::NAO::prefLabel(), Soprano::LiteralValue(services.first()->name()), graph);
+            addStatement(uri, NAO::prefLabel(), Soprano::LiteralValue(services.first()->name()), graph);
         }
 
         return uri;
@@ -1174,6 +1176,7 @@ void Nepomuk::DataManagementModel::updateTypeCachesAndSoOn()
 
 void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resources, const QUrl &property, const QHash<Soprano::Node, Soprano::Node> &nodes, const QString &app)
 {
+    kDebug() << resources << property << nodes << app;
     Q_ASSERT(!resources.isEmpty());
     Q_ASSERT(!nodes.isEmpty());
     Q_ASSERT(!property.isEmpty());
@@ -1256,7 +1259,7 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
                                                                 "?m %1 ?g . "
                                                                 "FILTER(?r in (%3)) . "
                                                                 "FILTER(?v in (%4)) . }")
-                .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::coreGraphMetadataFor()),
+                .arg(Soprano::Node::resourceToN3(NRL::coreGraphMetadataFor()),
                      Soprano::Node::resourceToN3(property),
                      resourcesToN3(knownResources).join(QLatin1String(",")),
                      nodesToN3(resolvedNodes).join(QLatin1String(",")),
@@ -1274,12 +1277,12 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
             finalProperties.remove(qMakePair(r, v));
 
             // in case the app is the same there is no need to do anything
-            if(containsStatement(g, Soprano::Vocabulary::NAO::maintainedBy(), appRes, m)) {
+            if(containsStatement(g, NAO::maintainedBy(), appRes, m)) {
                 continue;
             }
             else if(cnt == 1) {
                 // we can reuse the graph
-                addStatement(g, Soprano::Vocabulary::NAO::maintainedBy(), appRes, m);
+                addStatement(g, NAO::maintainedBy(), appRes, m);
             }
             else {
                 // we need to split the graph
@@ -1289,8 +1292,8 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
                 // FIXME: do not split the same graph again and again. Check if the graph in question already is the one we created.
 
                 // add metadata graph
-                addStatement( metadataGraph, Soprano::Vocabulary::NRL::coreGraphMetadataFor(), graph, metadataGraph );
-                addStatement( metadataGraph, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::GraphMetadata(), metadataGraph );
+                addStatement( metadataGraph, NRL::coreGraphMetadataFor(), graph, metadataGraph );
+                addStatement( metadataGraph, RDF::type(), NRL::GraphMetadata(), metadataGraph );
 
                 // copy the metadata from the old graph to the new one
                 executeQuery(QString::fromLatin1("insert into %1 { %2 ?p ?o . } where { graph %3 { %4 ?p ?o . } . }")
@@ -1301,7 +1304,7 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
                              Soprano::Query::QueryLanguageSparql);
 
                 // add the new app
-                addStatement(graph, Soprano::Vocabulary::NAO::maintainedBy(), appRes, metadataGraph);
+                addStatement(graph, NAO::maintainedBy(), appRes, metadataGraph);
 
                 // and finally move the actual property over to the new graph
                 removeStatement(r, property, v, g);
@@ -1327,16 +1330,7 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
         // TODO: check if using one big sparql insert improves performance
         QSet<QUrl> finalResources;
         for(QSet<QPair<QUrl, Soprano::Node> >::const_iterator it = finalProperties.constBegin(); it != finalProperties.constEnd(); ++it) {
-            Soprano::Node node = it->second;
-            if(node.isResource()) {
-                QUrl uri = resolveUrl(node.uri());
-                if(uri.isEmpty()) {
-                    uri = createUri(ResourceUri);
-                    addStatement(uri, Vocabulary::NIE::url(), node.uri(), graph);
-                }
-                node = uri;
-            }
-            addStatement(it->first, property, node, graph);
+            addStatement(it->first, property, it->second, graph);
             finalResources.insert(it->first);
         }
 
@@ -1378,7 +1372,7 @@ QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url) const
     if(url.scheme() == QLatin1String("file")) {
         Soprano::QueryResultIterator it
                 = executeQuery(QString::fromLatin1("select ?r where { ?r %1 %2 . } limit 1")
-                               .arg(Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NIE::url()),
+                               .arg(Soprano::Node::resourceToN3(NIE::url()),
                                     Soprano::Node::resourceToN3(url)),
                                Soprano::Query::QueryLanguageSparql);
         if(it.next()) {
