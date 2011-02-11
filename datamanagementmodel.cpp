@@ -299,6 +299,14 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
 void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
 {
     //
+    // Special case: setting to the empty list
+    //
+    if(values.isEmpty()) {
+        removeProperties(resources, QList<QUrl>() << property, app);
+        return;
+    }
+
+    //
     // Check parameters
     //
     if(app.isEmpty()) {
@@ -326,7 +334,7 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     }
 
     const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
-    if(!values.isEmpty() && nodes.isEmpty()) {
+    if(nodes.isEmpty()) {
         setError(QString::fromLatin1("setProperty: At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
@@ -350,24 +358,22 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
             return;
         }
 
-        if(!nodes.isEmpty()) {
-            // check if another resource already uses the URL - no two resources can have the same URL at the same time
-            // CAUTION: There is one theoretical situation in which this breaks (more than this actually):
-            //          A file is moved and before the nie:url is updated data is added to the file in the new location.
-            //          At this point the file is there twice and the data should ideally be merged. But how to decide that
-            //          and how to distiguish between that situation and a file overwrite?
-            if(containsAnyStatement(Soprano::Node(), NIE::url(), *nodes.constBegin())) {
-                setError(QLatin1String("setProperty: No two resources can have the same nie:url at the same time."), Soprano::Error::ErrorInvalidArgument);
-                return;
-            }
-
-            if(updateNieUrlOnLocalFile(resources.first(), nodes.constBegin()->uri())) {
-                return;
-            }
-
-            // nie:url is the only property for which we do not want to resolve URLs
-            resolvedNodes.insert(*nodes.constBegin(), *nodes.constBegin());
+        // check if another resource already uses the URL - no two resources can have the same URL at the same time
+        // CAUTION: There is one theoretical situation in which this breaks (more than this actually):
+        //          A file is moved and before the nie:url is updated data is added to the file in the new location.
+        //          At this point the file is there twice and the data should ideally be merged. But how to decide that
+        //          and how to distiguish between that situation and a file overwrite?
+        if(containsAnyStatement(Soprano::Node(), NIE::url(), *nodes.constBegin())) {
+            setError(QLatin1String("setProperty: No two resources can have the same nie:url at the same time."), Soprano::Error::ErrorInvalidArgument);
+            return;
         }
+
+        if(updateNieUrlOnLocalFile(resources.first(), nodes.constBegin()->uri())) {
+            return;
+        }
+
+        // nie:url is the only property for which we do not want to resolve URLs
+        resolvedNodes.insert(*nodes.constBegin(), *nodes.constBegin());
     }
     else {
         resolvedNodes = resolveNodes(nodes);
@@ -392,7 +398,7 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     Q_FOREACH(const Soprano::BindingSet& binding, existing) {
         if(!existingValues.contains(binding["v"])) {
             removeAllStatements(binding["r"], property, binding["v"]);
-            graphs.insert(binding["r"].uri());
+            graphs.insert(binding["g"].uri());
         }
     }
     removeTrailingGraphs(graphs);
