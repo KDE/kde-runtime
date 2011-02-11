@@ -12,7 +12,11 @@ endif(WINCE)
 #search packages used by KDE
 set(KDE_MIN_VERSION "4.6.40")  # for the < 4.2 macro
 find_package(KDE4 4.6.40 REQUIRED)
-find_package(Strigi REQUIRED)
+if (WIN32)
+    find_package(Strigi)
+else ()
+    find_package(Strigi REQUIRED)
+endif ()
 
 include(KDE4Defaults)
 include(MacroLibrary)
