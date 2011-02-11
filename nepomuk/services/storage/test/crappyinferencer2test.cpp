@@ -60,26 +60,40 @@ void CrappyInferencer2Test::init()
 {
     m_baseModel->removeAllStatements();
 
+    //
     // we create one fake ontology
+    //
+    // A
+    // |- B
+    //    |- C - invisible
+    //       |- D
+    //       |- E
+    //
+    // F
+    // |- E
+    //
+    // L1
+    // |- L2
+    //    |- L1
+    //
     QUrl graph("graph:/onto");
     m_baseModel->addStatement( graph, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::Ontology(), graph );
-
-    m_baseModel->addStatement( QUrl("onto:/E"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Class(), graph );
-    m_baseModel->addStatement( QUrl("onto:/E"), Soprano::Vocabulary::RDFS::subClassOf(), QUrl("onto:/C"), graph );
+    m_baseModel->addStatement( QUrl("nepomuk:/G"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::InstanceBase(), graph );
 
     m_baseModel->addStatement( QUrl("onto:/A"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Class(), graph );
-
     m_baseModel->addStatement( QUrl("onto:/B"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Class(), graph );
-    m_baseModel->addStatement( QUrl("onto:/B"), Soprano::Vocabulary::RDFS::subClassOf(), QUrl("onto:/A"), graph );
-
     m_baseModel->addStatement( QUrl("onto:/C"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Class(), graph );
-    m_baseModel->addStatement( QUrl("onto:/C"), Soprano::Vocabulary::RDFS::subClassOf(), QUrl("onto:/B"), graph );
-
     m_baseModel->addStatement( QUrl("onto:/D"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Class(), graph );
-    m_baseModel->addStatement( QUrl("onto:/D"), Soprano::Vocabulary::RDFS::subClassOf(), QUrl("onto:/C"), graph );
-
+    m_baseModel->addStatement( QUrl("onto:/E"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Class(), graph );
     m_baseModel->addStatement( QUrl("onto:/F"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Class(), graph );
+
+    m_baseModel->addStatement( QUrl("onto:/E"), Soprano::Vocabulary::RDFS::subClassOf(), QUrl("onto:/C"), graph );
+    m_baseModel->addStatement( QUrl("onto:/B"), Soprano::Vocabulary::RDFS::subClassOf(), QUrl("onto:/A"), graph );
+    m_baseModel->addStatement( QUrl("onto:/C"), Soprano::Vocabulary::RDFS::subClassOf(), QUrl("onto:/B"), graph );
+    m_baseModel->addStatement( QUrl("onto:/D"), Soprano::Vocabulary::RDFS::subClassOf(), QUrl("onto:/C"), graph );
     m_baseModel->addStatement( QUrl("onto:/E"), Soprano::Vocabulary::RDFS::subClassOf(), QUrl("onto:/F"), graph );
+
+    m_model->addStatement( QUrl("onto:/C"), Soprano::Vocabulary::NAO::userVisible(), LiteralValue(false), graph );
 
     // the loopy classes
     m_baseModel->addStatement( QUrl("onto:/L1"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Class(), graph );
@@ -106,15 +120,18 @@ void CrappyInferencer2Test::testAddTypeStatement()
     int cnt = m_model->statementCount();
     QUrl resA("nepomuk:/A");
     m_model->addStatement(resA, Soprano::Vocabulary::RDF::type(), QUrl("onto:/A"), QUrl("nepomuk:/G"));
-    QCOMPARE(m_model->statementCount(), cnt+2);
+    QCOMPARE(m_model->statementCount(), cnt+3);
+    QVERIFY(m_model->containsAnyStatement(resA, Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(m_model->containsAnyStatement(resA, Vocabulary::NAO::userVisible(), LiteralValue(1)));
 
     cnt = m_model->statementCount();
     QUrl resB("nepomuk:/B");
     m_model->addStatement(resB, Soprano::Vocabulary::RDF::type(), QUrl("onto:/B"), QUrl("nepomuk:/G"));
-    QCOMPARE(m_model->statementCount(), cnt+3);
+    QCOMPARE(m_model->statementCount(), cnt+4);
     QVERIFY(m_model->containsAnyStatement(resB, Vocabulary::RDF::type(), QUrl("onto:/B")));
     QVERIFY(m_model->containsAnyStatement(resB, Vocabulary::RDF::type(), QUrl("onto:/A")));
     QVERIFY(m_model->containsAnyStatement(resB, Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(m_model->containsAnyStatement(resB, Vocabulary::NAO::userVisible(), LiteralValue(1)));
 
     cnt = m_model->statementCount();
     QUrl resC("nepomuk:/C");
@@ -128,13 +145,14 @@ void CrappyInferencer2Test::testAddTypeStatement()
     cnt = m_model->statementCount();
     QUrl resD("nepomuk:/D");
     m_model->addStatement(resD, Soprano::Vocabulary::RDF::type(), QUrl("onto:/E"), QUrl("nepomuk:/G"));
-    QCOMPARE(m_model->statementCount(), cnt+6);
+    QCOMPARE(m_model->statementCount(), cnt+7);
     QVERIFY(m_model->containsAnyStatement(resD, Vocabulary::RDF::type(), QUrl("onto:/F")));
     QVERIFY(m_model->containsAnyStatement(resD, Vocabulary::RDF::type(), QUrl("onto:/E")));
     QVERIFY(m_model->containsAnyStatement(resD, Vocabulary::RDF::type(), QUrl("onto:/C")));
     QVERIFY(m_model->containsAnyStatement(resD, Vocabulary::RDF::type(), QUrl("onto:/B")));
     QVERIFY(m_model->containsAnyStatement(resD, Vocabulary::RDF::type(), QUrl("onto:/A")));
     QVERIFY(m_model->containsAnyStatement(resD, Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(m_model->containsAnyStatement(resD, Vocabulary::NAO::userVisible(), LiteralValue(1)));
 }
 
 // make sure the new relation is taken into account with the next addStatement
@@ -159,6 +177,7 @@ void CrappyInferencer2Test::testRemoveTypeStatement()
     QCOMPARE(m_model->statementCount(), cnt);
     QVERIFY(!m_model->containsAnyStatement(resA, Vocabulary::RDF::type(), QUrl("onto:/A")));
     QVERIFY(!m_model->containsAnyStatement(resA, Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(!m_model->containsAnyStatement(resA, Vocabulary::NAO::userVisible(), LiteralValue(1)));
 
     // add two types with intersecting super types
     m_model->addStatement(resA, Soprano::Vocabulary::RDF::type(), QUrl("onto:/B"), QUrl("nepomuk:/G"));
@@ -166,13 +185,14 @@ void CrappyInferencer2Test::testRemoveTypeStatement()
     // remove one of them
     m_model->removeStatement(resA, Soprano::Vocabulary::RDF::type(), QUrl("onto:/B"), QUrl("nepomuk:/G"));
     // make sure all is well
-    QCOMPARE(m_model->statementCount(), cnt+6);
+    QCOMPARE(m_model->statementCount(), cnt+7);
     QVERIFY(m_model->containsAnyStatement(resA, Vocabulary::RDF::type(), QUrl("onto:/F")));
     QVERIFY(m_model->containsAnyStatement(resA, Vocabulary::RDF::type(), QUrl("onto:/E")));
     QVERIFY(m_model->containsAnyStatement(resA, Vocabulary::RDF::type(), QUrl("onto:/C")));
     QVERIFY(m_model->containsAnyStatement(resA, Vocabulary::RDF::type(), QUrl("onto:/B")));
     QVERIFY(m_model->containsAnyStatement(resA, Vocabulary::RDF::type(), QUrl("onto:/A")));
     QVERIFY(m_model->containsAnyStatement(resA, Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(m_model->containsAnyStatement(resA, Vocabulary::NAO::userVisible(), LiteralValue(1)));
 }
 
 // make sure the removed subclass relation is taken into account with the next addStatement
@@ -209,12 +229,15 @@ void CrappyInferencer2Test::testRemoveAllStatements()
     QVERIFY(m_model->containsAnyStatement(resB, Vocabulary::RDF::type(), QUrl("onto:/A")));
     QVERIFY(m_model->containsAnyStatement(resB, Vocabulary::RDF::type(), QUrl("onto:/B")));
     QVERIFY(!m_model->containsAnyStatement(resB, Vocabulary::RDF::type(), QUrl("onto:/F")));
-    QCOMPARE(m_model->statementCount(), cnt+5);
+    QVERIFY(m_model->containsAnyStatement(resA, Vocabulary::NAO::userVisible(), LiteralValue(1)));
+    QVERIFY(m_model->containsAnyStatement(resB, Vocabulary::NAO::userVisible(), LiteralValue(1)));
+    QCOMPARE(m_model->statementCount(), cnt+7);
 
     // 3. remove all types from one resource
     m_model->addStatement(resA, Soprano::Vocabulary::RDF::type(), QUrl("onto:/E"), QUrl("nepomuk:/G"));
     m_model->removeAllStatements(resA, Soprano::Vocabulary::RDF::type(), Node(), QUrl("nepomuk:/G"));
     QVERIFY(!m_model->containsAnyStatement(resA, Soprano::Vocabulary::RDF::type(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(resA, Vocabulary::NAO::userVisible(), LiteralValue(1)));
 
     // 4. remove a graph
     m_model->addStatement(resA, Soprano::Vocabulary::RDF::type(), QUrl("onto:/E"), QUrl("nepomuk:/G"));
@@ -257,17 +280,25 @@ void CrappyInferencer2Test::testUpdateAllResources()
 
     m_model->updateAllResources();
 
+    // wait for the above call to finish
+    QEventLoop loop;
+    connect(m_model, SIGNAL(allResourcesUpdated()), &loop, SLOT(quit()));
+    loop.exec();
+
     QVERIFY(m_model->containsAnyStatement(resA, Vocabulary::RDF::type(), QUrl("onto:/A")));
     QVERIFY(m_model->containsAnyStatement(resA, Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(m_model->containsAnyStatement(resA, Vocabulary::NAO::userVisible(), LiteralValue(1)));
 
     QVERIFY(m_model->containsAnyStatement(resB, Vocabulary::RDF::type(), QUrl("onto:/B")));
     QVERIFY(m_model->containsAnyStatement(resB, Vocabulary::RDF::type(), QUrl("onto:/A")));
     QVERIFY(m_model->containsAnyStatement(resB, Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(m_model->containsAnyStatement(resB, Vocabulary::NAO::userVisible(), LiteralValue(1)));
 
     QVERIFY(m_model->containsAnyStatement(resC, Vocabulary::RDF::type(), QUrl("onto:/C")));
     QVERIFY(m_model->containsAnyStatement(resC, Vocabulary::RDF::type(), QUrl("onto:/B")));
     QVERIFY(m_model->containsAnyStatement(resC, Vocabulary::RDF::type(), QUrl("onto:/A")));
     QVERIFY(m_model->containsAnyStatement(resC, Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Resource()));
+    QVERIFY(!m_model->containsAnyStatement(resC, Vocabulary::NAO::userVisible(), LiteralValue(1)));
 
     QVERIFY(m_model->containsAnyStatement(resD, Vocabulary::RDF::type(), QUrl("onto:/F")));
     QVERIFY(m_model->containsAnyStatement(resD, Vocabulary::RDF::type(), QUrl("onto:/E")));
@@ -275,7 +306,7 @@ void CrappyInferencer2Test::testUpdateAllResources()
     QVERIFY(m_model->containsAnyStatement(resD, Vocabulary::RDF::type(), QUrl("onto:/B")));
     QVERIFY(m_model->containsAnyStatement(resD, Vocabulary::RDF::type(), QUrl("onto:/A")));
     QVERIFY(m_model->containsAnyStatement(resD, Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Resource()));
-
+    QVERIFY(m_model->containsAnyStatement(resD, Vocabulary::NAO::userVisible(), LiteralValue(1)));
 }
 
 QTEST_KDEMAIN_CORE(CrappyInferencer2Test)
