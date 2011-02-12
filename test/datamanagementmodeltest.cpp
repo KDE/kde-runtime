@@ -1644,6 +1644,11 @@ void DataManagementModelTest::testMergeResources_createResource()
     m_model->containsAnyStatement(Soprano::Node(), NAO::prefLabel(), Soprano::LiteralValue(QLatin1String("Foobar")));
 
     // check if all the correct metadata graphs exist
+    // ask where {
+    //  graph ?g { ?r a nao:Tag . ?r nao:prefLabel "Foobar" . } .
+    //  graph ?mg { ?g a nrl:InstanceBase . ?mg a nrl:GraphMetadata . ?mg nrl:coreGraphMetadataFor ?g . } .
+    //  ?g nao:maintainedBy ?a . ?a nao:identifier "testapp"
+    // }
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
                                                       "graph ?g { ?r a %1 . ?r %2 %3 . } . "
                                                       "graph ?mg { ?g a %4 . ?mg a %5 . ?mg %6 ?g . } . "
@@ -1705,11 +1710,11 @@ void DataManagementModelTest::testMergeResources_createResource()
 
     // create a resource by specifying the URI
     SimpleResource res2;
-    res2.setUri(QUrl("res:/A"));
+    res2.setUri(QUrl("nepomuk:/res/A"));
     res2.m_properties.insert(QUrl("prop:/string"), QVariant(QLatin1String("foobar")));
     m_dmModel->mergeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"));
 
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+    QVERIFY(m_model->containsAnyStatement( res2.uri(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
 }
 
 void DataManagementModelTest::testMergeResources_invalid_args()
@@ -1780,12 +1785,13 @@ void DataManagementModelTest::testMergeResources_file1()
     QVERIFY(!m_model->containsAnyStatement(QUrl("file:/A"), Node(), Node()));
 
     // make sure file URL and res URI are properly related including the properties
-    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { ?r %1 <file:/A> . "
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { ?r %1 %4 . "
                                                       "?r a %2 . "
                                                       "?r <prop:/string> %3 . }")
                                   .arg(Node::resourceToN3(NIE::url()),
                                        Node::resourceToN3(NAO::Tag()),
-                                       Node::literalToN3(LiteralValue(QLatin1String("Foobar")))),
+                                       Node::literalToN3(LiteralValue(QLatin1String("Foobar"))),
+                                       Node::resourceToN3(QUrl("file:/A"))),
                                   Query::QueryLanguageSparql).boolValue());
 }
 
@@ -1794,25 +1800,28 @@ void DataManagementModelTest::testMergeResources_file2()
     ResourceManager::instance()->setOverrideMainModel( m_model );
 
     // merge a property with non-existing file value
+    QUrl fileUrl("file:///B");
+    
     SimpleResource r1;
-    r1.setUri(QUrl("res:/A"));
-    r1.m_properties.insert(QUrl("prop:/res"), QUrl("file:/B"));
+    r1.setUri(QUrl("nepomuk:/res/A"));
+    r1.m_properties.insert(QUrl("prop:/res"), fileUrl);
 
     m_dmModel->mergeResources(SimpleResourceGraph() << r1, QLatin1String("testapp"));
 
     // the property should have been created
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/res"), Node()));
+    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), Node()));
 
     // but it should not be related to the file URL
-    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("file:/B")));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), fileUrl));
 
     // there should be a nie:url for the file URL
-    QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl("file:/B")));
+    QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), fileUrl));
 
     // make sure file URL and res URI are properly related including the properties
-    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { <res:/A> <prop:/res> ?r . "
-                                                      "?r %1 <file:/B> . }")
-                                  .arg(Node::resourceToN3(NIE::url())),
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { <nepomuk:/res/A> <prop:/res> ?r . "
+                                                      "?r %1 %2 . }")
+                                  .arg(Node::resourceToN3(NIE::url()),
+                                       Node::resourceToN3(fileUrl)),
                                   Query::QueryLanguageSparql).boolValue());
 }
 
