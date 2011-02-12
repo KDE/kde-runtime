@@ -58,26 +58,26 @@ void DataManagementModelTest::resetModel()
 
     // add some classes and properties
     QUrl graph("graph:/onto");
-    m_model->addStatement( graph, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::Ontology(), graph );
+    m_model->addStatement( graph, RDF::type(), NRL::Ontology(), graph );
 
-    m_model->addStatement( QUrl("prop:/int"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdInt(), graph );
+    m_model->addStatement( QUrl("prop:/int"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/int"), RDFS::range(), XMLSchema::xsdInt(), graph );
 
-    m_model->addStatement( QUrl("prop:/int2"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int2"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdInt(), graph );
+    m_model->addStatement( QUrl("prop:/int2"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/int2"), RDFS::range(), XMLSchema::xsdInt(), graph );
 
-    m_model->addStatement( QUrl("prop:/int3"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int3"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdInt(), graph );
+    m_model->addStatement( QUrl("prop:/int3"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/int3"), RDFS::range(), XMLSchema::xsdInt(), graph );
 
-    m_model->addStatement( QUrl("prop:/string"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/string"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::string(), graph );
+    m_model->addStatement( QUrl("prop:/string"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/string"), RDFS::range(), XMLSchema::string(), graph );
 
-    m_model->addStatement( QUrl("prop:/res"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::RDFS::Resource(), graph );
+    m_model->addStatement( QUrl("prop:/res"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/res"), RDFS::range(), RDFS::Resource(), graph );
 
-    m_model->addStatement( QUrl("prop:/res_c1"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::RDFS::Resource(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), Soprano::Vocabulary::NRL::maxCardinality(), LiteralValue(1), graph );
+    m_model->addStatement( QUrl("prop:/res_c1"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/res_c1"), RDFS::range(), RDFS::Resource(), graph );
+    m_model->addStatement( QUrl("prop:/res_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
 
 
     // rebuild the internals of the data management model
@@ -127,12 +127,12 @@ void DataManagementModelTest::testAddProperty()
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
                                                       "graph ?g { ?r a %1 . ?r %2 %3 . } . "
                                                       "graph ?mg { ?g a %4 . ?mg a %5 . ?mg %6 ?g . } . }")
-                                  .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::Agent()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::identifier()),
+                                  .arg(Soprano::Node::resourceToN3(NAO::Agent()),
+                                       Soprano::Node::resourceToN3(NAO::identifier()),
                                        Soprano::Node::literalToN3(QLatin1String("Testapp")),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::InstanceBase()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::GraphMetadata()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::coreGraphMetadataFor())),
+                                       Soprano::Node::resourceToN3(NRL::InstanceBase()),
+                                       Soprano::Node::resourceToN3(NRL::GraphMetadata()),
+                                       Soprano::Node::resourceToN3(NRL::coreGraphMetadataFor())),
                                   Soprano::Query::QueryLanguageSparql).boolValue());
 
     // check that we have an InstanceBase with a GraphMetadata graph
@@ -141,9 +141,9 @@ void DataManagementModelTest::testAddProperty()
                                                       "graph ?mg { ?g a %2 . ?mg a %3 . ?mg %4 ?g . } . "
                                                       "}")
                                   .arg(Soprano::Node::literalToN3(QLatin1String("foobar")),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::InstanceBase()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::GraphMetadata()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::coreGraphMetadataFor())),
+                                       Soprano::Node::resourceToN3(NRL::InstanceBase()),
+                                       Soprano::Node::resourceToN3(NRL::GraphMetadata()),
+                                       Soprano::Node::resourceToN3(NRL::coreGraphMetadataFor())),
                                   Soprano::Query::QueryLanguageSparql).boolValue());
 
     // check the number of graphs (two for the app, two for the actual data, and one for the ontology)
@@ -188,17 +188,17 @@ void DataManagementModelTest::testAddProperty()
     // plus the new app
     existingStatements.addStatements(
                 m_model->executeQuery(QString::fromLatin1("select ?g ?s ?p ?o where { graph ?g { ?s ?p ?o . } . filter(bif:exists((select (1) where { graph ?g { ?a a %1 . ?a %2 %3 . } . })))}")
-                                      .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::Agent()),
-                                           Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::identifier()),
+                                      .arg(Soprano::Node::resourceToN3(NAO::Agent()),
+                                           Soprano::Node::resourceToN3(NAO::identifier()),
                                            Soprano::Node::literalToN3(QLatin1String("Otherapp"))),
                                       Soprano::Query::QueryLanguageSparql)
                 .iterateStatementsFromBindings(QLatin1String("s"), QLatin1String("p"), QLatin1String("o"), QLatin1String("g"))
                 .allStatements()
                 + m_model->executeQuery(QString::fromLatin1("select ?g ?s ?p ?o where { graph ?g { ?s ?p ?o . } . filter(bif:exists((select (1) where { graph ?gg { ?a a %1 . ?a %2 %3 . } . ?g %4 ?gg . })))}")
-                                        .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::Agent()),
-                                             Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::identifier()),
+                                        .arg(Soprano::Node::resourceToN3(NAO::Agent()),
+                                             Soprano::Node::resourceToN3(NAO::identifier()),
                                              Soprano::Node::literalToN3(QLatin1String("Otherapp")),
-                                             Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::coreGraphMetadataFor())),
+                                             Soprano::Node::resourceToN3(NRL::coreGraphMetadataFor())),
                                         Soprano::Query::QueryLanguageSparql)
                 .iterateStatementsFromBindings(QLatin1String("s"), QLatin1String("p"), QLatin1String("o"), QLatin1String("g"))
                 .allStatements()
@@ -366,9 +366,6 @@ void DataManagementModelTest::testAddProperty_invalid_args()
 
 void DataManagementModelTest::testAddProperty_blankNodes()
 {
-    using namespace Nepomuk::Vocabulary;
-    using namespace Soprano::Vocabulary;
-
     Graph existingStatements = m_model->listStatements().allStatements();
     
     m_dmModel->addProperty( QList<QUrl>() << QUrl("_:asd"), RDF::type(),
@@ -392,12 +389,12 @@ void DataManagementModelTest::testSetProperty()
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
                                                       "graph ?g { ?r a %1 . ?r %2 %3 . } . "
                                                       "graph ?mg { ?g a %4 . ?mg a %5 . ?mg %6 ?g . } . }")
-                                  .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::Agent()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::identifier()),
+                                  .arg(Soprano::Node::resourceToN3(NAO::Agent()),
+                                       Soprano::Node::resourceToN3(NAO::identifier()),
                                        Soprano::Node::literalToN3(QLatin1String("Testapp")),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::InstanceBase()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::GraphMetadata()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::coreGraphMetadataFor())),
+                                       Soprano::Node::resourceToN3(NRL::InstanceBase()),
+                                       Soprano::Node::resourceToN3(NRL::GraphMetadata()),
+                                       Soprano::Node::resourceToN3(NRL::coreGraphMetadataFor())),
                                   Soprano::Query::QueryLanguageSparql).boolValue());
 
     // check that we have an InstanceBase with a GraphMetadata graph
@@ -406,9 +403,9 @@ void DataManagementModelTest::testSetProperty()
                                                       "graph ?mg { ?g a %2 . ?mg a %3 . ?mg %4 ?g . } . "
                                                       "}")
                                   .arg(Soprano::Node::literalToN3(QLatin1String("foobar")),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::InstanceBase()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::GraphMetadata()),
-                                       Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::coreGraphMetadataFor())),
+                                       Soprano::Node::resourceToN3(NRL::InstanceBase()),
+                                       Soprano::Node::resourceToN3(NRL::GraphMetadata()),
+                                       Soprano::Node::resourceToN3(NRL::coreGraphMetadataFor())),
                                   Soprano::Query::QueryLanguageSparql).boolValue());
 
     // check the number of graphs (two for the app, two for the actual data, and one for the ontology)
@@ -712,7 +709,7 @@ void DataManagementModelTest::testRemoveProperty()
     const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
-    m_model->addStatement(QUrl("res:/A"), Soprano::Vocabulary::NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g1);
 
     m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QLatin1String("hello world"), QLatin1String("Testapp"));
 
@@ -722,8 +719,8 @@ void DataManagementModelTest::testRemoveProperty()
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world"))));
 
     // test that the mtime has been updated (and is thus in another graph)
-    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Soprano::Vocabulary::NAO::lastModified(), Soprano::Node(), g1));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), Soprano::Vocabulary::NAO::lastModified(), Soprano::Node()));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), NAO::lastModified(), Soprano::Node(), g1));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::lastModified(), Soprano::Node()));
 
     // test that the other property value is still valid
     QVERIFY(m_model->containsStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1));
@@ -749,9 +746,6 @@ void DataManagementModelTest::testRemoveProperty()
 
 void DataManagementModelTest::testSetProperty_blankNodes()
 {
-    using namespace Nepomuk::Vocabulary;
-    using namespace Soprano::Vocabulary;
-    
     Graph existingStatements = m_model->listStatements().allStatements();
     
     m_dmModel->setProperty( QList<QUrl>() << QUrl("_:SetProperty"), RDF::type(),
@@ -802,7 +796,7 @@ void DataManagementModelTest::testRemoveProperty_invalid_args()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g1);
-    m_model->addStatement(QUrl("res:/A"), Soprano::Vocabulary::NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g1);
 
     // remember current state to compare later on
     Soprano::Graph existingStatements = m_model->listStatements().allStatements();
@@ -890,9 +884,6 @@ void DataManagementModelTest::testRemoveProperty_invalid_args()
 
 void DataManagementModelTest::testRemoveProperty_blankNodes()
 {
-    using namespace Nepomuk::Vocabulary;
-    using namespace Soprano::Vocabulary;
-    
     Graph existingStatements = m_model->listStatements().allStatements();
     
     m_dmModel->removeProperty( QList<QUrl>() << QUrl("_:removeProperty"), RDF::type(),
@@ -1074,9 +1065,6 @@ void DataManagementModelTest::testRemoveProperties_invalid_args()
 
 void DataManagementModelTest::testRemoveProperties_blankNodes()
 {
-    using namespace Nepomuk::Vocabulary;
-    using namespace Soprano::Vocabulary;
-    
     Graph existingStatements = m_model->listStatements().allStatements();
     
     m_dmModel->removeProperties( QList<QUrl>() << QUrl("_:asd"),
@@ -1246,9 +1234,6 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
 
 void DataManagementModelTest::testRemoveResources_blankNodes()
 {
-    using namespace Nepomuk::Vocabulary;
-    using namespace Soprano::Vocabulary;
-    
     Graph existingStatements = m_model->listStatements().allStatements();
     
     m_dmModel->removeResources( QList<QUrl>() << QUrl("_:remResources"), QLatin1String("testapp") );
