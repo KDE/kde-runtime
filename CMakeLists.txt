@@ -16,6 +16,7 @@ include_directories(
 )
 
 set( datamanagement_BIN_SRCS
+  transactionmodel.cpp
   datamanagementservice.cpp
   datamanagementmodel.cpp
   datamanagementadaptor.cpp

@@ -13,7 +13,8 @@ kde4_add_unit_test(datamanagementmodeltest
   datamanagementmodeltest.cpp
   ../classandpropertytree.cpp
   ../datamanagementmodel.cpp
-  ../resourcemerger.cpp)
+  ../resourcemerger.cpp
+  ../transactionmodel.cpp)
 
 target_link_libraries(datamanagementmodeltest
   ${QT_QTTEST_LIBRARY}
@@ -29,7 +30,8 @@ kde4_add_unit_test(datamanagementadaptortest
   ../datamanagementmodel.cpp
   ../datamanagementadaptor.cpp
   ../datamanagementcommand.cpp
-  ../resourcemerger.cpp)
+  ../resourcemerger.cpp
+  ../transactionmodel.cpp)
 
 target_link_libraries(datamanagementadaptortest
   ${QT_QTTEST_LIBRARY}
