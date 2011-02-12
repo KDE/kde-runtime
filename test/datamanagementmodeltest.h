@@ -46,6 +46,7 @@ private Q_SLOTS:
     void testAddProperty_cardinality();
     void testAddProperty_file();
     void testAddProperty_invalid_args();
+    void testAddProperty_blankNodes();
 
     void testSetProperty();
     void testSetProperty_overwrite();
@@ -55,18 +56,22 @@ private Q_SLOTS:
     void testSetProperty_nieUrl3();
     void testSetProperty_nieUrl4();
     void testSetProperty_nieUrl5();
+    void testSetProperty_blankNodes();
 
     void testRemoveProperty();
     void testRemoveProperty_file();
     void testRemoveProperty_invalid_args();
+    void testRemoveProperty_blankNodes();
 
     void testRemoveProperties();
     void testRemoveProperties_invalid_args();
-
+    void testRemoveProperties_blankNodes();
+    
     void testRemoveResources();
     void testRemoveResources_subresources();
     void testRemoveResources_invalid_args();
-
+    void testRemoveResources_blankNodes();
+    
     void testRemoveDataByApplication1();
     void testRemoveDataByApplication2();
     void testRemoveDataByApplication3();
