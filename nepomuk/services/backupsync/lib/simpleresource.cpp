@@ -228,3 +228,9 @@ QList< Soprano::Statement > Nepomuk::Sync::ResourceHash::toStatementList() const
 
     return stList;
 }
+
+
+bool Nepomuk::Sync::SimpleResource::isValid() const
+{
+    return !d->uri.isEmpty() && !isEmpty();
+}
