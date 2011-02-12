@@ -157,7 +157,8 @@ namespace {
 // static
 Nepomuk::Sync::SimpleResource Nepomuk::Sync::SimpleResource::fromStatementList(const QList< Soprano::Statement >& list)
 {
-    Q_ASSERT( !list.isEmpty() );
+    if( list.isEmpty() )
+        return SimpleResource();
     
     SimpleResource res;
     Soprano::Node subject = list.first().subject();
