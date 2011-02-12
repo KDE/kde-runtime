@@ -45,6 +45,7 @@ private Q_SLOTS:
     void testAddProperty();
     void testAddProperty_cardinality();
     void testAddProperty_file();
+    void testAddProperty_invalidFile();
     void testAddProperty_invalid_args();
     void testAddProperty_blankNodes();
 

@@ -32,7 +32,8 @@
 #define USING_SOPRANO_NRLMODEL_UNSTABLE_API
 #include <Soprano/NRLModel>
 
-#include <ktempdir.h>
+#include <KTemporaryFile>
+#include <KTempDir>
 #include <KDebug>
 
 #include <Nepomuk/Vocabulary/NFO>
@@ -283,6 +284,25 @@ void DataManagementModelTest::testAddProperty_file()
     QCOMPARE(m_model->listStatements(Node(), NIE::url(), QUrl("file:/A")).allStatements().count(), 1);
 }
 
+void DataManagementModelTest::testAddProperty_invalidFile()
+{
+    KTemporaryFile f1;
+    QVERIFY( f1.open() );
+    QUrl f1Url( f1.fileName() );
+    //f1Url.setScheme("file");
+    
+    m_dmModel->addProperty( QList<QUrl>() << f1Url, RDF::type(), QVariantList() << NAO::Tag(), QLatin1String("testapp") );
+    
+    // This should pass - Why should I have to mention file:// before my file urls
+    // It's so much easier to just write /home/whatever
+    QVERIFY( m_model->containsAnyStatement( Node(), NIE::url(), f1Url ) );
+    
+    m_dmModel->addProperty( QList<QUrl>() << QUrl("file:///Blah"), NIE::comment(),
+                            QVariantList() << "Comment", QLatin1String("testapp") );
+    
+    // There should be some error as '/Blah' does not exist
+    QVERIFY(m_dmModel->lastError());
+}
 
 void DataManagementModelTest::testAddProperty_invalid_args()
 {

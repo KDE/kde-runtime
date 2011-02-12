@@ -228,7 +228,10 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
                 setError(QLatin1String("addProperty: No two resources can have the same nie:url at the same time."), Soprano::Error::ErrorInvalidArgument);
                 return;
             }
-            else if(containsAnyStatement(resources.first(), NIE::url(), Soprano::Node())) { // TODO: this can be removed as soon as nie:url gets a max cardinality of 1
+            else if(containsAnyStatement(resources.first(), NIE::url(), Soprano::Node())) {
+                // TODO: this can be removed as soon as nie:url gets a max cardinality of 1
+                // vHanda: nie:url as of KDE 4.6 has a max cardinality of 1. This is due to the
+                //         nepomuk resource identification ontology
                 setError(QLatin1String("addProperty: One resource can only have one nie:url."), Soprano::Error::ErrorInvalidArgument);
                 return;
             }
