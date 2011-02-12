@@ -71,5 +71,11 @@ QList< Soprano::Statement > SimpleResource::toStatementList() const
     return list;
 }
 
+bool SimpleResource::isValid() const
+{
+    // We donot check if m_uri.isValid() as a blank uri of the form "_:daf" would be invalid
+    return !m_uri.isEmpty() && ( !m_properties.isEmpty() );
+}
+
 
 } // namespace Nepomuk

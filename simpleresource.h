@@ -44,6 +44,7 @@ public:
     PropertyHash m_properties;
 
     QList<Soprano::Statement> toStatementList() const;
+    bool isValid() const;
 private :
     QUrl m_uri;    
 };
