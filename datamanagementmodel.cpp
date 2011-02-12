@@ -53,6 +53,7 @@
 #include <KDebug>
 #include <KService>
 #include <KServiceTypeTrader>
+#include <Nepomuk/Variant>
 
 using namespace Nepomuk::Vocabulary;
 using namespace Soprano::Vocabulary;
@@ -942,27 +943,92 @@ void Nepomuk::DataManagementModel::removePropertiesByApplication(const QList<QUr
     setError("Not implemented yet");
 }
 
-
+namespace {
+    QUrl createBlankUri() {
+        //FIXME: This could statistically give 2 non-unique ids. Should we use more that the
+        //       first 5 characters?
+        return QUrl( QLatin1String("_:") + QUuid::createUuid().toString().mid(1, 5) );
+    }
+}
 void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceGraph &resources, const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
 {
-
-    QList<Soprano::Statement> allStatements;
-
     if(app.isEmpty()) {
         setError(QLatin1String("mergeResources: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
-
-    clearError();
-
     if(resources.isEmpty()) {
-        // nothing to do
         return;
     }
+    
+    using namespace Nepomuk::Vocabulary;
+    using namespace Soprano::Vocabulary;
+
+    QHash<QUrl, QUrl> resolvedNodes;
+    SimpleResourceGraph resGraph( resources );
+    QMutableListIterator<SimpleResource> iter( resGraph );
+    while( iter.hasNext() ) {
+        SimpleResource & res = iter.next();
+        
+        if( !res.isValid() ) {
+            setError(QLatin1String("mergeResources: One of the resources is Invalid."), Soprano::Error::ErrorInvalidArgument);
+            return;
+        }
+        
+        // Hanlde file uris
+        if( res.uri().scheme() == QLatin1String("file") ) { //TODO: Even handle filex: ?
+            QUrl fileUri = res.uri();
+            QUrl newResUri = resolveUrl( fileUri );
+            if( newResUri.isEmpty() ) {
+                // Resolution of one file failed. Assign it a random blank uri
+                newResUri = createBlankUri();
+            }
+            resolvedNodes.insert( fileUri, newResUri );
+
+            res.setUri( newResUri );
+            if( !res.m_properties.contains( NIE::url(), fileUri ) )
+                res.m_properties.insert( NIE::url(), fileUri );
+            if( !res.m_properties.contains( RDF::type(), NFO::FileDataObject() ) )
+                res.m_properties.insert( RDF::type(), NFO::FileDataObject() );
+        }
+    }
+
 
     Sync::ResourceIdentifier resIdent;
+    QList<Soprano::Statement> allStatements;
+    QList<Sync::SimpleResource> extraResources;
     
-    foreach( const SimpleResource & res, resources ) {
+    foreach( SimpleResource res, resGraph ) {
+        QMutableHashIterator<QUrl, QVariant> it( res.m_properties );
+        while( it.hasNext() ) {
+            it.next();
+
+            Nepomuk::Variant var( it.value() );
+            if( var.isResource() && var.toUrl().scheme() == QLatin1String("file")
+                && it.key() != NIE::url() ) {
+                const QUrl fileUri = var.toUrl();
+                // Need to resolve it
+                QHash< QUrl, QUrl >::const_iterator findIter = resolvedNodes.find( fileUri );
+                if( findIter != resolvedNodes.end() ) {
+                    it.setValue( findIter.value() );
+                }
+                else {
+                    // It doesn't exist, create it
+                    QUrl resolvedUri = resolveUrl( fileUri );
+                    if( resolvedUri.isEmpty() )
+                        resolvedUri = createBlankUri();
+
+                    Sync::SimpleResource newRes;
+                    newRes.setUri( resolvedUri );
+                    newRes.insert( RDF::type(), NFO::FileDataObject() );
+                    newRes.insert( NIE::url(), fileUri );
+
+                    extraResources.append( newRes );
+
+                    it.setValue( resolvedUri );
+                }
+            }
+        }
+        
         QList< Soprano::Statement > stList = res.toStatementList();
         allStatements << stList;
 
@@ -971,11 +1037,12 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
             return;
         }
 
-        // trueg: IMHO fromStatementList should be able to handle an empty list and not assert on it.
-        //        Instead it should simply return an invalid SimpleResource.
         Sync::SimpleResource simpleRes = Sync::SimpleResource::fromStatementList( stList );
+        if( !simpleRes.isValid() ) {
+            setError(QLatin1String("mergeResources: Contains invalid resources."), Soprano::Error::ErrorParsingFailed);
+            return;
+        }
         resIdent.addSimpleResource( simpleRes );
-        // TODO: check if res is valid and if not: setError...
     }
     
     resIdent.setModel( this );
@@ -988,6 +1055,10 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
         //return;
     }
 
+    foreach( const Sync::SimpleResource & res, extraResources ) {
+        allStatements << res.toStatementList();
+    }
+    
     ResourceMerger merger( this, app, additionalMetadata );
     merger.merge( Soprano::Graph(allStatements), resIdent.mappings() );
 
