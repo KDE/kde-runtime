@@ -113,6 +113,10 @@ namespace {
             terms[i].prepend(QString::fromLatin1("%1!=").arg(var));
         return terms.join(QLatin1String(" && "));
     }
+
+    inline bool isLocalFileUrl(const QUrl& url) {
+        return url.scheme() == QLatin1String("file");
+    }
 }
 
 class Nepomuk::DataManagementModel::Private
@@ -978,7 +982,7 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
         }
         
         // Hanlde file uris
-        if( res.uri().scheme() == QLatin1String("file") ) { //TODO: Even handle filex: ?
+        if(isLocalFileUrl(res.uri())) { //TODO: Even handle filex: ?
             QUrl fileUri = res.uri();
             QUrl newResUri = resolveUrl( fileUri );
             if( newResUri.isEmpty() ) {
@@ -1007,7 +1011,7 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
             it.next();
 
             Nepomuk::Variant var( it.value() );
-            if( var.isResource() && var.toUrl().scheme() == QLatin1String("file")
+            if( var.isResource() && isLocalFileUrl(var.toUrl())
                 && it.key() != NIE::url() ) {
                 const QUrl fileUri = var.toUrl();
                 // Need to resolve it
@@ -1116,7 +1120,7 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
     QSet<QUrl> fileUrls;
     QSet<QUrl> resUris;
     foreach( const QUrl & res, resources ) {
-        if(res.scheme() == QLatin1String("file"))
+        if(isLocalFileUrl(res))
             fileUrls.insert(res);
         else
             resUris.insert(res);
@@ -1528,7 +1532,7 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::resolveUrls(const QList<QUrl> &u
 
 QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url) const
 {
-    if(url.scheme() == QLatin1String("file")) {
+    if(isLocalFileUrl(url)) {
         Soprano::QueryResultIterator it
                 = executeQuery(QString::fromLatin1("select ?r where { ?r %1 %2 . } limit 1")
                                .arg(Soprano::Node::resourceToN3(NIE::url()),
@@ -1582,7 +1586,7 @@ bool Nepomuk::DataManagementModel::updateNieUrlOnLocalFile(const QUrl &resource,
     QUrl resUri, oldNieUrl, oldNieUrlGraph, oldParentResource, oldParentResourceGraph, oldFileNameGraph;
     QString oldFileName;
 
-    if(resource.scheme() == QLatin1String("file")) {
+    if(isLocalFileUrl(resource)) {
         oldNieUrl = resource;
         Soprano::QueryResultIterator it
                 = executeQuery(QString::fromLatin1("select distinct ?gu ?gf ?gp ?r ?f ?p where { "
