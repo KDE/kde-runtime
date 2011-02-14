@@ -398,7 +398,7 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     const QSet<Soprano::Node> existingValues = QSet<Soprano::Node>::fromList(resolvedNodes.values());
     QSet<QUrl> graphs;
     QList<Soprano::BindingSet> existing
-            = executeQuery(QString::fromLatin1("select ?r ?v where { graph ?g { ?r %1 ?v . FILTER(?r in (%2)) . } . }")
+            = executeQuery(QString::fromLatin1("select ?r ?v ?g where { graph ?g { ?r %1 ?v . FILTER(?r in (%2)) . } . }")
                            .arg(Soprano::Node::resourceToN3(property),
                                 resourcesToN3(uriHash).join(QLatin1String(","))),
                            Soprano::Query::QueryLanguageSparql).allBindings();
