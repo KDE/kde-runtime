@@ -24,6 +24,7 @@
 #include <QtCore/QDirIterator>
 #include <QtCore/QFile>
 #include <QtCore/QQueue>
+#include <QtCore/QScopedArrayPointer>
 
 #include <kdebug.h>
 
@@ -142,7 +143,8 @@ public:
 
         const int len = offsetof(struct dirent, d_name) +
                 pathconf(path.data(), _PC_NAME_MAX) + 1;
-        struct dirent* entry = ( struct dirent* )new char[len];
+        QScopedArrayPointer<char> entryData( new char[len] );
+        struct dirent* entry = ( struct dirent* )entryData.data();
 
         DIR* dir = opendir( path.data() );
         if ( dir ) {
@@ -175,8 +177,6 @@ public:
             }
 
             closedir( dir );
-            delete [] entry;
-
             return true;
         }
         else {
