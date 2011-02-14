@@ -385,17 +385,6 @@ void DataManagementModelTest::testAddProperty_invalid_args()
 }
 
 
-void DataManagementModelTest::testAddProperty_blankNodes()
-{
-    Graph existingStatements = m_model->listStatements().allStatements();
-    
-    m_dmModel->addProperty( QList<QUrl>() << QUrl("_:asd"), RDF::type(),
-                            QVariantList() << NFO::FileDataObject(), QLatin1String("testapp") );
-
-    QCOMPARE( existingStatements, Graph( m_model->listStatements().allStatements() ) );    
-}
-
-
 void DataManagementModelTest::testSetProperty()
 {
     // adding the most basic property
@@ -765,19 +754,6 @@ void DataManagementModelTest::testRemoveProperty()
     QCOMPARE(m_model->statementCount(), cleanCount+6);
 }
 
-void DataManagementModelTest::testSetProperty_blankNodes()
-{
-    Graph existingStatements = m_model->listStatements().allStatements();
-    
-    m_dmModel->setProperty( QList<QUrl>() << QUrl("_:SetProperty"), RDF::type(),
-                            QVariantList() << NFO::FileDataObject(), QLatin1String("testapp") );
-    
-    QCOMPARE( existingStatements, Graph( m_model->listStatements().allStatements() ) );
-    
-    kDebug() << m_dmModel->lastError();
-}
-
-
 void DataManagementModelTest::testRemoveProperty_file()
 {
     // prepare some test data
@@ -902,19 +878,6 @@ void DataManagementModelTest::testRemoveProperty_invalid_args()
     // no data should have been changed
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
-
-void DataManagementModelTest::testRemoveProperty_blankNodes()
-{
-    Graph existingStatements = m_model->listStatements().allStatements();
-    
-    m_dmModel->removeProperty( QList<QUrl>() << QUrl("_:removeProperty"), RDF::type(),
-                               QVariantList() << NFO::FileDataObject(), QLatin1String("testapp") );
-    
-    QCOMPARE( existingStatements, Graph( m_model->listStatements().allStatements() ) );
-    
-    kDebug() << m_dmModel->lastError();
-}
-
 
 void DataManagementModelTest::testRemoveProperties()
 {
@@ -1084,19 +1047,6 @@ void DataManagementModelTest::testRemoveProperties_invalid_args()
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
-void DataManagementModelTest::testRemoveProperties_blankNodes()
-{
-    Graph existingStatements = m_model->listStatements().allStatements();
-    
-    m_dmModel->removeProperties( QList<QUrl>() << QUrl("_:asd"),
-                                 QList<QUrl>() << RDF::type() << NIE::url(),
-                                 QLatin1String("testapp") );
-    
-    QCOMPARE( existingStatements, Graph( m_model->listStatements().allStatements() ) );
-    
-    kDebug() << m_dmModel->lastError();
-}
-
 
 void DataManagementModelTest::testRemoveResources()
 {
@@ -1251,17 +1201,6 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
 
     // no data should have been changed
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
-}
-
-void DataManagementModelTest::testRemoveResources_blankNodes()
-{
-    Graph existingStatements = m_model->listStatements().allStatements();
-    
-    m_dmModel->removeResources( QList<QUrl>() << QUrl("_:remResources"), QLatin1String("testapp") );
-    
-    QCOMPARE( existingStatements, Graph( m_model->listStatements().allStatements() ) );
-    
-    kDebug() << m_dmModel->lastError();
 }
 
 // the isolated test: create one graph with one resource, delete that resource
