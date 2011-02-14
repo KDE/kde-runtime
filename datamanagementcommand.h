@@ -27,7 +27,7 @@
 #include <QtDBus/QDBusMessage>
 
 #include "datamanagementmodel.h"
-#include "simpleresource.h"
+#include "simpleresourcegraph.h"
 
 
 namespace Nepomuk {

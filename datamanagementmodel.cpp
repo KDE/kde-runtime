@@ -22,6 +22,8 @@
 #include "datamanagementmodel.h"
 #include "classandpropertytree.h"
 #include "resourcemerger.h"
+#include "simpleresourcegraph.h"
+#include "simpleresource.h"
 
 #include <nepomuk/simpleresource.h>
 #include <nepomuk/resourceidentifier.h>
@@ -974,7 +976,8 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
 
     QHash<QUrl, QUrl> resolvedNodes;
     SimpleResourceGraph resGraph( resources );
-    QMutableListIterator<SimpleResource> iter( resGraph );
+    QList<SimpleResource> resGraphList = resGraph.toList();
+    QMutableListIterator<SimpleResource> iter( resGraphList );
     while( iter.hasNext() ) {
         SimpleResource & res = iter.next();
         
@@ -1000,13 +1003,14 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
                 res.m_properties.insert( RDF::type(), NFO::FileDataObject() );
         }
     }
+    resGraph = resGraphList;
 
 
     Sync::ResourceIdentifier resIdent;
     QList<Soprano::Statement> allStatements;
     QList<Sync::SimpleResource> extraResources;
     
-    foreach( SimpleResource res, resGraph ) {
+    foreach( SimpleResource res, resGraph.toList() ) {
         QMutableHashIterator<QUrl, QVariant> it( res.m_properties );
         while( it.hasNext() ) {
             it.next();

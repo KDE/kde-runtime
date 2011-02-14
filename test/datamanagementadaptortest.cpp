@@ -23,7 +23,7 @@
 #include "../datamanagementmodel.h"
 #include "../datamanagementadaptor.h"
 #include "../classandpropertytree.h"
-#include "../simpleresource.h"
+#include "simpleresource.h"
 
 #include <QtTest>
 #include "qtest_kde.h"

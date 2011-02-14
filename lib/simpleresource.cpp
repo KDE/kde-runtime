@@ -25,24 +25,22 @@
 
 #include <Nepomuk/Variant>
 
-namespace Nepomuk {
-
-SimpleResource::SimpleResource()
+Nepomuk::SimpleResource::SimpleResource()
 {
 
 }
 
-SimpleResource::~SimpleResource()
+Nepomuk::SimpleResource::~SimpleResource()
 {
 
 }
 
-QUrl SimpleResource::uri() const
+QUrl Nepomuk::SimpleResource::uri() const
 {
     return m_uri;
 }
 
-void SimpleResource::setUri(const QUrl& uri)
+void Nepomuk::SimpleResource::setUri(const QUrl& uri)
 {
     m_uri = uri;
 }
@@ -56,7 +54,7 @@ namespace {
     }
 }
 
-QList< Soprano::Statement > SimpleResource::toStatementList() const
+QList< Soprano::Statement > Nepomuk::SimpleResource::toStatementList() const
 {
     QList<Soprano::Statement> list;
     QHashIterator<QUrl, QVariant> it( m_properties );
@@ -71,11 +69,18 @@ QList< Soprano::Statement > SimpleResource::toStatementList() const
     return list;
 }
 
-bool SimpleResource::isValid() const
+bool Nepomuk::SimpleResource::isValid() const
 {
     // We donot check if m_uri.isValid() as a blank uri of the form "_:daf" would be invalid
     return !m_uri.isEmpty() && ( !m_properties.isEmpty() );
 }
 
+bool Nepomuk::SimpleResource::operator ==(const Nepomuk::SimpleResource &other) const
+{
+    return m_uri == other.m_uri && m_properties == other.m_properties;
+}
 
-} // namespace Nepomuk
+uint Nepomuk::qHash(const SimpleResource& res)
+{
+    return qHash(res.uri());
+}

@@ -12,6 +12,7 @@ include_directories(
   ${KDE4_INCLUDES}
   ${SOPRANO_INCLUDE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
+  ${CMAKE_SOURCE_DIR}/lib
 )
 
 set( datamanagement_BIN_SRCS
@@ -21,7 +22,6 @@ set( datamanagement_BIN_SRCS
   datamanagementcommand.cpp
   classandpropertytree.cpp
   resourcemerger.cpp
-  simpleresource.cpp
 )
 
 kde4_add_plugin(nepomukdatamanagementservice ${datamanagement_BIN_SRCS})
@@ -33,6 +33,7 @@ target_link_libraries(nepomukdatamanagementservice
   ${SOPRANO_LIBRARIES}
   ${NEPOMUK_LIBRARIES}
   nepomuksync
+  nepomukdatamanagement
 )
 
 install(TARGETS nepomukdatamanagementservice
@@ -40,4 +41,5 @@ install(TARGETS nepomukdatamanagementservice
 install(FILES nepomukdatamanagementservice.desktop
   DESTINATION ${SERVICES_INSTALL_DIR})
 
+add_subdirectory(lib)
 add_subdirectory(test)

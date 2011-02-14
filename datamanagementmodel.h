@@ -26,11 +26,10 @@
 
 #include <QtCore/QDateTime>
 
-#include "simpleresource.h"
-
 namespace Nepomuk {
 
 class ResourceMerger;
+class SimpleResourceGraph;
 
 class DataManagementModel : public Soprano::FilterModel
 {

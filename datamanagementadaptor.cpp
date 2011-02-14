@@ -27,6 +27,7 @@
 #include "datamanagementadaptor.h"
 #include "datamanagementmodel.h"
 #include "datamanagementcommand.h"
+#include "simpleresourcegraph.h"
 
 #include <QtCore/QMetaObject>
 #include <QtCore/QByteArray>

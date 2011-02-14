@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2011 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,39 +19,13 @@
    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SIMPLERESOURCE_H
-#define SIMPLERESOURCE_H
-
-#include <QtCore/QUrl>
-#include <QtCore/QMultiHash>
-#include <QtCore/QList>
-
-#include <Soprano/Statement>
+#include "datamanagement.h"
 
 namespace Nepomuk {
 
-typedef QMultiHash<QUrl, QVariant> PropertyHash;
-
-class SimpleResource
+DataManagement::DataManagement(QObject *parent) :
+    QObject(parent)
 {
-public:
-    SimpleResource();
-    virtual ~SimpleResource();
-    
-    QUrl uri() const;
-    void setUri( const QUrl & uri );
-
-    PropertyHash m_properties;
-
-    QList<Soprano::Statement> toStatementList() const;
-    bool isValid() const;
-private :
-    QUrl m_uri;    
-};
-
-typedef QList<SimpleResource> SimpleResourceGraph;
 }
 
-Q_DECLARE_METATYPE(Nepomuk::SimpleResourceGraph)
-
-#endif
+} // namespace Nepomuk

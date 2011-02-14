@@ -13,7 +13,6 @@ kde4_add_unit_test(datamanagementmodeltest
   datamanagementmodeltest.cpp
   ../classandpropertytree.cpp
   ../datamanagementmodel.cpp
-  ../simpleresource.cpp
   ../resourcemerger.cpp)
 
 target_link_libraries(datamanagementmodeltest
@@ -21,6 +20,7 @@ target_link_libraries(datamanagementmodeltest
   ${SOPRANO_LIBRARIES}
   ${KDE4_KDECORE_LIBS}
   nepomuksync
+  nepomukdatamanagement
 )
 
 kde4_add_unit_test(datamanagementadaptortest
@@ -29,7 +29,6 @@ kde4_add_unit_test(datamanagementadaptortest
   ../datamanagementmodel.cpp
   ../datamanagementadaptor.cpp
   ../datamanagementcommand.cpp
-  ../simpleresource.cpp
   ../resourcemerger.cpp)
 
 target_link_libraries(datamanagementadaptortest
@@ -37,4 +36,5 @@ target_link_libraries(datamanagementadaptortest
   ${SOPRANO_LIBRARIES}
   ${KDE4_KDECORE_LIBS}
   nepomuksync
+  nepomukdatamanagement
 )

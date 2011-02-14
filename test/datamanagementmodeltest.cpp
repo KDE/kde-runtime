@@ -22,7 +22,8 @@
 #include "datamanagementmodeltest.h"
 #include "../datamanagementmodel.h"
 #include "../classandpropertytree.h"
-#include "../simpleresource.h"
+#include "simpleresource.h"
+#include "simpleresourcegraph.h"
 
 #include <QtTest>
 #include "qtest_kde.h"
@@ -50,7 +51,7 @@ using namespace Nepomuk::Vocabulary;
 
 
 // TODO: test nao:created and nao:lastModified, these should always be correct for existing resources. This is especially important in the removeDataByApplication methods.
-// TODO: how about not allowing to change the nie:url of more than one resource at the same time. After all that is supposed to be unique.
+// TODO: test that trailing graphs are properly removed in all methods.
 
 void DataManagementModelTest::resetModel()
 {
@@ -1539,7 +1540,7 @@ void DataManagementModelTest::testMergeResources()
     res.m_properties.insert( QUrl("nepomuk:/mergeTest/prop1"), QVariant(10) );
 
     Nepomuk::SimpleResourceGraph graph;
-    graph.append( res );
+    graph << res;
 
     // Try merging it.
     m_dmModel->mergeResources( graph, QLatin1String("Testapp") );
@@ -1926,7 +1927,7 @@ void DataManagementModelTest::testDescribeResources()
 
 
     // get one resource without sub-res
-    SimpleResourceGraph g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A"), false);
+    QList<SimpleResource> g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A"), false).toList();
 
     // no error
     QVERIFY(!m_dmModel->lastError());
@@ -1942,7 +1943,7 @@ void DataManagementModelTest::testDescribeResources()
 
 
     // get one resource by file-url without sub-res
-    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("file:/C"), false);
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("file:/C"), false).toList();
 
     // no error
     QVERIFY(!m_dmModel->lastError());
@@ -1958,7 +1959,7 @@ void DataManagementModelTest::testDescribeResources()
 
 
     // get one resource with sub-res
-    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A"), true);
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A"), true).toList();
 
     // no error
     QVERIFY(!m_dmModel->lastError());
@@ -1984,7 +1985,7 @@ void DataManagementModelTest::testDescribeResources()
 
 
     // get one resource via file URL with sub-res
-    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("file:/C"), true);
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("file:/C"), true).toList();
 
     // no error
     QVERIFY(!m_dmModel->lastError());
@@ -2010,7 +2011,7 @@ void DataManagementModelTest::testDescribeResources()
 
 
     // get two resources without sub-res
-    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"), false);
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"), false).toList();
 
     // no error
     QVERIFY(!m_dmModel->lastError());
@@ -2030,7 +2031,7 @@ void DataManagementModelTest::testDescribeResources()
 
 
     // get two resources with sub-res
-    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"), true);
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"), true).toList();
 
     // no error
     QVERIFY(!m_dmModel->lastError());
@@ -2039,7 +2040,7 @@ void DataManagementModelTest::testDescribeResources()
     QCOMPARE(g.count(), 4);
 
     // the results are res:/A, res:/B, res:/C and res:/D
-    SimpleResourceGraph::const_iterator it = g.constBegin();
+    QList<SimpleResource>::const_iterator it = g.constBegin();
     r1 = *it;
     ++it;
     r2 = *it;
@@ -2054,7 +2055,7 @@ void DataManagementModelTest::testDescribeResources()
 
 
     // get two resources with sub-res and mixed URL/URI
-    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("file:/C"), true);
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("file:/C"), true).toList();
 
     // no error
     QVERIFY(!m_dmModel->lastError());

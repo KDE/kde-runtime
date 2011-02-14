@@ -33,13 +33,12 @@
 #include <QtDBus/QDBusContext>
 #include <QtDBus/QDBusVariant>
 
-#include "simpleresource.h"
-
 class QThreadPool;
 
 namespace Nepomuk {
 class DataManagementModel;
 class DataManagementCommand;
+class SimpleResourceGraph;
 
 /*
  * Adaptor class for interface org.kde.nepomuk.DataManagement
