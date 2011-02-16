@@ -6,7 +6,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_P
 #search packages used by KDE
 set(KDE_MIN_VERSION "4.5.5")  # for the < 4.2 macro
 find_package(KDE4 4.5.5 REQUIRED)
-find_package(Strigi REQUIRED)
+if (WIN32) 
+   find_package(Strigi) 
+else () 
+   find_package(Strigi REQUIRED) 
+endif () 
+
 # I don't see any package requiring it. please explain why this dependency
 # is necessary (dirk)
 #find_package(KdepimLibs REQUIRED)
