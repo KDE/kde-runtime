@@ -1,11 +1,6 @@
 [Desktop Entry]
 Name=KDE Shutdown
-Name[de]=KDE herunterfahren
-Name[en_GB]=KDE Shutdown
-Name[x-test]=xxKDE shutdown helperxx
 Comment=kill running KDE applications and processes
-Comment[de]=Beendet laufende KDE Anwendungen und Prozesse
-Comment[en_GB]=kill running KDE applications and processes
 Type=Application
 Terminal=false
 Exec=kshutdown
