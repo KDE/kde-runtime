@@ -1,6 +1,12 @@
 [Desktop Entry]
 Name=KDE Shutdown
+Name[pt]=Encerramento do KDE
+Name[uk]=Завершення роботи KDE
+Name[x-test]=xxKDE Shutdownxx
 Comment=kill running KDE applications and processes
+Comment[pt]=matar as aplicações e processos do KDE em execução
+Comment[uk]=Завершення роботи всіх програм і процесів KDE
+Comment[x-test]=xxkill running KDE applications and processesxx
 Type=Application
 Terminal=false
 Exec=kshutdown
