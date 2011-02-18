@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=KDE Shutdown
+Name[cs]=Vypínání KDE
 Name[ia]=Clausura de KDE
 Name[nds]=KDE utmaken
 Name[nl]=KDE afsluiten
@@ -9,6 +10,7 @@ Name[uk]=Завершення роботи KDE
 Name[x-test]=xxKDE Shutdownxx
 Name[zh_TW]=關閉 KDE
 Comment=kill running KDE applications and processes
+Comment[cs]=zabít bežící aplikace a procesy KDE
 Comment[ia]=occide applicationes e processos executante de KDE
 Comment[nl]=actieve KDE toepassingen en processen afbreken
 Comment[pt]=matar todas as aplicações e processos do KDE em execução
