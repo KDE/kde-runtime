@@ -74,7 +74,7 @@ namespace Nepomuk {
             QHash<KUrl, KUrl> mappings() const;
             
             /**
-             * Pushes all the statements in \p graph into the model. If the statement
+             * Merges all the statements in \p graph into the model. If the statement
              * already exists then resolveDuplicate() is called.
              *
              * If any of the statements contains a graph, then that graph is used. Otherwise
@@ -82,7 +82,7 @@ namespace Nepomuk {
              *
              * \sa setGraphType graphType
              */
-            virtual void merge( const Soprano::Graph & graph, const QHash<KUrl, KUrl> & mappings );
+            virtual void merge( const Soprano::Graph & graph );
 
             virtual void mergeStatement( const Soprano::Statement & st );
             

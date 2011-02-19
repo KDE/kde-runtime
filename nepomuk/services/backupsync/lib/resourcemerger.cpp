@@ -116,10 +116,8 @@ KUrl Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
 }
 
 
-void Nepomuk::Sync::ResourceMerger::merge(const Soprano::Graph& graph, const QHash< KUrl, KUrl >& mappings)
-{
-    d->m_mappings = mappings;
-    
+void Nepomuk::Sync::ResourceMerger::merge( const Soprano::Graph& graph )
+{   
     const QList<Soprano::Statement> statements = graph.toList();
     foreach( Soprano::Statement st, statements ) {
         mergeStatement( st );
