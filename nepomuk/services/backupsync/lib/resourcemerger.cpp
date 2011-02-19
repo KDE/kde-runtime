@@ -107,29 +107,37 @@ void Nepomuk::Sync::ResourceMerger::merge(const Soprano::Graph& graph, const QHa
     
     const QList<Soprano::Statement> statements = graph.toList();
     foreach( Soprano::Statement st, statements ) {
-        if( !st.isValid() )
-            continue;
-
-        KUrl resolvedSubject = d->resolve( st.subject() );
-        if( !resolvedSubject.isValid() ) {
-            kDebug() << "Subject - " << st.subject() << " resolution failed";
-            continue;
-        }
-        
-        st.setSubject( resolvedSubject );
-        Soprano::Node object = st.object();
-        if( (object.isResource() && object.uri().scheme() == QLatin1String("nepomuk") )
-            || object.isBlank() ) {
-            KUrl resolvedObject = d->resolve( object );
-            if( resolvedObject.isEmpty() ) {
-                kDebug() << object << " resolution failed!";
-                continue;
-            }
-            st.setObject( resolvedObject );
-        }
-
-        d->push( st );
+        mergeStatement( st );
     }
+}
+
+
+void Nepomuk::Sync::ResourceMerger::mergeStatement(const Soprano::Statement& statement)
+{
+    Soprano::Statement st( statement );
+    
+    if( !st.isValid() )
+        return;
+    
+    KUrl resolvedSubject = d->resolve( st.subject() );
+    if( !resolvedSubject.isValid() ) {
+        kDebug() << "Subject - " << st.subject() << " resolution failed";
+        return;
+    }
+    
+    st.setSubject( resolvedSubject );
+    Soprano::Node object = st.object();
+    if( (object.isResource() && object.uri().scheme() == QLatin1String("nepomuk") )
+        || object.isBlank() ) {
+        KUrl resolvedObject = d->resolve( object );
+        if( resolvedObject.isEmpty() ) {
+            kDebug() << object << " resolution failed!";
+            return;
+        }
+        st.setObject( resolvedObject );
+    }
+        
+    d->push( st );
 }
 
 

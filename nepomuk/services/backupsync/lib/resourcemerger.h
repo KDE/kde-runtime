@@ -81,6 +81,8 @@ namespace Nepomuk {
              */
             virtual void merge( const Soprano::Graph & graph, const QHash<KUrl, KUrl> & mappings );
 
+            virtual void mergeStatement( const Soprano::Statement & st );
+            
             /**
              * The graph type by default is nrl:InstanceBase. If \p type is not a subclass of
              * nrl:Graph then it is ignored.
@@ -90,7 +92,6 @@ namespace Nepomuk {
             QHash<QUrl, Soprano::Node> additionalMetadata() const;
             
         protected:
-            
             /**
              * Called when trying to merge a statement which contains a Resource that
              * has not been identified.
