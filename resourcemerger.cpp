@@ -190,7 +190,9 @@ Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::S
         int existing = m_model->listStatements( st.subject(), st.predicate(), Soprano::Node() ).allStatements().size();
 
         if( existing == maxCardinality ) {
-            m_model->setError("Max Cardinality error");
+            m_model->setError( QString::fromLatin1("%1 has a max cardinality of %2")
+                               .arg( propUri.toString(), maxCardinality ),
+                               Soprano::Error::ErrorInvalidStatement);
             return Soprano::Error::ErrorInvalidStatement;
         }
     }
@@ -207,8 +209,10 @@ Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::S
     // domain
     if( !domain.isEmpty() && !isOfType( st.subject().uri(), domain ) ) {
         kDebug() << "invalid domain range";
-        m_model->setError("Invalid domain");
-        return Soprano::Error::ErrorInvalidStatement;
+        m_model->setError( QString::fromLatin1("%1 has a rdfs:domain of %2")
+                           .arg( propUri.toString(), domain.toString() ),
+                           Soprano::Error::ErrorInvalidArgument);
+        return Soprano::Error::ErrorInvalidArgument;
     }
 
     // range
@@ -216,16 +220,20 @@ Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::S
         if( st.object().isResource() ) {
             if( !isOfType( st.object().uri(), range ) ) {
                 kDebug() << "Invalid resource range";
-                m_model->setError("Invalid range");
-                return Soprano::Error::ErrorInvalidStatement;
+                m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2")
+                                   .arg( propUri.toString(), range.toString() ),
+                                   Soprano::Error::ErrorInvalidArgument);
+                return Soprano::Error::ErrorInvalidArgument;
             }
         }
         else if( st.object().isLiteral() ) {
             const Soprano::LiteralValue lv = st.object().literal();
             if( lv.dataTypeUri() != range ) {
                 kDebug() << "Invalid literal range";
-                m_model->setError("Invalid range");
-                return Soprano::Error::ErrorInvalidStatement;
+                m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2")
+                                   .arg( propUri.toString(), range.toString() ),
+                                   Soprano::Error::ErrorInvalidArgument);
+                return Soprano::Error::ErrorInvalidArgument;
             }
         }
     }
@@ -264,8 +272,11 @@ void Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
     QList<Soprano::Statement> allStatements( graph.toList() );
 
     foreach( const Soprano::Statement & st, allStatements ) {
-        if( st.predicate() == RDF::type() )
+        if( st.predicate() == RDF::type() ) {
             mergeStatement( st );
+            if( m_model->lastError() != Soprano::Error::ErrorNone )
+                return;
+        }
         else
             remainingStatements << st;
     }
@@ -275,6 +286,8 @@ void Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
     //
     foreach( const Soprano::Statement & st, remainingStatements ) {
         mergeStatement( st );
+        if( m_model->lastError() != Soprano::Error::ErrorNone )
+            return;
     }
 }
 
