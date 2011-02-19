@@ -954,13 +954,6 @@ void Nepomuk::DataManagementModel::removePropertiesByApplication(const QList<QUr
     setError("Not implemented yet");
 }
 
-namespace {
-    QUrl createBlankUri() {
-        //FIXME: This could statistically give 2 non-unique ids. Should we use more that the
-        //       first 5 characters?
-        return QUrl( QLatin1String("_:") + QUuid::createUuid().toString().mid(1, 5) );
-    }
-}
 void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceGraph &resources, const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
 {
     if(app.isEmpty()) {
@@ -970,9 +963,6 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
     if(resources.isEmpty()) {
         return;
     }
-    
-    using namespace Nepomuk::Vocabulary;
-    using namespace Soprano::Vocabulary;
 
     QHash<QUrl, QUrl> resolvedNodes;
     SimpleResourceGraph resGraph( resources );
@@ -992,7 +982,7 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
             QUrl newResUri = resolveUrl( fileUri );
             if( newResUri.isEmpty() ) {
                 // Resolution of one file failed. Assign it a random blank uri
-                newResUri = createBlankUri();
+                newResUri = resGraph.createBlankNode();
             }
             resolvedNodes.insert( fileUri, newResUri );
 
@@ -1028,7 +1018,7 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
                     // It doesn't exist, create it
                     QUrl resolvedUri = resolveUrl( fileUri );
                     if( resolvedUri.isEmpty() )
-                        resolvedUri = createBlankUri();
+                        resolvedUri = resGraph.createBlankNode();
 
                     Sync::SimpleResource newRes;
                     newRes.setUri( resolvedUri );

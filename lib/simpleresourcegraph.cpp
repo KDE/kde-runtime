@@ -26,7 +26,6 @@
 
 #include <KRandom>
 
-
 class Nepomuk::SimpleResourceGraph::Private : public QSharedData
 {
 public:
@@ -62,6 +61,12 @@ QUrl Nepomuk::SimpleResourceGraph::Private::createBlankNode() const
         }
     }
 }
+
+QUrl Nepomuk::SimpleResourceGraph::createBlankNode()
+{
+    return d->createBlankNode();
+}
+
 
 Nepomuk::SimpleResourceGraph::SimpleResourceGraph()
     : d(new Private)

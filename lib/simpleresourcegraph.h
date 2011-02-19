@@ -67,6 +67,8 @@ public:
     QSet<SimpleResource> toSet() const;
     QList<SimpleResource> toList() const;
 
+    QUrl createBlankNode();
+
 private:
     class Private;
     QSharedDataPointer<Private> d;
