@@ -965,7 +965,9 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
         return;
     }
 
+    /// Holds the mapping of <file://url> to <nepomuk:/res/> uris
     QHash<QUrl, QUrl> resolvedNodes;
+
     SimpleResourceGraph resGraph( resources );
     QList<SimpleResource> resGraphList = resGraph.toList();
     QMutableListIterator<SimpleResource> iter( resGraphList );
@@ -979,29 +981,35 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
         
         // Hanlde file uris
         if( res.uri().scheme() == QLatin1String("file") ) { //TODO: Even handle filex: ?
-            QUrl fileUri = res.uri();
-            QUrl newResUri = resolveUrl( fileUri );
+            QUrl fileUrl = res.uri();
+            QUrl newResUri = resolveUrl( fileUrl );
             if( newResUri.isEmpty() ) {
                 // Resolution of one file failed. Assign it a random blank uri
                 newResUri = resGraph.createBlankNode();
             }
-            resolvedNodes.insert( fileUri, newResUri );
+            resolvedNodes.insert( fileUrl, newResUri );
 
             res.setUri( newResUri );
-            if( !res.m_properties.contains( NIE::url(), fileUri ) )
-                res.m_properties.insert( NIE::url(), fileUri );
+            if( !res.m_properties.contains( NIE::url(), fileUrl ) )
+                res.m_properties.insert( NIE::url(), fileUrl );
             if( !res.m_properties.contains( RDF::type(), NFO::FileDataObject() ) )
                 res.m_properties.insert( RDF::type(), NFO::FileDataObject() );
+            if( QFileInfo( fileUrl.toString() ).isDir() && !res.m_properties.contains( RDF::type(), NFO::Folder() )) {
+                res.m_properties.insert( RDF::type(), NFO::Folder() );
+            }
         }
     }
     resGraph = resGraphList;
 
-
     Sync::ResourceIdentifier resIdent;
     QList<Soprano::Statement> allStatements;
     QList<Sync::SimpleResource> extraResources;
+
     
     foreach( SimpleResource res, resGraph.toList() ) {
+        //
+        // Find all the statements of the form "sub pred <file://..>" where the pred != nie:url
+        // The <file://> url is converted into a new resource
         QMutableHashIterator<QUrl, QVariant> it( res.m_properties );
         while( it.hasNext() ) {
             it.next();
@@ -1009,22 +1017,24 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
             Nepomuk::Variant var( it.value() );
             if( var.isResource() && var.toUrl().scheme() == QLatin1String("file")
                 && it.key() != NIE::url() ) {
-                const QUrl fileUri = var.toUrl();
+                const QUrl fileUrl = var.toUrl();
                 // Need to resolve it
-                QHash< QUrl, QUrl >::const_iterator findIter = resolvedNodes.find( fileUri );
+                QHash< QUrl, QUrl >::const_iterator findIter = resolvedNodes.find( fileUrl );
                 if( findIter != resolvedNodes.end() ) {
                     it.setValue( findIter.value() );
                 }
                 else {
                     // It doesn't exist, create it
-                    QUrl resolvedUri = resolveUrl( fileUri );
+                    QUrl resolvedUri = resolveUrl( fileUrl );
                     if( resolvedUri.isEmpty() )
                         resolvedUri = resGraph.createBlankNode();
 
                     Sync::SimpleResource newRes;
                     newRes.setUri( resolvedUri );
                     newRes.insert( RDF::type(), NFO::FileDataObject() );
-                    newRes.insert( NIE::url(), fileUri );
+                    newRes.insert( NIE::url(), fileUrl );
+                    if( QFileInfo( fileUrl.toString() ).isDir() )
+                        newRes.insert( RDF::type(), NFO::Folder() );
 
                     extraResources.append( newRes );
 
