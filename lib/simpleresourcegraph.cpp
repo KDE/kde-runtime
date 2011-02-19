@@ -123,8 +123,8 @@ void Nepomuk::SimpleResourceGraph::remove(const QUrl &uri)
 
 void Nepomuk::SimpleResourceGraph::remove(const SimpleResource &res)
 {
-    // TODO: should we also check if the resource we have matches res exactly before removing?
-    remove(res.uri());
+    if( contains( res ) )
+        remove( res.uri() );
 }
 
 bool Nepomuk::SimpleResourceGraph::contains(const QUrl &uri) const
@@ -134,8 +134,11 @@ bool Nepomuk::SimpleResourceGraph::contains(const QUrl &uri) const
 
 bool Nepomuk::SimpleResourceGraph::contains(const SimpleResource &res) const
 {
-    // TODO: should we also check if the resource we have matches res exactly?
-    return contains(res.uri());
+    QHash< QUrl, SimpleResource >::const_iterator it = d->resources.find( res.uri() );
+    if( it == d->resources.constEnd() )
+        return false;
+
+    return res == it.value();
 }
 
 Nepomuk::SimpleResource Nepomuk::SimpleResourceGraph::operator[](const QUrl &uri) const
