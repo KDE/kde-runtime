@@ -64,12 +64,15 @@ namespace Nepomuk {
         class NEPOMUKSYNC_EXPORT ResourceMerger
         {
         public:
-            ResourceMerger();
+            ResourceMerger( Soprano::Model * model =0, const QHash<KUrl, KUrl> & mappings = QHash<KUrl,KUrl>() );
             virtual ~ResourceMerger();
 
             void setModel( Soprano::Model * model );
             Soprano::Model * model() const;
 
+            void setMappings( const QHash<KUrl, KUrl> & mappings );
+            QHash<KUrl, KUrl> mappings() const;
+            
             /**
              * Pushes all the statements in \p graph into the model. If the statement
              * already exists then resolveDuplicate() is called.

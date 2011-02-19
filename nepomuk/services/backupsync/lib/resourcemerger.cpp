@@ -43,8 +43,7 @@ public:
 
     ResourceMerger * q;
     
-    QHash<KUrl, KUrl> m_oldMappings;
-    QHash<KUrl, KUrl> m_newMappings;
+    QHash<KUrl, KUrl> m_mappings;
 
     QHash<QUrl, Soprano::Node> m_additionalMetadata;
 
@@ -58,9 +57,11 @@ Nepomuk::Sync::ResourceMerger::Private::Private(Nepomuk::Sync::ResourceMerger* r
 }
 
 
-Nepomuk::Sync::ResourceMerger::ResourceMerger()
+Nepomuk::Sync::ResourceMerger::ResourceMerger( Soprano::Model * model, const QHash<KUrl, KUrl> & mappings )
     : d( new Nepomuk::Sync::ResourceMerger::Private( this ) )
 {
+    setModel( model );
+    setMappings( mappings );
 }
 
 Nepomuk::Sync::ResourceMerger::~ResourceMerger()
@@ -70,12 +71,26 @@ Nepomuk::Sync::ResourceMerger::~ResourceMerger()
 
 void Nepomuk::Sync::ResourceMerger::setModel(Soprano::Model* model)
 {
+    if( model == 0 ) {
+        d->m_model = ResourceManager::instance()->mainModel();
+        return;
+    }
     d->m_model = model;
 }
 
 Soprano::Model* Nepomuk::Sync::ResourceMerger::model() const
 {
     return d->m_model;
+}
+
+void Nepomuk::Sync::ResourceMerger::setMappings(const QHash< KUrl, KUrl >& mappings)
+{
+    d->m_mappings = mappings;
+}
+
+QHash< KUrl, KUrl > Nepomuk::Sync::ResourceMerger::mappings() const
+{
+    return d->m_mappings;
 }
 
 void Nepomuk::Sync::ResourceMerger::setAdditionalGraphMetadata(const QHash< QUrl, Soprano::Node >& additionalMetadata)
@@ -91,19 +106,19 @@ QHash< QUrl, Soprano::Node > Nepomuk::Sync::ResourceMerger::additionalMetadata()
 KUrl Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
 {
     // The default implementation is to create it.
-    QHash< KUrl, KUrl >::const_iterator it = d->m_newMappings.constFind( uri );
-    if( it != d->m_newMappings.constEnd() )
-        return it.value();
+    //QHash< KUrl, KUrl >::const_iterator it = d->m_newMappings.constFind( uri );
+    //if( it != d->m_newMappings.constEnd() )
+    //    return it.value();
     
     KUrl newUri = createResourceUri();
-    d->m_newMappings.insert( uri, newUri );
+    d->m_mappings.insert( uri, newUri );
     return newUri;
 }
 
 
 void Nepomuk::Sync::ResourceMerger::merge(const Soprano::Graph& graph, const QHash< KUrl, KUrl >& mappings)
 {
-    d->m_oldMappings = mappings;
+    d->m_mappings = mappings;
     
     const QList<Soprano::Statement> statements = graph.toList();
     foreach( Soprano::Statement st, statements ) {
@@ -193,8 +208,8 @@ KUrl Nepomuk::Sync::ResourceMerger::Private::resolve(const Soprano::Node& n)
     const QUrl oldUri = n.isResource() ? n.uri() : QUrl( n.toN3() );
     
     // Find in mappings
-    QHash< KUrl, KUrl >::const_iterator it = m_oldMappings.constFind( oldUri );
-    if( it != m_oldMappings.constEnd() ) {
+    QHash< KUrl, KUrl >::const_iterator it = m_mappings.constFind( oldUri );
+    if( it != m_mappings.constEnd() ) {
         return it.value();
     } else {
         return q->resolveUnidentifiedResource( oldUri );
