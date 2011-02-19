@@ -1063,7 +1063,8 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
     }
     
     ResourceMerger merger( this, app, additionalMetadata );
-    merger.merge( Soprano::Graph(allStatements), resIdent.mappings() );
+    merger.setMappings( resIdent.mappings() );
+    merger.merge( Soprano::Graph(allStatements) );
 
     //// TODO: do not allow to create properties or classes this way
     //setError("Not implemented yet");
@@ -1713,5 +1714,10 @@ bool Nepomuk::DataManagementModel::updateNieUrlOnLocalFile(const QUrl &resource,
 
 //    executeQuery(query, Soprano::Query::QueryLanguageSparql);
 //}
+
+Nepomuk::ClassAndPropertyTree* Nepomuk::DataManagementModel::classAndPropertyTree()
+{
+    return &d->m_classAndPropertyTree;
+}
 
 #include "datamanagementmodel.moc"

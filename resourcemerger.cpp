@@ -20,16 +20,21 @@
 
 #include "resourcemerger.h"
 #include "datamanagementmodel.h"
+#include "classandpropertytree.h"
 
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/NAO>
 
 #include <Soprano/StatementIterator>
+#include <Soprano/FilterModel>
 #include <Soprano/NodeIterator>
 
 #include <Nepomuk/Variant>
 #include <KDebug>
+#include <Soprano/Graph>
+
+using namespace Soprano::Vocabulary;
 
 Nepomuk::ResourceMerger::ResourceMerger(Nepomuk::DataManagementModel* model, const QString& app,
                                         const QHash< QUrl, QVariant >& additionalMetadata)
@@ -69,7 +74,7 @@ void Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
         
         Soprano::Statement st( newSt );
         st.setContext( newGraph );
-        model()->addStatement( st );
+        addStatement( st );
     }
     kDebug() << m_model->statementCount();
 }
@@ -138,7 +143,7 @@ QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
         it != finalPropHash.constEnd(); ++it) {
 
         Soprano::Statement st( graph, it.key(), it.value(), metadatagraph );
-        m_model->addStatement( st );
+        addStatement( st );
     }
 
     m_graphHash.insert( oldAppUri, graph );
@@ -165,4 +170,112 @@ QUrl Nepomuk::ResourceMerger::createGraphUri()
 {
     return m_model->createUri( DataManagementModel::GraphUri );
 }
+
+Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::Statement& st)
+{
+    const QUrl & propUri = st.predicate().uri();
+
+    if( propUri == RDF::type() ) {
+        m_model->addStatement( st );
+        return Soprano::Error::ErrorNone;
+    }
+    
+    //
+    // Cardinality checks
+    //
+    ClassAndPropertyTree * tree = m_model->classAndPropertyTree();
+    int maxCardinality = tree->maxCardinality( propUri );
+
+    if( maxCardinality > 0 ) {
+        int existing = m_model->listStatements( st.subject(), st.predicate(), Soprano::Node() ).allStatements().size();
+
+        if( existing == maxCardinality ) {
+            m_model->setError("Max Cardinality error");
+            return Soprano::Error::ErrorInvalidStatement;
+        }
+    }
+    
+    //
+    // rdfs:domain and range checks
+    //
+    QUrl domain = tree->propertyDomain( propUri );
+    QUrl range = tree->propertyRange( propUri );
+
+    kDebug() << "Domain : " << domain;
+    kDebug() << "Range : " << range;
+
+    // domain
+    if( !domain.isEmpty() && !isOfType( st.subject().uri(), domain ) ) {
+        kDebug() << "invalid domain range";
+        m_model->setError("Invalid domain");
+        return Soprano::Error::ErrorInvalidStatement;
+    }
+
+    // range
+    if( !range.isEmpty() ) {
+        if( st.object().isResource() ) {
+            if( !isOfType( st.object().uri(), range ) ) {
+                kDebug() << "Invalid resource range";
+                m_model->setError("Invalid range");
+                return Soprano::Error::ErrorInvalidStatement;
+            }
+        }
+        else if( st.object().isLiteral() ) {
+            const Soprano::LiteralValue lv = st.object().literal();
+            if( lv.dataTypeUri() != range ) {
+                kDebug() << "Invalid literal range";
+                m_model->setError("Invalid range");
+                return Soprano::Error::ErrorInvalidStatement;
+            }
+        }
+    }
+    
+    return m_model->addStatement( st );
+}
+
+bool Nepomuk::ResourceMerger::isOfType(const QUrl& uri, const QUrl& type) const
+{
+    kDebug() << "Checking " << uri << " for type " << type;
+    ClassAndPropertyTree * tree = m_model->classAndPropertyTree();
+
+    QList<Soprano::Node> types = m_model->listStatements( uri, RDF::type(), Soprano::Node() ).iterateObjects().allNodes();
+
+    if( types.isEmpty() ) {
+        kDebug() << uri << " does not have a type!!";
+        return false;
+    }
+
+    foreach( const Soprano::Node & node, types ) {
+        if( node.uri() == type || tree->isChildOf( node.uri(), type ) ) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+void Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
+{
+    //
+    // First merge all the statements predicate rdf:type.
+    // That way the domain/range checks in addStatement wont fail
+
+    QList<Soprano::Statement> remainingStatements;
+    QList<Soprano::Statement> allStatements( graph.toList() );
+
+    foreach( const Soprano::Statement & st, allStatements ) {
+        if( st.predicate() == RDF::type() )
+            mergeStatement( st );
+        else
+            remainingStatements << st;
+    }
+
+    //
+    // Merge the remaining statements
+    //
+    foreach( const Soprano::Statement & st, remainingStatements ) {
+        mergeStatement( st );
+    }
+}
+
 

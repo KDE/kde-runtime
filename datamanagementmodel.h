@@ -28,6 +28,7 @@
 
 namespace Nepomuk {
 
+class ClassAndPropertyTree;
 class ResourceMerger;
 class SimpleResourceGraph;
 
@@ -252,6 +253,8 @@ private:
      */
     bool updateNieUrlOnLocalFile(const QUrl& resource, const QUrl& nieUrl);
 
+    ClassAndPropertyTree * classAndPropertyTree();
+    
     enum UriType {
         GraphUri,
         ResourceUri
