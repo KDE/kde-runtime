@@ -24,6 +24,7 @@
 #include "resourcemerger.h"
 #include "simpleresourcegraph.h"
 #include "simpleresource.h"
+#include "transactionmodel.h"
 
 #include <nepomuk/simpleresource.h>
 #include <nepomuk/resourceidentifier.h>
@@ -1061,11 +1062,19 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
     foreach( const Sync::SimpleResource & res, extraResources ) {
         allStatements << res.toStatementList();
     }
-    
+
+    TransactionModel trModel(this);
     ResourceMerger merger( this, app, additionalMetadata );
     merger.setMappings( resIdent.mappings() );
     merger.merge( Soprano::Graph(allStatements) );
 
+    if( lastError() != Soprano::Error::ErrorNone ) {
+        kDebug() << " MERGING FAILED! ";
+        return;
+    }
+    
+    trModel.commit();
+    
     //// TODO: do not allow to create properties or classes this way
     //setError("Not implemented yet");
 }
