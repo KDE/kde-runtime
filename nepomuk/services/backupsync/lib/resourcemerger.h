@@ -29,6 +29,7 @@
 #include <KUrl>
 
 #include "nepomuksync_export.h"
+#include <Soprano/Error/ErrorCode>
 
 namespace Soprano {
     class Statement;
@@ -136,6 +137,14 @@ namespace Nepomuk {
              * \sa createGraph
              */
             KUrl graph();
+
+            /**
+             * Add the statement in the model. By default it just calls
+             * Soprano::Model::addStatement()
+             */
+            virtual Soprano::Error::ErrorCode addStatement( const Soprano::Statement & st );
+            Soprano::Error::ErrorCode addStatement( const Soprano::Node& subject, const Soprano::Node& property,
+                                                    const Soprano::Node& object, const Soprano::Node& graph );
             
         private:
             class Private;

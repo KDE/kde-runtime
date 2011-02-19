@@ -140,15 +140,15 @@ KUrl Nepomuk::Sync::ResourceMerger::createGraph()
 
     using namespace Soprano::Vocabulary;
 
-    d->m_model->addStatement( metadataGraph, RDF::type(), NRL::GraphMetadata(), metadataGraph );
-    d->m_model->addStatement( metadataGraph, NRL::coreGraphMetadataFor(), graphUri, metadataGraph );
+    addStatement( metadataGraph, RDF::type(), NRL::GraphMetadata(), metadataGraph );
+    addStatement( metadataGraph, NRL::coreGraphMetadataFor(), graphUri, metadataGraph );
 
     if( d->m_additionalMetadata.find( RDF::type() ).value() != NRL::InstanceBase() )
         d->m_additionalMetadata.insert( RDF::type(), NRL::InstanceBase() );
     
     for(QHash<QUrl, Soprano::Node>::const_iterator it = d->m_additionalMetadata.constBegin();
         it != d->m_additionalMetadata.constEnd(); ++it) {
-        d->m_model->addStatement(graphUri, it.key(), it.value(), metadataGraph);
+        addStatement(graphUri, it.key(), it.value(), metadataGraph);
     }
     
     return graphUri;
@@ -175,7 +175,8 @@ void Nepomuk::Sync::ResourceMerger::Private::push(const Soprano::Statement& st)
         m_graph = q->createGraph();
     }
     statement.setContext( m_graph );
-    m_model->addStatement( statement );
+    kDebug() << "Pushing - " << statement;
+    q->addStatement( statement );
 }
 
 
@@ -209,5 +210,15 @@ QUrl Nepomuk::Sync::ResourceMerger::createResourceUri()
 QUrl Nepomuk::Sync::ResourceMerger::createGraphUri()
 {
     return ResourceManager::instance()->generateUniqueUri("ctx");
+}
+
+Soprano::Error::ErrorCode Nepomuk::Sync::ResourceMerger::addStatement(const Soprano::Statement& st)
+{
+    return d->m_model->addStatement( st );
+}
+
+Soprano::Error::ErrorCode Nepomuk::Sync::ResourceMerger::addStatement(const Soprano::Node& subject, const Soprano::Node& property, const Soprano::Node& object, const Soprano::Node& graph)
+{
+    return d->m_model->addStatement( Soprano::Statement(subject, property, object, graph) );
 }
 
