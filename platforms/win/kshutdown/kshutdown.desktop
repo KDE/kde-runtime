@@ -2,6 +2,7 @@
 Name=KDE Shutdown
 Name[ca]=Aturada del KDE
 Name[da]=Nedlukning af KDE 
+Name[kk]=KDE доғарғышы
 Name[nl]=KDE afsluiten
 Name[pt]=Encerramento do KDE
 Name[sv]=Avstängning av KDE
@@ -10,6 +11,7 @@ Name[x-test]=xxKDE Shutdownxx
 Comment=kill running KDE applications and processes
 Comment[ca]=Mata totes les aplicacions i processos en execució del KDE
 Comment[da]=Dræb kørende KDE-programmer og -processer
+Comment[kk]=KDE қолданбаларының доғару және процестерін құрту
 Comment[nl]=actieve KDE toepassingen en processen afbreken
 Comment[pt]=matar as aplicações e processos do KDE em execução
 Comment[sv]=Döda KDE-program och processer som kör
