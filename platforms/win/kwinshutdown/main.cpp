@@ -30,7 +30,7 @@
 
 int main(int argc, char **argv)
 {
-    KAboutData about("kshutdown", "kde-runtime", ki18n("kshutdown"), "1.0",
+    KAboutData about("kwinshutdown", "kde-runtime", ki18n("kwinshutdown"), "1.0",
                      ki18n("A helper tool to shutdown a running installation"),
                      KAboutData::License_GPL,
                      ki18n("(C) 2011 Ralf Habacker"));
