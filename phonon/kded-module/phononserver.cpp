@@ -154,6 +154,8 @@ void PhononServer::findVirtualDevices()
 {
 #ifdef HAVE_LIBASOUND2
     QList<DeviceHint> deviceHints;
+    QHash<PS::AudioDeviceKey, PS::AudioDevice> playbackDevices;
+    QHash<PS::AudioDeviceKey, PS::AudioDevice> captureDevices;
 
     // update config to the changes on disc
     snd_config_update_free_global();
@@ -172,17 +174,17 @@ void PhononServer::findVirtualDevices()
         nextHint.name = QString::fromUtf8(x);
         free(x);
 
+        if (nextHint.name.isEmpty() || nextHint.name == "null")
+            continue;
+
         if (nextHint.name.startsWith(QLatin1String("front:")) ||
-                /*nextHint.name.startsWith("rear:") ||
-                nextHint.name.startsWith("center_lfe:") ||*/
-                nextHint.name.startsWith(QLatin1String("surround40:")) ||
-                nextHint.name.startsWith(QLatin1String("surround41:")) ||
-                nextHint.name.startsWith(QLatin1String("surround50:")) ||
-                nextHint.name.startsWith(QLatin1String("surround51:")) ||
-                nextHint.name.startsWith(QLatin1String("surround71:")) ||
-                nextHint.name.startsWith(QLatin1String("default:")) ||
-                nextHint.name == "null"
-                ) {
+            nextHint.name.startsWith(QLatin1String("rear:")) ||
+            nextHint.name.startsWith(QLatin1String("center_lfe:")) ||
+            nextHint.name.startsWith(QLatin1String("surround40:")) ||
+            nextHint.name.startsWith(QLatin1String("surround41:")) ||
+            nextHint.name.startsWith(QLatin1String("surround50:")) ||
+            nextHint.name.startsWith(QLatin1String("surround51:")) ||
+            nextHint.name.startsWith(QLatin1String("surround71:"))) {
             continue;
         }
 
@@ -201,24 +203,38 @@ void PhononServer::findVirtualDevices()
     foreach (const DeviceHint &deviceHint, deviceHints) {
         const QString &alsaDeviceName = deviceHint.name;
         const QString &description = deviceHint.description;
-        const QString &uniqueId = description;
+        QString uniqueId = description;
         //const QString &udi = alsaDeviceName;
-        const QStringList &lines = description.split('\n');
         bool isAdvanced = false;
+
+        // Try to determine the card name
+        const QStringList &lines = description.split('\n');
         QString cardName = lines.first();
+
+        if (cardName.isEmpty()) {
+            int cardNameStart = alsaDeviceName.indexOf("CARD=");
+            int cardNameEnd;
+
+            if (cardNameStart >= 0) {
+                cardNameStart += 5;
+                cardNameEnd = alsaDeviceName.indexOf(',', cardNameStart);
+                if (cardNameEnd < 0)
+                    cardNameEnd = alsaDeviceName.count();
+
+                cardName = alsaDeviceName.mid(cardNameStart, cardNameEnd - cardNameStart);
+            } else {
+                cardName = i18n("Unknown");
+            }
+        }
+
+        // Put a non-empty unique id if the description is empty
+        if (uniqueId.isEmpty()) {
+            uniqueId = cardName;
+        }
+
+        // Add a description to the card name, if it exists
         if (lines.size() > 1) {
             cardName = i18nc("%1 is the sound card name, %2 is the description in case it exists", "%1 (%2)", cardName, lines[1]);
-        }
-        if (alsaDeviceName.startsWith(QLatin1String("front:")) ||
-                alsaDeviceName.startsWith(QLatin1String("rear:")) ||
-                alsaDeviceName.startsWith(QLatin1String("center_lfe:")) ||
-                alsaDeviceName.startsWith(QLatin1String("surround40:")) ||
-                alsaDeviceName.startsWith(QLatin1String("surround41:")) ||
-                alsaDeviceName.startsWith(QLatin1String("surround50:")) ||
-                alsaDeviceName.startsWith(QLatin1String("surround51:")) ||
-                alsaDeviceName.startsWith(QLatin1String("surround71:")) ||
-                alsaDeviceName.startsWith(QLatin1String("iec958:"))) {
-            isAdvanced = true;
         }
 
         bool available = false;
@@ -237,6 +253,25 @@ void PhononServer::findVirtualDevices()
                 captureDevice = true;
                 snd_pcm_close(pcm);
             }
+        }
+
+        if (alsaDeviceName.startsWith(QLatin1String("front:")) ||
+            alsaDeviceName.startsWith(QLatin1String("rear:")) ||
+            alsaDeviceName.startsWith(QLatin1String("center_lfe:")) ||
+            alsaDeviceName.startsWith(QLatin1String("surround40:")) ||
+            alsaDeviceName.startsWith(QLatin1String("surround41:")) ||
+            alsaDeviceName.startsWith(QLatin1String("surround50:")) ||
+            alsaDeviceName.startsWith(QLatin1String("surround51:")) ||
+            alsaDeviceName.startsWith(QLatin1String("surround71:")) ||
+            alsaDeviceName.startsWith(QLatin1String("iec958:"))) {
+            isAdvanced = true;
+        }
+
+        if (alsaDeviceName.startsWith(QLatin1String("front")) ||
+            alsaDeviceName.startsWith(QLatin1String("center")) ||
+            alsaDeviceName.startsWith(QLatin1String("rear")) ||
+            alsaDeviceName.startsWith(QLatin1String("surround"))) {
+            captureDevice = false;
         }
 
         QString iconName(QLatin1String("audio-card"));
@@ -264,21 +299,34 @@ void PhononServer::findVirtualDevices()
         //dev.setUseCache(false);
         if (playbackDevice) {
             const PS::AudioDeviceKey key = { uniqueId + QLatin1String("_playback"), -1, -1 };
-            PS::AudioDevice dev(cardName, iconName, key, initialPreference, isAdvanced);
-            dev.addAccess(access);
-            m_audioOutputDevices << dev;
+
+            if (playbackDevices.contains(key)) {
+                playbackDevices[key].addAccess(access);
+            } else {
+                PS::AudioDevice dev(cardName, iconName, key, initialPreference, isAdvanced);
+                dev.addAccess(access);
+                playbackDevices.insert(key, dev);
+            }
         }
         if (captureDevice) {
             const PS::AudioDeviceKey key = { uniqueId + QLatin1String("_capture"), -1, -1 };
-            PS::AudioDevice dev(cardName, iconName, key, initialPreference, isAdvanced);
-            dev.addAccess(access);
-            m_audioCaptureDevices << dev;
+
+            if (captureDevices.contains(key)) {
+                captureDevices[key].addAccess(access);
+            } else {
+                PS::AudioDevice dev(cardName, iconName, key, initialPreference, isAdvanced);
+                dev.addAccess(access);
+                captureDevices.insert(key, dev);
+            }
         } else {
             if (!playbackDevice) {
                 kDebug(601) << deviceHint.name << " doesn't work.";
             }
         }
     }
+
+    m_audioOutputDevices << playbackDevices.values();
+    m_audioCaptureDevices << captureDevices.values();
 
     const QString etcFile(QLatin1String("/etc/asound.conf"));
     const QString homeFile(QDir::homePath() + QLatin1String("/.asoundrc"));
@@ -344,6 +392,9 @@ void PhononServer::findDevices()
 
     const QList<Solid::Device> &allHwDevices =
         Solid::Device::listFromQuery("AudioInterface.deviceType & 'AudioInput|AudioOutput'");
+
+    kDebug(601) << "Solid gives" << allHwDevices.count() << "devices";
+
     foreach (const Solid::Device &hwDevice, allHwDevices) {
         const Solid::AudioInterface *audioIface = hwDevice.as<Solid::AudioInterface>();
 
