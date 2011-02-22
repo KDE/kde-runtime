@@ -64,7 +64,7 @@ namespace Nepomuk {
         class NEPOMUKSYNC_EXPORT ResourceMerger
         {
         public:
-            ResourceMerger( Soprano::Model * model =0, const QHash<KUrl, KUrl> & mappings = QHash<KUrl,KUrl>() );
+            ResourceMerger( Soprano::Model * model =0, const QHash<KUrl, KUrl> & mappings = (QHash<KUrl, KUrl>()) );
             virtual ~ResourceMerger();
 
             void setModel( Soprano::Model * model );
