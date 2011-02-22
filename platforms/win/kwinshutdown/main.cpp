@@ -30,7 +30,7 @@
 
 int main(int argc, char **argv)
 {
-    KAboutData about("kwinshutdown", "kde-runtime", ki18n("kwinshutdown"), "1.0",
+    KAboutData about("kwinshutdown", 0, ki18n("kwinshutdown"), "1.0",
                      ki18n("A helper tool to shutdown a running installation"),
                      KAboutData::License_GPL,
                      ki18n("(C) 2011 Ralf Habacker"));
@@ -47,9 +47,9 @@ int main(int argc, char **argv)
     KApplication app(true);
 
     int res = KMessageBox::warningContinueCancel(0,
-        "Should I really shutdown all applications and processes of your recent installation ?"
-        "\n\nPlease make sure you have saved all documents.",
-        "Shutdown KDE");
+        ki18n("Should I really shutdown all applications and processes of your recent installation ?"
+        "\n\nPlease make sure you have saved all documents.").toString(),
+        ki18n("Shutdown KDE").toString());
     if (res == KMessageBox::Cancel)
         return 2;
 
