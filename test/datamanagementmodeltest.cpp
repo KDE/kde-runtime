@@ -1472,7 +1472,7 @@ void DataManagementModelTest::testRemoveDataByApplication6()
 
 namespace {
     int push( Soprano::Model * model, Nepomuk::SimpleResource res, QUrl graph ) {
-        QHashIterator<QUrl, QVariant> it( res.m_properties );
+        QHashIterator<QUrl, QVariant> it( res.properties() );
         if( !res.uri().isValid() )
             return 0;
 
@@ -1507,8 +1507,8 @@ void DataManagementModelTest::testMergeResources()
 
     Nepomuk::SimpleResource res;
     res.setUri( QUrl("nepomuk:/mergeTest/res2") );
-    res.m_properties.insert( RDF::type(), NFO::FileDataObject() );
-    res.m_properties.insert( QUrl("nepomuk:/mergeTest/prop1"), QVariant(10) );
+    res.addProperty( RDF::type(), NFO::FileDataObject() );
+    res.addProperty( QUrl("nepomuk:/mergeTest/prop1"), QVariant(10) );
 
     Nepomuk::SimpleResourceGraph graph;
     graph << res;
@@ -1539,28 +1539,28 @@ void DataManagementModelTest::testMergeResources()
         QUrl graphUri("nepomuk:/ctx/afd"); // TODO: Actually Create one
 
         Nepomuk::SimpleResource coldplay;
-        coldplay.m_properties.insert( RDF::type(), NCO::Contact() );
-        coldplay.m_properties.insert( NCO::fullname(), "Coldplay" );
+        coldplay.addProperty( RDF::type(), NCO::Contact() );
+        coldplay.addProperty( NCO::fullname(), "Coldplay" );
 
         // Push it into the model with a proper uri
         coldplay.setUri( QUrl("nepomuk:/res/coldplay") );
-        QVERIFY( push( m_model, coldplay, graphUri ) == coldplay.m_properties.size() );
+        QVERIFY( push( m_model, coldplay, graphUri ) == coldplay.properties().size() );
 
         // Now keep it as a blank node
         coldplay.setUri( QUrl("_:coldplay") );
 
         Nepomuk::SimpleResource album;
         album.setUri( QUrl("_:XandY") );
-        album.m_properties.insert( RDF::type(), NMM::MusicAlbum() );
-        album.m_properties.insert( NIE::title(), "X&Y" );
+        album.addProperty( RDF::type(), NMM::MusicAlbum() );
+        album.addProperty( NIE::title(), "X&Y" );
 
         Nepomuk::SimpleResource res1;
         res1.setUri( QUrl("nepomuk:/res/m/Res1") );
-        res1.m_properties.insert( RDF::type(), NFO::FileDataObject() );
-        res1.m_properties.insert( RDF::type(), NMM::MusicPiece() );
-        res1.m_properties.insert( NFO::fileName(), "Yellow.mp3" );
-        res1.m_properties.insert( NMM::performer(), QUrl("_:coldplay") );
-        res1.m_properties.insert( NMM::musicAlbum(), QUrl("_:XandY") );
+        res1.addProperty( RDF::type(), NFO::FileDataObject() );
+        res1.addProperty( RDF::type(), NMM::MusicPiece() );
+        res1.addProperty( NFO::fileName(), "Yellow.mp3" );
+        res1.addProperty( NMM::performer(), QUrl("_:coldplay") );
+        res1.addProperty( NMM::musicAlbum(), QUrl("_:XandY") );
         Nepomuk::SimpleResourceGraph resGraph;
         resGraph << res1 << coldplay << album;
 
@@ -1575,7 +1575,7 @@ void DataManagementModelTest::testMergeResources()
         QVERIFY( m_model->containsAnyStatement( res1.uri(), NFO::fileName(),
                                                 Soprano::LiteralValue("Yellow.mp3") ) );
         kDebug() << m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements();
-        QVERIFY( m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements().size() == res1.m_properties.size() );
+        QVERIFY( m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements().size() == res1.properties().size() );
 
         QList< Node > objects = m_model->listStatements( res1.uri(), NMM::performer(), Soprano::Node() ).iterateObjects().allNodes();
 
@@ -1610,8 +1610,8 @@ void DataManagementModelTest::testMergeResources()
     // In the opposite case - nothing should be done
     {
         Nepomuk::SimpleResource res;
-        res.m_properties.insert( RDF::type(), NCO::Contact() );
-        res.m_properties.insert( NCO::fullname(), "Lion" );
+        res.addProperty( RDF::type(), NCO::Contact() );
+        res.addProperty( NCO::fullname(), "Lion" );
 
         QUrl graphUri("nepomuk:/ctx/mergeRes/testGraph");
         QUrl graphMetadataGraph("nepomuk:/ctx/mergeRes/testGraph-metadata");
@@ -1622,7 +1622,7 @@ void DataManagementModelTest::testMergeResources()
         QVERIFY( m_model->statementCount() == stCount+3 );
 
         res.setUri(QUrl("nepomuk:/res/Lion"));
-        QVERIFY( push( m_model, res, graphUri ) == res.m_properties.size() );
+        QVERIFY( push( m_model, res, graphUri ) == res.properties().size() );
         res.setUri(QUrl("_:lion"));
 
         Nepomuk::SimpleResourceGraph resGraph;
@@ -1645,8 +1645,8 @@ void DataManagementModelTest::testMergeResources()
     }
     {
         Nepomuk::SimpleResource res;
-        res.m_properties.insert( RDF::type(), NCO::Contact() );
-        res.m_properties.insert( NCO::fullname(), "Tiger" );
+        res.addProperty( RDF::type(), NCO::Contact() );
+        res.addProperty( NCO::fullname(), "Tiger" );
 
         QUrl graphUri("nepomuk:/ctx/mergeRes/testGraph2");
         QUrl graphMetadataGraph("nepomuk:/ctx/mergeRes/testGraph2-metadata");
@@ -1656,7 +1656,7 @@ void DataManagementModelTest::testMergeResources()
         QVERIFY( m_model->statementCount() == stCount+2 );
 
         res.setUri(QUrl("nepomuk:/res/Tiger"));
-        QVERIFY( push( m_model, res, graphUri ) == res.m_properties.size() );
+        QVERIFY( push( m_model, res, graphUri ) == res.properties().size() );
         res.setUri(QUrl("_:tiger"));
 
         Nepomuk::SimpleResourceGraph resGraph;
@@ -1688,8 +1688,8 @@ void DataManagementModelTest::testMergeResources_createResource()
     //
     SimpleResource res;
     res.setUri(QUrl("_:A"));
-    res.m_properties.insert(RDF::type(), NAO::Tag());
-    res.m_properties.insert(NAO::prefLabel(), QLatin1String("Foobar"));
+    res.addProperty(RDF::type(), NAO::Tag());
+    res.addProperty(NAO::prefLabel(), QLatin1String("Foobar"));
 
     m_dmModel->mergeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
 
@@ -1779,7 +1779,7 @@ void DataManagementModelTest::testMergeResources_createResource()
     // create a resource by specifying the URI
     SimpleResource res2;
     res2.setUri(QUrl("nepomuk:/res/A"));
-    res2.m_properties.insert(QUrl("prop:/string"), QVariant(QLatin1String("foobar")));
+    res2.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("foobar")));
     m_dmModel->mergeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"));
 
     QVERIFY(m_model->containsAnyStatement( res2.uri(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
@@ -1824,7 +1824,7 @@ void DataManagementModelTest::testMergeResources_invalid_args()
     // invalid range used in one resource
     SimpleResource res;
     res.setUri(QUrl("res:/A"));
-    res.m_properties.insert(QUrl("prop:/int"), QVariant(QLatin1String("foobar")));
+    res.addProperty(QUrl("prop:/int"), QVariant(QLatin1String("foobar")));
     m_dmModel->mergeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
 
     // this call should fail
@@ -1841,8 +1841,8 @@ void DataManagementModelTest::testMergeResources_file1()
     // merge a file URL
     SimpleResource r1;
     r1.setUri(QUrl("file:/A"));
-    r1.m_properties.insert(RDF::type(), NAO::Tag());
-    r1.m_properties.insert(QUrl("prop:/string"), QLatin1String("Foobar"));
+    r1.addProperty(RDF::type(), NAO::Tag());
+    r1.addProperty(QUrl("prop:/string"), QLatin1String("Foobar"));
 
     m_dmModel->mergeResources(SimpleResourceGraph() << r1, QLatin1String("testapp"));
 
@@ -1872,7 +1872,7 @@ void DataManagementModelTest::testMergeResources_file2()
     
     SimpleResource r1;
     r1.setUri(QUrl("nepomuk:/res/A"));
-    r1.m_properties.insert(QUrl("prop:/res"), fileUrl);
+    r1.addProperty(QUrl("prop:/res"), fileUrl);
 
     m_dmModel->mergeResources(SimpleResourceGraph() << r1, QLatin1String("testapp"));
 
@@ -1916,9 +1916,9 @@ void DataManagementModelTest::testMergeResources_metadata()
 
     // now we merge the same resource (with differing metadata)
     SimpleResource a;
-    a.m_properties.insert(QUrl("prop:/int"), QVariant(42));
-    a.m_properties.insert(QUrl("prop:/string"), QVariant(QLatin1String("Foobar")));
-    a.m_properties.insert(NAO::created(), QVariant(QDateTime(QDate(2010, 12, 24), QTime::currentTime())));
+    a.addProperty(QUrl("prop:/int"), QVariant(42));
+    a.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("Foobar")));
+    a.addProperty(NAO::created(), QVariant(QDateTime(QDate(2010, 12, 24), QTime::currentTime())));
 
     // merge the resource
     m_dmModel->mergeResources(SimpleResourceGraph() << a, QLatin1String("B"));
@@ -1961,7 +1961,7 @@ void DataManagementModelTest::testDescribeResources()
     QCOMPARE(g.first().uri(), QUrl("res:/A"));
 
     // res:/A has 3 properties
-    QCOMPARE(g.first().m_properties.count(), 3);
+    QCOMPARE(g.first().properties().count(), 3);
 
 
     // get one resource by file-url without sub-res
@@ -1977,7 +1977,7 @@ void DataManagementModelTest::testDescribeResources()
     QCOMPARE(g.first().uri(), QUrl("res:/C"));
 
     // res:/C has 3 properties
-    QCOMPARE(g.first().m_properties.count(), 3);
+    QCOMPARE(g.first().properties().count(), 3);
 
 
     // get one resource with sub-res
@@ -1997,12 +1997,12 @@ void DataManagementModelTest::testDescribeResources()
 
     // res:/A has 3 properties
     if(r1.uri() == QUrl("res:/A")) {
-        QCOMPARE(r1.m_properties.count(), 3);
-        QCOMPARE(r2.m_properties.count(), 1);
+        QCOMPARE(r1.properties().count(), 3);
+        QCOMPARE(r2.properties().count(), 1);
     }
     else {
-        QCOMPARE(r1.m_properties.count(), 1);
-        QCOMPARE(r2.m_properties.count(), 3);
+        QCOMPARE(r1.properties().count(), 1);
+        QCOMPARE(r2.properties().count(), 3);
     }
 
 
@@ -2023,12 +2023,12 @@ void DataManagementModelTest::testDescribeResources()
 
     // res:/A has 3 properties
     if(r1.uri() == QUrl("res:/C")) {
-        QCOMPARE(r1.m_properties.count(), 3);
-        QCOMPARE(r2.m_properties.count(), 1);
+        QCOMPARE(r1.properties().count(), 3);
+        QCOMPARE(r2.properties().count(), 1);
     }
     else {
-        QCOMPARE(r1.m_properties.count(), 1);
-        QCOMPARE(r2.m_properties.count(), 3);
+        QCOMPARE(r1.properties().count(), 1);
+        QCOMPARE(r2.properties().count(), 3);
     }
 
 
@@ -2048,8 +2048,8 @@ void DataManagementModelTest::testDescribeResources()
     QVERIFY(r1.uri() == QUrl("res:/C") || r2.uri() == QUrl("res:/C"));
 
     // res:/A has 3 properties
-    QCOMPARE(r1.m_properties.count(), 3);
-    QCOMPARE(r2.m_properties.count(), 3);
+    QCOMPARE(r1.properties().count(), 3);
+    QCOMPARE(r2.properties().count(), 3);
 
 
     // get two resources with sub-res

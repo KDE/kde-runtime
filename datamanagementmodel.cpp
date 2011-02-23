@@ -1009,10 +1009,10 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
             resolvedNodes.insert( fileUri, newResUri );
 
             res.setUri( newResUri );
-            if( !res.m_properties.contains( NIE::url(), fileUri ) )
-                res.m_properties.insert( NIE::url(), fileUri );
-            if( !res.m_properties.contains( RDF::type(), NFO::FileDataObject() ) )
-                res.m_properties.insert( RDF::type(), NFO::FileDataObject() );
+            if( !res.contains( NIE::url(), fileUri ) )
+                res.addProperty( NIE::url(), fileUri );
+            if( !res.contains( RDF::type(), NFO::FileDataObject() ) )
+                res.addProperty( RDF::type(), NFO::FileDataObject() );
         }
     }
     resGraph = resGraphList;
@@ -1022,8 +1022,9 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
     QList<Soprano::Statement> allStatements;
     QList<Sync::SimpleResource> extraResources;
     
-    foreach( SimpleResource res, resGraph.toList() ) {
-        QMutableHashIterator<QUrl, QVariant> it( res.m_properties );
+    foreach( const SimpleResource& res, resGraph.toList() ) {
+        SimpleResource resolvedRes(res.uri());
+        QHashIterator<QUrl, QVariant> it( res.properties() );
         while( it.hasNext() ) {
             it.next();
 
@@ -1034,7 +1035,7 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
                 // Need to resolve it
                 QHash< QUrl, QUrl >::const_iterator findIter = resolvedNodes.find( fileUri );
                 if( findIter != resolvedNodes.end() ) {
-                    it.setValue( findIter.value() );
+                    resolvedRes.addProperty(it.key(), findIter.value());
                 }
                 else {
                     // It doesn't exist, create it
@@ -1049,12 +1050,15 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
 
                     extraResources.append( newRes );
 
-                    it.setValue( resolvedUri );
+                    resolvedRes.addProperty(it.key(), resolvedUri);
                 }
+            }
+            else {
+                resolvedRes.addProperty(it.key(), it.value());
             }
         }
         
-        QList< Soprano::Statement > stList = res.toStatementList();
+        QList< Soprano::Statement > stList = resolvedRes.toStatementList();
         allStatements << stList;
 
         if(stList.isEmpty()) {
@@ -1189,7 +1193,7 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
     while(it.next()) {
         const QUrl r = it["s"].uri();
         graph[r].setUri(r);
-        graph[r].m_properties.insertMulti(it["p"].uri(), nodeToVariant(it["o"]));
+        graph[r].addProperty(it["p"].uri(), nodeToVariant(it["o"]));
     }
     if(it.lastError()) {
         setError(it.lastError());

@@ -62,7 +62,7 @@ QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::SimpleResource& re
 {
     arg.beginStructure();
     arg << QString::fromAscii(res.uri().toEncoded());
-    arg << res.m_properties;
+    arg << res.properties();
     arg.endStructure();
     return arg;
 }
@@ -71,9 +71,11 @@ const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::SimpleResour
 {
     arg.beginStructure();
     QString uriS;
+    Nepomuk::PropertyHash props;
     arg >> uriS;
     res.setUri( QUrl::fromEncoded(uriS.toAscii()) );
-    arg >> res.m_properties;
+    arg >> props;
+    res.setProperties(props);
     arg.endStructure();
     return arg;
 }
