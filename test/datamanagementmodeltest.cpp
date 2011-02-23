@@ -210,6 +210,22 @@ void DataManagementModelTest::testAddProperty()
     QCOMPARE(existingStatements, Soprano::Graph(m_model->listStatements().allStatements()));
 }
 
+// test that creating a resource by adding a property on its URI properly sets metadata
+void DataManagementModelTest::testAddProperty_createRes()
+{
+    // we create a new res by simply adding a property to it
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/int"), QVariantList() << 42, QLatin1String("Testapp"));
+
+    // now the newly created resource should have all the metadata a resource needs to have
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::created(), Node()));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::lastModified(), Node()));
+
+    // and both created and last modification date should be similar
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).iterateObjects().allNodes().first(),
+             m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first());
+}
+
+
 void DataManagementModelTest::testAddProperty_cardinality()
 {
     // adding the same value twice in one call should result in one insert. This also includes the cardinality check
@@ -421,6 +437,22 @@ void DataManagementModelTest::testSetProperty()
     // check the number of graphs (two for the app, two for the actual data, and one for the ontology)
     QCOMPARE(m_model->listContexts().allElements().count(), 5);
 }
+
+// test that creating a resource by setting a property on its URI properly sets metadata
+void DataManagementModelTest::testSetProperty_createRes()
+{
+    // we create a new res by simply adding a property to it
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/int"), QVariantList() << 42, QLatin1String("Testapp"));
+
+    // now the newly created resource should have all the metadata a resource needs to have
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::created(), Node()));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::lastModified(), Node()));
+
+    // and both created and last modification date should be similar
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).iterateObjects().allNodes().first(),
+             m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first());
+}
+
 
 void DataManagementModelTest::testSetProperty_overwrite()
 {
@@ -1662,8 +1694,22 @@ void DataManagementModelTest::testMergeResources_createResource()
     m_dmModel->mergeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
 
     // check if the resource exists
-    m_model->containsAnyStatement(Soprano::Node(), RDF::type(), NAO::Tag());
-    m_model->containsAnyStatement(Soprano::Node(), NAO::prefLabel(), Soprano::LiteralValue(QLatin1String("Foobar")));
+    QVERIFY(m_model->containsAnyStatement(Soprano::Node(), RDF::type(), NAO::Tag()));
+    QVERIFY(m_model->containsAnyStatement(Soprano::Node(), NAO::prefLabel(), Soprano::LiteralValue(QLatin1String("Foobar"))));
+
+    // make sure only one tag resource was created
+    QCOMPARE(m_model->listStatements(Node(), RDF::type(), NAO::Tag()).allElements().count(), 1);
+
+    // get the new resources URI
+    const QUrl resUri = m_model->listStatements(Node(), RDF::type(), NAO::Tag()).iterateSubjects().allNodes().first().uri();
+
+    // check that it has the default metadata
+    QVERIFY(m_model->containsAnyStatement(resUri, NAO::created(), Node()));
+    QVERIFY(m_model->containsAnyStatement(resUri, NAO::lastModified(), Node()));
+
+    // and both created and last modification date should be similar
+    QCOMPARE(m_model->listStatements(resUri, NAO::created(), Node()).iterateObjects().allNodes().first(),
+             m_model->listStatements(resUri, NAO::lastModified(), Node()).iterateObjects().allNodes().first());
 
     // check if all the correct metadata graphs exist
     // ask where {

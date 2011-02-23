@@ -43,12 +43,14 @@ private Q_SLOTS:
     void init();
 
     void testAddProperty();
+    void testAddProperty_createRes();
     void testAddProperty_cardinality();
     void testAddProperty_file();
     void testAddProperty_invalidFile();
     void testAddProperty_invalid_args();
 
     void testSetProperty();
+    void testSetProperty_createRes();
     void testSetProperty_overwrite();
     void testSetProperty_invalid_args();
     void testSetProperty_nieUrl1();

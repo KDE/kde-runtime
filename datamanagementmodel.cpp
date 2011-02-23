@@ -64,8 +64,7 @@ using namespace Soprano::Vocabulary;
 //// TODO: do not allow to create properties or classes through the "normal" methods. Instead provide methods for it.
 //// IDEAS:
 //// 1. Do not allow clients to change metadata properties like nao:created, nao:creator, nao:lastModified (except when sharing data...)
-//// 2. Automatically update nfo:fileName and parent folder link when changing nie:url (basically what metadatamover does now)
-
+//// 2. Somehow handle nie:hasPart (at least in describeResources - compare text annotations where we only want to annotate part of a text)
 
 namespace {
     /// used to handle sets and lists of QUrls
@@ -114,6 +113,7 @@ namespace {
         return terms.join(QLatin1String(" && "));
     }
 
+    // Idea: to resolve local file paths we could make this method return an enum like so: ExistingFileUrl, NonExistingFileUrl, OtherUri
     inline bool isLocalFileUrl(const QUrl& url) {
         return url.scheme() == QLatin1String("file");
     }
@@ -166,7 +166,10 @@ Soprano::Error::ErrorCode Nepomuk::DataManagementModel::updateModificationDate(c
 
     removeTrailingGraphs(mtimeGraphs);
 
-    return addStatement(resource, NAO::lastModified(), Soprano::LiteralValue( date ), graph);
+    addStatement(resource, NAO::lastModified(), Soprano::LiteralValue( date ), graph);
+    if(!containsAnyStatement(resource, NAO::created(), Node())) {
+        addStatement(resource, NAO::created(), Soprano::LiteralValue( date ), graph);
+    }
 }
 
 void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
@@ -200,7 +203,7 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
 
 
     //
-    // Check the integrity of the values
+    // Convert all values to RDF nodes. This includes the property range check and conversion of local file paths to file URLs
     //
     const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
     if(nodes.isEmpty()) {
@@ -340,6 +343,10 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
         return;
     }
 
+
+    //
+    // Convert all values to RDF nodes. This includes the property range check and conversion of local file paths to file URLs
+    //
     const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
     if(nodes.isEmpty()) {
         setError(QString::fromLatin1("setProperty: At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
@@ -616,9 +623,11 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
 
     clearError();
 
+    // create new URIs and a new graph
     const QUrl graph = createGraph(app);
     const QUrl resUri = createUri(ResourceUri);
 
+    // add provided metadata
     foreach(const QUrl& type, types) {
         addStatement(resUri, RDF::type(), type, graph);
     }
@@ -628,6 +637,12 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
     if(!description.isEmpty()) {
         addStatement(resUri, NAO::description(), Soprano::LiteralValue(description), graph);
     }
+
+    // add basic metadata to the new resource
+    const QDateTime now = QDateTime::currentDateTime();
+    addStatement(resUri, NAO::created(), now, graph);
+    addStatement(resUri, NAO::lastModified(), now, graph);
+
     return resUri;
 }
 
@@ -1053,6 +1068,8 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
         resIdent.addSimpleResource( simpleRes );
     }
     
+    clearError();
+
     resIdent.setModel( this );
     resIdent.setMinScore( 1.0 );
     resIdent.identifyAll();
@@ -1409,6 +1426,7 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
     }
 
     const QUrl appRes = findApplicationResource(app);
+
 
     //
     // Check if values already exist. If so remove the resources from the resourceSet and only add the application
