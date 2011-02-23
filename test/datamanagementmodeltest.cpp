@@ -71,6 +71,10 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( QUrl("prop:/int3"), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( QUrl("prop:/int3"), RDFS::range(), XMLSchema::xsdInt(), graph );
 
+    m_model->addStatement( QUrl("prop:/int_c1"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/int_c1"), RDFS::range(), XMLSchema::xsdInt(), graph );
+    m_model->addStatement( QUrl("prop:/int_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
+
     m_model->addStatement( QUrl("prop:/string"), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( QUrl("prop:/string"), RDFS::range(), XMLSchema::string(), graph );
 
@@ -1488,7 +1492,7 @@ namespace {
         return numPushed;
     }
 }
-void DataManagementModelTest::testMergeResources()
+void DataManagementModelTest::testStoreResources()
 {
     Nepomuk::ResourceManager::instance()->setOverrideMainModel( m_model );
     
@@ -1514,7 +1518,7 @@ void DataManagementModelTest::testMergeResources()
     graph << res;
 
     // Try merging it.
-    m_dmModel->mergeResources( graph, QLatin1String("Testapp") );
+    m_dmModel->storeResources( graph, QLatin1String("Testapp") );
     
     // res2 shouldn't exists as it is the same as res1 and should have gotten merged.
     QVERIFY( !m_model->containsAnyStatement( QUrl("nepomuk:/mergeTest/res2"), QUrl(), QUrl() ) );
@@ -1524,12 +1528,12 @@ void DataManagementModelTest::testMergeResources()
     graph.clear();
     graph << res;
 
-    m_dmModel->mergeResources( graph, QLatin1String("Testapp") );
+    m_dmModel->storeResources( graph, QLatin1String("Testapp") );
     QVERIFY( !m_model->containsAnyStatement( QUrl("_:blah"), QUrl(), QUrl() ) );
 
     //
     // Test 2 -
-    // This is for testing exactly how Strigi will use mergeResources ie
+    // This is for testing exactly how Strigi will use storeResources ie
     // have some blank nodes ( some of which may already exists ) and a
     // main resources which does not exist
     //
@@ -1568,7 +1572,7 @@ void DataManagementModelTest::testMergeResources()
         // Do the actual merging
         //
         kDebug() << "Perform the merge";
-        m_dmModel->mergeResources( resGraph, "TestApp" );
+        m_dmModel->storeResources( resGraph, "TestApp" );
 
         QVERIFY( m_model->containsAnyStatement( res1.uri(), Soprano::Node(),
                                                 Soprano::Node() ) );
@@ -1630,7 +1634,7 @@ void DataManagementModelTest::testMergeResources()
 
         QHash<QUrl, QVariant> additionalMetadata;
         additionalMetadata.insert( RDF::type(), NRL::InstanceBase() );
-        m_dmModel->mergeResources( resGraph, "TestApp", additionalMetadata );
+        m_dmModel->storeResources( resGraph, "TestApp", additionalMetadata );
         
         QList<Soprano::Statement> stList = m_model->listStatements( Soprano::Node(), NCO::fullname(),
                                                             Soprano::LiteralValue("Lion") ).allStatements();
@@ -1664,7 +1668,7 @@ void DataManagementModelTest::testMergeResources()
 
         QHash<QUrl, QVariant> additionalMetadata;
         additionalMetadata.insert( RDF::type(), NRL::InstanceBase() );
-        m_dmModel->mergeResources( resGraph, "TestApp", additionalMetadata );
+        m_dmModel->storeResources( resGraph, "TestApp", additionalMetadata );
 
         QList<Soprano::Statement> stList = m_model->listStatements( Soprano::Node(), NCO::fullname(),
                                                            Soprano::LiteralValue("Tiger") ).allStatements();
@@ -1679,7 +1683,7 @@ void DataManagementModelTest::testMergeResources()
     }
 }
 
-void DataManagementModelTest::testMergeResources_createResource()
+void DataManagementModelTest::testStoreResources_createResource()
 {
     ResourceManager::instance()->setOverrideMainModel( m_model );
 
@@ -1691,7 +1695,7 @@ void DataManagementModelTest::testMergeResources_createResource()
     res.addProperty(RDF::type(), NAO::Tag());
     res.addProperty(NAO::prefLabel(), QLatin1String("Foobar"));
 
-    m_dmModel->mergeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
+    m_dmModel->storeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
 
     // check if the resource exists
     QVERIFY(m_model->containsAnyStatement(Soprano::Node(), RDF::type(), NAO::Tag()));
@@ -1737,7 +1741,7 @@ void DataManagementModelTest::testMergeResources_createResource()
     // Now create the same resource again
     //
     Soprano::Graph existingStatements = m_model->listStatements().allStatements();
-    m_dmModel->mergeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
+    m_dmModel->storeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
 
     // nothing should have happened
     QCOMPARE(existingStatements, Soprano::Graph(m_model->listStatements().allStatements()));
@@ -1745,7 +1749,7 @@ void DataManagementModelTest::testMergeResources_createResource()
     //
     // Now create the same resource with a different app
     //
-    m_dmModel->mergeResources(SimpleResourceGraph() << res, QLatin1String("testapp2"));
+    m_dmModel->storeResources(SimpleResourceGraph() << res, QLatin1String("testapp2"));
 
     // only one thing should have been added: the new app Agent and its role as maintainer for the existing graph
     // vHanda: Shouldn't there be a new graph, with the resources statements which hash both
@@ -1780,19 +1784,19 @@ void DataManagementModelTest::testMergeResources_createResource()
     SimpleResource res2;
     res2.setUri(QUrl("nepomuk:/res/A"));
     res2.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("foobar")));
-    m_dmModel->mergeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"));
+    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"));
 
     QVERIFY(m_model->containsAnyStatement( res2.uri(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
 }
 
-void DataManagementModelTest::testMergeResources_invalid_args()
+void DataManagementModelTest::testStoreResources_invalid_args()
 {
     // remember current state to compare later on
     Soprano::Graph existingStatements = m_model->listStatements().allStatements();
 
 
     // empty resources -> no error but no change either
-    m_dmModel->mergeResources(SimpleResourceGraph(), QLatin1String("testapp"));
+    m_dmModel->storeResources(SimpleResourceGraph(), QLatin1String("testapp"));
 
     // no error
     QVERIFY(!m_dmModel->lastError());
@@ -1802,7 +1806,7 @@ void DataManagementModelTest::testMergeResources_invalid_args()
 
 
     // empty app
-    m_dmModel->mergeResources(SimpleResourceGraph(), QString());
+    m_dmModel->storeResources(SimpleResourceGraph(), QString());
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1812,7 +1816,7 @@ void DataManagementModelTest::testMergeResources_invalid_args()
 
 
     // invalid resource in graph
-    m_dmModel->mergeResources(SimpleResourceGraph() << SimpleResource(), QLatin1String("testapp"));
+    m_dmModel->storeResources(SimpleResourceGraph() << SimpleResource(), QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1825,7 +1829,7 @@ void DataManagementModelTest::testMergeResources_invalid_args()
     SimpleResource res;
     res.setUri(QUrl("res:/A"));
     res.addProperty(QUrl("prop:/int"), QVariant(QLatin1String("foobar")));
-    m_dmModel->mergeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
+    m_dmModel->storeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1834,7 +1838,7 @@ void DataManagementModelTest::testMergeResources_invalid_args()
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
-void DataManagementModelTest::testMergeResources_file1()
+void DataManagementModelTest::testStoreResources_file1()
 {
     ResourceManager::instance()->setOverrideMainModel( m_model );
 
@@ -1844,7 +1848,7 @@ void DataManagementModelTest::testMergeResources_file1()
     r1.addProperty(RDF::type(), NAO::Tag());
     r1.addProperty(QUrl("prop:/string"), QLatin1String("Foobar"));
 
-    m_dmModel->mergeResources(SimpleResourceGraph() << r1, QLatin1String("testapp"));
+    m_dmModel->storeResources(SimpleResourceGraph() << r1, QLatin1String("testapp"));
 
     // a nie:url relation should have been created
     QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl("file:/A")));
@@ -1863,7 +1867,7 @@ void DataManagementModelTest::testMergeResources_file1()
                                   Query::QueryLanguageSparql).boolValue());
 }
 
-void DataManagementModelTest::testMergeResources_file2()
+void DataManagementModelTest::testStoreResources_file2()
 {
     ResourceManager::instance()->setOverrideMainModel( m_model );
 
@@ -1874,7 +1878,7 @@ void DataManagementModelTest::testMergeResources_file2()
     r1.setUri(QUrl("nepomuk:/res/A"));
     r1.addProperty(QUrl("prop:/res"), fileUrl);
 
-    m_dmModel->mergeResources(SimpleResourceGraph() << r1, QLatin1String("testapp"));
+    m_dmModel->storeResources(SimpleResourceGraph() << r1, QLatin1String("testapp"));
 
     // the property should have been created
     QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), Node()));
@@ -1894,7 +1898,7 @@ void DataManagementModelTest::testMergeResources_file2()
 }
 
 // metadata should be ignored when merging one resource into another
-void DataManagementModelTest::testMergeResources_metadata()
+void DataManagementModelTest::testStoreResources_metadata()
 {
     ResourceManager::instance()->setOverrideMainModel( m_model );
 
@@ -1921,7 +1925,7 @@ void DataManagementModelTest::testMergeResources_metadata()
     a.addProperty(NAO::created(), QVariant(QDateTime(QDate(2010, 12, 24), QTime::currentTime())));
 
     // merge the resource
-    m_dmModel->mergeResources(SimpleResourceGraph() << a, QLatin1String("B"));
+    m_dmModel->storeResources(SimpleResourceGraph() << a, QLatin1String("B"));
 
     // make sure no new resource has been created
     QCOMPARE(m_model->listStatements(Node(), RDF::type(), NAO::Tag()).allStatements().count(), 1);
@@ -1929,6 +1933,59 @@ void DataManagementModelTest::testMergeResources_metadata()
     QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/string"), Node()).allStatements().count(), 1);
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).allStatements().count(), 1);
 }
+
+
+void DataManagementModelTest::testMergeResources()
+{
+    // first we need to create the two resources we want to merge as well as one that should not be touched
+    // for this simple test we put everything into one graph
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+
+    // the resource in which we want to merge
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int_c1"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+    // the resource that is going to be merged
+    // one duplicate property and one that differs, one backlink to ignore,
+    // one property with cardinality 1 to ignore
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int_c1"), LiteralValue(12), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/B"), g1);
+
+    // resource C to ignore (except the backlink which needs to be updated)
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/res"), QUrl("res:/B"), g1);
+
+
+    // now merge the resources
+    m_dmModel->mergeResources(QUrl("res:/A"), QUrl("res:/B"), QLatin1String("A"));
+
+    // make sure B is gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(Node(), Node(), QUrl("res:/B")));
+
+    // make sure A has all the required properties
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42)));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int_c1"), LiteralValue(42)));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello"))));
+
+    // make sure A has no superfluous properties
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int_c1"), LiteralValue(12)));
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/int"), Node()).allElements().count(), 1);
+
+    // make sure the backlink was updated
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/C"), QUrl("prop:/res"), QUrl("res:/A")));
+
+    // make sure C was not touched apart from the backlink
+    QVERIFY(m_model->containsStatement(QUrl("res:/C"), QUrl("prop:/int"), LiteralValue(42), g1));
+    QVERIFY(m_model->containsStatement(QUrl("res:/C"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1));
+}
+
 
 void DataManagementModelTest::testDescribeResources()
 {

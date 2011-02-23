@@ -51,7 +51,7 @@
       <arg name="properties" type="as" direction="in"/>
       <arg name="app" type="s" direction="in"/>
     </method>
-    <method name="mergeResources">
+    <method name="storeResources">
       <arg name="resources" type="a(sa{sv})" direction="in"/>
       <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Nepomuk::SimpleResourceGraph"/>
       <arg name="app" type="s" direction="in"/>

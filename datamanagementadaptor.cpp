@@ -109,7 +109,7 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementAdaptor::describeResources(c
     return SimpleResourceGraph();
 }
 
-void Nepomuk::DataManagementAdaptor::mergeResources(Nepomuk::SimpleResourceGraph resources, const QString &app, const QHash<QString, QDBusVariant> &additionalMetadata)
+void Nepomuk::DataManagementAdaptor::storeResources(Nepomuk::SimpleResourceGraph resources, const QString &app, const QHash<QString, QDBusVariant> &additionalMetadata)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);

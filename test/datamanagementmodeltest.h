@@ -77,12 +77,14 @@ private Q_SLOTS:
     void testRemoveDataByApplication5();
     void testRemoveDataByApplication6();
 
+    void testStoreResources();
+    void testStoreResources_createResource();
+    void testStoreResources_invalid_args();
+    void testStoreResources_file1();
+    void testStoreResources_file2();
+    void testStoreResources_metadata();
+
     void testMergeResources();
-    void testMergeResources_createResource();
-    void testMergeResources_invalid_args();
-    void testMergeResources_file1();
-    void testMergeResources_file2();
-    void testMergeResources_metadata();
 
     void testDescribeResources();
 

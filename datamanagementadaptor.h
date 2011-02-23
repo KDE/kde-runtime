@@ -98,7 +98,7 @@ class DataManagementAdaptor: public QObject, protected QDBusContext
                 "      <arg direction=\"in\" type=\"as\" name=\"properties\"/>\n"
                 "      <arg direction=\"in\" type=\"s\" name=\"app\"/>\n"
                 "    </method>\n"
-                "    <method name=\"mergeResources\">\n"
+                "    <method name=\"storeResources\">\n"
                 "      <arg direction=\"in\" type=\"a(sa{sv})\" name=\"resources\"/>\n"
                 "      <annotation value=\"Nepomuk::SimpleResourceGraph\" name=\"com.trolltech.QtDBus.QtTypeName.In0\"/>\n"
                 "      <arg direction=\"in\" type=\"s\" name=\"app\"/>\n"
@@ -171,7 +171,7 @@ public Q_SLOTS:
     QString createResource(const QStringList &types, const QString &label, const QString &description, const QString &app);
     void removeResources(const QStringList &resources, const QString &app, int flags);
     Nepomuk::SimpleResourceGraph describeResources(const QStringList &resources, bool includeSubResources);
-    void mergeResources(Nepomuk::SimpleResourceGraph resources, const QString &app, const QHash<QString, QDBusVariant> &additionalMetadata);
+    void storeResources(Nepomuk::SimpleResourceGraph resources, const QString &app, const QHash<QString, QDBusVariant> &additionalMetadata);
     void removeDataByApplication(const QString &app, int flags);
     void removeDataByApplication(const QStringList &resources, const QString &app, int flags);
     void removePropertiesByApplication(const QStringList &resources, const QStringList &properties, const QString &app);

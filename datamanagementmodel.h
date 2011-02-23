@@ -166,9 +166,15 @@ public Q_SLOTS:
      * to state that the provided information can be recreated at any time. Only built-in types
      * such as int, string, or url are supported.
      */
-    void mergeResources(const SimpleResourceGraph& resources,
+    void storeResources(const SimpleResourceGraph& resources,
                         const QString& app,
                         const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>() );
+
+    /**
+     * Merges two resources into one. Properties from \p resource1
+     * take precedence over that from \p resource2 (for properties with cardinality 1).
+     */
+    void mergeResources(const QUrl& resource1, const QUrl& resource2, const QString& app);
 
     /**
      * Describe a set of resources, i.e. retrieve all their properties.
