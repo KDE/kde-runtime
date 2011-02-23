@@ -147,7 +147,7 @@ Nepomuk::DataManagementModel::~DataManagementModel()
 }
 
 
-Soprano::Error::ErrorCode Nepomuk::DataManagementModel::updateModificationDate(const QUrl& resource, const QUrl & graph, const QDateTime& date)
+Soprano::Error::ErrorCode Nepomuk::DataManagementModel::updateModificationDate(const QUrl& resource, const QUrl & graph, const QDateTime& date, bool includeCreationDate)
 {
     Q_ASSERT(!graph.isEmpty());
 
@@ -167,9 +167,11 @@ Soprano::Error::ErrorCode Nepomuk::DataManagementModel::updateModificationDate(c
     removeTrailingGraphs(mtimeGraphs);
 
     addStatement(resource, NAO::lastModified(), Soprano::LiteralValue( date ), graph);
-    if(!containsAnyStatement(resource, NAO::created(), Node())) {
+    if(includeCreationDate && !containsAnyStatement(resource, NAO::created(), Soprano::Node())) {
         addStatement(resource, NAO::created(), Soprano::LiteralValue( date ), graph);
     }
+
+    return Soprano::Error::ErrorNone;
 }
 
 void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
@@ -640,8 +642,8 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
 
     // add basic metadata to the new resource
     const QDateTime now = QDateTime::currentDateTime();
-    addStatement(resUri, NAO::created(), now, graph);
-    addStatement(resUri, NAO::lastModified(), now, graph);
+    addStatement(resUri, NAO::created(), Soprano::LiteralValue(now), graph);
+    addStatement(resUri, NAO::lastModified(), Soprano::LiteralValue(now), graph);
 
     return resUri;
 }
@@ -1517,7 +1519,7 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
 
         // update modification date
         Q_FOREACH(const QUrl& res, finalResources) {
-            updateModificationDate(res, graph);
+            updateModificationDate(res, graph, QDateTime::currentDateTime(), true);
         }
     }
 }
