@@ -1893,6 +1893,43 @@ void DataManagementModelTest::testMergeResources_file2()
                                   Query::QueryLanguageSparql).boolValue());
 }
 
+// metadata should be ignored when merging one resource into another
+void DataManagementModelTest::testMergeResources_metadata()
+{
+    ResourceManager::instance()->setOverrideMainModel( m_model );
+
+    // create our app
+    const QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+
+    // create a resource
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), NAO::Tag(), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("Foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
+
+
+    // now we merge the same resource (with differing metadata)
+    SimpleResource a;
+    a.m_properties.insert(QUrl("prop:/int"), QVariant(42));
+    a.m_properties.insert(QUrl("prop:/string"), QVariant(QLatin1String("Foobar")));
+    a.m_properties.insert(NAO::created(), QVariant(QDateTime(QDate(2010, 12, 24), QTime::currentTime())));
+
+    // merge the resource
+    m_dmModel->mergeResources(SimpleResourceGraph() << a, QLatin1String("B"));
+
+    // make sure no new resource has been created
+    QCOMPARE(m_model->listStatements(Node(), RDF::type(), NAO::Tag()).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/int"), Node()).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/string"), Node()).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).allStatements().count(), 1);
+}
+
 void DataManagementModelTest::testDescribeResources()
 {
     // create some resources

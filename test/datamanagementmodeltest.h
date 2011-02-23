@@ -82,6 +82,7 @@ private Q_SLOTS:
     void testMergeResources_invalid_args();
     void testMergeResources_file1();
     void testMergeResources_file2();
+    void testMergeResources_metadata();
 
     void testDescribeResources();
 
