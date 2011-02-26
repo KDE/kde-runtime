@@ -74,3 +74,5 @@ QDBusPendingCall DBusInterface::asyncCall(
     
     return m_iface->asyncCall(method, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 }
+
+#include "dbusinterface.moc"

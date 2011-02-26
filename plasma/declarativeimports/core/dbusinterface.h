@@ -59,5 +59,4 @@ public:
     );
 };
 
-#include "dbusinterface.moc"
 #endif // DBUSINTERFACE_H
