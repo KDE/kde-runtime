@@ -22,27 +22,46 @@
 #include "simpleresource.h"
 
 #include <QtCore/QHashIterator>
+#include <QtCore/QSharedData>
 
 #include <Nepomuk/Variant>
 
-Nepomuk::SimpleResource::SimpleResource()
+class Nepomuk::SimpleResource::Private : public QSharedData
 {
+public:
+    QUrl m_uri;
+    PropertyHash m_properties;
+};
 
+Nepomuk::SimpleResource::SimpleResource(const QUrl& uri)
+{
+    d = new Private();
+    d->m_uri = uri;
+}
+
+Nepomuk::SimpleResource::SimpleResource(const SimpleResource& other)
+    : d(other.d)
+{
 }
 
 Nepomuk::SimpleResource::~SimpleResource()
 {
+}
 
+Nepomuk::SimpleResource & Nepomuk::SimpleResource::operator =(const Nepomuk::SimpleResource &other)
+{
+    d = other.d;
+    return *this;
 }
 
 QUrl Nepomuk::SimpleResource::uri() const
 {
-    return m_uri;
+    return d->m_uri;
 }
 
 void Nepomuk::SimpleResource::setUri(const QUrl& uri)
 {
-    m_uri = uri;
+    d->m_uri = uri;
 }
 
 namespace {
@@ -57,12 +76,12 @@ namespace {
 QList< Soprano::Statement > Nepomuk::SimpleResource::toStatementList() const
 {
     QList<Soprano::Statement> list;
-    QHashIterator<QUrl, QVariant> it( m_properties );
+    QHashIterator<QUrl, QVariant> it( d->m_properties );
     while( it.hasNext() ) {
         it.next();
         
         Soprano::Node object = Nepomuk::Variant( it.value() ).toNode();
-        list << Soprano::Statement( convertIfBlankNode( m_uri ),
+        list << Soprano::Statement( convertIfBlankNode( d->m_uri ),
                                     it.key(),
                                     convertIfBlankNode( object ) );
     }
@@ -71,16 +90,41 @@ QList< Soprano::Statement > Nepomuk::SimpleResource::toStatementList() const
 
 bool Nepomuk::SimpleResource::isValid() const
 {
-    // We donot check if m_uri.isValid() as a blank uri of the form "_:daf" would be invalid
-    return !m_uri.isEmpty() && ( !m_properties.isEmpty() );
+    // We do not check if m_uri.isValid() as a blank uri of the form "_:daf" would be invalid
+    return !d->m_uri.isEmpty() && ( !d->m_properties.isEmpty() );
 }
 
 bool Nepomuk::SimpleResource::operator ==(const Nepomuk::SimpleResource &other) const
 {
-    return m_uri == other.m_uri && m_properties == other.m_properties;
+    return d->m_uri == other.d->m_uri && d->m_properties == other.d->m_properties;
 }
 
 uint Nepomuk::qHash(const SimpleResource& res)
 {
     return qHash(res.uri());
+}
+
+Nepomuk::PropertyHash Nepomuk::SimpleResource::properties() const
+{
+    return d->m_properties;
+}
+
+bool Nepomuk::SimpleResource::contains(const QUrl &property) const
+{
+    return d->m_properties.contains(property);
+}
+
+bool Nepomuk::SimpleResource::contains(const QUrl &property, const QVariant &value) const
+{
+    return d->m_properties.contains(property, value);
+}
+
+void Nepomuk::SimpleResource::addProperty(const QUrl &property, const QVariant &value)
+{
+    d->m_properties.insert(property, value);
+}
+
+void Nepomuk::SimpleResource::setProperties(const Nepomuk::PropertyHash &properties)
+{
+    d->m_properties = properties;
 }

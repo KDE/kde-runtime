@@ -43,13 +43,14 @@ private Q_SLOTS:
     void init();
 
     void testAddProperty();
+    void testAddProperty_createRes();
     void testAddProperty_cardinality();
     void testAddProperty_file();
     void testAddProperty_invalidFile();
     void testAddProperty_invalid_args();
-    void testAddProperty_blankNodes();
 
     void testSetProperty();
+    void testSetProperty_createRes();
     void testSetProperty_overwrite();
     void testSetProperty_invalid_args();
     void testSetProperty_nieUrl1();
@@ -57,21 +58,17 @@ private Q_SLOTS:
     void testSetProperty_nieUrl3();
     void testSetProperty_nieUrl4();
     void testSetProperty_nieUrl5();
-    void testSetProperty_blankNodes();
 
     void testRemoveProperty();
     void testRemoveProperty_file();
     void testRemoveProperty_invalid_args();
-    void testRemoveProperty_blankNodes();
 
     void testRemoveProperties();
     void testRemoveProperties_invalid_args();
-    void testRemoveProperties_blankNodes();
     
     void testRemoveResources();
     void testRemoveResources_subresources();
     void testRemoveResources_invalid_args();
-    void testRemoveResources_blankNodes();
     
     void testRemoveDataByApplication1();
     void testRemoveDataByApplication2();
@@ -80,11 +77,14 @@ private Q_SLOTS:
     void testRemoveDataByApplication5();
     void testRemoveDataByApplication6();
 
+    void testStoreResources();
+    void testStoreResources_createResource();
+    void testStoreResources_invalid_args();
+    void testStoreResources_file1();
+    void testStoreResources_file2();
+    void testStoreResources_metadata();
+
     void testMergeResources();
-    void testMergeResources_createResource();
-    void testMergeResources_invalid_args();
-    void testMergeResources_file1();
-    void testMergeResources_file2();
 
     void testDescribeResources();
 

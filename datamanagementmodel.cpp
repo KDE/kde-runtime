@@ -64,8 +64,7 @@ using namespace Soprano::Vocabulary;
 //// TODO: do not allow to create properties or classes through the "normal" methods. Instead provide methods for it.
 //// IDEAS:
 //// 1. Do not allow clients to change metadata properties like nao:created, nao:creator, nao:lastModified (except when sharing data...)
-//// 2. Automatically update nfo:fileName and parent folder link when changing nie:url (basically what metadatamover does now)
-
+//// 2. Somehow handle nie:hasPart (at least in describeResources - compare text annotations where we only want to annotate part of a text)
 
 namespace {
     /// used to handle sets and lists of QUrls
@@ -113,6 +112,11 @@ namespace {
             terms[i].prepend(QString::fromLatin1("%1!=").arg(var));
         return terms.join(QLatin1String(" && "));
     }
+
+    // Idea: to resolve local file paths we could make this method return an enum like so: ExistingFileUrl, NonExistingFileUrl, OtherUri
+    inline bool isLocalFileUrl(const QUrl& url) {
+        return url.scheme() == QLatin1String("file");
+    }
 }
 
 class Nepomuk::DataManagementModel::Private
@@ -143,7 +147,7 @@ Nepomuk::DataManagementModel::~DataManagementModel()
 }
 
 
-Soprano::Error::ErrorCode Nepomuk::DataManagementModel::updateModificationDate(const QUrl& resource, const QUrl & graph, const QDateTime& date)
+Soprano::Error::ErrorCode Nepomuk::DataManagementModel::updateModificationDate(const QUrl& resource, const QUrl & graph, const QDateTime& date, bool includeCreationDate)
 {
     Q_ASSERT(!graph.isEmpty());
 
@@ -162,7 +166,12 @@ Soprano::Error::ErrorCode Nepomuk::DataManagementModel::updateModificationDate(c
 
     removeTrailingGraphs(mtimeGraphs);
 
-    return addStatement(resource, NAO::lastModified(), Soprano::LiteralValue( date ), graph);
+    addStatement(resource, NAO::lastModified(), Soprano::LiteralValue( date ), graph);
+    if(includeCreationDate && !containsAnyStatement(resource, NAO::created(), Soprano::Node())) {
+        addStatement(resource, NAO::created(), Soprano::LiteralValue( date ), graph);
+    }
+
+    return Soprano::Error::ErrorNone;
 }
 
 void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, const QUrl &property, const QVariantList &values, const QString &app)
@@ -196,7 +205,7 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
 
 
     //
-    // Check the integrity of the values
+    // Convert all values to RDF nodes. This includes the property range check and conversion of local file paths to file URLs
     //
     const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
     if(nodes.isEmpty()) {
@@ -336,6 +345,10 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
         return;
     }
 
+
+    //
+    // Convert all values to RDF nodes. This includes the property range check and conversion of local file paths to file URLs
+    //
     const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
     if(nodes.isEmpty()) {
         setError(QString::fromLatin1("setProperty: At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
@@ -394,7 +407,7 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     const QSet<Soprano::Node> existingValues = QSet<Soprano::Node>::fromList(resolvedNodes.values());
     QSet<QUrl> graphs;
     QList<Soprano::BindingSet> existing
-            = executeQuery(QString::fromLatin1("select ?r ?v where { graph ?g { ?r %1 ?v . FILTER(?r in (%2)) . } . }")
+            = executeQuery(QString::fromLatin1("select ?r ?v ?g where { graph ?g { ?r %1 ?v . FILTER(?r in (%2)) . } . }")
                            .arg(Soprano::Node::resourceToN3(property),
                                 resourcesToN3(uriHash).join(QLatin1String(","))),
                            Soprano::Query::QueryLanguageSparql).allBindings();
@@ -612,9 +625,11 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
 
     clearError();
 
+    // create new URIs and a new graph
     const QUrl graph = createGraph(app);
     const QUrl resUri = createUri(ResourceUri);
 
+    // add provided metadata
     foreach(const QUrl& type, types) {
         addStatement(resUri, RDF::type(), type, graph);
     }
@@ -624,6 +639,12 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
     if(!description.isEmpty()) {
         addStatement(resUri, NAO::description(), Soprano::LiteralValue(description), graph);
     }
+
+    // add basic metadata to the new resource
+    const QDateTime now = QDateTime::currentDateTime();
+    addStatement(resUri, NAO::created(), Soprano::LiteralValue(now), graph);
+    addStatement(resUri, NAO::lastModified(), Soprano::LiteralValue(now), graph);
+
     return resUri;
 }
 
@@ -955,10 +976,10 @@ void Nepomuk::DataManagementModel::removePropertiesByApplication(const QList<QUr
     setError("Not implemented yet");
 }
 
-void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceGraph &resources, const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
+void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceGraph &resources, const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
 {
     if(app.isEmpty()) {
-        setError(QLatin1String("mergeResources: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        setError(QLatin1String("storeResources: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
     if(resources.isEmpty()) {
@@ -975,12 +996,12 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
         SimpleResource & res = iter.next();
         
         if( !res.isValid() ) {
-            setError(QLatin1String("mergeResources: One of the resources is Invalid."), Soprano::Error::ErrorInvalidArgument);
+            setError(QLatin1String("storeResources: One of the resources is Invalid."), Soprano::Error::ErrorInvalidArgument);
             return;
         }
         
-        // Hanlde file uris
-        if( res.uri().scheme() == QLatin1String("file") ) { //TODO: Even handle filex: ?
+        // Handle file uris
+        if(isLocalFileUrl(res.uri())) { //TODO: Even handle filex: ?
             QUrl fileUrl = res.uri();
             QUrl newResUri = resolveUrl( fileUrl );
             if( newResUri.isEmpty() ) {
@@ -990,12 +1011,13 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
             resolvedNodes.insert( fileUrl, newResUri );
 
             res.setUri( newResUri );
-            if( !res.m_properties.contains( NIE::url(), fileUrl ) )
-                res.m_properties.insert( NIE::url(), fileUrl );
-            if( !res.m_properties.contains( RDF::type(), NFO::FileDataObject() ) )
-                res.m_properties.insert( RDF::type(), NFO::FileDataObject() );
-            if( QFileInfo( fileUrl.toString() ).isDir() && !res.m_properties.contains( RDF::type(), NFO::Folder() )) {
-                res.m_properties.insert( RDF::type(), NFO::Folder() );
+
+            if( !res.contains( NIE::url(), fileUrl ) )
+                res.addProperty( NIE::url(), fileUrl );
+            if( !res.contains( RDF::type(), NFO::FileDataObject() ) )
+                res.addProperty( RDF::type(), NFO::FileDataObject() );
+            if( QFileInfo( fileUrl.toString() ).isDir() && !res.contains( RDF::type(), NFO::Folder() )) {
+                res.addProperty( RDF::type(), NFO::Folder() );
             }
         }
     }
@@ -1006,22 +1028,20 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
     QList<Sync::SimpleResource> extraResources;
 
     
-    foreach( SimpleResource res, resGraph.toList() ) {
-        //
-        // Find all the statements of the form "sub pred <file://..>" where the pred != nie:url
-        // The <file://> url is converted into a new resource
-        QMutableHashIterator<QUrl, QVariant> it( res.m_properties );
+    foreach( const SimpleResource& res, resGraph.toList() ) {
+        SimpleResource resolvedRes(res.uri());
+        QHashIterator<QUrl, QVariant> it( res.properties() );
         while( it.hasNext() ) {
             it.next();
 
             Nepomuk::Variant var( it.value() );
-            if( var.isResource() && var.toUrl().scheme() == QLatin1String("file")
+            if( var.isResource() && isLocalFileUrl(var.toUrl())
                 && it.key() != NIE::url() ) {
                 const QUrl fileUrl = var.toUrl();
                 // Need to resolve it
                 QHash< QUrl, QUrl >::const_iterator findIter = resolvedNodes.find( fileUrl );
                 if( findIter != resolvedNodes.end() ) {
-                    it.setValue( findIter.value() );
+                    resolvedRes.addProperty(it.key(), findIter.value());
                 }
                 else {
                     // It doesn't exist, create it
@@ -1038,27 +1058,32 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
 
                     extraResources.append( newRes );
 
-                    it.setValue( resolvedUri );
+                    resolvedRes.addProperty(it.key(), resolvedUri);
                 }
+            }
+            else {
+                resolvedRes.addProperty(it.key(), it.value());
             }
         }
         
-        QList< Soprano::Statement > stList = res.toStatementList();
+        QList< Soprano::Statement > stList = resolvedRes.toStatementList();
         allStatements << stList;
 
         if(stList.isEmpty()) {
-            setError(QLatin1String("mergeResources: Encountered invalid resource"), Soprano::Error::ErrorInvalidArgument);
+            setError(QLatin1String("storeResources: Encountered invalid resource"), Soprano::Error::ErrorInvalidArgument);
             return;
         }
 
         Sync::SimpleResource simpleRes = Sync::SimpleResource::fromStatementList( stList );
         if( !simpleRes.isValid() ) {
-            setError(QLatin1String("mergeResources: Contains invalid resources."), Soprano::Error::ErrorParsingFailed);
+            setError(QLatin1String("storeResources: Contains invalid resources."), Soprano::Error::ErrorParsingFailed);
             return;
         }
         resIdent.addSimpleResource( simpleRes );
     }
     
+    clearError();
+
     resIdent.setModel( this );
     resIdent.setMinScore( 1.0 );
     resIdent.identifyAll();
@@ -1088,6 +1113,67 @@ void Nepomuk::DataManagementModel::mergeResources(const Nepomuk::SimpleResourceG
     //// TODO: do not allow to create properties or classes this way
     //setError("Not implemented yet");
 }
+
+
+void Nepomuk::DataManagementModel::mergeResources(const QUrl &res1, const QUrl &res2, const QString &app)
+{
+    if(res1.isEmpty() || res2.isEmpty()) {
+        setError(QLatin1String("mergeResources: Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
+    if(app.isEmpty()) {
+        setError(QLatin1String("mergeResources: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
+
+    clearError();
+
+
+    // TODO: Is it correct that all metadata stays the same?
+
+    //
+    // Copy all property values of res2 that are not also defined for res1
+    //
+    const QList<Soprano::BindingSet> res2Properties
+            = executeQuery(QString::fromLatin1("select ?g ?p ?v (select count(distinct ?v2) where { %2 ?p ?v2 . }) as ?c where { "
+                                               "graph ?g { %1 ?p ?v . } . "
+                                               "FILTER(!bif:exists((select (1) where { %2 ?p ?v . }))) . "
+                                               "}")
+                           .arg(Soprano::Node::resourceToN3(res2),
+                                Soprano::Node::resourceToN3(res1)),
+                           Soprano::Query::QueryLanguageSparql).allBindings();
+    foreach(const Soprano::BindingSet& binding, res2Properties) {
+        const QUrl& prop = binding["p"].uri();
+        // if the property has no cardinality of 1 or no value is defined yet we can simply convert the value to res1
+        if(d->m_classAndPropertyTree.maxCardinality(prop) != 1 ||
+                binding["c"].literal().toInt() == 0) {
+            addStatement(res1, prop, binding["v"], binding["g"]);
+        }
+    }
+
+
+    //
+    // Copy all backlinks from res2 that are not valid for res1
+    //
+    const QList<Soprano::BindingSet> res2Backlinks
+            = executeQuery(QString::fromLatin1("select ?g ?p ?r where { graph ?g { ?r ?p %1 . } . "
+                                               "FILTER(?r!=%2) . "
+                                               "FILTER(!bif:exists((select (1) where { ?r ?p %2 . }))) . "
+                                               "}")
+                           .arg(Soprano::Node::resourceToN3(res2),
+                                Soprano::Node::resourceToN3(res1)),
+                           Soprano::Query::QueryLanguageSparql).allBindings();
+    foreach(const Soprano::BindingSet& binding, res2Backlinks) {
+        addStatement(binding["r"], binding["p"], res1, binding["g"]);
+    }
+
+
+    //
+    // Finally delete res2 as it is now merged into res1
+    //
+    removeResources(QList<QUrl>() << res2, app);
+}
+
 
 namespace {
 QVariant nodeToVariant(const Soprano::Node& node) {
@@ -1126,7 +1212,7 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
     QSet<QUrl> fileUrls;
     QSet<QUrl> resUris;
     foreach( const QUrl & res, resources ) {
-        if(res.scheme() == QLatin1String("file"))
+        if(isLocalFileUrl(res))
             fileUrls.insert(res);
         else
             resUris.insert(res);
@@ -1176,7 +1262,7 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
     while(it.next()) {
         const QUrl r = it["s"].uri();
         graph[r].setUri(r);
-        graph[r].m_properties.insertMulti(it["p"].uri(), nodeToVariant(it["o"]));
+        graph[r].addProperty(it["p"].uri(), nodeToVariant(it["o"]));
     }
     if(it.lastError()) {
         setError(it.lastError());
@@ -1416,6 +1502,7 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
 
     const QUrl appRes = findApplicationResource(app);
 
+
     //
     // Check if values already exist. If so remove the resources from the resourceSet and only add the application
     // as maintainedBy in a new graph (except if its the only statement in the graph)
@@ -1505,7 +1592,7 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
 
         // update modification date
         Q_FOREACH(const QUrl& res, finalResources) {
-            updateModificationDate(res, graph);
+            updateModificationDate(res, graph, QDateTime::currentDateTime(), true);
         }
     }
 }
@@ -1538,7 +1625,7 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::resolveUrls(const QList<QUrl> &u
 
 QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url) const
 {
-    if(url.scheme() == QLatin1String("file")) {
+    if(isLocalFileUrl(url)) {
         Soprano::QueryResultIterator it
                 = executeQuery(QString::fromLatin1("select ?r where { ?r %1 %2 . } limit 1")
                                .arg(Soprano::Node::resourceToN3(NIE::url()),
@@ -1592,7 +1679,7 @@ bool Nepomuk::DataManagementModel::updateNieUrlOnLocalFile(const QUrl &resource,
     QUrl resUri, oldNieUrl, oldNieUrlGraph, oldParentResource, oldParentResourceGraph, oldFileNameGraph;
     QString oldFileName;
 
-    if(resource.scheme() == QLatin1String("file")) {
+    if(isLocalFileUrl(resource)) {
         oldNieUrl = resource;
         Soprano::QueryResultIterator it
                 = executeQuery(QString::fromLatin1("select distinct ?gu ?gf ?gp ?r ?f ?p where { "

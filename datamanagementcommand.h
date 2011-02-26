@@ -155,7 +155,7 @@ public:
 
 private:
     QVariant runCommand() {
-        model()->mergeResources(m_resources, m_app, m_additionalMetadata);
+        model()->storeResources(m_resources, m_app, m_additionalMetadata);
         return QVariant();
     }
 

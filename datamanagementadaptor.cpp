@@ -41,6 +41,8 @@
 #define USING_SOPRANO_NRLMODEL_UNSTABLE_API
 #include <Soprano/NRLModel>
 
+// TODO: support local file paths instead of file:/ URLs
+
 namespace {
 QVariantList convertVariantList(const QList<QDBusVariant>& values) {
     QVariantList vl;
@@ -107,7 +109,7 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementAdaptor::describeResources(c
     return SimpleResourceGraph();
 }
 
-void Nepomuk::DataManagementAdaptor::mergeResources(Nepomuk::SimpleResourceGraph resources, const QString &app, const QHash<QString, QDBusVariant> &additionalMetadata)
+void Nepomuk::DataManagementAdaptor::storeResources(Nepomuk::SimpleResourceGraph resources, const QString &app, const QHash<QString, QDBusVariant> &additionalMetadata)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);

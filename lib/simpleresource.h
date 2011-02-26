@@ -25,6 +25,7 @@
 #include <QtCore/QUrl>
 #include <QtCore/QMultiHash>
 #include <QtCore/QList>
+#include <QtCore/QSharedDataPointer>
 
 #include <Soprano/Statement>
 
@@ -37,20 +38,31 @@ typedef QMultiHash<QUrl, QVariant> PropertyHash;
 class NEPOMUK_DATA_MANAGEMENT_EXPORT SimpleResource
 {
 public:
-    SimpleResource();
+    SimpleResource(const QUrl& uri = QUrl());
+    SimpleResource(const SimpleResource& other);
     virtual ~SimpleResource();
     
+    SimpleResource& operator=(const SimpleResource& other);
+
     bool operator==(const SimpleResource& other) const;
 
     QUrl uri() const;
     void setUri( const QUrl & uri );
 
-    PropertyHash m_properties;
+    bool contains(const QUrl& property) const;
+    bool contains(const QUrl& property, const QVariant& value) const;
+
+    void setProperties(const PropertyHash& properties);
+    void addProperty(const QUrl& property, const QVariant& value);
+
+    PropertyHash properties() const;
 
     QList<Soprano::Statement> toStatementList() const;
     bool isValid() const;
-private :
-    QUrl m_uri;    
+
+private:
+    class Private;
+    QSharedDataPointer<Private> d;
 };
 
 uint qHash(const SimpleResource& res);
