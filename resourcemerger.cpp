@@ -171,90 +171,28 @@ QUrl Nepomuk::ResourceMerger::createGraphUri()
     return m_model->createUri( DataManagementModel::GraphUri );
 }
 
-Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::Statement& st)
+bool Nepomuk::ResourceMerger::isOfType(const Soprano::Node & node, const QUrl& type, const QList<QUrl> & newTypes) const
 {
-    const QUrl & propUri = st.predicate().uri();
-
-    if( propUri == RDF::type() ) {
-        m_model->addStatement( st );
-        return Soprano::Error::ErrorNone;
-    }
+    kDebug() << "Checking " << node << " for type " << type;
     
-    //
-    // Cardinality checks
-    //
     ClassAndPropertyTree * tree = m_model->classAndPropertyTree();
-    int maxCardinality = tree->maxCardinality( propUri );
+    QList<QUrl> types;
 
-    if( maxCardinality > 0 ) {
-        int existing = m_model->listStatements( st.subject(), st.predicate(), Soprano::Node() ).allStatements().size();
-
-        if( existing == maxCardinality ) {
-            m_model->setError( QString::fromLatin1("%1 has a max cardinality of %2")
-                               .arg( propUri.toString(), maxCardinality ),
-                               Soprano::Error::ErrorInvalidStatement);
-            return Soprano::Error::ErrorInvalidStatement;
+    if( !node.isBlank() ) {
+        QList< Soprano::Node > oldTypes = m_model->listStatements( node, RDF::type(), Soprano::Node() ).iterateObjects().allNodes();
+        foreach( const Soprano::Node & n, oldTypes ) {
+            types << n.uri(); 
         }
     }
+    types += newTypes;
     
-    //
-    // rdfs:domain and range checks
-    //
-    QUrl domain = tree->propertyDomain( propUri );
-    QUrl range = tree->propertyRange( propUri );
-
-    kDebug() << "Domain : " << domain;
-    kDebug() << "Range : " << range;
-
-    // domain
-    if( !domain.isEmpty() && !isOfType( st.subject().uri(), domain ) ) {
-        kDebug() << "invalid domain range";
-        m_model->setError( QString::fromLatin1("%1 has a rdfs:domain of %2")
-                           .arg( propUri.toString(), domain.toString() ),
-                           Soprano::Error::ErrorInvalidArgument);
-        return Soprano::Error::ErrorInvalidArgument;
-    }
-
-    // range
-    if( !range.isEmpty() ) {
-        if( st.object().isResource() ) {
-            if( !isOfType( st.object().uri(), range ) ) {
-                kDebug() << "Invalid resource range";
-                m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2")
-                                   .arg( propUri.toString(), range.toString() ),
-                                   Soprano::Error::ErrorInvalidArgument);
-                return Soprano::Error::ErrorInvalidArgument;
-            }
-        }
-        else if( st.object().isLiteral() ) {
-            const Soprano::LiteralValue lv = st.object().literal();
-            if( lv.dataTypeUri() != range ) {
-                kDebug() << "Invalid literal range";
-                m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2")
-                                   .arg( propUri.toString(), range.toString() ),
-                                   Soprano::Error::ErrorInvalidArgument);
-                return Soprano::Error::ErrorInvalidArgument;
-            }
-        }
-    }
-    
-    return m_model->addStatement( st );
-}
-
-bool Nepomuk::ResourceMerger::isOfType(const QUrl& uri, const QUrl& type) const
-{
-    kDebug() << "Checking " << uri << " for type " << type;
-    ClassAndPropertyTree * tree = m_model->classAndPropertyTree();
-
-    QList<Soprano::Node> types = m_model->listStatements( uri, RDF::type(), Soprano::Node() ).iterateObjects().allNodes();
-
     if( types.isEmpty() ) {
-        kDebug() << uri << " does not have a type!!";
+        kDebug() << node << " does not have a type!!";
         return false;
     }
 
-    foreach( const Soprano::Node & node, types ) {
-        if( node.uri() == type || tree->isChildOf( node.uri(), type ) ) {
+    foreach( const QUrl & uri, types ) {
+        if( uri == type || tree->isChildOf( uri, type ) ) {
             return true;
         }
     }
@@ -262,29 +200,135 @@ bool Nepomuk::ResourceMerger::isOfType(const QUrl& uri, const QUrl& type) const
     return false;
 }
 
+namespace {
+    QUrl getBlankOrResourceUri( const Soprano::Node & n ) {
+        if( n.isResource() ) {
+            return n.uri();
+        }
+        else if( n.isBlank() ) {
+            return QLatin1String("_:") + n.identifier();
+        }
+        return QUrl();
+    }
+}
+
 void Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
 {
+    QMultiHash<QUrl, QUrl> types;
+    QHash<QPair<QUrl,QUrl>, int> cardinality;
+
     //
-    // First merge all the statements predicate rdf:type.
-    // That way the domain/range checks in addStatement wont fail
+    // First separate all the statements predicate rdf:type.
+    // and collect info required to check the types and cardinality
 
     QList<Soprano::Statement> remainingStatements;
-    QList<Soprano::Statement> allStatements( graph.toList() );
+    QList<Soprano::Statement> typeStatements;
 
-    foreach( const Soprano::Statement & st, allStatements ) {
+    foreach( const Soprano::Statement & st, graph.toList() ) {
+        const QUrl subUri = getBlankOrResourceUri( st.subject() );
+        const QUrl objUri = getBlankOrResourceUri( st.object() );
+        
         if( st.predicate() == RDF::type() ) {
-            mergeStatement( st );
-            if( m_model->lastError() != Soprano::Error::ErrorNone )
-                return;
+            typeStatements << st;
+            types.insert( subUri, objUri );
+        }
+        else {
+            remainingStatements << st;
+        }
+
+        // Get the cardinality
+        QPair<QUrl,QUrl> subPredPair( subUri, st.predicate().uri() );
+
+        QHash< QPair< QUrl, QUrl >, int >::iterator it = cardinality.find( subPredPair );
+        if( it != cardinality.end() ) {
+            it.value()++;
         }
         else
-            remainingStatements << st;
+            cardinality.insert( subPredPair, 1 );
+    }
+    
+    //
+    // Check the cardinality + domain/range of remaining statements
+    //
+    ClassAndPropertyTree * tree = m_model->classAndPropertyTree();
+    
+    foreach( const Soprano::Statement & st, remainingStatements ) {
+        const QUrl subUri = getBlankOrResourceUri( st.subject() );
+        const QUrl & propUri = st.predicate().uri();
+        //
+        // Check for Cardinality
+        //
+        QPair<QUrl,QUrl> subPredPair( subUri, propUri );
+
+        int maxCardinality = tree->maxCardinality( propUri );
+        int existingCardinality = m_model->listStatements( st.subject(), st.predicate(), Soprano::Node() ).allStatements().size();
+        int stCardinality = cardinality.value( subPredPair );
+
+        if( maxCardinality > 0 ) {
+            if( stCardinality + existingCardinality > maxCardinality) {
+                kDebug() << "Max Cardinality : " << maxCardinality;
+                kDebug() << "Existing Cardinality: " << existingCardinality;
+                kDebug() << "St Cardinality: " << stCardinality;
+                m_model->setError( QString::fromLatin1("%1 has a max cardinality of %2")
+                                .arg( st.predicate().toString(), maxCardinality ),
+                                Soprano::Error::ErrorInvalidStatement);
+                return;
+            }
+        }
+
+        //
+        // Check for rdfs:domain and rdfs:range
+        //
+        
+        QUrl domain = tree->propertyDomain( propUri );
+        QUrl range = tree->propertyRange( propUri );
+        
+        kDebug() << "Domain : " << domain;
+        kDebug() << "Range : " << range;
+
+        QList<QUrl> subjectNewTypes = types.values( subUri );
+
+        // domain
+        if( !domain.isEmpty() && !isOfType( subUri, domain, subjectNewTypes ) ) {
+            kDebug() << "invalid domain range";
+            m_model->setError( QString::fromLatin1("%1 has a rdfs:domain of %2")
+                               .arg( propUri.toString(), domain.toString() ),
+                               Soprano::Error::ErrorInvalidArgument);
+            return;
+        }
+        
+        // range
+        if( !range.isEmpty() ) {
+            if( st.object().isResource() || st.object().isBlank() ) {
+                
+                const QUrl objUri = getBlankOrResourceUri( st.object() );
+                QList<QUrl> objectNewTypes= types.values( objUri );
+                
+                if( !isOfType( objUri, range, objectNewTypes ) ) {
+
+                    kDebug() << "Invalid resource range";
+                    m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2")
+                                       .arg( propUri.toString(), range.toString() ),
+                                       Soprano::Error::ErrorInvalidArgument);
+                    return;
+                }
+            }
+            else if( st.object().isLiteral() ) {
+                const Soprano::LiteralValue lv = st.object().literal();
+                if( lv.dataTypeUri() != range ) {
+                    kDebug() << "Invalid literal range";
+                    m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2")
+                                       .arg( propUri.toString(), range.toString() ),
+                                       Soprano::Error::ErrorInvalidArgument);
+                    return;
+                }
+            }
+        } // range
+        
     }
 
-    //
-    // Merge the remaining statements
-    //
-    foreach( const Soprano::Statement & st, remainingStatements ) {
+
+    foreach( const Soprano::Statement & st, graph.toList() ) {
         mergeStatement( st );
         if( m_model->lastError() != Soprano::Error::ErrorNone )
             return;

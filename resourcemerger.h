@@ -45,11 +45,10 @@ namespace Nepomuk {
 
     protected:
         virtual KUrl createGraph();
-        virtual void resolveDuplicate(const Soprano::Statement& newSt);
         virtual QUrl createResourceUri();
         virtual QUrl createGraphUri();
+        virtual void resolveDuplicate(const Soprano::Statement& newSt);
         virtual KUrl resolveUnidentifiedResource(const KUrl& uri);
-        virtual Soprano::Error::ErrorCode addStatement(const Soprano::Statement& st);
         
     private:
         QHash<QUrl, QUrl> m_graphHash;
@@ -63,7 +62,7 @@ namespace Nepomuk {
 
         QUrl mergeGraphs( const QUrl & oldGraph );
         
-        bool isOfType( const QUrl & uri, const QUrl & type ) const;
+        bool isOfType( const Soprano::Node& node, const QUrl& type, const QList< QUrl >& newTypes ) const;
     };
 
 }
