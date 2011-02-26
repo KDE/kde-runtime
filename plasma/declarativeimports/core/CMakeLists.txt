@@ -1,6 +1,7 @@
 project(corebindings)
 
-set(corebindings_SRCS
+set(corebindings_SRCS 
+    dbusinterface.cpp
     corebindingsplugin.cpp
     dataengineconsumer.cpp
     theme.cpp

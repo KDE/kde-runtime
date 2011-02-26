@@ -28,6 +28,7 @@
 
 #include "datasource_p.h"
 #include "datamodel.h"
+#include "dbusinterface.h"
 #include "framesvgitem_p.h"
 #include "svgitem_p.h"
 #include "theme_p.h"
@@ -47,6 +48,8 @@ void CoreBindingsPlugin::registerTypes(const char *uri)
     qmlRegisterType<Plasma::DataSource>(uri, 0, 1, "DataSource");
     qmlRegisterType<Plasma::DataModel>(uri, 0, 1, "DataModel");
     qmlRegisterType<Plasma::SortFilterModel>(uri, 0, 1, "SortFilterModel");
+    
+    qmlRegisterType<DBusInterface>(uri, 0, 1, "DBusInterface");
 
     qmlRegisterType<DialogProxy>(uri, 0, 1, "Dialog");
 
