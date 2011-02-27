@@ -1341,20 +1341,26 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
         graphMetaData.insert(NAO::maintainedBy(), findApplicationResource(app));
     }
 
+    return createGraph( graphMetaData );
+}
+
+QUrl Nepomuk::DataManagementModel::createGraph(const QMultiHash< QUrl, Soprano::Node >& metaData)
+{
     const QUrl graph = createUri(GraphUri);
     const QUrl metadatagraph = createUri(GraphUri);
-
+    
     // add metadata graph itself
     addStatement( metadatagraph, NRL::coreGraphMetadataFor(), graph, metadatagraph );
     addStatement( metadatagraph, RDF::type(), NRL::GraphMetadata(), metadatagraph );
-
-    for(QHash<QUrl, Soprano::Node>::const_iterator it = graphMetaData.constBegin();
-        it != graphMetaData.constEnd(); ++it) {
+    
+    for(QHash<QUrl, Soprano::Node>::const_iterator it = metaData.constBegin();
+        it != metaData.constEnd(); ++it) {
         addStatement(graph, it.key(), it.value(), metadatagraph);
     }
-
+        
     return graph;
 }
+
 
 QUrl Nepomuk::DataManagementModel::findApplicationResource(const QString &app, bool create)
 {

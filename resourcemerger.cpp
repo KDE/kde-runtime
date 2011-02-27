@@ -136,30 +136,12 @@ QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     if( !finalPropHash.contains( NAO::maintainedBy(), m_appUri ) )
         finalPropHash.insert( NAO::maintainedBy(), m_appUri );
 
-    QUrl graph = createGraph( finalPropHash );
+    QUrl graph = m_model->createGraph( finalPropHash );
 
     m_graphHash.insert( oldGraph, graph );
     return graph;
 }
 
-QUrl Nepomuk::ResourceMerger::createGraph(const QMultiHash< QUrl, Soprano::Node >& hash)
-{
-    //FIXME: Check for cardinality, rdfs:domain and rdfs:range
-    const QUrl graph = createGraphUri();
-    const QUrl metadatagraph = createGraphUri();
-    
-    // add metadata graph itself
-    m_model->addStatement( metadatagraph, NRL::coreGraphMetadataFor(), graph, metadatagraph );
-    m_model->addStatement( metadatagraph, RDF::type(), NRL::GraphMetadata(), metadatagraph );
-
-    QHash<QUrl, Soprano::Node>::const_iterator it = hash.constBegin();
-    for( ; it != hash.constEnd(); ++it) {
-        Soprano::Statement st( graph, it.key(), it.value(), metadatagraph );
-        addStatement( st );
-    }
-
-    return graph;
-}
 
 KUrl Nepomuk::ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
 {
