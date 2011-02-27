@@ -44,6 +44,11 @@ public:
 
     QSet<QUrl> allParents(const QUrl& uri) const;
     bool isChildOf(const QUrl& type, const QUrl& superClass) const;
+
+    /**
+     * Returns true if any one of the uris in \p types is a child of \p superClass
+     */
+    bool isChildOf(const QList<QUrl> & types, const QUrl& superClass) const;
     int maxCardinality(const QUrl& type) const;
     bool isUserVisible(const QUrl& type) const;
 

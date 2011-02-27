@@ -125,10 +125,12 @@ QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     oldPropHash.remove( RDF::type(), NRL::DiscardableInstanceBase() );
     newPropHash.remove( RDF::type(), NRL::DiscardableInstanceBase() );
 
-    //TODO: Should check for cardinality in the properties
-    //      and duplicates!
     finalPropHash.unite( oldPropHash );
     finalPropHash.unite( newPropHash );
+
+    // FIXME: Need better error checking!
+    if( !checkGraphMetadata( finalPropHash ) )
+        return QUrl();
 
     // Add app uri
     if( m_appUri.isEmpty() )
@@ -140,6 +142,89 @@ QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
 
     m_graphHash.insert( oldGraph, graph );
     return graph;
+}
+
+bool Nepomuk::ResourceMerger::checkGraphMetadata(const QMultiHash< QUrl, Soprano::Node >& hash)
+{
+    ClassAndPropertyTree* tree = m_model->classAndPropertyTree();
+    
+    QList<QUrl> types;
+    QHash<QUrl, int> propCardinality;
+    
+    QHash< QUrl, Soprano::Node >::const_iterator it = hash.constBegin();
+    for( ; it != hash.constEnd(); it++ ) {
+        const QUrl& propUri = it.key();
+        if( propUri == RDF::type() ) {
+            Soprano::Node object = it.value();
+            if( !object.isResource() ) {
+                m_model->setError(QString::fromLatin1("rdf:type has resource range. %1 was provided.").arg(it.value().type()), Soprano::Error::ErrorInvalidArgument);
+                return false;
+            }
+
+            // All the types should be a sub-type of nrl:Graph
+            if( !tree->isChildOf( object.uri(), NRL::Graph() ) ) {
+                m_model->setError( QString::fromLatin1("the rdf:type should be a subclass of nrl:Graph"),
+                                   Soprano::Error::ErrorInvalidArgument );
+                return false;
+            }
+            types << object.uri();
+        }
+
+        // Save the cardinality of each property
+        QHash< QUrl, int >::iterator propIter = propCardinality.find( propUri );
+        if( propIter == propCardinality.end() ) {
+            propCardinality.insert( propUri, 1 );
+        }
+        else {
+            propIter.value()++;
+        }
+    }
+
+    it = hash.constBegin();
+    for( ; it != hash.constEnd(); it++ ) {
+        const QUrl & propUri = it.key();
+        // Check the cardinality
+        int maxCardinality = tree->maxCardinality( propUri );
+        int curCardinality = propCardinality.value( propUri );
+
+        if( maxCardinality != 0 ) {
+            if( curCardinality > maxCardinality ) {
+                m_model->setError( QString::fromLatin1("%1 has a max cardinality of %2").arg(propUri.toString(), maxCardinality), Soprano::Error::ErrorInvalidArgument );
+                return false;
+            }
+        }
+
+        //
+        // Check the domain and range
+        const QUrl domain = tree->propertyDomain( propUri );
+        const QUrl range = tree->propertyRange( propUri );
+
+        // domain
+        if( !domain.isEmpty() && !tree->isChildOf( types, domain ) ) {
+            m_model->setError( QString::fromLatin1("%1 has a rdfs:domain of %2").arg( propUri.toString(), domain.toString() ), Soprano::Error::ErrorInvalidArgument);
+            return false;
+        }
+        
+        // range
+        if( !range.isEmpty() ) {
+            const Soprano::Node& object = it.value();
+            if( object.isResource() ) {
+                if( !isOfType( object.uri(), range ) ) {
+                    m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2").arg( propUri.toString(), range.toString() ), Soprano::Error::ErrorInvalidArgument);
+                    return false;
+                }
+            }
+            else if( object.isLiteral() ) {
+                const Soprano::LiteralValue lv = object.literal();
+                if( lv.dataTypeUri() != range ) {
+                    m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2").arg( propUri.toString(), range.toString() ), Soprano::Error::ErrorInvalidArgument);
+                    return false;
+                }
+            }
+        } // range
+    }
+
+    return true;
 }
 
 

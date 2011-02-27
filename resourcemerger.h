@@ -70,8 +70,10 @@ namespace Nepomuk {
 
         QUrl mergeGraphs( const QUrl & oldGraph );
         
-        bool isOfType( const Soprano::Node& node, const QUrl& type, const QList< QUrl >& newTypes ) const;
+        bool isOfType( const Soprano::Node& node, const QUrl& type, const QList<QUrl>& newTypes = QList<QUrl>() ) const;
         QMultiHash<QUrl, Soprano::Node> getPropertyHashForGraph( const QUrl & graph ) const;
+
+        bool checkGraphMetadata( const QMultiHash<QUrl, Soprano::Node> & hash );
     };
 
 }

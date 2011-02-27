@@ -1318,6 +1318,7 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
 
         else {
             // FIXME: check property, domain, and range
+            // Reuse code from ResourceMerger::checkGraphMetadata
         }
 
         Soprano::Node node = d->m_classAndPropertyTree.variantToNode(it.value(), property);

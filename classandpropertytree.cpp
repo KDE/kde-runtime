@@ -93,6 +93,15 @@ bool Nepomuk::ClassAndPropertyTree::isChildOf(const QUrl &type, const QUrl &supe
         return 0;
 }
 
+bool Nepomuk::ClassAndPropertyTree::isChildOf(const QList< QUrl >& types, const QUrl& superClass) const
+{
+    foreach( const QUrl & type, types ) {
+        if( isChildOf( type, superClass ) )
+            return true;
+    }
+    return false;
+}
+
 int Nepomuk::ClassAndPropertyTree::maxCardinality(const QUrl &type) const
 {
     QMutexLocker lock(&m_mutex);
