@@ -43,11 +43,6 @@ namespace Nepomuk {
         TransactionModel(Model* parent);
         virtual ~TransactionModel();
 
-        virtual Soprano::Error::ErrorCode addStatement(const Soprano::Statement& statement);
-        
-        virtual Soprano::Error::ErrorCode removeAllStatements(const Soprano::Statement& statement);
-        virtual Soprano::Error::ErrorCode removeStatement(const Soprano::Statement& statement);
-
         void commit();
         void roleback();
 

@@ -59,23 +59,6 @@ void TransactionModel::roleback()
     m_removed.clear();
 }
 
-Soprano::Error::ErrorCode TransactionModel::addStatement(const Soprano::Statement& statement)
-{
-    recordAddStatement( statement );
-    return Soprano::FilterModel::addStatement(statement);
-}
-
-Soprano::Error::ErrorCode TransactionModel::removeStatement(const Soprano::Statement& statement)
-{
-    return Soprano::FilterModel::removeStatement(statement);
-}
-
-Soprano::Error::ErrorCode TransactionModel::removeAllStatements(const Soprano::Statement& statement)
-{
-    recordRemoveAllStatements( statement );
-    return Soprano::FilterModel::removeAllStatements(statement);
-}
-
 // Slots
 void TransactionModel::recordAddStatement(const Soprano::Statement& st)
 {
