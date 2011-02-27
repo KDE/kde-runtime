@@ -33,17 +33,20 @@
 
 #include <KTemporaryFile>
 #include <KDebug>
+#include "identificationset.h"
 
 
 int Nepomuk::saveBackupChangeLog(const QUrl& url)
 {
-    const int step = 100;
+    const int step = 10000;
     const QString query = QString::fromLatin1("select ?r ?p ?o ?g where { graph ?g { ?r ?p ?o. } ?g a nrl:InstanceBase . FILTER(!bif:exists( ( select (1) where { ?g a nrl:DiscardableInstanceBase . } ) )) . }");
     
     Soprano::Model * model = Nepomuk::ResourceManager::instance()->mainModel();
-    
-    Soprano::QueryResultIterator iter= model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 
+    kDebug() << "Executing query!";
+    Soprano::QueryResultIterator iter= model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    kDebug() << "Done executing!";
+    
     int totalNumRecords = 0;
     int i = 0;
     ChangeLog changeLog;
@@ -54,7 +57,7 @@ int Nepomuk::saveBackupChangeLog(const QUrl& url)
         totalNumRecords++;
         
         if( ++i >= step ) {
-            //kDebug() << "Saving .. " << changeLog.size();
+            kDebug() << "Saving .. " << changeLog.size();
             changeLog.save( url );
             changeLog.clear();
             i = 0;
@@ -73,9 +76,11 @@ int Nepomuk::saveBackupChangeLog(const QUrl& url)
 
 bool Nepomuk::saveBackupSyncFile(const QUrl& url)
 {
+    kDebug() << url;
     KTemporaryFile file;
     file.open();
 
+    kDebug() << "Generating changelog";
     int numRecords = saveBackupChangeLog( file.fileName() );
     ChangeLog log = ChangeLog::fromUrl( file.fileName() );
     kDebug() << "Log size: " << log.size();
@@ -85,7 +90,11 @@ bool Nepomuk::saveBackupSyncFile(const QUrl& url)
         kDebug() << "Nothing to save..";
         return false;
     }
+
+    KTemporaryFile identificationFile;
+    identificationFile.open();
+    const QUrl identUrl( identificationFile.fileName() );
     
-    SyncFile syncFile( log );
-    return syncFile.save( url );
+    IdentificationSet::createIdentificationSet( log, identUrl );
+    return SyncFile::createSyncFile( file.fileName(), identUrl, url );
 }

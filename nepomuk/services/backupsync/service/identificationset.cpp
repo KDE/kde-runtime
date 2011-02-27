@@ -347,3 +347,33 @@ void Nepomuk::IdentificationSet::mergeWith(const IdentificationSet & rhs)
     return;
 }
 
+void Nepomuk::IdentificationSet::createIdentificationSet(Nepomuk::ChangeLog& log, const QUrl& outputUrl)
+{
+    QFile file( outputUrl.path() );
+    if( !file.open( QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate ) ) {
+        kWarning() << "File could not be opened : " << outputUrl.path();
+        return;
+    }
+    
+    QTextStream out( &file );
+
+    IdentificationSet set;
+    Soprano::Model * model = ResourceManager::instance()->mainModel();
+
+    QSet< QUrl > uniqueUris = getUniqueUris(log.toList());
+    log.clear();
+    
+    IdentificationSetGenerator generator( uniqueUris, model );
+    while( !generator.done() ) {
+        generator.statements.clear();
+        kDebug() << "iterating";
+        generator.iterate();
+        kDebug() << "Done : " << generator.m_done.size();
+        kDebug() << "Num statements: " << generator.statements.size();
+        set.d->m_statements.clear();
+        set.d->m_statements = generator.statements;
+        set.save( out );
+    }
+    kDebug() << "Done creating Identification Set";
+}
+

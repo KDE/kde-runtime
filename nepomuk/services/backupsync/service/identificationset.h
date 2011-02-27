@@ -99,6 +99,8 @@ namespace Nepomuk {
             
             IdentificationSet & operator=( const IdentificationSet & rhs );
             IdentificationSet& operator<<(const IdentificationSet & rhs);
+
+            static void createIdentificationSet( Nepomuk::ChangeLog& log, const QUrl& outputUrl );
         private :
             class Private;
             QSharedDataPointer<Private> d;
