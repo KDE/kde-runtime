@@ -20,9 +20,15 @@ qt4_add_dbus_adaptor(servicestub_SRCS
   servicecontrol.h
   Nepomuk::ServiceControl)
 
-kde4_add_executable(nepomukservicestub NOGUI
+kde4_add_executable(nepomukservicestub
   ${servicestub_SRCS}
 )
+
+if (Q_WS_MAC)
+    set_target_properties(nepomukservicestub PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/runtime/Info.plist.template)
+    set_target_properties(nepomukservicestub PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "org.kde.nepomuk.servicestub")
+    set_target_properties(nepomukservicestub PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "KDE Nepomuk Service Stub")
+endif (Q_WS_MAC)
 
 target_link_libraries(nepomukservicestub
   ${QT_QTCORE_LIBRARY}

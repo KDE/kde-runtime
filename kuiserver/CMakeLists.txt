@@ -52,7 +52,13 @@ dbus_add_activation_service(org.kde.kuiserver.service.in)
 
 kde4_add_kcfg_files(kuiserver_KDEINIT_SRCS kuiserversettings.kcfgc)
 
-kde4_add_kdeinit_executable( kuiserver ${kuiserver_KDEINIT_SRCS})
+kde4_add_kdeinit_executable(kuiserver ${kuiserver_KDEINIT_SRCS})
+
+if (Q_WS_MAC)
+    set_target_properties(kuiserver PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/Info.plist.template)
+    set_target_properties(kuiserver PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "org.kded.kuiserver")
+    set_target_properties(kuiserver PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "KDE User Interface Server")
+endif (Q_WS_MAC)
 
 target_link_libraries(kdeinit_kuiserver  ${KDE4_KIO_LIBS} )
 install(TARGETS kdeinit_kuiserver ${INSTALL_TARGETS_DEFAULT_ARGS})

@@ -38,6 +38,13 @@ qt4_add_dbus_interface(nepomukserver_SRCS
 
 kde4_add_kdeinit_executable(nepomukserver ${nepomukserver_SRCS})
 
+if (Q_WS_MAC)
+    set_target_properties(nepomukserver PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/Info.plist.template)
+    set_target_properties(nepomukserver PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "org.kde.nepomukserver")
+    set_target_properties(nepomukserver PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "KDE Nepomuk Server")
+endif (Q_WS_MAC)
+
+
 target_link_libraries(kdeinit_nepomukserver
   ${KDE4_KDEUI_LIBS}
   ${SOPRANO_LIBRARIES}
