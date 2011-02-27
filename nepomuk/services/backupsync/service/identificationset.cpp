@@ -53,9 +53,9 @@ namespace {
     public :
         IdentificationSetGenerator( const QSet<QUrl>& uniqueUris, Soprano::Model * m , const QSet<QUrl> & ignoreList = QSet<QUrl>());
 
-        Soprano::Model * model;
-        QSet<QUrl> done;
-        QSet<QUrl> notDone;
+        Soprano::Model * m_model;
+        QSet<QUrl> m_done;
+        QSet<QUrl> m_notDone;
 
         QList<Soprano::Statement> statements;
         
@@ -63,15 +63,16 @@ namespace {
         void iterate();
         QList<Soprano::Statement> generate();
 
-        static const int maxIterationSize = 50;
+        static const int maxIterationSize = 500;
+
+        bool done() const { return m_notDone.isEmpty(); }
     };
 
     IdentificationSetGenerator::IdentificationSetGenerator(const QSet<QUrl>& uniqueUris, Soprano::Model* m, const QSet<QUrl> & ignoreList)
     {
-        notDone = uniqueUris - ignoreList;
-        model = m;
-        done = ignoreList;
-
+        m_notDone = uniqueUris - ignoreList;
+        m_model = m;
+        m_done = ignoreList;
     }
 
     Soprano::QueryResultIterator IdentificationSetGenerator::queryIdentifyingStatements(const QStringList& uris)
@@ -86,17 +87,17 @@ namespace {
                              uris.join(", "));
 
 
-        return model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+        return m_model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
     }
 
     void IdentificationSetGenerator::iterate()
     {
         QStringList uris;
         
-        QMutableSetIterator<QUrl> iter( notDone );
+        QMutableSetIterator<QUrl> iter( m_notDone );
         while( iter.hasNext() ) {
             const QUrl & uri = iter.next();
-            done.insert( uri );
+            m_done.insert( uri );
             
             uris.append( Soprano::Node::resourceToN3( uri ) );
 
@@ -116,8 +117,8 @@ namespace {
             // If the object is also a nepomuk uri, it too needs to be identified.
             const QUrl & objUri = obj.uri();
             if( objUri.toString().startsWith("nepomuk:/res/") ) {
-                if( !done.contains( objUri ) ) {
-                    notDone.insert( objUri );
+                if( !m_done.contains( objUri ) ) {
+                    m_notDone.insert( objUri );
                 }
             }
         }
@@ -125,9 +126,9 @@ namespace {
 
     QList<Soprano::Statement> IdentificationSetGenerator::generate()
     {
-        done.clear();
+        m_done.clear();
 
-        while( !notDone.isEmpty() ) {
+        while( !done() ) {
             iterate();
         }
         return statements;
