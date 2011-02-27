@@ -74,7 +74,7 @@ class RemovableMediaModel : public Soprano::FilterModel
     Q_OBJECT
 
 public:
-    RemovableMediaModel(Soprano::Model *parent = 0);
+    RemovableMediaModel(Soprano::Model *parentModel = 0, QObject* parent = 0);
     ~RemovableMediaModel();
 
     // overloaded methods that provide file:/filex: transparent conversion

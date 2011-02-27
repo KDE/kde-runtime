@@ -168,11 +168,12 @@ private:
 };
 
 
-Nepomuk::RemovableMediaModel::RemovableMediaModel(Soprano::Model* parent)
-    : Soprano::FilterModel(parent),
+Nepomuk::RemovableMediaModel::RemovableMediaModel(Soprano::Model* parentModel, QObject* parent)
+    : Soprano::FilterModel(parentModel),
       m_filexSchema(QLatin1String("filex")),
       m_fileSchema(QLatin1String("file"))
 {
+    setParent(parent);
 }
 
 Nepomuk::RemovableMediaModel::~RemovableMediaModel()
