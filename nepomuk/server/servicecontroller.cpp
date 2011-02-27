@@ -206,7 +206,7 @@ bool Nepomuk::ServiceController::start()
         }
 
         // we wait for the service to be registered with DBus before creating the service interface
-        return d->processControl->start( KGlobal::dirs()->locate( "exe", "nepomukservicestub" ),
+        return d->processControl->start( KStandardDirs::findExe( "nepomukservicestub" ),
                                          QStringList() << name(),
                                          ProcessControl::RestartOnCrash );
     }
