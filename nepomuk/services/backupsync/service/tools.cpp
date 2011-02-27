@@ -36,25 +36,27 @@
 #include "identificationset.h"
 
 
-int Nepomuk::saveBackupChangeLog(const QUrl& url)
+int Nepomuk::saveBackupChangeLog(const QUrl& url, QSet<QUrl> & uniqueUris )
 {
-    const int step = 10000;
+    const int step = 1000;
     const QString query = QString::fromLatin1("select ?r ?p ?o ?g where { graph ?g { ?r ?p ?o. } ?g a nrl:InstanceBase . FILTER(!bif:exists( ( select (1) where { ?g a nrl:DiscardableInstanceBase . } ) )) . }");
     
     Soprano::Model * model = Nepomuk::ResourceManager::instance()->mainModel();
-
-    kDebug() << "Executing query!";
     Soprano::QueryResultIterator iter= model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    kDebug() << "Done executing!";
-    
+
     int totalNumRecords = 0;
     int i = 0;
     ChangeLog changeLog;
     while( iter.next() ) {
         Soprano::Statement st( iter["r"], iter["p"], iter["o"], iter["g"] );
-         //kDebug() << st;
+
         changeLog += ChangeLogRecord( st );
         totalNumRecords++;
+
+        //FIXME: Maybe we should only add those which have a "nepomuk" scheme?
+        uniqueUris.insert( st.subject().uri() );
+        if( st.object().isResource() )
+            uniqueUris.insert( st.object().uri() );
         
         if( ++i >= step ) {
             kDebug() << "Saving .. " << changeLog.size();
@@ -69,32 +71,19 @@ int Nepomuk::saveBackupChangeLog(const QUrl& url)
     return totalNumRecords;
 }
 
-//TODO: This doesn't really solve the problem that the backup maybe huge and
-//      large parts of the memory may get used. The proper solution would be
-//      to re-implement ChangeLog and IdentSet so that they don't load everything
-//      in one go.
-
 bool Nepomuk::saveBackupSyncFile(const QUrl& url)
 {
     kDebug() << url;
-    KTemporaryFile file;
-    file.open();
+    KTemporaryFile logFile;
+    logFile.open();
 
-    kDebug() << "Generating changelog";
-    int numRecords = saveBackupChangeLog( file.fileName() );
-    ChangeLog log = ChangeLog::fromUrl( file.fileName() );
-    kDebug() << "Log size: " << log.size();
-    Q_ASSERT( numRecords == log.size() );
-
-    if( log.empty() ) {
-        kDebug() << "Nothing to save..";
-        return false;
-    }
+    QSet<QUrl> uniqueUris;
+    saveBackupChangeLog( logFile.fileName(), uniqueUris );
 
     KTemporaryFile identificationFile;
     identificationFile.open();
     const QUrl identUrl( identificationFile.fileName() );
     
-    IdentificationSet::createIdentificationSet( log, identUrl );
-    return SyncFile::createSyncFile( file.fileName(), identUrl, url );
+    IdentificationSet::createIdentificationSet( uniqueUris, identUrl );
+    return SyncFile::createSyncFile( logFile.fileName(), identUrl, url );
 }
