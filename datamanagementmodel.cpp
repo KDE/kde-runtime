@@ -1291,9 +1291,28 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
 {
     QHash<QUrl, Soprano::Node> graphMetaData;
 
+    for(QHash<QUrl, QVariant>::const_iterator it = additionalMetadata.constBegin();
+        it != additionalMetadata.constEnd(); ++it) {
+        Soprano::Node node = d->m_classAndPropertyTree.variantToNode(it.value(), it.key());
+        if(node.isValid()) {
+            graphMetaData.insert(it.key(), node);
+        }
+        else {
+            setError(QString::fromLatin1("Cannot convert %1 to literal value.").arg(it.value().type()), Soprano::Error::ErrorInvalidArgument);
+            return QUrl();
+        }
+    }
+
+    return createGraph( app, graphMetaData );
+}
+
+QUrl Nepomuk::DataManagementModel::createGraph(const QString& app, const QMultiHash< QUrl, Soprano::Node >& additionalMetadata)
+{
+    QHash<QUrl, Soprano::Node> graphMetaData;
+
     // determine the graph type
     bool haveGraphType = false;
-    for(QHash<QUrl, QVariant>::const_iterator it = additionalMetadata.constBegin();
+    for(QHash<QUrl, Soprano::Node>::const_iterator it = additionalMetadata.constBegin();
         it != additionalMetadata.constEnd(); ++it) {
         const QUrl& property = it.key();
 
@@ -1304,13 +1323,13 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
                 return QUrl();
             }
             else {
-                if(d->m_classAndPropertyTree.isChildOf(it.value().toUrl(), NRL::Graph()))
+                if(d->m_classAndPropertyTree.isChildOf(it.value().uri(), NRL::Graph()))
                     haveGraphType = true;
             }
         }
 
         else if(property == NAO::created()) {
-            if(!it.value().type() == QVariant::DateTime) {
+            if(!it.value().literal().isDateTime()) {
                 setError(QString::fromLatin1("nao:created has dateTime range. %1 was provided.").arg(it.value().type()), Soprano::Error::ErrorInvalidArgument);
                 return QUrl();
             }
@@ -1319,15 +1338,6 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
         else {
             // FIXME: check property, domain, and range
             // Reuse code from ResourceMerger::checkGraphMetadata
-        }
-
-        Soprano::Node node = d->m_classAndPropertyTree.variantToNode(it.value(), property);
-        if(node.isValid()) {
-            graphMetaData.insert(it.key(), node);
-        }
-        else {
-            setError(QString::fromLatin1("Cannot convert %1 to literal value.").arg(it.value().type()), Soprano::Error::ErrorInvalidArgument);
-            return QUrl();
         }
     }
 
@@ -1342,20 +1352,15 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
         graphMetaData.insert(NAO::maintainedBy(), findApplicationResource(app));
     }
 
-    return createGraph( graphMetaData );
-}
-
-QUrl Nepomuk::DataManagementModel::createGraph(const QMultiHash< QUrl, Soprano::Node >& metaData)
-{
     const QUrl graph = createUri(GraphUri);
     const QUrl metadatagraph = createUri(GraphUri);
     
     // add metadata graph itself
-    addStatement( metadatagraph, NRL::coreGraphMetadataFor(), graph, metadatagraph );
-    addStatement( metadatagraph, RDF::type(), NRL::GraphMetadata(), metadatagraph );
+    addStatement(metadatagraph, NRL::coreGraphMetadataFor(), graph, metadatagraph);
+    addStatement(metadatagraph, RDF::type(), NRL::GraphMetadata(), metadatagraph);
     
-    for(QHash<QUrl, Soprano::Node>::const_iterator it = metaData.constBegin();
-        it != metaData.constEnd(); ++it) {
+    for(QHash<QUrl, Soprano::Node>::const_iterator it = graphMetaData.constBegin();
+        it != graphMetaData.constEnd(); ++it) {
         addStatement(graph, it.key(), it.value(), metadatagraph);
     }
         

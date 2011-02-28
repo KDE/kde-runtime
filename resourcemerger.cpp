@@ -138,7 +138,7 @@ QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     if( !finalPropHash.contains( NAO::maintainedBy(), m_appUri ) )
         finalPropHash.insert( NAO::maintainedBy(), m_appUri );
 
-    QUrl graph = m_model->createGraph( finalPropHash );
+    QUrl graph = m_model->createGraph( m_app, finalPropHash );
 
     m_graphHash.insert( oldGraph, graph );
     return graph;

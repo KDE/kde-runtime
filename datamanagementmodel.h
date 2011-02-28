@@ -196,7 +196,8 @@ Q_SIGNALS:
 
 private:
     QUrl createGraph(const QString& app, const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>());
-    QUrl createGraph( const QMultiHash< QUrl, Soprano::Node >& meta );
+    QUrl createGraph(const QString& app, const QMultiHash<QUrl, Soprano::Node>& additionalMetadata);
+
     QUrl findApplicationResource(const QString& app, bool create = true);
 
     /**
