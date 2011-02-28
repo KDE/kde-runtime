@@ -31,22 +31,36 @@ class DBusInterface : public QObject
 
     Q_PROPERTY(QString service READ service WRITE setService)
     Q_PROPERTY(QString path READ path WRITE setPath)
-    Q_PROPERTY(QString interface READ interface WRITE setInterface)
+    Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName)
     
     QDBusInterface *m_iface;
-    QString m_service, m_path, m_interface;
+    QString m_service, m_path, m_interfaceName;
+    
+protected:
+    QDBusInterface *interface();
     
 public:    
     DBusInterface(QObject *parent = 0);
     
     const QString &service() const;
     const QString &path() const;
-    const QString &interface() const;
+    const QString &interfaceName() const;
     void setService(const QString &service);
     void setPath(const QString &path);
-    void setInterface(const QString &interface);
+    void setInterfaceName(const QString &interface);
     
     Q_INVOKABLE QDBusPendingCall asyncCall(
+        const QString & method,
+        const QVariant & arg1 = QVariant(),
+        const QVariant & arg2 = QVariant(),
+        const QVariant & arg3 = QVariant(),
+        const QVariant & arg4 = QVariant(),
+        const QVariant & arg5 = QVariant(),
+        const QVariant & arg6 = QVariant(),
+        const QVariant & arg7 = QVariant(),
+        const QVariant & arg8 = QVariant()
+    );
+    Q_INVOKABLE QDBusMessage call(
         const QString & method,
         const QVariant & arg1 = QVariant(),
         const QVariant & arg2 = QVariant(),

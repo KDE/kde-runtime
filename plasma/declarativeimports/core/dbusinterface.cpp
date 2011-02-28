@@ -18,12 +18,28 @@
 
 #include "dbusinterface.h"
 
+#include <QtCore/QString>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusInterface>
 
-DBusInterface::DBusInterface(QObject* parent): QObject(parent)
-{
+#include <QDebug>
 
+DBusInterface::DBusInterface(QObject* parent):
+    QObject(parent),
+    m_iface(0),
+    m_service(QString()),
+    m_path(QString()),
+    m_interfaceName(QString())
+{
+}
+
+QDBusInterface* DBusInterface::interface()
+{
+    if (!m_iface) {
+        m_iface = new QDBusInterface(m_service, m_path, m_interfaceName);
+    }
+    
+    return m_iface;
 }
 
 const QString& DBusInterface::service() const
@@ -36,9 +52,9 @@ const QString& DBusInterface::path() const
     return m_path;
 }
 
-const QString& DBusInterface::interface() const
+const QString& DBusInterface::interfaceName() const
 {
-    return m_interface;
+    return m_interfaceName;
 }
 
 void DBusInterface::setService(const QString& service)
@@ -51,9 +67,9 @@ void DBusInterface::setPath(const QString& path)
     m_path = path;
 }
 
-void DBusInterface::setInterface(const QString& interface)
+void DBusInterface::setInterfaceName(const QString& interface)
 {
-    m_interface = interface;
+    m_interfaceName = interface;
 }
 
 QDBusPendingCall DBusInterface::asyncCall(
@@ -68,11 +84,23 @@ QDBusPendingCall DBusInterface::asyncCall(
     const QVariant& arg8
 )
 {
-    if (!m_iface) {
-        m_iface = new QDBusInterface(m_service, m_path, m_interface, QDBusConnection::sessionBus(), this);
-    }
-    
-    return m_iface->asyncCall(method, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+    return interface()->asyncCall(method, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 }
+
+QDBusMessage DBusInterface::call(
+    const QString& method,
+    const QVariant& arg1,
+    const QVariant& arg2,
+    const QVariant& arg3,
+    const QVariant& arg4,
+    const QVariant& arg5,
+    const QVariant& arg6,
+    const QVariant& arg7,
+    const QVariant& arg8
+)
+{
+    return interface()->call(method, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+}
+
 
 #include "dbusinterface.moc"
