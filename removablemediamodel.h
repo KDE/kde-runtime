@@ -38,7 +38,6 @@ namespace Solid {
 
 class KUrl;
 
-
 namespace Nepomuk {
 /**
  * Filter model that performs automatic conversion of file URLs
@@ -119,7 +118,6 @@ private:
 
         KUrl constructRelativeUrl( const QString& path ) const;
         QString constructLocalPath( const KUrl& filexUrl ) const;
-        bool hasLastMountPath() const;
 
         Solid::Device m_device;
         QString m_lastMountPath;

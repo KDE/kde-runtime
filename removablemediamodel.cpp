@@ -48,9 +48,6 @@
 
 using namespace Nepomuk::Vocabulary;
 
-// TODO: even the mount path URL itself needs to be encoded as filex:/. This is a bit problematic.
-//       we could have both the mount path and the root folder of the removable medium indexed at
-//       the same time. They both have URL file:/mount/path but represent different folders.
 // TODO: how do we handle this scenario: the indexer indexes files on a removable medium. This includes
 //       a nie:isPartOf relation to the parent folder of the mount point. This is technically not correct
 //       as it should be part of the removable file system instead. Right?
@@ -174,6 +171,12 @@ Nepomuk::RemovableMediaModel::RemovableMediaModel(Soprano::Model* parentModel, Q
       m_fileSchema(QLatin1String("file"))
 {
     setParent(parent);
+    initCacheEntries();
+
+    connect( Solid::DeviceNotifier::instance(), SIGNAL( deviceAdded( const QString& ) ),
+             this, SLOT( slotSolidDeviceAdded( const QString& ) ) );
+    connect( Solid::DeviceNotifier::instance(), SIGNAL( deviceRemoved( const QString& ) ),
+             this, SLOT( slotSolidDeviceRemoved( const QString& ) ) );
 }
 
 Nepomuk::RemovableMediaModel::~RemovableMediaModel()
@@ -229,13 +232,14 @@ Soprano::QueryResultIterator Nepomuk::RemovableMediaModel::executeQuery(const QS
 void Nepomuk::RemovableMediaModel::initCacheEntries()
 {
     QList<Solid::Device> devices
-        = Solid::Device::listFromQuery( QLatin1String( "StorageVolume.usage=='FileSystem'" ) );
+            = Solid::Device::listFromQuery( QLatin1String( "StorageVolume.usage=='FileSystem'" ) );
     foreach( const Solid::Device& dev, devices ) {
         if ( isUsableVolume( dev ) ) {
-            Entry* entry = createCacheEntry( dev );
-            const Solid::StorageAccess* storage = entry->m_device.as<Solid::StorageAccess>();
-            if ( storage && storage->isAccessible() )
-                slotAccessibilityChanged( true, dev.udi() );
+            if(Entry* entry = createCacheEntry( dev )) {
+                const Solid::StorageAccess* storage = entry->m_device.as<Solid::StorageAccess>();
+                if ( storage && storage->isAccessible() )
+                    slotAccessibilityChanged( true, dev.udi() );
+            }
         }
     }
 }
@@ -248,14 +252,17 @@ Nepomuk::RemovableMediaModel::Entry* Nepomuk::RemovableMediaModel::createCacheEn
     entry.m_device = dev;
     entry.m_description = dev.description();
     entry.m_uuid = entry.m_device.as<Solid::StorageVolume>()->uuid().toLower();
-    connect( dev.as<Solid::StorageAccess>(), SIGNAL(accessibilityChanged(bool, QString)),
-             this, SLOT(slotAccessibilityChanged(bool, QString)) );
-
-    m_metadataCache.insert( dev.udi(), entry );
-
-    kDebug() << "Found removable storage volume for Nepomuk docking:" << dev.udi() << dev.description();
-
-    return &m_metadataCache[dev.udi()];
+    if(!entry.m_uuid.isEmpty()) {
+        kDebug() << "Found removable storage volume for Nepomuk docking:" << dev.udi() << dev.description();
+        connect( dev.as<Solid::StorageAccess>(), SIGNAL(accessibilityChanged(bool, QString)),
+                this, SLOT(slotAccessibilityChanged(bool, QString)) );
+                m_metadataCache.insert( dev.udi(), entry );
+        return &m_metadataCache[dev.udi()];
+    }
+    else {
+        kDebug() << "Cannot use device de to empty UUID:" << dev.udi();
+        return 0;
+    }
 }
 
 
@@ -328,6 +335,7 @@ void Nepomuk::RemovableMediaModel::slotAccessibilityChanged( bool accessible, co
         QMutexLocker lock(&m_entryCacheMutex);
         Entry& entry = m_metadataCache[udi];
         entry.m_lastMountPath = entry.m_device.as<Solid::StorageAccess>()->filePath();
+        kDebug() << udi << "accessible at" << entry.m_lastMountPath << "with uuid" << entry.m_uuid;
     }
 }
 
@@ -368,12 +376,6 @@ QString Nepomuk::RemovableMediaModel::Entry::constructLocalPath( const KUrl& fil
     return path;
 }
 
-
-bool Nepomuk::RemovableMediaModel::Entry::hasLastMountPath() const
-{
-    return( !m_lastMountPath.isEmpty() &&
-           m_lastMountPath != QLatin1String( "/" ) );
-}
 
 Soprano::Statement Nepomuk::RemovableMediaModel::convertFilexUrls(const Soprano::Statement &s) const
 {
@@ -420,6 +422,7 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
 
     // is 0, 1, or 3 - nothing else
     int quoteCnt = 0;
+    bool inRegEx = false;
     QChar quote;
     QString newQuery;
     for(int i = 0; i < query.length(); ++i) {
@@ -431,12 +434,15 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
                // opening a literal
                quote = c;
                ++quoteCnt;
+               newQuery.append(c);
                // peek forward to see if there are three
                if(i+2 < query.length() &&
                        query[i+1] == c &&
                        query[i+2] == c) {
                    quoteCnt = 3;
                    i += 2;
+                   newQuery.append(c);
+                   newQuery.append(c);
                }
                continue;
            }
@@ -444,6 +450,7 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
                // possibly closing a literal
                if(quoteCnt == 1) {
                    quoteCnt = 0;
+                   newQuery.append(c);
                    continue;
                }
                else { // quoteCnt == 3
@@ -453,14 +460,19 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
                            query[i+2] == c) {
                        quoteCnt = 0;
                        i += 2;
+                       newQuery.append(c);
+                       newQuery.append(c);
+                       newQuery.append(c);
                        continue;
                    }
                }
            }
         }
 
-        // if we are not in a quote we can look for a resource
-        if(!quoteCnt || c == '<') {
+        //
+        // If we are not in a quote we can look for a resource
+        //
+        if(!quoteCnt && c == '<') {
             // peek forward to see if its a file:/ URL
             if(i+6 < query.length() &&
                     query[i+1] == 'f' &&
@@ -468,16 +480,69 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
                     query[i+3] == 'l' &&
                     query[i+4] == 'e' &&
                     query[i+5] == ':' &&
-                    query[i+6] == '/' ) {
+                    query[i+6] == '/') {
                 // look for the end of the file URL
                 int pos = query.indexOf('>', i+6);
                 if(pos > i+6) {
+                    kDebug() << "Found resource at" << i;
                     // convert the file URL into a filex URL (if necessary)
                     const KUrl fileUrl = query.mid(i+1, pos-i-1);
                     newQuery += convertFilexUrl(fileUrl).toN3();
                     i = pos;
                     continue;
                 }
+            }
+        }
+
+        //
+        // Or we check for a regex filter
+        //
+        else if(!inRegEx && !quoteCnt && c.toLower() == 'r') {
+            // peek forward to see if we have a REGEX filter
+            if(i+5 < query.length() &&
+                    query[i+1].toLower() == 'r' &&
+                    query[i+2].toLower() == 'e' &&
+                    query[i+3].toLower() == 'g' &&
+                    query[i+4].toLower() == 'e' &&
+                    query[i+5].toLower() == 'x') {
+                kDebug() << "Found regex filter at" << i;
+                int j = i+6;
+                // skip whitespace
+                while(j < query.length() && query[j].isSpace()) {
+                    ++j;
+                }
+                // now we need an open bracket
+                if(j < query.length() && query[j] == '(') {
+                    inRegEx = true;
+                    i = j;
+                }
+            }
+        }
+
+        //
+        // Find the end of a regex.
+        // FIXME: this is a bit tricky. There might be additional brackets in a regex. not sure.
+        //
+        else if(inRegEx && !quoteCnt && c == ')') {
+            inRegEx = false;
+        }
+
+        //
+        // Check for a file URL in a regex. This means we need to be in quotes
+        // and in a regex
+        // This is not perfect as in theory we could have a regex which checks
+        // some random literal which happens to mention a file URL. However,
+        // that case seems unlikely enough for us to go this way.
+        // FIXME: it would be best to check if the filter is done on nie:url.
+        //
+        else if(inRegEx && quoteCnt && c == 'f') {
+            // peek forward to see if its a file URL
+            if(i+5 < query.length() &&
+                    query[i+1] == 'i' &&
+                    query[i+2] == 'l' &&
+                    query[i+3] == 'e' &&
+                    query[i+4] == ':' &&
+                    query[i+5] == '/') {
             }
         }
 
