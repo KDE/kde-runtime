@@ -34,6 +34,7 @@ class DBusInterface : public QObject
     Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName)
     
     QDBusInterface *m_iface;
+    bool m_ifaceParamsChanged;
     QString m_service, m_path, m_interfaceName;
     
 protected:

@@ -18,7 +18,6 @@
 
 #include "dbusinterface.h"
 
-#include <QtCore/QString>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusInterface>
 
@@ -27,6 +26,7 @@
 DBusInterface::DBusInterface(QObject* parent):
     QObject(parent),
     m_iface(0),
+    m_ifaceParamsChanged(true),
     m_service(QString()),
     m_path(QString()),
     m_interfaceName(QString())
@@ -35,8 +35,12 @@ DBusInterface::DBusInterface(QObject* parent):
 
 QDBusInterface* DBusInterface::interface()
 {
-    if (!m_iface) {
+    if (m_ifaceParamsChanged) {
+        if (m_iface) {
+            delete m_iface;
+        }
         m_iface = new QDBusInterface(m_service, m_path, m_interfaceName);
+        m_ifaceParamsChanged = false;
     }
     
     return m_iface;
@@ -60,16 +64,19 @@ const QString& DBusInterface::interfaceName() const
 void DBusInterface::setService(const QString& service)
 {
     m_service = service;
+    m_ifaceParamsChanged = true;
 }
 
 void DBusInterface::setPath(const QString& path)
 {
     m_path = path;
+    m_ifaceParamsChanged = true;
 }
 
 void DBusInterface::setInterfaceName(const QString& interface)
 {
     m_interfaceName = interface;
+    m_ifaceParamsChanged = true;
 }
 
 QDBusPendingCall DBusInterface::asyncCall(
