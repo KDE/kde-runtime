@@ -24,6 +24,7 @@ target_link_libraries(datamanagementmodeltest
   nepomukdatamanagement
 )
 
+
 kde4_add_unit_test(datamanagementadaptortest
   datamanagementadaptortest.cpp
   ../classandpropertytree.cpp
@@ -37,6 +38,22 @@ target_link_libraries(datamanagementadaptortest
   ${QT_QTTEST_LIBRARY}
   ${SOPRANO_LIBRARIES}
   ${KDE4_KDECORE_LIBS}
+  ${NEPOMUK_LIBRARIES}
   nepomuksync
   nepomukdatamanagement
+)
+
+
+kde4_add_unit_test(removablemediamodeltest
+  removablemediamodeltest.cpp
+  ../removablemediamodel.cpp
+)
+add_definitions(-DFAKE_COMPUTER_XML="\\"${CMAKE_CURRENT_SOURCE_DIR}/solid/fakecomputer.xml\\"")
+
+target_link_libraries(removablemediamodeltest
+  ${QT_QTTEST_LIBRARY}
+  ${SOPRANO_LIBRARIES}
+  ${KDE4_KDECORE_LIBS}
+  ${KDE4_SOLID_LIBS}
+  ${NEPOMUK_LIBRARIES}
 )
