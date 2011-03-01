@@ -42,7 +42,6 @@
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Variant>
-#include <Nepomuk/Types/Property>
 
 #include <KDebug>
 #include <KUrl>
@@ -222,9 +221,9 @@ QSet< KUrl > Nepomuk::Sync::ResourceIdentifier::unidentified() const
 // Property settings
 //
 
-void Nepomuk::Sync::ResourceIdentifier::addOptionalProperty(const Nepomuk::Types::Property& property)
+void Nepomuk::Sync::ResourceIdentifier::addOptionalProperty(const QUrl& property)
 {
-    d->m_optionalProperties.append( property.uri() );
+    d->m_optionalProperties.append( property );
 }
 
 void Nepomuk::Sync::ResourceIdentifier::clearOptionalProperties()
@@ -237,9 +236,9 @@ KUrl::List Nepomuk::Sync::ResourceIdentifier::optionalProperties() const
     return d->m_optionalProperties;
 }
 
-void Nepomuk::Sync::ResourceIdentifier::addVitalProperty(const Nepomuk::Types::Property& property)
+void Nepomuk::Sync::ResourceIdentifier::addVitalProperty(const QUrl& property)
 {
-    d->m_vitalProperties.append( property.uri() );
+    d->m_vitalProperties.append( property );
 }
 
 void Nepomuk::Sync::ResourceIdentifier::clearVitalProperties()
