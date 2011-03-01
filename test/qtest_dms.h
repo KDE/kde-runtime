@@ -19,36 +19,25 @@
    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef REMOVABLEMEDIAMODELTEST_H
-#define REMOVABLEMEDIAMODELTEST_H
+#ifndef QTEST_DMS_H
+#define QTEST_DMS_H
 
-#include <QObject>
-#include <QStringList>
+#include <QtTest>
+#include <Soprano/Statement>
+#include <Soprano/Node>
 
-namespace Nepomuk {
-class RemovableMediaModel;
+namespace QTest {
+template<>
+char* toString(const Soprano::Node& node) {
+    return qstrdup( node.toN3().toLatin1().data() );
 }
-namespace Soprano {
-class Model;
+
+template<>
+char* toString(const Soprano::Statement& s) {
+    return qstrdup( (s.subject().toN3() + QLatin1String(" ") +
+                     s.predicate().toN3() + QLatin1String(" ") +
+                     s.object().toN3() + QLatin1String(" . ")).toLatin1().data() );
+}
 }
 
-class RemovableMediaModelTest : public QObject
-{
-    Q_OBJECT
-
-private Q_SLOTS:
-    void initTestCase();
-    void testConvertFileUrlsInStatement_data();
-    void testConvertFileUrlsInStatement();
-    void testConvertFilxUrl_data();
-    void testConvertFilxUrl();
-    void testConvertFilxUrls_data();
-    void testConvertFilxUrls();
-
-private:
-    Soprano::Model* m_model;
-    Nepomuk::RemovableMediaModel* m_rmModel;
-    QStringList m_removableDevices;
-};
-
-#endif
+#endif // QTEST_DMS_H

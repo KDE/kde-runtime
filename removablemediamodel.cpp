@@ -51,6 +51,8 @@ using namespace Nepomuk::Vocabulary;
 // TODO: how do we handle this scenario: the indexer indexes files on a removable medium. This includes
 //       a nie:isPartOf relation to the parent folder of the mount point. This is technically not correct
 //       as it should be part of the removable file system instead. Right?
+// TODO: Optical media do not have a uuid. Here we could use a combination of label and identifier of the medium.
+// TODO: we somehow need to handle network mounts here, too.
 
 namespace {
     bool isUsableVolume( const Solid::Device& dev ) {

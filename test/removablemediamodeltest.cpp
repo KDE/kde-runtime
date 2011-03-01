@@ -26,9 +26,11 @@
 #undef private
 
 #include <QtTest>
+#include "qtest_kde.h"
+#include "qtest_dms.h"
+
 #include <QtDBus>
 #include <Soprano/Soprano>
-#include "qtest_kde.h"
 #include <KDebug>
 
 #include <Solid/DeviceNotifier>
@@ -56,16 +58,9 @@ using namespace Nepomuk;
 using namespace Nepomuk::Vocabulary;
 using namespace Soprano;
 
+Q_DECLARE_METATYPE(Soprano::Node)
 Q_DECLARE_METATYPE(Soprano::Statement)
 
-namespace QTest {
-template<>
-char* toString(const Soprano::Statement& s) {
-    return qstrdup( (s.subject().toN3() + QLatin1String(" ") +
-                     s.predicate().toN3() + QLatin1String(" ") +
-                     s.object().toN3() + QLatin1String(" . ")).toLatin1().data() );
-}
-}
 
 namespace {
 /// Plug a device in the fake Solid hw manager.
@@ -126,9 +121,13 @@ void RemovableMediaModelTest::testConvertFileUrlsInStatement_data()
     const Statement convertableFileObjectWithoutNieUrl(QUrl("nepomuk:/res/xyz"), QUrl("onto:someProp"), QUrl("file:///media/XO-Y4/test.txt"));
     QTest::newRow("convertableFileUrlInObjectWithoutNieUrl") << convertableFileObjectWithoutNieUrl << convertableFileObjectWithoutNieUrl;
 
-    const Statement convertableFileObjectWithNieUrl_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/XO-Y4/test.txt"));
-    const Statement convertableFileObjectWithNieUrl_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("filex://xyz-123/test.txt"));
-    QTest::newRow("convertableFileUrlInObjectWithNieUrl") << convertableFileObjectWithNieUrl_original << convertableFileObjectWithNieUrl_converted;
+    const Statement convertableFileObjectWithNieUrl1_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/XO-Y4/test.txt"));
+    const Statement convertableFileObjectWithNieUrl1_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("filex://xyz-123/test.txt"));
+    QTest::newRow("convertableFileUrlInObjectWithNieUrl1") << convertableFileObjectWithNieUrl1_original << convertableFileObjectWithNieUrl1_converted;
+
+    const Statement convertableFileObjectWithNieUrl2_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/XO-Y4"));
+    const Statement convertableFileObjectWithNieUrl2_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("filex://xyz-123"));
+    QTest::newRow("convertableFileUrlInObjectWithNieUrl2") << convertableFileObjectWithNieUrl2_original << convertableFileObjectWithNieUrl2_converted;
 }
 
 
@@ -138,6 +137,63 @@ void RemovableMediaModelTest::testConvertFileUrlsInStatement()
     QFETCH(Statement, converted);
 
     QCOMPARE(m_rmModel->convertFileUrls(original), converted);
+}
+
+void RemovableMediaModelTest::testConvertFilxUrl_data()
+{
+    QTest::addColumn<Node>( "original" );
+    QTest::addColumn<Node>( "converted" );
+
+    const Node nothingToConvertFilex(QUrl("filex://abc-789/hello/world"));
+    QTest::newRow("nothingToConvertFilex") << nothingToConvertFilex << nothingToConvertFilex;
+
+    const Node convertFilex1(QUrl("filex://xyz-123/hello/world"));
+    QTest::newRow("convertFilex1") << convertFilex1 << Node(QUrl("file:///media/XO-Y4/hello/world"));
+
+    const Node convertFilex2(QUrl("filex://xyz-123"));
+    QTest::newRow("convertFilex2") << convertFilex2 << Node(QUrl("file:///media/XO-Y4"));
+}
+
+void RemovableMediaModelTest::testConvertFilxUrl()
+{
+    QFETCH(Node, original);
+    QFETCH(Node, converted);
+
+    QCOMPARE(m_rmModel->convertFilexUrl(original), converted);
+}
+
+void RemovableMediaModelTest::testConvertFilxUrls_data()
+{
+    QTest::addColumn<Statement>( "original" );
+    QTest::addColumn<Statement>( "converted" );
+
+    const Statement randomStatement(QUrl("nepomuk:/res/xyz"), QUrl("onto:someProp"), LiteralValue("foobar"));
+    QTest::newRow("noFileUrls") << randomStatement << randomStatement;
+
+    const Statement randomFilexSubject(QUrl("filex://123-123/tmp/test"), QUrl("onto:someProp"), LiteralValue("foobar"));
+    QTest::newRow("randomFilexUrlInSubject") << randomFilexSubject << randomFilexSubject;
+
+    const Statement convertableFilexSubject(QUrl("filex://xyz-123/test.txt"), QUrl("onto:someProp"), LiteralValue("foobar"));
+    QTest::newRow("convertableFilexUrlInSubject") << convertableFilexSubject << convertableFilexSubject;
+
+    const Statement convertableFilexObjectWithoutNieUrl(QUrl("nepomuk:/res/xyz"), QUrl("onto:someProp"), QUrl("filex://xyz-123/test.txt"));
+    QTest::newRow("convertableFilexUrlInObjectWithoutNieUrl") << convertableFilexObjectWithoutNieUrl << convertableFilexObjectWithoutNieUrl;
+
+    const Statement convertableFilexObjectWithNieUrl1_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("filex://xyz-123/test.txt"));
+    const Statement convertableFilexObjectWithNieUrl1_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/XO-Y4/test.txt"));
+    QTest::newRow("convertableFilexUrlInObjectWithNieUrl1") << convertableFilexObjectWithNieUrl1_original << convertableFilexObjectWithNieUrl1_converted;
+
+    const Statement convertableFilexObjectWithNieUrl2_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("filex://xyz-123"));
+    const Statement convertableFilexObjectWithNieUrl2_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/XO-Y4"));
+    QTest::newRow("convertableFilexUrlInObjectWithNieUrl2") << convertableFilexObjectWithNieUrl2_original << convertableFilexObjectWithNieUrl2_converted;
+}
+
+void RemovableMediaModelTest::testConvertFilxUrls()
+{
+    QFETCH(Statement, original);
+    QFETCH(Statement, converted);
+
+    QCOMPARE(m_rmModel->convertFilexUrls(original), converted);
 }
 
 QTEST_KDEMAIN_CORE(RemovableMediaModelTest)

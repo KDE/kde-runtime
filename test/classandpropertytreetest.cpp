@@ -24,17 +24,12 @@
 
 #include <QtTest>
 #include "qtest_kde.h"
+#include "qtest_dms.h"
 
 #include <Soprano/Soprano>
 
 #include <ktempdir.h>
 
-namespace QTest {
-template<>
-char* toString(const Soprano::Node& node) {
-    return qstrdup( node.toN3().toLatin1().data() );
-}
-}
 
 using namespace Soprano;
 

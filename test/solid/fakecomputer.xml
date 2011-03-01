@@ -461,59 +461,6 @@
                         <property key="gphotoSupport">true</property>
                     </device>
 
-                <!-- USB Device #2 containing a battery -->
-                <device udi="/org/kde/solid/fakehw/usb_device_1267_210_noserial">
-                    <property key="name">ZX Cordless Mouse</property>
-                    <property key="vendor">Logi4 Inc.</property>
-                    <property key="parent">/org/kde/solid/fakehw/usb_device_0_0_1d_2</property>
-                    <property key="interfaces">Battery</property>
-
-                    <property key="isPlugged">true</property>
-                    <property key="batteryType">mouse</property>
-                    <property key="chargeLevelUnit">mWh</property>
-                    <property key="maxLevel">432000</property>
-                    <property key="lastFullLevel">421650</property>
-                    <property key="currentLevel">421000</property>
-                    <property key="warningLevel">1405500</property>
-                    <property key="lowLevel">70275</property>
-                    <property key="voltageUnit">mV</property>
-                    <property key="voltage">5100</property>
-                    <property key="isRechargeable">true</property>
-                    <property key="chargeState">charging</property>
-                </device>
-                    <!-- HID Interface -->
-                    <device udi="/org/kde/solid/fakehw/usb_device_1267_210_noserial_if0">
-                        <property key="name">USB HID Interface</property>
-                        <property key="parent">/org/kde/solid/fakehw/usb_device_1267_210_noserial</property>
-                    </device>
-                        <!-- We finally find the mouse device -->
-                        <device udi="/org/kde/solid/fakehw/usb_device_1267_210_noserial_if0_logical_dev_input">
-                            <property key="name">Logi4 Receiver</property>
-                            <property key="parent">/org/kde/solid/fakehw/usb_device_1267_210_noserial_if0</property>
-                            <!-- TODO: Complete this if we get input (mouse and keyb) related interfaces -->
-                        </device>
-
-                <!-- USB Device #3 -->
-                <device udi="/org/kde/solid/fakehw/usb_device_4f1_5d33_HF8459">
-                    <property key="name">ORB 2400 series</property>
-                    <property key="vendor">Acme Corporation</property>
-                    <property key="parent">/org/kde/solid/fakehw/usb_device_0_0_1d_2</property>
-                </device>
-                    <!-- USB Printer Interface -->
-                    <device udi="/org/kde/solid/fakehw/usb_device_4f1_5d33_HF8459_if0">
-                        <property key="name">USB Printer Interface</property>
-                        <property key="parent">/org/kde/solid/fakehw/usb_device_4f1_5d33_HF8459</property>
-                    </device>
-                        <!-- We finally find the printer device -->
-                        <device udi="/org/kde/solid/fakehw/usb_device_4f1_5d33_HF8459_if0_printer">
-                            <property key="name">ORB 2400 series</property>
-                            <property key="vendor">Acme</property>
-                            <property key="parent">/org/kde/solid/fakehw/usb_device_4f1_5d33_HF8459_if0</property>
-                            <!-- TODO: Complete this if we get printer related interfaces -->
-                        </device>
-
-
-
         <!-- PCI Bridge -->
         <device udi="/org/kde/solid/fakehw/pci_8086_2448">
             <property key="name">99021 PCI Bridge</property>
@@ -571,52 +518,6 @@
                     <property key="deviceType">demux</property>
                     <property key="deviceIndex">1</property>
                 </device>
-
-
-
-        <!-- Integrated Audio Controller -->
-        <device udi="/org/kde/solid/fakehw/pci_8086_266e">
-            <property key="name">99021 Audio Controller</property>
-            <property key="vendor">Acme Corporation</property>
-            <property key="parent">/org/kde/solid/fakehw/computer</property>
-        </device>
-            <device udi="/org/kde/solid/fakehw/pci_8086_266e_alsa_capture_0">
-                <property key="name">Acme ALSA Capture</property>
-                <property key="interfaces">AudioInterface</property>
-                <property key="parent">/org/kde/solid/fakehw/pci_8086_266e</property>
-                <property key="driver">alsa</property>
-                <property key="driverHandle">0,0</property>
-                <property key="type">input</property>
-                <property key="soundcardType">internal</property>
-            </device>
-            <device udi="/org/kde/solid/fakehw/pci_8086_266e_alsa_playback_0">
-                <property key="name">Acme ALSA Playback</property>
-                <property key="interfaces">AudioInterface</property>
-                <property key="parent">/org/kde/solid/fakehw/pci_8086_266e</property>
-                <property key="driver">alsa</property>
-                <property key="driverHandle">0,1</property>
-                <property key="type">output</property>
-                <property key="soundcardType">internal</property>
-            </device>
-            <device udi="/org/kde/solid/fakehw/pci_8086_266e_alsa_control_1">
-                <property key="name">Acme ALSA Control</property>
-                <property key="interfaces">AudioInterface</property>
-                <property key="parent">/org/kde/solid/fakehw/pci_8086_266e</property>
-                <property key="driver">alsa</property>
-                <property key="driverHandle">0</property>
-                <property key="type">control</property>
-                <property key="soundcardType">internal</property>
-            </device>
-            <device udi="/org/kde/solid/fakehw/pci_8086_266e_oss_pcm_0">
-                <property key="name">Acme OSS PCM Device</property>
-                <property key="interfaces">AudioInterface</property>
-                <property key="parent">/org/kde/solid/fakehw/pci_8086_266e</property>
-                <property key="driver">oss</property>
-                <property key="driverHandle">/dev/dsp</property>
-                <property key="type">input,output</property>
-                <property key="soundcardType">internal</property>
-            </device>
-
 
 
 </machine>
