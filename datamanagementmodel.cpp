@@ -1086,6 +1086,10 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 
     resIdent.setModel( this );
     resIdent.setMinScore( 1.0 );
+    // Are there any more properties would count as resource metadata?
+    resIdent.addOptionalProperty( NAO::created() );
+    resIdent.addOptionalProperty( NAO::lastModified() );
+    
     resIdent.identifyAll();
 
     if( resIdent.mappings().empty() ) {
