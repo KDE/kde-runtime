@@ -24,6 +24,7 @@
 #include "resourceidentifier_p.h"
 #include "simpleresource.h"
 #include "identificationsetgenerator_p.h"
+#include "nrio.h"
 
 #include <QtCore/QSet>
 
@@ -37,7 +38,6 @@
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
 #include <Nepomuk/Vocabulary/NIE>
-#include "backupsync.h"
 
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>

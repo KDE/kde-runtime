@@ -21,7 +21,7 @@
 
 #include "resourceidentifier.h"
 #include "resourceidentifier_p.h"
-#include "backupsync.h"
+#include "nrio.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QSet>
