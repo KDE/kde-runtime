@@ -342,40 +342,32 @@ void Nepomuk::RemovableMediaModel::slotAccessibilityChanged( bool accessible, co
 }
 
 
-Soprano::Statement Nepomuk::RemovableMediaModel::convertFileUrls(const Soprano::Statement &statement) const
+Soprano::Node Nepomuk::RemovableMediaModel::convertFileUrl(const Soprano::Node &node) const
 {
-    if(statement.predicate().uri() == NIE::url() ||
-            (statement.predicate().isEmpty() && statement.object().isResource())) {
-        // check if the URL needs conversion
-        const QUrl url = statement.object().uri();
+    if(node.isResource()) {
+        const QUrl url = node.uri();
         if(url.scheme() == m_fileSchema) {
             const QString localFilePath = url.toLocalFile();
             if(const Entry* entry = findEntryByFilePath(localFilePath)) {
-                Soprano::Statement newStatement(statement);
-                newStatement.setObject(entry->constructRelativeUrl(localFilePath));
-                return newStatement;
+                return entry->constructRelativeUrl(localFilePath);
             }
         }
     }
 
+    return node;
+}
+
+
+Soprano::Statement Nepomuk::RemovableMediaModel::convertFileUrls(const Soprano::Statement &statement) const
+{
+    if(statement.predicate().uri() == NIE::url() ||
+            (statement.predicate().isEmpty() && statement.object().isResource())) {
+        Soprano::Statement newStatement(statement);
+        newStatement.setObject(convertFileUrl(statement.object()));
+        return newStatement;
+    }
+
     return statement;
-}
-
-
-KUrl Nepomuk::RemovableMediaModel::Entry::constructRelativeUrl( const QString& path ) const
-{
-    const QString relativePath = path.mid( m_lastMountPath.count() );
-    return KUrl( QLatin1String("filex://") + m_uuid + relativePath );
-}
-
-
-QString Nepomuk::RemovableMediaModel::Entry::constructLocalPath( const KUrl& filexUrl ) const
-{
-    QString path( m_lastMountPath );
-    if ( path.endsWith( QLatin1String( "/" ) ) )
-        path.truncate( path.length()-1 );
-    path += filexUrl.path();
-    return path;
 }
 
 
@@ -425,6 +417,7 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
     // is 0, 1, or 3 - nothing else
     int quoteCnt = 0;
     bool inRegEx = false;
+    bool inRes = false;
     QChar quote;
     QString newQuery;
     for(int i = 0; i < query.length(); ++i) {
@@ -489,35 +482,30 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
                     kDebug() << "Found resource at" << i;
                     // convert the file URL into a filex URL (if necessary)
                     const KUrl fileUrl = query.mid(i+1, pos-i-1);
-                    newQuery += convertFilexUrl(fileUrl).toN3();
+                    newQuery += convertFileUrl(fileUrl).toN3();
                     i = pos;
                     continue;
                 }
             }
+            inRes = true;
+        }
+
+        else if(inRes && c == '>') {
+            inRes = false;
         }
 
         //
         // Or we check for a regex filter
         //
-        else if(!inRegEx && !quoteCnt && c.toLower() == 'r') {
+        else if(!inRes && !inRegEx && !quoteCnt && c.toLower() == 'r') {
             // peek forward to see if we have a REGEX filter
-            if(i+5 < query.length() &&
-                    query[i+1].toLower() == 'r' &&
-                    query[i+2].toLower() == 'e' &&
-                    query[i+3].toLower() == 'g' &&
-                    query[i+4].toLower() == 'e' &&
-                    query[i+5].toLower() == 'x') {
+            if(i+4 < query.length() &&
+                    query[i+1].toLower() == 'e' &&
+                    query[i+2].toLower() == 'g' &&
+                    query[i+3].toLower() == 'e' &&
+                    query[i+4].toLower() == 'x') {
                 kDebug() << "Found regex filter at" << i;
-                int j = i+6;
-                // skip whitespace
-                while(j < query.length() && query[j].isSpace()) {
-                    ++j;
-                }
-                // now we need an open bracket
-                if(j < query.length() && query[j] == '(') {
-                    inRegEx = true;
-                    i = j;
-                }
+                inRegEx = true;
             }
         }
 
@@ -545,6 +533,22 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
                     query[i+3] == 'e' &&
                     query[i+4] == ':' &&
                     query[i+5] == '/') {
+                // find end of regex
+                QString quoteEnd = quote;
+                if(quoteCnt == 3) {
+                    quoteEnd += quote;
+                    quoteEnd += quote;
+                }
+                int pos = query.indexOf(quoteEnd, i+6);
+                if(pos > 0) {
+                    kDebug() << "Found file:/ regex filter at" << i;
+                    // convert the file URL into a filex URL (if necessary)
+                    const KUrl fileUrl = query.mid(i, pos-i);
+                    newQuery += KUrl(convertFileUrl(fileUrl).uri()).url();
+                    // set i to last char we handled and let the loop continue with the end of the quote
+                    i = pos-1;
+                    continue;
+                }
             }
         }
 
@@ -552,6 +556,23 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
     }
 
     return newQuery;
+}
+
+
+KUrl Nepomuk::RemovableMediaModel::Entry::constructRelativeUrl( const QString& path ) const
+{
+    const QString relativePath = path.mid( m_lastMountPath.count() );
+    return KUrl( QLatin1String("filex://") + m_uuid + relativePath );
+}
+
+
+QString Nepomuk::RemovableMediaModel::Entry::constructLocalPath( const KUrl& filexUrl ) const
+{
+    QString path( m_lastMountPath );
+    if ( path.endsWith( QLatin1String( "/" ) ) )
+        path.truncate( path.length()-1 );
+    path += filexUrl.path();
+    return path;
 }
 
 #include "removablemediamodel.moc"

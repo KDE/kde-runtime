@@ -103,6 +103,8 @@ private:
      */
     Soprano::Statement convertFileUrls(const Soprano::Statement& s) const;
 
+    Soprano::Node convertFileUrl(const Soprano::Node& node) const;
+
     /**
      * Converts file:/ URLs into their filex:/ counterpart if necessary.
      * This includes a simple handling of REGEX filters.

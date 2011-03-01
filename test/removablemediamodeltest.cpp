@@ -139,6 +139,35 @@ void RemovableMediaModelTest::testConvertFileUrlsInStatement()
     QCOMPARE(m_rmModel->convertFileUrls(original), converted);
 }
 
+void RemovableMediaModelTest::testConvertFileUrlsInQuery_data()
+{
+    QTest::addColumn<QString>( "original" );
+    QTest::addColumn<QString>( "converted" );
+
+    QString query = QString::fromLatin1("select ?r where { ?r ?p <file:///media/foobar/test.txt> . }");
+    QTest::newRow("queryWithNonConvertableFileUrl") << query << query;
+
+    QTest::newRow("queryWithConvertableFileUrl")
+            << QString::fromLatin1("select ?r where { ?r ?p <file:///media/XO-Y4/test.txt> . }")
+            << QString::fromLatin1("select ?r where { ?r ?p <filex://xyz-123/test.txt> . }");
+
+    QTest::newRow("queryWithConvertableRegex1")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^file:///media/XO-Y4/test')) . }")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^filex://xyz-123/test')) . }");
+
+    QTest::newRow("queryWithConvertableRegex2")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^file:///media/XO-Y4/')) . }")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^filex://xyz-123/')) . }");
+}
+
+void RemovableMediaModelTest::testConvertFileUrlsInQuery()
+{
+    QFETCH(QString, original);
+    QFETCH(QString, converted);
+
+    QCOMPARE(m_rmModel->convertFileUrls(original), converted);
+}
+
 void RemovableMediaModelTest::testConvertFilxUrl_data()
 {
     QTest::addColumn<Node>( "original" );

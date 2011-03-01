@@ -40,6 +40,8 @@ private Q_SLOTS:
     void initTestCase();
     void testConvertFileUrlsInStatement_data();
     void testConvertFileUrlsInStatement();
+    void testConvertFileUrlsInQuery_data();
+    void testConvertFileUrlsInQuery();
     void testConvertFilxUrl_data();
     void testConvertFilxUrl();
     void testConvertFilxUrls_data();
