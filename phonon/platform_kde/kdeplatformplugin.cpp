@@ -169,6 +169,8 @@ QObject *KdePlatformPlugin::createBackend(KService::Ptr newService)
     }
 
     kDebug() << "using backend: " << newService->name();
+    // Backends can have own l10n, try loading their catalog based on the library name.
+     KGlobal::locale()->insertCatalog(newService->library());
     return backend;
 }
 
