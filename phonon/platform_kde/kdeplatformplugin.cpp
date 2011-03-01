@@ -131,14 +131,14 @@ QObject *KdePlatformPlugin::createBackend(KService::Ptr newService)
         errorReason = KLibLoader::self()->lastErrorMessage();
     } else {
         QObject *backend = factory->create<QObject>();
-        if (0 == backend) {
+        if (!backend) {
             errorReason = i18n("create method returned 0");
         }
     }
 #else
     QObject *backend = newService->createInstance<QObject>(0, QVariantList(), &errorReason);
 #endif
-    if (0 == backend) {
+    if (!backend) {
         const QLatin1String suffix("/phonon_backend/");
         const QStringList libFilter(newService->library() + QLatin1String(".*"));
         foreach (QString libPath, QCoreApplication::libraryPaths()) {
@@ -156,7 +156,7 @@ QObject *KdePlatformPlugin::createBackend(KService::Ptr newService)
             }
         }
     }
-    if (0 == backend) {
+    if (!backend) {
         kError(600) << "Can not create backend object from factory for " <<
             newService->name() << ", " << newService->library() << ":\n" << errorReason;
 
