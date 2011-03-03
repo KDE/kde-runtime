@@ -24,6 +24,7 @@
 
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/RDF>
+#include <Soprano/Vocabulary/RDFS>
 #include <Soprano/Vocabulary/NAO>
 
 #include <Soprano/StatementIterator>
@@ -157,13 +158,13 @@ bool Nepomuk::ResourceMerger::checkGraphMetadata(const QMultiHash< QUrl, Soprano
         if( propUri == RDF::type() ) {
             Soprano::Node object = it.value();
             if( !object.isResource() ) {
-                m_model->setError(QString::fromLatin1("rdf:type has resource range. %1 was provided.").arg(it.value().type()), Soprano::Error::ErrorInvalidArgument);
+                m_model->setError(QString::fromLatin1("rdf:type has resource range. '%1' does not have a resource type.").arg(object.toN3()), Soprano::Error::ErrorInvalidArgument);
                 return false;
             }
 
             // All the types should be a sub-type of nrl:Graph
             if( !tree->isChildOf( object.uri(), NRL::Graph() ) ) {
-                m_model->setError( QString::fromLatin1("the rdf:type should be a subclass of nrl:Graph"),
+                m_model->setError( QString::fromLatin1("The rdf:type should be a subclass of nrl:Graph. '%1' is not.").arg(object.uri().toString()),
                                    Soprano::Error::ErrorInvalidArgument );
                 return false;
             }
@@ -254,11 +255,13 @@ bool Nepomuk::ResourceMerger::isOfType(const Soprano::Node & node, const QUrl& t
     
     ClassAndPropertyTree * tree = m_model->classAndPropertyTree();
     QList<QUrl> types;
+    // all resources have rdfs:Resource type by default
+    types << RDFS::Resource();
 
     if( !node.isBlank() ) {
         QList< Soprano::Node > oldTypes = m_model->listStatements( node, RDF::type(), Soprano::Node() ).iterateObjects().allNodes();
         foreach( const Soprano::Node & n, oldTypes ) {
-            types << n.uri(); 
+            types << n.uri();
         }
     }
     types += newTypes;
