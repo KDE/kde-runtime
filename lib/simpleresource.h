@@ -51,13 +51,71 @@ public:
 
     bool contains(const QUrl& property) const;
     bool contains(const QUrl& property, const QVariant& value) const;
+    bool containsNode(const QUrl& property, const Soprano::Node& value) const;
 
+    /**
+     * Clear the resource, remove all properties.
+     */
+    void clear();
+
+    /**
+     * Set the properties, replacing the existing properties.
+     */
     void setProperties(const PropertyHash& properties);
+
+    /**
+     * Add a set of properties to the existing ones.
+     */
+    void addProperties(const PropertyHash& properties);
+
+    /**
+     * Set a property overwriting existing values.
+     * \param property The property to set
+     * \param value The value of the property.
+     */
+    void setProperty(const QUrl& property, const QVariant& value);
+
+    /**
+     * Set a property overwriting existing values.
+     * \param property The property to set
+     * \param value The value of the property. Will be converted to a QVariant.
+     */
+    void setPropertyNode(const QUrl& property, const Soprano::Node& value);
+
+    /**
+     * Add a property. This allows to add more than one value for a property.
+     * \param property The property to set
+     * \param value The value of the property.
+     */
     void addProperty(const QUrl& property, const QVariant& value);
 
+    /**
+     * Add a property.
+     * \param property The property to set
+     * \param value The value of the property. Will be converted to a QVariant.
+     */
+    void addPropertyNode(const QUrl& property, const Soprano::Node& value);
+
+    /**
+     * Get all values for \p property.
+     */
+    QVariantList property(const QUrl& property) const;
+
+    /**
+     * \return All properties.
+     */
     PropertyHash properties() const;
 
+    /**
+     * Converts the resource into a list of statements. None of the statements will
+     * have a valid context set.
+     */
     QList<Soprano::Statement> toStatementList() const;
+
+    /**
+     * \return \p true if the resource is valid, ie. if it has a valid uri() and
+     * a non-empty list of properties.
+     */
     bool isValid() const;
 
 private:
@@ -65,7 +123,7 @@ private:
     QSharedDataPointer<Private> d;
 };
 
-uint qHash(const SimpleResource& res);
+NEPOMUK_DATA_MANAGEMENT_EXPORT uint qHash(const SimpleResource& res);
 }
 
 #endif

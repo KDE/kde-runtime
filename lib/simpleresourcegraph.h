@@ -39,13 +39,14 @@ public:
     SimpleResourceGraph();
     SimpleResourceGraph(const SimpleResource& resource);
     SimpleResourceGraph(const QList<SimpleResource>& resources);
+    SimpleResourceGraph(const QSet<SimpleResource>& resources);
     SimpleResourceGraph(const SimpleResourceGraph& other);
     ~SimpleResourceGraph();
 
     SimpleResourceGraph& operator=(const SimpleResourceGraph& other);
 
     /**
-     * Adds a resource to the graph. An invalif resource will get a
+     * Adds a resource to the graph. An invalid resource will get a
      * new blank node as resource URI.
      */
     void insert(const SimpleResource& res);

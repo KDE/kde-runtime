@@ -87,6 +87,14 @@ Nepomuk::SimpleResourceGraph::SimpleResourceGraph(const QList<SimpleResource>& r
     }
 }
 
+Nepomuk::SimpleResourceGraph::SimpleResourceGraph(const QSet<SimpleResource>& resources)
+    : d(new Private)
+{
+    Q_FOREACH(const SimpleResource& res, resources) {
+        insert(res);
+    }
+}
+
 Nepomuk::SimpleResourceGraph::SimpleResourceGraph(const SimpleResourceGraph& other)
     : d(other.d)
 {

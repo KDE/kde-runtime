@@ -24,6 +24,9 @@
 #include <QtCore/QHashIterator>
 #include <QtCore/QSharedData>
 
+#include <Soprano/Node>
+#include <Soprano/LiteralValue>
+
 #include <Nepomuk/Variant>
 
 class Nepomuk::SimpleResource::Private : public QSharedData
@@ -119,12 +122,58 @@ bool Nepomuk::SimpleResource::contains(const QUrl &property, const QVariant &val
     return d->m_properties.contains(property, value);
 }
 
+bool Nepomuk::SimpleResource::containsNode(const QUrl &property, const Soprano::Node &node) const
+{
+    if(node.isLiteral())
+        return contains(property, node.literal().variant());
+    else if(node.isResource())
+        return contains(property, node.uri());
+    else
+        return false;
+}
+
+void Nepomuk::SimpleResource::setPropertyNode(const QUrl &property, const Soprano::Node &value)
+{
+    d->m_properties.remove(property);
+    addPropertyNode(property, value);
+}
+
+void Nepomuk::SimpleResource::setProperty(const QUrl &property, const QVariant &value)
+{
+    d->m_properties.remove(property);
+    addProperty(property, value);
+}
+
 void Nepomuk::SimpleResource::addProperty(const QUrl &property, const QVariant &value)
 {
     d->m_properties.insert(property, value);
 }
 
+void Nepomuk::SimpleResource::addPropertyNode(const QUrl &property, const Soprano::Node &node)
+{
+    if(node.isResource())
+        addProperty(property, QVariant(node.uri()));
+    else if(node.isLiteral())
+        addProperty(property, node.literal().variant());
+    // else do nothing
+}
+
 void Nepomuk::SimpleResource::setProperties(const Nepomuk::PropertyHash &properties)
 {
     d->m_properties = properties;
+}
+
+void Nepomuk::SimpleResource::clear()
+{
+    d->m_properties.clear();
+}
+
+void Nepomuk::SimpleResource::addProperties(const Nepomuk::PropertyHash &properties)
+{
+    d->m_properties += properties;
+}
+
+QVariantList Nepomuk::SimpleResource::property(const QUrl &property) const
+{
+    return d->m_properties.values(property);
 }
