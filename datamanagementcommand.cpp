@@ -29,6 +29,8 @@
 
 #include <QtCore/QStringList>
 
+#include <KUrl>
+
 
 namespace {
 QDBusError::ErrorType convertSopranoErrorCode(int code)
@@ -77,7 +79,8 @@ void Nepomuk::DataManagementCommand::run()
 // static
 QUrl Nepomuk::decodeUrl(const QString& urlsString)
 {
-    return QUrl::fromEncoded(urlsString.toAscii());
+    // we use the power of KUrl to automatically convert file paths to file:/ URLs
+    return KUrl(urlsString);
 }
 
 // static
