@@ -26,6 +26,7 @@
 
 namespace PS
 {
+
 class AudioDeviceAccess
 {
     public:
@@ -36,39 +37,29 @@ class AudioDeviceAccess
             JackdDriver
         };
 
-        inline AudioDeviceAccess(const QStringList &deviceIds, int accessPreference,
-                AudioDriver driver, bool capture, bool playback)
-            : m_deviceIds(deviceIds),
-            m_accessPreference(accessPreference),
-            m_driver(driver),
-            m_capture(capture),
-            m_playback(playback)
-        {
-        }
+        AudioDeviceAccess(const QStringList &deviceIds, int accessPreference,
+                AudioDriver driver, bool capture, bool playback);
 
-        inline bool operator<(const AudioDeviceAccess &rhs) const {
-            return m_accessPreference > rhs.m_accessPreference; }
-        inline bool operator==(const AudioDeviceAccess &rhs) const {
-            return m_deviceIds == rhs.m_deviceIds && m_capture == rhs.m_capture
-                && m_playback == rhs.m_playback; }
-        inline bool operator!=(const AudioDeviceAccess &rhs) const { return !operator==(rhs); }
+        bool operator<(const AudioDeviceAccess &rhs) const;
+        bool operator==(const AudioDeviceAccess &rhs) const;
+        bool operator!=(const AudioDeviceAccess &rhs) const;
 
         /**
          * UDI to identify which device was removed
          */
-        inline const QString &udi() const { return m_udi; }
+        const QString &udi() const;
 
-        AudioDriver driver() const { return m_driver; }
+        AudioDriver driver() const;
 
         const QString driverName() const;
 
-        inline const QStringList &deviceIds() const { return m_deviceIds; }
+        const QStringList &deviceIds() const;
 
-        inline int accessPreference() const { return m_accessPreference; }
+        int accessPreference() const;
 
-        inline bool isCapture() const { return m_capture; }
+        bool isCapture() const;
 
-        inline bool isPlayback() const { return m_playback; }
+        bool isPlayback() const;
 
     private:
         friend QDebug operator<<(QDebug &, const AudioDeviceAccess &);

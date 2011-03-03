@@ -21,99 +21,86 @@
 #ifndef AUDIODEVICE_H
 #define AUDIODEVICE_H
 
-namespace PS
-{
-    struct AudioDeviceKey;
-    class AudioDevice;
-} // namespace PS
+#include "audiodeviceaccess.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QHash>
 #include <QtCore/QList>
 #include <QtCore/QString>
-#include "audiodeviceaccess.h"
+
 #include <ksharedconfig.h>
 
 namespace PS
 {
-class AudioDeviceAccess;
+
 struct AudioDeviceKey
 {
     QString uniqueId;
     int cardNumber;
     int deviceNumber;
-    inline bool operator==(const AudioDeviceKey &rhs) const {
-        if (uniqueId.isNull() || rhs.uniqueId.isNull()) {
-            return cardNumber == rhs.cardNumber && deviceNumber == rhs.deviceNumber;
-        }
-        return uniqueId == rhs.uniqueId && cardNumber == rhs.cardNumber && deviceNumber == rhs.deviceNumber;
-    }
+
+    bool operator==(const AudioDeviceKey &rhs) const;
 };
+
 class AudioDevice
 {
     public:
         AudioDevice();
         AudioDevice(const QString &cardName, const QString &icon, const AudioDeviceKey &key,
                 int pref, bool adv);
+
         void addAccess(const PS::AudioDeviceAccess &access);
 
-        inline bool operator<(const AudioDevice &rhs) const
-        { return m_initialPreference > rhs.m_initialPreference; }
-        inline bool operator==(const AudioDevice &rhs) const { return m_key == rhs.m_key; }
+        bool operator<(const AudioDevice &rhs) const;
+        bool operator==(const AudioDevice &rhs) const;
 
         /**
          * Returns the user visible name of the device
          */
-        inline const QString &name() const { return m_cardName; }
+        const QString &name() const;
 
-        inline void setPreferredName(const QString &name) { if (!m_dbNameOverrideFound) { m_cardName = name; } }
-
-        //inline void setUseCache(bool c) { m_useCache = c; }
+        void setPreferredName(const QString &name);
 
         /**
          * Valid indexes are negative
          */
-        inline int index() const { return m_index; }
-
-        /**
-         * UDI to identify which device was removed
-         */
-        //inline const QString &udi() const { return m_udi; }
+        int index() const;
 
         /**
          * User visible string to describe the device in detail
          */
         const QString description() const;
 
-        const QString &icon() const { return m_icon; }
+        const QString &icon() const;
 
-        inline bool isAvailable() const { return m_isAvailable; }
-        inline bool isAdvanced() const { return m_isAdvanced; }
-        inline int initialPreference() const { return m_initialPreference; }
-        inline int deviceNumber() const { return m_key.deviceNumber; }
-        inline const QList<AudioDeviceAccess> &accessList() const { return m_accessList; }
+        bool isAvailable() const;
+        bool isAdvanced() const;
+        int initialPreference() const;
+        int deviceNumber() const;
+        const QList<AudioDeviceAccess> &accessList() const;
+        const AudioDeviceKey &key() const;
 
         void removeFromCache(const KSharedConfigPtr &config) const;
         void syncWithCache(const KSharedConfigPtr &config);
 
-        inline const AudioDeviceKey &key() const { return m_key; }
-
     private:
-        void applyHardwareDatabaseOverrides();
         friend uint qHash(const AudioDevice &);
         friend QDebug operator<<(QDebug &, const AudioDevice &);
 
-        QList<AudioDeviceAccess> m_accessList;
+        void applyHardwareDatabaseOverrides();
+
+    private:
         QString m_cardName;
         QString m_icon;
 
+        QList<AudioDeviceAccess> m_accessList;
         AudioDeviceKey m_key;
+
         int m_index;
         int m_initialPreference;
         bool m_isAvailable : 1;
         bool m_isAdvanced : 1;
         bool m_dbNameOverrideFound : 1;
-        //bool m_useCache : 1;
 };
 
 inline QDebug operator<<(QDebug &s, const PS::AudioDeviceKey &k)
@@ -151,14 +138,5 @@ inline uint qHash(const AudioDevice &a)
 
 } // namespace PS
 
-//X inline uint qHash(const PS::AudioDeviceKey &k)
-//X {
-//X     return PS::qHash(k);
-//X }
-//X 
-//X inline uint qHash(const PS::AudioDevice &a)
-//X {
-//X     return PS::qHash(a);
-//X }
 
 #endif // AUDIODEVICE_H

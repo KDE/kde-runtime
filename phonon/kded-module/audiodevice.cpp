@@ -25,15 +25,30 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-PS::AudioDevice::AudioDevice()
+namespace PS
+{
+
+bool AudioDeviceKey::operator==(const AudioDeviceKey& rhs) const
+{
+    if (uniqueId.isNull() || rhs.uniqueId.isNull()) {
+        return cardNumber == rhs.cardNumber && deviceNumber == rhs.deviceNumber;
+    }
+
+    return
+        uniqueId == rhs.uniqueId &&
+        cardNumber == rhs.cardNumber &&
+        deviceNumber == rhs.deviceNumber;
+}
+
+AudioDevice::AudioDevice()
     : m_index(0), m_initialPreference(0), m_isAvailable(false), m_isAdvanced(true),
-    m_dbNameOverrideFound(false)//, m_useCache(true)
+    m_dbNameOverrideFound(false)
 {
 }
 
-PS::AudioDevice::AudioDevice(const QString &cardName, const QString &icon,
-        const AudioDeviceKey &key, int pref, bool adv)
-    : m_cardName(cardName),
+AudioDevice::AudioDevice(const QString &cardName, const QString &icon,
+        const AudioDeviceKey &key, int pref, bool adv) :
+    m_cardName(cardName),
     m_icon(icon),
     m_key(key),
     m_index(0),
@@ -41,25 +56,44 @@ PS::AudioDevice::AudioDevice(const QString &cardName, const QString &icon,
     m_isAvailable(false),
     m_isAdvanced(adv),
     m_dbNameOverrideFound(false)
-    //m_useCache(true)
 {
     applyHardwareDatabaseOverrides();
 }
 
-void PS::AudioDevice::addAccess(const AudioDeviceAccess &access)
+bool AudioDevice::operator<(const AudioDevice& rhs) const
 {
-    m_isAvailable |= !access.deviceIds().isEmpty();
-
-    m_accessList << access;
-    qSort(m_accessList); // FIXME: do sorted insert
+    return m_initialPreference > rhs.m_initialPreference;
 }
 
-const QString PS::AudioDevice::description() const
+bool AudioDevice::operator==(const AudioDevice& rhs) const
+{
+    return m_key == rhs.m_key;
+}
+
+const QString& AudioDevice::name() const
+{
+    return m_cardName;
+}
+
+void AudioDevice::setPreferredName(const QString& name)
+{
+    if (!m_dbNameOverrideFound) {
+        m_cardName = name;
+    }
+}
+
+int AudioDevice::index() const
+{
+    return m_index;
+}
+
+const QString AudioDevice::description() const
 {
     if (!m_isAvailable) {
         return i18n("<html>This device is currently not available (either it is unplugged or the "
                 "driver is not loaded).</html>");
     }
+
     QString list;
     foreach (const AudioDeviceAccess &a, m_accessList) {
         foreach (const QString &id, a.deviceIds()) {
@@ -68,48 +102,92 @@ const QString PS::AudioDevice::description() const
                     a.driverName(), id);
         }
     }
+
     return i18n("<html>This will try the following devices and use the first that works: "
             "<ol>%1</ol></html>", list);
 }
 
-void PS::AudioDevice::applyHardwareDatabaseOverrides()
+const QString& AudioDevice::icon() const
+{
+    return m_icon;
+}
+
+bool AudioDevice::isAvailable() const
+{
+    return m_isAvailable;
+}
+
+bool AudioDevice::isAdvanced() const
+{
+    return m_isAdvanced;
+}
+
+int AudioDevice::initialPreference() const
+{
+    return m_initialPreference;
+}
+
+int AudioDevice::deviceNumber() const
+{
+    return m_key.deviceNumber;
+}
+
+const QList< AudioDeviceAccess >& AudioDevice::accessList() const
+{
+    return m_accessList;
+}
+
+const AudioDeviceKey& AudioDevice::key() const
+{
+    return m_key;
+}
+
+void AudioDevice::addAccess(const AudioDeviceAccess &access)
+{
+    m_isAvailable |= !access.deviceIds().isEmpty();
+
+    m_accessList << access;
+    qSort(m_accessList); // FIXME: do sorted insert
+}
+
+void AudioDevice::applyHardwareDatabaseOverrides()
 {
     // now let's take a look at the hardware database whether we have to override something
     kDebug(601) << "looking for" << m_key.uniqueId;
     if (HardwareDatabase::contains(m_key.uniqueId)) {
         const HardwareDatabase::Entry &e = HardwareDatabase::entryFor(m_key.uniqueId);
         kDebug(601) << "  found it:" << e.name << e.iconName << e.initialPreference << e.isAdvanced;
+
         if (!e.name.isEmpty()) {
             m_dbNameOverrideFound = true;
             m_cardName = e.name;
         }
+
         if (!e.iconName.isEmpty()) {
             m_icon = e.iconName;
         }
+
         if (e.isAdvanced != 2) {
             m_isAdvanced = e.isAdvanced;
         }
+
         m_initialPreference = e.initialPreference;
     }
 }
 
-void PS::AudioDevice::removeFromCache(const KSharedConfigPtr &config) const
+void AudioDevice::removeFromCache(const KSharedConfigPtr &config) const
 {
-    //if (m_useCache) {
-        KConfigGroup cGroup(config, QLatin1String("AudioDevice_") + m_key.uniqueId);
-        cGroup.writeEntry("deleted", true);
-    //}
+    KConfigGroup cGroup(config, QLatin1String("AudioDevice_") + m_key.uniqueId);
+    cGroup.writeEntry("deleted", true);
 }
 
-void PS::AudioDevice::syncWithCache(const KSharedConfigPtr &config)
+void AudioDevice::syncWithCache(const KSharedConfigPtr &config)
 {
-    //if (!m_useCache) {
-        //return;
-    //}
     KConfigGroup cGroup(config, QLatin1String("AudioDevice_") + m_key.uniqueId);
     if (cGroup.exists()) {
         m_index = cGroup.readEntry("index", 0);
     }
+
     if (m_index >= 0) {
         KConfigGroup globalGroup(config, "Globals");
         m_index = -globalGroup.readEntry("nextIndex", 1);
@@ -118,9 +196,9 @@ void PS::AudioDevice::syncWithCache(const KSharedConfigPtr &config)
 
         cGroup.writeEntry("index", m_index);
     }
+
     cGroup.writeEntry("cardName", m_cardName);
     cGroup.writeEntry("iconName", m_icon);
-    //cGroup.writeEntry("udi", m_udi);
     cGroup.writeEntry("initialPreference", m_initialPreference);
     cGroup.writeEntry("isAdvanced", m_isAdvanced);
     cGroup.writeEntry("deviceNumber", m_key.deviceNumber);
@@ -129,3 +207,5 @@ void PS::AudioDevice::syncWithCache(const KSharedConfigPtr &config)
     // hotpluggable
     cGroup.writeEntry("hotpluggable", m_icon != QLatin1String("audio-card"));
 }
+
+} // namespace PS

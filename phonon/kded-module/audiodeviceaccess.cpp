@@ -21,21 +21,48 @@
 #include "audiodeviceaccess.h"
 #include <klocale.h>
 
-QDebug PS::operator<<(QDebug &s, const AudioDeviceAccess &a)
+namespace PS
 {
-    s.nospace() << "deviceIds: " << a.m_deviceIds
-        << "accessPreference: " << a.m_accessPreference
-        << "driver " << a.driverName();
-    if (a.m_capture) {
-        s.nospace() << " capture";
-    }
-    if (a.m_playback) {
-        s.nospace() << " playback";
-    }
-    return s;
+
+AudioDeviceAccess::AudioDeviceAccess(const QStringList& deviceIds, int accessPreference,
+        AudioDeviceAccess::AudioDriver driver,
+        bool capture,
+        bool playback):
+    m_deviceIds(deviceIds),
+    m_accessPreference(accessPreference),
+    m_driver(driver),
+    m_capture(capture),
+    m_playback(playback)
+{
 }
 
-const QString PS::AudioDeviceAccess::driverName() const
+bool AudioDeviceAccess::operator<(const AudioDeviceAccess& rhs) const
+{
+    return m_accessPreference > rhs.m_accessPreference;
+}
+
+bool AudioDeviceAccess::operator==(const AudioDeviceAccess& rhs) const
+{
+    return m_deviceIds == rhs.m_deviceIds && m_capture == rhs.m_capture
+        && m_playback == rhs.m_playback;
+}
+
+bool AudioDeviceAccess::operator!=(const AudioDeviceAccess& rhs) const
+{
+     return !operator==(rhs);
+}
+
+const QString& AudioDeviceAccess::udi() const
+{
+    return m_udi;
+}
+
+AudioDeviceAccess::AudioDriver AudioDeviceAccess::driver() const
+{
+    return m_driver;
+}
+
+const QString AudioDeviceAccess::driverName() const
 {
     switch (m_driver) {
     case InvalidDriver:
@@ -49,3 +76,39 @@ const QString PS::AudioDeviceAccess::driverName() const
     }
     return QString();
 }
+
+const QStringList& AudioDeviceAccess::deviceIds() const
+{
+    return m_deviceIds;
+}
+
+int AudioDeviceAccess::accessPreference() const
+{
+    return m_accessPreference;
+}
+
+bool AudioDeviceAccess::isCapture() const
+{
+    return m_capture;
+}
+
+bool AudioDeviceAccess::isPlayback() const
+{
+    return m_playback;
+}
+
+QDebug operator<<(QDebug &s, const AudioDeviceAccess &a)
+{
+    s.nospace() << "deviceIds: " << a.m_deviceIds
+        << "accessPreference: " << a.m_accessPreference
+        << "driver " << a.driverName();
+    if (a.m_capture) {
+        s.nospace() << " capture";
+    }
+    if (a.m_playback) {
+        s.nospace() << " playback";
+    }
+    return s;
+}
+
+} // namespace PS
