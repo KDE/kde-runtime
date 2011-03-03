@@ -27,9 +27,16 @@
 namespace PS
 {
 
+/**
+ * \brief Describes an access to a device
+ *
+ * Contains information about the driver, device id, and preference.
+ * It also specifies if it is about playback or capture.
+ */
 class DeviceAccess
 {
     public:
+        //! What driver to be used for this access
         enum AudioDriver {
             InvalidDriver = 0,
             AlsaDriver,
@@ -37,28 +44,37 @@ class DeviceAccess
             JackdDriver
         };
 
+        //! Constructs a device access object using the given information
         DeviceAccess(const QStringList &deviceIds, int accessPreference,
                 AudioDriver driver, bool capture, bool playback);
 
+        //! Compares to another access by using the preference
         bool operator<(const DeviceAccess &rhs) const;
+
         bool operator==(const DeviceAccess &rhs) const;
         bool operator!=(const DeviceAccess &rhs) const;
 
-        /**
-         * UDI to identify which device was removed
+        /** \todo remove - not used
+         * Unique Device Identifier
          */
         const QString &udi() const;
 
+        //! Which driver does the access belong to
         AudioDriver driver() const;
 
+        //! Returns the name of the driver
         const QString driverName() const;
 
+        //! Device identifiers, used to identify the access, driver specific
         const QStringList &deviceIds() const;
 
+        //! Returns the preference for this access
         int accessPreference() const;
 
+        //! True when the access can be used for capture
         bool isCapture() const;
 
+        //! True when the access can be used for playback
         bool isPlayback() const;
 
     private:
