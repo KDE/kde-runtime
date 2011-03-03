@@ -21,6 +21,8 @@
 #ifndef PHONONSERVER_H
 #define PHONONSERVER_H
 
+#include "deviceinfo.h"
+
 #include <kdedmodule.h>
 #include <ksharedconfig.h>
 #include <phonon/objectdescription.h>
@@ -29,7 +31,6 @@
 #include <QtCore/QVector>
 #include <QtCore/QList>
 #include <QtDBus/QDBusVariant>
-#include "audiodevice.h"
 
 class PhononServer : public KDEDModule
 {
@@ -71,8 +72,8 @@ class PhononServer : public KDEDModule
         QHash<int, QByteArray> m_audioDevicesPropertiesCache;
 
         // devices ordered by preference
-        QList<PS::AudioDevice> m_audioOutputDevices;
-        QList<PS::AudioDevice> m_audioCaptureDevices;
+        QList<PS::DeviceInfo> m_audioOutputDevices;
+        QList<PS::DeviceInfo> m_audioCaptureDevices;
 
         QStringList m_udisOfAudioDevices;
 };

@@ -18,14 +18,14 @@
 
 */
 
-#include "audiodeviceaccess.h"
+#include "deviceaccess.h"
 #include <klocale.h>
 
 namespace PS
 {
 
-AudioDeviceAccess::AudioDeviceAccess(const QStringList& deviceIds, int accessPreference,
-        AudioDeviceAccess::AudioDriver driver,
+DeviceAccess::DeviceAccess(const QStringList& deviceIds, int accessPreference,
+        DeviceAccess::AudioDriver driver,
         bool capture,
         bool playback):
     m_deviceIds(deviceIds),
@@ -36,33 +36,33 @@ AudioDeviceAccess::AudioDeviceAccess(const QStringList& deviceIds, int accessPre
 {
 }
 
-bool AudioDeviceAccess::operator<(const AudioDeviceAccess& rhs) const
+bool DeviceAccess::operator<(const DeviceAccess& rhs) const
 {
     return m_accessPreference > rhs.m_accessPreference;
 }
 
-bool AudioDeviceAccess::operator==(const AudioDeviceAccess& rhs) const
+bool DeviceAccess::operator==(const DeviceAccess& rhs) const
 {
     return m_deviceIds == rhs.m_deviceIds && m_capture == rhs.m_capture
         && m_playback == rhs.m_playback;
 }
 
-bool AudioDeviceAccess::operator!=(const AudioDeviceAccess& rhs) const
+bool DeviceAccess::operator!=(const DeviceAccess& rhs) const
 {
      return !operator==(rhs);
 }
 
-const QString& AudioDeviceAccess::udi() const
+const QString& DeviceAccess::udi() const
 {
     return m_udi;
 }
 
-AudioDeviceAccess::AudioDriver AudioDeviceAccess::driver() const
+DeviceAccess::AudioDriver DeviceAccess::driver() const
 {
     return m_driver;
 }
 
-const QString AudioDeviceAccess::driverName() const
+const QString DeviceAccess::driverName() const
 {
     switch (m_driver) {
     case InvalidDriver:
@@ -77,27 +77,27 @@ const QString AudioDeviceAccess::driverName() const
     return QString();
 }
 
-const QStringList& AudioDeviceAccess::deviceIds() const
+const QStringList& DeviceAccess::deviceIds() const
 {
     return m_deviceIds;
 }
 
-int AudioDeviceAccess::accessPreference() const
+int DeviceAccess::accessPreference() const
 {
     return m_accessPreference;
 }
 
-bool AudioDeviceAccess::isCapture() const
+bool DeviceAccess::isCapture() const
 {
     return m_capture;
 }
 
-bool AudioDeviceAccess::isPlayback() const
+bool DeviceAccess::isPlayback() const
 {
     return m_playback;
 }
 
-QDebug operator<<(QDebug &s, const AudioDeviceAccess &a)
+QDebug operator<<(QDebug &s, const DeviceAccess &a)
 {
     s.nospace() << "deviceIds: " << a.m_deviceIds
         << "accessPreference: " << a.m_accessPreference

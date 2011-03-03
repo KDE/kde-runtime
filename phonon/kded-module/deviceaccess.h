@@ -18,8 +18,8 @@
 
 */
 
-#ifndef AUDIODEVICEACCESS_H
-#define AUDIODEVICEACCESS_H
+#ifndef DEVICEACCESS_H
+#define DEVICEACCESS_H
 
 #include <QtCore/QDebug>
 #include <QtCore/QStringList>
@@ -27,7 +27,7 @@
 namespace PS
 {
 
-class AudioDeviceAccess
+class DeviceAccess
 {
     public:
         enum AudioDriver {
@@ -37,12 +37,12 @@ class AudioDeviceAccess
             JackdDriver
         };
 
-        AudioDeviceAccess(const QStringList &deviceIds, int accessPreference,
+        DeviceAccess(const QStringList &deviceIds, int accessPreference,
                 AudioDriver driver, bool capture, bool playback);
 
-        bool operator<(const AudioDeviceAccess &rhs) const;
-        bool operator==(const AudioDeviceAccess &rhs) const;
-        bool operator!=(const AudioDeviceAccess &rhs) const;
+        bool operator<(const DeviceAccess &rhs) const;
+        bool operator==(const DeviceAccess &rhs) const;
+        bool operator!=(const DeviceAccess &rhs) const;
 
         /**
          * UDI to identify which device was removed
@@ -62,7 +62,7 @@ class AudioDeviceAccess
         bool isPlayback() const;
 
     private:
-        friend QDebug operator<<(QDebug &, const AudioDeviceAccess &);
+        friend QDebug operator<<(QDebug &, const DeviceAccess &);
 
         // the udi is needed to identify a removed device
         QString m_udi;
@@ -74,8 +74,8 @@ class AudioDeviceAccess
         bool m_playback : 8;
 };
 
-QDebug operator<<(QDebug &s, const AudioDeviceAccess &a);
+QDebug operator<<(QDebug &s, const DeviceAccess &a);
 
 } // namespace PS
 
-#endif // AUDIODEVICEACCESS_H
+#endif // DEVICEACCESS_H

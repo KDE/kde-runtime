@@ -1,7 +1,7 @@
 set(kded_phonon_SRCS
    phononserver.cpp
-   audiodevice.cpp
-   audiodeviceaccess.cpp
+   deviceinfo.cpp
+   deviceaccess.cpp
    hardwaredatabase.cpp
 )
 

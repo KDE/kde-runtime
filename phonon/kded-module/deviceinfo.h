@@ -18,10 +18,10 @@
 
 */
 
-#ifndef AUDIODEVICE_H
-#define AUDIODEVICE_H
+#ifndef DEVICEINFO_H
+#define DEVICEINFO_H
 
-#include "audiodeviceaccess.h"
+#include "deviceaccess.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QHash>
@@ -33,26 +33,26 @@
 namespace PS
 {
 
-struct AudioDeviceKey
+struct DeviceKey
 {
     QString uniqueId;
     int cardNumber;
     int deviceNumber;
 
-    bool operator==(const AudioDeviceKey &rhs) const;
+    bool operator==(const DeviceKey &rhs) const;
 };
 
-class AudioDevice
+class DeviceInfo
 {
     public:
-        AudioDevice();
-        AudioDevice(const QString &cardName, const QString &icon, const AudioDeviceKey &key,
+        DeviceInfo();
+        DeviceInfo(const QString &cardName, const QString &icon, const DeviceKey &key,
                 int pref, bool adv);
 
-        void addAccess(const PS::AudioDeviceAccess &access);
+        void addAccess(const PS::DeviceAccess &access);
 
-        bool operator<(const AudioDevice &rhs) const;
-        bool operator==(const AudioDevice &rhs) const;
+        bool operator<(const DeviceInfo &rhs) const;
+        bool operator==(const DeviceInfo &rhs) const;
 
         /**
          * Returns the user visible name of the device
@@ -77,15 +77,15 @@ class AudioDevice
         bool isAdvanced() const;
         int initialPreference() const;
         int deviceNumber() const;
-        const QList<AudioDeviceAccess> &accessList() const;
-        const AudioDeviceKey &key() const;
+        const QList<DeviceAccess> &accessList() const;
+        const DeviceKey &key() const;
 
         void removeFromCache(const KSharedConfigPtr &config) const;
         void syncWithCache(const KSharedConfigPtr &config);
 
     private:
-        friend uint qHash(const AudioDevice &);
-        friend QDebug operator<<(QDebug &, const AudioDevice &);
+        friend uint qHash(const DeviceInfo &);
+        friend QDebug operator<<(QDebug &, const DeviceInfo &);
 
         void applyHardwareDatabaseOverrides();
 
@@ -93,8 +93,8 @@ class AudioDevice
         QString m_cardName;
         QString m_icon;
 
-        QList<AudioDeviceAccess> m_accessList;
-        AudioDeviceKey m_key;
+        QList<DeviceAccess> m_accessList;
+        DeviceKey m_key;
 
         int m_index;
         int m_initialPreference;
@@ -103,7 +103,7 @@ class AudioDevice
         bool m_dbNameOverrideFound : 1;
 };
 
-inline QDebug operator<<(QDebug &s, const PS::AudioDeviceKey &k)
+inline QDebug operator<<(QDebug &s, const PS::DeviceKey &k)
 {
     s.nospace() << "\n    uniqueId: " << k.uniqueId
         << ", card: " << k.cardNumber
@@ -111,7 +111,7 @@ inline QDebug operator<<(QDebug &s, const PS::AudioDeviceKey &k)
     return s;
 }
 
-inline QDebug operator<<(QDebug &s, const PS::AudioDevice &a)
+inline QDebug operator<<(QDebug &s, const PS::DeviceInfo &a)
 {
     s.nospace() << "\n- " << a.m_cardName
         << ", icon: " << a.m_icon
@@ -126,12 +126,12 @@ inline QDebug operator<<(QDebug &s, const PS::AudioDevice &a)
     return s;
 }
 
-inline uint qHash(const AudioDeviceKey &k)
+inline uint qHash(const DeviceKey &k)
 {
     return ::qHash(k.uniqueId) + k.cardNumber + 101 * k.deviceNumber;
 }
 
-inline uint qHash(const AudioDevice &a)
+inline uint qHash(const DeviceInfo &a)
 {
     return qHash(a.m_key);
 }
@@ -139,4 +139,5 @@ inline uint qHash(const AudioDevice &a)
 } // namespace PS
 
 
-#endif // AUDIODEVICE_H
+#endif // DEVICEINFO_H
+
