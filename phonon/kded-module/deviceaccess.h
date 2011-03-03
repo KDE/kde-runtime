@@ -54,11 +54,6 @@ class DeviceAccess
         bool operator==(const DeviceAccess &rhs) const;
         bool operator!=(const DeviceAccess &rhs) const;
 
-        /** \todo remove - not used
-         * Unique Device Identifier
-         */
-        const QString &udi() const;
-
         //! Which driver does the access belong to
         AudioDriver driver() const;
 
@@ -79,9 +74,6 @@ class DeviceAccess
 
     private:
         friend QDebug operator<<(QDebug &, const DeviceAccess &);
-
-        // the udi is needed to identify a removed device
-        QString m_udi;
 
         QStringList m_deviceIds;
         int m_accessPreference;

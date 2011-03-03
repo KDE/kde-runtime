@@ -52,11 +52,6 @@ bool DeviceAccess::operator!=(const DeviceAccess& rhs) const
      return !operator==(rhs);
 }
 
-const QString& DeviceAccess::udi() const
-{
-    return m_udi;
-}
-
 DeviceAccess::AudioDriver DeviceAccess::driver() const
 {
     return m_driver;
