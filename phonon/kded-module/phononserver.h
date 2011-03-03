@@ -64,7 +64,7 @@ class PhononServer : public KDEDModule
         void updateAudioDevicesCache();
 
         KSharedConfigPtr m_config;
-        QBasicTimer m_updateDeviceListing;
+        QBasicTimer m_updateDevicesTimer;
 
         // cache
         QByteArray m_audioOutputDevicesIndexesCache;

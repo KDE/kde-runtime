@@ -356,7 +356,7 @@ void PhononServer::findVirtualDevices()
 void PhononServer::alsaConfigChanged()
 {
     kDebug(601);
-    m_updateDeviceListing.start(50, this);
+    m_updateDevicesTimer.start(50, this);
 }
 
 static void removeOssOnlyDevices(QList<PS::DeviceInfo> *list)
@@ -704,7 +704,7 @@ void PhononServer::removeAudioDevices(const QList<int> &indexes)
         }
     }
     m_config->sync();
-    m_updateDeviceListing.start(50, this);
+    m_updateDevicesTimer.start(50, this);
 }
 
 static inline QByteArray nameForDriver(PS::DeviceAccess::DeviceDriverType d)
@@ -805,13 +805,13 @@ void PhononServer::deviceAdded(const QString &udi)
     if (!audiohw || 0 == (audiohw->deviceType() & (Solid::AudioInterface::AudioInput | Solid::AudioInterface::AudioOutput))) {
         return;
     }
-    m_updateDeviceListing.start(50, this);
+    m_updateDevicesTimer.start(50, this);
 }
 
 void PhononServer::timerEvent(QTimerEvent *e)
 {
-    if (e->timerId() == m_updateDeviceListing.timerId()) {
-        m_updateDeviceListing.stop();
+    if (e->timerId() == m_updateDevicesTimer.timerId()) {
+        m_updateDevicesTimer.stop();
         m_audioOutputDevices.clear();
         m_audioCaptureDevices.clear();
         m_udisOfAudioDevices.clear();
@@ -827,7 +827,7 @@ void PhononServer::timerEvent(QTimerEvent *e)
 void PhononServer::deviceRemoved(const QString &udi)
 {
     if (m_udisOfAudioDevices.contains(udi)) {
-        m_updateDeviceListing.start(50, this);
+        m_updateDevicesTimer.start(50, this);
     }
 }
 
