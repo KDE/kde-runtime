@@ -85,6 +85,12 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( QUrl("prop:/res_c1"), RDFS::range(), RDFS::Resource(), graph );
     m_model->addStatement( QUrl("prop:/res_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
 
+    // some ontology things the ResourceMerger depends on
+    m_model->addStatement( RDFS::Class(), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( RDFS::Class(), RDFS::subClassOf(), RDFS::Resource(), graph );
+    m_model->addStatement( NRL::Graph(), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( NRL::InstanceBase(), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( NRL::InstanceBase(), RDFS::subClassOf(), NRL::Graph(), graph );
 
     // rebuild the internals of the data management model
     m_dmModel->updateTypeCachesAndSoOn();
@@ -251,58 +257,65 @@ void DataManagementModelTest::testAddProperty_cardinality()
 
 void DataManagementModelTest::testAddProperty_file()
 {
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("file:/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("foobar")), QLatin1String("Testapp"));
+    QTemporaryFile fileA;
+    fileA.open();
+    QTemporaryFile fileB;
+    fileB.open();
+    QTemporaryFile fileC;
+    fileC.open();
+
+    m_dmModel->addProperty(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("foobar")), QLatin1String("Testapp"));
 
     // make sure the nie:url relation has been created
-    QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl("file:/A")));
-    QVERIFY(!m_model->containsAnyStatement(QUrl("file:/A"), Node(), Node()));
+    QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())));
+    QVERIFY(!m_model->containsAnyStatement(QUrl::fromLocalFile(fileA.fileName()), Node(), Node()));
 
     // make sure the actual value is there
-    QVERIFY(m_model->containsAnyStatement(m_model->listStatements(Node(), NIE::url(), QUrl("file:/A")).allStatements().first().subject(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+    QVERIFY(m_model->containsAnyStatement(m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().first().subject(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
 
 
     // add relation from file to file
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("file:/A"), QUrl("prop:/res"), QVariantList() << QVariant(QUrl("file:/B")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), QUrl("prop:/res"), QVariantList() << QVariant(QUrl::fromLocalFile(fileB.fileName())), QLatin1String("Testapp"));
 
     // make sure the nie:url relation has been created
-    QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl("file:/B")));
-    QVERIFY(!m_model->containsAnyStatement(QUrl("file:/B"), Node(), Node()));
+    QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl::fromLocalFile(fileB.fileName())));
+    QVERIFY(!m_model->containsAnyStatement(QUrl::fromLocalFile(fileB.fileName()), Node(), Node()));
 
     // make sure the actual value is there
-    QVERIFY(m_model->containsAnyStatement(m_model->listStatements(Node(), NIE::url(), QUrl("file:/A")).allStatements().first().subject(),
+    QVERIFY(m_model->containsAnyStatement(m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().first().subject(),
                                           QUrl("prop:/res"),
-                                          m_model->listStatements(Node(), NIE::url(), QUrl("file:/B")).allStatements().first().subject()));
+                                          m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileB.fileName())).allStatements().first().subject()));
 
 
     // add the same relation but with another app
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("file:/A"), QUrl("prop:/res"), QVariantList() << QVariant(QUrl("file:/B")), QLatin1String("Otherapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), QUrl("prop:/res"), QVariantList() << QVariant(QUrl::fromLocalFile(fileB.fileName())), QLatin1String("Otherapp"));
 
     // there is only one prop:/res relation defined
     QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/res"), Node()).allStatements().count(), 1);
 
     // we now add two values for a property with cardinality 1
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("file:/A"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("file:/B")), QLatin1String("Testapp"));
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("file:/A"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("file:/C")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl::fromLocalFile(fileB.fileName())), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl::fromLocalFile(fileC.fileName())), QLatin1String("Testapp"));
 
     // the second call needs to fail
     QVERIFY(m_dmModel->lastError());
 
 
     // get the res URI for file:/A
-    const QUrl fileAUri = m_model->listStatements(Soprano::Node(), NIE::url(), QUrl("file:/A")).allStatements().first().subject().uri();
+    const QUrl fileAUri = m_model->listStatements(Soprano::Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().first().subject().uri();
 
     // test adding a property to both the file and the resource URI. The result should be the exact same as doing it with only one of them
-    m_dmModel->addProperty(QList<QUrl>() << fileAUri << QUrl("file:/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("Whatever")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << fileAUri << QUrl::fromLocalFile(fileA.fileName()), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("Whatever")), QLatin1String("Testapp"));
 
     QCOMPARE(m_model->listStatements(fileAUri, QUrl("prop:/string"), LiteralValue(QLatin1String("Whatever"))).allStatements().count(), 1);
-    QCOMPARE(m_model->listStatements(Node(), NIE::url(), QUrl("file:/A")).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().count(), 1);
 
     // test the same with the file as object
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res"), QVariantList() << QVariant(QUrl(QLatin1String("file:/A"))) << QVariant(fileAUri), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res"), QVariantList() << QVariant(QUrl(fileA.fileName())) << QVariant(fileAUri), QLatin1String("Testapp"));
 
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/res"), fileAUri).allStatements().count(), 1);
-    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("file:/A")));
-    QCOMPARE(m_model->listStatements(Node(), NIE::url(), QUrl("file:/A")).allStatements().count(), 1);
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl::fromLocalFile(fileA.fileName())));
+    QCOMPARE(m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().count(), 1);
 }
 
 void DataManagementModelTest::testAddProperty_invalidFile()
@@ -314,9 +327,10 @@ void DataManagementModelTest::testAddProperty_invalidFile()
     
     m_dmModel->addProperty( QList<QUrl>() << f1Url, RDF::type(), QVariantList() << NAO::Tag(), QLatin1String("testapp") );
     
-    // This should pass - Why should I have to mention file:// before my file urls
-    // It's so much easier to just write /home/whatever
-    QVERIFY( m_model->containsAnyStatement( Node(), NIE::url(), f1Url ) );
+    // The support for plain file paths is in the DBus adaptor through the usage of KUrl. If
+    // local path support is neccesary on the level of the model, simply use KUrl which
+    // will automatically add the file:/ protocol to local paths.
+    QVERIFY( !m_model->containsAnyStatement( Node(), NIE::url(), f1Url ) );
     
     m_dmModel->addProperty( QList<QUrl>() << QUrl("file:///Blah"), NIE::comment(),
                             QVariantList() << "Comment", QLatin1String("testapp") );
@@ -393,6 +407,27 @@ void DataManagementModelTest::testAddProperty_invalid_args()
 
     // protected properties 2
     m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), NAO::lastModified(), QVariantList() << QDateTime::currentDateTime(), QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // make sure we cannot add anything to non-existing files
+    const QUrl nonExistingFileUrl("file:///a/file/that/is/very/unlikely/to/exist");
+    m_dmModel->addProperty(QList<QUrl>() << nonExistingFileUrl, QUrl("prop:/int"), QVariantList() << 42, QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // non-existing file as object
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res"), QVariantList() << nonExistingFileUrl, QLatin1String("testapp"));
 
     // the call should have failed
     QVERIFY(m_dmModel->lastError());
@@ -645,6 +680,27 @@ void DataManagementModelTest::testSetProperty_invalid_args()
 
     // nothing should have changed
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // make sure we cannot add anything to non-existing files
+    const QUrl nonExistingFileUrl("file:///a/file/that/is/very/unlikely/to/exist");
+    m_dmModel->setProperty(QList<QUrl>() << nonExistingFileUrl, QUrl("prop:/int"), QVariantList() << 42, QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // non-existing file as object
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res"), QVariantList() << nonExistingFileUrl, QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
 void DataManagementModelTest::testSetProperty_nieUrl1()
@@ -674,16 +730,21 @@ void DataManagementModelTest::testSetProperty_nieUrl2()
     KTempDir* dir = createNieUrlTestData();
 
     // change the nie:url of one of the top level dirs
-    const QUrl newDir1Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1");
+    const QUrl newDir1Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1-new");
+
+    // we first need to move the file, otherwise the file check in the dms kicks in
+    QVERIFY(QFile::rename(dir->name() + QLatin1String("dir1"), newDir1Url.toLocalFile()));
+
+    // now update the database
     m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/dir1"), NIE::url(), QVariantList() << newDir1Url, QLatin1String("testapp"));
 
     // this should have updated the nie:urls of all children, too
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir1"), NIE::url(), newDir1Url));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir1"), NFO::fileName(), LiteralValue(QLatin1String("dir1"))));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir11"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir11-old"))));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir12"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir12-old"))));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir13"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir13-old"))));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/file11"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/file11-old"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir1"), NFO::fileName(), LiteralValue(QLatin1String("dir1-new"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir11"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir11"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir12"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir12"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir13"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir13"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/file11"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/file11"))));
 
     delete dir;
 }
@@ -694,17 +755,22 @@ void DataManagementModelTest::testSetProperty_nieUrl3()
     KTempDir* dir = createNieUrlTestData();
 
     // change the nie:url of one of the top level dirs
-    const QUrl oldDir1Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1-old");
-    const QUrl newDir1Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1");
+    const QUrl oldDir1Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1");
+    const QUrl newDir1Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1-new");
+
+    // we first need to move the file, otherwise the file check in the dms kicks in
+    QVERIFY(QFile::rename(oldDir1Url.toLocalFile(), newDir1Url.toLocalFile()));
+
+    // now update the database
     m_dmModel->setProperty(QList<QUrl>() << oldDir1Url, NIE::url(), QVariantList() << newDir1Url, QLatin1String("testapp"));
 
     // this should have updated the nie:urls of all children, too
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir1"), NIE::url(), newDir1Url));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir1"), NFO::fileName(), LiteralValue(QLatin1String("dir1"))));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir11"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir11-old"))));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir12"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir12-old"))));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir13"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir13-old"))));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/file11"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/file11-old"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir1"), NFO::fileName(), LiteralValue(QLatin1String("dir1-new"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir11"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir11"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir12"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir12"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir13"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/dir13"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/file11"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/file11"))));
 
     delete dir;
 }
@@ -714,14 +780,20 @@ void DataManagementModelTest::testSetProperty_nieUrl4()
     KTempDir* dir = createNieUrlTestData();
 
     // move one of the dirs to a new parent
-    const QUrl newDir121Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1-old/dir12-old/dir121");
+    const QUrl oldDir121Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1/dir12/dir121");
+    const QUrl newDir121Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1/dir12/dir121-new");
+
+    // we first need to move the file, otherwise the file check in the dms kicks in
+    QVERIFY(QFile::rename(oldDir121Url.toLocalFile(), newDir121Url.toLocalFile()));
+
+    // now update the database
     m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/dir121"), NIE::url(), QVariantList() << newDir121Url, QLatin1String("testapp"));
 
     // the url
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir121"), NIE::url(), newDir121Url));
 
     // the child file
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/file1211"), NIE::url(), QUrl(newDir121Url.toString() + QLatin1String("/file1211-old"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/file1211"), NIE::url(), QUrl(newDir121Url.toString() + QLatin1String("/file1211"))));
 
     // the nie:isPartOf relationship should have been updated, too
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir121"), NIE::isPartOf(), QUrl("res:/dir12")));
@@ -733,18 +805,23 @@ void DataManagementModelTest::testSetProperty_nieUrl5()
     KTempDir* dir = createNieUrlTestData();
 
     // move one of the dirs to a new parent
-    const QUrl oldDir121Url = QLatin1String("file://") + dir->name() + QLatin1String("dir2-old/dir121-old");
-    const QUrl newDir121Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1-old/dir12-old/dir121");
+    const QUrl oldDir121Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1/dir12/dir121");
+    const QUrl newDir121Url = QLatin1String("file://") + dir->name() + QLatin1String("dir2/dir121");
+
+    // we first need to move the file, otherwise the file check in the dms kicks in
+    QVERIFY(QFile::rename(oldDir121Url.toLocalFile(), newDir121Url.toLocalFile()));
+
+    // now update the database
     m_dmModel->setProperty(QList<QUrl>() << oldDir121Url, NIE::url(), QVariantList() << newDir121Url, QLatin1String("testapp"));
 
     // the url
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir121"), NIE::url(), newDir121Url));
 
     // the child file
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/file1211"), NIE::url(), QUrl(newDir121Url.toString() + QLatin1String("/file1211-old"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/file1211"), NIE::url(), QUrl(newDir121Url.toString() + QLatin1String("/file1211"))));
 
     // the nie:isPartOf relationship should have been updated, too
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir121"), NIE::isPartOf(), QUrl("res:/dir12")));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir121"), NIE::isPartOf(), QUrl("res:/dir2")));
 }
 
 void DataManagementModelTest::testRemoveProperty()
@@ -792,31 +869,36 @@ void DataManagementModelTest::testRemoveProperty()
 
 void DataManagementModelTest::testRemoveProperty_file()
 {
+    QTemporaryFile fileA;
+    fileA.open();
+    QTemporaryFile fileB;
+    fileB.open();
+
     // prepare some test data
     QUrl mg1;
     const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
 
-    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl("file:/A"), g1);
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName()), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("whatever")), g1);
 
-    m_model->addStatement(QUrl("res:/B"), NIE::url(), QUrl("file:/B"), g1);
+    m_model->addStatement(QUrl("res:/B"), NIE::url(), QUrl::fromLocalFile(fileB.fileName()), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/B"), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/C"), g1);
 
 
 
     // now we remove one value via the file URL
-    m_dmModel->removeProperty(QList<QUrl>() << QUrl("file:/A"), QUrl("prop:/string"), QVariantList() << QLatin1String("hello world"), QLatin1String("Testapp"));
+    m_dmModel->removeProperty(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), QUrl("prop:/string"), QVariantList() << QLatin1String("hello world"), QLatin1String("Testapp"));
 
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/string"), Node()).allStatements().count(), 2);
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NIE::url(), Node()).allStatements().count(), 1);
-    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NIE::url(), QUrl("file:/A")).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().count(), 1);
 
 
     // test the same with a file URL value
-    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res"), QVariantList() << QUrl("file:/B"), QLatin1String("Testapp"));
+    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res"), QVariantList() << QUrl::fromLocalFile(fileB.fileName()), QLatin1String("Testapp"));
 
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/res"), Node()).allStatements().count(), 1);
 }
@@ -913,15 +995,41 @@ void DataManagementModelTest::testRemoveProperty_invalid_args()
 
     // no data should have been changed
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // make sure we cannot add anything to non-existing files
+    const QUrl nonExistingFileUrl("file:///a/file/that/is/very/unlikely/to/exist");
+    m_dmModel->removeProperty(QList<QUrl>() << nonExistingFileUrl, QUrl("prop:/int"), QVariantList() << 42, QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // non-existing file as object
+    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res"), QVariantList() << nonExistingFileUrl, QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
 void DataManagementModelTest::testRemoveProperties()
 {
+    QTemporaryFile fileA;
+    fileA.open();
+    QTemporaryFile fileB;
+    fileB.open();
+
     // prepare some test data
     QUrl mg1;
     const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
 
-    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl("file:/A"), g1);
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName()), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("whatever")), g1);
@@ -942,7 +1050,7 @@ void DataManagementModelTest::testRemoveProperties()
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(12), g1);
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(2), g1);
 
-    m_model->addStatement(QUrl("res:/B"), NIE::url(), QUrl("file:/B"), g1);
+    m_model->addStatement(QUrl("res:/B"), NIE::url(), QUrl::fromLocalFile(fileB.fileName()), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/B"), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/C"), g1);
 
@@ -970,7 +1078,7 @@ void DataManagementModelTest::testRemoveProperties()
 
 
     // test file URLs in the resources
-    m_dmModel->removeProperties(QList<QUrl>() << QUrl("file:/A"), QList<QUrl>() << QUrl("prop:/int2"), QLatin1String("testapp"));
+    m_dmModel->removeProperties(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), QList<QUrl>() << QUrl("prop:/int2"), QLatin1String("testapp"));
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int2"), Node()));
 
     // TODO: verify graphs
@@ -979,11 +1087,16 @@ void DataManagementModelTest::testRemoveProperties()
 
 void DataManagementModelTest::testRemoveProperties_invalid_args()
 {
+    QTemporaryFile fileA;
+    fileA.open();
+    QTemporaryFile fileB;
+    fileB.open();
+
     // prepare some test data
     QUrl mg1;
     const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
 
-    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl("file:/A"), g1);
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName()), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("whatever")), g1);
@@ -1004,7 +1117,7 @@ void DataManagementModelTest::testRemoveProperties_invalid_args()
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(12), g1);
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(2), g1);
 
-    m_model->addStatement(QUrl("res:/B"), NIE::url(), QUrl("file:/B"), g1);
+    m_model->addStatement(QUrl("res:/B"), NIE::url(), QUrl::fromLocalFile(fileB.fileName()), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/B"), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/C"), g1);
 
@@ -1081,16 +1194,32 @@ void DataManagementModelTest::testRemoveProperties_invalid_args()
 
     // no data should have been changed
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // make sure we cannot add anything to non-existing files
+    const QUrl nonExistingFileUrl("file:///a/file/that/is/very/unlikely/to/exist");
+    m_dmModel->removeProperties(QList<QUrl>() << nonExistingFileUrl, QList<QUrl>() << QUrl("prop:/int"), QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
 
 void DataManagementModelTest::testRemoveResources()
 {
+    QTemporaryFile fileA;
+    fileA.open();
+    QTemporaryFile fileB;
+    fileB.open();
+
     // prepare some test data
     QUrl mg1;
     const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
 
-    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl("file:/A"), g1);
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName()), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
 
@@ -1103,7 +1232,7 @@ void DataManagementModelTest::testRemoveResources()
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(6), g2);
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(12), g2);
     m_model->addStatement(QUrl("res:/C"), QUrl("prop:/int"), LiteralValue(2), g2);
-    m_model->addStatement(QUrl("res:/B"), NIE::url(), QUrl("file:/B"), g2);
+    m_model->addStatement(QUrl("res:/B"), NIE::url(), QUrl::fromLocalFile(fileB.fileName()), g2);
 
 
     m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), QLatin1String("testapp"), false);
@@ -1116,7 +1245,7 @@ void DataManagementModelTest::testRemoveResources()
     QCOMPARE(m_model->listStatements(QUrl("res:/C"), Node(), Node()).allStatements().count(), 2);
 
     // verify that removing resources by file URL works
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("file:/B"), QLatin1String("testapp"), false);
+    m_dmModel->removeResources(QList<QUrl>() << QUrl::fromLocalFile(fileB.fileName()), QLatin1String("testapp"), false);
 
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
 
@@ -1193,11 +1322,14 @@ void DataManagementModelTest::testRemoveResources_subresources()
 
 void DataManagementModelTest::testRemoveResources_invalid_args()
 {
+    QTemporaryFile fileA;
+    fileA.open();
+
     // prepare some test data
     QUrl mg1;
     const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
 
-    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl("file:/A"), g1);
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName()), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
 
@@ -1236,6 +1368,17 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
     QVERIFY(m_dmModel->lastError());
 
     // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // non-existing file
+    const QUrl nonExistingFileUrl("file:///a/file/that/is/very/unlikely/to/exist");
+    m_dmModel->removeResources(QList<QUrl>() << nonExistingFileUrl, QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
@@ -1336,6 +1479,9 @@ void DataManagementModelTest::testRemoveDataByApplication3()
 // test file URLs + not removing nie:url
 void DataManagementModelTest::testRemoveDataByApplication4()
 {
+    QTemporaryFile fileA;
+    fileA.open();
+
     // create our apps
     QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
     m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
@@ -1352,15 +1498,15 @@ void DataManagementModelTest::testRemoveDataByApplication4()
     const QUrl g2 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg2);
     m_model->addStatement(g2, NAO::maintainedBy(), QUrl("app:/B"), mg2);
 
-    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl("file:/A"), g1);
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName()), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("file:/A"), QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), QLatin1String("A"));
 
     // now the nie:url should still be there even though A created it
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl("file:/A")));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName())));
 
     // creation time should have been created
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::lastModified(), Node()));
@@ -1836,25 +1982,54 @@ void DataManagementModelTest::testStoreResources_invalid_args()
 
     // no data should have been changed
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // non-existing file
+    const QUrl nonExistingFileUrl("file:///a/file/that/is/very/unlikely/to/exist");
+    SimpleResource nonExistingFileRes;
+    nonExistingFileRes.setUri(nonExistingFileUrl);
+    nonExistingFileRes.addProperty(QUrl("prop:/int"), QVariant(42));
+    m_dmModel->storeResources(SimpleResourceGraph() << nonExistingFileRes, QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // non-existing file as object
+    nonExistingFileRes.setUri(QUrl("res:/A"));
+    nonExistingFileRes.addProperty(QUrl("prop:/res"), nonExistingFileUrl);
+    m_dmModel->storeResources(SimpleResourceGraph() << nonExistingFileRes, QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
 void DataManagementModelTest::testStoreResources_file1()
 {
+    QTemporaryFile fileA;
+    fileA.open();
+
     ResourceManager::instance()->setOverrideMainModel( m_model );
 
     // merge a file URL
     SimpleResource r1;
-    r1.setUri(QUrl("file:/A"));
+    r1.setUri(QUrl::fromLocalFile(fileA.fileName()));
     r1.addProperty(RDF::type(), NAO::Tag());
     r1.addProperty(QUrl("prop:/string"), QLatin1String("Foobar"));
 
     m_dmModel->storeResources(SimpleResourceGraph() << r1, QLatin1String("testapp"));
 
     // a nie:url relation should have been created
-    QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl("file:/A")));
+    QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())));
 
     // the file URL should never be used as subject
-    QVERIFY(!m_model->containsAnyStatement(QUrl("file:/A"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(QUrl::fromLocalFile(fileA.fileName()), Node(), Node()));
 
     // make sure file URL and res URI are properly related including the properties
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { ?r %1 %4 . "
@@ -1863,7 +2038,7 @@ void DataManagementModelTest::testStoreResources_file1()
                                   .arg(Node::resourceToN3(NIE::url()),
                                        Node::resourceToN3(NAO::Tag()),
                                        Node::literalToN3(LiteralValue(QLatin1String("Foobar"))),
-                                       Node::resourceToN3(QUrl("file:/A"))),
+                                       Node::resourceToN3(QUrl::fromLocalFile(fileA.fileName()))),
                                   Query::QueryLanguageSparql).boolValue());
 }
 
@@ -1872,8 +2047,10 @@ void DataManagementModelTest::testStoreResources_file2()
     ResourceManager::instance()->setOverrideMainModel( m_model );
 
     // merge a property with non-existing file value
-    QUrl fileUrl("file:///B");
-    
+    QTemporaryFile fileA;
+    fileA.open();
+    const QUrl fileUrl = QUrl::fromLocalFile(fileA.fileName());
+
     SimpleResource r1;
     r1.setUri(QUrl("nepomuk:/res/A"));
     r1.addProperty(QUrl("prop:/res"), fileUrl);
@@ -1989,6 +2166,9 @@ void DataManagementModelTest::testMergeResources()
 
 void DataManagementModelTest::testDescribeResources()
 {
+    QTemporaryFile fileC;
+    fileC.open();
+
     // create some resources
     const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
 
@@ -1998,7 +2178,7 @@ void DataManagementModelTest::testDescribeResources()
 
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
 
-    m_model->addStatement(QUrl("res:/C"), NIE::url(), QUrl("file:/C"), g1);
+    m_model->addStatement(QUrl("res:/C"), NIE::url(), QUrl::fromLocalFile(fileC.fileName()), g1);
     m_model->addStatement(QUrl("res:/C"), QUrl("prop:/int"), LiteralValue(42), g1);
     m_model->addStatement(QUrl("res:/C"), NAO::hasSubResource(), QUrl("res:/D"), g1);
 
@@ -2022,7 +2202,7 @@ void DataManagementModelTest::testDescribeResources()
 
 
     // get one resource by file-url without sub-res
-    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("file:/C"), false).toList();
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl::fromLocalFile(fileC.fileName()), false).toList();
 
     // no error
     QVERIFY(!m_dmModel->lastError());
@@ -2064,7 +2244,7 @@ void DataManagementModelTest::testDescribeResources()
 
 
     // get one resource via file URL with sub-res
-    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("file:/C"), true).toList();
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl::fromLocalFile(fileC.fileName()), true).toList();
 
     // no error
     QVERIFY(!m_dmModel->lastError());
@@ -2134,7 +2314,7 @@ void DataManagementModelTest::testDescribeResources()
 
 
     // get two resources with sub-res and mixed URL/URI
-    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("file:/C"), true).toList();
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl::fromLocalFile(fileC.fileName()), true).toList();
 
     // no error
     QVERIFY(!m_dmModel->lastError());
@@ -2194,41 +2374,31 @@ KTempDir * DataManagementModelTest::createNieUrlTestData()
     file.open(QIODevice::WriteOnly);
     file.close();
 
-    // We now create the situation in the model as if the above file structure was the new one after moving files and folders around.
+    // We now create the situation in the model
     // for that we use 2 graphs
-    // mainDir
-    // |- dir1-old
-    //    |- dir11-old
-    //       |- file111-old
-    //    |- dir12-old
-    //    |- file11-old
-    //    |- dir13-old
-    // |- dir2-old
-    //    |- dir121-old
-    //       |- file1211-old
     const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
     const QUrl g2 = m_nrlModel->createGraph(NRL::InstanceBase());
     const QString basePath = mainDir->name();
 
     // nie:url properties for all of them (spread over both graphs)
-    m_model->addStatement(QUrl("res:/dir1"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1-old")), g1);
-    m_model->addStatement(QUrl("res:/dir2"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir2-old")), g2);
-    m_model->addStatement(QUrl("res:/dir11"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1-old/dir11-old")), g1);
-    m_model->addStatement(QUrl("res:/dir12"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1-old/dir12-old")), g2);
-    m_model->addStatement(QUrl("res:/dir13"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1-old/dir13-old")), g1);
-    m_model->addStatement(QUrl("res:/file11"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1-old/file11-old")), g2);
-    m_model->addStatement(QUrl("res:/file111"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1-old/dir11-old/file111-old")), g1);
-    m_model->addStatement(QUrl("res:/dir121"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir2-old/dir121-old")), g2);
-    m_model->addStatement(QUrl("res:/file1211"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir2-old/dir121-old/file1211-old")), g1);
+    m_model->addStatement(QUrl("res:/dir1"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1")), g1);
+    m_model->addStatement(QUrl("res:/dir2"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir2")), g2);
+    m_model->addStatement(QUrl("res:/dir11"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1/dir11")), g1);
+    m_model->addStatement(QUrl("res:/dir12"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1/dir12")), g2);
+    m_model->addStatement(QUrl("res:/dir13"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1/dir13")), g1);
+    m_model->addStatement(QUrl("res:/file11"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1/file11")), g2);
+    m_model->addStatement(QUrl("res:/file111"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir1/dir11/file111")), g1);
+    m_model->addStatement(QUrl("res:/dir121"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir2/dir121")), g2);
+    m_model->addStatement(QUrl("res:/file1211"), NIE::url(), QUrl(QLatin1String("file://") + basePath + QLatin1String("dir2/dir121/file1211")), g1);
 
     // we define filename and parent folder only for some to test if the optional clause in the used query works properly
-    m_model->addStatement(QUrl("res:/dir1"), NFO::fileName(), LiteralValue(QLatin1String("dir1-old")), g1);
-    m_model->addStatement(QUrl("res:/dir2"), NFO::fileName(), LiteralValue(QLatin1String("dir2-old")), g1);
-    m_model->addStatement(QUrl("res:/dir11"), NFO::fileName(), LiteralValue(QLatin1String("dir11-old")), g2);
-    m_model->addStatement(QUrl("res:/dir12"), NFO::fileName(), LiteralValue(QLatin1String("dir12-old")), g2);
-    m_model->addStatement(QUrl("res:/file11"), NFO::fileName(), LiteralValue(QLatin1String("file11-old")), g1);
-    m_model->addStatement(QUrl("res:/file111"), NFO::fileName(), LiteralValue(QLatin1String("file111-old")), g2);
-    m_model->addStatement(QUrl("res:/dir121"), NFO::fileName(), LiteralValue(QLatin1String("dir121-old")), g2);
+    m_model->addStatement(QUrl("res:/dir1"), NFO::fileName(), LiteralValue(QLatin1String("dir1")), g1);
+    m_model->addStatement(QUrl("res:/dir2"), NFO::fileName(), LiteralValue(QLatin1String("dir2")), g1);
+    m_model->addStatement(QUrl("res:/dir11"), NFO::fileName(), LiteralValue(QLatin1String("dir11")), g2);
+    m_model->addStatement(QUrl("res:/dir12"), NFO::fileName(), LiteralValue(QLatin1String("dir12")), g2);
+    m_model->addStatement(QUrl("res:/file11"), NFO::fileName(), LiteralValue(QLatin1String("file11")), g1);
+    m_model->addStatement(QUrl("res:/file111"), NFO::fileName(), LiteralValue(QLatin1String("file111")), g2);
+    m_model->addStatement(QUrl("res:/dir121"), NFO::fileName(), LiteralValue(QLatin1String("dir121")), g2);
 
     m_model->addStatement(QUrl("res:/dir11"), NIE::isPartOf(), QUrl("res:/dir1"), g1);
     m_model->addStatement(QUrl("res:/dir12"), NIE::isPartOf(), QUrl(QLatin1String("res:/dir1")), g2);

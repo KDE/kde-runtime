@@ -234,12 +234,17 @@ private:
     /**
      * Resolves a local file url to its resource URI. Returns \p url if it is not a file URL and
      * an empty QUrl in case \p url is a file URL but has no resource URI in the model.
+     *
+     * \param statLocalFiles If \p true the method will check if local files exist and set an error
+     * if not.
      */
-    QUrl resolveUrl(const QUrl& url) const;
+    QUrl resolveUrl(const QUrl& url, bool statLocalFiles = false) const;
 
     /**
      * Resolves local file URLs through nie:url.
      * \return a Hash mapping \p urls to their actual resource URIs or an empty QUrl if the resource does not exist.
+     *
+     * This method does check if the local file exists and may set an error.
      */
     QHash<QUrl, QUrl> resolveUrls(const QList<QUrl>& urls) const;
 
@@ -247,6 +252,8 @@ private:
      * Resolves local file URLs through nie:url.
      * \return a Hash mapping \p nodes to the nodes that should actually be added to the model or an empty node if the resource for a file URL
      * does not exist yet.
+     *
+     * This method does check if the local file exists and may set an error.
      */
     QHash<Soprano::Node, Soprano::Node> resolveNodes(const QSet<Soprano::Node>& nodes) const;
 
