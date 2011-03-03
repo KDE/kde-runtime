@@ -37,7 +37,7 @@ class DeviceAccess
 {
     public:
         //! What driver to be used for this access
-        enum AudioDriver {
+        enum DeviceDriverType {
             InvalidDriver = 0,
             AlsaDriver,
             OssDriver,
@@ -46,7 +46,7 @@ class DeviceAccess
 
         //! Constructs a device access object using the given information
         DeviceAccess(const QStringList &deviceIds, int accessPreference,
-                AudioDriver driver, bool capture, bool playback);
+                DeviceDriverType driver, bool capture, bool playback);
 
         //! Compares to another access by using the preference
         bool operator<(const DeviceAccess &rhs) const;
@@ -55,7 +55,7 @@ class DeviceAccess
         bool operator!=(const DeviceAccess &rhs) const;
 
         //! Which driver does the access belong to
-        AudioDriver driver() const;
+        DeviceDriverType driver() const;
 
         //! Returns the name of the driver
         const QString driverName() const;
@@ -77,7 +77,7 @@ class DeviceAccess
 
         QStringList m_deviceIds;
         int m_accessPreference;
-        AudioDriver m_driver : 16;
+        DeviceDriverType m_driver : 16;
         bool m_capture : 8;
         bool m_playback : 8;
 };

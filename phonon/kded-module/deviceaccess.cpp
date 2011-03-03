@@ -25,7 +25,7 @@ namespace PS
 {
 
 DeviceAccess::DeviceAccess(const QStringList& deviceIds, int accessPreference,
-        DeviceAccess::AudioDriver driver,
+        DeviceAccess::DeviceDriverType driver,
         bool capture,
         bool playback):
     m_deviceIds(deviceIds),
@@ -52,7 +52,7 @@ bool DeviceAccess::operator!=(const DeviceAccess& rhs) const
      return !operator==(rhs);
 }
 
-DeviceAccess::AudioDriver DeviceAccess::driver() const
+DeviceAccess::DeviceDriverType DeviceAccess::driver() const
 {
     return m_driver;
 }

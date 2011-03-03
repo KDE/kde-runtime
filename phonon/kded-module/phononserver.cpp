@@ -400,7 +400,7 @@ void PhononServer::findDevices()
 
         QStringList deviceIds;
         int accessPreference = 0;
-        PS::DeviceAccess::AudioDriver driver = PS::DeviceAccess::InvalidDriver;
+        PS::DeviceAccess::DeviceDriverType driver = PS::DeviceAccess::InvalidDriver;
         bool capture = audioIface->deviceType() & Solid::AudioInterface::AudioInput;
         bool playback = audioIface->deviceType() & Solid::AudioInterface::AudioOutput;
         bool valid = true;
@@ -707,7 +707,7 @@ void PhononServer::removeAudioDevices(const QList<int> &indexes)
     m_updateDeviceListing.start(50, this);
 }
 
-static inline QByteArray nameForDriver(PS::DeviceAccess::AudioDriver d)
+static inline QByteArray nameForDriver(PS::DeviceAccess::DeviceDriverType d)
 {
     switch (d) {
     case PS::DeviceAccess::AlsaDriver:
@@ -746,7 +746,7 @@ void PhononServer::updateAudioDevicesCache()
         Phonon::DeviceAccessList deviceAccessList;
         bool first = true;
         QStringList oldDeviceIds;
-        PS::DeviceAccess::AudioDriver driverId = PS::DeviceAccess::InvalidDriver;
+        PS::DeviceAccess::DeviceDriverType driverId = PS::DeviceAccess::InvalidDriver;
         foreach (const PS::DeviceAccess &access, dev.accessList()) {
             const QByteArray &driver = nameForDriver(access.driver());
             if (first) {
