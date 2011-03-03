@@ -49,4 +49,4 @@ Name[zh_TW]=Nepomuk 備份
 Exec=nepomukbackup
 Icon=nepomuk
 Type=Application
-Categories=Qt;KDE;System;Backup;
+Categories=Qt;KDE;System;Archiving;
