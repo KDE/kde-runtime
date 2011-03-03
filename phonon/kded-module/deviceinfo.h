@@ -33,6 +33,13 @@
 namespace PS
 {
 
+/**
+ * \brief Identifies a certain device.
+ *
+ * Unique ID, card number and device number are used.
+ *
+ * Can be hashed. Can be compared to another.
+ */
 struct DeviceKey
 {
     QString uniqueId;
@@ -42,45 +49,85 @@ struct DeviceKey
     bool operator==(const DeviceKey &rhs) const;
 };
 
+/**
+ * \brief Stores information about a device, audio or video
+ *
+ * The following information is contained in this class:
+ * \li Device access list
+ * \li Device index
+ * \li Preferred name for the user to see
+ * \li Description
+ * \li Icon
+ * \li Initial preference
+ * \li Key
+ * \li Availability
+ * \li Advanced status
+ * \li Device number
+ *
+ * After the device is constructed, the hardware database is searched for overrides.
+ *
+ * There are methods to allow syncing with a config cache.
+ *
+ * Can be passed to QDebug().
+ *
+ * Can be hashed.
+ */
 class DeviceInfo
 {
     public:
+        //! Constructs an empty device info object
         DeviceInfo();
+
+        //! Constructs a device info object from the information given
         DeviceInfo(const QString &cardName, const QString &icon, const DeviceKey &key,
                 int pref, bool adv);
 
+        //! Adds the specified access to the list
         void addAccess(const PS::DeviceAccess &access);
 
+        //! Compare to another device info using the initial device preference
         bool operator<(const DeviceInfo &rhs) const;
+
+        //! Compare if two device info are identical by using the device key
         bool operator==(const DeviceInfo &rhs) const;
 
-        /**
-         * Returns the user visible name of the device
-         */
+        //! Returns the user visible name of the device
         const QString &name() const;
 
+        //! Sets the name of the device that will be visible to the user
         void setPreferredName(const QString &name);
 
-        /**
-         * Valid indexes are negative
-         */
+        //! Valid indexes are negative
         int index() const;
 
-        /**
-         * User visible string to describe the device in detail
-         */
+        //! User visible string to describe the device in detail
         const QString description() const;
 
+        //! The icon used to portray the device
         const QString &icon() const;
 
+        //! Returns if the device is available for use
         bool isAvailable() const;
+
+        //! Returns if the device is advanced
         bool isAdvanced() const;
+
+        //! The number for the initial preference for the device, before it's changed by the user
         int initialPreference() const;
+
+        //! Number that identifies the device for it's card
         int deviceNumber() const;
+
+        //! A list of accesses for the device, describing how it's possible to access it
         const QList<DeviceAccess> &accessList() const;
+
+        //! Key for the device, to distinguish it from any others
         const DeviceKey &key() const;
 
+        //! Mark the device as deleted, in the specified configuration
         void removeFromCache(const KSharedConfigPtr &config) const;
+
+        //! Write the device information to the specified configuration
         void syncWithCache(const KSharedConfigPtr &config);
 
     private:
