@@ -21,6 +21,7 @@
 
 #include "simpleresourcegraph.h"
 #include "simpleresource.h"
+#include "resourcegraphstoringjob_p.h"
 
 #include <QtCore/QSharedData>
 
@@ -177,4 +178,9 @@ bool Nepomuk::SimpleResourceGraph::isEmpty() const
 int Nepomuk::SimpleResourceGraph::count() const
 {
     return d->resources.count();
+}
+
+KJob* Nepomuk::SimpleResourceGraph::save(const KComponentData& component) const
+{
+    return new ResourceGraphStoringJob(*this, component);
 }

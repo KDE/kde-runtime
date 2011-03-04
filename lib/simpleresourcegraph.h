@@ -28,7 +28,11 @@
 #include <QtCore/QUrl>
 #include <QtCore/QMetaType>
 
+#include <KGlobal>
+
 #include "nepomukdatamanagement_export.h"
+
+class KJob;
 
 namespace Nepomuk {
 class SimpleResource;
@@ -69,6 +73,17 @@ public:
     QList<SimpleResource> toList() const;
 
     QUrl createBlankNode();
+
+    /**
+     * Save the graph to the Nepomuk database.
+     * \return A job that will perform the saving
+     * and emit the result() signal once done.
+     * Use the typical KJob error handling methods.
+     *
+     * \param component The component which should be given to
+     * Nepomuk for it to relate the newly created data to it.
+     */
+    KJob* save(const KComponentData& component = KGlobal::mainComponent()) const;
 
 private:
     class Private;

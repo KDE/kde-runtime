@@ -3,6 +3,7 @@ project(libdatamanagement)
 set(datamanagement_SRC
   simpleresource.cpp
   simpleresourcegraph.cpp
+  resourcegraphstoringjob.cpp
 )
 
 set(datamanagementservice_dbus_desc ${CMAKE_CURRENT_SOURCE_DIR}/../org.kde.nepomuk.DataManagement.xml)
@@ -23,4 +24,5 @@ target_link_libraries(nepomukdatamanagement
   ${QT_QTCORE_LIBRARY}
   ${QT_QTDBUS_LIBRARY}
   ${SOPRANO_LIBRARIES}
-  ${NEPOMUK_LIBRARIES})
+  ${NEPOMUK_LIBRARIES}
+  ${KDE4_KDECORE_LIBS})
