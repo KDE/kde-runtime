@@ -528,13 +528,13 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
     //
     QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources).values());
     resolvedResources.remove(QUrl());
-    if(lastError()) {
+    if(resolvedResources.isEmpty() || lastError()) {
         return;
     }
 
     QSet<Soprano::Node> resolvedNodes = QSet<Soprano::Node>::fromList(resolveNodes(valueNodes).values());
     resolvedNodes.remove(Soprano::Node());
-    if(lastError()) {
+    if(resolvedNodes.isEmpty() || lastError()) {
         return;
     }
 
@@ -632,7 +632,7 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
     //
     QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources).values());
     resolvedResources.remove(QUrl());
-    if(lastError()) {
+    if(resolvedResources.isEmpty() || lastError()) {
         return;
     }
 
@@ -1080,7 +1080,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     //
     // Resolve file URLs in resource URIs
     //
-    QSet<QUrl> allResources;
+    QSet<QUrl> allNonFileResources;
     SimpleResourceGraph resGraph( resources );
     QList<SimpleResource> resGraphList = resGraph.toList();
     QMutableListIterator<SimpleResource> iter( resGraphList );
@@ -1118,7 +1118,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             }
         }
         else {
-            allResources << res.uri();
+            allNonFileResources << res.uri();
         }
     }
     resGraph = resGraphList;
@@ -1127,7 +1127,8 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     //
     // We need to ensure that no client removes any ontology constructs or graphs
     //
-    if(containsResourceWithProtectedType(allResources)) {
+    if(!allNonFileResources.isEmpty() &&
+            containsResourceWithProtectedType(allNonFileResources)) {
         return;
     }
 
