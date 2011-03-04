@@ -41,7 +41,6 @@
 #define USING_SOPRANO_NRLMODEL_UNSTABLE_API
 #include <Soprano/NRLModel>
 
-// TODO: support local file paths instead of file:/ URLs
 
 namespace {
 QVariantList convertVariantList(const QList<QDBusVariant>& values) {
