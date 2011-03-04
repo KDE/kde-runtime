@@ -75,11 +75,17 @@ struct DeviceKey
 class DeviceInfo
 {
     public:
+        enum Type {
+            Unspecified,
+            Audio,
+            Video
+        };
+
         //! Constructs an empty device info object
         DeviceInfo();
 
         //! Constructs a device info object from the information given
-        DeviceInfo(const QString &cardName, const QString &icon, const DeviceKey &key,
+        DeviceInfo(Type t, const QString &cardName, const QString &icon, const DeviceKey &key,
                 int pref, bool adv);
 
         //! Adds the specified access to the list
@@ -135,8 +141,10 @@ class DeviceInfo
         friend QDebug operator<<(QDebug &, const DeviceInfo &);
 
         void applyHardwareDatabaseOverrides();
+        const QString prefixForConfigGroup() const;
 
     private:
+        Type m_type;
         QString m_cardName;
         QString m_icon;
 

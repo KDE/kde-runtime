@@ -275,6 +275,7 @@ QList<int> KdePlatformPlugin::objectDescriptionIndexes(ObjectDescriptionType typ
     switch (type) {
     case AudioOutputDeviceType:
     case AudioCaptureDeviceType:
+    case VideoCaptureDeviceType:
         ensureDeviceListingObject();
         return m_devList->objectDescriptionIndexes(type);
     default:
@@ -287,6 +288,7 @@ QHash<QByteArray, QVariant> KdePlatformPlugin::objectDescriptionProperties(Objec
     switch (type) {
     case AudioOutputDeviceType:
     case AudioCaptureDeviceType:
+    case VideoCaptureDeviceType:
         ensureDeviceListingObject();
         return m_devList->objectDescriptionProperties(type, index);
     default:
@@ -294,23 +296,41 @@ QHash<QByteArray, QVariant> KdePlatformPlugin::objectDescriptionProperties(Objec
     }
 }
 
-QList<QPair<QByteArray, QString> > KdePlatformPlugin::deviceAccessListFor(const Phonon::AudioOutputDevice &deviceDesc) const
+DeviceAccessList KdePlatformPlugin::deviceAccessListFor(const AudioOutputDevice &d) const
 {
-    const QVariant &deviceAccessListVariant = deviceDesc.property("deviceAccessList");
-    if (deviceAccessListVariant.isValid()) {
-        return qvariant_cast<Phonon::DeviceAccessList>(deviceAccessListVariant);
+    return deviceAccessListFor(d.property("deviceAccessList"), d.property("driver"), d.property("deviceIds"));
+}
+
+DeviceAccessList KdePlatformPlugin::deviceAccessListFor(const AudioCaptureDevice &d) const
+{
+    return deviceAccessListFor(d.property("deviceAccessList"), d.property("driver"), d.property("deviceIds"));
+}
+
+DeviceAccessList KdePlatformPlugin::deviceAccessListFor(const VideoCaptureDevice &d) const
+{
+    return deviceAccessListFor(d.property("deviceAccessList"), d.property("driver"), d.property("deviceIds"));
+}
+
+DeviceAccessList KdePlatformPlugin::deviceAccessListFor(
+    const QVariant &dalVariant,
+    const QVariant &driverVariant,
+    const QVariant &deviceIdsVariant) const
+{
+    if (dalVariant.isValid()) {
+        return qvariant_cast<Phonon::DeviceAccessList>(dalVariant);
     }
+
     Phonon::DeviceAccessList ret;
-    const QVariant &v = deviceDesc.property("driver");
-    if (v.isValid()) {
-        const QByteArray &driver = v.toByteArray();
-        const QStringList &deviceIds = deviceDesc.property("deviceIds").toStringList();
+    if (driverVariant.isValid()) {
+        const QByteArray &driver = driverVariant.toByteArray();
+        const QStringList &deviceIds = deviceIdsVariant.toStringList();
         foreach (const QString &deviceId, deviceIds) {
             ret << QPair<QByteArray, QString>(driver, deviceId);
         }
     }
     return ret;
 }
+
 
 } // namespace Phonon
 

@@ -44,6 +44,8 @@
 #include <Solid/GenericInterface>
 #include <Solid/Device>
 #include <Solid/DeviceNotifier>
+#include <Solid/Block>
+#include <solid/video.h>    // FIXME to Solid/Video, when it appears
 
 #include <../config-alsa.h>
 #ifdef HAVE_LIBASOUND2
@@ -303,7 +305,7 @@ void PhononServer::findVirtualDevices()
             if (playbackDevices.contains(key)) {
                 playbackDevices[key].addAccess(access);
             } else {
-                PS::DeviceInfo dev(cardName, iconName, key, initialPreference, isAdvanced);
+                PS::DeviceInfo dev(PS::DeviceInfo::Audio, cardName, iconName, key, initialPreference, isAdvanced);
                 dev.addAccess(access);
                 playbackDevices.insert(key, dev);
             }
@@ -314,7 +316,7 @@ void PhononServer::findVirtualDevices()
             if (captureDevices.contains(key)) {
                 captureDevices[key].addAccess(access);
             } else {
-                PS::DeviceInfo dev(cardName, iconName, key, initialPreference, isAdvanced);
+                PS::DeviceInfo dev(PS::DeviceInfo::Audio, cardName, iconName, key, initialPreference, isAdvanced);
                 dev.addAccess(access);
                 captureDevices.insert(key, dev);
             }
@@ -381,38 +383,56 @@ static void removeOssOnlyDevices(QList<PS::DeviceInfo> *list)
 
 void PhononServer::findDevices()
 {
-    QHash<PS::DeviceKey, PS::DeviceInfo> playbackDevices;
-    QHash<PS::DeviceKey, PS::DeviceInfo> captureDevices;
-    bool haveAlsaDevices = false;
-    QHash<QString, QList<int> > listOfCardNumsPerUniqueId;
-
     KConfigGroup globalConfigGroup(m_config, "Globals");
     //const int cacheVersion = globalConfigGroup.readEntry("CacheVersion", 0);
     // cacheVersion 1 is KDE 4.1, 0 is KDE 4.0
 
-    const QList<Solid::Device> &allHwDevices =
+    // Fetch the full list of audio and video devices from Solid
+    const QList<Solid::Device> &solidAudioDevices =
         Solid::Device::listFromQuery("AudioInterface.deviceType & 'AudioInput|AudioOutput'");
+    const QList<Solid::Device> &solidVideoDevices =
+        Solid::Device::listFromType(Solid::DeviceInterface::Video);
 
-    kDebug(601) << "Solid gives" << allHwDevices.count() << "devices";
+    kDebug(601) << "Solid offers" << solidAudioDevices.count() << "audio devices";
+    kDebug(601) << "Solid offers" << solidVideoDevices.count() << "video devices";
 
-    foreach (const Solid::Device &hwDevice, allHwDevices) {
+    // Collections of PhononServer devices, to be extracted from the ones from Solid
+    QHash<PS::DeviceKey, PS::DeviceInfo> audioPlaybackDevices;
+    QHash<PS::DeviceKey, PS::DeviceInfo> audioCaptureDevices;
+    QHash<PS::DeviceKey, PS::DeviceInfo> videoCaptureDevices;
+
+    QHash<QString, QList<int> > listOfCardNumsPerUniqueId;
+    QStringList deviceIds;
+    int accessPreference;
+    PS::DeviceAccess::DeviceDriverType driver;
+    bool valid = true;
+    bool isAdvanced = false;
+    bool preferCardName = false;
+
+    /*
+     * Process audio devices
+     */
+    bool haveAlsaDevices = false;
+    foreach (const Solid::Device &hwDevice, solidAudioDevices) {
         const Solid::AudioInterface *audioIface = hwDevice.as<Solid::AudioInterface>();
 
-        QStringList deviceIds;
-        int accessPreference = 0;
-        PS::DeviceAccess::DeviceDriverType driver = PS::DeviceAccess::InvalidDriver;
-        bool capture = audioIface->deviceType() & Solid::AudioInterface::AudioInput;
-        bool playback = audioIface->deviceType() & Solid::AudioInterface::AudioOutput;
-        bool valid = true;
-        bool isAdvanced = false;
-        bool preferCardName = false;
+        deviceIds.clear();
+        accessPreference = 0;
+        driver = PS::DeviceAccess::InvalidDriver;
+        valid = true;
+        isAdvanced = false;
+        preferCardName = false;
         int cardNum = -1;
         int deviceNum = -1;
+
+        bool capture = audioIface->deviceType() & Solid::AudioInterface::AudioInput;
+        bool playback = audioIface->deviceType() & Solid::AudioInterface::AudioOutput;
 
         switch (audioIface->driver()) {
         case Solid::AudioInterface::UnknownAudioDriver:
             valid = false;
             break;
+
         case Solid::AudioInterface::Alsa:
             if (audioIface->driverHandle().type() != QVariant::List) {
                 valid = false;
@@ -420,6 +440,7 @@ void PhononServer::findDevices()
                 haveAlsaDevices = true;
                 // ALSA has better naming of the device than the corresponding OSS entry in HAL
                 preferCardName = true;
+
                 const QList<QVariant> handles = audioIface->driverHandle().toList();
                 if (handles.size() < 1) {
                     valid = false;
@@ -456,6 +477,7 @@ void PhononServer::findDevices()
                 }
             }
             break;
+
         case Solid::AudioInterface::OpenSoundSystem:
             if (audioIface->driverHandle().type() != QVariant::String) {
                 valid = false;
@@ -475,10 +497,9 @@ void PhononServer::findDevices()
             continue;
         }
 
-        m_udisOfAudioDevices.append(hwDevice.udi());
+        m_udisOfDevices.append(hwDevice.udi());
 
-        const PS::DeviceAccess devAccess(deviceIds, accessPreference, driver, capture,
-                playback);
+        const PS::DeviceAccess devAccess(deviceIds, accessPreference, driver, capture, playback);
         int initialPreference = 36 - deviceNum;
 
         QString uniqueIdPrefix = uniqueId(hwDevice, deviceNum);
@@ -499,16 +520,21 @@ void PhononServer::findDevices()
                 uniqueIdPrefix += QString(":i%1").arg(listIndex);
             }
         }
+
         const PS::DeviceKey pkey = {
             uniqueIdPrefix + QLatin1String(":playback"), cardNum, deviceNum
         };
-        const bool needNewPlaybackDevice = playback && !playbackDevices.contains(pkey);
+        const bool needNewPlaybackDevice = playback && !audioPlaybackDevices.contains(pkey);
+
         const PS::DeviceKey ckey = {
             uniqueIdPrefix + QLatin1String(":capture"), cardNum, deviceNum
         };
-        const bool needNewCaptureDevice = capture && !captureDevices.contains(ckey);
+        const bool needNewCaptureDevice = capture && !audioCaptureDevices.contains(ckey);
+
         if (needNewPlaybackDevice || needNewCaptureDevice) {
             const QString &icon = hwDevice.icon();
+
+            // Adjust the device preference according to the soudcard type
             switch (audioIface->soundcardType()) {
             case Solid::AudioInterface::InternalSoundcard:
                 break;
@@ -526,26 +552,30 @@ void PhononServer::findDevices()
                 kWarning(601) << "Modem devices should never show up!";
                 break;
             }
+
             if (needNewPlaybackDevice) {
-                PS::DeviceInfo dev(audioIface->name(), icon, pkey, initialPreference, isAdvanced);
+                PS::DeviceInfo dev(PS::DeviceInfo::Audio, audioIface->name(), icon, pkey, initialPreference, isAdvanced);
                 dev.addAccess(devAccess);
-                playbackDevices.insert(pkey, dev);
+                audioPlaybackDevices.insert(pkey, dev);
             }
+
             if (needNewCaptureDevice) {
-                PS::DeviceInfo dev(audioIface->name(), icon, ckey, initialPreference, isAdvanced);
+                PS::DeviceInfo dev(PS::DeviceInfo::Audio, audioIface->name(), icon, ckey, initialPreference, isAdvanced);
                 dev.addAccess(devAccess);
-                captureDevices.insert(ckey, dev);
+                audioCaptureDevices.insert(ckey, dev);
             }
         }
+
         if (!needNewPlaybackDevice && playback) {
-            PS::DeviceInfo &dev = playbackDevices[pkey];
+            PS::DeviceInfo &dev = audioPlaybackDevices[pkey];
             if (preferCardName) {
                 dev.setPreferredName(audioIface->name());
             }
             dev.addAccess(devAccess);
         }
+
         if (!needNewCaptureDevice && capture) {
-            PS::DeviceInfo &dev = captureDevices[ckey];
+            PS::DeviceInfo &dev = audioCaptureDevices[ckey];
             if (preferCardName) {
                 dev.setPreferredName(audioIface->name());
             }
@@ -553,8 +583,8 @@ void PhononServer::findDevices()
         }
     }
 
-    m_audioOutputDevices = playbackDevices.values();
-    m_audioCaptureDevices = captureDevices.values();
+    m_audioOutputDevices = audioPlaybackDevices.values();
+    m_audioCaptureDevices = audioCaptureDevices.values();
 
     if (haveAlsaDevices) {
         // go through the lists and check for devices that have only OSS and remove them since
@@ -564,30 +594,135 @@ void PhononServer::findDevices()
         removeOssOnlyDevices(&m_audioCaptureDevices);
     }
 
-    // now that we know about the hardware let's see what virtual devices we can find in
-    // ~/.asoundrc and /etc/asound.conf
+    /*
+     * Process video devices
+     */
+    foreach (const Solid::Device &hwDevice, solidVideoDevices) {
+        const Solid::Video *videoDevice = hwDevice.as<Solid::Video>();
+        const Solid::Block *blockDevice = hwDevice.as<Solid::Block>();
+
+        if (!videoDevice || !blockDevice)
+            continue;
+
+        if (videoDevice->supportedDrivers().isEmpty()) {
+            continue;
+        }
+
+        kDebug(601) << "Solid video device:" << hwDevice.product() << hwDevice.description();
+        foreach (const QString driverName, videoDevice->supportedDrivers()) {
+            kDebug(601) << "- driver" << driverName << ":" << videoDevice->driverHandle(driverName);
+        }
+
+        // Iterate through the supported drivers to create different acccess objects for each one
+        foreach (const QString driverName, videoDevice->supportedDrivers()) {
+            deviceIds.clear();
+            accessPreference = 0;
+            driver = PS::DeviceAccess::InvalidDriver;
+            valid = true;
+            isAdvanced = false;
+
+            QVariant handle = videoDevice->driverHandle(driverName);
+
+            if (handle.isValid()) {
+                kDebug(601) << driverName << "valid handle, type" << handle.typeName();
+            } else {
+                kDebug(601) << driverName << "no driver handle";
+            }
+
+            if (hwDevice.udi().contains(QLatin1String("video4linux"))) {
+                driver = PS::DeviceAccess::Video4LinuxDriver;
+                deviceIds << blockDevice->device();
+            }
+            accessPreference += 20;
+
+            if (handle.isValid())
+                deviceIds << handle.toString();
+
+            /*
+             * TODO Check v4l docs or something to see if there's anything
+             * else to do here
+             */
+
+            if (!valid) {
+                continue;
+            }
+
+            m_udisOfDevices.append(hwDevice.udi());
+
+            PS::DeviceAccess devAccess(deviceIds, accessPreference, driver, true, false);
+            devAccess.setPreferredDriverName(QString("%1 (%2)").arg(devAccess.driverName(), driverName));
+            int initialPreference = 50;
+
+            const PS::DeviceKey key = { uniqueId(hwDevice, -1), -1, -1 };
+            const bool needNewDevice = !videoCaptureDevices.contains(key);
+
+            if (needNewDevice) {
+                const QString &icon = hwDevice.icon();
+
+                // TODO Tweak initial preference using info from Solid
+
+                // Create a new video capture device
+                PS::DeviceInfo dev(PS::DeviceInfo::Video, hwDevice.product(), icon, key, initialPreference, isAdvanced);
+                dev.addAccess(devAccess);
+                videoCaptureDevices.insert(key, dev);
+            } else {
+                PS::DeviceInfo &dev = videoCaptureDevices[key];
+                dev.addAccess(devAccess);
+            }
+        }
+    }
+
+    m_videoCaptureDevices = videoCaptureDevices.values();
+
+    /* Now that we know about the hardware let's see what virtual devices we can find in
+     * ~/.asoundrc and /etc/asound.conf
+     */
     findVirtualDevices();
 
     QSet<QString> alreadyFoundCards;
     foreach (const PS::DeviceInfo &dev, m_audioOutputDevices) {
         alreadyFoundCards.insert(QLatin1String("AudioDevice_") + dev.key().uniqueId);
     }
+
     foreach (const PS::DeviceInfo &dev, m_audioCaptureDevices) {
         alreadyFoundCards.insert(QLatin1String("AudioDevice_") + dev.key().uniqueId);
     }
+
+    foreach (const PS::DeviceInfo &dev, m_videoCaptureDevices) {
+        alreadyFoundCards.insert(QLatin1String("VideoDevice_") + dev.key().uniqueId);
+    }
+
     // now look in the config file for disconnected devices
     const QStringList &groupList = m_config->groupList();
-    QStringList askToRemove;
-    QList<int> askToRemoveIndexes;
+    QStringList askToRemoveAudio;
+    QStringList askToRemoveVideo;
+    QList<int> askToRemoveAudioIndexes;
+    QList<int> askToRemoveVideoIndexes;
+
     foreach (const QString &groupName, groupList) {
-        if (alreadyFoundCards.contains(groupName) || !groupName.startsWith(QLatin1String("AudioDevice_"))) {
+        if (alreadyFoundCards.contains(groupName)) {
             continue;
+        }
+
+        const bool isAudio = groupName.startsWith(QLatin1String("AudioDevice_"));
+        const bool isVideo = groupName.startsWith(QLatin1String("VideoDevice_"));
+        const bool isPlayback = isAudio && groupName.endsWith(QLatin1String("playback"));
+        const bool isCapture = isAudio && groupName.endsWith(QLatin1String("capture"));
+
+        if (!isAudio && !isVideo) {
+            continue;
+        }
+
+        if (isAudio && (!isPlayback && !isCapture)) {
+            // this entry shouldn't be here
+            m_config->deleteGroup(groupName);
         }
 
         const KConfigGroup cGroup(m_config, groupName);
         if (cGroup.readEntry("deleted", false)) {
             continue;
         }
+
         const QString &cardName = cGroup.readEntry("cardName", QString());
         const QString &iconName = cGroup.readEntry("iconName", QString());
         const bool hotpluggable = cGroup.readEntry("hotpluggable", true);
@@ -595,60 +730,91 @@ void PhononServer::findDevices()
         const int isAdvanced = cGroup.readEntry("isAdvanced", true);
         const int deviceNumber = cGroup.readEntry("deviceNumber", -1);
         const PS::DeviceKey key = { groupName.mid(12), -1, deviceNumber };
-        const PS::DeviceInfo dev(cardName, iconName, key, initialPreference, isAdvanced);
-        const bool isPlayback = groupName.endsWith(QLatin1String("playback"));
+        const PS::DeviceInfo dev(PS::DeviceInfo::Audio, cardName, iconName, key, initialPreference, isAdvanced);
+
         if (!hotpluggable) {
             const QSettings phononSettings(QLatin1String("kde.org"), QLatin1String("libphonon"));
-            if (isAdvanced &&
-                    phononSettings.value(QLatin1String("General/HideAdvancedDevices"), true).toBool()) {
+            if (isAdvanced && phononSettings.value(QLatin1String("General/HideAdvancedDevices"), true).toBool()) {
                 dev.removeFromCache(m_config);
                 continue;
             } else {
-                askToRemove << (isPlayback ? i18n("Output: %1", cardName) :
-                        i18n("Capture: %1", cardName));
-                askToRemoveIndexes << cGroup.readEntry("index", 0);
+                if (isAudio) {
+                    askToRemoveAudio << (isPlayback ? i18n("Output: %1", cardName) : i18n("Capture: %1", cardName));
+                    askToRemoveAudioIndexes << cGroup.readEntry("index", 0);
+                }
+
+                if (isVideo) {
+                    askToRemoveVideo << i18n("Video: %1", cardName);
+                    askToRemoveVideoIndexes << cGroup.readEntry("index", 0);
+                }
             }
         }
+
         if (isPlayback) {
             m_audioOutputDevices << dev;
-        } else if (!groupName.endsWith(QLatin1String("capture"))) {
-            // this entry shouldn't be here
-            m_config->deleteGroup(groupName);
-        } else {
+        }
+
+        if (isCapture) {
             m_audioCaptureDevices << dev;
         }
+
+        if (isVideo) {
+            m_videoCaptureDevices << dev;
+        }
+
         alreadyFoundCards.insert(groupName);
     }
-    if (!askToRemove.isEmpty()) {
-        qSort(askToRemove);
+
+    if (!askToRemoveAudio.isEmpty()) {
+        qSort(askToRemoveAudio);
         QMetaObject::invokeMethod(this, "askToRemoveDevices", Qt::QueuedConnection,
-                Q_ARG(QStringList, askToRemove), Q_ARG(QList<int>, askToRemoveIndexes));
+                Q_ARG(QStringList, askToRemoveAudio),
+                Q_ARG(int, Phonon::AudioOutputDeviceType | Phonon::AudioCaptureDeviceType),
+                Q_ARG(QList<int>, askToRemoveAudioIndexes));
+    }
+
+    if (!askToRemoveVideo.isEmpty()) {
+        qSort(askToRemoveVideo);
+        QMetaObject::invokeMethod(this, "askToRemoveDevices", Qt::QueuedConnection,
+                Q_ARG(QStringList, askToRemoveVideo),
+                Q_ARG(int, Phonon::VideoCaptureDeviceType),
+                Q_ARG(QList<int>, askToRemoveVideoIndexes));
     }
 
     renameDevices(&m_audioOutputDevices);
     renameDevices(&m_audioCaptureDevices);
+    renameDevices(&m_videoCaptureDevices);
 
     qSort(m_audioOutputDevices);
     qSort(m_audioCaptureDevices);
+    qSort(m_videoCaptureDevices);
 
     QMutableListIterator<PS::DeviceInfo> it(m_audioOutputDevices);
     while (it.hasNext()) {
         it.next().syncWithCache(m_config);
     }
+
     it = m_audioCaptureDevices;
+    while (it.hasNext()) {
+        it.next().syncWithCache(m_config);
+    }
+
+    it = m_videoCaptureDevices;
     while (it.hasNext()) {
         it.next().syncWithCache(m_config);
     }
 
     m_config->sync();
 
-    kDebug(601) << "Playback Devices:" << m_audioOutputDevices;
-    kDebug(601) << "Capture Devices:" << m_audioCaptureDevices;
+    kDebug(601) << "Audio Playback Devices:" << m_audioOutputDevices;
+    kDebug(601) << "Audio Capture Devices:" << m_audioCaptureDevices;
+    kDebug(601) << "Video Capture Devices:" << m_videoCaptureDevices;
 }
 
 QByteArray PhononServer::audioDevicesIndexes(int type)
 {
     QByteArray *v;
+
     switch (type) {
     case Phonon::AudioOutputDeviceType:
         v = &m_audioOutputDevicesIndexesCache;
@@ -659,20 +825,49 @@ QByteArray PhononServer::audioDevicesIndexes(int type)
     default:
         return QByteArray();
     }
+
     if (v->isEmpty()) {
-        updateAudioDevicesCache();
+        updateDevicesCache();
     }
+
     return *v;
+}
+
+QByteArray PhononServer::videoDevicesIndexes(int type)
+{
+    if (type != Phonon::VideoCaptureDeviceType)
+        return QByteArray();
+
+    if (m_videoCaptureDevicesIndexesCache.isEmpty()) {
+        updateDevicesCache();
+    }
+
+    return m_videoCaptureDevicesIndexesCache;
 }
 
 QByteArray PhononServer::audioDevicesProperties(int index)
 {
     if (m_audioOutputDevicesIndexesCache.isEmpty() || m_audioCaptureDevicesIndexesCache.isEmpty()) {
-        updateAudioDevicesCache();
+        updateDevicesCache();
     }
+
     if (m_audioDevicesPropertiesCache.contains(index)) {
         return m_audioDevicesPropertiesCache.value(index);
     }
+
+    return QByteArray();
+}
+
+QByteArray PhononServer::videoDevicesProperties(int index)
+{
+    if (m_videoCaptureDevicesIndexesCache.isEmpty()) {
+        updateDevicesCache();
+    }
+
+    if (m_videoDevicesPropertiesCache.contains(index)) {
+        return m_videoDevicesPropertiesCache.value(index);
+    }
+
     return QByteArray();
 }
 
@@ -681,12 +876,29 @@ bool PhononServer::isAudioDeviceRemovable(int index) const
     if (!m_audioDevicesPropertiesCache.contains(index)) {
         return false;
     }
+
     const QList<PS::DeviceInfo> &deviceList = m_audioOutputDevices + m_audioCaptureDevices;
     foreach (const PS::DeviceInfo &dev, deviceList) {
         if (dev.index() == index) {
             return !dev.isAvailable();
         }
     }
+
+    return false;
+}
+
+bool PhononServer::isVideoDeviceRemovable(int index) const
+{
+    if (!m_videoDevicesPropertiesCache.contains(index)) {
+        return false;
+    }
+
+    foreach (const PS::DeviceInfo &dev, m_videoCaptureDevices) {
+        if (dev.index() == index) {
+            return !dev.isAvailable();
+        }
+    }
+
     return false;
 }
 
@@ -703,6 +915,24 @@ void PhononServer::removeAudioDevices(const QList<int> &indexes)
             }
         }
     }
+
+    m_config->sync();
+    m_updateDevicesTimer.start(50, this);
+}
+
+void PhononServer::removeVideoDevices(const QList< int >& indexes)
+{
+    foreach (int index, indexes) {
+        foreach (const PS::DeviceInfo &dev, m_videoCaptureDevices) {
+            if (dev.index() == index) {
+                if (!dev.isAvailable()) {
+                    dev.removeFromCache(m_config);
+                }
+                break;
+            }
+        }
+    }
+
     m_config->sync();
     m_updateDevicesTimer.start(50, this);
 }
@@ -716,6 +946,8 @@ static inline QByteArray nameForDriver(PS::DeviceAccess::DeviceDriverType d)
         return "oss";
     case PS::DeviceAccess::JackdDriver:
         return "jackd";
+    case PS::DeviceAccess::Video4LinuxDriver:
+        return "v4l";
     case PS::DeviceAccess::InvalidDriver:
         break;
     }
@@ -732,7 +964,7 @@ inline static QByteArray streamToByteArray(const T &data)
     return r;
 }
 
-void PhononServer::updateAudioDevicesCache()
+void PhononServer::updateDevicesCache()
 {
     QList<int> indexList;
     foreach (const PS::DeviceInfo &dev, m_audioOutputDevices) {
@@ -814,32 +1046,48 @@ void PhononServer::timerEvent(QTimerEvent *e)
         m_updateDevicesTimer.stop();
         m_audioOutputDevices.clear();
         m_audioCaptureDevices.clear();
-        m_udisOfAudioDevices.clear();
+        m_videoCaptureDevices.clear();
+        m_udisOfDevices.clear();
         findDevices();
         m_audioOutputDevicesIndexesCache.clear();
         m_audioCaptureDevicesIndexesCache.clear();
+        m_videoCaptureDevicesIndexesCache.clear();
 
-        QDBusMessage signal = QDBusMessage::createSignal("/modules/phononserver", "org.kde.PhononServer", "audioDevicesChanged");
+        QDBusMessage signal = QDBusMessage::createSignal("/modules/phononserver", "org.kde.PhononServer", "devicesChanged");
         QDBusConnection::sessionBus().send(signal);
     }
 }
 
 void PhononServer::deviceRemoved(const QString &udi)
 {
-    if (m_udisOfAudioDevices.contains(udi)) {
+    if (m_udisOfDevices.contains(udi)) {
         m_updateDevicesTimer.start(50, this);
     }
 }
 
-void PhononServer::askToRemoveDevices(const QStringList &devList, const QList<int> &indexes)
+void PhononServer::askToRemoveDevices(const QStringList &devList, int type, const QList< int >& indexes)
 {
+    bool areAudio = type & (Phonon::AudioOutputDeviceType | Phonon::AudioCaptureDeviceType);
+    bool areVideo = type & Phonon::VideoCaptureDeviceType;
+
+    if (!areAudio && !areVideo)
+        return;
+
     const QString &dontAskAgainName = QLatin1String("phonon_forget_devices_") +
         devList.join(QLatin1String("_"));
+
     KMessageBox::ButtonCode result;
     if (!KMessageBox::shouldBeShownYesNo(dontAskAgainName, result)) {
         if (result == KMessageBox::Yes) {
-            kDebug(601) << "removeAudioDevices" << indexes;
-            removeAudioDevices(indexes);
+            if (areAudio) {
+                kDebug(601) << "removeAudioDevices" << indexes;
+                removeAudioDevices(indexes);
+            }
+
+            if (areVideo) {
+                kDebug(601) << "removeVideoDevices" << indexes;
+                removeVideoDevices(indexes);
+            }
         }
         return;
     }
@@ -861,37 +1109,46 @@ void PhononServer::askToRemoveDevices(const QStringList &devList, const QList<in
                 }
             }
     } *dialog = new MyDialog;
-    dialog->setPlainCaption(i18n("Removed Sound Devices"));
+    dialog->setPlainCaption(areAudio ? i18n("Removed Sound Devices") : i18n("Removed Video Devices"));
     dialog->setButtons(KDialog::Yes | KDialog::No | KDialog::User1);
-    KIcon icon("audio-card");
+    KIcon icon(areAudio ? "audio-card" : "camera-web");
     dialog->setWindowIcon(icon);
     dialog->setModal(false);
     KGuiItem yes(KStandardGuiItem::yes());
-    yes.setToolTip(i18n("Forget about the sound devices."));
+    yes.setToolTip(areAudio ? i18n("Forget about the sound devices.") : i18n("Forget about the video devices"));
     dialog->setButtonGuiItem(KDialog::Yes, yes);
     dialog->setButtonGuiItem(KDialog::No, KStandardGuiItem::no());
     dialog->setButtonGuiItem(KDialog::User1, KGuiItem(i18nc("short string for a button, it opens "
                     "the Phonon page of System Settings", "Manage Devices"),
                 KIcon("preferences-system"),
-                i18n("Open the System Settings page for sound device configuration where you can "
+                i18n("Open the System Settings page for device configuration where you can "
                     "manually remove disconnected devices from the cache.")));
     dialog->setEscapeButton(KDialog::No);
     dialog->setDefaultButton(KDialog::User1);
 
     bool checkboxResult = false;
     int res = KMessageBox::createKMessageBox(dialog, icon,
-            i18n("<html><p>KDE detected that one or more internal sound devices were removed.</p>"
+            i18n("<html><p>KDE detected that one or more internal devices were removed.</p>"
                 "<p><b>Do you want KDE to permanently forget about these devices?</b></p>"
                 "<p>This is the list of devices KDE thinks can be removed:<ul><li>%1</li></ul></p></html>",
             devList.join(QLatin1String("</li><li>"))),
             QStringList(),
             i18n("Do not ask again for these devices"),
             &checkboxResult, KMessageBox::Notify);
+
     result = (res == KDialog::Yes ? KMessageBox::Yes : KMessageBox::No);
     if (result == KMessageBox::Yes) {
-        kDebug(601) << "removeAudioDevices" << indexes;
-        removeAudioDevices(indexes);
+        if (areAudio) {
+            kDebug(601) << "removeAudioDevices" << indexes;
+            removeAudioDevices(indexes);
+        }
+
+        if (areVideo) {
+            kDebug(601) << "removeVideoDevices" << indexes;
+            removeVideoDevices(indexes);
+        }
     }
+
     if (checkboxResult) {
         KMessageBox::saveDontShowAgainYesNo(dontAskAgainName, result);
     }

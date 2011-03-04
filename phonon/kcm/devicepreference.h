@@ -60,6 +60,7 @@ class DevicePreference : public QWidget, private Ui::DevicePreference
         void updateDeviceList();
         void updateAudioOutputDevices();
         void updateAudioCaptureDevices();
+        void updateVideoCaptureDevices();
 
     private:
         template<Phonon::ObjectDescriptionType T> void removeDevice(const Phonon::ObjectDescription<T> &deviceToRemove,
@@ -67,9 +68,13 @@ class DevicePreference : public QWidget, private Ui::DevicePreference
         void loadCategoryDevices();
         QList<Phonon::AudioOutputDevice> availableAudioOutputDevices() const;
         QList<Phonon::AudioCaptureDevice> availableAudioCaptureDevices() const;
+        QList<Phonon::VideoCaptureDevice> availableVideoCaptureDevices() const;
+
+    private:
         QList<int> m_removeOnApply;
-        QMap<int, Phonon::AudioOutputDeviceModel *> m_outputModel;
-        QMap<int, Phonon::AudioCaptureDeviceModel *> m_captureModel;
+        QMap<int, Phonon::AudioOutputDeviceModel *> m_audioOutputModel;
+        QMap<int, Phonon::AudioCaptureDeviceModel *> m_audioCaptureModel;
+        QMap<int, Phonon::VideoCaptureDeviceModel *> m_videoCaptureModel;
         QStandardItemModel m_categoryModel;
         QStandardItemModel m_headerModel;
         bool m_showingOutputModel;

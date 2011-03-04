@@ -42,9 +42,13 @@ class PhononServer : public KDEDModule
 
     public slots:
         Q_SCRIPTABLE QByteArray audioDevicesIndexes(int type);
+        Q_SCRIPTABLE QByteArray videoDevicesIndexes(int type);
         Q_SCRIPTABLE QByteArray audioDevicesProperties(int index);
+        Q_SCRIPTABLE QByteArray videoDevicesProperties(int index);
         Q_SCRIPTABLE bool isAudioDeviceRemovable(int index) const;
+        Q_SCRIPTABLE bool isVideoDeviceRemovable(int index) const;
         Q_SCRIPTABLE void removeAudioDevices(const QList<int> &indexes);
+        Q_SCRIPTABLE void removeVideoDevices(const QList<int> &indexes);
 
     protected:
         void timerEvent(QTimerEvent *e);
@@ -56,12 +60,12 @@ class PhononServer : public KDEDModule
 
         void alsaConfigChanged();
 
-        void askToRemoveDevices(const QStringList &, const QList<int> &indexes);
+        void askToRemoveDevices(const QStringList &devList, int type, const QList<int> &indexes);
 
     private:
         void findDevices();
         void findVirtualDevices();
-        void updateAudioDevicesCache();
+        void updateDevicesCache();
 
         KSharedConfigPtr m_config;
         QBasicTimer m_updateDevicesTimer;
@@ -69,13 +73,16 @@ class PhononServer : public KDEDModule
         // cache
         QByteArray m_audioOutputDevicesIndexesCache;
         QByteArray m_audioCaptureDevicesIndexesCache;
+        QByteArray m_videoCaptureDevicesIndexesCache;
         QHash<int, QByteArray> m_audioDevicesPropertiesCache;
+        QHash<int, QByteArray> m_videoDevicesPropertiesCache;
 
         // devices ordered by preference
         QList<PS::DeviceInfo> m_audioOutputDevices;
         QList<PS::DeviceInfo> m_audioCaptureDevices;
+        QList<PS::DeviceInfo> m_videoCaptureDevices;
 
-        QStringList m_udisOfAudioDevices;
+        QStringList m_udisOfDevices;
 };
 
 #endif // PHONONSERVER_H

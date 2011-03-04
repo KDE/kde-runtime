@@ -44,10 +44,12 @@ DeviceInfo::DeviceInfo()
     : m_index(0), m_initialPreference(0), m_isAvailable(false), m_isAdvanced(true),
     m_dbNameOverrideFound(false)
 {
+    m_type = Unspecified;
 }
 
-DeviceInfo::DeviceInfo(const QString &cardName, const QString &icon,
+DeviceInfo::DeviceInfo(Type t, const QString &cardName, const QString &icon,
         const DeviceKey &key, int pref, bool adv) :
+    m_type(t),
     m_cardName(cardName),
     m_icon(icon),
     m_key(key),
@@ -175,15 +177,36 @@ void DeviceInfo::applyHardwareDatabaseOverrides()
     }
 }
 
+const QString DeviceInfo::prefixForConfigGroup() const
+{
+    QString groupPrefix;
+    if (m_type == Audio) {
+        groupPrefix = "AudioDevice_";
+    }
+    if (m_type == Video) {
+        groupPrefix = "VideoDevice_";
+    }
+
+    return groupPrefix;
+}
+
 void DeviceInfo::removeFromCache(const KSharedConfigPtr &config) const
 {
-    KConfigGroup cGroup(config, QLatin1String("AudioDevice_") + m_key.uniqueId);
+    if (m_type == Unspecified)
+        return;
+
+    KConfigGroup cGroup(config, prefixForConfigGroup().toLatin1() + m_key.uniqueId);
     cGroup.writeEntry("deleted", true);
 }
 
 void DeviceInfo::syncWithCache(const KSharedConfigPtr &config)
 {
-    KConfigGroup cGroup(config, QLatin1String("AudioDevice_") + m_key.uniqueId);
+    if (m_type == Unspecified) {
+        kWarning(601) << "Device info for" << name() << "has unspecified type, unable to sync with cache";
+        return;
+    }
+
+    KConfigGroup cGroup(config, prefixForConfigGroup().toLatin1() + m_key.uniqueId);
     if (cGroup.exists()) {
         m_index = cGroup.readEntry("index", 0);
     }

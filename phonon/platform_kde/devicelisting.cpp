@@ -76,14 +76,24 @@ namespace Phonon
 QList<int> DeviceListing::objectDescriptionIndexes(Phonon::ObjectDescriptionType type)
 {
     QList<int> r;
-    if (type != Phonon::AudioOutputDeviceType && type != Phonon::AudioCaptureDeviceType) {
+    QDBusReply<QByteArray> reply;
+
+    if (type == Phonon::AudioOutputDeviceType || type == Phonon::AudioCaptureDeviceType) {
+        reply = m_phononServer.call(QLatin1String("audioDevicesIndexes"), static_cast<int>(type));
+        if (!reply.isValid()) {
+            kError(600) << reply.error();
+            return r;
+        }
+    } else
+    if (type == Phonon::VideoCaptureDeviceType) {
+        reply = m_phononServer.call(QLatin1String("videoDevicesIndexes"), static_cast<int>(type));
+        if (!reply.isValid()) {
+            kError(600) << reply.error();
+            return r;
+        }
+    } else
         return r;
-    }
-    QDBusReply<QByteArray> reply = m_phononServer.call(QLatin1String("audioDevicesIndexes"), static_cast<int>(type));
-    if (!reply.isValid()) {
-        kError(600) << reply.error();
-        return r;
-    }
+
     QDataStream stream(reply.value());
     stream >> r;
     return r;
@@ -92,14 +102,24 @@ QList<int> DeviceListing::objectDescriptionIndexes(Phonon::ObjectDescriptionType
 QHash<QByteArray, QVariant> DeviceListing::objectDescriptionProperties(Phonon::ObjectDescriptionType type, int index)
 {
     QHash<QByteArray, QVariant> r;
-    if (type != Phonon::AudioOutputDeviceType && type != Phonon::AudioCaptureDeviceType) {
+    QDBusReply<QByteArray> reply;
+
+    if (type == Phonon::AudioOutputDeviceType || type == Phonon::AudioCaptureDeviceType) {
+        reply = m_phononServer.call(QLatin1String("audioDevicesProperties"), index);
+        if (!reply.isValid()) {
+            kError(600) << reply.error();
+            return r;
+        }
+    } else
+    if (type == Phonon::VideoCaptureDeviceType) {
+        reply = m_phononServer.call(QLatin1String("videoDevicesProperties"), index);
+        if (!reply.isValid()) {
+            kError(600) << reply.error();
+            return r;
+        }
+    } else
         return r;
-    }
-    QDBusReply<QByteArray> reply = m_phononServer.call(QLatin1String("audioDevicesProperties"), index);
-    if (!reply.isValid()) {
-        kError(600) << reply.error();
-        return r;
-    }
+
     QDataStream stream(reply.value());
     stream >> r;
     return r;
@@ -116,14 +136,14 @@ DeviceListing::DeviceListing()
     installAlsaPhononDeviceHandle();
 
     QDBusConnection::sessionBus().connect(QLatin1String("org.kde.kded"), QLatin1String("/modules/phononserver"), QLatin1String("org.kde.PhononServer"),
-            QLatin1String("audioDevicesChanged"), QString(), this, SLOT(audioDevicesChanged()));
+            QLatin1String("devicesChanged"), QString(), this, SLOT(devicesChanged()));
 }
 
 DeviceListing::~DeviceListing()
 {
 }
 
-void DeviceListing::audioDevicesChanged()
+void DeviceListing::devicesChanged()
 {
     kDebug(600);
     m_signalTimer.start(0, this);
@@ -133,9 +153,10 @@ void DeviceListing::timerEvent(QTimerEvent *e)
 {
     if (e->timerId() == m_signalTimer.timerId()) {
         m_signalTimer.stop();
-        kDebug(600) << "emitting objectDescriptionChanged for AudioOutputDeviceType and AudioCaptureDeviceType";
+        kDebug(600) << "emitting objectDescriptionChanged for all devices";
         emit objectDescriptionChanged(Phonon::AudioOutputDeviceType);
         emit objectDescriptionChanged(Phonon::AudioCaptureDeviceType);
+        emit objectDescriptionChanged(Phonon::VideoCaptureDeviceType);
     }
 }
 

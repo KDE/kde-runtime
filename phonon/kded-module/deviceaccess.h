@@ -41,7 +41,8 @@ class DeviceAccess
             InvalidDriver = 0,
             AlsaDriver,
             OssDriver,
-            JackdDriver
+            JackdDriver,
+            Video4LinuxDriver
         };
 
         //! Constructs a device access object using the given information
@@ -57,8 +58,16 @@ class DeviceAccess
         //! Which driver does the access belong to
         DeviceDriverType driver() const;
 
-        //! Returns the name of the driver
+        /*!
+         * Returns the name of the driver
+         *
+         * If setPreferredDriverName() has not been called with a non-empty name,
+         * it returns the name obtained from the driver type.
+         */
         const QString driverName() const;
+
+        //! Sets the driver name
+        void setPreferredDriverName(const QString &name);
 
         //! Device identifiers, used to identify the access, driver specific
         const QStringList &deviceIds() const;
@@ -78,6 +87,7 @@ class DeviceAccess
         QStringList m_deviceIds;
         int m_accessPreference;
         DeviceDriverType m_driver : 16;
+        QString m_preferredName;
         bool m_capture : 8;
         bool m_playback : 8;
 };

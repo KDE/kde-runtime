@@ -59,6 +59,9 @@ DeviceAccess::DeviceDriverType DeviceAccess::driver() const
 
 const QString DeviceAccess::driverName() const
 {
+    if (!m_preferredName.isEmpty())
+        return m_preferredName;
+
     switch (m_driver) {
     case InvalidDriver:
         return i18n("Invalid Driver");
@@ -68,8 +71,15 @@ const QString DeviceAccess::driverName() const
         return i18n("OSS");
     case JackdDriver:
         return i18n("Jack");
+    case Video4LinuxDriver:
+        return i18n("Video 4 Linux");
     }
     return QString();
+}
+
+void DeviceAccess::setPreferredDriverName(const QString& name)
+{
+    m_preferredName = name;
 }
 
 const QStringList& DeviceAccess::deviceIds() const
@@ -95,8 +105,9 @@ bool DeviceAccess::isPlayback() const
 QDebug operator<<(QDebug &s, const DeviceAccess &a)
 {
     s.nospace() << "deviceIds: " << a.m_deviceIds
-        << "accessPreference: " << a.m_accessPreference
-        << "driver " << a.driverName();
+        << "; accessPreference: " << a.m_accessPreference
+        << "; driver type" << (int) a.driver()
+        << "; driver" << a.driverName();
     if (a.m_capture) {
         s.nospace() << " capture";
     }
