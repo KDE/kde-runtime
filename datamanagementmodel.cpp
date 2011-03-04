@@ -1077,6 +1077,10 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     /// Holds the mapping of <file://url> to <nepomuk:/res/> uris
     QHash<QUrl, QUrl> resolvedNodes;
 
+    //
+    // Resolve file URLs in resource URIs
+    //
+    QSet<QUrl> allResources;
     SimpleResourceGraph resGraph( resources );
     QList<SimpleResource> resGraphList = resGraph.toList();
     QMutableListIterator<SimpleResource> iter( resGraphList );
@@ -1113,14 +1117,29 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                 res.addProperty( RDF::type(), NFO::Folder() );
             }
         }
+        else {
+            allResources << res.uri();
+        }
     }
     resGraph = resGraphList;
+
+
+    //
+    // We need to ensure that no client removes any ontology constructs or graphs
+    //
+    if(containsResourceWithProtectedType(allResources)) {
+        return;
+    }
+
 
     Sync::ResourceIdentifier resIdent;
     QList<Soprano::Statement> allStatements;
     QList<Sync::SimpleResource> extraResources;
 
     
+    //
+    // Resolve file URLs in property values and prepare resource identifier
+    //
     foreach( const SimpleResource& res, resGraph.toList() ) {
         SimpleResource resolvedRes(res.uri());
         QHashIterator<QUrl, QVariant> it( res.properties() );
@@ -1185,14 +1204,21 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         resIdent.addSimpleResource( simpleRes );
     }
     
+
     clearError();
 
+
+    //
+    // Perform the actual identification
+    //
     resIdent.setModel( this );
     resIdent.setMinScore( 1.0 );
     // Are there any more properties would count as resource metadata?
     resIdent.addOptionalProperty( NAO::created() );
     resIdent.addOptionalProperty( NAO::lastModified() );
-    
+    resIdent.addOptionalProperty( NAO::creator() );
+    resIdent.addOptionalProperty( NAO::userVisible() );
+
     resIdent.identifyAll();
 
     if( resIdent.mappings().empty() ) {
@@ -1218,7 +1244,6 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     trModel.commit();
     
     //// TODO: do not allow to create properties or classes this way
-    //setError("Not implemented yet");
 }
 
 
