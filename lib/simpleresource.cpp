@@ -144,9 +144,17 @@ void Nepomuk::SimpleResource::setProperty(const QUrl &property, const QVariant &
     addProperty(property, value);
 }
 
+void Nepomuk::SimpleResource::setProperty(const QUrl &property, const QVariantList &values)
+{
+    d->m_properties.remove(property);
+    foreach(const QVariant& v, values) {
+        addProperty(property, v);
+    }
+}
+
 void Nepomuk::SimpleResource::addProperty(const QUrl &property, const QVariant &value)
 {
-    d->m_properties.insert(property, value);
+    d->m_properties.insertMulti(property, value);
 }
 
 void Nepomuk::SimpleResource::addPropertyNode(const QUrl &property, const Soprano::Node &node)

@@ -78,6 +78,13 @@ public:
     /**
      * Set a property overwriting existing values.
      * \param property The property to set
+     * \param values The values of the property.
+     */
+    void setProperty(const QUrl& property, const QVariantList& values);
+
+    /**
+     * Set a property overwriting existing values.
+     * \param property The property to set
      * \param value The value of the property. Will be converted to a QVariant.
      */
     void setPropertyNode(const QUrl& property, const Soprano::Node& value);
