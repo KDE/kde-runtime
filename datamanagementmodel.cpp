@@ -63,8 +63,7 @@ using namespace Soprano::Vocabulary;
 
 //// TODO: do not allow to create properties or classes through the "normal" methods. Instead provide methods for it.
 //// IDEAS:
-//// 1. Do not allow clients to change metadata properties like nao:created, nao:creator, nao:lastModified (except when sharing data...)
-//// 2. Somehow handle nie:hasPart (at least in describeResources - compare text annotations where we only want to annotate part of a text)
+//// 1. Somehow handle nie:hasPart (at least in describeResources - compare text annotations where we only want to annotate part of a text)
 
 namespace {
     /// used to handle sets and lists of QUrls
