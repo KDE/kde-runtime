@@ -88,6 +88,7 @@ private Q_SLOTS:
     void testStoreResources_file1();
     void testStoreResources_file2();
     void testStoreResources_metadata();
+    void testStoreResources_protectedTypes();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();

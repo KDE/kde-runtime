@@ -2293,6 +2293,54 @@ void DataManagementModelTest::testStoreResources_metadata()
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).allStatements().count(), 1);
 }
 
+void DataManagementModelTest::testStoreResources_protectedTypes()
+{
+    // remember current state to compare later on
+    Soprano::Graph existingStatements = m_model->listStatements().allStatements();
+
+
+    // property
+    SimpleResource propertyRes(QUrl("prop:/res"));
+    propertyRes.addProperty(QUrl("prop:/int"), 42);
+
+    // store the resource
+    m_dmModel->storeResources(SimpleResourceGraph() << propertyRes, QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // class
+    SimpleResource classRes(NRL::Graph());
+    classRes.addProperty(QUrl("prop:/int"), 42);
+
+    // store the resource
+    m_dmModel->storeResources(SimpleResourceGraph() << classRes, QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // graph
+    SimpleResource graphRes(QUrl("graph:/onto"));
+    propertyRes.addProperty(QUrl("prop:/int"), 42);
+
+    // store the resource
+    m_dmModel->storeResources(SimpleResourceGraph() << graphRes, QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+}
+
 void DataManagementModelTest::testMergeResources()
 {
     // first we need to create the two resources we want to merge as well as one that should not be touched
