@@ -36,7 +36,7 @@ TransactionModel::TransactionModel(Soprano::Model* parent)
 
 TransactionModel::~TransactionModel()
 {
-    roleback();
+    rollback();
 }
 
 void TransactionModel::commit()
@@ -45,7 +45,7 @@ void TransactionModel::commit()
     m_removed.clear();
 }
 
-void TransactionModel::roleback()
+void TransactionModel::rollback()
 {
     foreach( const Soprano::Statement & st, m_added ) {
         Soprano::FilterModel::removeStatement( st );

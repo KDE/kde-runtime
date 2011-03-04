@@ -44,7 +44,7 @@ namespace Nepomuk {
         virtual ~TransactionModel();
 
         void commit();
-        void roleback();
+        void rollback();
 
     private slots:
         void recordAddStatement( const Soprano::Statement & st );
