@@ -116,10 +116,29 @@ private:
 
     class Entry {
     public:
-        Entry() {}
+        Entry();
+        Entry(const Solid::Device& device);
 
         KUrl constructRelativeUrl( const QString& path ) const;
         QString constructLocalPath( const KUrl& filexUrl ) const;
+
+        enum Type {
+            /// just here for completness and to create invalid entries
+            Unknown = 0,
+
+            /// An optical disk: CD, DVD, BD, m_identifier is the fs label
+            OpticalDisc = 1,
+
+            /// An nfs mount, m_identifier is host+path
+            NfsMount = 2,
+
+            /// A samba mount, m_identifier is host+path
+            SmbMount = 3,
+
+            /// A removable medium: USB keys and portable disks, m_identifier is a UUID
+            RemovableMedium = 4
+        };
+        Type m_type;
 
         Solid::Device m_device;
         QString m_lastMountPath;
@@ -128,20 +147,16 @@ private:
         // an USB device is simply ejected without properly
         // unmounting before
         QString m_description;
-        QString m_uuid;
+        QString m_identifier;
     };
     QHash<QString, Entry> m_metadataCache;
 
     Entry* createCacheEntry( const Solid::Device& dev );
     Entry* findEntryByFilePath( const QString& path );
     const Entry* findEntryByFilePath( const QString& path ) const;
-    const Entry* findEntryByUuid(const QString& uuid) const;
+    const Entry* findEntryByIdentifier(const QString& uuid) const;
 
     mutable QMutex m_entryCacheMutex;
-
-    // cached strings for quicker comparison
-    const QString m_filexSchema;
-    const QString m_fileSchema;
 
     class StatementIteratorBackend;
     class QueryResultIteratorBackend;

@@ -340,7 +340,7 @@
                     <!-- ... with a DVD Video in it -->
                     <device udi="/org/kde/solid/fakehw/volume_label_SOLIDMAN_BEGINS">
                         <property key="name">SolidMan Begins</property>
-                        <property key="interfaces">Block,StorageVolume,OpticalDisc</property>
+                        <property key="interfaces">Block,StorageVolume,OpticalDisc,StorageAccess</property>
                         <property key="parent">/org/kde/solid/fakehw/storage_model_solid_reader</property>
 
                         <property key="discType">dvd_rom</property>
@@ -352,6 +352,12 @@
                         <property key="uuid">5012</property>
                         <property key="size">8033075200</property>
                         <property key="label">SolidMan Begins</property>
+                        <property key="isMounted">true</property>
+                        <property key="mountPoint">/media/dvd</property>
+                        <property key="usage">filesystem</property>
+                        <property key="fsType">udf</property>
+                        <property key="label">SOLIDMAN_BEGINS</property>
+                        <property key="size">4235423524</property>
                     </device>
 
 
