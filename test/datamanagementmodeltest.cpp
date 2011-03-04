@@ -61,6 +61,8 @@ void DataManagementModelTest::resetModel()
     // add some classes and properties
     QUrl graph("graph:/onto");
     m_model->addStatement( graph, RDF::type(), NRL::Ontology(), graph );
+    // removeResources depends on type inference
+    m_model->addStatement( graph, RDF::type(), NRL::Graph(), graph );
 
     m_model->addStatement( QUrl("prop:/int"), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( QUrl("prop:/int"), RDFS::range(), XMLSchema::xsdInt(), graph );
@@ -439,6 +441,41 @@ void DataManagementModelTest::testAddProperty_invalid_args()
     // TODO: try setting protected properties like nie:url, nfo:fileName, nie:isPartOf (only applies to files)
 }
 
+void DataManagementModelTest::testAddProperty_protectedTypes()
+{
+    // remember current state to compare later on
+    Soprano::Graph existingStatements = m_model->listStatements().allStatements();
+
+
+    // property
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("prop:/res"), QUrl("prop:/int"), QVariantList() << 42, QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // class
+    m_dmModel->addProperty(QList<QUrl>() << NRL::Graph(), QUrl("prop:/int"), QVariantList() << 42, QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // graph
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("graph:/onto"), QUrl("prop:/int"), QVariantList() << 42, QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+}
 
 void DataManagementModelTest::testSetProperty()
 {
@@ -824,6 +861,42 @@ void DataManagementModelTest::testSetProperty_nieUrl5()
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir121"), NIE::isPartOf(), QUrl("res:/dir2")));
 }
 
+void DataManagementModelTest::testSetProperty_protectedTypes()
+{
+    // remember current state to compare later on
+    Soprano::Graph existingStatements = m_model->listStatements().allStatements();
+
+
+    // property
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("prop:/res"), QUrl("prop:/int"), QVariantList() << 42, QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // class
+    m_dmModel->setProperty(QList<QUrl>() << NRL::Graph(), QUrl("prop:/int"), QVariantList() << 42, QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // graph
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("graph:/onto"), QUrl("prop:/int"), QVariantList() << 42, QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+}
+
 void DataManagementModelTest::testRemoveProperty()
 {
     const int cleanCount = m_model->statementCount();
@@ -1018,6 +1091,43 @@ void DataManagementModelTest::testRemoveProperty_invalid_args()
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
+// it is not allowed to change properties, classes or graphs through this API
+void DataManagementModelTest::testRemoveProperty_protectedTypes()
+{
+    // remember current state to compare later on
+    Soprano::Graph existingStatements = m_model->listStatements().allStatements();
+
+
+    // property
+    m_dmModel->removeProperty(QList<QUrl>() << QUrl("prop:/res"), QUrl("prop:/int"), QVariantList() << 42, QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // class
+    m_dmModel->removeProperty(QList<QUrl>() << NRL::Graph(), QUrl("prop:/int"), QVariantList() << 42, QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // graph
+    m_dmModel->removeProperty(QList<QUrl>() << QUrl("graph:/onto"), QUrl("prop:/int"), QVariantList() << 42, QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+}
+
 void DataManagementModelTest::testRemoveProperties()
 {
     QTemporaryFile fileA;
@@ -1208,6 +1318,41 @@ void DataManagementModelTest::testRemoveProperties_invalid_args()
 }
 
 
+void DataManagementModelTest::testRemoveProperties_protectedTypes()
+{
+    // remember current state to compare later on
+    Soprano::Graph existingStatements = m_model->listStatements().allStatements();
+
+
+    // property
+    m_dmModel->removeProperties(QList<QUrl>() << QUrl("prop:/res"), QList<QUrl>() << QUrl("prop:/int"), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // class
+    m_dmModel->removeProperties(QList<QUrl>() << NRL::Graph(), QList<QUrl>() << QUrl("prop:/int"), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // graph
+    m_dmModel->removeProperties(QList<QUrl>() << QUrl("graph:/onto"), QList<QUrl>() << QUrl("prop:/int"), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);}
+
 void DataManagementModelTest::testRemoveResources()
 {
     QTemporaryFile fileA;
@@ -1379,6 +1524,43 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
     QVERIFY(m_dmModel->lastError());
 
     // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+}
+
+// make sure we do not allow to remove classes, properties, and graphs
+void DataManagementModelTest::testRemoveResources_protectedTypes()
+{
+    // remember current state to compare later on
+    Soprano::Graph existingStatements = m_model->listStatements().allStatements();
+
+
+    // property
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("prop:/res"), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // class
+    m_dmModel->removeResources(QList<QUrl>() << NRL::Graph(), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // graph
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("graph:/onto"), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
@@ -2111,7 +2293,6 @@ void DataManagementModelTest::testStoreResources_metadata()
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).allStatements().count(), 1);
 }
 
-
 void DataManagementModelTest::testMergeResources()
 {
     // first we need to create the two resources we want to merge as well as one that should not be touched
@@ -2163,6 +2344,81 @@ void DataManagementModelTest::testMergeResources()
     QVERIFY(m_model->containsStatement(QUrl("res:/C"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1));
 }
 
+void DataManagementModelTest::testMergeResources_protectedTypes()
+{
+    // create one resource to be merged with something else
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), NAO::Tag(), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("Foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
+
+
+    // remember current state to compare later on
+    Soprano::Graph existingStatements = m_model->listStatements().allStatements();
+
+
+    // property 1
+    m_dmModel->mergeResources(QUrl("res:/A"), QUrl("prop:/int"), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // property 2
+    m_dmModel->mergeResources(QUrl("prop:/int"), QUrl("res:/A"), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // class 1
+    m_dmModel->mergeResources(QUrl("res:/A"), NRL::Graph(), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // property 2
+    m_dmModel->mergeResources(NRL::Graph(), QUrl("res:/A"), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // graph 1
+    m_dmModel->mergeResources(QUrl("res:/A"), QUrl("graph:/onto"), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // graph 2
+    m_dmModel->mergeResources(QUrl("graph:/onto"), QUrl("res:/A"), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+}
 
 void DataManagementModelTest::testDescribeResources()
 {

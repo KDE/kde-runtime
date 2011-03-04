@@ -276,6 +276,14 @@ private:
     };
     QUrl createUri(UriType type);
 
+    /**
+     * Checks if any of the provided resources has a protected type (class, property, graph), ie. one
+     * of the resources should not be changed through the standard API.
+     *
+     * If the method returns \p true it has already set an appropriate error.
+     */
+    bool containsResourceWithProtectedType(const QSet<QUrl>& resources) const;
+
     class Private;
     Private* const d;
 

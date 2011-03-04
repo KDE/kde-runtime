@@ -48,6 +48,7 @@ private Q_SLOTS:
     void testAddProperty_file();
     void testAddProperty_invalidFile();
     void testAddProperty_invalid_args();
+    void testAddProperty_protectedTypes();
 
     void testSetProperty();
     void testSetProperty_createRes();
@@ -58,17 +59,21 @@ private Q_SLOTS:
     void testSetProperty_nieUrl3();
     void testSetProperty_nieUrl4();
     void testSetProperty_nieUrl5();
+    void testSetProperty_protectedTypes();
 
     void testRemoveProperty();
     void testRemoveProperty_file();
     void testRemoveProperty_invalid_args();
+    void testRemoveProperty_protectedTypes();
 
     void testRemoveProperties();
     void testRemoveProperties_invalid_args();
+    void testRemoveProperties_protectedTypes();
     
     void testRemoveResources();
     void testRemoveResources_subresources();
     void testRemoveResources_invalid_args();
+    void testRemoveResources_protectedTypes();
     
     void testRemoveDataByApplication1();
     void testRemoveDataByApplication2();
@@ -85,6 +90,7 @@ private Q_SLOTS:
     void testStoreResources_metadata();
 
     void testMergeResources();
+    void testMergeResources_protectedTypes();
 
     void testDescribeResources();
 
