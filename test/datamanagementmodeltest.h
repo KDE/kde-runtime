@@ -99,6 +99,7 @@ private:
     KTempDir* createNieUrlTestData();
 
     void resetModel();
+    bool haveTrailingGraphs() const;
 
     KTempDir* m_storageDir;
     Soprano::Model* m_model;

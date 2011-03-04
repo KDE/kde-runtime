@@ -51,7 +51,6 @@ using namespace Nepomuk::Vocabulary;
 
 
 // TODO: test nao:created and nao:lastModified, these should always be correct for existing resources. This is especially important in the removeDataByApplication methods.
-// TODO: test that trailing graphs are properly removed in all methods.
 
 void DataManagementModelTest::resetModel()
 {
@@ -220,6 +219,8 @@ void DataManagementModelTest::testAddProperty()
                 );
 
     QCOMPARE(existingStatements, Soprano::Graph(m_model->listStatements().allStatements()));
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 // test that creating a resource by adding a property on its URI properly sets metadata
@@ -235,6 +236,8 @@ void DataManagementModelTest::testAddProperty_createRes()
     // and both created and last modification date should be similar
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).iterateObjects().allNodes().first(),
              m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first());
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 
@@ -254,6 +257,8 @@ void DataManagementModelTest::testAddProperty_cardinality()
 
     // the second call needs to fail
     QVERIFY(m_dmModel->lastError());
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 
@@ -318,6 +323,8 @@ void DataManagementModelTest::testAddProperty_file()
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/res"), fileAUri).allStatements().count(), 1);
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl::fromLocalFile(fileA.fileName())));
     QCOMPARE(m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().count(), 1);
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testAddProperty_invalidFile()
@@ -339,6 +346,8 @@ void DataManagementModelTest::testAddProperty_invalidFile()
     
     // There should be some error as '/Blah' does not exist
     QVERIFY(m_dmModel->lastError());
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testAddProperty_invalid_args()
@@ -512,6 +521,8 @@ void DataManagementModelTest::testSetProperty()
 
     // check the number of graphs (two for the app, two for the actual data, and one for the ontology)
     QCOMPARE(m_model->listContexts().allElements().count(), 5);
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 // test that creating a resource by setting a property on its URI properly sets metadata
@@ -527,6 +538,8 @@ void DataManagementModelTest::testSetProperty_createRes()
     // and both created and last modification date should be similar
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).iterateObjects().allNodes().first(),
              m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first());
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 
@@ -551,6 +564,8 @@ void DataManagementModelTest::testSetProperty_overwrite()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int2"), LiteralValue(42), g);
 
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int3"), LiteralValue(42), g2);
+
+    QVERIFY(!haveTrailingGraphs());
 
 
     //
@@ -582,6 +597,8 @@ void DataManagementModelTest::testSetProperty_overwrite()
                                        Soprano::Node::resourceToN3(NAO::identifier()),
                                        Soprano::Node::literalToN3(QLatin1String("testapp"))),
                                   Soprano::Query::QueryLanguageSparql).boolValue());
+
+    QVERIFY(!haveTrailingGraphs());
 
 
     //
@@ -641,6 +658,8 @@ void DataManagementModelTest::testSetProperty_overwrite()
                                        Soprano::Node::literalToN3(QLatin1String("testapp")),
                                        Soprano::Node::literalToN3(QLatin1String("A"))),
                                   Soprano::Query::QueryLanguageSparql).boolValue());
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testSetProperty_invalid_args()
@@ -750,6 +769,8 @@ void DataManagementModelTest::testSetProperty_nieUrl1()
     // remember the graph since it should not change later on
     const QUrl nieUrlGraph = m_model->listStatements(QUrl("res:/A"), NIE::url(), QUrl("file:///tmp/A")).allStatements().first().context().uri();
 
+    QVERIFY(!haveTrailingGraphs());
+
 
     // we reset the URL
     m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), NIE::url(), QVariantList() << QUrl("file:///tmp/B"), QLatin1String("testapp"));
@@ -760,6 +781,8 @@ void DataManagementModelTest::testSetProperty_nieUrl1()
 
     // the graph should have been kept
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NIE::url(), Node()).allStatements().first().context().uri(), nieUrlGraph);
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testSetProperty_nieUrl2()
@@ -784,6 +807,8 @@ void DataManagementModelTest::testSetProperty_nieUrl2()
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/file11"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/file11"))));
 
     delete dir;
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 // the same test as above only using the file URL
@@ -810,6 +835,8 @@ void DataManagementModelTest::testSetProperty_nieUrl3()
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/file11"), NIE::url(), QUrl(newDir1Url.toString() + QLatin1String("/file11"))));
 
     delete dir;
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testSetProperty_nieUrl4()
@@ -834,6 +861,8 @@ void DataManagementModelTest::testSetProperty_nieUrl4()
 
     // the nie:isPartOf relationship should have been updated, too
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir121"), NIE::isPartOf(), QUrl("res:/dir12")));
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 // the same test as above only using the file URL
@@ -859,6 +888,8 @@ void DataManagementModelTest::testSetProperty_nieUrl5()
 
     // the nie:isPartOf relationship should have been updated, too
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/dir121"), NIE::isPartOf(), QUrl("res:/dir2")));
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testSetProperty_protectedTypes()
@@ -921,6 +952,8 @@ void DataManagementModelTest::testRemoveProperty()
     // test that the other property value is still valid
     QVERIFY(m_model->containsStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1));
 
+    QVERIFY(!haveTrailingGraphs());
+
 
     // step 2: remove the second value
     m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QLatin1String("foobar"), QLatin1String("Testapp"));
@@ -933,11 +966,10 @@ void DataManagementModelTest::testRemoveProperty()
     // even the resource should be gone since the NAO mtime does not count as a "real" property
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Soprano::Node(), Soprano::Node()));
 
-    QTextStream s(stderr);
-    m_model->write(s);
-
     // nothing except the ontology and the Testapp Agent should be left
     QCOMPARE(m_model->statementCount(), cleanCount+6);
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testRemoveProperty_file()
@@ -974,6 +1006,8 @@ void DataManagementModelTest::testRemoveProperty_file()
     m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res"), QVariantList() << QUrl::fromLocalFile(fileB.fileName()), QLatin1String("Testapp"));
 
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/res"), Node()).allStatements().count(), 1);
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testRemoveProperty_invalid_args()
@@ -1192,6 +1226,8 @@ void DataManagementModelTest::testRemoveProperties()
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int2"), Node()));
 
     // TODO: verify graphs
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 
@@ -1396,6 +1432,8 @@ void DataManagementModelTest::testRemoveResources()
 
     // verify that other resources were not touched
     QCOMPARE(m_model->listStatements(QUrl("res:/C"), Node(), Node()).allStatements().count(), 2);
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testRemoveResources_subresources()
@@ -1463,6 +1501,8 @@ void DataManagementModelTest::testRemoveResources_subresources()
     // E and F need to be preserved
     QCOMPARE(m_model->listStatements(QUrl("res:/D"), Node(), Node()).allStatements().count(), 1);
     QCOMPARE(m_model->listStatements(QUrl("res:/E"), Node(), Node()).allStatements().count(), 2);
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testRemoveResources_invalid_args()
@@ -1588,6 +1628,8 @@ void DataManagementModelTest::testRemoveDataByApplication1()
     QVERIFY(!m_model->containsAnyStatement(Node(), NAO::maintainedBy(), QUrl("app:/A")));
     QCOMPARE(m_model->listStatements(Node(), RDF::type(), NRL::InstanceBase()).allStatements().count(), 1);
     QCOMPARE(m_model->listStatements(Node(), RDF::type(), NRL::GraphMetadata()).allStatements().count(), 1);
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 // scatter resource over two graphs, only one of which is supposed to be removed
@@ -1626,6 +1668,8 @@ void DataManagementModelTest::testRemoveDataByApplication2()
 
     // four graphs: g2, the 2 app graphs, and the mtime graph
     QCOMPARE(m_model->listStatements(Node(), RDF::type(), NRL::InstanceBase()).allStatements().count(), 4);
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 // two apps that maintain a graph should keep the data when one removes it
@@ -1656,6 +1700,8 @@ void DataManagementModelTest::testRemoveDataByApplication3()
 
     QVERIFY(!m_model->containsAnyStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1));
     QCOMPARE(m_model->listStatements(g1, NAO::maintainedBy(), Node()).allStatements().count(), 1);
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 // test file URLs + not removing nie:url
@@ -1698,6 +1744,8 @@ void DataManagementModelTest::testRemoveDataByApplication4()
 
     // the "hello world" should still be there
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world"))));
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 // test sub-resource handling the easy kind
@@ -1725,6 +1773,8 @@ void DataManagementModelTest::testRemoveDataByApplication5()
     // this should have removed both A and B
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 // test sub-resource handling
@@ -1800,6 +1850,8 @@ void DataManagementModelTest::testRemoveDataByApplication6()
     QCOMPARE(m_model->listStatements(QUrl("res:/D"), Node(), Node()).allStatements().count(), 1);
     QCOMPARE(m_model->listStatements(QUrl("res:/E"), Node(), Node()).allStatements().count(), 2);
     QCOMPARE(m_model->listStatements(QUrl("res:/F"), Node(), Node()).allStatements().count(), 2);
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 namespace {
@@ -1858,6 +1910,8 @@ void DataManagementModelTest::testStoreResources()
 
     m_dmModel->storeResources( graph, QLatin1String("Testapp") );
     QVERIFY( !m_model->containsAnyStatement( QUrl("_:blah"), QUrl(), QUrl() ) );
+
+    QVERIFY(!haveTrailingGraphs());
 
     //
     // Test 2 -
@@ -1933,6 +1987,8 @@ void DataManagementModelTest::testStoreResources()
             st.setSubject( albumUri );
             QVERIFY( m_model->containsAnyStatement( st ) );
         }
+
+        QVERIFY(!haveTrailingGraphs());
     }
 
     //
@@ -1974,6 +2030,8 @@ void DataManagementModelTest::testStoreResources()
         QVERIFY( graphNode.isResource() );
 
         QVERIFY( !m_model->containsAnyStatement( graphNode, RDF::type(), NRL::DiscardableInstanceBase() ) );
+
+        QVERIFY(!haveTrailingGraphs());
     }
     {
         Nepomuk::SimpleResource res;
@@ -2008,6 +2066,8 @@ void DataManagementModelTest::testStoreResources()
         QVERIFY( graphNode.isResource() );
 
         QVERIFY( !m_model->containsAnyStatement( graphNode, RDF::type(), NRL::DiscardableInstanceBase() ) );
+
+        QVERIFY(!haveTrailingGraphs());
     }
 }
 
@@ -2115,6 +2175,8 @@ void DataManagementModelTest::testStoreResources_createResource()
     m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"));
 
     QVERIFY(m_model->containsAnyStatement( res2.uri(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testStoreResources_invalid_args()
@@ -2222,6 +2284,8 @@ void DataManagementModelTest::testStoreResources_file1()
                                        Node::literalToN3(LiteralValue(QLatin1String("Foobar"))),
                                        Node::resourceToN3(QUrl::fromLocalFile(fileA.fileName()))),
                                   Query::QueryLanguageSparql).boolValue());
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testStoreResources_file2()
@@ -2254,6 +2318,8 @@ void DataManagementModelTest::testStoreResources_file2()
                                   .arg(Node::resourceToN3(NIE::url()),
                                        Node::resourceToN3(fileUrl)),
                                   Query::QueryLanguageSparql).boolValue());
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 // metadata should be ignored when merging one resource into another
@@ -2291,6 +2357,8 @@ void DataManagementModelTest::testStoreResources_metadata()
     QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/int"), Node()).allStatements().count(), 1);
     QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/string"), Node()).allStatements().count(), 1);
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).allStatements().count(), 1);
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testStoreResources_protectedTypes()
@@ -2390,6 +2458,8 @@ void DataManagementModelTest::testMergeResources()
     // make sure C was not touched apart from the backlink
     QVERIFY(m_model->containsStatement(QUrl("res:/C"), QUrl("prop:/int"), LiteralValue(42), g1));
     QVERIFY(m_model->containsStatement(QUrl("res:/C"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1));
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testMergeResources_protectedTypes()
@@ -2712,6 +2782,19 @@ KTempDir * DataManagementModelTest::createNieUrlTestData()
     m_model->addStatement(QUrl("res:/file1211"), NIE::isPartOf(), QUrl(QLatin1String("res:/dir121")), g1);
 
     return mainDir;
+}
+
+bool DataManagementModelTest::haveTrailingGraphs() const
+{
+    return m_model->executeQuery(QString::fromLatin1("ask where { "
+                                                     "?g a ?t . "
+                                                     "FILTER(!bif:exists( (select (1) where { graph ?g { ?s ?p ?o . } . }))) . "
+                                                     "FILTER(?t in (%1,%2,%3)) . "
+                                                     "}")
+                                 .arg(Node::resourceToN3(NRL::InstanceBase()),
+                                      Node::resourceToN3(NRL::DiscardableInstanceBase()),
+                                      Node::resourceToN3(NRL::GraphMetadata())),
+                                 Soprano::Query::QueryLanguageSparql).boolValue();
 }
 
 QTEST_KDEMAIN_CORE(DataManagementModelTest)
