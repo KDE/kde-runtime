@@ -551,6 +551,13 @@ void DevicePreference::defaults()
         }
     }
 
+    /*
+     * Save this list (that contains even hidden devices) to GlobaConfig, and then
+     * load them back. All devices that should be hidden will be hidden
+     */
+    save();
+    loadCategoryDevices();
+
     deviceList->resizeColumnToContents(0);
 }
 
