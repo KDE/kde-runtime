@@ -947,7 +947,7 @@ static inline QByteArray nameForDriver(PS::DeviceAccess::DeviceDriverType d)
     case PS::DeviceAccess::JackdDriver:
         return "jackd";
     case PS::DeviceAccess::Video4LinuxDriver:
-        return "v4l";
+        return "v4l2";
     case PS::DeviceAccess::InvalidDriver:
         break;
     }
