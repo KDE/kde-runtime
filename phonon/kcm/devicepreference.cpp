@@ -490,19 +490,20 @@ void DevicePreference::save()
         const QList<int> order = m_audioOutputModel.value(cat)->tupleIndexOrder();
         Phonon::GlobalConfig().setAudioOutputDeviceListFor(cat, order);
     }
+
     for (int i = 1; i < captureCategoriesCount; ++i) {
         const Phonon::Category cat = captureCategories[i];
         Q_ASSERT(m_audioCaptureModel.value(cat));
         const QList<int> order = m_audioCaptureModel.value(cat)->tupleIndexOrder();
         Phonon::GlobalConfig().setAudioCaptureDeviceListFor(cat, order);
     }
-    /*for (int i = 1; i < captureCategoriesCount; ++i) {
+
+    for (int i = 1; i < captureCategoriesCount; ++i) {
         const Phonon::Category cat = captureCategories[i];
         Q_ASSERT(m_videoCaptureModel.value(cat));
         const QList<int> order = m_videoCaptureModel.value(cat)->tupleIndexOrder();
         Phonon::GlobalConfig().setVideoCaptureDeviceListFor(cat, order);
-    }*/
-    // TODO ^^ Phonon::GlobalConfig().setVideoCaptureDeviceListFor(cat, order);
+    }
 }
 
 void DevicePreference::defaults()
