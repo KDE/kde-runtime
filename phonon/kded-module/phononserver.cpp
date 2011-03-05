@@ -964,17 +964,36 @@ inline static QByteArray streamToByteArray(const T &data)
     return r;
 }
 
+inline static void insertGenericProperties(const PS::DeviceInfo &dev, QHash<QByteArray, QVariant> &p)
+{
+    p.insert("name", dev.name());
+    p.insert("description", dev.description());
+    p.insert("available", dev.isAvailable());
+    p.insert("initialPreference", dev.initialPreference());
+    p.insert("isAdvanced", dev.isAdvanced());
+    p.insert("icon", dev.icon());
+}
+
+inline static void insertDALProperty(const PS::DeviceInfo &dev, QHash<QByteArray, QVariant> &p)
+{
+    Phonon::DeviceAccessList deviceAccessList;
+    foreach (const PS::DeviceAccess &access, dev.accessList()) {
+        const QByteArray &driver = nameForDriver(access.driver());
+        foreach (const QString &deviceId, access.deviceIds()) {
+            deviceAccessList << Phonon::DeviceAccess(driver, deviceId);
+        }
+    }
+
+    p.insert("deviceAccessList", QVariant::fromValue(deviceAccessList));
+}
+
 void PhononServer::updateDevicesCache()
 {
     QList<int> indexList;
     foreach (const PS::DeviceInfo &dev, m_audioOutputDevices) {
         QHash<QByteArray, QVariant> properties;
-        properties.insert("name", dev.name());
-        properties.insert("description", dev.description());
-        properties.insert("available", dev.isAvailable());
-        properties.insert("initialPreference", dev.initialPreference());
-        properties.insert("isAdvanced", dev.isAdvanced());
-        properties.insert("icon", dev.icon());
+        insertGenericProperties(dev, properties);
+
         Phonon::DeviceAccessList deviceAccessList;
         bool first = true;
         QStringList oldDeviceIds;
@@ -994,6 +1013,7 @@ void PhononServer::updateDevicesCache()
                 deviceAccessList << Phonon::DeviceAccess(driver, deviceId);
             }
         }
+
         properties.insert("deviceAccessList", QVariant::fromValue(deviceAccessList));
 
         // Phonon 4.2 compatibility
@@ -1007,27 +1027,24 @@ void PhononServer::updateDevicesCache()
     indexList.clear();
     foreach (const PS::DeviceInfo &dev, m_audioCaptureDevices) {
         QHash<QByteArray, QVariant> properties;
-        properties.insert("name", dev.name());
-        properties.insert("description", dev.description());
-        properties.insert("available", dev.isAvailable());
-        properties.insert("initialPreference", dev.initialPreference());
-        properties.insert("isAdvanced", dev.isAdvanced());
-        properties.insert("icon", dev.icon());
-        Phonon::DeviceAccessList deviceAccessList;
-        foreach (const PS::DeviceAccess &access, dev.accessList()) {
-            const QByteArray &driver = nameForDriver(access.driver());
-            foreach (const QString &deviceId, access.deviceIds()) {
-                deviceAccessList << Phonon::DeviceAccess(driver, deviceId);
-            }
-        }
-        properties.insert("deviceAccessList", QVariant::fromValue(deviceAccessList));
-        // no Phonon 4.2 compatibility for capture devices necessary as 4.2 never really supported
-        // capture
+        insertGenericProperties(dev, properties);
+        insertDALProperty(dev, properties);
 
         indexList << dev.index();
         m_audioDevicesPropertiesCache.insert(dev.index(), streamToByteArray(properties));
     }
     m_audioCaptureDevicesIndexesCache = streamToByteArray(indexList);
+
+    indexList.clear();
+    foreach (const PS::DeviceInfo &dev, m_videoCaptureDevices) {
+        QHash<QByteArray, QVariant> properties;
+        insertGenericProperties(dev, properties);
+        insertDALProperty(dev, properties);
+
+        indexList << dev.index();
+        m_videoDevicesPropertiesCache.insert(dev.index(), streamToByteArray(properties));
+    }
+    m_videoCaptureDevicesIndexesCache = streamToByteArray(indexList);
 }
 
 void PhononServer::deviceAdded(const QString &udi)
