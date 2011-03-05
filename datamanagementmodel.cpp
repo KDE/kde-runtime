@@ -1227,6 +1227,12 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         //return;
     }
 
+    foreach( const KUrl & url, resIdent.unidentified() ) {
+        Soprano::Node dateTime( Soprano::LiteralValue( QDateTime::currentDateTime() ) );
+        allStatements << Soprano::Statement( url, NAO::created(), dateTime );
+        allStatements << Soprano::Statement( url, NAO::lastModified(), dateTime );
+    }
+
     foreach( const Sync::SimpleResource & res, extraResources ) {
         allStatements << res.toStatementList();
     }
