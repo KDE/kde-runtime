@@ -1,6 +1,6 @@
 /*
     This file is part of the Nepomuk KDE project.
-    Copyright (C) 2010  Vishesh Handa <handa.vish@gmail.com>
+    Copyright (C) 2010-11  Vishesh Handa <handa.vish@gmail.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,7 @@
 
 #include "resourceidentifier.h"
 #include "resourceidentifier_p.h"
-#include "backupsync.h"
+#include "nrio.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QSet>
@@ -97,10 +97,47 @@ bool Nepomuk::Sync::ResourceIdentifier::Private::queryIdentify(const KUrl& oldUr
     return result;
 }
 
+KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatchForAll(const Nepomuk::Sync::SimpleResource& simpleRes)
+{
+    QString query = QString::fromLatin1("select distinct ?r where { ");
+    QHash< KUrl, Soprano::Node >::const_iterator it = simpleRes.constBegin();
+    for( ; it != simpleRes.constEnd(); it ++ ) {
+        // Optional properties
+        if( m_optionalProperties.contains( it.key() ) ) {
+            query += QString::fromLatin1("OPTIONAL { ?r %1 %2 . }")
+                    .arg( Soprano::Node::resourceToN3( it.key() ), it.value().toN3() );
+        }
+        else {
+            query += QString::fromLatin1("?r %1 %2 . ")
+                        .arg( Soprano::Node::resourceToN3( it.key() ), it.value().toN3() );
+        }
+    }
+    query += QLatin1String(" } ");
+
+    Soprano::QueryResultIterator iter = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    QSet<KUrl> matchedResources;
+    while( iter.next() ) {
+        matchedResources.insert( iter["r"].uri() );
+    }
+
+    if( matchedResources.empty() ) {
+        return KUrl();
+    }
+    
+    if( matchedResources.size() > 1 )
+        return q->duplicateMatch( simpleRes.uri(), matchedResources, m_minScore );
+
+    return *matchedResources.begin();
+}
+
 
 //TODO: Optimize
 KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatch(const Nepomuk::Sync::SimpleResource& simpleRes)
 {
+    if( m_minScore == 1.0 ) {
+        return findMatchForAll( simpleRes );
+    }
+    
     kDebug() << "SimpleResource: " << simpleRes;
     //
     // Vital Properties

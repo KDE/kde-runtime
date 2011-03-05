@@ -23,6 +23,7 @@
 
 #include <QtCore/QList>
 #include <QtCore/QFile>
+#include <QtCore/QTimer>
 
 #include <Soprano/Node>
 #include <Soprano/Model>
@@ -75,6 +76,10 @@ namespace {
 void Nepomuk::InvalidFileResourceCleaner::run()
 {
     kDebug() << "Searching for invalid local file entries";
+#ifndef NDEBUG
+    QTime timer;
+    timer.start();
+#endif
     //
     // Since the removal of the graphs could intefere with the iterator and result
     // in jumping of rows (worst case) we cache all graphs to remove
@@ -104,6 +109,9 @@ void Nepomuk::InvalidFileResourceCleaner::run()
         Nepomuk::ResourceManager::instance()->mainModel()->removeAllStatements( Soprano::Node(), Soprano::Node(), r );
     }
     kDebug() << "Done searching for invalid local file entries";
+#ifndef NDEBUG
+    kDebug() << "Time elapsed: " << timer.elapsed()/1000.0 << "sec";
+#endif
 }
 
 #include "invalidfileresourcecleaner.moc"

@@ -22,7 +22,7 @@
 
 
 #include "changelogmerger.h"
-#include "backupsync.h"
+#include "nrio.h"
 #include "logstorage.h"
 
 #include <algorithm>
@@ -89,7 +89,7 @@ namespace {
 
         QString query = QString::fromLatin1( "ask { %1 %2 \"false\"^^xsd:boolean . }" )
                         .arg( Soprano::Node::resourceToN3( prop ) )
-                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::backupsync::mergeable() ) );
+                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NRIO::mergeable() ) );
 
         bool isMergeable = !model->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
 
@@ -117,7 +117,7 @@ void Nepomuk::ChangeLogMerger::mergeChangeLog()
     m_theGraph = createGraph();
     
     kDebug();
-    const Types::Property mergeableProperty( Nepomuk::Vocabulary::backupsync::mergeable() );
+    const Types::Property mergeableProperty( Nepomuk::Vocabulary::NRIO::mergeable() );
 
     //
     // Get own changeLog

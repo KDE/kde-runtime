@@ -89,6 +89,8 @@ namespace Nepomuk {
 
             SimpleResource& operator=( const SimpleResource & rhs );
             bool operator==( const SimpleResource & res ) const;
+
+            bool isValid() const;
         private:
             class Private;
             QSharedDataPointer<Private> d;

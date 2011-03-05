@@ -29,11 +29,27 @@ namespace Soprano {
 }
 
 class KJob;
+class CrappyInferencer2;
 
 namespace Nepomuk {
 
     class ModelCopyJob;
 
+    /**
+     * Represents the main Nepomuk model. While it looks as if there could be more than
+     * one instance of Repository there is only the one.
+     *
+     * Repository is based on NRLModel only for the query prefix expansion feature. It
+     * uses a Soprano::Utils::SignalCacheModel to compact the several statementsAdded()
+     * and statementsRemoved() signals, and uses CrappyInferencer2 to keep rdfs:subClassOf
+     * and nao:userVisible inference up-to-date.
+     *
+     * On construction it checks for and optionally performs conversion from an old repository
+     * type (pre-Virtuoso times) and runs CrappyInferencer2::updateAllResources() which is
+     * performed in a separate thread.
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
+     */
     class Repository : public Soprano::NRLModel
     {
         Q_OBJECT
@@ -59,8 +75,9 @@ namespace Nepomuk {
          * Will emit the opened signal
          */
         void open();
-
         void close();
+
+        void updateInference();
 
     Q_SIGNALS:
         void opened( Repository*, bool success );
@@ -75,6 +92,7 @@ namespace Nepomuk {
         State m_state;
 
         Soprano::Model* m_model;
+        CrappyInferencer2* m_inferencer;
         const Soprano::Backend* m_backend;
 
         // only used during opening

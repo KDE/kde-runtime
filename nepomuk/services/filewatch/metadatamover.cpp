@@ -77,6 +77,8 @@ void Nepomuk::MetadataMover::stop()
 void Nepomuk::MetadataMover::moveFileMetadata( const KUrl& from, const KUrl& to )
 {
     kDebug() << from << to;
+    Q_ASSERT( !from.path().isEmpty() && from.path() != "/" );
+    Q_ASSERT( !to.path().isEmpty() && to.path() != "/" );
     m_queueMutex.lock();
     UpdateRequest req( from, to );
     if ( !m_updateQueue.contains( req ) &&
@@ -89,6 +91,7 @@ void Nepomuk::MetadataMover::moveFileMetadata( const KUrl& from, const KUrl& to 
 
 void Nepomuk::MetadataMover::removeFileMetadata( const KUrl& file )
 {
+    Q_ASSERT( !file.path().isEmpty() && file.path() != "/" );
     removeFileMetadata( KUrl::List() << file );
 }
 

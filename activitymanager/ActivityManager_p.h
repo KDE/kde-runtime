@@ -36,7 +36,7 @@
     #include <Nepomuk/Resource>
 #endif
 
-#ifndef HAVE_NEPOMUK
+#if !defined(HAVE_NEPOMUK) && !defined(Q_CC_MSVC)
     #warning "No Nepomuk, disabling some activity related features"
 #endif
 

@@ -48,6 +48,9 @@ kuvo: {
     rdfs:Resource
         nao:userVisible true .
 
+    nao:userVisible
+        nao:userVisible false .
+
     nuao:Event
         nao:userVisible false .
 

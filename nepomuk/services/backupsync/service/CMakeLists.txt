@@ -58,7 +58,7 @@ qt4_add_dbus_adaptor( BackupSyncService_SRCS
 #--------- Ontologies -------#
 soprano_add_ontology(BackupSyncService_SRCS
    ${CMAKE_CURRENT_SOURCE_DIR}/../../../ontologies/nrio.trig
-  "backupsync"
+  "NRIO"
   "Nepomuk::Vocabulary"
   "trig")
 

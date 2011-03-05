@@ -20,6 +20,7 @@
 */
 
 #include "identificationsetgenerator_p.h"
+#include "nrio.h"
 
 #include <Soprano/Statement>
 #include <Soprano/Node>
@@ -27,7 +28,6 @@
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
-#include "backupsync.h"
 
 #include <Nepomuk/ResourceManager>
 
@@ -46,7 +46,7 @@ Soprano::QueryResultIterator Nepomuk::Sync::IdentificationSetGenerator::performQ
                                         "UNION { ?p %1 %3. } "
                                         "FILTER( ?r in ( %4 ) ) . } ")
     .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::subPropertyOf()),
-            Soprano::Node::resourceToN3(Nepomuk::Vocabulary::backupsync::identifyingProperty()),
+            Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NRIO::identifyingProperty()),
             Soprano::Node::resourceToN3(Soprano::Vocabulary::RDF::type()),
             uris.join(", "));
 

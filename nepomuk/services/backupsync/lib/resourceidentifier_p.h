@@ -110,6 +110,14 @@ namespace Nepomuk {
              * \sa queryIdentify
              */
             KUrl findMatch( const Nepomuk::Sync::SimpleResource& simpleRes );
+
+            /**
+             * This function does not take the minScore into evalutation. It returns
+             * the resource that matches all the properties in \p simpleRes.
+             *
+             * This should be used in the special case when the minScore = 1.0
+             */
+            KUrl findMatchForAll( const Nepomuk::Sync::SimpleResource& simpleRes );
         };
     }
 }

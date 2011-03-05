@@ -87,6 +87,9 @@ void Nepomuk::Core::slotOntologiesLoaded()
     m_repository->setEnableQueryPrefixExpansion(false);
     m_repository->setEnableQueryPrefixExpansion(true);
 
+    // the first time this is a very long procedure. Thus, we do it while Nepomuk is active although then some queries might return invalid results
+    m_repository->updateInference();
+
     if ( !m_initialized ) {
         // and finally we are done: the repository is online and the ontologies are loaded.
         m_initialized = true;

@@ -23,7 +23,7 @@
 #include "identificationset.h"
 #include "changelog.h"
 #include "changelogrecord.h"
-#include "backupsync.h"
+#include "nrio.h"
 
 #include <QtCore/QList>
 #include <QtCore/QFile>
@@ -47,15 +47,19 @@
 #include <Nepomuk/ResourceManager>
 
 #include <KDebug>
+#include <Soprano/Vocabulary/NRL>
+
+using namespace Soprano::Vocabulary;
+using namespace Nepomuk::Vocabulary;
 
 namespace {
     class IdentificationSetGenerator {
     public :
         IdentificationSetGenerator( const QSet<QUrl>& uniqueUris, Soprano::Model * m , const QSet<QUrl> & ignoreList = QSet<QUrl>());
 
-        Soprano::Model * model;
-        QSet<QUrl> done;
-        QSet<QUrl> notDone;
+        Soprano::Model * m_model;
+        QSet<QUrl> m_done;
+        QSet<QUrl> m_notDone;
 
         QList<Soprano::Statement> statements;
         
@@ -63,40 +67,43 @@ namespace {
         void iterate();
         QList<Soprano::Statement> generate();
 
-        static const int maxIterationSize = 50;
+        static const int maxIterationSize = 500;
+
+        bool done() const { return m_notDone.isEmpty(); }
     };
 
     IdentificationSetGenerator::IdentificationSetGenerator(const QSet<QUrl>& uniqueUris, Soprano::Model* m, const QSet<QUrl> & ignoreList)
     {
-        notDone = uniqueUris - ignoreList;
-        model = m;
-        done = ignoreList;
-
+        m_notDone = uniqueUris - ignoreList;
+        m_model = m;
+        m_done = ignoreList;
     }
 
     Soprano::QueryResultIterator IdentificationSetGenerator::queryIdentifyingStatements(const QStringList& uris)
     {
+        //
+        // select distinct ?r ?p ?o where { ?r ?p ?o.
+        // ?p rdfs:subPropertyOf nrio:identifyingProperty .
+        // FILTER( ?r in ( <res1>, <res2>, ... ) ) . }
+        //
         QString query = QString::fromLatin1("select distinct ?r ?p ?o where { ?r ?p ?o. "
-                                            "{ ?p %1 %2 .} "
-                                            "UNION { ?p %1 %3. } "
+                                            "?p %1 %2 . "
                                             " FILTER( ?r in ( %4 ) ) . } ")
-                        .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::subPropertyOf()),
-                             Soprano::Node::resourceToN3(Nepomuk::Vocabulary::backupsync::identifyingProperty()),
-                             Soprano::Node::resourceToN3(Soprano::Vocabulary::RDF::type()),
-                             uris.join(", "));
+                        .arg(Soprano::Node::resourceToN3( RDFS::subPropertyOf() ),
+                             Soprano::Node::resourceToN3( NRIO::identifyingProperty() ),
+                             uris.join(", ") );
 
-
-        return model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+        return m_model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
     }
 
     void IdentificationSetGenerator::iterate()
     {
         QStringList uris;
         
-        QMutableSetIterator<QUrl> iter( notDone );
+        QMutableSetIterator<QUrl> iter( m_notDone );
         while( iter.hasNext() ) {
             const QUrl & uri = iter.next();
-            done.insert( uri );
+            m_done.insert( uri );
             
             uris.append( Soprano::Node::resourceToN3( uri ) );
 
@@ -116,8 +123,8 @@ namespace {
             // If the object is also a nepomuk uri, it too needs to be identified.
             const QUrl & objUri = obj.uri();
             if( objUri.toString().startsWith("nepomuk:/res/") ) {
-                if( !done.contains( objUri ) ) {
-                    notDone.insert( objUri );
+                if( !m_done.contains( objUri ) ) {
+                    m_notDone.insert( objUri );
                 }
             }
         }
@@ -125,9 +132,9 @@ namespace {
 
     QList<Soprano::Statement> IdentificationSetGenerator::generate()
     {
-        done.clear();
+        m_done.clear();
 
-        while( !notDone.isEmpty() ) {
+        while( !done() ) {
             iterate();
         }
         return statements;
@@ -259,7 +266,7 @@ namespace {
         QString query = QString::fromLatin1( "ask { %1 %2 %3 }" )
         .arg( Soprano::Node::resourceToN3( prop ) )
         .arg( Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::subPropertyOf()) )
-        .arg( Soprano::Node::resourceToN3(Nepomuk::Vocabulary::backupsync::identifyingProperty()) );
+        .arg( Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NRIO::identifyingProperty()) );
         return model->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
     }
 }
@@ -344,5 +351,32 @@ void Nepomuk::IdentificationSet::mergeWith(const IdentificationSet & rhs)
 {
     this->d->m_statements << rhs.d->m_statements;
     return;
+}
+
+void Nepomuk::IdentificationSet::createIdentificationSet(const QSet<QUrl>& uniqueUris, const QUrl& outputUrl)
+{
+    QFile file( outputUrl.path() );
+    if( !file.open( QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate ) ) {
+        kWarning() << "File could not be opened : " << outputUrl.path();
+        return;
+    }
+    
+    QTextStream out( &file );
+
+    IdentificationSet set;
+    Soprano::Model * model = ResourceManager::instance()->mainModel();
+    
+    IdentificationSetGenerator generator( uniqueUris, model );
+    while( !generator.done() ) {
+        generator.statements.clear();
+        kDebug() << "iterating";
+        generator.iterate();
+        kDebug() << "Done : " << generator.m_done.size();
+        kDebug() << "Num statements: " << generator.statements.size();
+        set.d->m_statements.clear();
+        set.d->m_statements = generator.statements;
+        set.save( out );
+    }
+    kDebug() << "Done creating Identification Set";
 }
 

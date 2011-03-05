@@ -248,7 +248,7 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
                 }
             }
             QString workingDir = getWorkingDir();
-            QString description = s->genericName();
+            QString description = s->comment();
 
             files.append(LinkFile(QStringList() << execPath << arguments,linkFilePath,description,workingDir));
         }

@@ -21,7 +21,7 @@
 
 
 #include "diffgenerator.h"
-#include "backupsync.h"
+#include "nrio.h"
 #include "logstorage.h"
 #include "changelog.h"
 
@@ -67,7 +67,7 @@ Nepomuk::DiffGenerator::~DiffGenerator()
 
 
 namespace {
-    const Nepomuk::Types::Property identifyingProperty( Nepomuk::Vocabulary::backupsync::identifyingProperty() );
+    const Nepomuk::Types::Property identifyingProperty( Nepomuk::Vocabulary::NRIO::identifyingProperty() );
 }
 
 bool Nepomuk::DiffGenerator::backupStatement(const Soprano::Statement& st)

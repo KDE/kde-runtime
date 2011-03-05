@@ -129,6 +129,7 @@ bool Nepomuk::SyncFile::load(const QUrl& syncFile)
 
 bool Nepomuk::SyncFile::save( const QUrl& outFile )
 {
+    kDebug() << "Saving at " << outFile;
     KTempDir tempDir;
 
     QUrl logFileUrl( tempDir.name() + "changelog" );
@@ -137,15 +138,21 @@ bool Nepomuk::SyncFile::save( const QUrl& outFile )
     QUrl identFileUrl( tempDir.name() + "identificationset" );
     d->m_identificationSet.save( identFileUrl );
 
+    return createSyncFile( logFileUrl, identFileUrl, outFile );
+}
+
+// static
+bool Nepomuk::SyncFile::createSyncFile(const QUrl& logfile, const QUrl& identFile, const QUrl & outFile)
+{
     KTar tarFile( outFile.toString(), QString::fromLatin1("application/x-gzip") );
     if( !tarFile.open( QIODevice::WriteOnly ) ) {
         kWarning() << "File could not be opened : " << outFile.path();
         return false;
     }
-
-    tarFile.addLocalFile( logFileUrl.path(), "changelog" );
-    tarFile.addLocalFile( identFileUrl.path(), "identificationset" );
-
+    
+    tarFile.addLocalFile( logfile.path(), "changelog" );
+    tarFile.addLocalFile( identFile.path(), "identificationset" );
+    
     return true;
 }
 

@@ -29,6 +29,7 @@
 #include <KUrl>
 
 #include "nepomuksync_export.h"
+#include <Soprano/Error/ErrorCode>
 
 namespace Soprano {
     class Statement;
@@ -63,14 +64,17 @@ namespace Nepomuk {
         class NEPOMUKSYNC_EXPORT ResourceMerger
         {
         public:
-            ResourceMerger();
+            ResourceMerger( Soprano::Model * model =0, const QHash<KUrl, KUrl> & mappings = (QHash<KUrl, KUrl>()) );
             virtual ~ResourceMerger();
 
             void setModel( Soprano::Model * model );
             Soprano::Model * model() const;
 
+            void setMappings( const QHash<KUrl, KUrl> & mappings );
+            QHash<KUrl, KUrl> mappings() const;
+            
             /**
-             * Pushes all the statements in \p graph into the model. If the statement
+             * Merges all the statements in \p graph into the model. If the statement
              * already exists then resolveDuplicate() is called.
              *
              * If any of the statements contains a graph, then that graph is used. Otherwise
@@ -78,8 +82,10 @@ namespace Nepomuk {
              *
              * \sa setGraphType graphType
              */
-            virtual void merge( const Soprano::Graph & graph, const QHash<KUrl, KUrl> & mappings );
+            virtual void merge( const Soprano::Graph & graph );
 
+            virtual void mergeStatement( const Soprano::Statement & st );
+            
             /**
              * The graph type by default is nrl:InstanceBase. If \p type is not a subclass of
              * nrl:Graph then it is ignored.
@@ -89,7 +95,6 @@ namespace Nepomuk {
             QHash<QUrl, Soprano::Node> additionalMetadata() const;
             
         protected:
-            
             /**
              * Called when trying to merge a statement which contains a Resource that
              * has not been identified.
@@ -136,6 +141,14 @@ namespace Nepomuk {
              * \sa createGraph
              */
             KUrl graph();
+
+            /**
+             * Add the statement in the model. By default it just calls
+             * Soprano::Model::addStatement()
+             */
+            virtual Soprano::Error::ErrorCode addStatement( const Soprano::Statement & st );
+            Soprano::Error::ErrorCode addStatement( const Soprano::Node& subject, const Soprano::Node& property,
+                                                    const Soprano::Node& object, const Soprano::Node& graph );
             
         private:
             class Private;

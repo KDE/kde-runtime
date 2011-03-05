@@ -14,6 +14,7 @@
 
 #include "repository.h"
 #include "modelcopyjob.h"
+#include "crappyinferencer2.h"
 
 #include <Soprano/Backend>
 #include <Soprano/PluginManager>
@@ -68,6 +69,9 @@ Nepomuk::Repository::~Repository()
 void Nepomuk::Repository::close()
 {
     kDebug() << m_name;
+
+    delete m_inferencer;
+    m_inferencer = 0;
 
     delete m_modelCopyJob;
     m_modelCopyJob = 0;
@@ -165,8 +169,12 @@ void Nepomuk::Repository::open()
     // =================================
     Soprano::Util::SignalCacheModel* scm = new Soprano::Util::SignalCacheModel( m_model );
     scm->setParent(this); // memory management
-
     setParentModel( scm );
+
+    // create the crappy inference model which handles rdfs:subClassOf only -> we only use this to improve performance of ResourceTypeTerms
+    // =================================
+    m_inferencer = new CrappyInferencer2( scm );
+    setParentModel(m_inferencer);
 
     // check if we have to convert
     // =================================
@@ -337,7 +345,18 @@ Soprano::BackendSettings Nepomuk::Repository::readVirtuosoSettings() const
     // needs to be addressed as well
     settings << Soprano::BackendSetting( "ServerThreads", 100 );
 
+    // Never take more than 5 minutes to answer a query (this is to filter out broken queries and bugs in Virtuoso's query optimizer)
+    // trueg: We cannot activate this yet. 1. Virtuoso < 6.3 crashes and 2. even open cursors are subject to the timeout which is really
+    //        not what we want!
+//    settings << Soprano::BackendSetting( "QueryTimeout", 5*60000 );
+
     return settings;
+}
+
+void Nepomuk::Repository::updateInference()
+{
+    m_inferencer->updateInferenceIndex();
+    m_inferencer->updateAllResources();
 }
 
 #include "repository.moc"

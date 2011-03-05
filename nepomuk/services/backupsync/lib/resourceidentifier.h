@@ -37,10 +37,6 @@ namespace Soprano {
 namespace Nepomuk {
 
     class Resource;
-
-    namespace Types {
-        class Property;
-    }
     
     namespace Sync {
 
@@ -139,7 +135,7 @@ namespace Nepomuk {
              * The property \p prop will be matched during identification, but it will
              * not contribute to the actual score if it cannot be matched.
              */
-            void addOptionalProperty( const Types::Property & property );
+            void addOptionalProperty( const QUrl & property );
 
             void clearOptionalProperties();
             
@@ -151,7 +147,7 @@ namespace Nepomuk {
             *
             * By default - rdf:type is the only vital property
             */
-            void addVitalProperty( const Types::Property & property );
+            void addVitalProperty( const QUrl & property );
 
             void clearVitalProperties();
             

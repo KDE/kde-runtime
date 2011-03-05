@@ -16,7 +16,7 @@ if(KDEBASE_DISABLE_MULTIMEDIA)
 else(KDEBASE_DISABLE_MULTIMEDIA)
    set(PHONON_MIN_VERSION "4.4.3")
    macro_ensure_version("${PHONON_MIN_VERSION}" "${PHONON_VERSION}" _phonon_version_ok)
-   macro_log_feature(_phonon_version_ok "Phonon" "Phonon library" "git://gitorious.org/phonon/phonon.git" TRUE "${PHONON_MIN_VERSION}" "STRONGLY RECOMMENDED: Required for playing audio and video throughout KDE")
+   macro_log_feature(_phonon_version_ok "Phonon" "Phonon library" "git://anongit.kde.org/phonon.git" TRUE "${PHONON_MIN_VERSION}" "STRONGLY RECOMMENDED: Required for playing audio and video throughout KDE")
 
    find_package(Alsa)
    option(WITH_ALSA "Use ALSA, if found" ON)

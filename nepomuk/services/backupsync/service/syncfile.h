@@ -115,6 +115,7 @@ namespace Nepomuk {
         const ChangeLog& changeLog() const;
         const IdentificationSet & identificationSet() const;
 
+        static bool createSyncFile( const QUrl& logfile, const QUrl& identFile, const QUrl& outFile );
     private:
         class Private;
         Private * d;
