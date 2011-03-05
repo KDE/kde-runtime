@@ -57,6 +57,8 @@ namespace Nepomuk {
 
         IndexScheduler* m_indexScheduler;
         int m_pauseState;
+        
+        bool m_wasIndexingWhenPaused;
 
         // timer used to periodically check for available space
         QTimer m_availSpaceTimer;
