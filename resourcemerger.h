@@ -74,6 +74,13 @@ namespace Nepomuk {
         QMultiHash<QUrl, Soprano::Node> getPropertyHashForGraph( const QUrl & graph ) const;
 
         bool checkGraphMetadata( const QMultiHash<QUrl, Soprano::Node> & hash );
+        bool areEqual( const QMultiHash<QUrl, Soprano::Node>& oldPropHash,
+                       const QMultiHash<QUrl, Soprano::Node>& newPropHash );
+        
+        /**
+         * Returns true if all the types in \p types are present in \p masterTypes
+         */
+        bool containsAllTypes( const QSet<QUrl>& types, const QSet<QUrl>& masterTypes );
     };
 
 }
