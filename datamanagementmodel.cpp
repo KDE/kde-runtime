@@ -1,6 +1,7 @@
 /*
    This file is part of the Nepomuk KDE project.
    Copyright (C) 2010-2011 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2011 Vishesh Handa <handa.vish@gmail.com>   
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -1463,7 +1464,7 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
 
 QUrl Nepomuk::DataManagementModel::createGraph(const QString& app, const QMultiHash< QUrl, Soprano::Node >& additionalMetadata)
 {
-    QHash<QUrl, Soprano::Node> graphMetaData;
+    QHash<QUrl, Soprano::Node> graphMetaData = additionalMetadata;
 
     // determine the graph type
     bool haveGraphType = false;
