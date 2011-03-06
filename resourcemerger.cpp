@@ -59,7 +59,7 @@ KUrl Nepomuk::ResourceMerger::createGraph()
 void Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
 {
     kDebug() << newSt;
-    // Merge rules
+    // Graph Merge rules
     // 1. If old graph is of type discardable and new is non-discardable
     //    -> Then update the graph
     // 2. Otherwsie
@@ -231,8 +231,10 @@ QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     finalPropHash.unite( newPropHash );
 
     // FIXME: Need better error checking!
-    if( !checkGraphMetadata( finalPropHash ) )
+    if( !checkGraphMetadata( finalPropHash ) ) {
+        kDebug() << "Graph metadata check FAILED!";
         return QUrl();
+    }
 
     // Add app uri
     if( m_appUri.isEmpty() )
@@ -510,7 +512,7 @@ void Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
         
     }
 
-
+    // The graph is error free. Merge all its statements
     foreach( const Soprano::Statement & st, graph.toList() ) {
         mergeStatement( st );
         if( m_model->lastError() != Soprano::Error::ErrorNone )
@@ -518,4 +520,17 @@ void Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
     }
 }
 
-
+Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::Statement& st)
+{
+    // Special handling for nao:lastModified
+    if( st.predicate().uri() == NAO::lastModified() ) {
+        model()->removeAllStatements( st.subject(), st.predicate(), Soprano::Node() );
+    }
+    // and nao:created
+    else if( st.predicate().uri() == NAO::created() ) {
+        // Do nothing - Keep the original nao:created
+        return Soprano::Error::ErrorNone;
+    }
+    
+    return model()->addStatement( st );
+}

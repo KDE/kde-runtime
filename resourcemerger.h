@@ -49,6 +49,7 @@ namespace Nepomuk {
         virtual QUrl createGraphUri();
         virtual void resolveDuplicate(const Soprano::Statement& newSt);
         virtual KUrl resolveUnidentifiedResource(const KUrl& uri);
+        virtual Soprano::Error::ErrorCode addStatement( const Soprano::Statement & st );
         
     private:
         /**
