@@ -34,16 +34,26 @@ public:
     virtual ~EventProcessor();
 
     enum EventType {
-        Accessed,
-        Opened,
-        Modified,
-        Closed
+        Accessed,   ///< resource was accessed, but we don't know for how long it will be open/used
+        Opened,     ///< resource was opened
+        Modified,   ///< previously opened resource was modified
+        Closed      ///< previously opened resource was closed
     };
 
-    static void addEvent(const QString & application, const QString & uri, EventType type);
+    enum EventReason {
+        User,
+        Heuristic,
+        Scheduled,
+        System,
+        World
+    };
+
+    static void addEvent(const QString & application, const QString & uri,
+            EventType type = Accessed, EventReason reason = User);
 
 protected:
-    void _event(const QString & application, const QString & uri, EventType type);
+    void _event(const QString & application, const QString & uri,
+            EventType type = Accessed, EventReason reason = User);
 
 private:
     EventProcessor();
