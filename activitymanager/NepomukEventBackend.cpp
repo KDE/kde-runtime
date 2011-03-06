@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010 Ivan Cukic <ivan.cukic(at)kde.org>
+ *   Copyright (C) 2011 Ivan Cukic <ivan.cukic(at)kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License version 2,
@@ -17,32 +17,21 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef EVENT_PROCESSOR_H
-#define EVENT_PROCESSOR_H
+#include "config-features.h"
 
-#include <QThread>
+#ifndef HAVE_NEPOMUK
+    #warning "No Nepomuk, disabling desktop events processing"
 
-#include "Event.h"
+#else // HAVE_NEPOMUK
 
-class EventBackend;
-class EventProcessorPrivate;
+#include "NepomukEventBackend.h"
 
-/**
- * Thread to process desktop/usage events
- */
-class EventProcessor: public QThread {
-public:
-    static EventProcessor * self();
+NepomukEventBackend::NepomukEventBackend()
+{
+}
 
-    virtual ~EventProcessor();
+void NepomukEventBackend::addEvents(const EventList & events)
+{
+}
 
-    static void addEvent(const QString & application, const QString & uri,
-            Event::Type type = Event::Accessed, Event::Reason reason = Event::User);
-
-private:
-    EventProcessor();
-
-    QList < EventBackend * > m_backends;
-};
-
-#endif // EVENT_PROCESSOR_H
+#endif // HAVE_NEPOMUK

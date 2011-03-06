@@ -56,6 +56,9 @@ include_directories(
 set(activity_manager_SRCS
     ActivityManager.cpp
     EventProcessor.cpp
+    ZeitgeistEventBackend.cpp
+    NepomukEventBackend.cpp
+    EventBackend.cpp
     main.cpp
     )
 
