@@ -1228,10 +1228,17 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         //return;
     }
 
-    foreach( const KUrl & url, resIdent.unidentified() ) {
+    //
+    // Add extra metadata for new resources - nao:created & nao:lastModified
+    //
+    foreach( const KUrl & uri, resIdent.unidentified() ) {
         Soprano::Node dateTime( Soprano::LiteralValue( QDateTime::currentDateTime() ) );
-        allStatements << Soprano::Statement( url, NAO::created(), dateTime );
-        allStatements << Soprano::Statement( url, NAO::lastModified(), dateTime );
+        
+        Sync::SimpleResource simpleRes = resIdent.simpleResource( uri );
+        if( !simpleRes.contains( NAO::created() ) )
+            allStatements << Soprano::Statement( uri, NAO::created(), dateTime );
+        if( !simpleRes.contains( NAO::lastModified() ) )
+            allStatements << Soprano::Statement( uri, NAO::lastModified(), dateTime );
     }
 
     foreach( const Sync::SimpleResource & res, extraResources ) {
