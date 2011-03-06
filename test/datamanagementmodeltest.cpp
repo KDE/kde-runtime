@@ -1962,7 +1962,9 @@ void DataManagementModelTest::testStoreResources()
         QVERIFY( m_model->containsAnyStatement( res1.uri(), NFO::fileName(),
                                                 Soprano::LiteralValue("Yellow.mp3") ) );
         kDebug() << m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements();
-        QVERIFY( m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements().size() == res1.properties().size() );
+        // The +2 is because nao:created and nao:lastModified would have also been added
+        QCOMPARE( m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements().size(),
+                  res1.properties().size() + 2 );
 
         QList< Node > objects = m_model->listStatements( res1.uri(), NMM::performer(), Soprano::Node() ).iterateObjects().allNodes();
 
