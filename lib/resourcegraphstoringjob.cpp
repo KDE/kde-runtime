@@ -44,8 +44,8 @@ Nepomuk::ResourceGraphStoringJob::ResourceGraphStoringJob(const Nepomuk::SimpleR
                                           QDBusConnection::sessionBus());
     QDBusPendingCallWatcher* dbusCallWatcher
             = new QDBusPendingCallWatcher(dms.storeResources(graph,
-                                                             component.componentName(),
-                                                             Nepomuk::DBus::convertMetadataHash(additionalMetadata)));
+                                                             Nepomuk::DBus::convertMetadataHash(additionalMetadata),
+                                                             component.componentName()));
     connect(dbusCallWatcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
             this, SLOT(slotDBusCallFinished(QDBusPendingCallWatcher*)));
 }
