@@ -22,6 +22,7 @@
 #include "datamanagement.h"
 #include "genericdatamanagementjob_p.h"
 #include "createresourcejob.h"
+#include "describeresourcesjob.h"
 #include "dbustypes.h"
 
 #include <QtCore/QStringList>
@@ -151,5 +152,5 @@ KJob* Nepomuk::storeResources(const SimpleResourceGraph& resources,
 Nepomuk::DescribeResourcesJob* Nepomuk::describeResources(const QList<QUrl>& resources,
                                                           bool includeSubResources)
 {
-    return 0;
+    return new DescribeResourcesJob(resources, includeSubResources);
 }
