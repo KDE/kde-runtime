@@ -3,7 +3,6 @@ project(libdatamanagement)
 set(datamanagement_SRC
   simpleresource.cpp
   simpleresourcegraph.cpp
-  resourcegraphstoringjob.cpp
   genericdatamanagementjob.cpp
   dbustypes.cpp
   datamanagement.cpp

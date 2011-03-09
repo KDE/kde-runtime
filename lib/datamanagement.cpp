@@ -20,7 +20,6 @@
 */
 
 #include "datamanagement.h"
-#include "resourcegraphstoringjob_p.h"
 #include "genericdatamanagementjob_p.h"
 #include "dbustypes.h"
 
@@ -141,7 +140,10 @@ KJob* Nepomuk::storeResources(const SimpleResourceGraph& resources,
                               const QHash<QUrl, QVariant>& additionalMetadata,
                               const KComponentData& component)
 {
-    return new ResourceGraphStoringJob(resources, additionalMetadata, component);
+    return new GenericDataManagementJob("storeResources",
+                                        Q_ARG(Nepomuk::SimpleResourceGraph, resources),
+                                        Q_ARG(NepomukDBusVariantHash, Nepomuk::DBus::convertMetadataHash(additionalMetadata)),
+                                        Q_ARG(QString, component.componentName()));
 }
 
 

@@ -21,7 +21,7 @@
 
 #include "simpleresourcegraph.h"
 #include "simpleresource.h"
-#include "resourcegraphstoringjob_p.h"
+#include "datamanagement.h"
 
 #include <QtCore/QSharedData>
 #include <QtCore/QHash>
@@ -184,5 +184,5 @@ int Nepomuk::SimpleResourceGraph::count() const
 
 KJob* Nepomuk::SimpleResourceGraph::save(const KComponentData& component) const
 {
-    return new ResourceGraphStoringJob(*this, QHash<QUrl, QVariant>(), component);
+    return Nepomuk::storeResources(*this, QHash<QUrl, QVariant>(), component);
 }
