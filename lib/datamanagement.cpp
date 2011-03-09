@@ -21,7 +21,7 @@
 
 #include "datamanagement.h"
 #include "resourcegraphstoringjob_p.h"
-#include "genericdatamanagementjob.h"
+#include "genericdatamanagementjob_p.h"
 #include "dbustypes.h"
 
 #include <QtCore/QStringList>

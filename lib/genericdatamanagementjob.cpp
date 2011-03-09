@@ -19,7 +19,7 @@
    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "genericdatamanagementjob.h"
+#include "genericdatamanagementjob_p.h"
 #include "datamanagementinterface.h"
 #include "dbustypes.h"
 
@@ -76,4 +76,4 @@ void Nepomuk::GenericDataManagementJob::slotDBusCallFinished(QDBusPendingCallWat
     emitResult();
 }
 
-#include "genericdatamanagementjob.moc"
+#include "genericdatamanagementjob_p.moc"
