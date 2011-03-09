@@ -920,7 +920,11 @@ void DevicePreference::on_testPlaybackButton_toggled(bool down)
             m_audioOutput->setVolume(1.0);
             m_audioOutput->setMuted(false);
 
-            Phonon::createPath(m_media, m_audioOutput);
+            // Try to create a path
+            if (!Phonon::createPath(m_media, m_audioOutput).isValid()) {
+                KMessageBox::error(this, i18n("Your backend may not support audio capture"));
+                break;
+            }
 
             // Determine the selected device
             const Phonon::AudioCaptureDeviceModel *model = static_cast<const Phonon::AudioCaptureDeviceModel *>(idx.model());
@@ -934,13 +938,19 @@ void DevicePreference::on_testPlaybackButton_toggled(bool down)
             // Create a media object and a video output
             m_media = new Phonon::MediaObject(this);
             m_videoWidget = new Phonon::VideoWidget(NULL);
-            Phonon::createPath(m_media, m_videoWidget);
+
+            // Try to create a path
+            if (!Phonon::createPath(m_media, m_videoWidget).isValid()) {
+                KMessageBox::error(this, i18n("Your backend may not support video capture"));
+                break;
+            }
 
             // Determine the selected device
             const Phonon::VideoCaptureDeviceModel *model = static_cast<const Phonon::VideoCaptureDeviceModel *>(idx.model());
             const Phonon::VideoCaptureDevice &device = model->modelData(idx);
             m_media->setCurrentSource(device);
 
+            // Set up the testing video widget
             m_videoWidget->setWindowTitle(i18n("Testing %1", device.name()));
             m_videoWidget->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint);
             if (device.property("icon").canConvert(QVariant::String))
