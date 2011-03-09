@@ -31,13 +31,34 @@ class QDBusPendingCallWatcher;
 
 namespace Nepomuk {
 class SimpleResourceGraph;
+
+/**
+ * \class DescribeResourcesJob describeresourcesjob.h Nepomuk/DescribeResourcesJob
+ *
+ * \brief Job returned by Nepomuk::describeResources().
+ *
+ * Access the result through the resources() method in the slot connected
+ * to the KJOb::result() signal.
+ *
+ * \author Sebastian Trueg <trueg@kde.org>
+ */
 class DescribeResourcesJob : public KJob
 {
     Q_OBJECT
 
 public:
+    /**
+     * Destructor. The job does delete itself as soon
+     * as it is done.
+     */
     ~DescribeResourcesJob();
 
+    /**
+     * The returned resources.
+     *
+     * Access the result in a slot connected to the KJob::result()
+     * signal.
+     */
     SimpleResourceGraph resources() const;
 
 private Q_SLOTS:

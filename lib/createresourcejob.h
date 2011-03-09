@@ -31,13 +31,33 @@ class KComponentData;
 class QDBusPendingCallWatcher;
 
 namespace Nepomuk {
+/**
+ * \class CreateResourceJob createresourcejob.h Nepomuk/CreateResourceJob
+ *
+ * \brief Job returned by Nepomuk::createResource().
+ *
+ * Access the result through the resources() method in the slot connected
+ * to the KJOb::result() signal.
+ *
+ * \author Sebastian Trueg <trueg@kde.org>
+ */
 class CreateResourceJob : public KJob
 {
     Q_OBJECT
 
 public:
+    /**
+     * Destructor. The job does delete itself as soon
+     * as it is done.
+     */
     ~CreateResourceJob();
 
+    /**
+     * The returned resource URI.
+     *
+     * Access the result in a slot connected to the KJob::result()
+     * signal.
+     */
     QUrl resourceUri() const;
 
 private Q_SLOTS:
