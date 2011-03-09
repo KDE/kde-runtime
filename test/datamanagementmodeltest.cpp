@@ -1961,6 +1961,11 @@ void DataManagementModelTest::testStoreResources()
                                                 Soprano::Node() ) );
         QVERIFY( m_model->containsAnyStatement( res1.uri(), NFO::fileName(),
                                                 Soprano::LiteralValue("Yellow.mp3") ) );
+        // Make sure we have the nao:created and nao:lastModified
+        QVERIFY( m_model->containsAnyStatement( res1.uri(), NAO::lastModified(),
+                                                Soprano::Node() ) );
+        QVERIFY( m_model->containsAnyStatement( res1.uri(), NAO::created(),
+                                                Soprano::Node() ) );
         kDebug() << m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements();
         // The +2 is because nao:created and nao:lastModified would have also been added
         QCOMPARE( m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements().size(),
