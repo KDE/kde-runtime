@@ -528,8 +528,9 @@ Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::S
     }
     // and nao:created
     else if( st.predicate().uri() == NAO::created() ) {
-        // Do nothing - Keep the original nao:created
-        return Soprano::Error::ErrorNone;
+        // If nao:created already exists, then do nothing
+        if( model()->containsAnyStatement( st.subject(), NAO::created(), Soprano::Node() ) )
+            return Soprano::Error::ErrorNone;
     }
     
     return model()->addStatement( st );
