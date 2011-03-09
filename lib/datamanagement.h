@@ -27,6 +27,8 @@
 #include <KComponentData>
 #include <KGlobal>
 
+#include "nepomukdatamanagement_export.h"
+
 class KJob;
 
 namespace Nepomuk {
@@ -60,45 +62,45 @@ namespace Nepomuk {
      * from \p resources. Existing values will not be touched.
      * If a cardinality is breached an error will be thrown.
      */
-    KJob* addProperty(const QList<QUrl>& resources,
-                      const QUrl& property,
-                      const QVariantList& values,
-                      const KComponentData& component = KGlobal::mainComponent());
+    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* addProperty(const QList<QUrl>& resources,
+                                                     const QUrl& property,
+                                                     const QVariantList& values,
+                                                     const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Set, ie. overwrite properties. Set \p property with
      * \p values for each resource from \p resources. Existing
      * values will be replaced.
      */
-    KJob* setProperty(const QList<QUrl>& resources,
-                      const QUrl& property,
-                      const QVariantList& values,
-                      const KComponentData& component = KGlobal::mainComponent());
+    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* setProperty(const QList<QUrl>& resources,
+                                                     const QUrl& property,
+                                                     const QVariantList& values,
+                                                     const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Remove the property \p property with \p values from each
      * resource in \p resources.
      */
-    KJob* removeProperty(const QList<QUrl>& resources,
-                         const QUrl& property,
-                         const QVariantList& values,
-                         const KComponentData& component = KGlobal::mainComponent());
+    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* removeProperty(const QList<QUrl>& resources,
+                                                        const QUrl& property,
+                                                        const QVariantList& values,
+                                                        const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Remove all statements involving any proerty from \p properties from
      * all resources in \p resources.
      */
-    KJob* removeProperties(const QList<QUrl>& resources,
-                           const QList<QUrl>& properties,
-                           const KComponentData& component = KGlobal::mainComponent());
+    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* removeProperties(const QList<QUrl>& resources,
+                                                          const QList<QUrl>& properties,
+                                                          const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Create a new resource with several \p types.
      */
-    CreateResourceJob* createResource(const QList<QUrl>& types,
-                                      const QString& label,
-                                      const QString& description,
-                                      const KComponentData& component = KGlobal::mainComponent());
+    NEPOMUK_DATA_MANAGEMENT_EXPORT CreateResourceJob* createResource(const QList<QUrl>& types,
+                                                                     const QString& label,
+                                                                     const QString& description,
+                                                                     const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Remove resources from the database.
@@ -108,9 +110,9 @@ namespace Nepomuk {
      * If false sub-resources will be kept if they are still referenced by
      * other resources.
      */
-    KJob* removeResources(const QList<QUrl>& resources,
-                          RemovalFlags flags = NoRemovalFlags,
-                          const KComponentData& component = KGlobal::mainComponent());
+    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* removeResources(const QList<QUrl>& resources,
+                                                         RemovalFlags flags = NoRemovalFlags,
+                                                         const KComponentData& component = KGlobal::mainComponent());
     //@}
 
     /**
@@ -126,9 +128,9 @@ namespace Nepomuk {
      * If false sub-resources will be kept if they are still referenced by
      * other resources.
      */
-    KJob* removeDataByApplication(const QList<QUrl>& resources,
-                                  RemovalFlags flags = NoRemovalFlags,
-                                  const KComponentData& component = KGlobal::mainComponent());
+    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* removeDataByApplication(const QList<QUrl>& resources,
+                                                                 RemovalFlags flags = NoRemovalFlags,
+                                                                 const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Remove all information from the database which
@@ -138,24 +140,24 @@ namespace Nepomuk {
      * If false sub-resources will be kept if they are still referenced by
      * resources that have been created by other applications.
      */
-    KJob* removeDataByApplication(RemovalFlags flags = NoRemovalFlags,
-                                  const KComponentData& component = KGlobal::mainComponent());
+    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* removeDataByApplication(RemovalFlags flags = NoRemovalFlags,
+                                                                 const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Remove all statements involving any proerty from \p properties from
      * all resources in \p resources if it was created by application \p app.
      */
-    KJob* removePropertiesByApplication(const QList<QUrl>& resources,
-                                        const QList<QUrl>& properties,
-                                        const KComponentData& component = KGlobal::mainComponent());
+    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* removePropertiesByApplication(const QList<QUrl>& resources,
+                                                                       const QList<QUrl>& properties,
+                                                                       const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Merges two resources into one. Properties from \p resource1
      * take precedence over that from \p resource2 (for properties with cardinality 1).
      */
-    KJob* mergeResources(const QUrl& resource1,
-                         const QUrl& resource2,
-                         const KComponentData& component = KGlobal::mainComponent());
+    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* mergeResources(const QUrl& resource1,
+                                                        const QUrl& resource2,
+                                                        const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * \param resources The resources to be merged. Blank nodes will be converted into new
@@ -167,17 +169,17 @@ namespace Nepomuk {
      * to state that the provided information can be recreated at any time. Only built-in types
      * such as int, string, or url are supported.
      */
-    KJob* storeResources(const SimpleResourceGraph& resources,
-                         const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>(),
-                         const KComponentData& component = KGlobal::mainComponent());
+    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* storeResources(const SimpleResourceGraph& resources,
+                                                        const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>(),
+                                                        const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Describe a set of resources, i.e. retrieve all their properties.
      * \param resources The resource URIs of the resources to describe.
      * \param includeSubResources If \p true sub resources will be included.
      */
-    DescribeResourcesJob* describeResources(const QList<QUrl>& resources,
-                                            bool includeSubResources);
+    NEPOMUK_DATA_MANAGEMENT_EXPORT DescribeResourcesJob* describeResources(const QList<QUrl>& resources,
+                                                                           bool includeSubResources);
     //@}
 }
 

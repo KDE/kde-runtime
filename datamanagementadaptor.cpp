@@ -42,15 +42,6 @@
 #include <Soprano/NRLModel>
 
 
-namespace {
-QVariantList convertVariantList(const QList<QDBusVariant>& values) {
-    QVariantList vl;
-    Q_FOREACH(const QDBusVariant& v, values)
-        vl << v.variant();
-    return vl;
-}
-}
-
 Nepomuk::DataManagementAdaptor::DataManagementAdaptor(Nepomuk::DataManagementModel *parent)
     : QObject(parent),
       m_model(parent),
@@ -73,16 +64,16 @@ Nepomuk::DataManagementAdaptor::~DataManagementAdaptor()
 {
 }
 
-void Nepomuk::DataManagementAdaptor::addProperty(const QStringList &resources, const QString &property, const QList<QDBusVariant> &values, const QString &app)
+void Nepomuk::DataManagementAdaptor::addProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new AddPropertyCommand(decodeUris(resources), decodeUri(property), convertVariantList(values), app, m_model, message()));
+    enqueueCommand(new AddPropertyCommand(decodeUris(resources), decodeUri(property), values, app, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::addProperty(const QString &resource, const QString &property, const QDBusVariant &value, const QString &app)
 {
-    addProperty(QStringList() << resource, property, QList<QDBusVariant>() << value, app);
+    addProperty(QStringList() << resource, property, QVariantList() << value.variant(), app);
 }
 
 QString Nepomuk::DataManagementAdaptor::createResource(const QStringList &types, const QString &label, const QString &description, const QString &app)
@@ -153,16 +144,16 @@ void Nepomuk::DataManagementAdaptor::removePropertiesByApplication(const QString
     enqueueCommand(new RemovePropertiesByApplicationCommand(decodeUris(resources), decodeUris(properties), app, m_model, message()));
 }
 
-void Nepomuk::DataManagementAdaptor::removeProperty(const QStringList &resources, const QString &property, const QList<QDBusVariant> &values, const QString &app)
+void Nepomuk::DataManagementAdaptor::removeProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new RemovePropertyCommand(decodeUris(resources), decodeUri(property), convertVariantList(values), app, m_model, message()));
+    enqueueCommand(new RemovePropertyCommand(decodeUris(resources), decodeUri(property), values, app, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::removeProperty(const QString &resource, const QString &property, const QDBusVariant &value, const QString &app)
 {
-    removeProperty(QStringList() << resource, property, QList<QDBusVariant>() << value, app);
+    removeProperty(QStringList() << resource, property, QVariantList() << value.variant(), app);
 }
 
 void Nepomuk::DataManagementAdaptor::removeResources(const QStringList &resources, int flags, const QString &app)
@@ -177,16 +168,16 @@ void Nepomuk::DataManagementAdaptor::removeResources(const QString &resource, in
     removeResources(QStringList() << resource, flags, app);
 }
 
-void Nepomuk::DataManagementAdaptor::setProperty(const QStringList &resources, const QString &property, const QList<QDBusVariant> &values, const QString &app)
+void Nepomuk::DataManagementAdaptor::setProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new SetPropertyCommand(decodeUris(resources), decodeUri(property), convertVariantList(values), app, m_model, message()));
+    enqueueCommand(new SetPropertyCommand(decodeUris(resources), decodeUri(property), values, app, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::setProperty(const QString &resource, const QString &property, const QDBusVariant &value, const QString &app)
 {
-    setProperty(QStringList() << resource, property, QList<QDBusVariant>() << value, app);
+    setProperty(QStringList() << resource, property, QVariantList() << value.variant(), app);
 }
 
 void Nepomuk::DataManagementAdaptor::enqueueCommand(DataManagementCommand *cmd)

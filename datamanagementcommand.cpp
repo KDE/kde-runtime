@@ -70,8 +70,11 @@ void Nepomuk::DataManagementCommand::run()
             if(result.type() == QVariant::Url) {
                 result = encodeUrl(result.toUrl());
             }
+            QDBusConnection::sessionBus().send(m_msg.createReply(result));
         }
-        QDBusConnection::sessionBus().send(m_msg.createReply(result));
+        else {
+            QDBusConnection::sessionBus().send(m_msg.createReply());
+        }
     }
 }
 

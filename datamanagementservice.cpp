@@ -52,7 +52,7 @@ Nepomuk::DataManagementService::DataManagementService(QObject *parent, const QVa
     d->m_dmModel = new DataManagementModel(mainModel(), d->m_removableMediaModel);
 
     Nepomuk::DataManagementAdaptor* adaptor = new Nepomuk::DataManagementAdaptor(d->m_dmModel);
-    QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagementmodel"), adaptor, QDBusConnection::ExportAllSlots);
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagementmodel"), adaptor, QDBusConnection::ExportScriptableContents);
 }
 
 

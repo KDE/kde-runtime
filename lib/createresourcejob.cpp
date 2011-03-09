@@ -73,6 +73,7 @@ void Nepomuk::CreateResourceJob::slotDBusCallFinished(QDBusPendingCallWatcher *w
     QDBusPendingReply<> reply = *watcher;
     if (reply.isError()) {
         QDBusError error = reply.error();
+        setError(1);
         setErrorText(error.message());
     }
     else {

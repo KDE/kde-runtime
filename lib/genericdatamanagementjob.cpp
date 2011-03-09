@@ -30,6 +30,8 @@
 #include <QtCore/QVariant>
 #include <QtCore/QHash>
 
+#include <KDebug>
+
 Nepomuk::GenericDataManagementJob::GenericDataManagementJob(const char *methodName,
                                                             QGenericArgument val0,
                                                             QGenericArgument val1,
@@ -70,6 +72,8 @@ void Nepomuk::GenericDataManagementJob::slotDBusCallFinished(QDBusPendingCallWat
     QDBusPendingReply<> reply = *watcher;
     if (reply.isError()) {
         QDBusError error = reply.error();
+        kDebug() << error;
+        setError(int(error.type()));
         setErrorText(error.message());
     }
     watcher->deleteLater();

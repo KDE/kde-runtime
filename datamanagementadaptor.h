@@ -164,25 +164,25 @@ public:
     QList<QUrl> decodeUris(const QStringList& s, bool namespaceAbbrExpansion = true) const;
 
 public Q_SLOTS:
-    void setProperty(const QStringList &resources, const QString &property, const QList<QDBusVariant> &values, const QString &app);
-    void addProperty(const QStringList &resources, const QString &property, const QList<QDBusVariant> &values, const QString &app);
-    void removeProperty(const QStringList &resources, const QString &property, const QList<QDBusVariant> &values, const QString &app);
-    void removeProperties(const QStringList &resources, const QStringList &properties, const QString &app);
-    QString createResource(const QStringList &types, const QString &label, const QString &description, const QString &app);
-    void removeResources(const QStringList &resources, int flags, const QString &app);
-    Nepomuk::SimpleResourceGraph describeResources(const QStringList &resources, bool includeSubResources);
-    void storeResources(Nepomuk::SimpleResourceGraph resources, const QHash<QString, QDBusVariant> &additionalMetadata, const QString &app);
-    void removeDataByApplication(int flags, const QString &app);
-    void removeDataByApplication(const QStringList &resources, int flags, const QString &app);
-    void removePropertiesByApplication(const QStringList &resources, const QStringList &properties, const QString &app);
+    Q_SCRIPTABLE void setProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app);
+    Q_SCRIPTABLE void addProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app);
+    Q_SCRIPTABLE void removeProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app);
+    Q_SCRIPTABLE void removeProperties(const QStringList &resources, const QStringList &properties, const QString &app);
+    Q_SCRIPTABLE QString createResource(const QStringList &types, const QString &label, const QString &description, const QString &app);
+    Q_SCRIPTABLE void removeResources(const QStringList &resources, int flags, const QString &app);
+    Q_SCRIPTABLE Nepomuk::SimpleResourceGraph describeResources(const QStringList &resources, bool includeSubResources);
+    Q_SCRIPTABLE void storeResources(Nepomuk::SimpleResourceGraph resources, const QHash<QString, QDBusVariant> &additionalMetadata, const QString &app);
+    Q_SCRIPTABLE void removeDataByApplication(int flags, const QString &app);
+    Q_SCRIPTABLE void removeDataByApplication(const QStringList &resources, int flags, const QString &app);
+    Q_SCRIPTABLE void removePropertiesByApplication(const QStringList &resources, const QStringList &properties, const QString &app);
 
     /// convinience overloads for scripts (no lists)
-    void setProperty(const QString &resource, const QString &property, const QDBusVariant &value, const QString &app);
-    void addProperty(const QString &resource, const QString &property, const QDBusVariant &value, const QString &app);
-    void removeProperty(const QString &resource, const QString &property, const QDBusVariant &value, const QString &app);
-    void removeProperties(const QString &resource, const QString &property, const QString &app);
-    QString createResource(const QString &type, const QString &label, const QString &description, const QString &app);
-    void removeResources(const QString &resource, int flags, const QString &app);
+    Q_SCRIPTABLE void setProperty(const QString &resource, const QString &property, const QDBusVariant &value, const QString &app);
+    Q_SCRIPTABLE void addProperty(const QString &resource, const QString &property, const QDBusVariant &value, const QString &app);
+    Q_SCRIPTABLE void removeProperty(const QString &resource, const QString &property, const QDBusVariant &value, const QString &app);
+    Q_SCRIPTABLE void removeProperties(const QString &resource, const QString &property, const QString &app);
+    Q_SCRIPTABLE QString createResource(const QString &type, const QString &label, const QString &description, const QString &app);
+    Q_SCRIPTABLE void removeResources(const QString &resource, int flags, const QString &app);
 
 private Q_SLOTS:
     void updateNamespaces();
