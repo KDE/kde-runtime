@@ -108,7 +108,7 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementAdaptor::describeResources(c
     return SimpleResourceGraph();
 }
 
-void Nepomuk::DataManagementAdaptor::storeResources(Nepomuk::SimpleResourceGraph resources, const QString &app, const QHash<QString, QDBusVariant> &additionalMetadata)
+void Nepomuk::DataManagementAdaptor::storeResources(Nepomuk::SimpleResourceGraph resources, const QHash<QString, QDBusVariant> &additionalMetadata, const QString &app)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
@@ -120,14 +120,14 @@ void Nepomuk::DataManagementAdaptor::storeResources(Nepomuk::SimpleResourceGraph
     enqueueCommand(new MergeResourcesCommand(resources, app, decodedMetaData, m_model, message()));
 }
 
-void Nepomuk::DataManagementAdaptor::removeDataByApplication(const QString &app, int flags)
+void Nepomuk::DataManagementAdaptor::removeDataByApplication(int flags, const QString &app)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new RemoveDataByApplicationCommand(QList<QUrl>(), app, flags, m_model, message()));
 }
 
-void Nepomuk::DataManagementAdaptor::removeDataByApplication(const QStringList &resources, const QString &app, int flags)
+void Nepomuk::DataManagementAdaptor::removeDataByApplication(const QStringList &resources, int flags, const QString &app)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
@@ -165,16 +165,16 @@ void Nepomuk::DataManagementAdaptor::removeProperty(const QString &resource, con
     removeProperty(QStringList() << resource, property, QList<QDBusVariant>() << value, app);
 }
 
-void Nepomuk::DataManagementAdaptor::removeResources(const QStringList &resources, const QString &app, int flags)
+void Nepomuk::DataManagementAdaptor::removeResources(const QStringList &resources, int flags, const QString &app)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new RemoveResourcesCommand(decodeUris(resources), app, flags, m_model, message()));
 }
 
-void Nepomuk::DataManagementAdaptor::removeResources(const QString &resource, const QString &app, int flags)
+void Nepomuk::DataManagementAdaptor::removeResources(const QString &resource, int flags, const QString &app)
 {
-    removeResources(QStringList() << resource, app, flags);
+    removeResources(QStringList() << resource, flags, app);
 }
 
 void Nepomuk::DataManagementAdaptor::setProperty(const QStringList &resources, const QString &property, const QList<QDBusVariant> &values, const QString &app)

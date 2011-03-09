@@ -570,7 +570,7 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
         if(!valueGraphs.isEmpty()) {
             // If the resource is now empty we remove it completely
             if(!doesResourceExist(res)) {
-                removeResources(QList<QUrl>() << res, app, false);
+                removeResources(QList<QUrl>() << res, NoRemovalFlags, app);
             }
             else {
                 if(mtimeGraph.isEmpty()) {
@@ -666,7 +666,7 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
         if(!valueGraphs.isEmpty()) {
             // If the resource is now empty we remove it completely
             if(!doesResourceExist(res)) {
-                removeResources(QList<QUrl>() << res, app, false);
+                removeResources(QList<QUrl>() << res, NoRemovalFlags, app);
             }
             else {
                 if(mtimeGraph.isEmpty()) {
@@ -727,7 +727,7 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
     return resUri;
 }
 
-void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources, const QString &app, RemovalFlags flags)
+void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources, RemovalFlags flags, const QString &app)
 {
     kDebug() << resources << app << flags;
 
@@ -801,7 +801,7 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
             subResources << it[0].uri();
         }
         if(!subResources.isEmpty()) {
-            removeResources(subResources, app, flags);
+            removeResources(subResources, flags, app);
         }
     }
 
@@ -825,7 +825,7 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
     removeTrailingGraphs(graphs);
 }
 
-void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &resources, const QString &app, RemovalFlags flags)
+void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &resources, RemovalFlags flags, const QString &app)
 {
     //
     // Check parameters
@@ -894,7 +894,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
             subResources << it[0].uri();
         }
         if(!subResources.isEmpty()) {
-            removeDataByApplication(subResources, app, flags);
+            removeDataByApplication(subResources, flags, app);
         }
     }
 
@@ -969,14 +969,14 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
         }
     }
     if(!resourcesToRemoveCompletely.isEmpty()){
-        removeResources(resourcesToRemoveCompletely, app, flags);
+        removeResources(resourcesToRemoveCompletely, flags, app);
     }
 
 
     removeTrailingGraphs(QSet<QUrl>::fromList(graphs.keys()));
 }
 
-void Nepomuk::DataManagementModel::removeDataByApplication(const QString &app, RemovalFlags flags)
+void Nepomuk::DataManagementModel::removeDataByApplication(RemovalFlags flags, const QString &app)
 {
     setError("Not implemented yet");
     return;
@@ -1326,7 +1326,7 @@ void Nepomuk::DataManagementModel::mergeResources(const QUrl &res1, const QUrl &
     //
     // Finally delete res2 as it is now merged into res1
     //
-    removeResources(QList<QUrl>() << res2, app);
+    removeResources(QList<QUrl>() << res2, NoRemovalFlags, app);
 }
 
 
