@@ -19,27 +19,40 @@
    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DBUSTYPES_H
-#define DBUSTYPES_H
+#include "dbustypes.h"
 
-#include <QtCore/QMetaType>
-#include <QtCore/QHash>
-#include <QtCore/QString>
-#include <QtCore/QUrl>
-#include <QtDBus/QDBusVariant>
+#include <QtCore/QStringList>
 
-#include "simpleresourcegraph.h"
+#include <KUrl>
 
-typedef QHash<QString, QDBusVariant> NepomukDBusVariantHash;
-Q_DECLARE_METATYPE(NepomukDBusVariantHash)
-
-namespace Nepomuk {
-    namespace DBus {
-        QString convertUri(const QUrl& uri);
-        QStringList convertUriList(const QList<QUrl>& uris);
-        QHash<QString, QDBusVariant> convertMetadataHash(const QHash<QUrl, QVariant>& metadata);
-        QList<QDBusVariant> convertVariantList(const QVariantList& vl);
-    }
+QString Nepomuk::DBus::convertUri(const QUrl& uri)
+{
+    return KUrl(uri).url();
 }
 
-#endif // DBUSTYPES_H
+QStringList Nepomuk::DBus::convertUriList(const QList<QUrl>& uris)
+{
+    QStringList uriStrings;
+    foreach(const QUrl& uri, uris)
+        uriStrings << convertUri(uri);
+    return uriStrings;
+}
+
+QHash<QString, QDBusVariant> Nepomuk::DBus::convertMetadataHash(const QHash<QUrl, QVariant>& metadata)
+{
+    QHash<QString, QDBusVariant> dbusHash;
+    QHash<QUrl, QVariant>::const_iterator end = metadata.constEnd();
+    for(QHash<QUrl, QVariant>::const_iterator it = metadata.constBegin();
+        it != end; ++it) {
+        dbusHash.insertMulti(KUrl(it.key()).url(), QDBusVariant(it.value()));
+    }
+    return dbusHash;
+}
+
+QList<QDBusVariant> Nepomuk::DBus::convertVariantList(const QVariantList& vl)
+{
+    QList<QDBusVariant> dbusVl;
+    foreach(const QVariant& v, vl)
+        dbusVl << QDBusVariant(v);
+    return dbusVl;
+}

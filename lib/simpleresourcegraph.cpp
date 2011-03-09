@@ -24,6 +24,8 @@
 #include "resourcegraphstoringjob_p.h"
 
 #include <QtCore/QSharedData>
+#include <QtCore/QHash>
+#include <QtCore/QUrl>
 
 #include <KRandom>
 
@@ -182,5 +184,5 @@ int Nepomuk::SimpleResourceGraph::count() const
 
 KJob* Nepomuk::SimpleResourceGraph::save(const KComponentData& component) const
 {
-    return new ResourceGraphStoringJob(*this, component);
+    return new ResourceGraphStoringJob(*this, QHash<QUrl, QVariant>(), component);
 }

@@ -20,12 +20,133 @@
 */
 
 #include "datamanagement.h"
+#include "resourcegraphstoringjob_p.h"
+#include "genericdatamanagementjob.h"
+#include "dbustypes.h"
 
-namespace Nepomuk {
+#include <QtCore/QStringList>
 
-DataManagement::DataManagement(QObject *parent) :
-    QObject(parent)
+
+KJob* Nepomuk::addProperty(const QList<QUrl>& resources,
+                           const QUrl& property,
+                           const QVariantList& values,
+                           const KComponentData& component)
 {
+    return new GenericDataManagementJob("addProperty",
+                                        Q_ARG(QStringList, Nepomuk::DBus::convertUriList(resources)),
+                                        Q_ARG(QString, DBus::convertUri(property)),
+                                        Q_ARG(QList<QDBusVariant>, DBus::convertVariantList(values)),
+                                        Q_ARG(QString, component.componentName()));
 }
 
-} // namespace Nepomuk
+KJob* Nepomuk::setProperty(const QList<QUrl>& resources,
+                           const QUrl& property,
+                           const QVariantList& values,
+                           const KComponentData& component)
+{
+    return new GenericDataManagementJob("setProperty",
+                                        Q_ARG(QStringList, Nepomuk::DBus::convertUriList(resources)),
+                                        Q_ARG(QString, DBus::convertUri(property)),
+                                        Q_ARG(QList<QDBusVariant>, DBus::convertVariantList(values)),
+                                        Q_ARG(QString, component.componentName()));
+}
+
+
+KJob* Nepomuk::removeProperty(const QList<QUrl>& resources,
+                              const QUrl& property,
+                              const QVariantList& values,
+                              const KComponentData& component)
+{
+    return new GenericDataManagementJob("removeProperty",
+                                        Q_ARG(QStringList, Nepomuk::DBus::convertUriList(resources)),
+                                        Q_ARG(QString, DBus::convertUri(property)),
+                                        Q_ARG(QList<QDBusVariant>, DBus::convertVariantList(values)),
+                                        Q_ARG(QString, component.componentName()));
+}
+
+
+KJob* Nepomuk::removeProperties(const QList<QUrl>& resources,
+                                const QList<QUrl>& properties,
+                                const KComponentData& component)
+{
+    return new GenericDataManagementJob("removeProperties",
+                                        Q_ARG(QStringList, Nepomuk::DBus::convertUriList(resources)),
+                                        Q_ARG(QStringList, Nepomuk::DBus::convertUriList(properties)),
+                                        Q_ARG(QString, component.componentName()));
+}
+
+
+Nepomuk::CreateResourceJob* Nepomuk::createResource(const QList<QUrl>& types,
+                                                    const QString& label,
+                                                    const QString& description,
+                                                    const KComponentData& component)
+{
+    return 0;
+}
+
+
+KJob* Nepomuk::removeResources(const QList<QUrl>& resources,
+                               RemovalFlags flags,
+                               const KComponentData& component)
+{
+    return new GenericDataManagementJob("removeResources",
+                                        Q_ARG(QStringList, Nepomuk::DBus::convertUriList(resources)),
+                                        Q_ARG(int, int(flags)),
+                                        Q_ARG(QString, component.componentName()));
+}
+
+
+KJob* Nepomuk::removeDataByApplication(const QList<QUrl>& resources,
+                                       RemovalFlags flags,
+                                       const KComponentData& component)
+{
+    return new GenericDataManagementJob("removeDataByApplication",
+                                        Q_ARG(QStringList, Nepomuk::DBus::convertUriList(resources)),
+                                        Q_ARG(int, int(flags)),
+                                        Q_ARG(QString, component.componentName()));
+}
+
+
+KJob* Nepomuk::removeDataByApplication(RemovalFlags flags,
+                                       const KComponentData& component)
+{
+    return new GenericDataManagementJob("removeDataByApplication",
+                                        Q_ARG(int, int(flags)),
+                                        Q_ARG(QString, component.componentName()));
+}
+
+
+KJob* Nepomuk::removePropertiesByApplication(const QList<QUrl>& resources,
+                                             const QList<QUrl>& properties,
+                                             const KComponentData& component)
+{
+    return new GenericDataManagementJob("removePropertiesByApplication",
+                                        Q_ARG(QStringList, Nepomuk::DBus::convertUriList(resources)),
+                                        Q_ARG(QStringList, Nepomuk::DBus::convertUriList(properties)),
+                                        Q_ARG(QString, component.componentName()));
+}
+
+
+KJob* Nepomuk::mergeResources(const QUrl& resource1,
+                              const QUrl& resource2,
+                              const KComponentData& component)
+{
+    return new GenericDataManagementJob("mergeResources",
+                                        Q_ARG(QString, Nepomuk::DBus::convertUri(resource1)),
+                                        Q_ARG(QString, Nepomuk::DBus::convertUri(resource2)),
+                                        Q_ARG(QString, component.componentName()));
+}
+
+KJob* Nepomuk::storeResources(const SimpleResourceGraph& resources,
+                              const QHash<QUrl, QVariant>& additionalMetadata,
+                              const KComponentData& component)
+{
+    return new ResourceGraphStoringJob(resources, additionalMetadata, component);
+}
+
+
+Nepomuk::DescribeResourcesJob* Nepomuk::describeResources(const QList<QUrl>& resources,
+                                                          bool includeSubResources)
+{
+    return 0;
+}

@@ -4,6 +4,9 @@ set(datamanagement_SRC
   simpleresource.cpp
   simpleresourcegraph.cpp
   resourcegraphstoringjob.cpp
+  genericdatamanagementjob.cpp
+  dbustypes.cpp
+  datamanagement.cpp
 )
 
 set(datamanagementservice_dbus_desc ${CMAKE_CURRENT_SOURCE_DIR}/../org.kde.nepomuk.DataManagement.xml)

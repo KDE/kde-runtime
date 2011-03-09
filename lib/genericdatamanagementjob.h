@@ -19,27 +19,37 @@
    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DBUSTYPES_H
-#define DBUSTYPES_H
+#ifndef GENERICDATAMANAGEMENTJOB_H
+#define GENERICDATAMANAGEMENTJOB_H
 
-#include <QtCore/QMetaType>
-#include <QtCore/QHash>
-#include <QtCore/QString>
-#include <QtCore/QUrl>
-#include <QtDBus/QDBusVariant>
+#include <KJob>
 
-#include "simpleresourcegraph.h"
-
-typedef QHash<QString, QDBusVariant> NepomukDBusVariantHash;
-Q_DECLARE_METATYPE(NepomukDBusVariantHash)
+class QDBusPendingCallWatcher;
 
 namespace Nepomuk {
-    namespace DBus {
-        QString convertUri(const QUrl& uri);
-        QStringList convertUriList(const QList<QUrl>& uris);
-        QHash<QString, QDBusVariant> convertMetadataHash(const QHash<QUrl, QVariant>& metadata);
-        QList<QDBusVariant> convertVariantList(const QVariantList& vl);
-    }
+class GenericDataManagementJob : public KJob
+{
+    Q_OBJECT
+
+public:
+    /**
+     * Start any Data Management Service method with a void
+     * return type.
+     */
+    GenericDataManagementJob(const char* methodName,
+                             QGenericArgument val0,
+                             QGenericArgument val1 = QGenericArgument(),
+                             QGenericArgument val2 = QGenericArgument(),
+                             QGenericArgument val3 = QGenericArgument(),
+                             QGenericArgument val4 = QGenericArgument());
+    ~GenericDataManagementJob();
+
+    /// does nothing, we do all in the constructor - it simply needs to be implemented
+    void start();
+
+private Q_SLOTS:
+    void slotDBusCallFinished(QDBusPendingCallWatcher*);
+};
 }
 
-#endif // DBUSTYPES_H
+#endif

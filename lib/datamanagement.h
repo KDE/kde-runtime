@@ -27,20 +27,30 @@
 #include <KComponentData>
 #include <KGlobal>
 
+class KJob;
+
 namespace Nepomuk {
+    class DescribeResourcesJob;
+    class CreateResourceJob;
+    class SimpleResourceGraph;
 
-// FIXME: make this a KJob-based async API!
+    /**
+     * Flags to influence the behaviour of several data mangement
+     * methods.
+     */
+    enum RemovalFlag {
+        /// No flags - default behaviour
+        NoRemovalFlags = 0x0,
 
-class DataManagement : public QObject
-{
-    Q_OBJECT
+        /**
+         * Remove sub resources of the resources specified in the parameters.
+         * This will remove sub-resources that are not referenced by any resource
+         * which will not be deleted.
+         */
+        RemoveSubResoures = 0x1
+    };
+    Q_DECLARE_FLAGS(RemovalFlags, RemovalFlag)
 
-public:
-    DataManagement(QObject *parent = 0, const KComponentData& component = KGlobal::component());
-    ~DataManagement();
-
-
-public Q_SLOTS:
     /**
      * \name Basic API
      */
@@ -50,40 +60,45 @@ public Q_SLOTS:
      * from \p resources. Existing values will not be touched.
      * If a cardinality is breached an error will be thrown.
      */
-    void addProperty(const QList<QUrl>& resources,
-                     const QUrl& property,
-                     const QVariantList& values);
+    KJob* addProperty(const QList<QUrl>& resources,
+                      const QUrl& property,
+                      const QVariantList& values,
+                      const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Set, ie. overwrite properties. Set \p property with
      * \p values for each resource from \p resources. Existing
      * values will be replaced.
      */
-    void setProperty(const QList<QUrl>& resources,
-                     const QUrl& property,
-                     const QVariantList& values);
+    KJob* setProperty(const QList<QUrl>& resources,
+                      const QUrl& property,
+                      const QVariantList& values,
+                      const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Remove the property \p property with \p values from each
      * resource in \p resources.
      */
-    void removeProperty(const QList<QUrl>& resources,
-                        const QUrl& property,
-                        const QVariantList& values);
+    KJob* removeProperty(const QList<QUrl>& resources,
+                         const QUrl& property,
+                         const QVariantList& values,
+                         const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Remove all statements involving any proerty from \p properties from
      * all resources in \p resources.
      */
-    void removeProperties(const QList<QUrl>& resources,
-                          const QList<QUrl>& properties);
+    KJob* removeProperties(const QList<QUrl>& resources,
+                           const QList<QUrl>& properties,
+                           const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Create a new resource with several \p types.
      */
-    QUrl createResource(const QList<QUrl>& types,
-                        const QString& label,
-                        const QString& description);
+    CreateResourceJob* createResource(const QList<QUrl>& types,
+                                      const QString& label,
+                                      const QString& description,
+                                      const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Remove resources from the database.
@@ -93,8 +108,9 @@ public Q_SLOTS:
      * If false sub-resources will be kept if they are still referenced by
      * other resources.
      */
-    void removeResources(const QList<QUrl>& resources,
-                         RemovalFlags flags = NoRemovalFlags);
+    KJob* removeResources(const QList<QUrl>& resources,
+                          RemovalFlags flags = NoRemovalFlags,
+                          const KComponentData& component = KGlobal::mainComponent());
     //@}
 
     /**
@@ -110,8 +126,9 @@ public Q_SLOTS:
      * If false sub-resources will be kept if they are still referenced by
      * other resources.
      */
-    void removeDataByApplication(const QList<QUrl>& resources,
-                                 RemovalFlags flags = NoRemovalFlags);
+    KJob* removeDataByApplication(const QList<QUrl>& resources,
+                                  RemovalFlags flags = NoRemovalFlags,
+                                  const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Remove all information from the database which
@@ -121,14 +138,24 @@ public Q_SLOTS:
      * If false sub-resources will be kept if they are still referenced by
      * resources that have been created by other applications.
      */
-    void removeDataByApplication(RemovalFlags flags = NoRemovalFlags);
+    KJob* removeDataByApplication(RemovalFlags flags = NoRemovalFlags,
+                                  const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Remove all statements involving any proerty from \p properties from
      * all resources in \p resources if it was created by application \p app.
      */
-    void removePropertiesByApplication(const QList<QUrl>& resources,
-                                       const QList<QUrl>& properties);
+    KJob* removePropertiesByApplication(const QList<QUrl>& resources,
+                                        const QList<QUrl>& properties,
+                                        const KComponentData& component = KGlobal::mainComponent());
+
+    /**
+     * Merges two resources into one. Properties from \p resource1
+     * take precedence over that from \p resource2 (for properties with cardinality 1).
+     */
+    KJob* mergeResources(const QUrl& resource1,
+                         const QUrl& resource2,
+                         const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * \param resources The resources to be merged. Blank nodes will be converted into new
@@ -140,19 +167,20 @@ public Q_SLOTS:
      * to state that the provided information can be recreated at any time. Only built-in types
      * such as int, string, or url are supported.
      */
-    void mergeResources(const SimpleResourceGraph& resources,
-                        const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>() );
+    KJob* storeResources(const SimpleResourceGraph& resources,
+                         const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>(),
+                         const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Describe a set of resources, i.e. retrieve all their properties.
      * \param resources The resource URIs of the resources to describe.
      * \param includeSubResources If \p true sub resources will be included.
      */
-    SimpleResourceGraph describeResources(const QList<QUrl>& resources,
-                                          bool includeSubResources) const;
+    DescribeResourcesJob* describeResources(const QList<QUrl>& resources,
+                                            bool includeSubResources);
     //@}
-};
-
 }
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Nepomuk::RemovalFlags)
 
 #endif

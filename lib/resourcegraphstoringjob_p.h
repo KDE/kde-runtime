@@ -24,6 +24,9 @@
 
 #include <KJob>
 
+#include <QtCore/QHash>
+#include <QtCore/QUrl>
+
 
 class QDBusPendingCallWatcher;
 class KComponentData;
@@ -42,7 +45,7 @@ public:
     /**
      * Will directly start the job.
      */
-    ResourceGraphStoringJob(const Nepomuk::SimpleResourceGraph& graph, const KComponentData& cd);
+    ResourceGraphStoringJob(const Nepomuk::SimpleResourceGraph& graph, const QHash<QUrl, QVariant>& additionalMetadata, const KComponentData& cd);
     ~ResourceGraphStoringJob();
 
     void start();

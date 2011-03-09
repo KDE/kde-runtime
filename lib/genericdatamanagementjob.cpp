@@ -19,8 +19,7 @@
    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "resourcegraphstoringjob_p.h"
-#include "simpleresourcegraph.h"
+#include "genericdatamanagementjob.h"
 #include "datamanagementinterface.h"
 #include "dbustypes.h"
 
@@ -31,35 +30,42 @@
 #include <QtCore/QVariant>
 #include <QtCore/QHash>
 
-#include <KComponentData>
-
-
-Nepomuk::ResourceGraphStoringJob::ResourceGraphStoringJob(const Nepomuk::SimpleResourceGraph& graph,
-                                                          const QHash<QUrl, QVariant>& additionalMetadata,
-                                                          const KComponentData& component)
+Nepomuk::GenericDataManagementJob::GenericDataManagementJob(const char *methodName,
+                                                            QGenericArgument val0,
+                                                            QGenericArgument val1,
+                                                            QGenericArgument val2,
+                                                            QGenericArgument val3,
+                                                            QGenericArgument val4)
     : KJob(0)
 {
     org::kde::nepomuk::DataManagement dms(QLatin1String("org.kde.nepomuk.services.DataManagement"),
                                           QLatin1String("/datamanagementmodel"),
                                           QDBusConnection::sessionBus());
-    QDBusPendingCallWatcher* dbusCallWatcher
-            = new QDBusPendingCallWatcher(dms.storeResources(graph,
-                                                             component.componentName(),
-                                                             Nepomuk::DBus::convertMetadataHash(additionalMetadata)));
+    QDBusPendingReply<> reply;
+    QMetaObject::invokeMethod(&dms,
+                              methodName,
+                              Qt::DirectConnection,
+                              Q_RETURN_ARG(QDBusPendingReply<> , reply),
+                              val0,
+                              val1,
+                              val2,
+                              val3,
+                              val4);
+    QDBusPendingCallWatcher* dbusCallWatcher = new QDBusPendingCallWatcher(reply);
     connect(dbusCallWatcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
             this, SLOT(slotDBusCallFinished(QDBusPendingCallWatcher*)));
 }
 
-Nepomuk::ResourceGraphStoringJob::~ResourceGraphStoringJob()
+Nepomuk::GenericDataManagementJob::~GenericDataManagementJob()
 {
 }
 
-void Nepomuk::ResourceGraphStoringJob::start()
+void Nepomuk::GenericDataManagementJob::start()
 {
-    // do nothing. we all do it in the constructor to avoid storing any members
+    // do nothing
 }
 
-void Nepomuk::ResourceGraphStoringJob::slotDBusCallFinished(QDBusPendingCallWatcher *watcher)
+void Nepomuk::GenericDataManagementJob::slotDBusCallFinished(QDBusPendingCallWatcher *watcher)
 {
     QDBusPendingReply<> reply = *watcher;
     if (reply.isError()) {
@@ -70,4 +76,4 @@ void Nepomuk::ResourceGraphStoringJob::slotDBusCallFinished(QDBusPendingCallWatc
     emitResult();
 }
 
-#include "resourcegraphstoringjob_p.moc"
+#include "genericdatamanagementjob.moc"
