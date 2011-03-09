@@ -4,6 +4,7 @@ set(datamanagement_SRC
   simpleresource.cpp
   simpleresourcegraph.cpp
   genericdatamanagementjob.cpp
+  createresourcejob.cpp
   dbustypes.cpp
   datamanagement.cpp
 )

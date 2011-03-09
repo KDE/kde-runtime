@@ -21,6 +21,7 @@
 
 #include "datamanagement.h"
 #include "genericdatamanagementjob_p.h"
+#include "createresourcejob.h"
 #include "dbustypes.h"
 
 #include <QtCore/QStringList>
@@ -80,7 +81,7 @@ Nepomuk::CreateResourceJob* Nepomuk::createResource(const QList<QUrl>& types,
                                                     const QString& description,
                                                     const KComponentData& component)
 {
-    return 0;
+    return new CreateResourceJob(types, label, description, component);
 }
 
 
