@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2006-2008 Matthias Kretz <kretz@kde.org>
+    Copyright (C) 2011 Casian Andrei <skeletk13@gmail.com>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -34,6 +35,7 @@
 
 #include <Phonon/AudioOutput>
 #include <Phonon/MediaObject>
+#include <Phonon/VideoWidget>
 #include <phonon/backendinterface.h>
 #include <phonon/backendcapabilities.h>
 #include <phonon/globalconfig.h>
@@ -141,13 +143,12 @@ void DevicePreference::changeEvent(QEvent *e)
 DevicePreference::DevicePreference(QWidget *parent)
     : QWidget(parent),
     m_headerModel(0, 1, 0),
-    m_showingOutputModel(true),
-    m_media(0), m_output(0)
+    m_media(NULL), m_audioOutput(NULL), m_videoWidget(NULL)
 {
     setupUi(this);
     testPlaybackButton->setIcon(KIcon("media-playback-start"));
     testPlaybackButton->setEnabled(false);
-    testPlaybackButton->setToolTip(i18n("Play a test sound on the selected device"));
+    testPlaybackButton->setToolTip(i18n("Test the selected device"));
     removeButton->setIcon(KIcon("list-remove"));
     deferButton->setIcon(KIcon("go-down"));
     preferButton->setIcon(KIcon("go-up"));
@@ -253,6 +254,13 @@ DevicePreference::DevicePreference(QWidget *parent)
     }
 }
 
+DevicePreference::~DevicePreference()
+{
+    // Ensure that the video widget is destroyed, if it remains active
+    if (m_videoWidget)
+        delete m_videoWidget;
+}
+
 void DevicePreference::updateDeviceList()
 {
     QStandardItem *currentItem = m_categoryModel.itemFromIndex(categoryTree->currentIndex());
@@ -277,7 +285,6 @@ void DevicePreference::updateDeviceList()
             break;
         default: ;
         }
-        m_showingOutputModel = catItem->odtype() == Phonon::AudioOutputDeviceType;
         if (cat == Phonon::NoCategory) {
             switch (catItem->odtype()) {
             case Phonon::AudioOutputDeviceType:
@@ -309,7 +316,6 @@ void DevicePreference::updateDeviceList()
             }
         }
     } else {
-        m_showingOutputModel = false;
         m_headerModel.setHeaderData(0, Qt::Horizontal, QString(), Qt::DisplayRole);
         deviceList->setModel(0);
     }
@@ -649,6 +655,29 @@ void DevicePreference::removeDevice(const Phonon::ObjectDescription<T> &deviceTo
     emit changed();
 }
 
+DevicePreference::DeviceType DevicePreference::shownModelType() const
+{
+    const QStandardItem *item = m_categoryModel.itemFromIndex(categoryTree->currentIndex());
+    if (!item)
+        return InvalidDevice;
+    Q_ASSERT(item->type() == 1001);
+
+    const CategoryItem *catItem = static_cast<const CategoryItem *>(item);
+    if (!catItem)
+        return InvalidDevice;
+
+    switch (catItem->odtype()) {
+        case Phonon::AudioOutputDeviceType:
+            return AudioOutput;
+        case Phonon::AudioCaptureDeviceType:
+            return AudioCapture;
+        case Phonon::VideoCaptureDeviceType:
+            return VideoCapture;
+        default:
+            return InvalidDevice;
+    }
+}
+
 void DevicePreference::on_removeButton_clicked()
 {
     const QModelIndex idx = deviceList->currentIndex();
@@ -794,29 +823,124 @@ void DevicePreference::on_testPlaybackButton_toggled(bool down)
 {
     if (down) {
         QModelIndex idx = deviceList->currentIndex();
-        if (!idx.isValid() || !m_showingOutputModel) {
+        if (!idx.isValid()) {
             return;
         }
-        const Phonon::AudioOutputDeviceModel *model = static_cast<const Phonon::AudioOutputDeviceModel *>(idx.model());
-        const Phonon::AudioOutputDevice &device = model->modelData(idx);
-        m_media = new Phonon::MediaObject(this);
-        m_output = new Phonon::AudioOutput(this);
-        m_output->setOutputDevice(device);
 
-        // just to be very sure that nothing messes our test sound up
-        m_output->setVolume(1.0);
-        m_output->setMuted(false);
+        // Shouldn't happen, but better to be on the safe side
+        if (m_testingType != InvalidDevice) {
+            if (m_media) {
+                delete m_media;
+                m_media = NULL;
+            }
 
-        Phonon::createPath(m_media, m_output);
-        connect(m_media, SIGNAL(finished()), testPlaybackButton, SLOT(toggle()));
-        m_media->setCurrentSource(KStandardDirs::locate("sound", "KDE-Sys-Log-In.ogg"));
+            if (m_audioOutput) {
+                delete m_audioOutput;
+                m_audioOutput = NULL;
+            }
+
+            if (m_videoWidget) {
+                delete m_videoWidget;
+                m_videoWidget = NULL;
+            }
+        }
+
+        // Setup the Phonon objects according to the testing type
+        m_testingType = shownModelType();
+        switch (m_testingType) {
+        case AudioOutput: {
+            // Create an audio output with the selected device
+            m_media = new Phonon::MediaObject(this);
+            const Phonon::AudioOutputDeviceModel *model = static_cast<const Phonon::AudioOutputDeviceModel *>(idx.model());
+            const Phonon::AudioOutputDevice &device = model->modelData(idx);
+            m_audioOutput = new Phonon::AudioOutput(this);
+            m_audioOutput->setOutputDevice(device);
+
+            // Just to be very sure that nothing messes our test sound up
+            m_audioOutput->setVolume(1.0);
+            m_audioOutput->setMuted(false);
+
+            Phonon::createPath(m_media, m_audioOutput);
+
+            m_media->setCurrentSource(KStandardDirs::locate("sound", "KDE-Sys-Log-In.ogg"));
+            connect(m_media, SIGNAL(finished()), testPlaybackButton, SLOT(toggle()));
+
+            break;
+        }
+
+        case AudioCapture: {
+            // Create a media object and an audio output
+            m_media = new Phonon::MediaObject(this);
+            m_audioOutput = new Phonon::AudioOutput(Phonon::NoCategory, this);
+
+            // Just to be very sure that nothing messes our test sound up
+            m_audioOutput->setVolume(1.0);
+            m_audioOutput->setMuted(false);
+
+            Phonon::createPath(m_media, m_audioOutput);
+
+            // Determine the selected device
+            const Phonon::AudioCaptureDeviceModel *model = static_cast<const Phonon::AudioCaptureDeviceModel *>(idx.model());
+            const Phonon::AudioCaptureDevice &device = model->modelData(idx);
+            m_media->setCurrentSource(device);
+
+            break;
+        }
+
+        case VideoCapture: {
+            // Create a media object and a video output
+            m_media = new Phonon::MediaObject(this);
+            m_videoWidget = new Phonon::VideoWidget(NULL);
+            Phonon::createPath(m_media, m_videoWidget);
+
+            // Determine the selected device
+            const Phonon::VideoCaptureDeviceModel *model = static_cast<const Phonon::VideoCaptureDeviceModel *>(idx.model());
+            const Phonon::VideoCaptureDevice &device = model->modelData(idx);
+            m_media->setCurrentSource(device);
+
+            m_videoWidget->setWindowTitle(i18n("Testing %1", device.name()));
+            m_videoWidget->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint);
+            if (device.property("icon").canConvert(QVariant::String))
+                m_videoWidget->setWindowIcon(KIcon(device.property("icon").toString()));
+            m_videoWidget->move(QCursor::pos() - QPoint(250, 295));
+            m_videoWidget->resize(320, 240);
+            m_videoWidget->show();
+
+            break;
+        }
+
+        default:
+            return;
+        }
+
         m_media->play();
     } else {
-        disconnect(m_media, SIGNAL(finished()), testPlaybackButton, SLOT(toggle()));
-        delete m_media;
-        m_media = 0;
-        delete m_output;
-        m_output = 0;
+        // Uninitialize the Phonon objects according to the testing type
+        switch (m_testingType) {
+        case AudioOutput:
+            disconnect(m_media, SIGNAL(finished()), testPlaybackButton, SLOT(toggle()));
+            delete m_media;
+            delete m_audioOutput;
+            break;
+
+        case AudioCapture:
+            delete m_media;
+            delete m_audioOutput;
+            break;
+
+        case VideoCapture:
+            delete m_media;
+            delete m_videoWidget;
+            break;
+
+        default:
+            return;
+        }
+
+        m_media = NULL;
+        m_videoWidget = NULL;
+        m_audioOutput = NULL;
+        m_testingType = InvalidDevice;
     }
 }
 
@@ -829,8 +953,7 @@ void DevicePreference::updateButtonsEnabled()
         preferButton->setEnabled(idx.isValid() && idx.row() > 0);
         deferButton->setEnabled(idx.isValid() && idx.row() < deviceList->model()->rowCount() - 1);
         removeButton->setEnabled(idx.isValid() && !(idx.flags() & Qt::ItemIsEnabled));
-        testPlaybackButton->setEnabled(m_showingOutputModel && idx.isValid() &&
-                (idx.flags() & Qt::ItemIsEnabled));
+        testPlaybackButton->setEnabled(idx.isValid() && (idx.flags() & Qt::ItemIsEnabled));
     } else {
         preferButton->setEnabled(false);
         deferButton->setEnabled(false);

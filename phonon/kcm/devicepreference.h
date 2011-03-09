@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2006-2008 Matthias Kretz <kretz@kde.org>
+    Copyright (C) 2011 Casian Andrei <skeletk13@gmail.com>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -32,6 +33,7 @@ namespace Phonon
 {
     class MediaObject;
     class AudioOutput;
+    class VideoWidget;
 } // namespace Phonon
 
 class DevicePreference : public QWidget, private Ui::DevicePreference
@@ -39,6 +41,8 @@ class DevicePreference : public QWidget, private Ui::DevicePreference
     Q_OBJECT
     public:
         DevicePreference(QWidget *parent = 0);
+        virtual ~DevicePreference();
+
         void load();
         void save();
         void defaults();
@@ -63,12 +67,16 @@ class DevicePreference : public QWidget, private Ui::DevicePreference
         void updateVideoCaptureDevices();
 
     private:
+        enum DeviceType {InvalidDevice, AudioOutput, AudioCapture, VideoCapture};
+
+    private:
         template<Phonon::ObjectDescriptionType T> void removeDevice(const Phonon::ObjectDescription<T> &deviceToRemove,
                 QMap<int, Phonon::ObjectDescriptionModel<T> *> *modelMap);
         void loadCategoryDevices();
         QList<Phonon::AudioOutputDevice> availableAudioOutputDevices() const;
         QList<Phonon::AudioCaptureDevice> availableAudioCaptureDevices() const;
         QList<Phonon::VideoCaptureDevice> availableVideoCaptureDevices() const;
+        DeviceType shownModelType() const;
 
     private:
         QList<int> m_removeOnApply;
@@ -77,10 +85,11 @@ class DevicePreference : public QWidget, private Ui::DevicePreference
         QMap<int, Phonon::VideoCaptureDeviceModel *> m_videoCaptureModel;
         QStandardItemModel m_categoryModel;
         QStandardItemModel m_headerModel;
-        bool m_showingOutputModel;
+        DeviceType m_testingType;
 
         Phonon::MediaObject *m_media;
-        Phonon::AudioOutput *m_output;
+        Phonon::AudioOutput *m_audioOutput;
+        Phonon::VideoWidget *m_videoWidget;
 };
 
 #endif // DEVICEPREFERENCE_H_STUPID_UIC
