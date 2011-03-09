@@ -116,8 +116,8 @@ public Q_SLOTS:
      * other resources.
      */
     void removeResources(const QList<QUrl>& resources,
-                         const QString& app,
-                         RemovalFlags flags = NoRemovalFlags);
+                         RemovalFlags flags,
+                         const QString& app);
     //@}
 
     /**
@@ -134,8 +134,8 @@ public Q_SLOTS:
      * other resources.
      */
     void removeDataByApplication(const QList<QUrl>& resources,
-                                 const QString& app,
-                                 RemovalFlags flags = NoRemovalFlags);
+                                 RemovalFlags flags,
+                                 const QString& app);
 
     /**
      * Remove all information from the database which
@@ -145,8 +145,8 @@ public Q_SLOTS:
      * If false sub-resources will be kept if they are still referenced by
      * resources that have been created by other applications.
      */
-    void removeDataByApplication(const QString& app,
-                                 RemovalFlags flags = NoRemovalFlags);
+    void removeDataByApplication(RemovalFlags flags,
+                                 const QString& app);
 
     /**
      * Remove all statements involving any proerty from \p properties from

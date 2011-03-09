@@ -1417,7 +1417,7 @@ void DataManagementModelTest::testRemoveResources()
     m_model->addStatement(QUrl("res:/B"), NIE::url(), QUrl::fromLocalFile(fileB.fileName()), g2);
 
 
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), QLatin1String("testapp"), false);
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
 
     // verify that the resource is gone
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -1427,7 +1427,7 @@ void DataManagementModelTest::testRemoveResources()
     QCOMPARE(m_model->listStatements(QUrl("res:/C"), Node(), Node()).allStatements().count(), 2);
 
     // verify that removing resources by file URL works
-    m_dmModel->removeResources(QList<QUrl>() << QUrl::fromLocalFile(fileB.fileName()), QLatin1String("testapp"), false);
+    m_dmModel->removeResources(QList<QUrl>() << QUrl::fromLocalFile(fileB.fileName()), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
 
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
 
@@ -1491,7 +1491,7 @@ void DataManagementModelTest::testRemoveResources_subresources()
     m_model->addStatement(QUrl("res:/F"), QUrl("prop:/int"), LiteralValue(42), g2);
 
     // delete the resource
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), QLatin1String("A"), DataManagementModel::RemoveSubResoures);
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::RemoveSubResoures, QLatin1String("A"));
 
     // this should have removed A, B and C
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -1528,7 +1528,7 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
 
 
     // empty resource list
-    m_dmModel->removeResources(QList<QUrl>(), QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>(), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1538,7 +1538,7 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
 
 
     // resource list with empty URL
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A") << QUrl(), QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A") << QUrl(), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1548,7 +1548,7 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
 
 
     // empty app
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), QString());
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QString());
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1559,7 +1559,7 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
 
     // non-existing file
     const QUrl nonExistingFileUrl("file:///a/file/that/is/very/unlikely/to/exist");
-    m_dmModel->removeResources(QList<QUrl>() << nonExistingFileUrl, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << nonExistingFileUrl, DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
 
     // the call should have failed
     QVERIFY(m_dmModel->lastError());
@@ -1576,7 +1576,7 @@ void DataManagementModelTest::testRemoveResources_protectedTypes()
 
 
     // property
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("prop:/res"), QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("prop:/res"), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1586,7 +1586,7 @@ void DataManagementModelTest::testRemoveResources_protectedTypes()
 
 
     // class
-    m_dmModel->removeResources(QList<QUrl>() << NRL::Graph(), QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << NRL::Graph(), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1596,7 +1596,7 @@ void DataManagementModelTest::testRemoveResources_protectedTypes()
 
 
     // graph
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("graph:/onto"), QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("graph:/onto"), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1622,7 +1622,7 @@ void DataManagementModelTest::testRemoveDataByApplication1()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
 
     // verify that nothing is left, not even the graph
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -1657,7 +1657,7 @@ void DataManagementModelTest::testRemoveDataByApplication2()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
 
     // verify that graph1 is gone completely
     QVERIFY(!m_model->containsAnyStatement(Node(), Node(), Node(), g1));
@@ -1694,7 +1694,7 @@ void DataManagementModelTest::testRemoveDataByApplication3()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
 
     // the resource should still be there, without any changes, not even a changed mtime
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), Node(), Node()).allStatements().count(), 2);
@@ -1732,7 +1732,7 @@ void DataManagementModelTest::testRemoveDataByApplication4()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
 
     // now the nie:url should still be there even though A created it
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName())));
@@ -1769,7 +1769,7 @@ void DataManagementModelTest::testRemoveDataByApplication5()
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), QLatin1String("A"), DataManagementModel::RemoveSubResoures);
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::RemoveSubResoures, QLatin1String("A"));
 
     // this should have removed both A and B
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -1839,7 +1839,7 @@ void DataManagementModelTest::testRemoveDataByApplication6()
     m_model->addStatement(QUrl("res:/G"), NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g2);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), QLatin1String("A"), DataManagementModel::RemoveSubResoures);
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::RemoveSubResoures, QLatin1String("A"));
 
     // this should have removed A, B and C
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));

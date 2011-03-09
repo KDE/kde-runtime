@@ -180,9 +180,9 @@ public:
 private:
     QVariant runCommand() {
         if(m_resources.isEmpty())
-            model()->removeDataByApplication(m_app, m_flags);
+            model()->removeDataByApplication(m_flags, m_app);
         else
-            model()->removeDataByApplication(m_resources, m_app, m_flags);
+            model()->removeDataByApplication(m_resources, m_flags, m_app);
         return QVariant();
     }
 
@@ -281,7 +281,7 @@ public:
 
 private:
     QVariant runCommand() {
-        model()->removeResources(m_resources, m_app, m_flags);
+        model()->removeResources(m_resources, m_flags, m_app);
         return QVariant();
     }
 
