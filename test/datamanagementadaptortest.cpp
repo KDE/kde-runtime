@@ -40,7 +40,6 @@
 #include <Nepomuk/Vocabulary/NMM>
 #include <Nepomuk/Vocabulary/NCO>
 #include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/ResourceManager>
 
 using namespace Soprano;
 using namespace Soprano::Vocabulary;
