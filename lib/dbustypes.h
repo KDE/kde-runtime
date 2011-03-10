@@ -27,19 +27,29 @@
 #include <QtCore/QString>
 #include <QtCore/QUrl>
 #include <QtDBus/QDBusVariant>
+#include <QtDBus/QDBusArgument>
 
-#include "simpleresourcegraph.h"
+#include "simpleresource.h"
+#include "nepomukdatamanagement_export.h"
 
-typedef QHash<QString, QDBusVariant> NepomukDBusVariantHash;
-Q_DECLARE_METATYPE(NepomukDBusVariantHash)
+Q_DECLARE_METATYPE(Nepomuk::PropertyHash)
+Q_DECLARE_METATYPE(Nepomuk::SimpleResource)
+Q_DECLARE_METATYPE(QList<Nepomuk::SimpleResource>)
 
 namespace Nepomuk {
     namespace DBus {
         QString convertUri(const QUrl& uri);
         QStringList convertUriList(const QList<QUrl>& uris);
-        QHash<QString, QDBusVariant> convertMetadataHash(const QHash<QUrl, QVariant>& metadata);
         QList<QDBusVariant> convertVariantList(const QVariantList& vl);
+        NEPOMUK_DATA_MANAGEMENT_EXPORT void registerDBusTypes();
     }
 }
+
+QDBusArgument& operator<<( QDBusArgument& arg, const QUrl& url );
+const QDBusArgument& operator>>( const QDBusArgument& arg, QUrl& url );
+QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::PropertyHash& ph );
+const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::PropertyHash& ph );
+QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::SimpleResource& res );
+const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::SimpleResource& res );
 
 #endif // DBUSTYPES_H

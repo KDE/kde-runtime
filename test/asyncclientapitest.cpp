@@ -24,7 +24,10 @@
 #include "../datamanagementadaptor.h"
 #include "../classandpropertytree.h"
 #include "simpleresource.h"
-#include "../lib/datamanagement.h"
+#include "simpleresourcegraph.h"
+#include "datamanagement.h"
+#include "createresourcejob.h"
+#include "describeresourcesjob.h"
 #include "nepomuk_dms_test_config.h"
 
 #include <QtTest>
@@ -47,8 +50,6 @@
 #include <Nepomuk/Vocabulary/NMM>
 #include <Nepomuk/Vocabulary/NCO>
 #include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/Variant>
-#include <Nepomuk/ResourceManager>
 
 using namespace Soprano;
 using namespace Soprano::Vocabulary;
@@ -89,8 +90,60 @@ void AsyncClientApiTest::cleanupTestCase()
     delete m_model;
 }
 
+void AsyncClientApiTest::resetModel()
+{
+    // remove all the junk from previous tests
+    m_model->removeAllStatements();
+
+    // add some classes and properties
+    QUrl graph("graph:/onto");
+    m_model->addStatement( graph, RDF::type(), NRL::Ontology(), graph );
+    // removeResources depends on type inference
+    m_model->addStatement( graph, RDF::type(), NRL::Graph(), graph );
+
+    m_model->addStatement( QUrl("prop:/int"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/int"), RDFS::range(), XMLSchema::xsdInt(), graph );
+
+    m_model->addStatement( QUrl("prop:/int2"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/int2"), RDFS::range(), XMLSchema::xsdInt(), graph );
+
+    m_model->addStatement( QUrl("prop:/int3"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/int3"), RDFS::range(), XMLSchema::xsdInt(), graph );
+
+    m_model->addStatement( QUrl("prop:/int_c1"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/int_c1"), RDFS::range(), XMLSchema::xsdInt(), graph );
+    m_model->addStatement( QUrl("prop:/int_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
+
+    m_model->addStatement( QUrl("prop:/string"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/string"), RDFS::range(), XMLSchema::string(), graph );
+
+    m_model->addStatement( QUrl("prop:/res"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/res"), RDFS::range(), RDFS::Resource(), graph );
+
+    m_model->addStatement( QUrl("prop:/res_c1"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/res_c1"), RDFS::range(), RDFS::Resource(), graph );
+    m_model->addStatement( QUrl("prop:/res_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
+
+    m_model->addStatement( QUrl("class:/A"), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( QUrl("class:/B"), RDF::type(), RDFS::Class(), graph );
+
+    // some ontology things the ResourceMerger depends on
+    m_model->addStatement( RDFS::Class(), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( RDFS::Class(), RDFS::subClassOf(), RDFS::Resource(), graph );
+    m_model->addStatement( NRL::Graph(), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( NRL::InstanceBase(), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( NRL::InstanceBase(), RDFS::subClassOf(), NRL::Graph(), graph );
+
+    // rebuild the internals of the data management model
+    QDBusInterface(QLatin1String("org.kde.nepomuk.services.DataManagement"),
+                   QLatin1String("/fakedms"),
+                   QLatin1String("org.kde.fakedms.Nepomuk.DataManagementModel"),
+                   QDBusConnection::sessionBus()).call(QLatin1String("updateTypeCachesAndSoOn"));
+}
+
 void AsyncClientApiTest::init()
 {
+    resetModel();
 }
 
 
@@ -103,12 +156,19 @@ void AsyncClientApiTest::testAddProperty()
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42)));
 }
 
+void AsyncClientApiTest::testSetProperty()
+{
+    KJob* job = Nepomuk::setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/int"), QVariantList() << 42);
+    QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
+    QVERIFY(!job->error());
+
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42)));
+}
+
 void AsyncClientApiTest::testRemoveProperties()
 {
     Soprano::NRLModel nrlModel(m_model);
-
-    QUrl mg1;
-    const QUrl g1 = nrlModel.createGraph(NRL::InstanceBase(), &mg1);
+    const QUrl g1 = nrlModel.createGraph(NRL::InstanceBase());
 
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(12), g1);
@@ -125,6 +185,192 @@ void AsyncClientApiTest::testRemoveProperties()
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int"), Node()));
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int2"), Node()));
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
+}
+
+void AsyncClientApiTest::testCreateResource()
+{
+    CreateResourceJob* job = Nepomuk::createResource(QList<QUrl>() << QUrl("class:/A") << QUrl("class:/B"), QLatin1String("label"), QLatin1String("desc"));
+    QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
+    QVERIFY(!job->error());
+
+    const QUrl uri = job->resourceUri();
+    QVERIFY(!uri.isEmpty());
+
+    QVERIFY(m_model->containsAnyStatement(uri, RDF::type(), QUrl("class:/A")));
+    QVERIFY(m_model->containsAnyStatement(uri, RDF::type(), QUrl("class:/B")));
+    QVERIFY(m_model->containsAnyStatement(uri, NAO::prefLabel(), LiteralValue(QLatin1String("label"))));
+    QVERIFY(m_model->containsAnyStatement(uri, NAO::description(), LiteralValue(QLatin1String("desc"))));
+}
+
+void AsyncClientApiTest::testRemoveProperty()
+{
+    Soprano::NRLModel nrlModel(m_model);
+    const QUrl g1 = nrlModel.createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g1);
+
+    KJob* job = Nepomuk::removeProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QLatin1String("hello world"));
+    QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
+    QVERIFY(!job->error());
+
+    // test that the data has been removed
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world"))));
+}
+
+void AsyncClientApiTest::testRemoveResources()
+{
+    Soprano::NRLModel nrlModel(m_model);
+    const QUrl g1 = nrlModel.createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), NAO::Tag(), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+
+    KJob* job = Nepomuk::removeResources(QList<QUrl>() << QUrl("res:/A"), NoRemovalFlags);
+    QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
+    QVERIFY(!job->error());
+
+    // verify that the resource is gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
+}
+
+void AsyncClientApiTest::testRemoveDataByApplication()
+{
+    Soprano::NRLModel nrlModel(m_model);
+
+    // create our apps (we need to use the component name for the first one as that will be reused in the call below)
+    QUrl appG = nrlModel.createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(KGlobal::mainComponent().componentName()), appG);
+    appG = nrlModel.createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/B"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/B"), NAO::identifier(), LiteralValue(QLatin1String("B")), appG);
+
+    // create the resource to delete
+    QUrl mg1;
+    const QUrl g1 = nrlModel.createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    QUrl mg2;
+    const QUrl g2 = nrlModel.createGraph(NRL::InstanceBase(), &mg2);
+    m_model->addStatement(g2, NAO::maintainedBy(), QUrl("app:/B"), mg2);
+
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
+
+    // delete the resource
+    KJob* job = Nepomuk::removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), NoRemovalFlags);
+    QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
+    QVERIFY(!job->error());
+
+    // verify that graph1 is gone completely
+    QVERIFY(!m_model->containsAnyStatement(Node(), Node(), Node(), g1));
+
+    // only two statements left: the one in the second graph and the last modification date
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), Node(), Node()).allStatements().count(), 2);
+    QVERIFY(m_model->containsStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::lastModified(), Node()));
+
+    // four graphs: g2, the 2 app graphs, and the mtime graph
+    QCOMPARE(m_model->listStatements(Node(), RDF::type(), NRL::InstanceBase()).allStatements().count(), 4);
+}
+
+void AsyncClientApiTest::testStoreResources()
+{
+    // store a simple resource just to check if the method is called properly
+    SimpleResource res;
+    res.setUri(QUrl("_:A"));
+    res.addProperty(RDF::type(), NAO::Tag());
+    res.addProperty(NAO::prefLabel(), QLatin1String("Foobar"));
+
+    KJob* job = Nepomuk::storeResources(SimpleResourceGraph() << res);
+    QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
+    QVERIFY(!job->error());
+
+    // check if the resource exists
+    QVERIFY(m_model->containsAnyStatement(Soprano::Node(), RDF::type(), NAO::Tag()));
+    QVERIFY(m_model->containsAnyStatement(Soprano::Node(), NAO::prefLabel(), Soprano::LiteralValue(QLatin1String("Foobar"))));
+}
+
+void AsyncClientApiTest::testMergeResources()
+{
+    // create some resources
+    Soprano::NRLModel nrlModel(m_model);
+    const QUrl g1 = nrlModel.createGraph(NRL::InstanceBase());
+
+    // the resource in which we want to merge
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int_c1"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+    // the resource that is going to be merged
+    // one duplicate property and one that differs, one backlink to ignore,
+    // one property with cardinality 1 to ignore
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int_c1"), LiteralValue(12), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/B"), g1);
+
+    KJob* job = Nepomuk::mergeResources(QUrl("res:/A"), QUrl("res:/B"));
+    QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
+    QVERIFY(!job->error());
+
+    // make sure B is gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(Node(), Node(), QUrl("res:/B")));
+
+    // make sure A has all the required properties
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42)));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int_c1"), LiteralValue(42)));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello"))));
+
+    // make sure A has no superfluous properties
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int_c1"), LiteralValue(12)));
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/int"), Node()).allElements().count(), 1);
+}
+
+void AsyncClientApiTest::testDescribeResources()
+{
+    // create some resources
+    Soprano::NRLModel nrlModel(m_model);
+    const QUrl g1 = nrlModel.createGraph(NRL::InstanceBase());
+
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), NAO::Tag(), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/B"), g1);
+
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/C"), NAO::hasSubResource(), QUrl("res:/D"), g1);
+
+    m_model->addStatement(QUrl("res:/D"), QUrl("prop:/string"), LiteralValue(QLatin1String("Hello")), g1);
+
+
+    // we only use one of the test cases from the dms test: get two resources with subresoruces
+    DescribeResourcesJob* job = Nepomuk::describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"), true);
+    QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
+    QVERIFY(!job->error());
+
+    QList<SimpleResource> g = job->resources().toList();
+
+    // only one resource in the result
+    QCOMPARE(g.count(), 4);
+
+    // the results are res:/A, res:/B, res:/C and res:/D
+    QList<SimpleResource>::const_iterator it = g.constBegin();
+    SimpleResource r1 = *it;
+    ++it;
+    SimpleResource r2 = *it;
+    ++it;
+    SimpleResource r3 = *it;
+    ++it;
+    SimpleResource r4 = *it;
+    QVERIFY(r1.uri() == QUrl("res:/A") || r2.uri() == QUrl("res:/A") || r3.uri() == QUrl("res:/A") || r4.uri() == QUrl("res:/A"));
+    QVERIFY(r1.uri() == QUrl("res:/B") || r2.uri() == QUrl("res:/B") || r3.uri() == QUrl("res:/B") || r4.uri() == QUrl("res:/B"));
+    QVERIFY(r1.uri() == QUrl("res:/C") || r2.uri() == QUrl("res:/C") || r3.uri() == QUrl("res:/C") || r4.uri() == QUrl("res:/C"));
+    QVERIFY(r1.uri() == QUrl("res:/D") || r2.uri() == QUrl("res:/D") || r3.uri() == QUrl("res:/D") || r4.uri() == QUrl("res:/D"));
 }
 
 QTEST_KDEMAIN_CORE(AsyncClientApiTest)

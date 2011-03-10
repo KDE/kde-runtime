@@ -23,11 +23,11 @@
 
 #include <QtCore/QHashIterator>
 #include <QtCore/QSharedData>
+#include <QtCore/QVariant>
 
 #include <Soprano/Node>
 #include <Soprano/LiteralValue>
 
-#include <Nepomuk/Variant>
 
 class Nepomuk::SimpleResource::Private : public QSharedData
 {
@@ -83,7 +83,12 @@ QList< Soprano::Statement > Nepomuk::SimpleResource::toStatementList() const
     while( it.hasNext() ) {
         it.next();
         
-        Soprano::Node object = Nepomuk::Variant( it.value() ).toNode();
+        Soprano::Node object;
+        if( it.value().type() == QVariant::Url )
+            object = it.value().toUrl();
+        else
+            object = Soprano::LiteralValue( it.value() );
+
         list << Soprano::Statement( convertIfBlankNode( d->m_uri ),
                                     it.key(),
                                     convertIfBlankNode( object ) );
@@ -94,7 +99,19 @@ QList< Soprano::Statement > Nepomuk::SimpleResource::toStatementList() const
 bool Nepomuk::SimpleResource::isValid() const
 {
     // We do not check if m_uri.isValid() as a blank uri of the form "_:daf" would be invalid
-    return !d->m_uri.isEmpty() && ( !d->m_properties.isEmpty() );
+    if(d->m_uri.isEmpty() || d->m_properties.isEmpty()) {
+        return false;
+    }
+
+    // properties cannot have empty values
+    PropertyHash::const_iterator end = d->m_properties.constEnd();
+    for(PropertyHash::const_iterator it = d->m_properties.constBegin(); it != end; ++it) {
+        if(!it.value().isValid()) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 bool Nepomuk::SimpleResource::operator ==(const Nepomuk::SimpleResource &other) const

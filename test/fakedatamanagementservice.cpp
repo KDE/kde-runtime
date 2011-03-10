@@ -38,22 +38,15 @@
 #include <KCmdLineArgs>
 #include <KCmdLineOptions>
 
-#include <QtDBus>
-
-#include <Nepomuk/Vocabulary/NFO>
-#include <Nepomuk/Vocabulary/NMM>
-#include <Nepomuk/Vocabulary/NCO>
-#include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/Variant>
 #include <Nepomuk/ResourceManager>
+
+#include <QtDBus>
 
 #include <signal.h>
 #include <stdio.h>
 
 using namespace Soprano;
-using namespace Soprano::Vocabulary;
 using namespace Nepomuk;
-using namespace Nepomuk::Vocabulary;
 
 namespace {
 #ifndef Q_OS_WIN
@@ -98,6 +91,9 @@ FakeDataManagementService::FakeDataManagementService(QObject *parent)
     // register the adaptor
     QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagementmodel"), m_dmAdaptor, QDBusConnection::ExportScriptableContents);
 
+    // register the dm model itself - simply to let the test case have access to the updateTypeCachesAndSoOn() method
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/fakedms"), m_dmModel, QDBusConnection::ExportAllSlots);
+
     // register under the service name used by the Nepomuk service stub
     QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.nepomuk.services.DataManagement"));
 
@@ -106,9 +102,8 @@ FakeDataManagementService::FakeDataManagementService(QObject *parent)
     dbusModel->setParent(this);
     dbusModel->registerModel(QLatin1String("/model"));
 
-    // init the model data
-    // TODO: export the slot via DBus so the unit test can call it
-    resetModel();
+    // the resourcemerger still depends on the ResourceManager - this is very bad!
+    ResourceManager::instance()->setOverrideMainModel( m_nrlModel );
 }
 
 FakeDataManagementService::~FakeDataManagementService()
@@ -118,51 +113,6 @@ FakeDataManagementService::~FakeDataManagementService()
     delete m_nrlModel;
     delete m_model;
     delete m_storageDir;
-}
-
-void FakeDataManagementService::resetModel()
-{
-    // remove all the junk from previous tests
-    m_model->removeAllStatements();
-
-    // add some classes and properties
-    QUrl graph("graph:/onto");
-    m_model->addStatement( graph, RDF::type(), NRL::Ontology(), graph );
-    // removeResources depends on type inference
-    m_model->addStatement( graph, RDF::type(), NRL::Graph(), graph );
-
-    m_model->addStatement( QUrl("prop:/int"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int2"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int2"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int3"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int3"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int_c1"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int_c1"), RDFS::range(), XMLSchema::xsdInt(), graph );
-    m_model->addStatement( QUrl("prop:/int_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    m_model->addStatement( QUrl("prop:/string"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/string"), RDFS::range(), XMLSchema::string(), graph );
-
-    m_model->addStatement( QUrl("prop:/res"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res"), RDFS::range(), RDFS::Resource(), graph );
-
-    m_model->addStatement( QUrl("prop:/res_c1"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), RDFS::range(), RDFS::Resource(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    // some ontology things the ResourceMerger depends on
-    m_model->addStatement( RDFS::Class(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( RDFS::Class(), RDFS::subClassOf(), RDFS::Resource(), graph );
-    m_model->addStatement( NRL::Graph(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NRL::InstanceBase(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NRL::InstanceBase(), RDFS::subClassOf(), NRL::Graph(), graph );
-
-    // rebuild the internals of the data management model
-    m_dmModel->updateTypeCachesAndSoOn();
 }
 
 

@@ -42,7 +42,6 @@
 #include <Nepomuk/Vocabulary/NMM>
 #include <Nepomuk/Vocabulary/NCO>
 #include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/Variant>
 #include <Nepomuk/ResourceManager>
 
 using namespace Soprano;
@@ -1866,7 +1865,10 @@ namespace {
         while( it.hasNext() ) {
             it.next();
             st.setPredicate( it.key() );
-            st.setObject( Nepomuk::Variant(it.value()).toNode() );
+            if(it.value().type() == QVariant::Url)
+                st.setObject(it.value().toUrl());
+            else
+                st.setObject( Soprano::LiteralValue(it.value()) );
             if( model->addStatement( st ) == Soprano::Error::ErrorNone )
                 numPushed++;
         }
@@ -2081,6 +2083,7 @@ void DataManagementModelTest::testStoreResources()
 
 void DataManagementModelTest::testStoreResources_createResource()
 {
+#warning We need to get rid of the ResourceManager usage here!
     ResourceManager::instance()->setOverrideMainModel( m_model );
 
     //

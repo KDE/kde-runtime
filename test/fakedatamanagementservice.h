@@ -42,9 +42,6 @@ public:
     FakeDataManagementService(QObject *parent = 0);
     ~FakeDataManagementService();
 
-public Q_SLOTS:
-    void resetModel();
-
 private:
     KTempDir* m_storageDir;
     Soprano::Model* m_model;

@@ -24,6 +24,7 @@
 #include "createresourcejob.h"
 #include "describeresourcesjob.h"
 #include "dbustypes.h"
+#include "simpleresourcegraph.h"
 
 #include <QtCore/QStringList>
 
@@ -143,8 +144,8 @@ KJob* Nepomuk::storeResources(const SimpleResourceGraph& resources,
                               const KComponentData& component)
 {
     return new GenericDataManagementJob("storeResources",
-                                        Q_ARG(Nepomuk::SimpleResourceGraph, resources),
-                                        Q_ARG(NepomukDBusVariantHash, Nepomuk::DBus::convertMetadataHash(additionalMetadata)),
+                                        Q_ARG(QList<Nepomuk::SimpleResource>, resources.toList()),
+                                        Q_ARG(Nepomuk::PropertyHash, additionalMetadata),
                                         Q_ARG(QString, component.componentName()));
 }
 

@@ -22,7 +22,6 @@
 #include "datamanagementservice.h"
 #include "datamanagementmodel.h"
 #include "datamanagementadaptor.h"
-#include "dbusoperators.h"
 #include "removablemediamodel.h"
 
 #include <QtDBus/QDBusMetaType>
@@ -30,8 +29,7 @@
 
 
 Q_DECLARE_METATYPE(QList<QUrl>)
-Q_DECLARE_METATYPE(Nepomuk::PropertyHash)
-Q_DECLARE_METATYPE(Nepomuk::SimpleResource)
+
 
 class Nepomuk::DataManagementService::Private
 {
@@ -45,9 +43,6 @@ Nepomuk::DataManagementService::DataManagementService(QObject *parent, const QVa
     : Service(parent),
       d(new Private())
 {
-    qDBusRegisterMetaType<Nepomuk::PropertyHash>();
-    qDBusRegisterMetaType<Nepomuk::SimpleResource>();
-
     d->m_removableMediaModel = new RemovableMediaModel(mainModel(), this);
     d->m_dmModel = new DataManagementModel(mainModel(), d->m_removableMediaModel);
 

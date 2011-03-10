@@ -82,6 +82,8 @@ public:
      *
      * \param component The component which should be given to
      * Nepomuk for it to relate the newly created data to it.
+     *
+     * \sa Nepomuk::storeResources()
      */
     KJob* save(const KComponentData& component = KGlobal::mainComponent()) const;
 
@@ -90,7 +92,5 @@ private:
     QSharedDataPointer<Private> d;
 };
 }
-
-Q_DECLARE_METATYPE(Nepomuk::SimpleResourceGraph)
 
 #endif

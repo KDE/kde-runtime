@@ -28,6 +28,7 @@
 #include "datamanagementmodel.h"
 #include "datamanagementcommand.h"
 #include "simpleresourcegraph.h"
+#include "dbustypes.h"
 
 #include <QtCore/QMetaObject>
 #include <QtCore/QByteArray>
@@ -47,6 +48,8 @@ Nepomuk::DataManagementAdaptor::DataManagementAdaptor(Nepomuk::DataManagementMod
       m_model(parent),
       m_namespacePrefixRx(QLatin1String("(\\w+)\\:(\\w+)"))
 {
+    DBus::registerDBusTypes();
+
     m_threadPool = new QThreadPool(this);
 
     // never let go of our threads - that is just pointless apu cycles wasted
@@ -90,25 +93,27 @@ QString Nepomuk::DataManagementAdaptor::createResource(const QString &type, cons
     return createResource(QStringList() << type, label, description, app);
 }
 
-Nepomuk::SimpleResourceGraph Nepomuk::DataManagementAdaptor::describeResources(const QStringList &resources, bool includeSubResources)
+QList<Nepomuk::SimpleResource> Nepomuk::DataManagementAdaptor::describeResources(const QStringList &resources, bool includeSubResources)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new DescribeResourcesCommand(decodeUris(resources), includeSubResources, m_model, message()));
     // QtDBus will ignore this return value
-    return SimpleResourceGraph();
+    return QList<SimpleResource>();
 }
 
-void Nepomuk::DataManagementAdaptor::storeResources(Nepomuk::SimpleResourceGraph resources, const QHash<QString, QDBusVariant> &additionalMetadata, const QString &app)
+void Nepomuk::DataManagementAdaptor::storeResources(const QList<Nepomuk::SimpleResource>& resources, const Nepomuk::PropertyHash &additionalMetadata, const QString &app)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    QHash<QUrl, QVariant> decodedMetaData;
-    for(QHash<QString, QDBusVariant>::const_iterator it = additionalMetadata.constBegin();
-        it != additionalMetadata.constEnd(); ++it) {
-        decodedMetaData.insert(decodeUri(it.key()), it.value().variant());
-    }
-    enqueueCommand(new MergeResourcesCommand(resources, app, decodedMetaData, m_model, message()));
+    enqueueCommand(new StoreResourcesCommand(resources, app, additionalMetadata, m_model, message()));
+}
+
+void Nepomuk::DataManagementAdaptor::mergeResources(const QString &resource1, const QString &resource2, const QString &app)
+{
+    Q_ASSERT(calledFromDBus());
+    setDelayedReply(true);
+    enqueueCommand(new MergeResourcesCommand(decodeUri(resource1), decodeUri(resource2), app, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::removeDataByApplication(int flags, const QString &app)

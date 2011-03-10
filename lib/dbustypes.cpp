@@ -22,6 +22,7 @@
 #include "dbustypes.h"
 
 #include <QtCore/QStringList>
+#include <QtDBus/QDBusMetaType>
 
 #include <KUrl>
 
@@ -38,21 +39,113 @@ QStringList Nepomuk::DBus::convertUriList(const QList<QUrl>& uris)
     return uriStrings;
 }
 
-QHash<QString, QDBusVariant> Nepomuk::DBus::convertMetadataHash(const QHash<QUrl, QVariant>& metadata)
-{
-    QHash<QString, QDBusVariant> dbusHash;
-    QHash<QUrl, QVariant>::const_iterator end = metadata.constEnd();
-    for(QHash<QUrl, QVariant>::const_iterator it = metadata.constBegin();
-        it != end; ++it) {
-        dbusHash.insertMulti(KUrl(it.key()).url(), QDBusVariant(it.value()));
-    }
-    return dbusHash;
-}
-
 QList<QDBusVariant> Nepomuk::DBus::convertVariantList(const QVariantList& vl)
 {
     QList<QDBusVariant> dbusVl;
     foreach(const QVariant& v, vl)
         dbusVl << QDBusVariant(v);
     return dbusVl;
+}
+
+void Nepomuk::DBus::registerDBusTypes()
+{
+    // we need QUrl to be able to pass it in a QVariant
+    qDBusRegisterMetaType<QUrl>();
+
+    // the central struct for storeResources and describeResources
+    qDBusRegisterMetaType<Nepomuk::SimpleResource>();
+
+    // we use a list instead of a struct for SimpleResourceGraph
+    qDBusRegisterMetaType<QList<Nepomuk::SimpleResource> >();
+
+    // required for the additional metadata in storeResources
+    qDBusRegisterMetaType<Nepomuk::PropertyHash>();
+}
+
+// We need the QUrl serialization to be able to pass URIs in variants
+QDBusArgument& operator<<( QDBusArgument& arg, const QUrl& url )
+{
+    arg.beginStructure();
+    arg << QString::fromAscii(url.toEncoded());
+    arg.endStructure();
+    return arg;
+}
+
+// We need the QUrl serialization to be able to pass URIs in variants
+const QDBusArgument& operator>>( const QDBusArgument& arg, QUrl& url )
+{
+    arg.beginStructure();
+    QString uriString;
+    arg >> uriString;
+    url = QUrl::fromEncoded(uriString.toAscii());
+    arg.endStructure();
+    return arg;
+}
+
+QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::PropertyHash& ph )
+{
+    arg.beginMap( QVariant::String, qMetaTypeId<QDBusVariant>());
+    for(Nepomuk::PropertyHash::const_iterator it = ph.constBegin();
+        it != ph.constEnd(); ++it) {
+        arg.beginMapEntry();
+        arg << QString::fromAscii(it.key().toEncoded());
+        arg << QDBusVariant(it.value());
+        arg.endMapEntry();
+    }
+    arg.endMap();
+    return arg;
+}
+
+const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::PropertyHash& ph )
+{
+    ph.clear();
+    arg.beginMap();
+    while(!arg.atEnd()) {
+        QString key;
+        QDBusVariant value;
+        arg.beginMapEntry();
+        arg >> key >> value;
+
+        const QUrl p = QUrl::fromEncoded(key.toAscii());
+        const QVariant v = value.variant();
+
+        //
+        // trueg: QDBus does not automatically convert non-basic types but gives us a QDBusArgument in a QVariant.
+        // Thus, we need to handle QUrl as a special case here. It is the only complex type we use.
+        //
+        if(v.userType() == qMetaTypeId<QDBusArgument>()) {
+            QDBusArgument arg = v.value<QDBusArgument>();
+            QUrl url;
+            arg >> url;
+            ph.insertMulti(p, url);
+        }
+        else {
+            ph.insertMulti(p, v);
+        }
+        arg.endMapEntry();
+    }
+    arg.endMap();
+    return arg;
+}
+
+QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::SimpleResource& res )
+{
+    arg.beginStructure();
+    arg << QString::fromAscii(res.uri().toEncoded());
+    arg << res.properties();
+    arg.endStructure();
+    return arg;
+}
+
+const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::SimpleResource& res )
+{
+    arg.beginStructure();
+    QString uriS;
+    Nepomuk::PropertyHash props;
+    arg >> uriS;
+    res.setUri( QUrl::fromEncoded(uriS.toAscii()) );
+    arg >> props;
+    res.setProperties(props);
+    arg.endStructure();
+    return arg;
 }

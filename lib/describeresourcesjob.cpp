@@ -21,6 +21,7 @@
 
 #include "describeresourcesjob.h"
 #include "datamanagementinterface.h"
+#include "simpleresourcegraph.h"
 #include "dbustypes.h"
 
 #include <QtDBus/QDBusConnection>
@@ -31,6 +32,7 @@
 #include <QtCore/QUrl>
 
 #include <KComponentData>
+#include <KDebug>
 
 
 class Nepomuk::DescribeResourcesJob::Private
@@ -44,6 +46,8 @@ Nepomuk::DescribeResourcesJob::DescribeResourcesJob(const QList<QUrl>& resources
     : KJob(0),
       d(new Private)
 {
+    DBus::registerDBusTypes();
+
     org::kde::nepomuk::DataManagement dms(QLatin1String("org.kde.nepomuk.services.DataManagement"),
                                           QLatin1String("/datamanagementmodel"),
                                           QDBusConnection::sessionBus());
@@ -66,14 +70,14 @@ void Nepomuk::DescribeResourcesJob::start()
 
 void Nepomuk::DescribeResourcesJob::slotDBusCallFinished(QDBusPendingCallWatcher *watcher)
 {
-    QDBusPendingReply<> reply = *watcher;
+    QDBusPendingReply<QList<Nepomuk::SimpleResource> > reply = *watcher;
     if (reply.isError()) {
         QDBusError error = reply.error();
         setError(1);
         setErrorText(error.message());
     }
     else {
-        d->m_resources = reply.argumentAt(0).value<Nepomuk::SimpleResourceGraph>();
+        d->m_resources = reply.value();
     }
     watcher->deleteLater();
     emitResult();

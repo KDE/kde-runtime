@@ -40,6 +40,9 @@ Nepomuk::GenericDataManagementJob::GenericDataManagementJob(const char *methodNa
                                                             QGenericArgument val4)
     : KJob(0)
 {
+    // DBus types necessary for storeResources
+    DBus::registerDBusTypes();
+
     org::kde::nepomuk::DataManagement dms(QLatin1String("org.kde.nepomuk.services.DataManagement"),
                                           QLatin1String("/datamanagementmodel"),
                                           QDBusConnection::sessionBus());

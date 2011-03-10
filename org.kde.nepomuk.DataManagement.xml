@@ -39,11 +39,11 @@
     </method>
     <method name="removeDataByApplication">
       <arg name="resources" type="as" direction="in"/>
-      <arg name="force" type="b" direction="in"/>
+      <arg name="flags" type="i" direction="in"/>
       <arg name="app" type="s" direction="in"/>
     </method>
     <method name="removeDataByApplication">
-      <arg name="force" type="b" direction="in"/>
+      <arg name="flags" type="i" direction="in"/>
       <arg name="app" type="s" direction="in"/>
     </method>
     <method name="removePropertiesByApplication">
@@ -53,16 +53,21 @@
     </method>
     <method name="storeResources">
       <arg name="resources" type="a(sa{sv})" direction="in"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Nepomuk::SimpleResourceGraph"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QList&lt;Nepomuk::SimpleResource&gt;"/>
       <arg name="additionalMetadata" type="a{sv}" direction="in"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="QHash&lt;QString,QDBusVariant&gt;"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="Nepomuk::PropertyHash"/>
+      <arg name="app" type="s" direction="in"/>
+    </method>
+    <method name="mergeResources">
+      <arg name="resource1" type="s" direction="in"/>
+      <arg name="resource2" type="s" direction="in"/>
       <arg name="app" type="s" direction="in"/>
     </method>
     <method name="describeResources">
       <arg name="resources" type="as" direction="in"/>
       <arg name="includeSubResources" type="b" direction="in"/>
       <arg type="a(sa{sv})" direction="out"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Nepomuk::SimpleResourceGraph"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QList&lt;Nepomuk::SimpleResource&gt;"/>
     </method>
     <method name="setProperty">
       <arg name="resource" type="s" direction="in"/>

@@ -26,7 +26,9 @@
 #include <QtCore/QVariant>
 #include <QtDBus/QDBusMessage>
 
+#include "dbustypes.h"
 #include "datamanagementmodel.h"
+#include "simpleresource.h"
 #include "simpleresourcegraph.h"
 
 
@@ -140,10 +142,10 @@ private:
     QString m_app;
 };
 
-class MergeResourcesCommand : public DataManagementCommand
+class StoreResourcesCommand : public DataManagementCommand
 {
 public:
-    MergeResourcesCommand(const SimpleResourceGraph& resources,
+    StoreResourcesCommand(const SimpleResourceGraph& resources,
                           const QString& app,
                           const QHash<QUrl, QVariant>& additionalMetadata,
                           Nepomuk::DataManagementModel* model,
@@ -162,6 +164,30 @@ private:
     SimpleResourceGraph m_resources;
     QString m_app;
     QHash<QUrl, QVariant> m_additionalMetadata;
+};
+
+class MergeResourcesCommand : public DataManagementCommand
+{
+public:
+    MergeResourcesCommand(const QUrl& resource1,
+                          const QUrl& resource2,
+                          const QString& app,
+                          Nepomuk::DataManagementModel* model,
+                          const QDBusMessage& msg)
+        : DataManagementCommand(model, msg),
+          m_resource1(resource1),
+          m_resource2(resource2),
+          m_app(app) {}
+
+private:
+    QVariant runCommand() {
+        model()->mergeResources(m_resource1, m_resource2, m_app);
+        return QVariant();
+    }
+
+    QUrl m_resource1;
+    QUrl m_resource2;
+    QString m_app;
 };
 
 class RemoveDataByApplicationCommand : public DataManagementCommand
@@ -303,7 +329,7 @@ public:
 
 private:
     QVariant runCommand() {
-        return QVariant::fromValue(model()->describeResources(m_resources, m_includeSubResources));
+        return QVariant::fromValue(model()->describeResources(m_resources, m_includeSubResources).toList());
     }
 
     QList<QUrl> m_resources;

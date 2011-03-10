@@ -27,6 +27,8 @@
 #include <QtCore/QList>
 #include <QtCore/QUrl>
 
+#include "nepomukdatamanagement_export.h"
+
 class QDBusPendingCallWatcher;
 
 namespace Nepomuk {
@@ -42,7 +44,7 @@ class SimpleResourceGraph;
  *
  * \author Sebastian Trueg <trueg@kde.org>
  */
-class DescribeResourcesJob : public KJob
+class NEPOMUK_DATA_MANAGEMENT_EXPORT DescribeResourcesJob : public KJob
 {
     Q_OBJECT
 

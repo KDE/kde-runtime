@@ -31,6 +31,7 @@
 #include <QtCore/QUrl>
 
 #include <KComponentData>
+#include <KUrl>
 
 
 class Nepomuk::CreateResourceJob::Private
@@ -70,14 +71,14 @@ void Nepomuk::CreateResourceJob::start()
 
 void Nepomuk::CreateResourceJob::slotDBusCallFinished(QDBusPendingCallWatcher *watcher)
 {
-    QDBusPendingReply<> reply = *watcher;
+    QDBusPendingReply<QString> reply = *watcher;
     if (reply.isError()) {
         QDBusError error = reply.error();
         setError(1);
         setErrorText(error.message());
     }
     else {
-        d->m_resourceUri = reply.argumentAt(0).toUrl();
+        d->m_resourceUri = KUrl(reply.value());
     }
     watcher->deleteLater();
     emitResult();

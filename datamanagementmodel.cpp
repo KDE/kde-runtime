@@ -57,7 +57,6 @@
 #include <KDebug>
 #include <KService>
 #include <KServiceTypeTrader>
-#include <Nepomuk/Variant>
 
 using namespace Nepomuk::Vocabulary;
 using namespace Soprano::Vocabulary;
@@ -1147,16 +1146,16 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         while( it.hasNext() ) {
             it.next();
 
-            Nepomuk::Variant var( it.value() );
-            if( var.isResource() && it.key() != NIE::url() ) {
-                const LocalFileState localFileState = isLocalFileUrl(var.toUrl());
+            const QVariant value(it.value());
+            if( value.type() == QVariant::Url && it.key() != NIE::url() ) {
+                const LocalFileState localFileState = isLocalFileUrl(value.toUrl());
                 if(localFileState == NonExistingLocalFile) {
-                    setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(var.toUrl().toLocalFile()),
+                    setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(value.toUrl().toLocalFile()),
                              Soprano::Error::ErrorInvalidArgument);
                     return;
                 }
                 else if(localFileState == ExistingLocalFile) {
-                    const QUrl fileUrl = var.toUrl();
+                    const QUrl fileUrl = value.toUrl();
                     // Need to resolve it
                     QHash< QUrl, QUrl >::const_iterator findIter = resolvedNodes.find( fileUrl );
                     if( findIter != resolvedNodes.end() ) {
@@ -1205,6 +1204,16 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         resIdent.addSimpleResource( simpleRes );
     }
     
+
+    //
+    // Check the created statements
+    //
+    foreach(const Soprano::Statement& s, allStatements) {
+        if(!s.isValid()) {
+            setError(QLatin1String("storeResources: Encountered invalid statement after resource conversion."), Soprano::Error::ErrorInvalidArgument);
+            return;
+        }
+    }
 
     clearError();
 
@@ -1343,6 +1352,8 @@ QVariant nodeToVariant(const Soprano::Node& node) {
 
 Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(const QList<QUrl> &resources, bool includeSubResources) const
 {
+    kDebug() << resources << includeSubResources;
+
     //
     // check parameters
     //

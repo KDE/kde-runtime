@@ -1,6 +1,7 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2010-2011 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2010-2011 Vishesh Handa <handa.vish@gmail.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -35,6 +36,13 @@ namespace Nepomuk {
 
 typedef QMultiHash<QUrl, QVariant> PropertyHash;
 
+/**
+ * \class SimpleResource simpleresource.h Nepomuk/SimpleResource
+ *
+ * \brief Represents a snapshot of one %Nepomuk resource.
+ *
+ * \author Vishesh Handa <handa.vish@gmail.com>, Sebastian Trueg <trueg@kde.org>
+ */
 class NEPOMUK_DATA_MANAGEMENT_EXPORT SimpleResource
 {
 public:

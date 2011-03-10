@@ -27,6 +27,8 @@
 #include <QtCore/QHash>
 #include <QtCore/QUrl>
 
+#include "nepomukdatamanagement_export.h"
+
 class KComponentData;
 class QDBusPendingCallWatcher;
 
@@ -41,7 +43,7 @@ namespace Nepomuk {
  *
  * \author Sebastian Trueg <trueg@kde.org>
  */
-class CreateResourceJob : public KJob
+class NEPOMUK_DATA_MANAGEMENT_EXPORT CreateResourceJob : public KJob
 {
     Q_OBJECT
 

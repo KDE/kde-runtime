@@ -38,9 +38,19 @@ private slots:
     void init();
 
     void testAddProperty();
+    void testSetProperty();
+    void testCreateResource();
+    void testRemoveProperty();
     void testRemoveProperties();
+    void testRemoveResources();
+    void testRemoveDataByApplication();
+    void testStoreResources();
+    void testMergeResources();
+    void testDescribeResources();
 
 private:
+    void resetModel();
+
     QProcess* m_fakeDms;
     Soprano::Model* m_model;
 };

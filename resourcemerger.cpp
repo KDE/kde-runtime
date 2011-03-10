@@ -31,7 +31,6 @@
 #include <Soprano/FilterModel>
 #include <Soprano/NodeIterator>
 
-#include <Nepomuk/Variant>
 #include <KDebug>
 #include <Soprano/Graph>
 
@@ -185,6 +184,14 @@ bool Nepomuk::ResourceMerger::containsAllTypes(const QSet< QUrl >& types, const 
     return true;
 }
 
+namespace {
+Soprano::Node variantToNode(const QVariant& v) {
+    if(v.type() == QVariant::Url)
+        return v.toUrl();
+    else
+        return Soprano::LiteralValue(v);
+}
+}
 
 QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
 {
@@ -202,7 +209,7 @@ QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     QMultiHash<QUrl, Soprano::Node> newPropHash;
     QHash< QUrl, QVariant >::const_iterator it = m_additionalMetadata.begin();
     for( ; it != m_additionalMetadata.end(); it++ )
-        newPropHash.insert( it.key(), Nepomuk::Variant( it.value() ).toNode() );
+        newPropHash.insert( it.key(), variantToNode( it.value() ) );
 
     // Compare the old and new property hash
     // If both have the same properties then there is no point in creating a new graph.
