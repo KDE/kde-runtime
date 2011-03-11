@@ -24,6 +24,7 @@
 #include <QtCore/QHashIterator>
 #include <QtCore/QSharedData>
 #include <QtCore/QVariant>
+#include <QtCore/QDebug>
 
 #include <Soprano/Node>
 #include <Soprano/LiteralValue>
@@ -119,11 +120,6 @@ bool Nepomuk::SimpleResource::operator ==(const Nepomuk::SimpleResource &other) 
     return d->m_uri == other.d->m_uri && d->m_properties == other.d->m_properties;
 }
 
-uint Nepomuk::qHash(const SimpleResource& res)
-{
-    return qHash(res.uri());
-}
-
 Nepomuk::PropertyHash Nepomuk::SimpleResource::properties() const
 {
     return d->m_properties;
@@ -201,4 +197,14 @@ void Nepomuk::SimpleResource::addProperties(const Nepomuk::PropertyHash &propert
 QVariantList Nepomuk::SimpleResource::property(const QUrl &property) const
 {
     return d->m_properties.values(property);
+}
+
+uint Nepomuk::qHash(const SimpleResource& res)
+{
+    return qHash(res.uri());
+}
+
+QDebug Nepomuk::operator<<(QDebug& dbg, const Nepomuk::SimpleResource& res)
+{
+    return dbg << res.uri() << res.properties();
 }
