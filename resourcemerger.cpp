@@ -301,7 +301,7 @@ bool Nepomuk::ResourceMerger::checkGraphMetadata(const QMultiHash< QUrl, Soprano
 
         if( maxCardinality != 0 ) {
             if( curCardinality > maxCardinality ) {
-                m_model->setError( QString::fromLatin1("%1 has a max cardinality of %2").arg(propUri.toString(), maxCardinality), Soprano::Error::ErrorInvalidArgument );
+                m_model->setError( QString::fromLatin1("%1 has a max cardinality of %2").arg(propUri.toString()).arg(maxCardinality), Soprano::Error::ErrorInvalidArgument );
                 return false;
             }
         }
@@ -462,7 +462,7 @@ void Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
 //                kDebug() << "Existing Cardinality: " << existingCardinality;
 //                kDebug() << "St Cardinality: " << stCardinality;
                 m_model->setError( QString::fromLatin1("%1 has a max cardinality of %2")
-                                .arg( st.predicate().toString(), maxCardinality ),
+                                .arg( st.predicate().toString()).arg( maxCardinality ),
                                 Soprano::Error::ErrorInvalidStatement);
                 return;
             }
