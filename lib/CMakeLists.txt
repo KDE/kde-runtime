@@ -38,4 +38,5 @@ install(FILES
   datamanagement.h
   createresourcejob.h
   describeresourcesjob.h
+  nepomukdatamanagement_export.h
   DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk)
