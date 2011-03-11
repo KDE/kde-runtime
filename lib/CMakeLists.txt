@@ -30,3 +30,12 @@ target_link_libraries(nepomukdatamanagement
   ${SOPRANO_LIBRARIES}
   ${NEPOMUK_LIBRARIES}
   ${KDE4_KDECORE_LIBS})
+
+install(TARGETS nepomukdatamanagement DESTINATION ${LIB_INSTALL_DIR})
+install(FILES
+  simpleresource.h
+  simpleresourcegraph.h
+  datamanagement.h
+  createresourcejob.h
+  describeresourcesjob.h
+  DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk)
