@@ -62,7 +62,7 @@ void AsyncClientApiTest::initTestCase()
     kDebug() << "Starting fake DMS:" << FAKEDMS_BIN;
 
     // setup the service watcher so we know when the fake DMS is up
-    QDBusServiceWatcher watcher(QLatin1String("org.kde.nepomuk.services.DataManagement"),
+    QDBusServiceWatcher watcher(QLatin1String("org.kde.nepomuk.DataManagement"),
                                 QDBusConnection::sessionBus(),
                                 QDBusServiceWatcher::WatchForRegistration);
 
@@ -75,13 +75,13 @@ void AsyncClientApiTest::initTestCase()
     QTest::kWaitForSignal(&watcher, SIGNAL(serviceRegistered(QString)));
 
     // get us access to the fake DMS's model
-    m_model = new Soprano::Client::DBusModel(QLatin1String("org.kde.nepomuk.services.DataManagement"), QLatin1String("/model"));
+    m_model = new Soprano::Client::DBusModel(QLatin1String("org.kde.nepomuk.DataManagement"), QLatin1String("/model"));
 }
 
 void AsyncClientApiTest::cleanupTestCase()
 {
     kDebug() << "Shutting down fake DMS...";
-    QDBusInterface(QLatin1String("org.kde.nepomuk.services.DataManagement"),
+    QDBusInterface(QLatin1String("org.kde.nepomuk.DataManagement"),
                    QLatin1String("/MainApplication"),
                    QLatin1String("org.kde.KApplication"),
                    QDBusConnection::sessionBus()).call(QLatin1String("quit"));
@@ -135,7 +135,7 @@ void AsyncClientApiTest::resetModel()
     m_model->addStatement( NRL::InstanceBase(), RDFS::subClassOf(), NRL::Graph(), graph );
 
     // rebuild the internals of the data management model
-    QDBusInterface(QLatin1String("org.kde.nepomuk.services.DataManagement"),
+    QDBusInterface(QLatin1String("org.kde.nepomuk.DataManagement"),
                    QLatin1String("/fakedms"),
                    QLatin1String("org.kde.fakedms.Nepomuk.DataManagementModel"),
                    QDBusConnection::sessionBus()).call(QLatin1String("updateTypeCachesAndSoOn"));

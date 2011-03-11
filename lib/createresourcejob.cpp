@@ -47,7 +47,7 @@ Nepomuk::CreateResourceJob::CreateResourceJob(const QList<QUrl>& types,
     : KJob(0),
       d(new Private)
 {
-    org::kde::nepomuk::DataManagement dms(QLatin1String("org.kde.nepomuk.services.DataManagement"),
+    org::kde::nepomuk::DataManagement dms(QLatin1String("org.kde.nepomuk.DataManagement"),
                                           QLatin1String("/datamanagementmodel"),
                                           QDBusConnection::sessionBus());
     QDBusPendingCallWatcher* dbusCallWatcher

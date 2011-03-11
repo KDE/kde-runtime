@@ -48,6 +48,9 @@ Nepomuk::DataManagementService::DataManagementService(QObject *parent, const QVa
 
     Nepomuk::DataManagementAdaptor* adaptor = new Nepomuk::DataManagementAdaptor(d->m_dmModel);
     QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagementmodel"), adaptor, QDBusConnection::ExportScriptableContents);
+
+    // register the fancier name for this important service
+    QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.nepomuk.DataManagement"));
 }
 
 

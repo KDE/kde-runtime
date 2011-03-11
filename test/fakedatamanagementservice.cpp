@@ -95,7 +95,7 @@ FakeDataManagementService::FakeDataManagementService(QObject *parent)
     QDBusConnection::sessionBus().registerObject(QLatin1String("/fakedms"), m_dmModel, QDBusConnection::ExportAllSlots);
 
     // register under the service name used by the Nepomuk service stub
-    QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.nepomuk.services.DataManagement"));
+    QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.nepomuk.DataManagement"));
 
     // register our base model via dbus so the test case can access it
     Soprano::Server::DBusExportModel* dbusModel = new Soprano::Server::DBusExportModel(m_model);
