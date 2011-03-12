@@ -9,7 +9,9 @@ kde4_add_unit_test(classandpropertytreetest
 target_link_libraries(classandpropertytreetest
   ${QT_QTTEST_LIBRARY}
   ${SOPRANO_LIBRARIES}
-  ${KDE4_KDECORE_LIBS})
+  ${KDE4_KDECORE_LIBS}
+  nepomukdatamanagement
+)
 
 
 kde4_add_unit_test(datamanagementmodeltest

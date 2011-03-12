@@ -20,6 +20,7 @@
 */
 
 #include "classandpropertytree.h"
+#include "simpleresource.h"
 
 #include <QtCore/QSet>
 #include <QtCore/QDir>
@@ -377,6 +378,32 @@ QSet<QUrl> Nepomuk::ClassAndPropertyTree::getAllParents(ClassOrProperty* cop, QS
         cop->allParents.remove(cop->uri);
     }
     return cop->allParents;
+}
+
+
+namespace {
+    Soprano::Node convertIfBlankNode( const Soprano::Node & n ) {
+        if( n.isResource() && n.uri().toString().startsWith("_:") ) {
+            return Soprano::Node( n.uri().toString().mid(2) ); // "_:" take 2 characters
+        }
+        return n;
+    }
+}
+
+QList<Soprano::Statement> Nepomuk::ClassAndPropertyTree::simpleResourceToStatementList(const Nepomuk::SimpleResource &res) const
+{
+    const Soprano::Node subject = convertIfBlankNode(res.uri());
+    QList<Soprano::Statement> list;
+    PropertyHash properties = res.properties();
+    QHashIterator<QUrl, QVariant> it( properties );
+    while( it.hasNext() ) {
+        it.next();
+        const Soprano::Node object = variantToNode(it.value(), it.key());
+        list << Soprano::Statement(subject,
+                                   it.key(),
+                                   convertIfBlankNode(object));
+    }
+    return list;
 }
 
 #include "classandpropertytree.moc"

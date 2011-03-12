@@ -26,14 +26,17 @@
 #include <QtCore/QUrl>
 #include <QtCore/QVariant>
 #include <QtCore/QMutex>
+#include <QtCore/QList>
 
 namespace Soprano {
 class Model;
 class Node;
+class Statement;
 }
 
 
 namespace Nepomuk {
+class SimpleResource;
 class ClassAndPropertyTree : public QObject
 {
     Q_OBJECT
@@ -58,6 +61,8 @@ public:
     /// will try very hard to convert a variant into a node. Supports literal XML types and QUrl
     Soprano::Node variantToNode(const QVariant& value, const QUrl& property) const;
     QSet<Soprano::Node> variantListToNodeSet(const QVariantList& vl, const QUrl& property) const;
+
+    QList<Soprano::Statement> simpleResourceToStatementList(const Nepomuk::SimpleResource& res) const;
 
 public Q_SLOTS:
     void rebuildTree(Soprano::Model* model);

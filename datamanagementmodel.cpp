@@ -1188,7 +1188,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             }
         }
         
-        QList< Soprano::Statement > stList = resolvedRes.toStatementList();
+        QList< Soprano::Statement > stList = d->m_classAndPropertyTree.simpleResourceToStatementList(resolvedRes);
         allStatements << stList;
 
         if(stList.isEmpty()) {
