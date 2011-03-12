@@ -150,56 +150,64 @@ Soprano::Node Nepomuk::ClassAndPropertyTree::variantToNode(const QVariant &value
 
 QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QVariantList &vl, const QUrl &property) const
 {
-    const QUrl range = propertyRange(property);
-    const QVariant::Type literalType = Soprano::LiteralValue::typeFromDataTypeUri(range);
     QSet<Soprano::Node> nodes;
-    if(literalType == QVariant::Invalid) {
+    const QUrl range = propertyRange(property);
+    // special case: rdfs:Literal
+    if(range == Soprano::Vocabulary::RDFS::Literal()) {
         Q_FOREACH(const QVariant& value, vl) {
-            // treat as a resource range for now
-            if(value.type() == QVariant::Url) {
-                nodes.insert(value.toUrl());
-            }
-            else if(value.type() == QVariant::String) {
-                QString s = value.toString();
-                if(!s.isEmpty()) {
-                    // for convinience we support local file paths
-                    if(s[0] == QDir::separator() && QFile::exists(s)) {
-                        nodes.insert(QUrl::fromLocalFile(s));
-                    }
-                    else {
-                        // treat it as a URI
-                        nodes.insert(QUrl(s));
-                    }
-                }
-                else {
-                    // empty string
-                    return QSet<Soprano::Node>();
-                }
-            }
-            else {
-                // invalid type
-                return QSet<Soprano::Node>();
-            }
+            nodes.insert(Soprano::LiteralValue::createPlainLiteral(value.toString()));
         }
     }
     else {
-        Q_FOREACH(const QVariant& value, vl) {
-            if(value.type() == literalType) {
-                nodes.insert(Soprano::LiteralValue(value));
-            }
-            else {
-                Soprano::LiteralValue v = Soprano::LiteralValue::fromString(value.toString(), range);
-                if(v.isValid()) {
-                    nodes.insert(v);
+        const QVariant::Type literalType = Soprano::LiteralValue::typeFromDataTypeUri(range);
+        if(literalType == QVariant::Invalid) {
+            Q_FOREACH(const QVariant& value, vl) {
+                // treat as a resource range for now
+                if(value.type() == QVariant::Url) {
+                    nodes.insert(value.toUrl());
+                }
+                else if(value.type() == QVariant::String) {
+                    QString s = value.toString();
+                    if(!s.isEmpty()) {
+                        // for convinience we support local file paths
+                        if(s[0] == QDir::separator() && QFile::exists(s)) {
+                            nodes.insert(QUrl::fromLocalFile(s));
+                        }
+                        else {
+                            // treat it as a URI
+                            nodes.insert(QUrl(s));
+                        }
+                    }
+                    else {
+                        // empty string
+                        return QSet<Soprano::Node>();
+                    }
                 }
                 else {
-                    // failed literal conversion
+                    // invalid type
                     return QSet<Soprano::Node>();
                 }
             }
         }
+        else {
+            Q_FOREACH(const QVariant& value, vl) {
+                if(value.type() == literalType) {
+                    nodes.insert(Soprano::LiteralValue(value));
+                }
+                else {
+                    Soprano::LiteralValue v = Soprano::LiteralValue::fromString(value.toString(), range);
+                    if(v.isValid()) {
+                        nodes.insert(v);
+                    }
+                    else {
+                        // failed literal conversion
+                        return QSet<Soprano::Node>();
+                    }
+                }
+            }
+        }
     }
-
+    kDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Converted nodes:" << vl << nodes << range;
     return nodes;
 }
 
