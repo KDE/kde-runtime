@@ -2356,10 +2356,12 @@ void DataManagementModelTest::testStoreResources_metadata()
     const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
     m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
 
+    const QDateTime now = QDateTime::currentDateTime();
     m_model->addStatement(QUrl("res:/A"), RDF::type(), NAO::Tag(), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("Foobar")), g1);
-    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(now), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(now), g1);
 
 
     // now we merge the same resource (with differing metadata)
@@ -2378,6 +2380,25 @@ void DataManagementModelTest::testStoreResources_metadata()
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).allStatements().count(), 1);
 
     QVERIFY(!haveTrailingGraphs());
+
+
+    // now merge the same resource with some new data - just to make sure the metadata is updated properly
+    SimpleResource resA(QUrl("res:/A"));
+    resA.addProperty(QUrl("prop:/int2"), 42);
+
+    // merge the resource
+    m_dmModel->storeResources(SimpleResourceGraph() << resA, QLatin1String("B"));
+
+    // make sure the new data is there
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int2"), LiteralValue(42)));
+
+    // make sure creation date did not change
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).allStatements().count(), 1);
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::created(), LiteralValue(now)));
+    
+    // make sure the last mtime has been updated
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).allStatements().count(), 1);
+    QVERIFY(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first().literal().toDateTime() > now);
 }
 
 void DataManagementModelTest::testStoreResources_protectedTypes()
