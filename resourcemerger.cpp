@@ -32,6 +32,7 @@
 #include <Soprano/FilterModel>
 #include <Soprano/NodeIterator>
 #include <Soprano/LiteralValue>
+#include <Soprano/Node>
 
 #include <KDebug>
 #include <Soprano/Graph>
@@ -83,15 +84,18 @@ void Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
 
 QMultiHash< QUrl, Soprano::Node > Nepomuk::ResourceMerger::getPropertyHashForGraph(const QUrl& graph) const
 {
-    QList<Soprano::Statement> statements = model()->listStatements( graph, Soprano::Node(), Soprano::Node() ).allStatements();
-    
-//    kDebug() << statements;
-    
+    // trueg: this is more a hack than anything else: exclude the inference types
+    // a real solution would either ignore supertypes of nrl:Graph in checkGraphMetadata()
+    // or only check the new metadata for consistency
+    Soprano::QueryResultIterator it
+            = model()->executeQuery(QString::fromLatin1("select ?p ?o where { graph ?g { %1 ?p ?o . } . FILTER(?g!=<urn:crappyinference2:inferredtriples>) . }")
+                                    .arg(Soprano::Node::resourceToN3(graph)),
+                                    Soprano::Query::QueryLanguageSparql);
     //Convert to prop hash
     QMultiHash<QUrl, Soprano::Node> propHash;
-    foreach( const Soprano::Statement & st, statements )
-        propHash.insert( st.predicate().uri(), st.object() );
-
+    while(it.next()) {
+        propHash.insert( it["p"].uri(), it["o"] );
+    }
     return propHash;
 }
 
@@ -276,8 +280,9 @@ bool Nepomuk::ResourceMerger::checkGraphMetadata(const QMultiHash< QUrl, Soprano
             }
 
             // All the types should be a sub-type of nrl:Graph
+            // FIXME: there could be multiple types in the old graph from inferencing. all superclasses of nrl:Graph. However, it would still be valid.
             if( !tree->isChildOf( object.uri(), NRL::Graph() ) ) {
-                m_model->setError( QString::fromLatin1("The rdf:type should be a subclass of nrl:Graph. '%1' is not.").arg(object.uri().toString()),
+                m_model->setError( QString::fromLatin1("Any rdf:type specified in the additional metadata should be a subclass of nrl:Graph. '%1' is not.").arg(object.uri().toString()),
                                    Soprano::Error::ErrorInvalidArgument );
                 return false;
             }
