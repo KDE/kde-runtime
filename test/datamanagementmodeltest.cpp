@@ -96,6 +96,10 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NAO::prefLabel(), RDFS::range(), RDFS::Literal(), graph );
     m_model->addStatement( NFO::fileName(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NFO::fileName(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NCO::fullname(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NCO::fullname(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NIE::title(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NIE::title(), RDFS::range(), XMLSchema::string(), graph );
 
     // rebuild the internals of the data management model
     m_dmModel->updateTypeCachesAndSoOn();
