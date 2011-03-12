@@ -391,8 +391,11 @@ QSet<QUrl> Nepomuk::ClassAndPropertyTree::getAllParents(ClassOrProperty* cop, QS
 
 namespace {
     Soprano::Node convertIfBlankNode( const Soprano::Node & n ) {
-        if( n.isResource() && n.uri().toString().startsWith("_:") ) {
-            return Soprano::Node( n.uri().toString().mid(2) ); // "_:" take 2 characters
+        if( n.isResource() ) {
+            const QString uriString = n.uri().toString();
+            if( uriString.startsWith("_:") ) {
+                return Soprano::Node( uriString.mid(2) ); // "_:" take 2 characters
+            }
         }
         return n;
     }
