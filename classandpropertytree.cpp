@@ -207,7 +207,7 @@ QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QV
             }
         }
     }
-    kDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Converted nodes:" << vl << nodes << range;
+
     return nodes;
 }
 

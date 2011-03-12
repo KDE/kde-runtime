@@ -516,7 +516,7 @@ void Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
             }
             else if( st.object().isLiteral() ) {
                 const Soprano::LiteralValue lv = st.object().literal();
-                if( lv.dataTypeUri() != range ) {
+                if( lv.dataTypeUri() != range && !lv.isPlain() && range != RDFS::Literal()) {
                     kDebug() << "Invalid literal range";
                     m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2")
                                        .arg( propUri.toString(), range.toString() ),

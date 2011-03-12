@@ -92,6 +92,10 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NRL::Graph(), RDF::type(), RDFS::Class(), graph );
     m_model->addStatement( NRL::InstanceBase(), RDF::type(), RDFS::Class(), graph );
     m_model->addStatement( NRL::InstanceBase(), RDFS::subClassOf(), NRL::Graph(), graph );
+    m_model->addStatement( NAO::prefLabel(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NAO::prefLabel(), RDFS::range(), RDFS::Literal(), graph );
+    m_model->addStatement( NFO::fileName(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NFO::fileName(), RDFS::range(), XMLSchema::string(), graph );
 
     // rebuild the internals of the data management model
     m_dmModel->updateTypeCachesAndSoOn();
@@ -2098,7 +2102,7 @@ void DataManagementModelTest::testStoreResources_createResource()
 
     // check if the resource exists
     QVERIFY(m_model->containsAnyStatement(Soprano::Node(), RDF::type(), NAO::Tag()));
-    QVERIFY(m_model->containsAnyStatement(Soprano::Node(), NAO::prefLabel(), Soprano::LiteralValue(QLatin1String("Foobar"))));
+    QVERIFY(m_model->containsAnyStatement(Soprano::Node(), NAO::prefLabel(), Soprano::LiteralValue::createPlainLiteral(QLatin1String("Foobar"))));
 
     // make sure only one tag resource was created
     QCOMPARE(m_model->listStatements(Node(), RDF::type(), NAO::Tag()).allElements().count(), 1);
@@ -2127,7 +2131,7 @@ void DataManagementModelTest::testStoreResources_createResource()
                                                       "}")
                                   .arg(Soprano::Node::resourceToN3(NAO::Tag()),
                                        Soprano::Node::resourceToN3(NAO::prefLabel()),
-                                       Soprano::Node::literalToN3(QLatin1String("Foobar")),
+                                       Soprano::Node::literalToN3(LiteralValue::createPlainLiteral(QLatin1String("Foobar"))),
                                        Soprano::Node::resourceToN3(NRL::InstanceBase()),
                                        Soprano::Node::resourceToN3(NRL::GraphMetadata()),
                                        Soprano::Node::resourceToN3(NRL::coreGraphMetadataFor()),
@@ -2171,7 +2175,7 @@ void DataManagementModelTest::testStoreResources_createResource()
                                                       "}")
                                   .arg(Soprano::Node::resourceToN3(NAO::Tag()),
                                        Soprano::Node::resourceToN3(NAO::prefLabel()),
-                                       Soprano::Node::literalToN3(QLatin1String("Foobar")),
+                                       Soprano::Node::literalToN3(LiteralValue::createPlainLiteral(QLatin1String("Foobar"))),
                                        Soprano::Node::resourceToN3(NAO::maintainedBy()),
                                        Soprano::Node::resourceToN3(NAO::identifier()),
                                        Soprano::Node::literalToN3(QLatin1String("testapp")),
