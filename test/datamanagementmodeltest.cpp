@@ -1983,7 +1983,7 @@ void DataManagementModelTest::testStoreResources()
         QVERIFY( objects.first().isResource() );
 
         QUrl coldplayUri = objects.first().uri();
-        QVERIFY( coldplayUri == QUrl("nepomuk:/res/coldplay") );
+        QCOMPARE( coldplayUri, QUrl("nepomuk:/res/coldplay") );
         QList< Soprano::Statement > stList = coldplay.toStatementList();
         foreach( Soprano::Statement st, stList ) {
             st.setSubject( coldplayUri );
