@@ -28,8 +28,10 @@
 #include <Soprano/Vocabulary/NAO>
 
 #include <Soprano/StatementIterator>
+#include <Soprano/QueryResultIterator>
 #include <Soprano/FilterModel>
 #include <Soprano/NodeIterator>
+#include <Soprano/LiteralValue>
 
 #include <KDebug>
 #include <Soprano/Graph>
@@ -453,10 +455,17 @@ void Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
         QPair<QUrl,QUrl> subPredPair( subUri, propUri );
 
         int maxCardinality = tree->maxCardinality( propUri );
-        int existingCardinality = m_model->listStatements( st.subject(), st.predicate(), Soprano::Node() ).allStatements().size();
-        int stCardinality = cardinality.value( subPredPair );
 
         if( maxCardinality > 0 ) {
+            int existingCardinality = 0;
+            if(!st.subject().isBlank()) {
+                existingCardinality = m_model->executeQuery(QString::fromLatin1("select count(distinct ?v) where { %1 %2 ?v . FILTER(?v!=%3) . }")
+                                                            .arg(st.subject().toN3(), st.predicate().toN3(), st.object().toN3()),
+                                                            Soprano::Query::QueryLanguageSparql)
+                    .iterateBindings(0)
+                    .allNodes().first().literal().toInt();
+            }
+            const int stCardinality = cardinality.value( subPredPair );
             if( stCardinality + existingCardinality > maxCardinality) {
 //                kDebug() << "Max Cardinality : " << maxCardinality;
 //                kDebug() << "Existing Cardinality: " << existingCardinality;
