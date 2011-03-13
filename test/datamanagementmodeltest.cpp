@@ -2205,6 +2205,8 @@ void DataManagementModelTest::testStoreResources_createResource()
 
 void DataManagementModelTest::testStoreResources_invalid_args()
 {
+    ResourceManager::instance()->setOverrideMainModel( m_model );
+
     // remember current state to compare later on
     Soprano::Graph existingStatements = m_model->listStatements().allStatements();
 
@@ -2280,6 +2282,8 @@ void DataManagementModelTest::testStoreResources_invalid_args()
 
 void DataManagementModelTest::testStoreResources_invalid_args_with_existing()
 {
+    ResourceManager::instance()->setOverrideMainModel( m_model );
+
     // create a test resource
     QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
     m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
