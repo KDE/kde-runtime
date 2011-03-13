@@ -86,6 +86,11 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( QUrl("prop:/res_c1"), RDFS::range(), RDFS::Resource(), graph );
     m_model->addStatement( QUrl("prop:/res_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
 
+    m_model->addStatement( QUrl("class:/typeA"), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( QUrl("class:/typeB"), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( QUrl("class:/typeB"), RDFS::subClassOf(), QUrl("class:/typeA"), graph );
+
+
     // some ontology things the ResourceMerger depends on
     m_model->addStatement( RDFS::Class(), RDF::type(), RDFS::Class(), graph );
     m_model->addStatement( RDFS::Class(), RDFS::subClassOf(), RDFS::Resource(), graph );
@@ -2273,6 +2278,101 @@ void DataManagementModelTest::testStoreResources_invalid_args()
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
+void DataManagementModelTest::testStoreResources_invalid_args_with_existing()
+{
+    // create a test resource
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    // create the resource to delete
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/B"), g1);
+    const QDateTime now = QDateTime::currentDateTime();
+    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(now), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(now), g1);
+
+
+    // create a resource to merge
+    SimpleResource a(QUrl("res:/A"));
+    a.addProperty(QUrl("prop:/int"), 42);
+
+
+    // remember current state to compare later on
+    Soprano::Graph existingStatements = m_model->listStatements().allStatements();
+
+
+    // empty resources -> no error but no change either
+    m_dmModel->storeResources(SimpleResourceGraph(), QLatin1String("testapp"));
+
+    // no error
+    QVERIFY(!m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // empty app
+    m_dmModel->storeResources(SimpleResourceGraph() << a, QString());
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // invalid resource in graph
+    m_dmModel->storeResources(SimpleResourceGraph() << a << SimpleResource(), QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // invalid range used in one resource
+    SimpleResource res(a);
+    res.addProperty(QUrl("prop:/int"), QVariant(QLatin1String("foobar")));
+    m_dmModel->storeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // non-existing file as object
+    const QUrl nonExistingFileUrl("file:///a/file/that/is/very/unlikely/to/exist");
+    SimpleResource nonExistingFileRes(a);
+    nonExistingFileRes.addProperty(QUrl("prop:/res"), nonExistingFileUrl);
+    m_dmModel->storeResources(SimpleResourceGraph() << nonExistingFileRes, QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // invalid cardinality in resource
+    SimpleResource invalidCRes(a);
+    invalidCRes.addProperty(QUrl("prop:/int_c1"), 42);
+    invalidCRes.addProperty(QUrl("prop:/int_c1"), 2);
+    m_dmModel->storeResources(SimpleResourceGraph() << invalidCRes, QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+}
+
 void DataManagementModelTest::testStoreResources_file1()
 {
     QTemporaryFile fileA;
@@ -2395,7 +2495,7 @@ void DataManagementModelTest::testStoreResources_metadata()
     // make sure creation date did not change
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).allStatements().count(), 1);
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::created(), LiteralValue(now)));
-    
+
     // make sure the last mtime has been updated
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).allStatements().count(), 1);
     QVERIFY(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first().literal().toDateTime() > now);
@@ -2403,6 +2503,8 @@ void DataManagementModelTest::testStoreResources_metadata()
 
 void DataManagementModelTest::testStoreResources_protectedTypes()
 {
+    ResourceManager::instance()->setOverrideMainModel( m_model );
+
     // remember current state to compare later on
     Soprano::Graph existingStatements = m_model->listStatements().allStatements();
 
@@ -2447,6 +2549,95 @@ void DataManagementModelTest::testStoreResources_protectedTypes()
 
     // no data should have been changed
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+}
+
+// make sure storeResources ignores supertypes
+void DataManagementModelTest::testStoreResources_superTypes()
+{
+    ResourceManager::instance()->setOverrideMainModel( m_model );
+
+    // 1. create a resource to merge
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), QUrl("class:/typeA"), g1);
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), QUrl("class:/typeB"), g1);
+    const QDateTime now = QDateTime::currentDateTime();
+    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(now), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(now), g1);
+
+
+    // now merge the same resource (excluding the super-type A)
+    SimpleResource a;
+    a.addProperty(RDF::type(), QUrl("class:/typeB"));
+    a.addProperty(QUrl("prop:/string"), QLatin1String("hello world"));
+
+    m_dmModel->storeResources(SimpleResourceGraph() << a, QLatin1String("A"));
+
+
+    // make sure the existing resource was reused
+    QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world"))).allElements().count(), 1);
+}
+
+// make sure merging even works with missing metadata in store
+void DataManagementModelTest::testStoreResources_missingMetadata()
+{
+    ResourceManager::instance()->setOverrideMainModel( m_model );
+
+    // create our app
+    const QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+
+    // create a resource (without creation date)
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    const QDateTime now = QDateTime::currentDateTime();
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), NAO::Tag(), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("Foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(now), g1);
+
+
+    // now we merge the same resource
+    SimpleResource a;
+    a.addProperty(QUrl("prop:/int"), QVariant(42));
+    a.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("Foobar")));
+
+    // merge the resource
+    m_dmModel->storeResources(SimpleResourceGraph() << a, QLatin1String("B"));
+
+    // make sure no new resource has been created
+    QCOMPARE(m_model->listStatements(Node(), RDF::type(), NAO::Tag()).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/int"), Node()).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/string"), Node()).allStatements().count(), 1);
+
+    QVERIFY(!haveTrailingGraphs());
+
+
+    // now merge the same resource with some new data - just to make sure the metadata is updated properly
+    SimpleResource resA(QUrl("res:/A"));
+    resA.addProperty(QUrl("prop:/int2"), 42);
+
+    // merge the resource
+    m_dmModel->storeResources(SimpleResourceGraph() << resA, QLatin1String("B"));
+
+    // make sure the new data is there
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int2"), LiteralValue(42)));
+
+    // make sure creation date did not change, ie. it was not created as that would be wrong
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), NAO::created(), Node()));
+
+    // make sure the last mtime has been updated
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).allStatements().count(), 1);
+    QVERIFY(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first().literal().toDateTime() > now);
 }
 
 void DataManagementModelTest::testMergeResources()

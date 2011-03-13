@@ -85,10 +85,13 @@ private Q_SLOTS:
     void testStoreResources();
     void testStoreResources_createResource();
     void testStoreResources_invalid_args();
+    void testStoreResources_invalid_args_with_existing();
     void testStoreResources_file1();
     void testStoreResources_file2();
     void testStoreResources_metadata();
     void testStoreResources_protectedTypes();
+    void testStoreResources_superTypes();
+    void testStoreResources_missingMetadata();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();
