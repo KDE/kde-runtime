@@ -1070,6 +1070,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         return;
     }
     if(resources.isEmpty()) {
+        clearError();
         return;
     }
 
