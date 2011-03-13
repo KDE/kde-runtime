@@ -160,16 +160,22 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
             defname = defname.mid(defname.lastIndexOf('/') + 1);
         }
 
-        QPointer<KFileDialog> dlg = new KFileDialog(defname, QString(), parent);
-        dlg->setSelection(defname);
-        dlg->setCaption(i18nc("@title:window","Select Filename"));
-        dlg->setOperationMode(KFileDialog::Saving);
-        dlg->setMode(KFile::File);
-        dlg->setConfirmOverwrite(true);
-        dlg->exec();
+        QWeakPointer<KFileDialog> dlg = new KFileDialog(defname, QString(), parent);
+        dlg.data()->setSelection(defname);
+        dlg.data()->setCaption(i18nc("@title:window","Select Filename"));
+        dlg.data()->setOperationMode(KFileDialog::Saving);
+        dlg.data()->setMode(KFile::File);
+        dlg.data()->setConfirmOverwrite(true);
+        dlg.data()->exec();
 
-        KUrl fileUrl = dlg->selectedUrl();
-        delete dlg;
+        if (dlg.isNull()) {
+            //Dialog is invalid, it was probably deleted (ex. via DBus call)
+            //return and do not crash
+            return;
+        }
+        
+        KUrl fileUrl = dlg.data()->selectedUrl();
+        delete dlg.data();
 
         if (fileUrl.isValid()) {
             KTemporaryFile tf;
