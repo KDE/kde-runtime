@@ -25,7 +25,7 @@
 #define CHANGELOGMERGER_H
 
 #include "resourcemerger.h"
-#include "simpleresource.h"
+#include "syncresource.h"
 #include "changelog.h"
 #include "resourcelog.h"
 
@@ -53,7 +53,7 @@ namespace Nepomuk {
         ChangeLog m_logFile;
         QDateTime m_minDateTime;
         
-        QList<Sync::SimpleResource> m_jobs;
+        QList<Sync::SyncResource> m_jobs;
         QList<Soprano::Statement> m_multipleMergers;
         
         /// Contains all the records from the LogFile
@@ -73,7 +73,7 @@ namespace Nepomuk {
 
         /**
          * Resolve conflicts for properties with multiple cardinalities. It works by locally
-         * making all the changes in the SimpleResource.
+         * making all the changes in the SyncResource.
          */
         void resolveMultipleCardinality( const QList<ChangeLogRecord >& theirRecords, const QList<ChangeLogRecord >& ownRecords );
         

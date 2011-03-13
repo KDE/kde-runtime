@@ -40,7 +40,7 @@ namespace Nepomuk {
     
     namespace Sync {
 
-        class SimpleResource;
+        class SyncResource;
 
         /**
          * \class ResourceIdentifier resourceidentifier.h
@@ -84,7 +84,7 @@ namespace Nepomuk {
             virtual void addStatement( const Soprano::Statement & st );
             virtual void addStatements( const Soprano::Graph& graph );
             virtual void addStatements( const QList<Soprano::Statement> & stList );
-            virtual void addSimpleResource( const SimpleResource & res );
+            virtual void addSyncResource( const SyncResource & res );
             
             //
             // Getting the info
@@ -114,7 +114,7 @@ namespace Nepomuk {
 
             QList<Soprano::Statement> identifyingStatements() const;
 
-            SimpleResource simpleResource( const KUrl & uri );
+            SyncResource simpleResource( const KUrl & uri );
             //
             // Score
             //

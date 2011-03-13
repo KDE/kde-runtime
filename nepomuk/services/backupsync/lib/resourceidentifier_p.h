@@ -31,7 +31,7 @@
 #include <KUrl>
 
 #include "resourceidentifier.h"
-#include "simpleresource.h"
+#include "syncresource.h"
 #include <Nepomuk/ResourceManager>
 
 
@@ -109,7 +109,7 @@ namespace Nepomuk {
              *
              * \sa queryIdentify
              */
-            KUrl findMatch( const Nepomuk::Sync::SimpleResource& simpleRes );
+            KUrl findMatch( const Nepomuk::Sync::SyncResource& simpleRes );
 
             /**
              * This function does not take the minScore into evalutation. It returns
@@ -117,7 +117,7 @@ namespace Nepomuk {
              *
              * This should be used in the special case when the minScore = 1.0
              */
-            KUrl findMatchForAll( const Nepomuk::Sync::SimpleResource& simpleRes );
+            KUrl findMatchForAll( const Nepomuk::Sync::SyncResource& simpleRes );
         };
     }
 }
