@@ -105,6 +105,10 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NCO::fullname(), RDFS::range(), XMLSchema::string(), graph );
     m_model->addStatement( NIE::title(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NIE::title(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NAO::created(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NAO::created(), RDFS::range(), XMLSchema::dateTime(), graph );
+    m_model->addStatement( NAO::lastModified(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NAO::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
 
     // rebuild the internals of the data management model
     m_dmModel->updateTypeCachesAndSoOn();
@@ -2476,12 +2480,39 @@ void DataManagementModelTest::testStoreResources_metadata()
 
     // merge the resource
     m_dmModel->storeResources(SimpleResourceGraph() << a, QLatin1String("B"));
+    QVERIFY(!m_dmModel->lastError());
 
     // make sure no new resource has been created
     QCOMPARE(m_model->listStatements(Node(), RDF::type(), NAO::Tag()).allStatements().count(), 1);
     QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/int"), Node()).allStatements().count(), 1);
     QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/string"), Node()).allStatements().count(), 1);
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).allStatements().count(), 1);
+
+    // make sure the new app has been created
+    QueryResultIterator it = m_model->executeQuery(QString::fromLatin1("select ?a where { ?a a %1 . ?a %2 %3 . }")
+                                                   .arg(Node::resourceToN3(NAO::Agent()),
+                                                        Node::resourceToN3(NAO::prefLabel()),
+                                                        Node::literalToN3(QLatin1String("B"))),
+                                                   Soprano::Query::QueryLanguageSparql);
+    QVERIFY(it.next());
+    const QUrl appBRes = it[0].uri();
+
+    // make sure the data is now maintained by both apps
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { graph ?g { <res:/A> <prop:/int> %1 . } . ?g %2 %3 . ?g %2 <app:/A> . }")
+                                  .arg(Node::literalToN3(42),
+                                       Node::resourceToN3(NAO::maintainedBy()),
+                                       Node::resourceToN3(appBRes)),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { graph ?g { <res:/A> <prop:/string> %1 . } . ?g %2 %3 . ?g %2 <app:/A> . }")
+                                  .arg(Node::literalToN3(QLatin1String("Foobar")),
+                                       Node::resourceToN3(NAO::maintainedBy()),
+                                       Node::resourceToN3(appBRes)),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { graph ?g { <res:/A> a %1 . } . ?g %2 %3 . ?g %2 <app:/A> . }")
+                                  .arg(Node::resourceToN3(NAO::Tag()),
+                                       Node::resourceToN3(NAO::maintainedBy()),
+                                       Node::resourceToN3(appBRes)),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
 
     QVERIFY(!haveTrailingGraphs());
 
@@ -2492,6 +2523,7 @@ void DataManagementModelTest::testStoreResources_metadata()
 
     // merge the resource
     m_dmModel->storeResources(SimpleResourceGraph() << resA, QLatin1String("B"));
+    QVERIFY(!m_dmModel->lastError());
 
     // make sure the new data is there
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int2"), LiteralValue(42)));
