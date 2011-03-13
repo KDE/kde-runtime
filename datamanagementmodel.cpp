@@ -27,7 +27,7 @@
 #include "simpleresource.h"
 #include "transactionmodel.h"
 
-#include <nepomuk/simpleresource.h>
+#include <nepomuk/syncresource.h>
 #include <nepomuk/resourceidentifier.h>
 #include <nepomuk/resourcemerger.h>
 
@@ -1099,7 +1099,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             return;
         }
         else if(localFileState == ExistingLocalFile) {
-            QUrl fileUrl = res.uri();
+            const QUrl fileUrl = res.uri();
             QUrl newResUri = resolveUrl( fileUrl );
             if( newResUri.isEmpty() ) {
                 // Resolution of one file failed. Assign it a random blank uri
@@ -1135,7 +1135,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 
     Sync::ResourceIdentifier resIdent;
     QList<Soprano::Statement> allStatements;
-    QList<Sync::SimpleResource> extraResources;
+    QList<Sync::SyncResource> extraResources;
 
     
     //
@@ -1168,7 +1168,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                         if( resolvedUri.isEmpty() )
                             resolvedUri = resGraph.createBlankNode();
 
-                        Sync::SimpleResource newRes;
+                        Sync::SyncResource newRes;
                         newRes.setUri( resolvedUri );
                         newRes.insert( RDF::type(), NFO::FileDataObject() );
                         newRes.insert( NIE::url(), fileUrl );
@@ -1197,12 +1197,12 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             return;
         }
 
-        Sync::SimpleResource simpleRes = Sync::SimpleResource::fromStatementList( stList );
+        Sync::SyncResource simpleRes = Sync::SyncResource::fromStatementList( stList );
         if( !simpleRes.isValid() ) {
             setError(QLatin1String("storeResources: Contains invalid resources."), Soprano::Error::ErrorParsingFailed);
             return;
         }
-        resIdent.addSimpleResource( simpleRes );
+        resIdent.addSyncResource( simpleRes );
     }
     
 
@@ -1211,6 +1211,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     //
     foreach(const Soprano::Statement& s, allStatements) {
         if(!s.isValid()) {
+            kDebug() << "Invalid statement after resource conversion:" << s;
             setError(QLatin1String("storeResources: Encountered invalid statement after resource conversion."), Soprano::Error::ErrorInvalidArgument);
             return;
         }
@@ -1244,14 +1245,14 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     foreach( const KUrl & uri, resIdent.unidentified() ) {
         Soprano::Node dateTime( Soprano::LiteralValue( QDateTime::currentDateTime() ) );
         
-        Sync::SimpleResource simpleRes = resIdent.simpleResource( uri );
+        Sync::SyncResource simpleRes = resIdent.simpleResource( uri );
         if( !simpleRes.contains( NAO::created() ) )
             allStatements << Soprano::Statement( uri, NAO::created(), dateTime );
         if( !simpleRes.contains( NAO::lastModified() ) )
             allStatements << Soprano::Statement( uri, NAO::lastModified(), dateTime );
     }
 
-    foreach( const Sync::SimpleResource & res, extraResources ) {
+    foreach( const Sync::SyncResource & res, extraResources ) {
         allStatements << res.toStatementList();
     }
 
