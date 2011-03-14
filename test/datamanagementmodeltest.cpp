@@ -107,8 +107,10 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NIE::title(), RDFS::range(), XMLSchema::string(), graph );
     m_model->addStatement( NAO::created(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NAO::created(), RDFS::range(), XMLSchema::dateTime(), graph );
+    m_model->addStatement( NAO::created(), NRL::maxCardinality(), LiteralValue(1), graph );
     m_model->addStatement( NAO::lastModified(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NAO::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
+    m_model->addStatement( NAO::lastModified(), NRL::maxCardinality(), LiteralValue(1), graph );
 
     // some ontology things we need in testStoreResources_realLife
     m_model->addStatement( NMM::season(), RDF::type(), RDF::Property(), graph );
