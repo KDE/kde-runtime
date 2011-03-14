@@ -2676,6 +2676,43 @@ void DataManagementModelTest::testStoreResources_missingMetadata()
     QVERIFY(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first().literal().toDateTime() > now);
 }
 
+// test merging when there is more than one candidate resource to merge with
+void DataManagementModelTest::testStoreResources_multiMerge()
+{
+    ResourceManager::instance()->setOverrideMainModel( m_model );
+
+    // create two resource which could be matches for the one we will store
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    // the resource in which we want to merge
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g1);
+
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/B"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
+    m_model->addStatement(QUrl("res:/B"), NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g1);
+
+
+    // now store the exact same resource
+    SimpleResource res;
+    res.addProperty(QUrl("prop:/int"), 42);
+    res.addProperty(QUrl("prop:/string"), QLatin1String("foobar"));
+
+    m_dmModel->storeResources(SimpleResourceGraph() << res, QLatin1String("A"));
+    QVERIFY(!m_dmModel->lastError());
+
+    // make sure no new resource was created
+    QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/int"), LiteralValue(42)).allElements().count(), 2);
+    QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))).allElements().count(), 2);
+
+    // make sure both resources still exist
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
+}
+
 void DataManagementModelTest::testMergeResources()
 {
     // first we need to create the two resources we want to merge as well as one that should not be touched
