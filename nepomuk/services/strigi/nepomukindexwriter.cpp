@@ -480,8 +480,12 @@ void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult* idx,
 
         //
         // ignore the path as we handle that ourselves in startAnalysis
+        // ignore the mimetype since we handle that ourselves in finishAnalysis
+        //  and KDE's mimetype is much more reliable than Strigi's.
+        // TODO: remember the mimetype and use it only if KMimeType does not find one.
         //
-        else if ( field->key() != FieldRegister::pathFieldName ) {
+        else if ( field->key() != FieldRegister::pathFieldName &&
+                  field->key() != FieldRegister::mimetypeFieldName ) {
             statement.setObject( rfd->createObject( value ) );
         }
 
