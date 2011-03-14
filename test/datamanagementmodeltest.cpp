@@ -110,6 +110,15 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NAO::lastModified(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NAO::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
 
+    // some ontology things we need in testStoreResources_realLife
+    m_model->addStatement( NMM::season(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NMM::season(), RDFS::range(), XMLSchema::xsdInt(), graph );
+    m_model->addStatement( NMM::episodeNumber(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NMM::episodeNumber(), RDFS::range(), XMLSchema::xsdInt(), graph );
+    m_model->addStatement( NIE::description(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NIE::description(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NIE::title(), RDFS::subClassOf(), QUrl("http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifyingProperty"), graph );
+
     // rebuild the internals of the data management model
     m_dmModel->updateTypeCachesAndSoOn();
 }
@@ -2731,6 +2740,153 @@ void DataManagementModelTest::testStoreResources_multiMerge()
     // make sure both resources still exist
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
+}
+
+// an example from real-life which made an early version of DMS fail
+void DataManagementModelTest::testStoreResources_realLife()
+{
+    ResourceManager::instance()->setOverrideMainModel( m_model );
+
+    // we deal with one file
+    QTemporaryFile theFile;
+    theFile.open();
+
+    // the full data - slightly cleanup up (excluding additional video track resources)
+    // this data is a combination from the file indexing service and DMS storeResources calls
+
+    // the resource URIs used
+    const QUrl fileResUri("nepomuk:/res/3ff603a5-4023-4c2f-bd89-372002a0ffd2");
+    const QUrl tvSeriesUri("nepomuk:/res/e6fbe22d-bb5c-416c-a935-407a34b58c76");
+    const QUrl appRes("nepomuk:/res/275907b0-c120-4581-83d5-ea9ec034dbcd");
+
+    // the graph URIs
+    // two strigi graphs due to the nie:url preservation
+    const QUrl strigiG1("nepomuk:/ctx/5ca62cd0-ccff-4484-99e3-1fd9f782a3a4");
+    const QUrl strigiG2("nepomuk:/ctx/9f0bac21-f8e4-4e82-b51d-e0a7585f1c8d");
+    const QUrl strigiMG1("nepomuk:/ctx/0117104c-d501-48ce-badd-6f363bfde3e2");
+    const QUrl strigiMG2("nepomuk:/ctx/e52c8b8a-2e32-4a27-8633-03f27fec441b");
+
+    const QUrl dmsG1("nepomuk:/ctx/8bea556f-cacf-4f31-be73-7f7c0f14024b");
+    const QUrl dmsG2("nepomuk:/ctx/374d3968-0d20-4807-8a87-d2d6b87e7de3");
+    const QUrl dmsMG1("nepomuk:/ctx/9902847f-dfe8-489a-881b-4abf1707fee7");
+    const QUrl dmsMG2("nepomuk:/ctx/72ef2cdf-26e7-42b6-9093-0b7b0a7c25fc");
+
+    const QUrl appG1("nepomuk:/ctx/7dc9f013-4e45-42bf-8595-a12e78adde81");
+    const QUrl appMG1("nepomuk:/ctx/1ffcb2bb-525d-4173-b211-ebdf28c0897b");
+
+    // strings we reuse
+    const QString seriesTitle("Nepomuk The Series");
+    const QString episodeTitle("Who are you?");
+    const QString seriesOverview("Nepomuk is a series about information and the people needing this information for informational purposes.");
+    const QString episodeOverview("The series pilot focusses on this and that, nothing in particular and it not really that interesting at all.");
+
+    // the file resource
+    m_model->addStatement(fileResUri, NIE::isPartOf(), QUrl("nepomuk:/res/e9f85f29-150d-49b6-9ffb-264ae7ec3864"), strigiG1);
+    m_model->addStatement(fileResUri, NIE::contentSize(), Soprano::LiteralValue::fromString("369532928", XMLSchema::xsdInt()), strigiG1);
+    m_model->addStatement(fileResUri, NIE::mimeType(), Soprano::LiteralValue::fromString("audio/x-riff", XMLSchema::string()), strigiG1);
+    m_model->addStatement(fileResUri, NIE::mimeType(), Soprano::LiteralValue::fromString("video/x-msvideo", XMLSchema::string()), strigiG1);
+    m_model->addStatement(fileResUri, NFO::fileName(), Soprano::LiteralValue(KUrl(theFile.fileName()).fileName()), strigiG1);
+    m_model->addStatement(fileResUri, NIE::lastModified(), Soprano::LiteralValue::fromString("2010-06-29T15:44:44Z", XMLSchema::dateTime()), strigiG1);
+    m_model->addStatement(fileResUri, NFO::codec(), Soprano::LiteralValue::fromString("MP3", XMLSchema::string()), strigiG1);
+    m_model->addStatement(fileResUri, NFO::codec(), Soprano::LiteralValue::fromString("xvid", XMLSchema::string()), strigiG1);
+    m_model->addStatement(fileResUri, NFO::averageBitrate(), Soprano::LiteralValue::fromString("1132074", XMLSchema::xsdInt()), strigiG1);
+    m_model->addStatement(fileResUri, NFO::duration(), Soprano::LiteralValue::fromString("2567", XMLSchema::xsdInt()), strigiG1);
+    m_model->addStatement(fileResUri, NFO::duration(), Soprano::LiteralValue::fromString("2611", XMLSchema::xsdInt()), strigiG1);
+    m_model->addStatement(fileResUri, NFO::frameRate(), Soprano::LiteralValue::fromString("23", XMLSchema::xsdInt()), strigiG1);
+    m_model->addStatement(fileResUri, NIE::hasPart(), QUrl("nepomuk:/res/b805e3bb-db13-4561-b457-8da8d13ce34d"), strigiG1);
+    m_model->addStatement(fileResUri, NIE::hasPart(), QUrl("nepomuk:/res/c438df3c-1446-4931-9d9e-3665567025b9"), strigiG1);
+    m_model->addStatement(fileResUri, NFO::horizontalResolution(), Soprano::LiteralValue::fromString("624", XMLSchema::xsdInt()), strigiG1);
+    m_model->addStatement(fileResUri, NFO::verticalResolution(), Soprano::LiteralValue::fromString("352", XMLSchema::xsdInt()), strigiG1);
+
+    m_model->addStatement(fileResUri, RDF::type(), NFO::FileDataObject(), strigiG2);
+    m_model->addStatement(fileResUri, NIE::url(), QUrl::fromLocalFile(theFile.fileName()), strigiG2);
+
+    m_model->addStatement(fileResUri, RDF::type(), NMM::TVShow(), dmsG1);
+    m_model->addStatement(fileResUri, NAO::created(), Soprano::LiteralValue::fromString("2011-03-14T10:06:38.317Z", XMLSchema::dateTime()), dmsG1);
+    m_model->addStatement(fileResUri, NIE::title(), Soprano::LiteralValue(episodeTitle), dmsG1);
+    m_model->addStatement(fileResUri, NAO::lastModified(), Soprano::LiteralValue::fromString("2011-03-14T10:06:38.317Z", XMLSchema::dateTime()), dmsG1);
+    m_model->addStatement(fileResUri, NMM::synopsis(), Soprano::LiteralValue(episodeOverview), dmsG1);
+    m_model->addStatement(fileResUri, NMM::season(), Soprano::LiteralValue::fromString("1", XMLSchema::xsdInt()), dmsG1);
+    m_model->addStatement(fileResUri, NMM::episodeNumber(), Soprano::LiteralValue::fromString("1", XMLSchema::xsdInt()), dmsG1);
+    m_model->addStatement(fileResUri, RDF::type(), NIE::InformationElement(), dmsG2);
+    m_model->addStatement(fileResUri, RDF::type(), NFO::Video(), dmsG2);
+
+    // the TV Series resource
+    m_model->addStatement(tvSeriesUri, RDF::type(), NMM::TVSeries(), dmsG1);
+    m_model->addStatement(tvSeriesUri, NAO::created(), Soprano::LiteralValue::fromString("2011-03-14T10:06:38.317Z", XMLSchema::dateTime()), dmsG1);
+    m_model->addStatement(tvSeriesUri, NIE::title(), Soprano::LiteralValue(seriesTitle), dmsG1);
+    m_model->addStatement(tvSeriesUri, NAO::lastModified(), Soprano::LiteralValue::fromString("2011-03-14T10:06:38.317Z", XMLSchema::dateTime()), dmsG1);
+    m_model->addStatement(tvSeriesUri, NIE::description(), Soprano::LiteralValue(seriesOverview), dmsG1);
+    m_model->addStatement(tvSeriesUri, NMM::hasEpisode(), fileResUri, dmsG1);
+    m_model->addStatement(tvSeriesUri, RDF::type(), NIE::InformationElement(), dmsG2);
+
+    // the app that called storeResources
+    m_model->addStatement(appRes, RDF::type(), NAO::Agent(), appG1);
+    m_model->addStatement(appRes, NAO::prefLabel(), Soprano::LiteralValue::fromString("Nepomuk TVNamer", XMLSchema::string()), appG1);
+    m_model->addStatement(appRes, NAO::identifier(), Soprano::LiteralValue::fromString("nepomuktvnamer", XMLSchema::string()), appG1);
+
+    // all the graph metadata
+    m_model->addStatement(strigiG1, RDF::type(), NRL::DiscardableInstanceBase(), strigiMG1);
+    m_model->addStatement(strigiG1, NAO::created(), Soprano::LiteralValue::fromString("2010-10-22T14:13:42.204Z", XMLSchema::dateTime()), strigiMG1);
+    m_model->addStatement(strigiG1, QUrl("http://www.strigi.org/fields#indexGraphFor"), fileResUri, strigiMG1);
+    m_model->addStatement(strigiMG1, RDF::type(), NRL::GraphMetadata(), strigiMG1);
+    m_model->addStatement(strigiMG1, NRL::coreGraphMetadataFor(), strigiG1, strigiMG1);
+
+    m_model->addStatement(strigiG2, RDF::type(), NRL::InstanceBase(), strigiMG2);
+    m_model->addStatement(strigiG2, NAO::created(), Soprano::LiteralValue::fromString("2010-10-22T14:13:42.204Z", XMLSchema::dateTime()), strigiMG2);
+    m_model->addStatement(strigiG2, QUrl("http://www.strigi.org/fields#indexGraphFor"), fileResUri, strigiMG2);
+    m_model->addStatement(strigiG2, NAO::maintainedBy(), appRes, strigiMG2);
+    m_model->addStatement(strigiMG2, RDF::type(), NRL::GraphMetadata(), strigiMG2);
+    m_model->addStatement(strigiMG2, NRL::coreGraphMetadataFor(), strigiG2, strigiMG2);
+
+    m_model->addStatement(dmsG1, RDF::type(), NRL::InstanceBase(), dmsMG1);
+    m_model->addStatement(dmsG1, NAO::created(), Soprano::LiteralValue::fromString("2011-03-14T10:06:38.343Z", XMLSchema::dateTime()), dmsMG1);
+    m_model->addStatement(dmsG1, NAO::maintainedBy(), appRes, dmsMG1);
+    m_model->addStatement(dmsMG1, RDF::type(), NRL::GraphMetadata(), dmsMG1);
+    m_model->addStatement(dmsMG1, NRL::coreGraphMetadataFor(), dmsG1, dmsMG1);
+
+    m_model->addStatement(dmsG2, RDF::type(), NRL::InstanceBase(), dmsMG2);
+    m_model->addStatement(dmsG2, NAO::created(), Soprano::LiteralValue::fromString("2011-03-14T10:06:38.621Z", XMLSchema::dateTime()), dmsMG2);
+    m_model->addStatement(dmsG2, NAO::maintainedBy(), appRes, dmsMG2);
+    m_model->addStatement(dmsMG2, RDF::type(), NRL::GraphMetadata(), dmsMG2);
+    m_model->addStatement(dmsMG2, NRL::coreGraphMetadataFor(), dmsG2, dmsMG2);
+
+    m_model->addStatement(appG1, RDF::type(), NRL::InstanceBase(), appMG1);
+    m_model->addStatement(appG1, NAO::created(), Soprano::LiteralValue::fromString("2011-03-12T17:48:44.307Z", XMLSchema::dateTime()), appMG1);
+    m_model->addStatement(appMG1, RDF::type(), NRL::GraphMetadata(), appMG1);
+    m_model->addStatement(appMG1, NRL::coreGraphMetadataFor(), appG1, appMG1);
+
+
+    // remember current state to compare later on
+    Soprano::Graph existingStatements = m_model->listStatements().allStatements();
+
+
+    // now the TV show information is stored again
+    SimpleResourceGraph graph;
+    SimpleResource tvShowRes(QUrl::fromLocalFile(theFile.fileName()));
+    tvShowRes.addProperty(RDF::type(), NMM::TVShow());
+    tvShowRes.addProperty(NMM::episodeNumber(), 1);
+    tvShowRes.addProperty(NMM::season(), 1);
+    tvShowRes.addProperty(NIE::title(), episodeTitle);
+    tvShowRes.addProperty(NMM::synopsis(), episodeOverview);
+
+    SimpleResource tvSeriesRes(graph.createBlankNode());
+    tvSeriesRes.addProperty(RDF::type(), NMM::TVSeries());
+    tvSeriesRes.addProperty(NIE::title(), seriesTitle);
+    tvSeriesRes.addProperty(NIE::description(), seriesOverview);
+    tvSeriesRes.addProperty(NMM::hasEpisode(), tvShowRes.uri());
+
+    tvShowRes.addProperty(NMM::series(), tvSeriesRes.uri());
+
+    graph << tvShowRes << tvSeriesRes;
+
+    m_dmModel->storeResources(graph, QLatin1String("nepomuktvnamer"));
+    QVERIFY(!m_dmModel->lastError());
+
+
+    // now test the data - nothing should have changed at all
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
 void DataManagementModelTest::testMergeResources()
