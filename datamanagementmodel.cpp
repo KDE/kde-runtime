@@ -1063,6 +1063,7 @@ void Nepomuk::DataManagementModel::removePropertiesByApplication(const QList<QUr
     setError("Not implemented yet");
 }
 
+//// TODO: do not allow to create properties or classes this way
 void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceGraph &resources, const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
 {
     if(app.isEmpty()) {
@@ -1256,19 +1257,16 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         allStatements << res.toStatementList();
     }
 
+#warning Stuff is sometimes changed even if the call fails! Looks like it happens if the graph metadata check fails - Does TransactionModel actually work? Was it tested?
     TransactionModel trModel(this);
     ResourceMerger merger( this, app, additionalMetadata );
     merger.setMappings( resIdent.mappings() );
-    merger.merge( Soprano::Graph(allStatements) );
-
-    if( lastError() != Soprano::Error::ErrorNone ) {
-        kDebug() << " MERGING FAILED! ";
-        return;
+    if(merger.merge( Soprano::Graph(allStatements) )) {
+        trModel.commit();
     }
-    
-    trModel.commit();
-    
-    //// TODO: do not allow to create properties or classes this way
+    else {
+        kDebug() << " MERGING FAILED! ";
+    }
 }
 
 

@@ -41,13 +41,13 @@ namespace Nepomuk {
                         const QHash<QUrl, QVariant> & additionalMetadata );
         virtual ~ResourceMerger();
 
-        virtual void merge(const Soprano::Graph& graph);
+        virtual bool merge(const Soprano::Graph& graph);
 
     protected:
         virtual KUrl createGraph();
         virtual QUrl createResourceUri();
         virtual QUrl createGraphUri();
-        virtual void resolveDuplicate(const Soprano::Statement& newSt);
+        virtual bool resolveDuplicate(const Soprano::Statement& newSt);
         virtual KUrl resolveUnidentifiedResource(const KUrl& uri);
         virtual Soprano::Error::ErrorCode addStatement( const Soprano::Statement & st );
         

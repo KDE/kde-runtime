@@ -58,7 +58,7 @@ KUrl Nepomuk::ResourceMerger::createGraph()
     return m_model->createGraph( m_app, m_additionalMetadata );
 }
 
-void Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
+bool Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
 {
     kDebug() << newSt;
     // Graph Merge rules
@@ -78,6 +78,10 @@ void Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
         Soprano::Statement st( newSt );
         st.setContext( newGraph );
         addStatement( st );
+        return true;
+    }
+    else {
+        return false;
     }
     //kDebug() << m_model->statementCount();
 }
@@ -411,7 +415,7 @@ namespace {
     }
 }
 
-void Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
+bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
 {
     QMultiHash<QUrl, QUrl> types;
     QHash<QPair<QUrl,QUrl>, int> cardinality;
@@ -478,7 +482,7 @@ void Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
                 m_model->setError( QString::fromLatin1("%1 has a max cardinality of %2")
                                 .arg( st.predicate().toString()).arg( maxCardinality ),
                                 Soprano::Error::ErrorInvalidStatement);
-                return;
+                return false;
             }
         }
 
@@ -500,7 +504,7 @@ void Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
             m_model->setError( QString::fromLatin1("%1 has a rdfs:domain of %2")
                                .arg( propUri.toString(), domain.toString() ),
                                Soprano::Error::ErrorInvalidArgument);
-            return;
+            return false;
         }
         
         // range
@@ -516,17 +520,18 @@ void Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
                     m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2")
                                        .arg( propUri.toString(), range.toString() ),
                                        Soprano::Error::ErrorInvalidArgument);
-                    return;
+                    return false;
                 }
             }
             else if( st.object().isLiteral() ) {
                 const Soprano::LiteralValue lv = st.object().literal();
-                if( lv.dataTypeUri() != range && !lv.isPlain() && range != RDFS::Literal()) {
-                    kDebug() << "Invalid literal range";
+                if( (!lv.isPlain() && lv.dataTypeUri() != range) ||
+                        (lv.isPlain() && range != RDFS::Literal()) ) {
+                    kDebug() << "Invalid literal range" << Soprano::Node::literalToN3(lv);
                     m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2")
                                        .arg( propUri.toString(), range.toString() ),
                                        Soprano::Error::ErrorInvalidArgument);
-                    return;
+                    return false;
                 }
             }
         } // range
@@ -535,10 +540,11 @@ void Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
 
     // The graph is error free. Merge all its statements
     foreach( const Soprano::Statement & st, graph.toList() ) {
-        mergeStatement( st );
-        if( m_model->lastError() != Soprano::Error::ErrorNone )
-            return;
+        if(!mergeStatement( st ))
+            return false;
     }
+
+    return true;
 }
 
 Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::Statement& st)
