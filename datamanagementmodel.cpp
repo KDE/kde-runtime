@@ -1819,16 +1819,25 @@ QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFil
         localFileState = ExistingLocalFile;
     }
 
-    if(localFileState != OtherResource) {
+    //
+    // we resolve all URLs except nepomuk:/ URIs. While the DMS does only use nie:url
+    // on local files libnepomuk used to use it for everything but nepomuk:/ URIs.
+    // Thus, we need to handle that legacy data by checking if url does exist as nie:url
+    //
+    if(localFileState != OtherResource || url.scheme() != QLatin1String("nepomuk")) {
         Soprano::QueryResultIterator it
                 = executeQuery(QString::fromLatin1("select ?r where { ?r %1 %2 . } limit 1")
                                .arg(Soprano::Node::resourceToN3(NIE::url()),
                                     Soprano::Node::resourceToN3(url)),
                                Soprano::Query::QueryLanguageSparql);
+
+        // if the URL is used as a nie:url return the corresponding resource URI
         if(it.next()) {
             return it[0].uri();
         }
-        else {
+
+        // if there is no existing URI return an empty match for local files (since we do always want to use nie:url here)
+        else if(localFileState != OtherResource) {
             // we only throw an error if the file:/ URL points to a non-existing file AND it does not exist in the database.
             if(localFileState == NonExistingLocalFile) {
                 setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(url.toLocalFile()),
@@ -1836,10 +1845,12 @@ QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFil
             }
             return QUrl();
         }
+
+        // else we simply return the original URL/URI since we are fine with using it as resource URI
     }
-    else {
-        return url;
-    }
+
+    // fallback
+    return url;
 }
 
 QHash<Soprano::Node, Soprano::Node> Nepomuk::DataManagementModel::resolveNodes(const QSet<Soprano::Node> &nodes) const
