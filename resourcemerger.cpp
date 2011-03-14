@@ -70,20 +70,21 @@ bool Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
     const QUrl oldGraph = model()->listStatements( newSt.subject(), newSt.predicate(), newSt.object() ).iterateContexts().allNodes().first().uri();
 
     //kDebug() << m_model->statementCount();
-    QUrl newGraph = mergeGraphs( oldGraph );
-    if( newGraph.isValid() ) {
-        kDebug() << "Is valid!  " << newGraph;
-        model()->removeAllStatements( newSt.subject(), newSt.predicate(), newSt.object() );
-        
-        Soprano::Statement st( newSt );
-        st.setContext( newGraph );
-        addStatement( st );
-        return true;
-    }
-    else {
+    if(!mergeGraphs( oldGraph )) {
         return false;
     }
-    //kDebug() << m_model->statementCount();
+    else {
+        const QUrl newGraph = m_graphHash[oldGraph];
+        if( newGraph.isValid() ) {
+            kDebug() << "Is valid!  " << newGraph;
+            model()->removeAllStatements( newSt.subject(), newSt.predicate(), newSt.object() );
+
+            Soprano::Statement st( newSt );
+            st.setContext( newGraph );
+            addStatement( st );
+        }
+        return true;
+    }
 }
 
 QMultiHash< QUrl, Soprano::Node > Nepomuk::ResourceMerger::getPropertyHashForGraph(const QUrl& graph) const
@@ -203,14 +204,13 @@ Soprano::Node variantToNode(const QVariant& v) {
 }
 }
 
-QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
+bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
 {
     //
     // Check if mergeGraphs has already been called for oldGraph
     //
-    QHash<QUrl, QUrl>::const_iterator fit = m_graphHash.constFind( oldGraph );
-    if( fit != m_graphHash.constEnd() )
-        return fit.value();
+    if(m_graphHash.contains(oldGraph))
+        return true;
     
     QMultiHash<QUrl, Soprano::Node> oldPropHash = getPropertyHashForGraph( oldGraph );
     
@@ -228,7 +228,7 @@ QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
         kDebug() << "SAME!!";
         // They are the same - Don't do anything
         m_graphHash.insert( oldGraph, QUrl() );
-        return QUrl();
+        return true;
     }
         
     QMultiHash<QUrl, Soprano::Node> finalPropHash;
@@ -250,7 +250,7 @@ QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     // FIXME: Need better error checking!
     if( !checkGraphMetadata( finalPropHash ) ) {
         kDebug() << "Graph metadata check FAILED!";
-        return QUrl();
+        return false;
     }
 
     // Add app uri
@@ -263,7 +263,7 @@ QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     QUrl graph = m_model->createGraph( m_app, finalPropHash );
 
     m_graphHash.insert( oldGraph, graph );
-    return graph;
+    return true;
 }
 
 bool Nepomuk::ResourceMerger::checkGraphMetadata(const QMultiHash< QUrl, Soprano::Node >& hash)
@@ -540,8 +540,10 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
 
     // The graph is error free. Merge all its statements
     foreach( const Soprano::Statement & st, graph.toList() ) {
-        if(!mergeStatement( st ))
+        if(!mergeStatement( st )) {
+            m_model->setError(QLatin1String("Failed to merge one statement. FIXME: add more useful error info."));
             return false;
+        }
     }
 
     return true;

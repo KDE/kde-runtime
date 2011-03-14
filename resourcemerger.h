@@ -69,7 +69,7 @@ namespace Nepomuk {
 
         Nepomuk::DataManagementModel * m_model;
 
-        QUrl mergeGraphs( const QUrl & oldGraph );
+        bool mergeGraphs( const QUrl & oldGraph );
         
         bool isOfType( const Soprano::Node& node, const QUrl& type, const QList<QUrl>& newTypes = QList<QUrl>() ) const;
         QMultiHash<QUrl, Soprano::Node> getPropertyHashForGraph( const QUrl & graph ) const;
