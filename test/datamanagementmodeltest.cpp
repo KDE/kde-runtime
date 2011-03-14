@@ -909,6 +909,26 @@ void DataManagementModelTest::testSetProperty_nieUrl5()
     QVERIFY(!haveTrailingGraphs());
 }
 
+// test support for any other URL scheme which already exists as nie:url (This is what libnepomuk does support)
+void DataManagementModelTest::testSetProperty_nieUrl6()
+{
+    // create a resource that has a URL
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
+    const QUrl url("http://nepomuk.kde.org/");
+
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), url, g1);
+
+
+    // use the url to set a property
+    m_dmModel->setProperty(QList<QUrl>() << url, QUrl("prop:/int"), QVariantList() << 42, QLatin1String("A"));
+
+    // check that the property has been added to the resource
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42)));
+
+    // check that no new resource has been created
+    QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/int"), LiteralValue(42)).allElements().count(), 1);
+}
+
 void DataManagementModelTest::testSetProperty_protectedTypes()
 {
     // remember current state to compare later on

@@ -59,6 +59,7 @@ private Q_SLOTS:
     void testSetProperty_nieUrl3();
     void testSetProperty_nieUrl4();
     void testSetProperty_nieUrl5();
+    void testSetProperty_nieUrl6();
     void testSetProperty_protectedTypes();
 
     void testRemoveProperty();
