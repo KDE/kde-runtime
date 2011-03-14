@@ -96,6 +96,10 @@ bool Nepomuk::ClassAndPropertyTree::isChildOf(const QUrl &type, const QUrl &supe
 
 bool Nepomuk::ClassAndPropertyTree::isChildOf(const QList< QUrl >& types, const QUrl& superClass) const
 {
+    if(superClass == Soprano::Vocabulary::RDFS::Resource()) {
+        return true;
+    }
+
     foreach( const QUrl & type, types ) {
         if( isChildOf( type, superClass ) )
             return true;
