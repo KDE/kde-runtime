@@ -82,9 +82,9 @@ namespace Nepomuk {
              *
              * \sa setGraphType graphType
              */
-            virtual void merge( const Soprano::Graph & graph );
+            virtual bool merge( const Soprano::Graph & graph );
 
-            virtual void mergeStatement( const Soprano::Statement & st );
+            virtual bool mergeStatement( const Soprano::Statement & st );
             
             /**
              * The graph type by default is nrl:InstanceBase. If \p type is not a subclass of
@@ -114,13 +114,13 @@ namespace Nepomuk {
              *
              * \sa resolveDuplicate
              */
-            void push( const Soprano::Statement & st );
+            bool push( const Soprano::Statement & st );
 
             /**
              * If the statement being pushed already exists this method is called.
              * By default it does nothing which means keeping the old statement
              */ 
-            virtual void resolveDuplicate( const Soprano::Statement & newSt );
+            virtual bool resolveDuplicate( const Soprano::Statement & newSt );
 
             /**
              * Creates a new resource uri. By default this creates it using the
