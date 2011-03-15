@@ -167,7 +167,9 @@ void Nepomuk::SimpleResource::setProperty(const QUrl &property, const QVariantLi
 
 void Nepomuk::SimpleResource::addProperty(const QUrl &property, const QVariant &value)
 {
-    d->m_properties.insertMulti(property, value);
+    // QMultiHash even stores the same key/value pair multiple times!
+    if(!d->m_properties.contains(property, value))
+        d->m_properties.insertMulti(property, value);
 }
 
 void Nepomuk::SimpleResource::addPropertyNode(const QUrl &property, const Soprano::Node &node)
