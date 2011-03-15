@@ -54,7 +54,9 @@ class KdePlatformPlugin : public QObject, public PlatformPlugin
         virtual QList<int> objectDescriptionIndexes(ObjectDescriptionType type) const;
         virtual QHash<QByteArray, QVariant> objectDescriptionProperties(ObjectDescriptionType type, int index) const;
 
-        virtual QList<QPair<QByteArray, QString> > deviceAccessListFor(const Phonon::AudioOutputDevice &) const;
+        virtual DeviceAccessList deviceAccessListFor(const AudioOutputDevice &) const;
+        virtual DeviceAccessList deviceAccessListFor(const AudioCaptureDevice &) const;
+        virtual DeviceAccessList deviceAccessListFor(const VideoCaptureDevice &) const;
 
     signals:
         void objectDescriptionChanged(ObjectDescriptionType);
@@ -62,6 +64,9 @@ class KdePlatformPlugin : public QObject, public PlatformPlugin
     private:
         QObject *createBackend(KService::Ptr newService);
         void ensureDeviceListingObject() const;
+
+        DeviceAccessList deviceAccessListFor(const QVariant&, const QVariant&, const QVariant&) const;
+
         mutable DeviceListing *m_devList;
 };
 

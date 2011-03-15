@@ -49,7 +49,7 @@ class DeviceListing : public QObject
         void timerEvent(QTimerEvent *e);
 
     private slots:
-        void audioDevicesChanged();
+        void devicesChanged();
 
     private:
         QBasicTimer m_signalTimer;

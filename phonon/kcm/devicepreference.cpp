@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2006-2008 Matthias Kretz <kretz@kde.org>
+    Copyright (C) 2011 Casian Andrei <skeletk13@gmail.com>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -34,6 +35,7 @@
 
 #include <Phonon/AudioOutput>
 #include <Phonon/MediaObject>
+#include <Phonon/VideoWidget>
 #include <phonon/backendinterface.h>
 #include <phonon/backendcapabilities.h>
 #include <phonon/globalconfig.h>
@@ -56,12 +58,35 @@
 Q_DECLARE_METATYPE(QList<int>)
 #endif
 
-static const Phonon::Category captureCategories[] = {
+/*
+ * Lists of categories for every device type
+ */
+static const Phonon::Category audioOutCategories[] = {
     Phonon::NoCategory,
+    Phonon::NotificationCategory,
+    Phonon::MusicCategory,
+    Phonon::VideoCategory,
     Phonon::CommunicationCategory,
-    Phonon::AccessibilityCategory
+    Phonon::GameCategory,
+    Phonon::AccessibilityCategory,
 };
-static const int captureCategoriesCount = sizeof(captureCategories)/sizeof(Phonon::Category);
+
+static const Phonon::CaptureCategory audioCapCategories[] = {
+    Phonon::NoCaptureCategory,
+    Phonon::CommunicationCaptureCategory,
+    Phonon::RecordingCategory,
+    Phonon::ControlCategory
+};
+
+static const Phonon::CaptureCategory videoCapCategories[] = {
+    Phonon::NoCaptureCategory,
+    Phonon::CommunicationCaptureCategory,
+    Phonon::RecordingCategory,
+};
+
+static const int audioOutCategoriesCount = sizeof(audioOutCategories) / sizeof(Phonon::Category);
+static const int audioCapCategoriesCount = sizeof(audioCapCategories) / sizeof(Phonon::CaptureCategory);
+static const int videoCapCategoriesCount = sizeof(videoCapCategories) / sizeof(Phonon::CaptureCategory);
 
 void operator++(Phonon::Category &c)
 {
@@ -71,19 +96,48 @@ void operator++(Phonon::Category &c)
 
 class CategoryItem : public QStandardItem {
     public:
-        CategoryItem(Phonon::Category cat, bool output = true)
-            : QStandardItem(cat == Phonon::NoCategory ? (output ? i18n("Audio Output") : i18n("Audio Capture")) : Phonon::categoryToString(cat)),
-            isOutputItem(output),
-            m_cat(cat)
+        CategoryItem(Phonon::Category cat)
+                : QStandardItem(),
+                m_cat(cat),
+                m_odtype(Phonon::AudioOutputDeviceType)
         {
+            if (cat == Phonon::NoCategory) {
+                setText(i18n("Audio Output"));
+            } else {
+                setText(Phonon::categoryToString(cat));
+            }
+        }
+
+        CategoryItem(Phonon::CaptureCategory cat, Phonon::ObjectDescriptionType t = Phonon::AudioCaptureDeviceType)
+                : QStandardItem(),
+                m_capcat(cat),
+                m_odtype(t)
+        {
+            if (cat == Phonon::NoCaptureCategory) {
+                switch(t) {
+                case Phonon::AudioCaptureDeviceType:
+                    setText(i18n("Audio Capture"));
+                    break;
+                case Phonon::VideoCaptureDeviceType:
+                    setText(i18n("Video Capture"));
+                    break;
+                default:
+                    setText(i18n("Invalid"));
+                }
+            } else {
+                setText(Phonon::categoryToString(cat));
+            }
         }
 
         int type() const { return 1001; }
         Phonon::Category category() const { return m_cat; }
-        const bool isOutputItem;
+        Phonon::CaptureCategory captureCategory() const { return m_capcat; }
+        Phonon::ObjectDescriptionType odtype() const { return m_odtype; }
 
     private:
         Phonon::Category m_cat;
+        Phonon::CaptureCategory m_capcat;
+        Phonon::ObjectDescriptionType m_odtype;
 };
 
 /**
@@ -94,7 +148,6 @@ void DevicePreference::changeEvent(QEvent *e)
 {
     QWidget::changeEvent(e);
     if (e->type() == QEvent::PaletteChange) {
-        //deviceList->viewport()->setStyleSheet(deviceList->viewport()->styleSheet());
         deviceList->setStyleSheet(deviceList->styleSheet());
     }
 }
@@ -102,18 +155,20 @@ void DevicePreference::changeEvent(QEvent *e)
 DevicePreference::DevicePreference(QWidget *parent)
     : QWidget(parent),
     m_headerModel(0, 1, 0),
-    m_showingOutputModel(true),
-    m_media(0), m_output(0)
+    m_media(NULL), m_audioOutput(NULL), m_videoWidget(NULL)
 {
     setupUi(this);
+
+    // Setup the buttons
     testPlaybackButton->setIcon(KIcon("media-playback-start"));
     testPlaybackButton->setEnabled(false);
-    testPlaybackButton->setToolTip(i18n("Play a test sound on the selected device"));
+    testPlaybackButton->setToolTip(i18n("Test the selected device"));
     removeButton->setIcon(KIcon("list-remove"));
     deferButton->setIcon(KIcon("go-down"));
     preferButton->setIcon(KIcon("go-up"));
+
+    // Configure the device list
     deviceList->setDragDropMode(QAbstractItemView::InternalMove);
-    //deviceList->viewport()->setStyleSheet(QString("QWidget#qt_scrollarea_viewport {"
     deviceList->setStyleSheet(QString("QTreeView {"
                 "background-color: palette(base);"
                 "background-image: url(%1);"
@@ -123,40 +178,59 @@ DevicePreference::DevicePreference(QWidget *parent)
                 "}")
             .arg(KStandardDirs::locate("data", "kcm_phonon/listview-background.png")));
     deviceList->setAlternatingRowColors(false);
+
+    // The root item for the categories
     QStandardItem *parentItem = m_categoryModel.invisibleRootItem();
 
     // Audio Output Parent
-    QStandardItem *outputItem = new CategoryItem(Phonon::NoCategory);
-    m_outputModel[Phonon::NoCategory] = new Phonon::AudioOutputDeviceModel(this);
-    outputItem->setEditable(false);
-    outputItem->setToolTip(i18n("Defines the default ordering of devices which can be overridden by individual categories."));
-    parentItem->appendRow(outputItem);
+    QStandardItem *aOutputItem = new CategoryItem(Phonon::NoCategory);
+    m_audioOutputModel[Phonon::NoCategory] = new Phonon::AudioOutputDeviceModel(this);
+    aOutputItem->setEditable(false);
+    aOutputItem->setToolTip(i18n("Defines the default ordering of devices which can be overridden by individual categories."));
+    parentItem->appendRow(aOutputItem);
 
     // Audio Capture Parent
-    QStandardItem *captureItem = new CategoryItem(Phonon::NoCategory, false);
-    m_captureModel[Phonon::NoCategory] = new Phonon::AudioCaptureDeviceModel(this);
-    captureItem->setEditable(false);
-    captureItem->setToolTip(i18n("Defines the default ordering of devices which can be overridden by individual categories."));
-    parentItem->appendRow(captureItem);
+    QStandardItem *aCaptureItem = new CategoryItem(Phonon::NoCaptureCategory, Phonon::AudioCaptureDeviceType);
+    m_audioCaptureModel[Phonon::NoCaptureCategory] = new Phonon::AudioCaptureDeviceModel(this);
+    aCaptureItem->setEditable(false);
+    aCaptureItem->setToolTip(i18n("Defines the default ordering of devices which can be overridden by individual categories."));
+    parentItem->appendRow(aCaptureItem);
+
+    // Video Capture Parent
+    QStandardItem *vCaptureItem = new CategoryItem(Phonon::NoCaptureCategory, Phonon::VideoCaptureDeviceType);
+    m_videoCaptureModel[Phonon::NoCaptureCategory] = new Phonon::VideoCaptureDeviceModel(this);
+    vCaptureItem->setEditable(false);
+    vCaptureItem->setToolTip(i18n("Defines the default ordering of devices which can be overridden by individual categories."));
+    parentItem->appendRow(vCaptureItem);
 
     // Audio Output Children
-    parentItem = outputItem;
-    for (int i = 0; i <= Phonon::LastCategory; ++i) {
-        m_outputModel[i] = new Phonon::AudioOutputDeviceModel(this);
-        QStandardItem *item = new CategoryItem(static_cast<Phonon::Category>(i));
+    parentItem = aOutputItem;
+    for (int i = 1; i < audioOutCategoriesCount; ++i) { // i == 1 to skip NoCategory
+        m_audioOutputModel[audioOutCategories[i]] = new Phonon::AudioOutputDeviceModel(this);
+        QStandardItem *item = new CategoryItem(audioOutCategories[i]);
         item->setEditable(false);
         parentItem->appendRow(item);
     }
 
     // Audio Capture Children
-    parentItem = captureItem;
-    for (int i = 1; i < captureCategoriesCount; ++i) { // i == 1 to skip NoCategory
-        m_captureModel[captureCategories[i]] = new Phonon::AudioCaptureDeviceModel(this);
-        QStandardItem *item = new CategoryItem(captureCategories[i], false);
+    parentItem = aCaptureItem;
+    for (int i = 1; i < audioCapCategoriesCount; ++i) { // i == 1 to skip NoCategory
+        m_audioCaptureModel[audioCapCategories[i]] = new Phonon::AudioCaptureDeviceModel(this);
+        QStandardItem *item = new CategoryItem(audioCapCategories[i], Phonon::AudioCaptureDeviceType);
         item->setEditable(false);
         parentItem->appendRow(item);
     }
 
+    // Video Capture Children
+    parentItem = vCaptureItem;
+    for (int i = 1; i < videoCapCategoriesCount; ++i) { // i == 1 to skip NoCategory
+        m_videoCaptureModel[videoCapCategories[i]] = new Phonon::VideoCaptureDeviceModel(this);
+        QStandardItem *item = new CategoryItem(videoCapCategories[i], Phonon::VideoCaptureDeviceType);
+        item->setEditable(false);
+        parentItem->appendRow(item);
+    }
+
+    // Configure the category tree
     categoryTree->setModel(&m_categoryModel);
     if (categoryTree->header()) {
         categoryTree->header()->hide();
@@ -167,91 +241,149 @@ DevicePreference::DevicePreference(QWidget *parent)
             SIGNAL(currentChanged(const QModelIndex &,const QModelIndex &)),
             SLOT(updateDeviceList()));
 
+    // Connect all model data change signals to the changed slot
     for (int i = -1; i <= Phonon::LastCategory; ++i) {
-        connect(m_outputModel[i], SIGNAL(rowsInserted(const QModelIndex &, int, int)), this, SIGNAL(changed()));
-        connect(m_outputModel[i], SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SIGNAL(changed()));
-        connect(m_outputModel[i], SIGNAL(layoutChanged()), this, SIGNAL(changed()));
-        connect(m_outputModel[i], SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SIGNAL(changed()));
-        if (m_captureModel.contains(i)) {
-            connect(m_captureModel[i], SIGNAL(rowsInserted(const QModelIndex &, int, int)), this, SIGNAL(changed()));
-            connect(m_captureModel[i], SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SIGNAL(changed()));
-            connect(m_captureModel[i], SIGNAL(layoutChanged()), this, SIGNAL(changed()));
-            connect(m_captureModel[i], SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SIGNAL(changed()));
+        connect(m_audioOutputModel[i], SIGNAL(rowsInserted(const QModelIndex &, int, int)), this, SIGNAL(changed()));
+        connect(m_audioOutputModel[i], SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SIGNAL(changed()));
+        connect(m_audioOutputModel[i], SIGNAL(layoutChanged()), this, SIGNAL(changed()));
+        connect(m_audioOutputModel[i], SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SIGNAL(changed()));
+        if (m_audioCaptureModel.contains(i)) {
+            connect(m_audioCaptureModel[i], SIGNAL(rowsInserted(const QModelIndex &, int, int)), this, SIGNAL(changed()));
+            connect(m_audioCaptureModel[i], SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SIGNAL(changed()));
+            connect(m_audioCaptureModel[i], SIGNAL(layoutChanged()), this, SIGNAL(changed()));
+            connect(m_audioCaptureModel[i], SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SIGNAL(changed()));
+        }
+        if (m_videoCaptureModel.contains(i)) {
+            connect(m_videoCaptureModel[i], SIGNAL(rowsInserted(const QModelIndex &, int, int)), this, SIGNAL(changed()));
+            connect(m_videoCaptureModel[i], SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SIGNAL(changed()));
+            connect(m_videoCaptureModel[i], SIGNAL(layoutChanged()), this, SIGNAL(changed()));
+            connect(m_videoCaptureModel[i], SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SIGNAL(changed()));
         }
     }
+
     connect(showCheckBox, SIGNAL(stateChanged (int)), this, SIGNAL(changed()));
+
+    // Connect the signals from Phonon that notify changes in the device lists
     connect(Phonon::BackendCapabilities::notifier(), SIGNAL(availableAudioOutputDevicesChanged()), SLOT(updateAudioOutputDevices()));
     connect(Phonon::BackendCapabilities::notifier(), SIGNAL(availableAudioCaptureDevicesChanged()), SLOT(updateAudioCaptureDevices()));
+    connect(Phonon::BackendCapabilities::notifier(), SIGNAL(availableVideoCaptureDevicesChanged()), SLOT(updateVideoCaptureDevices()));
     connect(Phonon::BackendCapabilities::notifier(), SIGNAL(capabilitiesChanged()), SLOT(updateAudioOutputDevices()));
     connect(Phonon::BackendCapabilities::notifier(), SIGNAL(capabilitiesChanged()), SLOT(updateAudioCaptureDevices()));
+    connect(Phonon::BackendCapabilities::notifier(), SIGNAL(capabilitiesChanged()), SLOT(updateVideoCaptureDevices()));
 
     if (!categoryTree->currentIndex().isValid()) {
         categoryTree->setCurrentIndex(m_categoryModel.index(0, 0).child(1, 0));
     }
 }
 
+DevicePreference::~DevicePreference()
+{
+    // Ensure that the video widget is destroyed, if it remains active
+    if (m_videoWidget)
+        delete m_videoWidget;
+}
+
 void DevicePreference::updateDeviceList()
 {
-    QStandardItem *currentItem = m_categoryModel.itemFromIndex(categoryTree->currentIndex());
     KFadeWidgetEffect *animation = new KFadeWidgetEffect(deviceList);
+
+    // Temporarily disconnect the device list selection model
     if (deviceList->selectionModel()) {
         disconnect(deviceList->selectionModel(),
                 SIGNAL(currentRowChanged(const QModelIndex &,const QModelIndex &)),
                 this, SLOT(updateButtonsEnabled()));
     }
+
+    // Get the current selected category item
+    QStandardItem *currentItem = m_categoryModel.itemFromIndex(categoryTree->currentIndex());
     if (currentItem && currentItem->type() == 1001) {
         CategoryItem *catItem = static_cast<CategoryItem *>(currentItem);
+        bool cap = catItem->odtype() != Phonon::AudioOutputDeviceType;
         const Phonon::Category cat = catItem->category();
-        if (catItem->isOutputItem) {
-            deviceList->setModel(m_outputModel[cat]);
-        } else {
-            deviceList->setModel(m_captureModel[cat]);
+        const Phonon::CaptureCategory capcat = catItem->captureCategory();
+
+        // Update the device list, by setting it's model to the one for the corresponding category
+        switch (catItem->odtype()) {
+        case Phonon::AudioOutputDeviceType:
+            deviceList->setModel(m_audioOutputModel[cat]);
+            break;
+        case Phonon::AudioCaptureDeviceType:
+            deviceList->setModel(m_audioCaptureModel[capcat]);
+            break;
+        case Phonon::VideoCaptureDeviceType:
+            deviceList->setModel(m_videoCaptureModel[capcat]);
+            break;
+        default: ;
         }
-        m_showingOutputModel = catItem->isOutputItem;
-        if (cat == Phonon::NoCategory) {
-            if (catItem->isOutputItem) {
-                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Output Device Preference"), Qt::DisplayRole);
-            } else {
-                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Capture Device Preference"), Qt::DisplayRole);
+
+        // Update the header
+        if (cap ? capcat == Phonon::NoCaptureCategory : cat == Phonon::NoCategory) {
+            switch (catItem->odtype()) {
+            case Phonon::AudioOutputDeviceType:
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Audio Output Device Preference"), Qt::DisplayRole);
+                break;
+            case Phonon::AudioCaptureDeviceType:
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Audio Capture Device Preference"), Qt::DisplayRole);
+                break;
+            case Phonon::VideoCaptureDeviceType:
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Video Capture Device Preference"), Qt::DisplayRole);
+                break;
+            default: ;
             }
         } else {
-            if (catItem->isOutputItem) {
-                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Output Device Preference for the '%1' Category", Phonon::categoryToString(cat)), Qt::DisplayRole);
-            } else {
-                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Capture Device Preference for the '%1' Category", Phonon::categoryToString(cat)), Qt::DisplayRole);
+            switch (catItem->odtype()) {
+            case Phonon::AudioOutputDeviceType:
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Audio Output Device Preference for the '%1' Category",
+                        Phonon::categoryToString(cat)), Qt::DisplayRole);
+                break;
+            case Phonon::AudioCaptureDeviceType:
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Audio Capture Device Preference for the '%1' Category",
+                        Phonon::categoryToString(capcat)), Qt::DisplayRole);
+                break;
+            case Phonon::VideoCaptureDeviceType:
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Video Capture Device Preference for the '%1' Category ",
+                        Phonon::categoryToString(capcat)), Qt::DisplayRole);
+                break;
+            default: ;
             }
         }
     } else {
-        m_showingOutputModel = false;
+        // No valid category selected
         m_headerModel.setHeaderData(0, Qt::Horizontal, QString(), Qt::DisplayRole);
         deviceList->setModel(0);
     }
+
+    // Update the header, the buttons enabled state
     deviceList->header()->setModel(&m_headerModel);
     updateButtonsEnabled();
+
+    // Reconnect the device list selection model
     if (deviceList->selectionModel()) {
         connect(deviceList->selectionModel(),
                 SIGNAL(currentRowChanged(const QModelIndex &,const QModelIndex &)),
                 this, SLOT(updateButtonsEnabled()));
     }
+
     deviceList->resizeColumnToContents(0);
     animation->start();
 }
 
 void DevicePreference::updateAudioCaptureDevices()
 {
-    kDebug();
     const QList<Phonon::AudioCaptureDevice> list = availableAudioCaptureDevices();
     QHash<int, Phonon::AudioCaptureDevice> hash;
     foreach (const Phonon::AudioCaptureDevice &dev, list) {
         hash.insert(dev.index(), dev);
     }
-    for (int ii = 0; ii < captureCategoriesCount; ++ii) {
-        const int i = captureCategories[ii];
-        Phonon::AudioCaptureDeviceModel *model = m_captureModel.value(i);
+
+    for (int catIndex = 0; catIndex < audioCapCategoriesCount; ++ catIndex) {
+        const int i = audioCapCategories[catIndex];
+        Phonon::AudioCaptureDeviceModel *model = m_audioCaptureModel.value(i);
         Q_ASSERT(model);
 
         QHash<int, Phonon::AudioCaptureDevice> hashCopy(hash);
         QList<Phonon::AudioCaptureDevice> orderedList;
+
         if (model->rowCount() > 0) {
             QList<int> order = model->tupleIndexOrder();
             foreach (int idx, order) {
@@ -259,6 +391,7 @@ void DevicePreference::updateAudioCaptureDevices()
                     orderedList << hashCopy.take(idx);
                 }
             }
+
             if (hashCopy.size() > 1) {
                 // keep the order of the original list
                 foreach (const Phonon::AudioCaptureDevice &dev, list) {
@@ -269,11 +402,57 @@ void DevicePreference::updateAudioCaptureDevices()
             } else if (hashCopy.size() == 1) {
                 orderedList += hashCopy.values();
             }
+
             model->setModelData(orderedList);
         } else {
             model->setModelData(list);
         }
     }
+
+    deviceList->resizeColumnToContents(0);
+}
+
+void DevicePreference::updateVideoCaptureDevices()
+{
+    const QList<Phonon::VideoCaptureDevice> list = availableVideoCaptureDevices();
+    QHash<int, Phonon::VideoCaptureDevice> hash;
+    foreach (const Phonon::VideoCaptureDevice &dev, list) {
+        hash.insert(dev.index(), dev);
+    }
+
+    for (int catIndex = 0; catIndex < videoCapCategoriesCount; ++ catIndex) {
+        const int i = videoCapCategories[catIndex];
+        Phonon::VideoCaptureDeviceModel *model = m_videoCaptureModel.value(i);
+        Q_ASSERT(model);
+
+        QHash<int, Phonon::VideoCaptureDevice> hashCopy(hash);
+        QList<Phonon::VideoCaptureDevice> orderedList;
+
+        if (model->rowCount() > 0) {
+            QList<int> order = model->tupleIndexOrder();
+            foreach (int idx, order) {
+                if (hashCopy.contains(idx)) {
+                    orderedList << hashCopy.take(idx);
+                }
+            }
+
+            if (hashCopy.size() > 1) {
+                // keep the order of the original list
+                foreach (const Phonon::VideoCaptureDevice &dev, list) {
+                    if (hashCopy.contains(dev.index())) {
+                        orderedList << hashCopy.take(dev.index());
+                    }
+                }
+            } else if (hashCopy.size() == 1) {
+                orderedList += hashCopy.values();
+            }
+
+            model->setModelData(orderedList);
+        } else {
+            model->setModelData(list);
+        }
+    }
+
     deviceList->resizeColumnToContents(0);
 }
 
@@ -284,12 +463,15 @@ void DevicePreference::updateAudioOutputDevices()
     foreach (const Phonon::AudioOutputDevice &dev, list) {
         hash.insert(dev.index(), dev);
     }
-    for (int i = -1; i <= Phonon::LastCategory; ++i) {
-        Phonon::AudioOutputDeviceModel *model = m_outputModel.value(i);
+
+    for (int catIndex = 0; catIndex < audioOutCategoriesCount; ++ catIndex) {
+        const int i = audioOutCategories[catIndex];
+        Phonon::AudioOutputDeviceModel *model = m_audioOutputModel.value(i);
         Q_ASSERT(model);
 
         QHash<int, Phonon::AudioOutputDevice> hashCopy(hash);
         QList<Phonon::AudioOutputDevice> orderedList;
+
         if (model->rowCount() > 0) {
             QList<int> order = model->tupleIndexOrder();
             foreach (int idx, order) {
@@ -297,6 +479,7 @@ void DevicePreference::updateAudioOutputDevices()
                     orderedList << hashCopy.take(idx);
                 }
             }
+
             if (hashCopy.size() > 1) {
                 // keep the order of the original list
                 foreach (const Phonon::AudioOutputDevice &dev, list) {
@@ -307,11 +490,13 @@ void DevicePreference::updateAudioOutputDevices()
             } else if (hashCopy.size() == 1) {
                 orderedList += hashCopy.values();
             }
+
             model->setModelData(orderedList);
         } else {
             model->setModelData(list);
         }
     }
+
     deviceList->resizeColumnToContents(0);
 }
 
@@ -325,6 +510,11 @@ QList<Phonon::AudioCaptureDevice> DevicePreference::availableAudioCaptureDevices
     return Phonon::BackendCapabilities::availableAudioCaptureDevices();
 }
 
+QList<Phonon::VideoCaptureDevice> DevicePreference::availableVideoCaptureDevices() const
+{
+    return Phonon::BackendCapabilities::availableVideoCaptureDevices();
+}
+
 void DevicePreference::load()
 {
     showCheckBox->setChecked(!Phonon::GlobalConfig().hideAdvancedDevices());
@@ -334,22 +524,37 @@ void DevicePreference::load()
 void DevicePreference::loadCategoryDevices()
 {
     // "Load" the settings from the backend.
-    for (Phonon::Category cat = Phonon::NoCategory; cat <= Phonon::LastCategory; ++cat) {
+    for (int i = 0; i < audioOutCategoriesCount; ++ i) {
+        const Phonon::Category cat = audioOutCategories[i];
         QList<Phonon::AudioOutputDevice> list;
         const QList<int> deviceIndexes = Phonon::GlobalConfig().audioOutputDeviceListFor(cat);
         foreach (int i, deviceIndexes) {
             list.append(Phonon::AudioOutputDevice::fromIndex(i));
         }
-        m_outputModel[cat]->setModelData(list);
+
+        m_audioOutputModel[cat]->setModelData(list);
     }
-    for (int i = 0; i < captureCategoriesCount; ++i) {
-        const Phonon::Category cat = captureCategories[i];
+
+    for (int i = 0; i < audioCapCategoriesCount; ++ i) {
+        const Phonon::CaptureCategory cat = audioCapCategories[i];
         QList<Phonon::AudioCaptureDevice> list;
         const QList<int> deviceIndexes = Phonon::GlobalConfig().audioCaptureDeviceListFor(cat);
         foreach (int i, deviceIndexes) {
             list.append(Phonon::AudioCaptureDevice::fromIndex(i));
         }
-        m_captureModel[cat]->setModelData(list);
+
+        m_audioCaptureModel[cat]->setModelData(list);
+    }
+
+    for (int i = 0; i < videoCapCategoriesCount; ++ i) {
+        const Phonon::CaptureCategory cat = videoCapCategories[i];
+        QList<Phonon::VideoCaptureDevice> list;
+        const QList<int> deviceIndexes = Phonon::GlobalConfig().videoCaptureDeviceListFor(cat);
+        foreach (int i, deviceIndexes) {
+            list.append(Phonon::VideoCaptureDevice::fromIndex(i));
+        }
+
+        m_videoCaptureModel[cat]->setModelData(list);
     }
 
     deviceList->resizeColumnToContents(0);
@@ -365,16 +570,25 @@ void DevicePreference::save()
         m_removeOnApply.clear();
     }
 
-    for (Phonon::Category cat = Phonon::NoCategory; cat <= Phonon::LastCategory; ++cat) {
-        Q_ASSERT(m_outputModel.value(cat));
-        const QList<int> order = m_outputModel.value(cat)->tupleIndexOrder();
+    for (int i = 0; i < audioOutCategoriesCount; ++i) {
+        const Phonon::Category cat = audioOutCategories[i];
+        Q_ASSERT(m_audioOutputModel.value(cat));
+        const QList<int> order = m_audioOutputModel.value(cat)->tupleIndexOrder();
         Phonon::GlobalConfig().setAudioOutputDeviceListFor(cat, order);
     }
-    for (int i = 1; i < captureCategoriesCount; ++i) {
-        const Phonon::Category cat = captureCategories[i];
-        Q_ASSERT(m_captureModel.value(cat));
-        const QList<int> order = m_captureModel.value(cat)->tupleIndexOrder();
+
+    for (int i = 0; i < audioCapCategoriesCount; ++i) {
+        const Phonon::CaptureCategory cat = audioCapCategories[i];
+        Q_ASSERT(m_audioCaptureModel.value(cat));
+        const QList<int> order = m_audioCaptureModel.value(cat)->tupleIndexOrder();
         Phonon::GlobalConfig().setAudioCaptureDeviceListFor(cat, order);
+    }
+
+    for (int i = 0; i < videoCapCategoriesCount; ++i) {
+        const Phonon::CaptureCategory cat = videoCapCategories[i];
+        Q_ASSERT(m_videoCaptureModel.value(cat));
+        const QList<int> order = m_videoCaptureModel.value(cat)->tupleIndexOrder();
+        Phonon::GlobalConfig().setVideoCaptureDeviceListFor(cat, order);
     }
 }
 
@@ -382,16 +596,29 @@ void DevicePreference::defaults()
 {
     {
         const QList<Phonon::AudioOutputDevice> list = availableAudioOutputDevices();
-        for (int i = -1; i <= Phonon::LastCategory; ++i) {
-            m_outputModel[i]->setModelData(list);
+        for (int i = 0; i < audioOutCategoriesCount; ++i) {
+            m_audioOutputModel[audioOutCategories[i]]->setModelData(list);
         }
     }
     {
         const QList<Phonon::AudioCaptureDevice> list = availableAudioCaptureDevices();
-        for (int i = 0; i < captureCategoriesCount; ++i) {
-            m_captureModel[captureCategories[i]]->setModelData(list);
+        for (int i = 0; i < audioCapCategoriesCount; ++i) {
+            m_audioCaptureModel[audioCapCategories[i]]->setModelData(list);
         }
     }
+    {
+        const QList<Phonon::VideoCaptureDevice> list = availableVideoCaptureDevices();
+        for (int i = 0; i < videoCapCategoriesCount; ++i) {
+            m_videoCaptureModel[videoCapCategories[i]]->setModelData(list);
+        }
+    }
+
+    /*
+     * Save this list (that contains even hidden devices) to GlobaConfig, and then
+     * load them back. All devices that should be hidden will be hidden
+     */
+    save();
+    loadCategoryDevices();
 
     deviceList->resizeColumnToContents(0);
 }
@@ -409,6 +636,14 @@ void DevicePreference::on_preferButton_clicked()
     }
     {
         Phonon::AudioCaptureDeviceModel *deviceModel = qobject_cast<Phonon::AudioCaptureDeviceModel *>(model);
+        if (deviceModel) {
+            deviceModel->moveUp(deviceList->currentIndex());
+            updateButtonsEnabled();
+            emit changed();
+        }
+    }
+    {
+        Phonon::VideoCaptureDeviceModel *deviceModel = qobject_cast<Phonon::VideoCaptureDeviceModel *>(model);
         if (deviceModel) {
             deviceModel->moveUp(deviceList->currentIndex());
             updateButtonsEnabled();
@@ -436,6 +671,14 @@ void DevicePreference::on_deferButton_clicked()
             emit changed();
         }
     }
+    {
+        Phonon::VideoCaptureDeviceModel *deviceModel = qobject_cast<Phonon::VideoCaptureDeviceModel *>(model);
+        if (deviceModel) {
+            deviceModel->moveDown(deviceList->currentIndex());
+            updateButtonsEnabled();
+            emit changed();
+        }
+    }
 }
 
 template<Phonon::ObjectDescriptionType T>
@@ -452,6 +695,7 @@ void DevicePreference::removeDevice(const Phonon::ObjectDescription<T> &deviceTo
     if (!reply.value()) {
         return;
     }
+
     m_removeOnApply << deviceToRemove.index();
 
     // remove from all models, idx.row() is only correct for the current model
@@ -464,22 +708,54 @@ void DevicePreference::removeDevice(const Phonon::ObjectDescription<T> &deviceTo
             }
         }
     }
+
     updateButtonsEnabled();
     emit changed();
+}
+
+DevicePreference::DeviceType DevicePreference::shownModelType() const
+{
+    const QStandardItem *item = m_categoryModel.itemFromIndex(categoryTree->currentIndex());
+    if (!item)
+        return InvalidDevice;
+    Q_ASSERT(item->type() == 1001);
+
+    const CategoryItem *catItem = static_cast<const CategoryItem *>(item);
+    if (!catItem)
+        return InvalidDevice;
+
+    switch (catItem->odtype()) {
+    case Phonon::AudioOutputDeviceType:
+        return AudioOutput;
+    case Phonon::AudioCaptureDeviceType:
+        return AudioCapture;
+    case Phonon::VideoCaptureDeviceType:
+        return VideoCapture;
+    default:
+        return InvalidDevice;
+    }
 }
 
 void DevicePreference::on_removeButton_clicked()
 {
     const QModelIndex idx = deviceList->currentIndex();
 
-    QAbstractItemModel *model = deviceList->model();
-    Phonon::AudioOutputDeviceModel *playbackModel = qobject_cast<Phonon::AudioOutputDeviceModel *>(model);
-    if (playbackModel && idx.isValid()) {
-        removeDevice(playbackModel->modelData(idx), &m_outputModel);
-    } else {
-        Phonon::AudioCaptureDeviceModel *captureModel = qobject_cast<Phonon::AudioCaptureDeviceModel *>(model);
-        if (captureModel && idx.isValid()) {
-            removeDevice(captureModel->modelData(idx), &m_captureModel);
+    if (idx.isValid()) {
+        QAbstractItemModel *model = deviceList->model();
+        Phonon::AudioOutputDeviceModel *aPlaybackModel = qobject_cast<Phonon::AudioOutputDeviceModel *>(model);
+        Phonon::AudioCaptureDeviceModel *aCaptureModel = qobject_cast<Phonon::AudioCaptureDeviceModel *>(model);
+        Phonon::VideoCaptureDeviceModel *vCaptureModel = qobject_cast<Phonon::VideoCaptureDeviceModel *>(model);
+
+        if (aPlaybackModel) {
+            removeDevice(aPlaybackModel->modelData(idx), &m_audioOutputModel);
+        }
+
+        if (aCaptureModel) {
+            removeDevice(aCaptureModel->modelData(idx), &m_audioCaptureModel);
+        }
+
+        if (vCaptureModel) {
+            removeDevice(vCaptureModel->modelData(idx), &m_videoCaptureModel);
         }
     }
 
@@ -490,11 +766,46 @@ void DevicePreference::on_applyPreferencesButton_clicked()
 {
     const QModelIndex idx = categoryTree->currentIndex();
     const QStandardItem *item = m_categoryModel.itemFromIndex(idx);
-    if( !item ) 
+    if (!item)
         return;
     Q_ASSERT(item->type() == 1001);
+
     const CategoryItem *catItem = static_cast<const CategoryItem *>(item);
-    const QList<Phonon::AudioOutputDevice> modelData = m_outputModel.value(catItem->category())->modelData();
+
+    QList<Phonon::AudioOutputDevice> aoPreferredList;
+    QList<Phonon::AudioCaptureDevice> acPreferredList;
+    QList<Phonon::VideoCaptureDevice> vcPreferredList;
+    const Phonon::Category *categoryList = NULL;
+    const Phonon::CaptureCategory *capCategoryList = NULL;
+    int categoryListCount;
+    int catIndex;
+    bool cap = false;
+
+    switch (catItem->odtype()) {
+    case Phonon::AudioOutputDeviceType:
+        aoPreferredList = m_audioOutputModel.value(catItem->category())->modelData();
+        categoryList = audioOutCategories;
+        categoryListCount = audioOutCategoriesCount;
+        cap = false;
+        break;
+
+    case Phonon::AudioCaptureDeviceType:
+        acPreferredList = m_audioCaptureModel.value(catItem->captureCategory())->modelData();
+        capCategoryList = audioCapCategories;
+        categoryListCount = audioCapCategoriesCount;
+        cap = true;
+        break;
+
+    case Phonon::VideoCaptureDeviceType:
+        vcPreferredList = m_videoCaptureModel.value(catItem->captureCategory())->modelData();
+        capCategoryList = videoCapCategories;
+        categoryListCount = videoCapCategoriesCount;
+        cap = true;
+        break;
+
+    default:
+        return;
+    }
 
     KDialog dialog(this);
     dialog.setButtons(KDialog::Ok | KDialog::Cancel);
@@ -509,9 +820,13 @@ void DevicePreference::on_applyPreferencesButton_clicked()
     label.setWordWrap(true);
 
     KListWidget list(&mainWidget);
-    for (Phonon::Category cat = Phonon::NoCategory; cat <= Phonon::LastCategory; ++cat) {
-        QListWidgetItem *item = new QListWidgetItem(cat == Phonon::NoCategory
-                ? i18n("Default/Unspecified Category") : Phonon::categoryToString(cat), &list, cat);
+
+    for (catIndex = 0; catIndex < categoryListCount; catIndex ++) {
+        Phonon::Category cat = cap ? Phonon::NoCategory : categoryList[catIndex];
+        Phonon::CaptureCategory capcat = cap ? capCategoryList[catIndex] : Phonon::NoCaptureCategory;
+
+        QListWidgetItem *item = new QListWidgetItem((cap ? capcat == Phonon::NoCaptureCategory : cat == Phonon::NoCategory)
+                ? i18n("Default/Unspecified Category") : Phonon::categoryToString(cat), &list, cap ? (int) capcat : (int) cat);
         item->setCheckState(Qt::Checked);
         if (cat == catItem->category()) {
             item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
@@ -525,17 +840,36 @@ void DevicePreference::on_applyPreferencesButton_clicked()
 
     switch (dialog.exec()) {
     case QDialog::Accepted:
-        for (Phonon::Category cat = Phonon::NoCategory; cat <= Phonon::LastCategory; ++cat) {
-            if (cat != catItem->category()) {
-                QListWidgetItem *item = list.item(static_cast<int>(cat) + 1);
-                Q_ASSERT(item->type() == cat);
+        for (catIndex = 0; catIndex < categoryListCount; catIndex ++) {
+            Phonon::Category cat = cap ? Phonon::NoCategory : categoryList[catIndex];
+            Phonon::CaptureCategory capcat = cap ? capCategoryList[catIndex] : Phonon::NoCaptureCategory;
+
+            if (cap ? capcat != catItem->captureCategory() : cat != catItem->category()) {
+                QListWidgetItem *item = list.item(catIndex);
+                Q_ASSERT(item->type() == cap ? (int) capcat : (int) cat);
                 if (item->checkState() == Qt::Checked) {
-                    m_outputModel.value(cat)->setModelData(modelData);
+                    switch (catItem->odtype()) {
+                    case Phonon::AudioOutputDeviceType:
+                        m_audioOutputModel.value(cat)->setModelData(aoPreferredList);
+                        break;
+
+                    case Phonon::AudioCaptureDeviceType:
+                        m_audioCaptureModel.value(capcat)->setModelData(acPreferredList);
+                        break;
+
+                    case Phonon::VideoCaptureDeviceType:
+                        m_videoCaptureModel.value(capcat)->setModelData(vcPreferredList);
+                        break;
+
+                    default: ;
+                    }
                 }
             }
         }
+
         emit changed();
         break;
+
     case QDialog::Rejected:
         // nothing to do
         break;
@@ -554,43 +888,145 @@ void DevicePreference::on_testPlaybackButton_toggled(bool down)
 {
     if (down) {
         QModelIndex idx = deviceList->currentIndex();
-        if (!idx.isValid() || !m_showingOutputModel) {
+        if (!idx.isValid()) {
             return;
         }
-        const Phonon::AudioOutputDeviceModel *model = static_cast<const Phonon::AudioOutputDeviceModel *>(idx.model());
-        const Phonon::AudioOutputDevice &device = model->modelData(idx);
-        m_media = new Phonon::MediaObject(this);
-        m_output = new Phonon::AudioOutput(this);
-        m_output->setOutputDevice(device);
 
-        // just to be very sure that nothing messes our test sound up
-        m_output->setVolume(1.0);
-        m_output->setMuted(false);
+        // Shouldn't happen, but better to be on the safe side
+        if (m_testingType != InvalidDevice) {
+            if (m_media) {
+                delete m_media;
+                m_media = NULL;
+            }
 
-        Phonon::createPath(m_media, m_output);
-        connect(m_media, SIGNAL(finished()), testPlaybackButton, SLOT(toggle()));
-        m_media->setCurrentSource(KStandardDirs::locate("sound", "KDE-Sys-Log-In.ogg"));
+            if (m_audioOutput) {
+                delete m_audioOutput;
+                m_audioOutput = NULL;
+            }
+
+            if (m_videoWidget) {
+                delete m_videoWidget;
+                m_videoWidget = NULL;
+            }
+        }
+
+        // Setup the Phonon objects according to the testing type
+        m_testingType = shownModelType();
+        switch (m_testingType) {
+        case AudioOutput: {
+            // Create an audio output with the selected device
+            m_media = new Phonon::MediaObject(this);
+            const Phonon::AudioOutputDeviceModel *model = static_cast<const Phonon::AudioOutputDeviceModel *>(idx.model());
+            const Phonon::AudioOutputDevice &device = model->modelData(idx);
+            m_audioOutput = new Phonon::AudioOutput(this);
+            m_audioOutput->setOutputDevice(device);
+
+            // Just to be very sure that nothing messes our test sound up
+            m_audioOutput->setVolume(1.0);
+            m_audioOutput->setMuted(false);
+
+            Phonon::createPath(m_media, m_audioOutput);
+
+            m_media->setCurrentSource(KStandardDirs::locate("sound", "KDE-Sys-Log-In.ogg"));
+            connect(m_media, SIGNAL(finished()), testPlaybackButton, SLOT(toggle()));
+
+            break;
+        }
+
+        case AudioCapture: {
+            // Create a media object and an audio output
+            m_media = new Phonon::MediaObject(this);
+            m_audioOutput = new Phonon::AudioOutput(Phonon::NoCategory, this);
+
+            // Just to be very sure that nothing messes our test sound up
+            m_audioOutput->setVolume(1.0);
+            m_audioOutput->setMuted(false);
+
+            // Try to create a path
+            if (!Phonon::createPath(m_media, m_audioOutput).isValid()) {
+                KMessageBox::error(this, i18n("Your backend may not support audio capture"));
+                break;
+            }
+
+            // Determine the selected device
+            const Phonon::AudioCaptureDeviceModel *model = static_cast<const Phonon::AudioCaptureDeviceModel *>(idx.model());
+            const Phonon::AudioCaptureDevice &device = model->modelData(idx);
+            m_media->setCurrentSource(device);
+
+            break;
+        }
+
+        case VideoCapture: {
+            // Create a media object and a video output
+            m_media = new Phonon::MediaObject(this);
+            m_videoWidget = new Phonon::VideoWidget(NULL);
+
+            // Try to create a path
+            if (!Phonon::createPath(m_media, m_videoWidget).isValid()) {
+                KMessageBox::error(this, i18n("Your backend may not support video capture"));
+                break;
+            }
+
+            // Determine the selected device
+            const Phonon::VideoCaptureDeviceModel *model = static_cast<const Phonon::VideoCaptureDeviceModel *>(idx.model());
+            const Phonon::VideoCaptureDevice &device = model->modelData(idx);
+            m_media->setCurrentSource(device);
+
+            // Set up the testing video widget
+            m_videoWidget->setWindowTitle(i18n("Testing %1", device.name()));
+            m_videoWidget->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint);
+            if (device.property("icon").canConvert(QVariant::String))
+                m_videoWidget->setWindowIcon(KIcon(device.property("icon").toString()));
+            m_videoWidget->move(QCursor::pos() - QPoint(250, 295));
+            m_videoWidget->resize(320, 240);
+            m_videoWidget->show();
+
+            break;
+        }
+
+        default:
+            return;
+        }
+
         m_media->play();
     } else {
-        disconnect(m_media, SIGNAL(finished()), testPlaybackButton, SLOT(toggle()));
-        delete m_media;
-        m_media = 0;
-        delete m_output;
-        m_output = 0;
+        // Uninitialize the Phonon objects according to the testing type
+        switch (m_testingType) {
+        case AudioOutput:
+            disconnect(m_media, SIGNAL(finished()), testPlaybackButton, SLOT(toggle()));
+            delete m_media;
+            delete m_audioOutput;
+            break;
+
+        case AudioCapture:
+            delete m_media;
+            delete m_audioOutput;
+            break;
+
+        case VideoCapture:
+            delete m_media;
+            delete m_videoWidget;
+            break;
+
+        default:
+            return;
+        }
+
+        m_media = NULL;
+        m_videoWidget = NULL;
+        m_audioOutput = NULL;
+        m_testingType = InvalidDevice;
     }
 }
 
 void DevicePreference::updateButtonsEnabled()
 {
-    //kDebug() ;
     if (deviceList->model()) {
-        //kDebug() << "model available";
         QModelIndex idx = deviceList->currentIndex();
         preferButton->setEnabled(idx.isValid() && idx.row() > 0);
         deferButton->setEnabled(idx.isValid() && idx.row() < deviceList->model()->rowCount() - 1);
         removeButton->setEnabled(idx.isValid() && !(idx.flags() & Qt::ItemIsEnabled));
-        testPlaybackButton->setEnabled(m_showingOutputModel && idx.isValid() &&
-                (idx.flags() & Qt::ItemIsEnabled));
+        testPlaybackButton->setEnabled(idx.isValid() && (idx.flags() & Qt::ItemIsEnabled));
     } else {
         preferButton->setEnabled(false);
         deferButton->setEnabled(false);
