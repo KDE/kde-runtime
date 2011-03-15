@@ -67,7 +67,7 @@ bool Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
     // 2. Otherwsie
     //    -> Keep the old graph
     
-    const QUrl oldGraph = model()->listStatements( newSt.subject(), newSt.predicate(), newSt.object() ).iterateContexts().allNodes().first().uri();
+    const QUrl oldGraph = model()->listStatements( newSt.subject(), newSt.predicate(), newSt.object() ).allStatements().first().context().uri();
 
     //kDebug() << m_model->statementCount();
     if(!mergeGraphs( oldGraph )) {
@@ -465,7 +465,13 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
 
         int maxCardinality = tree->maxCardinality( propUri );
 
-        if( maxCardinality > 0 ) {
+        // we ignore the metadata properties as they will get special
+        // treatment duing the merging
+        if( maxCardinality > 0 &&
+                propUri != NAO::created() &&
+                propUri != NAO::lastModified() &&
+                propUri != NAO::creator() &&
+                propUri != NAO::userVisible() ) {
             int existingCardinality = 0;
             if(!st.subject().isBlank()) {
                 existingCardinality = m_model->executeQuery(QString::fromLatin1("select count(distinct ?v) where { %1 %2 ?v . FILTER(?v!=%3) . }")
@@ -516,8 +522,8 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
                 
                 if( !isOfType( objUri, range, objectNewTypes ) ) {
 
-                    kDebug() << "Invalid resource range";
-                    m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2")
+                    kDebug() << "Invalid resource range." << objUri << "has types" << objectNewTypes;
+                    m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2.")
                                        .arg( propUri.toString(), range.toString() ),
                                        Soprano::Error::ErrorInvalidArgument);
                     return false;
@@ -551,16 +557,24 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
 
 Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::Statement& st)
 {
-    // Special handling for nao:lastModified
-    if( st.predicate().uri() == NAO::lastModified() ) {
+    // Special handling for nao:lastModified and nao:userVisible: only the latest value is correct
+    if( st.predicate().uri() == NAO::lastModified() ||
+            st.predicate().uri() == NAO::userVisible() ) {
         model()->removeAllStatements( st.subject(), st.predicate(), Soprano::Node() );
     }
-    // and nao:created
+
+    // Special handling for nao:created: only the first value is correct
     else if( st.predicate().uri() == NAO::created() ) {
         // If nao:created already exists, then do nothing
+        // FIXME: only write nao:created if we actually create the resource or if it was provided by the client, otherwise drop it.
         if( model()->containsAnyStatement( st.subject(), NAO::created(), Soprano::Node() ) )
             return Soprano::Error::ErrorNone;
     }
-    
+
+    // Special handling for nao:creator
+    else if( st.predicate().uri() == NAO::creator() ) {
+        // FIXME: handle nao:creator somehow
+    }
+
     return model()->addStatement( st );
 }
