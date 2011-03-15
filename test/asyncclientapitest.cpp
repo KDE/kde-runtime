@@ -124,6 +124,15 @@ void AsyncClientApiTest::resetModel()
     m_model->addStatement( QUrl("prop:/res_c1"), RDFS::range(), RDFS::Resource(), graph );
     m_model->addStatement( QUrl("prop:/res_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
 
+    m_model->addStatement( QUrl("prop:/date"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/date"), RDFS::range(), XMLSchema::date(), graph );
+
+    m_model->addStatement( QUrl("prop:/time"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/time"), RDFS::range(), XMLSchema::time(), graph );
+
+    m_model->addStatement( QUrl("prop:/dateTime"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/dateTime"), RDFS::range(), XMLSchema::dateTime(), graph );
+
     m_model->addStatement( QUrl("class:/A"), RDF::type(), RDFS::Class(), graph );
     m_model->addStatement( QUrl("class:/B"), RDF::type(), RDFS::Class(), graph );
 
@@ -277,11 +286,17 @@ void AsyncClientApiTest::testRemoveDataByApplication()
 
 void AsyncClientApiTest::testStoreResources()
 {
-    // store a simple resource just to check if the method is called properly
+    // store a resource just to check if the method is called properly
+    // and all types are property handled
     SimpleResource res;
     res.setUri(QUrl("_:A"));
     res.addProperty(RDF::type(), NAO::Tag());
-    res.addProperty(NAO::prefLabel(), QLatin1String("Foobar"));
+    res.addProperty(QUrl("prop:/string"), QLatin1String("Foobar"));
+    res.addProperty(QUrl("prop:/int"), 42);
+    res.addProperty(QUrl("prop:/date"), QDate::currentDate());
+    res.addProperty(QUrl("prop:/time"), QTime::currentTime());
+    res.addProperty(QUrl("prop:/dateTime"), QDateTime::currentDateTime());
+    res.addProperty(QUrl("prop:/res"), QUrl("res:/A"));
 
     KJob* job = Nepomuk::storeResources(SimpleResourceGraph() << res);
     QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
@@ -289,7 +304,11 @@ void AsyncClientApiTest::testStoreResources()
 
     // check if the resource exists
     QVERIFY(m_model->containsAnyStatement(Soprano::Node(), RDF::type(), NAO::Tag()));
-    QVERIFY(m_model->containsAnyStatement(Soprano::Node(), NAO::prefLabel(), Soprano::LiteralValue(QLatin1String("Foobar"))));
+    QVERIFY(m_model->containsAnyStatement(Soprano::Node(), QUrl("prop:/string"), Soprano::LiteralValue(QLatin1String("Foobar"))));
+    QVERIFY(m_model->containsAnyStatement(Soprano::Node(), QUrl("prop:/int"), Soprano::LiteralValue(42)));
+    QVERIFY(m_model->containsAnyStatement(Soprano::Node(), QUrl("prop:/date"), Soprano::LiteralValue(res.property(QUrl("prop:/date")).first().toDate())));
+    QVERIFY(m_model->containsAnyStatement(Soprano::Node(), QUrl("prop:/time"), Soprano::LiteralValue(res.property(QUrl("prop:/time")).first().toTime())));
+    QVERIFY(m_model->containsAnyStatement(Soprano::Node(), QUrl("prop:/dateTime"), Soprano::LiteralValue(res.property(QUrl("prop:/dateTime")).first().toDateTime())));
 }
 
 void AsyncClientApiTest::testMergeResources()

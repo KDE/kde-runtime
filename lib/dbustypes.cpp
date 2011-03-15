@@ -22,9 +22,13 @@
 #include "dbustypes.h"
 
 #include <QtCore/QStringList>
+#include <QtCore/QDate>
+#include <QtCore/QTime>
+#include <QtCore/QDateTime>
 #include <QtDBus/QDBusMetaType>
 
 #include <KUrl>
+#include <KDebug>
 
 QString Nepomuk::DBus::convertUri(const QUrl& uri)
 {
@@ -111,13 +115,37 @@ const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::PropertyHash
 
         //
         // trueg: QDBus does not automatically convert non-basic types but gives us a QDBusArgument in a QVariant.
-        // Thus, we need to handle QUrl as a special case here. It is the only complex type we use.
+        // Thus, we need to handle QUrl, QTime, QDate, and QDateTime as a special cases here. They is the only complex types we support.
         //
         if(v.userType() == qMetaTypeId<QDBusArgument>()) {
-            QDBusArgument arg = v.value<QDBusArgument>();
-            QUrl url;
-            arg >> url;
-            ph.insertMulti(p, url);
+            const QDBusArgument arg = v.value<QDBusArgument>();
+
+            QVariant v;
+            if(arg.currentSignature() == QLatin1String("(s)")) {
+                QUrl url;
+                arg >> url;
+                v.setValue(url);
+            }
+            else if(arg.currentSignature() == QLatin1String("(iii)")) {
+                QDate date;
+                arg >> date;
+                v.setValue(date);
+            }
+            else if(arg.currentSignature() == QLatin1String("(iiii)")) {
+                QTime time;
+                arg >> time;
+                v.setValue(time);
+            }
+            else if(arg.currentSignature() == QLatin1String("((iii)(iiii)i)")) {
+                QDateTime dt;
+                arg >> dt;
+                v.setValue(dt);
+            }
+            else {
+                kDebug() << "Unknown type signature in property hash value:" << arg.currentSignature();
+            }
+
+            ph.insertMulti(p, v);
         }
         else {
             ph.insertMulti(p, v);
