@@ -74,14 +74,14 @@ static const Phonon::Category audioOutCategories[] = {
 static const Phonon::CaptureCategory audioCapCategories[] = {
     Phonon::NoCaptureCategory,
     Phonon::CommunicationCaptureCategory,
-    Phonon::RecordingCategory,
-    Phonon::ControlCategory
+    Phonon::RecordingCaptureCategory,
+    Phonon::ControlCaptureCategory
 };
 
 static const Phonon::CaptureCategory videoCapCategories[] = {
     Phonon::NoCaptureCategory,
     Phonon::CommunicationCaptureCategory,
-    Phonon::RecordingCategory,
+    Phonon::RecordingCaptureCategory,
 };
 
 static const int audioOutCategoriesCount = sizeof(audioOutCategories) / sizeof(Phonon::Category);

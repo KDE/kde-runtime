@@ -22,7 +22,7 @@
 
 #include "resourceidentifier.h"
 #include "resourceidentifier_p.h"
-#include "simpleresource.h"
+#include "syncresource.h"
 #include "identificationsetgenerator_p.h"
 #include "nrio.h"
 
@@ -61,12 +61,12 @@ Nepomuk::Sync::ResourceIdentifier::~ResourceIdentifier()
 
 void Nepomuk::Sync::ResourceIdentifier::addStatement(const Soprano::Statement& st)
 {
-    SimpleResource res;
+    SyncResource res;
     res.setUri( st.subject() );
     
-    QHash<KUrl, SimpleResource>::iterator it = d->m_resourceHash.find( res.uri() );
+    QHash<KUrl, SyncResource>::iterator it = d->m_resourceHash.find( res.uri() );
     if( it != d->m_resourceHash.end() ) {
-        SimpleResource & res = it.value();
+        SyncResource & res = it.value();
         res.insert( st.predicate().uri(), st.object() );
         return;
     }
@@ -84,7 +84,7 @@ void Nepomuk::Sync::ResourceIdentifier::addStatements(const Soprano::Graph& grap
 
     KUrl::List uniqueKeys = resHash.uniqueKeys();
     foreach( const KUrl & resUri, uniqueKeys ) {
-        QHash<KUrl, SimpleResource>::iterator it = d->m_resourceHash.find( resUri );
+        QHash<KUrl, SyncResource>::iterator it = d->m_resourceHash.find( resUri );
         if( it != d->m_resourceHash.end() ) {
             it.value() += resHash.value( resUri );
         }
@@ -103,10 +103,10 @@ void Nepomuk::Sync::ResourceIdentifier::addStatements(const QList< Soprano::Stat
 }
 
 
-void Nepomuk::Sync::ResourceIdentifier::addSimpleResource(const Nepomuk::Sync::SimpleResource& res)
+void Nepomuk::Sync::ResourceIdentifier::addSyncResource(const Nepomuk::Sync::SyncResource& res)
 {
     Q_ASSERT( !res.uri().isEmpty() );
-    QHash<KUrl, SimpleResource>::iterator it = d->m_resourceHash.find( res.uri() );
+    QHash<KUrl, SyncResource>::iterator it = d->m_resourceHash.find( res.uri() );
     if( it == d->m_resourceHash.end() ) {
         d->m_resourceHash.insert( res.uri(), res );
         d->m_notIdentified.insert( res.uri() );
@@ -190,14 +190,14 @@ QHash<KUrl, KUrl> Nepomuk::Sync::ResourceIdentifier::mappings() const
     return d->m_hash;
 }
 
-Nepomuk::Sync::SimpleResource Nepomuk::Sync::ResourceIdentifier::simpleResource(const KUrl& uri)
+Nepomuk::Sync::SyncResource Nepomuk::Sync::ResourceIdentifier::simpleResource(const KUrl& uri)
 {
-    QHash< KUrl, SimpleResource >::const_iterator it = d->m_resourceHash.constFind( uri );
+    QHash< KUrl, SyncResource >::const_iterator it = d->m_resourceHash.constFind( uri );
     if( it != d->m_resourceHash.constEnd() ) {
         return it.value();
     }
     
-    return SimpleResource();
+    return SyncResource();
 }
 
 
@@ -285,7 +285,7 @@ void Nepomuk::Sync::ResourceIdentifier::forceResource(const KUrl& oldUri, const 
     if( res.isFile() ) {
         const QUrl nieUrlProp = Nepomuk::Vocabulary::NIE::url();
         
-        Sync::SimpleResource & simRes = d->m_resourceHash[ oldUri ];
+        Sync::SyncResource & simRes = d->m_resourceHash[ oldUri ];
         KUrl oldNieUrl = simRes.nieUrl();
         KUrl newNieUrl = res.property( nieUrlProp ).toUrl();
         
@@ -321,7 +321,7 @@ void Nepomuk::Sync::ResourceIdentifier::forceResource(const KUrl& oldUri, const 
             if( d->m_hash.contains( uri ) )
                 continue;
             
-            Sync::SimpleResource& simpleRes = d->m_resourceHash[ uri ];
+            Sync::SyncResource& simpleRes = d->m_resourceHash[ uri ];
             // Check if it has a nie:url
             QString nieUrl = simpleRes.nieUrl().url();
             if( nieUrl.isEmpty() )
@@ -352,7 +352,7 @@ bool Nepomuk::Sync::ResourceIdentifier::ignore(const KUrl& resUri, bool ignoreSu
     }
 
     // Remove the resource
-    const Sync::SimpleResource & res = d->m_resourceHash.value( resUri );
+    const Sync::SyncResource & res = d->m_resourceHash.value( resUri );
     d->m_resourceHash.remove( resUri );
     d->m_notIdentified.remove( resUri );
 
@@ -361,7 +361,7 @@ bool Nepomuk::Sync::ResourceIdentifier::ignore(const KUrl& resUri, bool ignoreSu
     // Remove all the statements that contain the resoruce
     QList<KUrl> allUris = d->m_resourceHash.uniqueKeys();
     foreach( const KUrl & uri, allUris ) {
-        SimpleResource res = d->m_resourceHash[ uri ];
+        SyncResource res = d->m_resourceHash[ uri ];
         res.removeObject( resUri );
     }
 
@@ -379,7 +379,7 @@ bool Nepomuk::Sync::ResourceIdentifier::ignore(const KUrl& resUri, bool ignoreSu
     KUrl mainNieUrl = nieUrlNodes.first().uri();
     
     foreach( const KUrl & uri, d->m_notIdentified ) {
-        Sync::SimpleResource res = d->m_resourceHash[ uri ];
+        Sync::SyncResource res = d->m_resourceHash[ uri ];
         
         // If already identified
         if( d->m_hash.contains(uri) )
