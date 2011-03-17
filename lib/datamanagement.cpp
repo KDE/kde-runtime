@@ -28,6 +28,8 @@
 
 #include <QtCore/QStringList>
 
+#include <KUrl>
+
 
 KJob* Nepomuk::addProperty(const QList<QUrl>& resources,
                            const QUrl& property,
@@ -149,6 +151,18 @@ KJob* Nepomuk::storeResources(const SimpleResourceGraph& resources,
                                         Q_ARG(QString, component.componentName()));
 }
 
+KJob* Nepomuk::importResources(const KUrl& url,
+                               Soprano::RdfSerialization serialization,
+                               const QString& userSerialization,
+                               const QHash<QUrl, QVariant>& additionalMetadata,
+                               const KComponentData& component)
+{
+    return new GenericDataManagementJob("importResources",
+                                        Q_ARG(QUrl, url),
+                                        Q_ARG(QString, Soprano::serializationMimeType(serialization, userSerialization)),
+                                        Q_ARG(Nepomuk::PropertyHash, additionalMetadata),
+                                        Q_ARG(QString, component.componentName()));
+}
 
 Nepomuk::DescribeResourcesJob* Nepomuk::describeResources(const QList<QUrl>& resources,
                                                           bool includeSubResources)

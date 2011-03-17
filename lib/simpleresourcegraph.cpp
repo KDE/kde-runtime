@@ -183,6 +183,25 @@ int Nepomuk::SimpleResourceGraph::count() const
     return d->resources.count();
 }
 
+namespace {
+QVariant nodeToVariant(const Soprano::Node& node) {
+    if(node.isResource())
+        return node.uri();
+    else if(node.isBlank())
+        return QUrl(QLatin1String("_:") + node.identifier());
+    else
+        return node.literal().variant();
+}
+}
+
+void Nepomuk::SimpleResourceGraph::addStatement(const Soprano::Statement &s)
+{
+    const QUrl uri = nodeToVariant(s.subject()).toUrl();
+    const QVariant value = nodeToVariant(s.object());
+    d->resources[uri].setUri(uri);
+    d->resources[uri].addProperty(s.predicate().uri(), value);
+}
+
 KJob* Nepomuk::SimpleResourceGraph::save(const KComponentData& component) const
 {
     return Nepomuk::storeResources(*this, QHash<QUrl, QVariant>(), component);

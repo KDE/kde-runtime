@@ -27,9 +27,12 @@
 #include <KComponentData>
 #include <KGlobal>
 
+#include <Soprano/Global>
+
 #include "nepomukdatamanagement_export.h"
 
 class KJob;
+class KUrl;
 
 namespace Nepomuk {
     class DescribeResourcesJob;
@@ -172,6 +175,25 @@ namespace Nepomuk {
     NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* storeResources(const SimpleResourceGraph& resources,
                                                         const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>(),
                                                         const KComponentData& component = KGlobal::mainComponent());
+
+    /**
+     * Import an RDF graph from a URL.
+     * \param url The url from which the graph should be loaded. This does not have to be local.
+     * \param serialization The RDF serialization used for the file. If Soprano::SerializationUnknown a crude automatic
+     * detection based on file extension is used.
+     * \param userSerialization If \p serialization is Soprano::SerializationUser this value is used. See Soprano::Parser
+     * for details.
+     * \param additionalMetadata Additional metadata for the added resources. This can include
+     * such details as the creator of the data or details on the method of data recovery.
+     * One typical usecase is that the file indexer uses (rdf:type, nrl:DiscardableInstanceBase)
+     * to state that the provided information can be recreated at any time. Only built-in types
+     * such as int, string, or url are supported.
+     */
+    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* importResources(const KUrl& url,
+                                                         Soprano::RdfSerialization serialization,
+                                                         const QString& userSerialization = QString(),
+                                                         const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>(),
+                                                         const KComponentData& component = KGlobal::mainComponent());
 
     /**
      * Describe a set of resources, i.e. retrieve all their properties.

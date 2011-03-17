@@ -228,4 +228,16 @@ void Nepomuk::DataManagementAdaptor::updateNamespaces()
     }
 }
 
+void Nepomuk::DataManagementAdaptor::importResources(const QString &url, const QString &serialization, const QString &app)
+{
+    importResources(url, serialization, PropertyHash(), app);
+}
+
+void Nepomuk::DataManagementAdaptor::importResources(const QString &url, const QString &serialization, const Nepomuk::PropertyHash &additionalMetadata, const QString &app)
+{
+    Q_ASSERT(calledFromDBus());
+    setDelayedReply(true);
+    enqueueCommand(new ImportResourcesCommand(decodeUri(url), Soprano::mimeTypeToSerialization(serialization), serialization, additionalMetadata, app, m_model, message()));
+}
+
 #include "datamanagementadaptor.moc"

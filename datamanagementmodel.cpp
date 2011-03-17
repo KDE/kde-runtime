@@ -41,6 +41,8 @@
 #include <Soprano/StatementIterator>
 #include <Soprano/NodeIterator>
 #include <Soprano/Error/ErrorCode>
+#include <Soprano/Parser>
+#include <Soprano/PluginManager>
 
 #include <QtCore/QHash>
 #include <QtCore/QUrl>
@@ -57,6 +59,8 @@
 #include <KDebug>
 #include <KService>
 #include <KServiceTypeTrader>
+
+#include <KIO/NetAccess>
 
 using namespace Nepomuk::Vocabulary;
 using namespace Soprano::Vocabulary;
@@ -1269,6 +1273,53 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     }
 }
 
+void Nepomuk::DataManagementModel::importResources(const QUrl &url,
+                                                   const QString &app,
+                                                   Soprano::RdfSerialization serialization,
+                                                   const QString &userSerialization,
+                                                   const QHash<QUrl, QVariant>& additionalMetadata)
+{
+    // download the file
+    QString tmpFileName;
+    if(!KIO::NetAccess::download(url, tmpFileName, 0)) {
+        setError(QString::fromLatin1("Failed to download '%1'.").arg(url.toString()));
+        return;
+    }
+
+    // guess the serialization
+    if(serialization == Soprano::SerializationUnknown) {
+        const QString extension = KUrl(url).fileName().section('.', -1).toLower();
+        if(extension == QLatin1String("trig"))
+            serialization = Soprano::SerializationTrig;
+        else if(extension == QLatin1String("n3"))
+            serialization = Soprano::SerializationNTriples;
+        else if(extension == QLatin1String("xml"))
+            serialization = Soprano::SerializationRdfXml;
+    }
+
+    const Soprano::Parser* parser = Soprano::PluginManager::instance()->discoverParserForSerialization(serialization, userSerialization);
+    if(!parser) {
+        setError(QString::fromLatin1("Failed to create parser for serialization '%1'").arg(Soprano::serializationMimeType(serialization, userSerialization)));
+    }
+    else {
+        SimpleResourceGraph graph;
+        Soprano::StatementIterator it = parser->parseFile(tmpFileName, QUrl(), serialization, userSerialization);
+        while(it.next()) {
+            graph.addStatement(*it);
+        }
+        if(parser->lastError()) {
+            setError(parser->lastError());
+        }
+        else if(it.lastError()) {
+            setError(it.lastError());
+        }
+        else {
+            storeResources(graph, app, additionalMetadata);
+        }
+    }
+
+    KIO::NetAccess::removeTempFile(tmpFileName);
+}
 
 void Nepomuk::DataManagementModel::mergeResources(const QUrl &res1, const QUrl &res2, const QString &app)
 {

@@ -33,7 +33,9 @@
 #include "nepomukdatamanagement_export.h"
 
 class KJob;
-
+namespace Soprano {
+class Statement;
+}
 namespace Nepomuk {
 class SimpleResource;
 
@@ -73,6 +75,8 @@ public:
     QList<SimpleResource> toList() const;
 
     QUrl createBlankNode();
+
+    void addStatement(const Soprano::Statement& statement);
 
     /**
      * Save the graph to the Nepomuk database.
