@@ -47,6 +47,7 @@ private slots:
     void testStoreResources();
     void testMergeResources();
     void testDescribeResources();
+    void testImportResources();
 
 private:
     void resetModel();

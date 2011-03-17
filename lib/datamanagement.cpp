@@ -158,7 +158,7 @@ KJob* Nepomuk::importResources(const KUrl& url,
                                const KComponentData& component)
 {
     return new GenericDataManagementJob("importResources",
-                                        Q_ARG(QUrl, url),
+                                        Q_ARG(QString, Nepomuk::DBus::convertUri(url)),
                                         Q_ARG(QString, Soprano::serializationMimeType(serialization, userSerialization)),
                                         Q_ARG(Nepomuk::PropertyHash, additionalMetadata),
                                         Q_ARG(QString, component.componentName()));

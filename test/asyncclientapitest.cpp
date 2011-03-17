@@ -392,6 +392,57 @@ void AsyncClientApiTest::testDescribeResources()
     QVERIFY(r1.uri() == QUrl("res:/D") || r2.uri() == QUrl("res:/D") || r3.uri() == QUrl("res:/D") || r4.uri() == QUrl("res:/D"));
 }
 
+void AsyncClientApiTest::testImportResources()
+{
+    // create the test data
+    QTemporaryFile fileA;
+    fileA.open();
+
+    Soprano::Graph graph;
+    graph.addStatement(Node(QString::fromLatin1("res1")), QUrl("prop:/int"), LiteralValue(42));
+    graph.addStatement(Node(QString::fromLatin1("res1")), RDF::type(), QUrl("class:/typeA"));
+    graph.addStatement(Node(QString::fromLatin1("res1")), QUrl("prop:/res"), Node(QString::fromLatin1("res2")));
+    graph.addStatement(Node(QString::fromLatin1("res2")), RDF::type(), QUrl("class:/typeB"));
+    graph.addStatement(QUrl::fromLocalFile(fileA.fileName()), QUrl("prop:/int"), LiteralValue(12));
+    graph.addStatement(QUrl::fromLocalFile(fileA.fileName()), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")));
+
+    // write the test file
+    QTemporaryFile tmp;
+    tmp.open();
+    QTextStream str(&tmp);
+    Q_FOREACH(const Statement& s, graph.toList()) {
+        str << s.subject().toN3() << " " << s.predicate().toN3() << " " << s.object().toN3() << " ." << endl;
+    }
+    tmp.close();
+
+
+    // import the file
+    KJob* job = Nepomuk::importResources(QUrl::fromLocalFile(tmp.fileName()), Soprano::SerializationNTriples);
+    QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
+    QVERIFY(!job->error());
+
+
+    // make sure the data has been imported properly
+    QVERIFY(m_model->containsAnyStatement(Node(), QUrl("prop:/int"), LiteralValue(42)));
+    const QUrl res1Uri = m_model->listStatements(Node(), QUrl("prop:/int"), LiteralValue(42)).allStatements().first().subject().uri();
+    QVERIFY(m_model->containsAnyStatement(res1Uri, RDF::type(), QUrl("class:/typeA")));
+    QVERIFY(m_model->containsAnyStatement(res1Uri, QUrl("prop:/res"), Node()));
+    const QUrl res2Uri = m_model->listStatements(res1Uri, QUrl("prop:/res"), Node()).allStatements().first().object().uri();
+    QVERIFY(m_model->containsAnyStatement(res2Uri, RDF::type(), QUrl("class:/typeB")));
+    QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())));
+    const QUrl res3Uri = m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().first().subject().uri();
+    QVERIFY(m_model->containsAnyStatement(res3Uri, QUrl("prop:/int"), LiteralValue(12)));
+    QVERIFY(m_model->containsAnyStatement(res3Uri, QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+
+    // make sure the metadata is there
+    QVERIFY(m_model->containsAnyStatement(res1Uri, NAO::lastModified(), Node()));
+    QVERIFY(m_model->containsAnyStatement(res1Uri, NAO::created(), Node()));
+    QVERIFY(m_model->containsAnyStatement(res2Uri, NAO::lastModified(), Node()));
+    QVERIFY(m_model->containsAnyStatement(res2Uri, NAO::created(), Node()));
+    QVERIFY(m_model->containsAnyStatement(res3Uri, NAO::lastModified(), Node()));
+    QVERIFY(m_model->containsAnyStatement(res3Uri, NAO::created(), Node()));
+}
+
 QTEST_KDEMAIN_CORE(AsyncClientApiTest)
 
 #include "asyncclientapitest.moc"
