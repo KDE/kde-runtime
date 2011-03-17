@@ -2891,6 +2891,30 @@ void DataManagementModelTest::testStoreResources_realLife()
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
+void DataManagementModelTest::testStoreResources_trivialMerge()
+{
+    ResourceManager::instance()->setOverrideMainModel( m_model );
+
+    // we create a resource with some properties
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), QUrl("class:/typeA"), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g1);
+
+
+    // now we store a trivial resource
+    SimpleResource res;
+    res.addProperty(RDF::type(), QUrl("class:/typeA"));
+
+    m_dmModel->storeResources(SimpleResourceGraph() << res, QLatin1String("A"));
+
+    // the two resources should NOT have been merged
+    QCOMPARE(m_model->listStatements(Node(), RDF::type(), QUrl("class:/typeA")).allElements().count(), 2);
+}
+
 void DataManagementModelTest::testMergeResources()
 {
     // first we need to create the two resources we want to merge as well as one that should not be touched
