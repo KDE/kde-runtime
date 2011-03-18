@@ -177,6 +177,25 @@ public Q_SLOTS:
     void mergeResources(const QUrl& resource1, const QUrl& resource2, const QString& app);
 
     /**
+     * Import an RDF graph from a URL.
+     * \param url The url from which the graph should be loaded. This does not have to be local.
+     * \param app The calling application
+     * \param serialization The RDF serialization used for the file. If Soprano::SerializationUnknown a crude automatic
+     * detection based on file extension is used.
+     * \param userSerialization If \p serialization is Soprano::SerializationUser this value is used. See Soprano::Parser
+     * for details.
+     * \param additionalMetadata Additional metadata for the added resources. This can include
+     * such details as the creator of the data or details on the method of data recovery.
+     * One typical usecase is that the file indexer uses (rdf:type, nrl:DiscardableInstanceBase)
+     * to state that the provided information can be recreated at any time. Only built-in types
+     * such as int, string, or url are supported.
+     */
+    void importResources(const QUrl& url, const QString& app,
+                         Soprano::RdfSerialization serialization,
+                         const QString& userSerialization = QString(),
+                         const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>());
+
+    /**
      * Describe a set of resources, i.e. retrieve all their properties.
      * \param resources The resource URIs of the resources to describe.
      * \param includeSubResources If \p true sub resources will be included.

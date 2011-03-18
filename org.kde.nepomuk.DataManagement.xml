@@ -58,6 +58,18 @@
       <annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="Nepomuk::PropertyHash"/>
       <arg name="app" type="s" direction="in"/>
     </method>
+    <method name="importResources">
+      <arg name="url" type="s" direction="in"/>
+      <arg name="serialization" type="s" direction="in"/>
+      <arg name="additionalMetadata" type="a{sv}" direction="in"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In2" value="Nepomuk::PropertyHash"/>
+      <arg name="app" type="s" direction="in"/>
+    </method>
+    <method name="importResources">
+      <arg name="url" type="s" direction="in"/>
+      <arg name="serialization" type="s" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+    </method>
     <method name="mergeResources">
       <arg name="resource1" type="s" direction="in"/>
       <arg name="resource2" type="s" direction="in"/>

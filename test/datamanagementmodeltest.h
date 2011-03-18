@@ -102,6 +102,8 @@ private Q_SLOTS:
 
     void testDescribeResources();
 
+    void testImportResources();
+
 private:
     KTempDir* createNieUrlTestData();
 

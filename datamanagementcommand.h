@@ -335,6 +335,36 @@ private:
     QList<QUrl> m_resources;
     bool m_includeSubResources;
 };
+
+class ImportResourcesCommand : public DataManagementCommand
+{
+public:
+    ImportResourcesCommand(const QUrl& url,
+                           Soprano::RdfSerialization serialization,
+                           const QString& userSerialization,
+                           const PropertyHash& additionalProps,
+                           const QString& app,
+                           Nepomuk::DataManagementModel* model,
+                           const QDBusMessage& msg)
+        : DataManagementCommand(model, msg),
+          m_url(url),
+          m_serialization(serialization),
+          m_userSerialization(userSerialization),
+          m_additionalProperties(additionalProps),
+          m_app(app) {}
+
+private:
+    QVariant runCommand() {
+        model()->importResources(m_url, m_app, m_serialization, m_userSerialization, m_additionalProperties);
+        return QVariant();
+    }
+
+    QUrl m_url;
+    Soprano::RdfSerialization m_serialization;
+    QString m_userSerialization;
+    PropertyHash m_additionalProperties;
+    QString m_app;
+};
 }
 
 #endif
