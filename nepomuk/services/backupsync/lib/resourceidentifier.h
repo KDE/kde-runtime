@@ -106,6 +106,8 @@ namespace Nepomuk {
              * Returns urls that were not successfully identified
              */
             QSet<KUrl> unidentified() const;
+            
+            QSet<KUrl> identified() const;
 
             /**
              * Returns all the statements that are being used to identify \p uri

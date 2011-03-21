@@ -217,6 +217,12 @@ QSet< KUrl > Nepomuk::Sync::ResourceIdentifier::unidentified() const
     return d->m_notIdentified;
 }
 
+QSet< KUrl > Nepomuk::Sync::ResourceIdentifier::identified() const
+{
+    return d->m_hash.keys().toSet();
+}
+
+
 //
 // Property settings
 //
