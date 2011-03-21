@@ -19,6 +19,7 @@ kde4_add_unit_test(datamanagementmodeltest
   ../classandpropertytree.cpp
   ../datamanagementmodel.cpp
   ../resourcemerger.cpp
+  ../resourceidentifier.cpp
   ../transactionmodel.cpp)
 
 target_link_libraries(datamanagementmodeltest
@@ -37,6 +38,7 @@ kde4_add_unit_test(datamanagementadaptortest
   ../datamanagementadaptor.cpp
   ../datamanagementcommand.cpp
   ../resourcemerger.cpp
+  ../resourceidentifier.cpp
   ../transactionmodel.cpp)
 
 target_link_libraries(datamanagementadaptortest
@@ -74,6 +76,7 @@ kde4_add_executable(fakedms
   ../datamanagementcommand.cpp
   ../removablemediamodel.cpp
   ../resourcemerger.cpp
+  ../resourceidentifier.cpp
   ../transactionmodel.cpp)
 
 target_link_libraries(fakedms

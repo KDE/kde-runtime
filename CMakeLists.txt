@@ -23,6 +23,7 @@ set( datamanagement_BIN_SRCS
   datamanagementcommand.cpp
   classandpropertytree.cpp
   resourcemerger.cpp
+  resourceidentifier.cpp
   removablemediamodel.cpp
 )
 

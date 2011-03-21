@@ -23,6 +23,7 @@
 #include "datamanagementmodel.h"
 #include "classandpropertytree.h"
 #include "resourcemerger.h"
+#include "resourceidentifier.h"
 #include "simpleresourcegraph.h"
 #include "simpleresource.h"
 #include "transactionmodel.h"
@@ -1138,7 +1139,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     }
 
 
-    Sync::ResourceIdentifier resIdent;
+    ResourceIdentifier resIdent;
     QList<Soprano::Statement> allStatements;
     QList<Sync::SyncResource> extraResources;
 
@@ -1229,13 +1230,6 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     // Perform the actual identification
     //
     resIdent.setModel( this );
-    resIdent.setMinScore( 1.0 );
-    // Are there any more properties would count as resource metadata?
-    resIdent.addOptionalProperty( NAO::created() );
-    resIdent.addOptionalProperty( NAO::lastModified() );
-    resIdent.addOptionalProperty( NAO::creator() );
-    resIdent.addOptionalProperty( NAO::userVisible() );
-
     resIdent.identifyAll();
 
     if( resIdent.mappings().empty() ) {
