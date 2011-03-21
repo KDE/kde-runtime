@@ -1,5 +1,5 @@
 /*
-    <one line to give the library's name and an idea of what it does.>
+    This file is part of the Nepomuk KDE project.
     Copyright (C) 2011  Vishesh Handa <handa.vish@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -61,30 +61,32 @@ KUrl Nepomuk::ResourceMerger::createGraph()
 bool Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
 {
     kDebug() << newSt;
-    // Graph Merge rules
-    // 1. If old graph is of type discardable and new is non-discardable
-    //    -> Then update the graph
-    // 2. Otherwsie
-    //    -> Keep the old graph
     
     const QUrl oldGraph = model()->listStatements( newSt.subject(), newSt.predicate(), newSt.object() ).allStatements().first().context().uri();
 
     //kDebug() << m_model->statementCount();
-    if(!mergeGraphs( oldGraph )) {
-        return false;
-    }
-    else {
+    if( mergeGraphs( oldGraph ) ) {
         const QUrl newGraph = m_graphHash[oldGraph];
         if( newGraph.isValid() ) {
             kDebug() << "Is valid!  " << newGraph;
+            //kDebug() << "Removing " << newSt;
             model()->removeAllStatements( newSt.subject(), newSt.predicate(), newSt.object() );
-
+            
             Soprano::Statement st( newSt );
             st.setContext( newGraph );
-            addStatement( st );
+            
+            if( addStatement( st ) != Soprano::Error::ErrorNone )
+                return false;
+            
+            return true;
         }
+        
+        // The graph is not valid. This happens in the case when both the old graph
+        // and the new graph are same, and therefore nothing needs to be done
         return true;
     }
+    
+    return false;
 }
 
 QMultiHash< QUrl, Soprano::Node > Nepomuk::ResourceMerger::getPropertyHashForGraph(const QUrl& graph) const
@@ -109,7 +111,7 @@ bool Nepomuk::ResourceMerger::areEqual(const QMultiHash<QUrl, Soprano::Node>& ol
                                        const QMultiHash<QUrl, Soprano::Node>& newPropHash)
 {
     //
-    // When checking if two graphs are equal - Certain stuff needs to be considered
+    // When checking if two graphs are equal, certain stuff needs to be considered
     //
     // 1. The nao:created might not be the same
     // 2. One graph may contain more rdf:types than the other, but still be the same
@@ -204,23 +206,35 @@ Soprano::Node variantToNode(const QVariant& v) {
 }
 }
 
+// Graph Merge rules
+// 1. If old graph is of type discardable and new is non-discardable
+//    -> Then update the graph
+// 2. Otherwsie
+//    -> Keep the old graph
+
 bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
 {
     //
     // Check if mergeGraphs has already been called for oldGraph
     //
-    if(m_graphHash.contains(oldGraph))
+    if(m_graphHash.contains(oldGraph)) {
+        kDebug() << "Already merged once, just returning";
         return true;
+    }
     
     QMultiHash<QUrl, Soprano::Node> oldPropHash = getPropertyHashForGraph( oldGraph );
     
-    //FIXME: Some form of error checking? What if the additional properties
-    //       and not error free?
     QMultiHash<QUrl, Soprano::Node> newPropHash;
     QHash< QUrl, QVariant >::const_iterator it = m_additionalMetadata.begin();
-    for( ; it != m_additionalMetadata.end(); it++ )
-        newPropHash.insert( it.key(), variantToNode( it.value() ) );
-
+    for( ; it != m_additionalMetadata.end(); it++ ) {
+        Soprano::Node n = variantToNode( it.value() );
+        if( !n.isValid() ) {
+            //TODO: Set a proper error over here?
+            return false;
+        }
+        newPropHash.insert( it.key(), n );
+    }
+    
     // Compare the old and new property hash
     // If both have the same properties then there is no point in creating a new graph.
     // vHanda: This check is very expensive. Is it worth it?
@@ -247,7 +261,6 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     finalPropHash.unite( oldPropHash );
     finalPropHash.unite( newPropHash );
 
-    // FIXME: Need better error checking!
     if( !checkGraphMetadata( finalPropHash ) ) {
         kDebug() << "Graph metadata check FAILED!";
         return false;
@@ -279,14 +292,14 @@ bool Nepomuk::ResourceMerger::checkGraphMetadata(const QMultiHash< QUrl, Soprano
         if( propUri == RDF::type() ) {
             Soprano::Node object = it.value();
             if( !object.isResource() ) {
-                m_model->setError(QString::fromLatin1("rdf:type has resource range. '%1' does not have a resource type.").arg(object.toN3()), Soprano::Error::ErrorInvalidArgument);
+                setError(QString::fromLatin1("rdf:type has resource range. '%1' does not have a resource type.").arg(object.toN3()), Soprano::Error::ErrorInvalidArgument);
                 return false;
             }
 
             // All the types should be a sub-type of nrl:Graph
             // FIXME: there could be multiple types in the old graph from inferencing. all superclasses of nrl:Graph. However, it would still be valid.
             if( !tree->isChildOf( object.uri(), NRL::Graph() ) ) {
-                m_model->setError( QString::fromLatin1("Any rdf:type specified in the additional metadata should be a subclass of nrl:Graph. '%1' is not.").arg(object.uri().toString()),
+                setError( QString::fromLatin1("Any rdf:type specified in the additional metadata should be a subclass of nrl:Graph. '%1' is not.").arg(object.uri().toString()),
                                    Soprano::Error::ErrorInvalidArgument );
                 return false;
             }
@@ -312,7 +325,7 @@ bool Nepomuk::ResourceMerger::checkGraphMetadata(const QMultiHash< QUrl, Soprano
 
         if( maxCardinality != 0 ) {
             if( curCardinality > maxCardinality ) {
-                m_model->setError( QString::fromLatin1("%1 has a max cardinality of %2").arg(propUri.toString()).arg(maxCardinality), Soprano::Error::ErrorInvalidArgument );
+                setError( QString::fromLatin1("%1 has a max cardinality of %2").arg(propUri.toString()).arg(maxCardinality), Soprano::Error::ErrorInvalidArgument );
                 return false;
             }
         }
@@ -324,7 +337,7 @@ bool Nepomuk::ResourceMerger::checkGraphMetadata(const QMultiHash< QUrl, Soprano
 
         // domain
         if( !domain.isEmpty() && !tree->isChildOf( types, domain ) ) {
-            m_model->setError( QString::fromLatin1("%1 has a rdfs:domain of %2").arg( propUri.toString(), domain.toString() ), Soprano::Error::ErrorInvalidArgument);
+            setError( QString::fromLatin1("%1 has a rdfs:domain of %2").arg( propUri.toString(), domain.toString() ), Soprano::Error::ErrorInvalidArgument);
             return false;
         }
         
@@ -333,14 +346,14 @@ bool Nepomuk::ResourceMerger::checkGraphMetadata(const QMultiHash< QUrl, Soprano
             const Soprano::Node& object = it.value();
             if( object.isResource() ) {
                 if( !isOfType( object.uri(), range ) ) {
-                    m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2").arg( propUri.toString(), range.toString() ), Soprano::Error::ErrorInvalidArgument);
+                    setError( QString::fromLatin1("%1 has a rdfs:range of %2").arg( propUri.toString(), range.toString() ), Soprano::Error::ErrorInvalidArgument);
                     return false;
                 }
             }
             else if( object.isLiteral() ) {
                 const Soprano::LiteralValue lv = object.literal();
                 if( lv.dataTypeUri() != range ) {
-                    m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2").arg( propUri.toString(), range.toString() ), Soprano::Error::ErrorInvalidArgument);
+                    setError( QString::fromLatin1("%1 has a rdfs:range of %2").arg( propUri.toString(), range.toString() ), Soprano::Error::ErrorInvalidArgument);
                     return false;
                 }
             }
@@ -485,7 +498,7 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
 //                kDebug() << "Max Cardinality : " << maxCardinality;
 //                kDebug() << "Existing Cardinality: " << existingCardinality;
 //                kDebug() << "St Cardinality: " << stCardinality;
-                m_model->setError( QString::fromLatin1("%1 has a max cardinality of %2")
+                setError( QString::fromLatin1("%1 has a max cardinality of %2")
                                 .arg( st.predicate().toString()).arg( maxCardinality ),
                                 Soprano::Error::ErrorInvalidStatement);
                 return false;
@@ -507,7 +520,7 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
         // domain
         if( !domain.isEmpty() && !isOfType( subUri, domain, subjectNewTypes ) ) {
             kDebug() << "invalid domain range";
-            m_model->setError( QString::fromLatin1("%1 has a rdfs:domain of %2")
+            setError( QString::fromLatin1("%1 has a rdfs:domain of %2")
                                .arg( propUri.toString(), domain.toString() ),
                                Soprano::Error::ErrorInvalidArgument);
             return false;
@@ -523,7 +536,7 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
                 if( !isOfType( objUri, range, objectNewTypes ) ) {
 
                     kDebug() << "Invalid resource range." << objUri << "has types" << objectNewTypes;
-                    m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2.")
+                    setError( QString::fromLatin1("%1 has a rdfs:range of %2.")
                                        .arg( propUri.toString(), range.toString() ),
                                        Soprano::Error::ErrorInvalidArgument);
                     return false;
@@ -534,7 +547,7 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
                 if( (!lv.isPlain() && lv.dataTypeUri() != range) ||
                         (lv.isPlain() && range != RDFS::Literal()) ) {
                     kDebug() << "Invalid literal range" << Soprano::Node::literalToN3(lv);
-                    m_model->setError( QString::fromLatin1("%1 has a rdfs:range of %2")
+                    setError( QString::fromLatin1("%1 has a rdfs:range of %2")
                                        .arg( propUri.toString(), range.toString() ),
                                        Soprano::Error::ErrorInvalidArgument);
                     return false;
@@ -546,8 +559,10 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
 
     // The graph is error free. Merge all its statements
     foreach( const Soprano::Statement & st, graph.toList() ) {
+        kDebug() << "Trying to merge : " << st;
         if(!mergeStatement( st )) {
-            m_model->setError(QLatin1String("Failed to merge one statement. FIXME: add more useful error info."));
+            kDebug() << "Merge statement error: " << lastError();
+            //m_model->setError(QLatin1String("Failed to merge one statement. FIXME: add more useful error info."));
             return false;
         }
     }
