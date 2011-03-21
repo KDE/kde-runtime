@@ -419,9 +419,9 @@ Soprano::Graph Nepomuk::Sync::ResourceIdentifier::createIdentifyingStatements(co
     return gen.generate();
 }
 
-Nepomuk::Resource Nepomuk::Sync::ResourceIdentifier::additionalIdentification(const KUrl& uri)
+KUrl Nepomuk::Sync::ResourceIdentifier::additionalIdentification(const KUrl& uri)
 {
     Q_UNUSED( uri );
     // Do nothing - identification fails
-    return Nepomuk::Resource();
+    return KUrl();
 }

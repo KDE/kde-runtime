@@ -202,7 +202,7 @@ namespace Nepomuk {
              * In case identification fails for \p uri this method would be called. Derived classes
              * can implement their own identification mechanisms over here.
              */
-            virtual Nepomuk::Resource additionalIdentification( const KUrl & uri );
+            virtual KUrl additionalIdentification( const KUrl & uri );
         };
     }
 }
