@@ -1,6 +1,6 @@
 /*
     This file is part of the Nepomuk KDE project.
-    Copyright (C) 2010  Vishesh Handa <handa.vish@gmail.com>
+    Copyright (C) 2010-11  Vishesh Handa <handa.vish@gmail.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -74,23 +74,37 @@ namespace Nepomuk {
             QHash<KUrl, KUrl> mappings() const;
             
             /**
-             * Merges all the statements in \p graph into the model. If the statement
-             * already exists then resolveDuplicate() is called.
+             * Merges all the statements in \p graph into the model, by calling
+             * mergeStatement
              *
-             * If any of the statements contains a graph, then that graph is used. Otherwise
-             * a newly generated graph is used.
-             *
-             * \sa setGraphType graphType
+             * It stops merging if any of the statements in \p graph fail to merge
+             * 
+             * \sa mergeStatement
+             * \return \c true if merging was successful
              */
             virtual bool merge( const Soprano::Graph & graph );
 
+            /**
+             * Merges the statement \p st into the model. If the statement
+             * already exists then resolveDuplicate() is called.
+             *
+             * If any of the statements contains a graph, then that graph is used. Otherwise
+             * createGraph() is called which returns a new graph.
+             *
+             * lastError() is set, if merging fails.
+             * 
+             * \sa createGraph
+             * \return \c true if the merging was sucessful. 
+             *         \c false if merging failed
+             */
             virtual bool mergeStatement( const Soprano::Statement & st );
             
             /**
-             * The graph type by default is nrl:InstanceBase. If \p type is not a subclass of
-             * nrl:Graph then it is ignored.
+             * Sets the graph metadata which will be used to create a graph.
+             * 
+             * \sa createGraph
              */
-            void setAdditionalGraphMetadata( const QHash< QUrl, Soprano::Node >& additionalMetadata );
+            void setAdditionalGraphMetadata( const QHash<QUrl, Soprano::Node>& additionalMetadata );
             
             QHash<QUrl, Soprano::Node> additionalMetadata() const;
             
@@ -99,38 +113,52 @@ namespace Nepomuk {
              * Called when trying to merge a statement which contains a Resource that
              * has not been identified.
              * 
-             * The default implementation of this creates the resource in the main model.
+             * The default implementation of this creates the resource in the model. 
+             * The resourceUri is generated using createResourceUri.
+             * 
+             * If the resolution is supposed to fail, this function returns KUrl().
+             * The reason why resolution failed should also be set with setError()
+             * 
+             * \sa createResourceUri
              */
             virtual KUrl resolveUnidentifiedResource( const KUrl & uri );
 
             /**
-             * Creates a new graph with the additional metadata 
+             * Creates a new graph with the additional metadata. 
+             * All graphs that are created should be a subtype of nrl:Graph
+             * 
+             * \sa additionalMetadata
              */
             virtual KUrl createGraph();
 
             /**
              * Push the statement into the Nepomuk repository.
-             * If the statement exists then resolveDuplicate is called
+             * If a statement with the same subject, predicate and object already
+             * exists in the model, then resolveDuplicate is called.
              *
              * \sa resolveDuplicate
+             * \return \c true if pushing the statement was successful
              */
             bool push( const Soprano::Statement & st );
 
             /**
              * If the statement being pushed already exists this method is called.
              * By default it does nothing which means keeping the old statement
+             * 
+             * \return \c true if resolution was successful
+             *         \c false if resolution failed, and merging and should fail
              */ 
             virtual bool resolveDuplicate( const Soprano::Statement & newSt );
 
             /**
              * Creates a new resource uri. By default this creates it using the
-             * ResourceManager::instace()
+             * ResourceManager::instace()->generateUniqueUri("res")
              */
             virtual QUrl createResourceUri();
 
             /**
              * Creates a new graph uri. By default this creates it using the
-             * ResourceManager::instace()
+             * ResourceManager::instace()->generateUniqueUri("ctx")
              */
             virtual QUrl createGraphUri();
 
@@ -145,6 +173,8 @@ namespace Nepomuk {
             /**
              * Add the statement in the model. By default it just calls
              * Soprano::Model::addStatement()
+             * 
+             * \return \c Soprano::Error::ErrorNone if added to model
              */
             virtual Soprano::Error::ErrorCode addStatement( const Soprano::Statement & st );
             Soprano::Error::ErrorCode addStatement( const Soprano::Node& subject, const Soprano::Node& property,

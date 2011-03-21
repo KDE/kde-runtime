@@ -105,11 +105,7 @@ QHash< QUrl, Soprano::Node > Nepomuk::Sync::ResourceMerger::additionalMetadata()
 
 KUrl Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
 {
-    // The default implementation is to create it.
-    //QHash< KUrl, KUrl >::const_iterator it = d->m_newMappings.constFind( uri );
-    //if( it != d->m_newMappings.constEnd() )
-    //    return it.value();
-    
+    //TODO: The resource should also get its metadata -> nao:created, nao:lastModified
     KUrl newUri = createResourceUri();
     d->m_mappings.insert( uri, newUri );
     return newUri;
@@ -194,6 +190,7 @@ bool Nepomuk::Sync::ResourceMerger::Private::push(const Soprano::Statement& st)
     }
 
     if( !m_graph.isValid() ) {
+        //TODO: Add error handling. What if graph creation failed?
         m_graph = q->createGraph();
     }
     statement.setContext( m_graph );
