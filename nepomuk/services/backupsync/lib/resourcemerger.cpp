@@ -1,6 +1,6 @@
 /*
     This file is part of the Nepomuk KDE project.
-    Copyright (C) 2010  Vishesh Handa <handa.vish@gmail.com>
+    Copyright (C) 2010-11  Vishesh Handa <handa.vish@gmail.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -32,6 +32,8 @@
 
 #include <KUrl>
 #include <KDebug>
+
+using namespace Soprano::Vocabulary;
 
 class Nepomuk::Sync::ResourceMerger::Private {
 public:
@@ -157,8 +159,6 @@ KUrl Nepomuk::Sync::ResourceMerger::createGraph()
     KUrl graphUri = createGraphUri();
     KUrl metadataGraph = createResourceUri();
 
-    using namespace Soprano::Vocabulary;
-
     addStatement( metadataGraph, RDF::type(), NRL::GraphMetadata(), metadataGraph );
     addStatement( metadataGraph, NRL::coreGraphMetadataFor(), graphUri, metadataGraph );
 
@@ -176,8 +176,13 @@ KUrl Nepomuk::Sync::ResourceMerger::createGraph()
 
 KUrl Nepomuk::Sync::ResourceMerger::graph()
 {
-    if( !d->m_graph.isValid() )
+    if( !d->m_graph.isValid() ) {
         d->m_graph = createGraph();
+        if( !d->m_graph.isValid() ) {
+            setError( QString::fromLatin1("Graph creation failed. A valid graph was not returned %1")
+                      .arg( d->m_graph.url() ), Soprano::Error::ErrorInvalidArgument );
+        }
+    }
     return d->m_graph;
 }
 
@@ -190,8 +195,9 @@ bool Nepomuk::Sync::ResourceMerger::Private::push(const Soprano::Statement& st)
     }
 
     if( !m_graph.isValid() ) {
-        //TODO: Add error handling. What if graph creation failed?
         m_graph = q->createGraph();
+        if( !m_graph.isValid() )
+            return false;
     }
     statement.setContext( m_graph );
     kDebug() << "Pushing - " << statement;

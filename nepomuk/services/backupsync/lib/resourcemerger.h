@@ -61,7 +61,7 @@ namespace Nepomuk {
          * 
          * \author Vishesh Handa <handa.vish@gmail.com>
          */
-        class NEPOMUKSYNC_EXPORT ResourceMerger
+        class NEPOMUKSYNC_EXPORT ResourceMerger : public Soprano::Error::ErrorCache
         {
         public:
             ResourceMerger( Soprano::Model * model =0, const QHash<KUrl, KUrl> & mappings = (QHash<KUrl, KUrl>()) );
