@@ -47,7 +47,7 @@ public:
     
     QHash<KUrl, KUrl> m_mappings;
 
-    QHash<QUrl, Soprano::Node> m_additionalMetadata;
+    QMultiHash<QUrl, Soprano::Node> m_additionalMetadata;
 
     bool push( const Soprano::Statement & st );
     KUrl resolve( const Soprano::Node & n );
@@ -95,12 +95,12 @@ QHash< KUrl, KUrl > Nepomuk::Sync::ResourceMerger::mappings() const
     return d->m_mappings;
 }
 
-void Nepomuk::Sync::ResourceMerger::setAdditionalGraphMetadata(const QHash< QUrl, Soprano::Node >& additionalMetadata)
+void Nepomuk::Sync::ResourceMerger::setAdditionalGraphMetadata(const QMultiHash< QUrl, Soprano::Node >& additionalMetadata)
 {
     d->m_additionalMetadata = additionalMetadata;
 }
 
-QHash< QUrl, Soprano::Node > Nepomuk::Sync::ResourceMerger::additionalMetadata() const
+QMultiHash< QUrl, Soprano::Node > Nepomuk::Sync::ResourceMerger::additionalMetadata() const
 {
     return d->m_additionalMetadata;
 }
@@ -162,7 +162,7 @@ KUrl Nepomuk::Sync::ResourceMerger::createGraph()
     addStatement( metadataGraph, RDF::type(), NRL::GraphMetadata(), metadataGraph );
     addStatement( metadataGraph, NRL::coreGraphMetadataFor(), graphUri, metadataGraph );
 
-    if( d->m_additionalMetadata.find( RDF::type() ).value() != NRL::InstanceBase() )
+    if( !d->m_additionalMetadata.contains( RDF::type(), NRL::InstanceBase() ) )
         d->m_additionalMetadata.insert( RDF::type(), NRL::InstanceBase() );
     
     for(QHash<QUrl, Soprano::Node>::const_iterator it = d->m_additionalMetadata.constBegin();

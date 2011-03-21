@@ -104,9 +104,9 @@ namespace Nepomuk {
              * 
              * \sa createGraph
              */
-            void setAdditionalGraphMetadata( const QHash<QUrl, Soprano::Node>& additionalMetadata );
+            void setAdditionalGraphMetadata( const QMultiHash<QUrl, Soprano::Node>& additionalMetadata );
             
-            QHash<QUrl, Soprano::Node> additionalMetadata() const;
+            QMultiHash<QUrl, Soprano::Node> additionalMetadata() const;
             
         protected:
             /**
