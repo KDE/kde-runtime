@@ -20,10 +20,15 @@
 
 #include "resourceidentifier.h"
 
+#include <QtCore/QDateTime>
+#include <QtCore/QSet>
+
 #include <Soprano/Node>
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/NAO>
+#include <Soprano/StatementIterator>
+#include <Soprano/NodeIterator>
 
 using namespace Soprano::Vocabulary;
 
@@ -50,4 +55,25 @@ KUrl Nepomuk::ResourceIdentifier::additionalIdentification(const KUrl& uri)
     
     // Otherwise Identification fails
     return KUrl();
+}
+
+KUrl Nepomuk::ResourceIdentifier::duplicateMatch(const KUrl& origUri, const QSet<KUrl>& matchedUris, float score)
+{
+    // 
+    // We return the uri that has the oldest nao:created
+    //
+    KUrl oldestUri;
+    QDateTime naoCreated = QDateTime::currentDateTime();
+    foreach( const KUrl & uri, matchedUris ) {
+        QList< Soprano::Node > nodes = model()->listStatements( uri, NAO::created(), Soprano::Node() ).iterateObjects().allNodes();
+        Q_ASSERT( nodes.size() == 1 );
+        
+        QDateTime dt = nodes.first().literal().toDateTime();
+        if( dt < naoCreated ) {
+            oldestUri = uri;
+            naoCreated = dt;
+        }
+    }
+    
+    return oldestUri;
 }

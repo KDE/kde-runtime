@@ -34,6 +34,7 @@ public:
     
 protected:
     KUrl additionalIdentification( const KUrl & uri );
+    virtual KUrl duplicateMatch(const KUrl& uri, const QSet< KUrl >& matchedUris, float score);
 };
 
 }
