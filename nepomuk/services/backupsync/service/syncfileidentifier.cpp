@@ -178,7 +178,7 @@ Nepomuk::Resource Nepomuk::SyncFileIdentifier::createNewResource(const Sync::Syn
     return res.resourceUri();
 }
 
-Nepomuk::Resource Nepomuk::SyncFileIdentifier::additionalIdentification(const KUrl& uri)
+KUrl Nepomuk::SyncFileIdentifier::additionalIdentification(const KUrl& uri)
 {
     Sync::SyncResource res = simpleResource( uri );
 
@@ -195,8 +195,8 @@ Nepomuk::Resource Nepomuk::SyncFileIdentifier::additionalIdentification(const KU
         if( newRes.isValid() )
             forceResource( uri, newRes );
         else
-            return Resource();
+            return KUrl();
     }
 
-    return Resource();
+    return KUrl();
 }

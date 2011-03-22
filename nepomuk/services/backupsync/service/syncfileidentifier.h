@@ -43,7 +43,7 @@ namespace Nepomuk {
         void load();
 
     protected:
-        virtual Resource additionalIdentification(const KUrl& uri);
+        virtual KUrl additionalIdentification(const KUrl& uri);
         
     private:
         ChangeLog m_changeLog;
