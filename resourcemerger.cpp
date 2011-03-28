@@ -430,13 +430,21 @@ namespace {
 
 bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
 {
+    // Special handling for resource metadata
+    QSet<QUrl> metadataProperties;
+    metadataProperties.reserve( 4 );
+    metadataProperties.insert( NAO::lastModified() );
+    metadataProperties.insert( NAO::userVisible() );
+    metadataProperties.insert( NAO::created() );
+    metadataProperties.insert( NAO::creator() );
+    
     QMultiHash<QUrl, QUrl> types;
     QHash<QPair<QUrl,QUrl>, int> cardinality;
 
     //
     // First separate all the statements predicate rdf:type.
     // and collect info required to check the types and cardinality
-
+    //
     QList<Soprano::Statement> remainingStatements;
     QList<Soprano::Statement> typeStatements;
 
@@ -480,11 +488,7 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
 
         // we ignore the metadata properties as they will get special
         // treatment duing the merging
-        if( maxCardinality > 0 &&
-                propUri != NAO::created() &&
-                propUri != NAO::lastModified() &&
-                propUri != NAO::creator() &&
-                propUri != NAO::userVisible() ) {
+        if( maxCardinality > 0 && !metadataProperties.contains( propUri ) ) {
             int existingCardinality = 0;
             if(!st.subject().isBlank()) {
                 existingCardinality = m_model->executeQuery(QString::fromLatin1("select count(distinct ?v) where { %1 %2 ?v . FILTER(?v!=%3) . }")
@@ -566,7 +570,7 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
             return false;
         }
     }
-
+    
     return true;
 }
 
