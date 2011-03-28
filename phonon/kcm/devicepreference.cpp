@@ -825,8 +825,21 @@ void DevicePreference::on_applyPreferencesButton_clicked()
         Phonon::Category cat = cap ? Phonon::NoCategory : categoryList[catIndex];
         Phonon::CaptureCategory capcat = cap ? capCategoryList[catIndex] : Phonon::NoCaptureCategory;
 
-        QListWidgetItem *item = new QListWidgetItem((cap ? capcat == Phonon::NoCaptureCategory : cat == Phonon::NoCategory)
-                ? i18n("Default/Unspecified Category") : Phonon::categoryToString(cat), &list, cap ? (int) capcat : (int) cat);
+        QListWidgetItem *item = NULL;
+        if (cap) {
+            if (capcat == Phonon::NoCaptureCategory) {
+                item = new QListWidgetItem(i18n("Default/Unspecified Category"), &list, capcat);
+            } else {
+                item = new QListWidgetItem(Phonon::categoryToString(capcat), &list, capcat);
+            }
+        } else {
+            if (cat == Phonon::NoCategory) {
+                item = new QListWidgetItem(i18n("Default/Unspecified Category"), &list, cat);
+            } else {
+                item = new QListWidgetItem(Phonon::categoryToString(cat), &list, cat);
+            }
+        }
+
         item->setCheckState(Qt::Checked);
         if (cat == catItem->category()) {
             item->setFlags(item->flags() & ~Qt::ItemIsEnabled);

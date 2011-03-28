@@ -73,7 +73,7 @@ bool Nepomuk::Sync::ResourceIdentifier::Private::identify( const KUrl& oldUri )
     KUrl resourceUri = findMatch( res );
     
     if( resourceUri.isEmpty() ) {
-        resourceUri = q->additionalIdentification( oldUri ).resourceUri();
+        resourceUri = q->additionalIdentification( oldUri );
         if( resourceUri.isEmpty() )
             return false;
     }

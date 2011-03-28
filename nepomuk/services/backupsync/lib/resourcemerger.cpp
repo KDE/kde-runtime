@@ -1,6 +1,6 @@
 /*
     This file is part of the Nepomuk KDE project.
-    Copyright (C) 2010  Vishesh Handa <handa.vish@gmail.com>
+    Copyright (C) 2010-11  Vishesh Handa <handa.vish@gmail.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -33,6 +33,8 @@
 #include <KUrl>
 #include <KDebug>
 
+using namespace Soprano::Vocabulary;
+
 class Nepomuk::Sync::ResourceMerger::Private {
 public:
     Private( ResourceMerger * resMerger );
@@ -45,7 +47,7 @@ public:
     
     QHash<KUrl, KUrl> m_mappings;
 
-    QHash<QUrl, Soprano::Node> m_additionalMetadata;
+    QMultiHash<QUrl, Soprano::Node> m_additionalMetadata;
 
     bool push( const Soprano::Statement & st );
     KUrl resolve( const Soprano::Node & n );
@@ -93,23 +95,19 @@ QHash< KUrl, KUrl > Nepomuk::Sync::ResourceMerger::mappings() const
     return d->m_mappings;
 }
 
-void Nepomuk::Sync::ResourceMerger::setAdditionalGraphMetadata(const QHash< QUrl, Soprano::Node >& additionalMetadata)
+void Nepomuk::Sync::ResourceMerger::setAdditionalGraphMetadata(const QMultiHash< QUrl, Soprano::Node >& additionalMetadata)
 {
     d->m_additionalMetadata = additionalMetadata;
 }
 
-QHash< QUrl, Soprano::Node > Nepomuk::Sync::ResourceMerger::additionalMetadata() const
+QMultiHash< QUrl, Soprano::Node > Nepomuk::Sync::ResourceMerger::additionalMetadata() const
 {
     return d->m_additionalMetadata;
 }
 
 KUrl Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
 {
-    // The default implementation is to create it.
-    //QHash< KUrl, KUrl >::const_iterator it = d->m_newMappings.constFind( uri );
-    //if( it != d->m_newMappings.constEnd() )
-    //    return it.value();
-    
+    //TODO: The resource should also get its metadata -> nao:created, nao:lastModified
     KUrl newUri = createResourceUri();
     d->m_mappings.insert( uri, newUri );
     return newUri;
@@ -161,12 +159,10 @@ KUrl Nepomuk::Sync::ResourceMerger::createGraph()
     KUrl graphUri = createGraphUri();
     KUrl metadataGraph = createResourceUri();
 
-    using namespace Soprano::Vocabulary;
-
     addStatement( metadataGraph, RDF::type(), NRL::GraphMetadata(), metadataGraph );
     addStatement( metadataGraph, NRL::coreGraphMetadataFor(), graphUri, metadataGraph );
 
-    if( d->m_additionalMetadata.find( RDF::type() ).value() != NRL::InstanceBase() )
+    if( !d->m_additionalMetadata.contains( RDF::type(), NRL::InstanceBase() ) )
         d->m_additionalMetadata.insert( RDF::type(), NRL::InstanceBase() );
     
     for(QHash<QUrl, Soprano::Node>::const_iterator it = d->m_additionalMetadata.constBegin();
@@ -180,8 +176,13 @@ KUrl Nepomuk::Sync::ResourceMerger::createGraph()
 
 KUrl Nepomuk::Sync::ResourceMerger::graph()
 {
-    if( !d->m_graph.isValid() )
+    if( !d->m_graph.isValid() ) {
         d->m_graph = createGraph();
+        if( !d->m_graph.isValid() ) {
+            setError( QString::fromLatin1("Graph creation failed. A valid graph was not returned %1")
+                      .arg( d->m_graph.url() ), Soprano::Error::ErrorInvalidArgument );
+        }
+    }
     return d->m_graph;
 }
 
@@ -195,6 +196,8 @@ bool Nepomuk::Sync::ResourceMerger::Private::push(const Soprano::Statement& st)
 
     if( !m_graph.isValid() ) {
         m_graph = q->createGraph();
+        if( !m_graph.isValid() )
+            return false;
     }
     statement.setContext( m_graph );
     kDebug() << "Pushing - " << statement;

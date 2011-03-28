@@ -106,6 +106,8 @@ namespace Nepomuk {
              * Returns urls that were not successfully identified
              */
             QSet<KUrl> unidentified() const;
+            
+            QSet<KUrl> identified() const;
 
             /**
              * Returns all the statements that are being used to identify \p uri
@@ -202,7 +204,7 @@ namespace Nepomuk {
              * In case identification fails for \p uri this method would be called. Derived classes
              * can implement their own identification mechanisms over here.
              */
-            virtual Nepomuk::Resource additionalIdentification( const KUrl & uri );
+            virtual KUrl additionalIdentification( const KUrl & uri );
         };
     }
 }
