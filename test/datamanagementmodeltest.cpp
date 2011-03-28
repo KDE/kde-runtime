@@ -2522,7 +2522,7 @@ void DataManagementModelTest::testStoreResources_metadata()
     // make sure the new app has been created
     QueryResultIterator it = m_model->executeQuery(QString::fromLatin1("select ?a where { ?a a %1 . ?a %2 %3 . }")
                                                    .arg(Node::resourceToN3(NAO::Agent()),
-                                                        Node::resourceToN3(NAO::prefLabel()),
+                                                        Node::resourceToN3(NAO::identifier()),
                                                         Node::literalToN3(QLatin1String("B"))),
                                                    Soprano::Query::QueryLanguageSparql);
     QVERIFY(it.next());
@@ -2539,7 +2539,7 @@ void DataManagementModelTest::testStoreResources_metadata()
                                        Node::resourceToN3(NAO::maintainedBy()),
                                        Node::resourceToN3(appBRes)),
                                   Soprano::Query::QueryLanguageSparql).boolValue());
-    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { graph ?g { <res:/A> a %1 . } . ?g %2 %3 . ?g %2 <app:/A> . }")
+    QVERIFY(!m_model->executeQuery(QString::fromLatin1("ask where { graph ?g { <res:/A> a %1 . } . ?g %2 %3 . ?g %2 <app:/A> . }")
                                   .arg(Node::resourceToN3(NAO::Tag()),
                                        Node::resourceToN3(NAO::maintainedBy()),
                                        Node::resourceToN3(appBRes)),
@@ -2563,9 +2563,9 @@ void DataManagementModelTest::testStoreResources_metadata()
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).allStatements().count(), 1);
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::created(), LiteralValue(now)));
 
-    // make sure the last mtime has been updated
+    // make sure mtime has not changed - the resource has not changed
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).allStatements().count(), 1);
-    QVERIFY(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first().literal().toDateTime() > now);
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first().literal().toDateTime(), now);
 }
 
 void DataManagementModelTest::testStoreResources_protectedTypes()
