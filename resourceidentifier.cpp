@@ -46,17 +46,10 @@ Nepomuk::ResourceIdentifier::ResourceIdentifier()
 }
 
 
-KUrl Nepomuk::ResourceIdentifier::additionalIdentification(const KUrl& uri)
+bool Nepomuk::ResourceIdentifier::exists(const KUrl& uri)
 {
     QString query = QString::fromLatin1("ask { %1 ?p ?o . } ").arg( Soprano::Node::resourceToN3(uri) );
-    bool exists = model()->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
-    
-    if( exists ) {
-        return uri;
-    }
-    
-    // Otherwise Identification fails
-    return KUrl();
+    return model()->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
 }
 
 KUrl Nepomuk::ResourceIdentifier::duplicateMatch(const KUrl& origUri, const QSet<KUrl>& matchedUris, float score)
@@ -102,9 +95,8 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
     //
     // Check if a uri with the same name exists
     //
-    QUrl newUri = additionalIdentification( uri );
-    if( !newUri.isEmpty() ) {
-        manualIdentification( uri, newUri );
+    if( exists( uri ) ) {
+        manualIdentification( uri, uri );
         return true;
     }
     
