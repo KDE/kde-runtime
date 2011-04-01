@@ -147,11 +147,17 @@ void Nepomuk::Sync::ResourceIdentifier::identify(const KUrl::List& uriList)
         
         d->m_beingIdentified.clear();
         
-        if( d->identify( uri ) ) {
+        if( runIdentification( uri ) ) {
             d->m_notIdentified.remove( uri );
         }
     }
 }
+
+bool Nepomuk::Sync::ResourceIdentifier::runIdentification(const KUrl& uri)
+{
+    return d->identify( uri );
+}
+
 
 bool Nepomuk::Sync::ResourceIdentifier::allIdentified() const
 {

@@ -63,14 +63,14 @@ namespace Nepomuk {
             //
             // Processing
             //
-            virtual void identifyAll();
+            void identifyAll();
 
-            virtual bool identify( const KUrl & uri );
+            bool identify( const KUrl & uri );
 
             /**
              * Identifies all the resources present in the \p uriList.
              */
-            virtual void identify( const KUrl::List & uriList );
+            void identify( const KUrl::List & uriList );
             
             /**
              * This returns true if ALL the external ResourceUris have been identified.
@@ -205,6 +205,14 @@ namespace Nepomuk {
              * can implement their own identification mechanisms over here.
              */
             virtual KUrl additionalIdentification( const KUrl & uri );
+            
+            
+            /**
+             * This function returns true if identification was successful, and false if it was not.
+             * If you need to customize the identification process, you will need to overload this
+             * function.
+             */
+            virtual bool runIdentification( const KUrl& uri );
         };
     }
 }
