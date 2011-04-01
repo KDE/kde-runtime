@@ -29,6 +29,8 @@
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/StatementIterator>
 #include <Soprano/NodeIterator>
+#include <nepomuk/syncresource.h>
+#include <KDebug>
 
 using namespace Soprano::Vocabulary;
 
@@ -76,4 +78,96 @@ KUrl Nepomuk::ResourceIdentifier::duplicateMatch(const KUrl& origUri, const QSet
     }
     
     return oldestUri;
+}
+
+bool Nepomuk::ResourceIdentifier::isIdentfyingProperty(const QUrl& uri) const
+{
+    //- by default all properties with a literal range are identifying
+    // - by default all properties with a resource range are non-identifying
+    // - a few literal properties like nao:rating or nmo:imStatusMessage are marked as non-identifying
+    // - a few resource properties are marked as identifying
+    
+    //TODO: Implement me!
+    if( uri == NAO::created() || uri == NAO::creator() || uri == NAO::lastModified() 
+        || uri == NAO::userVisible() )
+        return false;
+    
+    return true;
+}
+
+
+bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
+{
+    kDebug() << "Identifying : " << uri;
+    //
+    // Check if a uri with the same name exists
+    //
+    QUrl newUri = additionalIdentification( uri );
+    if( !newUri.isEmpty() ) {
+        manualIdentification( uri, newUri );
+        return true;
+    }
+    
+    const Sync::SyncResource & res = simpleResource( uri );
+    kDebug() << res;
+    
+    QString query = QString::fromLatin1("select distinct ?r where { ");
+    
+    int num = 0;
+    QHash< KUrl, Soprano::Node >::const_iterator it = res.constBegin();
+    for( ; it != res.constEnd(); it ++ ) {
+        const QUrl & prop = it.key();
+        
+        if( !isIdentfyingProperty( prop ) )
+            continue;
+        
+        const Soprano::Node & object = it.value();
+        //FIXME: Identify the resources as well ( but only non-ontology )
+        //if( object.isResource() && !identify( object.uri() ) )
+        //    return false;
+                
+        query += QString::fromLatin1(" optional { ?r %1 ?o%3 . filter(?o%3=%2) . } . filter(bound(?o%3)). ")
+                 .arg( Soprano::Node::resourceToN3( prop ), 
+                       it.value().toN3(),
+                       QString::number( num++ ) );
+    }
+    
+    // Make sure atleast one of the identification properties has been matched
+    query += QString::fromLatin1("filter( ");
+    for( int i=0; i<num-1; i++ ) {
+        query += QString::fromLatin1(" bound(?o%1) || ").arg( QString::number( i ) );
+    }
+    query += QString::fromLatin1(" bound(?o%1) ) . }").arg( QString::number( num - 1 ) );
+    
+    //
+    // FIXME; We somehow need to sort the results based on the number of properties matched
+    // Maybe we could use a sub query in the query above.
+    // 
+    kDebug() << query;
+    QSet<KUrl> results;
+    Soprano::QueryResultIterator qit = model()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    while( qit.next() ) {
+        kDebug() << "RESULT: " << qit["r"];
+        results << qit["r"].uri();
+    }
+    
+    kDebug() << "Got " << results.size() << " results";
+    if( results.empty() )
+        return false;
+    
+    KUrl result;
+    if( results.size() == 1 )
+        result = *results.begin();
+    else {
+        kDebug() << "DUPLICATE RESULTS!";
+        result = duplicateMatch( uri, results, 1.0 );
+    }
+    
+    if( !result.isEmpty() ) {
+        kDebug() << uri << " --> " << result;
+        manualIdentification( uri, result );
+        return true;
+    }
+    
+    return false;
 }
