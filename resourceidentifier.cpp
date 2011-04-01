@@ -103,22 +103,26 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
     const Sync::SyncResource & res = simpleResource( uri );
     kDebug() << res;
     
-    QString query = QString::fromLatin1("select distinct ?r where { ");
+    QString query = QString::fromLatin1("where { ?r ?p ?o. ");
     
     int num = 0;
+    QStringList identifyingProperties;
     QHash< KUrl, Soprano::Node >::const_iterator it = res.constBegin();
     for( ; it != res.constEnd(); it ++ ) {
         const QUrl & prop = it.key();
         
-        if( !isIdentfyingProperty( prop ) )
+        if( !isIdentfyingProperty( prop ) ) {
             continue;
+        }
+        
+        identifyingProperties << Soprano::Node::resourceToN3( prop );
         
         const Soprano::Node & object = it.value();
         //FIXME: Identify the resources as well ( but only non-ontology )
         //if( object.isResource() && !identify( object.uri() ) )
         //    return false;
                 
-        query += QString::fromLatin1(" optional { ?r %1 ?o%3 . filter(?o%3=%2) . } . filter(bound(?o%3)). ")
+        query += QString::fromLatin1(" optional { ?r %1 ?o%3 . } . filter(!bound(?o%3) || ?o%3=%2). ")
                  .arg( Soprano::Node::resourceToN3( prop ), 
                        it.value().toN3(),
                        QString::number( num++ ) );
@@ -131,15 +135,29 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
     }
     query += QString::fromLatin1(" bound(?o%1) ) . }").arg( QString::number( num - 1 ) );
     
-    //
-    // FIXME; We somehow need to sort the results based on the number of properties matched
-    // Maybe we could use a sub query in the query above.
-    // 
+    QString insideQuery = QString::fromLatin1("select count(*) where { ?r ?p ?o. filter( ?p in (%1) ). }")
+                            .arg( identifyingProperties.join(",") );
+    query = QString::fromLatin1("select distinct ?r (%1) as ?cnt ").arg( insideQuery ) + query + 
+            QString::fromLatin1(" order by desc(?cnt)");
+    
     kDebug() << query;
+    
+    //
+    // Only store the results which have the maximum score
+    //
     QSet<KUrl> results;
+    int score = -1;
     Soprano::QueryResultIterator qit = model()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
     while( qit.next() ) {
-        kDebug() << "RESULT: " << qit["r"];
+        kDebug() << "RESULT: " << qit["r"] << " " << qit["cnt"];
+        
+        int count = qit["cnt"].literal().toInt();
+        if( score == -1 ) {
+            score = count;
+        }
+        else if( count < score )
+            break;
+        
         results << qit["r"].uri();
     }
     
@@ -147,17 +165,17 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
     if( results.empty() )
         return false;
     
-    KUrl result;
+    KUrl newUri;
     if( results.size() == 1 )
-        result = *results.begin();
+        newUri = *results.begin();
     else {
         kDebug() << "DUPLICATE RESULTS!";
-        result = duplicateMatch( uri, results, 1.0 );
+        newUri = duplicateMatch( uri, results, 1.0 );
     }
     
-    if( !result.isEmpty() ) {
-        kDebug() << uri << " --> " << result;
-        manualIdentification( uri, result );
+    if( !newUri.isEmpty() ) {
+        kDebug() << uri << " --> " << newUri;
+        manualIdentification( uri, newUri );
         return true;
     }
     
