@@ -118,9 +118,11 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
         identifyingProperties << Soprano::Node::resourceToN3( prop );
         
         const Soprano::Node & object = it.value();
-        //FIXME: Identify the resources as well ( but only non-ontology )
-        //if( object.isResource() && !identify( object.uri() ) )
-        //    return false;
+        if( object.isBlank() || ( object.isResource() && object.uri().scheme() == QLatin1String("nepomuk") ) ) {
+            const QUrl objectUri = object.isResource() ? object.uri() : "_:" + object.identifier();
+            if( !identify( objectUri ) )
+                continue;
+        }
                 
         query += QString::fromLatin1(" optional { ?r %1 ?o%3 . } . filter(!bound(?o%3) || ?o%3=%2). ")
                  .arg( Soprano::Node::resourceToN3( prop ), 
