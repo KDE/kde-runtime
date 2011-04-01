@@ -132,24 +132,28 @@ void Nepomuk::Sync::ResourceIdentifier::identifyAll()
 
 bool Nepomuk::Sync::ResourceIdentifier::identify(const KUrl& uri)
 {
-    identify( KUrl::List() << uri );
-    return d->m_hash.contains( uri );
+    // If already identified
+    if( d->m_hash.contains( uri ) )
+        return true;
+    
+    // Avoid recursive calls
+    if( d->m_beingIdentified.contains( uri ) )
+        return false;
+    
+    bool result = runIdentification( uri );
+    d->m_beingIdentified.remove( uri );
+    
+    if( result )
+        d->m_notIdentified.remove( uri );
+    
+    return result;
 }
 
 
 void Nepomuk::Sync::ResourceIdentifier::identify(const KUrl::List& uriList)
 {
     foreach( const KUrl & uri, uriList ) {
-        // If already identified
-        if( d->m_hash.contains( uri ) ) {
-            continue;
-        }
-        
-        d->m_beingIdentified.clear();
-        
-        if( runIdentification( uri ) ) {
-            d->m_notIdentified.remove( uri );
-        }
+        identify( uri );
     }
 }
 
