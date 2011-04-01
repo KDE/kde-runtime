@@ -213,6 +213,12 @@ namespace Nepomuk {
              * function.
              */
             virtual bool runIdentification( const KUrl& uri );
+            
+            /**
+             * Sets oldUri -> newUri in the mappings. 
+             * This is useful when runIdentification has been reimplemented.
+             */
+            void manualIdentification( const KUrl & oldUri, const KUrl & newUri );
         };
     }
 }

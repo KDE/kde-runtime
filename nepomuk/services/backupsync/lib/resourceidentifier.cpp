@@ -441,3 +441,9 @@ KUrl Nepomuk::Sync::ResourceIdentifier::additionalIdentification(const KUrl& uri
     // Do nothing - identification fails
     return KUrl();
 }
+
+void Nepomuk::Sync::ResourceIdentifier::manualIdentification(const KUrl& oldUri, const KUrl& newUri)
+{
+    d->m_hash[ oldUri ] = newUri;
+    d->m_notIdentified.remove( oldUri );
+}
