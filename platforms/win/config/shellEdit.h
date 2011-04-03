@@ -30,7 +30,7 @@ class ShellEdit : public QDialog, public Ui::ShellEditDlg
 	Q_OBJECT
 	
 	public:
-		ShellEdit(QString shellName, QString shellDescription, QString shellCmd);
+		ShellEdit(const QString& shellName, const QString& shellDescription, const QString& shellCmd);
 		~ShellEdit();
 };
 
