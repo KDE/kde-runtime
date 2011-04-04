@@ -125,10 +125,8 @@ bool Nepomuk::Sync::ResourceMerger::merge( const Soprano::Graph& graph )
 }
 
 
-bool Nepomuk::Sync::ResourceMerger::mergeStatement(const Soprano::Statement& statement)
+bool Nepomuk::Sync::ResourceMerger::resolveStatement(Soprano::Statement& st)
 {
-    Soprano::Statement st( statement );
-    
     if( !st.isValid() )
         return false;
     
@@ -149,6 +147,16 @@ bool Nepomuk::Sync::ResourceMerger::mergeStatement(const Soprano::Statement& sta
         }
         st.setObject( resolvedObject );
     }
+    
+    return true;
+}
+
+
+bool Nepomuk::Sync::ResourceMerger::mergeStatement(const Soprano::Statement& statement)
+{
+    Soprano::Statement st( statement );
+    if( !resolveStatement( st ) )
+        return false;
         
     return d->push( st );
 }
