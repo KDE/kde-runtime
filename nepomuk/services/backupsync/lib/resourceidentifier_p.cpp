@@ -84,19 +84,6 @@ bool Nepomuk::Sync::ResourceIdentifier::Private::identify( const KUrl& oldUri )
 }
 
 
-
-bool Nepomuk::Sync::ResourceIdentifier::Private::queryIdentify(const KUrl& oldUri)
-{
-    if( m_beingIdentified.contains( oldUri ) )
-        return false;
-    bool result = identify( oldUri );
-
-    if( result )
-        m_notIdentified.remove( oldUri );
-
-    return result;
-}
-
 KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatchForAll(const Nepomuk::Sync::SyncResource& simpleRes)
 {
     QString query = QString::fromLatin1("select distinct ?r where { ");
@@ -188,7 +175,7 @@ KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatch(const Nepomuk::Sync::
         QList<Soprano::Node> objList = simpleRes.values( propUri );
         foreach( const Soprano::Node& n, objList ) {
             if( n.isResource() && n.uri().scheme() == QLatin1String("nepomuk") ) {
-                if( !queryIdentify( n.uri() ) ) {
+                if( !q->identify( n.uri() ) ) {
                     continue;
                 }
             }

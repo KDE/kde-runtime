@@ -132,26 +132,36 @@ void Nepomuk::Sync::ResourceIdentifier::identifyAll()
 
 bool Nepomuk::Sync::ResourceIdentifier::identify(const KUrl& uri)
 {
-    identify( KUrl::List() << uri );
-    return d->m_hash.contains( uri );
+    // If already identified
+    if( d->m_hash.contains( uri ) )
+        return true;
+    
+    // Avoid recursive calls
+    if( d->m_beingIdentified.contains( uri ) )
+        return false;
+    
+    bool result = runIdentification( uri );
+    d->m_beingIdentified.remove( uri );
+    
+    if( result )
+        d->m_notIdentified.remove( uri );
+    
+    return result;
 }
 
 
 void Nepomuk::Sync::ResourceIdentifier::identify(const KUrl::List& uriList)
 {
     foreach( const KUrl & uri, uriList ) {
-        // If already identified
-        if( d->m_hash.contains( uri ) ) {
-            continue;
-        }
-        
-        d->m_beingIdentified.clear();
-        
-        if( d->identify( uri ) ) {
-            d->m_notIdentified.remove( uri );
-        }
+        identify( uri );
     }
 }
+
+bool Nepomuk::Sync::ResourceIdentifier::runIdentification(const KUrl& uri)
+{
+    return d->identify( uri );
+}
+
 
 bool Nepomuk::Sync::ResourceIdentifier::allIdentified() const
 {
@@ -430,4 +440,10 @@ KUrl Nepomuk::Sync::ResourceIdentifier::additionalIdentification(const KUrl& uri
     Q_UNUSED( uri );
     // Do nothing - identification fails
     return KUrl();
+}
+
+void Nepomuk::Sync::ResourceIdentifier::manualIdentification(const KUrl& oldUri, const KUrl& newUri)
+{
+    d->m_hash[ oldUri ] = newUri;
+    d->m_notIdentified.remove( oldUri );
 }

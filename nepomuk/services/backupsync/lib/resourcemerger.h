@@ -180,6 +180,10 @@ namespace Nepomuk {
             Soprano::Error::ErrorCode addStatement( const Soprano::Node& subject, const Soprano::Node& property,
                                                     const Soprano::Node& object, const Soprano::Node& graph );
             
+            /**
+             * Resolves the subject and object and gets the object ready for pushing
+             */
+            bool resolveStatement( Soprano::Statement& st );
         private:
             class Private;
             Private * d;
