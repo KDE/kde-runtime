@@ -74,8 +74,6 @@ public:
     QSet<SimpleResource> toSet() const;
     QList<SimpleResource> toList() const;
 
-    QUrl createBlankNode();
-
     void addStatement(const Soprano::Statement& statement);
 
     /**

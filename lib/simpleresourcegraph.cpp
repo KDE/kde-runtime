@@ -33,43 +33,8 @@
 class Nepomuk::SimpleResourceGraph::Private : public QSharedData
 {
 public:
-    Private()
-        : m_idCnt(0) {
-    }
-
     QHash<QUrl, SimpleResource> resources;
-
-    QUrl createBlankNode() const;
-
-private:
-    mutable int m_idCnt;
 };
-
-
-QUrl Nepomuk::SimpleResourceGraph::Private::createBlankNode() const
-{
-    forever {
-        // convert int to string (a...z,aa...az,ba....bz,...)
-        int idCnt = ++m_idCnt;
-        QByteArray id;
-        while(idCnt > 0) {
-            const int rest = idCnt%26;
-            id.append('a' + rest);
-            idCnt -= rest;
-            idCnt /= 26;
-        }
-
-        const QUrl uri = QLatin1String("_:") + id;
-        if(!resources.contains(uri)) {
-            return uri;
-        }
-    }
-}
-
-QUrl Nepomuk::SimpleResourceGraph::createBlankNode()
-{
-    return d->createBlankNode();
-}
 
 
 Nepomuk::SimpleResourceGraph::SimpleResourceGraph()
@@ -116,10 +81,7 @@ Nepomuk::SimpleResourceGraph & Nepomuk::SimpleResourceGraph::operator=(const Nep
 
 void Nepomuk::SimpleResourceGraph::insert(const SimpleResource &res)
 {
-    SimpleResource newRes(res);
-    if(newRes.uri().isEmpty())
-        newRes.setUri(d->createBlankNode());
-    d->resources.insert(newRes.uri(), newRes);
+    d->resources.insert(res.uri(), res);
 }
 
 Nepomuk::SimpleResourceGraph& Nepomuk::SimpleResourceGraph::operator<<(const SimpleResource &res)

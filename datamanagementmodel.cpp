@@ -1104,14 +1104,8 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         }
         else if(localFileState == ExistingLocalFile) {
             const QUrl fileUrl = res.uri();
-            QUrl newResUri = resolveUrl( fileUrl );
-            if( newResUri.isEmpty() ) {
-                // Resolution of one file failed. Assign it a random blank uri
-                newResUri = resGraph.createBlankNode();
-            }
-            resolvedNodes.insert( fileUrl, newResUri );
-
-            res.setUri( newResUri );
+            res.setUri( resolveUrl( fileUrl ) );
+            resolvedNodes.insert( fileUrl, res.uri() );
 
             if( !res.contains( NIE::url(), fileUrl ) )
                 res.addProperty( NIE::url(), fileUrl );
@@ -1169,8 +1163,11 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                     else {
                         // It doesn't exist, create it
                         QUrl resolvedUri = resolveUrl( fileUrl );
-                        if( resolvedUri.isEmpty() )
-                            resolvedUri = resGraph.createBlankNode();
+                        if( resolvedUri.isEmpty() ) {
+                            // HACK: improveme
+                            SimpleResource tmpRes;
+                            resolvedUri = tmpRes.uri();
+                        }
 
                         Sync::SyncResource newRes;
                         newRes.setUri( resolvedUri );

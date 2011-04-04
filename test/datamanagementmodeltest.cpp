@@ -2852,7 +2852,7 @@ void DataManagementModelTest::testStoreResources_realLife()
     tvShowRes.addProperty(NIE::title(), episodeTitle);
     tvShowRes.addProperty(NMM::synopsis(), episodeOverview);
 
-    SimpleResource tvSeriesRes(graph.createBlankNode());
+    SimpleResource tvSeriesRes;
     tvSeriesRes.addProperty(RDF::type(), NMM::TVSeries());
     tvSeriesRes.addProperty(NIE::title(), seriesTitle);
     tvSeriesRes.addProperty(NIE::description(), seriesOverview);

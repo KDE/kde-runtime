@@ -30,6 +30,26 @@
 #include <Soprano/LiteralValue>
 
 
+namespace {
+QAtomicInt s_idCnt;
+
+QUrl createBlankUri()
+{
+    // convert int to string (a...z,aa...az,ba....bz,...)
+    int idCnt = s_idCnt.fetchAndAddRelaxed(1);
+    QByteArray id;
+    while(idCnt > 0) {
+        const int rest = idCnt%26;
+        id.append('a' + rest);
+        idCnt -= rest;
+        idCnt /= 26;
+    }
+
+    const QUrl uri = QLatin1String("_:") + id;
+    return uri;
+}
+}
+
 class Nepomuk::SimpleResource::Private : public QSharedData
 {
 public:
@@ -40,7 +60,7 @@ public:
 Nepomuk::SimpleResource::SimpleResource(const QUrl& uri)
 {
     d = new Private();
-    d->m_uri = uri;
+    setUri(uri);
 }
 
 Nepomuk::SimpleResource::SimpleResource(const SimpleResource& other)
@@ -65,7 +85,10 @@ QUrl Nepomuk::SimpleResource::uri() const
 
 void Nepomuk::SimpleResource::setUri(const QUrl& uri)
 {
-    d->m_uri = uri;
+    if(uri.isEmpty())
+        d->m_uri = createBlankUri();
+    else
+        d->m_uri = uri;
 }
 
 namespace {

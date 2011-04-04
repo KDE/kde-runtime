@@ -55,6 +55,11 @@ public:
     bool operator==(const SimpleResource& other) const;
 
     QUrl uri() const;
+
+    /**
+     * Setting an invalid/empty uri will create a new random ID.
+     * This allows to reuse SimpleResource instances.
+     */
     void setUri( const QUrl & uri );
 
     bool contains(const QUrl& property) const;
