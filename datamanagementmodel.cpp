@@ -155,10 +155,13 @@ Nepomuk::DataManagementModel::DataManagementModel(Soprano::Model* model, QObject
     setParent(parent);
     updateTypeCachesAndSoOn();
 
-    // meta data properties are protected as it is up to us to decide when they change
+    // meta data properties are protected. This means they cannot be removed. But they
+    // can be set.
     d->m_protectedProperties.insert(NAO::created());
     d->m_protectedProperties.insert(NAO::creator());
     d->m_protectedProperties.insert(NAO::lastModified());
+    d->m_protectedProperties.insert(NAO::userVisible());
+    d->m_protectedProperties.insert(NIE::url());
 }
 
 Nepomuk::DataManagementModel::~DataManagementModel()
@@ -218,7 +221,7 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
         return;
     }
     if(d->m_protectedProperties.contains(property)) {
-        setError(QString::fromLatin1("addProperty: %1 is a protected property which can only be changed by the data management service itself.").arg(property.toString()),
+        setError(QString::fromLatin1("addProperty: %1 is a protected property which can only be set.").arg(property.toString()),
                  Soprano::Error::ErrorInvalidArgument);
         return;
     }
@@ -376,11 +379,6 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     }
     if(property.isEmpty()) {
         setError(QLatin1String("setProperty: Property needs to be specified."), Soprano::Error::ErrorInvalidArgument);
-        return;
-    }
-    if(d->m_protectedProperties.contains(property)) {
-        setError(QString::fromLatin1("setProperty: %1 is a protected property which can only be changed by the data management service itself.").arg(property.toString()),
-                 Soprano::Error::ErrorInvalidArgument);
         return;
     }
 

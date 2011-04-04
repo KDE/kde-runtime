@@ -746,26 +746,6 @@ void DataManagementModelTest::testSetProperty_invalid_args()
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 
 
-    // protected property 1
-    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), NAO::created(), QVariantList() << QDateTime::currentDateTime(), QLatin1String("testapp"));
-
-    // the call should have failed
-    QVERIFY(m_dmModel->lastError());
-
-    // nothing should have changed
-    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
-
-
-    // protected property 1
-    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), NAO::lastModified(), QVariantList() << QDateTime::currentDateTime(), QLatin1String("testapp"));
-
-    // the call should have failed
-    QVERIFY(m_dmModel->lastError());
-
-    // nothing should have changed
-    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
-
-
     // make sure we cannot add anything to non-existing files
     const QUrl nonExistingFileUrl("file:///a/file/that/is/very/unlikely/to/exist");
     m_dmModel->setProperty(QList<QUrl>() << nonExistingFileUrl, QUrl("prop:/int"), QVariantList() << 42, QLatin1String("testapp"));
