@@ -605,12 +605,7 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
 Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::Statement& st)
 {
     m_modifiedResources << st.subject().uri();
-    
-    const QUrl & predicate = st.predicate().uri();
-    if( metadataProperties.contains( predicate ) ) {
-        kDebug() << st;
-        Q_ASSERT( !"WTF!" );
-    }
+
     return model()->addStatement( st );
 }
 
