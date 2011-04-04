@@ -82,6 +82,9 @@ namespace Nepomuk {
          * Returns true if all the types in \p types are present in \p masterTypes
          */
         bool containsAllTypes( const QSet<QUrl>& types, const QSet<QUrl>& masterTypes );
+        
+        /// Refers to the properties which are considered as resource metadata
+        QSet<QUrl> metadataProperties;
     };
 
 }

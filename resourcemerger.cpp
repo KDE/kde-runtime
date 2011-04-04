@@ -47,6 +47,13 @@ Nepomuk::ResourceMerger::ResourceMerger(Nepomuk::DataManagementModel* model, con
     m_model = model;
     
     setModel( m_model );
+    
+    // Resource Metadata
+    metadataProperties.reserve( 4 );
+    metadataProperties.insert( NAO::lastModified() );
+    metadataProperties.insert( NAO::userVisible() );
+    metadataProperties.insert( NAO::created() );
+    metadataProperties.insert( NAO::creator() );
 }
 
 Nepomuk::ResourceMerger::~ResourceMerger()
@@ -428,16 +435,11 @@ namespace {
     }
 }
 
+namespace {
+    
+}
 bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
 {
-    // Special handling for resource metadata
-    QSet<QUrl> metadataProperties;
-    metadataProperties.reserve( 4 );
-    metadataProperties.insert( NAO::lastModified() );
-    metadataProperties.insert( NAO::userVisible() );
-    metadataProperties.insert( NAO::created() );
-    metadataProperties.insert( NAO::creator() );
-    
     QMultiHash<QUrl, QUrl> types;
     QHash<QPair<QUrl,QUrl>, int> cardinality;
 
@@ -576,24 +578,27 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
 
 Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::Statement& st)
 {
-    // Special handling for nao:lastModified and nao:userVisible: only the latest value is correct
-    if( st.predicate().uri() == NAO::lastModified() ||
-            st.predicate().uri() == NAO::userVisible() ) {
-        model()->removeAllStatements( st.subject(), st.predicate(), Soprano::Node() );
-    }
+    const QUrl & predicate = st.predicate().uri();
+    if( metadataProperties.contains( predicate ) ) {
+        // Special handling for nao:lastModified and nao:userVisible: only the latest value is correct
+        if( predicate == NAO::lastModified() ||
+                predicate == NAO::userVisible() ) {
+            model()->removeAllStatements( st.subject(), st.predicate(), Soprano::Node() );
+        }
 
-    // Special handling for nao:created: only the first value is correct
-    else if( st.predicate().uri() == NAO::created() ) {
-        // If nao:created already exists, then do nothing
-        // FIXME: only write nao:created if we actually create the resource or if it was provided by the client, otherwise drop it.
-        if( model()->containsAnyStatement( st.subject(), NAO::created(), Soprano::Node() ) )
-            return Soprano::Error::ErrorNone;
-    }
+        // Special handling for nao:created: only the first value is correct
+        else if( predicate == NAO::created() ) {
+            // If nao:created already exists, then do nothing
+            // FIXME: only write nao:created if we actually create the resource or if it was provided by the client, otherwise drop it.
+            if( model()->containsAnyStatement( st.subject(), NAO::created(), Soprano::Node() ) )
+                return Soprano::Error::ErrorNone;
+        }
 
-    // Special handling for nao:creator
-    else if( st.predicate().uri() == NAO::creator() ) {
-        // FIXME: handle nao:creator somehow
+        // Special handling for nao:creator
+        else if( predicate == NAO::creator() ) {
+            // FIXME: handle nao:creator somehow
+        }
     }
-
+    
     return model()->addStatement( st );
 }
