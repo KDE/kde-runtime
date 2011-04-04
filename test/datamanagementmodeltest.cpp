@@ -2563,9 +2563,9 @@ void DataManagementModelTest::testStoreResources_metadata()
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).allStatements().count(), 1);
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::created(), LiteralValue(now)));
 
-    // make sure mtime has not changed - the resource has not changed
+    // make sure mtime has changed - the resource has changed
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).allStatements().count(), 1);
-    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first().literal().toDateTime(), now);
+    QVERIFY(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first().literal().toDateTime() != now);
 }
 
 void DataManagementModelTest::testStoreResources_protectedTypes()
