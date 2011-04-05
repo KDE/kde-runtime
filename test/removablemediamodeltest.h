@@ -50,7 +50,6 @@ private Q_SLOTS:
 private:
     Soprano::Model* m_model;
     Nepomuk::RemovableMediaModel* m_rmModel;
-    QStringList m_removableDevices;
 };
 
 #endif

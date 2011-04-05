@@ -257,8 +257,7 @@ Nepomuk::RemovableMediaModel::Entry* Nepomuk::RemovableMediaModel::createCacheEn
 
     Entry entry(dev);
     if(!entry.m_urlPrefix.isEmpty()) {
-        kDebug() << "Found removable storage volume for Nepomuk docking:" << dev.udi() << dev.description();
-        kDebug() << "Creating entry" << entry.m_urlPrefix;
+        kDebug() << "Usable" << dev.udi();
 
         // we only add to this set and never remove. This is no problem as this is a small set
         m_usedSchemas.insert(KUrl(entry.m_urlPrefix).scheme());
