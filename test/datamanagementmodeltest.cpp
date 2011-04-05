@@ -2480,6 +2480,78 @@ void DataManagementModelTest::testStoreResources_file2()
     QVERIFY(!haveTrailingGraphs());
 }
 
+
+void DataManagementModelTest::testStoreResources_file3()
+{
+    QTemporaryFile fileA;
+    fileA.open();
+    const QUrl fileUrl = QUrl::fromLocalFile(fileA.fileName());
+    
+    SimpleResource r1;
+    r1.setUri( fileUrl );
+    r1.addProperty( RDF::type(), QUrl("newtype:/1") );
+    
+    m_dmModel->storeResources( SimpleResourceGraph() << r1, QLatin1String("origApp") );
+    
+    // Make sure all the data has been added and it belongs to origApp
+    QString query = QString::fromLatin1("ask { graph ?g { ?r a %6 . "
+                                        " ?r %7 %1 . "
+                                        " ?r a %2 . } ?g %3 ?app . ?app %4 %5 . }")
+                    .arg( Soprano::Node::resourceToN3( fileUrl ),
+                          Soprano::Node::resourceToN3( QUrl("newtype:/1") ),
+                          Soprano::Node::resourceToN3( NAO::maintainedBy() ),
+                          Soprano::Node::resourceToN3( NAO::identifier() ),
+                          Soprano::Node(Soprano::LiteralValue("origApp")).toN3(),
+                          Soprano::Node::resourceToN3( NFO::FileDataObject()),
+                          Soprano::Node::resourceToN3( NIE::url() )
+                        );
+                    
+    QVERIFY( m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue() );
+    
+    QList< Statement > stList = m_model->listStatements( Soprano::Node(), NIE::url(), fileUrl ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+    
+    QUrl resUri = stList.first().subject().uri();
+    QVERIFY( resUri.scheme() == QLatin1String("nepomuk") );
+    
+    SimpleResource r2;
+    r2.setUri( fileUrl );
+    r2.addProperty( QUrl("prop:/custom"), QUrl("object:/custom") );
+    
+    m_dmModel->storeResources( SimpleResourceGraph() << r2, QLatin1String("newApp") );
+    
+    // Make sure it was identified properly
+    stList = m_model->listStatements( Soprano::Node(), NIE::url(), fileUrl ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+    
+    QUrl resUri2 = stList.first().subject().uri();
+    QVERIFY( resUri2.scheme() == QLatin1String("nepomuk") );
+    QCOMPARE( resUri, resUri2 );
+    
+    // The only statement that should have acquired "newApp" as the maintainer should be 
+    // r2 <prop:/custom> <object:/custom>
+    
+    query = QString::fromLatin1("select ?name where { graph ?g { %1 %2 %3 . %1 a %4. }"
+                                " ?g %5 ?app . ?app %6 ?name . }")
+                .arg( Soprano::Node::resourceToN3( resUri ),
+                      Soprano::Node::resourceToN3( NIE::url() ),
+                      Soprano::Node::resourceToN3( fileUrl ),
+                      Soprano::Node::resourceToN3( NFO::FileDataObject() ),
+                      Soprano::Node::resourceToN3( NAO::maintainedBy() ),
+                      Soprano::Node::resourceToN3( NAO::identifier() ) );
+                
+    QueryResultIterator it = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    QStringList appList;
+    while( it.next() )
+        appList << it["name"].literal().toString();
+    
+    QCOMPARE( appList.size(), 1 );
+    
+    //query = QString::fromLatin1("ask { )
+    
+}
+
+
 // metadata should be ignored when merging one resource into another
 void DataManagementModelTest::testStoreResources_metadata()
 {
