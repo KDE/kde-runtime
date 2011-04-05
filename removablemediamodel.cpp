@@ -28,6 +28,7 @@
 #include <Solid/StorageDrive>
 #include <Solid/StorageVolume>
 #include <Solid/StorageAccess>
+#include <Solid/NetworkShare>
 #include <Solid/OpticalDisc>
 #include <Solid/Predicate>
 
@@ -52,20 +53,25 @@ using namespace Nepomuk::Vocabulary;
 // TODO: how do we handle this scenario: the indexer indexes files on a removable medium. This includes
 //       a nie:isPartOf relation to the parent folder of the mount point. This is technically not correct
 //       as it should be part of the removable file system instead. Right?
-// TODO: we somehow need to handle network mounts here, too.
+
 
 namespace {
     bool isUsableVolume( const Solid::Device& dev ) {
-        if ( dev.is<Solid::StorageVolume>() &&
-             dev.is<Solid::StorageAccess>() &&
-             dev.parent().is<Solid::StorageDrive>() &&
-             ( dev.parent().as<Solid::StorageDrive>()->isRemovable() ||
-               dev.parent().as<Solid::StorageDrive>()->isHotpluggable() ) ) {
-            const Solid::StorageVolume* volume = dev.as<Solid::StorageVolume>();
-            if ( !volume->isIgnored() && volume->usage() == Solid::StorageVolume::FileSystem )
-                return true;
+        if ( dev.is<Solid::StorageAccess>() ) {
+            if( dev.is<Solid::StorageVolume>() &&
+                    dev.parent().is<Solid::StorageDrive>() &&
+                    ( dev.parent().as<Solid::StorageDrive>()->isRemovable() ||
+                      dev.parent().as<Solid::StorageDrive>()->isHotpluggable() ) ) {
+                const Solid::StorageVolume* volume = dev.as<Solid::StorageVolume>();
+                if ( !volume->isIgnored() && volume->usage() == Solid::StorageVolume::FileSystem )
+                    return true;
+            }
+            else if(dev.is<Solid::NetworkShare>()) {
+                return !dev.as<Solid::NetworkShare>()->url().isEmpty();
+            }
         }
 
+        // fallback
         return false;
     }
 
@@ -73,15 +79,6 @@ namespace {
         Solid::Device dev( udi );
         return isUsableVolume( dev );
     }
-
-    /// maps to Nepomuk::RemovableMediaModel::Entry::Type starting at 1
-    const char* s_urlSchemas[] = {
-        "file",
-        "optical",
-        "nfs",
-        "smb",
-        "filex"
-    };
 }
 
 
@@ -241,7 +238,8 @@ Soprano::QueryResultIterator Nepomuk::RemovableMediaModel::executeQuery(const QS
 void Nepomuk::RemovableMediaModel::initCacheEntries()
 {
     QList<Solid::Device> devices
-            = Solid::Device::listFromQuery( QLatin1String( "StorageVolume.usage=='FileSystem'" ) );
+            = Solid::Device::listFromQuery(QLatin1String("StorageVolume.usage=='FileSystem'"))
+            + Solid::Device::listFromType(Solid::DeviceInterface::NetworkShare);
     foreach( const Solid::Device& dev, devices ) {
         if ( isUsableVolume( dev ) ) {
             if(Entry* entry = createCacheEntry( dev )) {
@@ -258,9 +256,13 @@ Nepomuk::RemovableMediaModel::Entry* Nepomuk::RemovableMediaModel::createCacheEn
     QMutexLocker lock(&m_entryCacheMutex);
 
     Entry entry(dev);
-    if(!entry.m_identifier.isEmpty()) {
+    if(!entry.m_urlPrefix.isEmpty()) {
         kDebug() << "Found removable storage volume for Nepomuk docking:" << dev.udi() << dev.description();
-        kDebug() << "Creating entry" << entry.m_type << entry.m_identifier;
+        kDebug() << "Creating entry" << entry.m_urlPrefix;
+
+        // we only add to this set and never remove. This is no problem as this is a small set
+        m_usedSchemas.insert(KUrl(entry.m_urlPrefix).scheme());
+
         connect( dev.as<Solid::StorageAccess>(), SIGNAL(accessibilityChanged(bool, QString)),
                 this, SLOT(slotAccessibilityChanged(bool, QString)) );
                 m_metadataCache.insert( dev.udi(), entry );
@@ -295,14 +297,15 @@ const Nepomuk::RemovableMediaModel::Entry* Nepomuk::RemovableMediaModel::findEnt
 }
 
 
-const Nepomuk::RemovableMediaModel::Entry* Nepomuk::RemovableMediaModel::findEntryByIdentifier(const QString &identifier) const
+const Nepomuk::RemovableMediaModel::Entry* Nepomuk::RemovableMediaModel::findEntryByUrl(const KUrl &url) const
 {
     QMutexLocker lock(&m_entryCacheMutex);
 
     for( QHash<QString, Entry>::const_iterator it = m_metadataCache.constBegin();
         it != m_metadataCache.constEnd(); ++it ) {
         const Entry& entry = *it;
-        if(entry.m_identifier == identifier) {
+        kDebug() << url << entry.m_urlPrefix;
+        if(url.url().startsWith(entry.m_urlPrefix)) {
             return &entry;
         }
     }
@@ -342,7 +345,7 @@ void Nepomuk::RemovableMediaModel::slotAccessibilityChanged( bool accessible, co
         QMutexLocker lock(&m_entryCacheMutex);
         Entry& entry = m_metadataCache[udi];
         entry.m_lastMountPath = entry.m_device.as<Solid::StorageAccess>()->filePath();
-        kDebug() << udi << "accessible at" << entry.m_lastMountPath << "with identifier" << entry.m_identifier;
+        kDebug() << udi << "accessible at" << entry.m_lastMountPath << "with identifier" << entry.m_urlPrefix;
     }
 }
 
@@ -351,7 +354,7 @@ Soprano::Node Nepomuk::RemovableMediaModel::convertFileUrl(const Soprano::Node &
 {
     if(node.isResource()) {
         const QUrl url = node.uri();
-        if(url.scheme() == QLatin1String(s_urlSchemas[0])) {
+        if(url.scheme() == QLatin1String("file")) {
             const QString localFilePath = url.toLocalFile();
             if(const Entry* entry = findEntryByFilePath(localFilePath)) {
                 return entry->constructRelativeUrl(localFilePath);
@@ -392,9 +395,8 @@ Soprano::Node Nepomuk::RemovableMediaModel::convertFilexUrl(const Soprano::Node 
 {
     if(node.isResource()) {
         const QUrl url = node.uri();
-        if(url.scheme() == QLatin1String(s_urlSchemas[Entry::RemovableMedium])) {
-            const QString uuid = url.host();
-            if(const Entry* entry = findEntryByIdentifier(uuid.toLower())) {
+        if(m_usedSchemas.contains(url.scheme())) {
+            if(const Entry* entry = findEntryByUrl(url)) {
                 return QUrl::fromLocalFile(entry->constructLocalPath(url));
             }
         }
@@ -565,36 +567,34 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
 
 
 Nepomuk::RemovableMediaModel::Entry::Entry()
-    : m_type(Unknown)
 {
 }
 
 Nepomuk::RemovableMediaModel::Entry::Entry(const Solid::Device& device)
-    : m_type(Unknown),
-      m_device(device)
+    : m_device(device)
 {
     m_description = device.description();
     if(device.is<Solid::StorageVolume>()) {
         const Solid::StorageVolume* volume = m_device.as<Solid::StorageVolume>();
         if(device.is<Solid::OpticalDisc>()) {
-            m_type = OpticalDisc;
             // we use the label as is - it is not even close to unique but
             // so far we have nothing better
-            m_identifier = volume->label();
+            m_urlPrefix = QLatin1String("optical://") + volume->label();
         }
-        else {
-            m_type = RemovableMedium;
+        else if(!volume->uuid().isEmpty()) {
             // we always use lower-case uuids
-            m_identifier = volume->uuid().toLower();
+            m_urlPrefix = QLatin1String("filex://") + volume->uuid().toLower();
         }
     }
-    // TODO: check for network shares
+    else if(device.is<Solid::NetworkShare>()) {
+        m_urlPrefix = device.as<Solid::NetworkShare>()->url().toString();
+    }
 }
 
 KUrl Nepomuk::RemovableMediaModel::Entry::constructRelativeUrl( const QString& path ) const
 {
     const QString relativePath = path.mid( m_lastMountPath.count() );
-    return KUrl( QLatin1String(s_urlSchemas[m_type]) + QLatin1String("://") + m_identifier + relativePath );
+    return KUrl( m_urlPrefix + relativePath );
 }
 
 
@@ -605,25 +605,7 @@ QString Nepomuk::RemovableMediaModel::Entry::constructLocalPath( const KUrl& fil
     if ( path.endsWith( QLatin1String( "/" ) ) )
         path.truncate( path.length()-1 );
 
-    switch(m_type) {
-    case NfsMount:
-    case SmbMount:
-        // The path of the filex URL contains both the remote share path and
-        // the relative path of the file itself. Thus, we simply strip away
-        // the identifier from the filex URL
-        path += filexUrl.url().mid(m_identifier.length());
-        break;
-
-    case OpticalDisc:
-    case RemovableMedium:
-    default:
-        // m_identifier is a simple string which is the host of the URL,
-        // thus the path of the filex url is the relative path itself
-        path += filexUrl.path();
-        break;
-    }
-
-    return path;
+    return path + filexUrl.url().mid(m_urlPrefix.count());
 }
 
 #include "removablemediamodel.moc"

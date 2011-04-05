@@ -28,6 +28,7 @@
 
 #include <QtCore/QVariant>
 #include <QtCore/QHash>
+#include <QtCore/QSet>
 
 #include <Solid/Device>
 
@@ -122,24 +123,6 @@ private:
         KUrl constructRelativeUrl( const QString& path ) const;
         QString constructLocalPath( const KUrl& filexUrl ) const;
 
-        enum Type {
-            /// just here for completness and to create invalid entries
-            Unknown = 0,
-
-            /// An optical disk: CD, DVD, BD, m_identifier is the fs label
-            OpticalDisc = 1,
-
-            /// An nfs mount, m_identifier is host+path
-            NfsMount = 2,
-
-            /// A samba mount, m_identifier is host+path
-            SmbMount = 3,
-
-            /// A removable medium: USB keys and portable disks, m_identifier is a UUID
-            RemovableMedium = 4
-        };
-        Type m_type;
-
         Solid::Device m_device;
         QString m_lastMountPath;
 
@@ -147,14 +130,23 @@ private:
         // an USB device is simply ejected without properly
         // unmounting before
         QString m_description;
-        QString m_identifier;
+
+        /// The prefix to be used for URLs
+        QString m_urlPrefix;
     };
+
+    /// maps Solid UDI to Entry
     QHash<QString, Entry> m_metadataCache;
+
+    /// contains all schemas that are used as url prefixes in m_metadataCache
+    /// this is used to avoid trying to convert each and every resource in
+    /// convertFilexUrl
+    QSet<QString> m_usedSchemas;
 
     Entry* createCacheEntry( const Solid::Device& dev );
     Entry* findEntryByFilePath( const QString& path );
     const Entry* findEntryByFilePath( const QString& path ) const;
-    const Entry* findEntryByIdentifier(const QString& uuid) const;
+    const Entry* findEntryByUrl(const KUrl& url) const;
 
     mutable QMutex m_entryCacheMutex;
 
