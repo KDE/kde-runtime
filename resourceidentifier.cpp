@@ -142,6 +142,11 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
                        QString::number( num++ ) );
     }
     
+    if( identifyingProperties.isEmpty() ) {
+        kDebug() << "No identification properties found!";
+        return false;
+    }
+    
     // Make sure atleast one of the identification properties has been matched
     query += QString::fromLatin1("filter( ");
     for( int i=0; i<num-1; i++ ) {
