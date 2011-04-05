@@ -37,7 +37,7 @@ protected:
     virtual bool runIdentification(const KUrl& uri);
     
 private:
-    bool isIdentfyingProperty( const QUrl& uri ) const;
+    bool isIdentfyingProperty( const QUrl& uri );
     
     /// Returns true if a resource with uri \p uri exists
     bool exists( const KUrl& uri );
