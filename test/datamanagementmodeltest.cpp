@@ -2552,6 +2552,39 @@ void DataManagementModelTest::testStoreResources_file3()
 }
 
 
+void DataManagementModelTest::testStoreResources_file4()
+{
+    QTemporaryFile fileA;
+    fileA.open();
+    const QUrl fileUrl = QUrl::fromLocalFile(fileA.fileName());
+    
+    SimpleResource res;
+    res.addProperty( RDF::type(), fileUrl );
+    res.addProperty( QUrl("prop2:/prop"), fileUrl );
+    
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app1") );
+    
+    // Make sure the fileUrl got added
+    QList< Statement > stList = m_model->listStatements( Node(), NIE::url(), fileUrl ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+    
+    QUrl fileResUri = stList.first().subject().uri();
+    
+    // Make sure the SimpleResource was stored
+    stList = m_model->listStatements( Node(), RDF::type(), fileResUri ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+    
+    QUrl resUri = stList.first().subject().uri();
+    
+    // Check for the other statement
+    stList = m_model->listStatements( resUri, QUrl("prop2:/prop"), Node() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+    
+    QUrl fileResUri2 = stList.first().object().uri();
+    QCOMPARE( fileResUri, fileResUri2 );
+}
+
+
 // metadata should be ignored when merging one resource into another
 void DataManagementModelTest::testStoreResources_metadata()
 {
