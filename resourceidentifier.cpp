@@ -132,8 +132,10 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
         const Soprano::Node & object = it.value();
         if( object.isBlank() || ( object.isResource() && object.uri().scheme() == QLatin1String("nepomuk") ) ) {
             const QUrl objectUri = object.isResource() ? object.uri() : "_:" + object.identifier();
-            if( !identify( objectUri ) )
+            if( !identify( objectUri ) ) {
+                kDebug() << "Identification of object " << objectUri << " failed";
                 continue;
+            }
         }
                 
         query += QString::fromLatin1(" optional { ?r %1 ?o%3 . } . filter(!bound(?o%3) || ?o%3=%2). ")
@@ -142,7 +144,7 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
                        QString::number( num++ ) );
     }
     
-    if( identifyingProperties.isEmpty() ) {
+    if( identifyingProperties.isEmpty() || num == 0 ) {
         kDebug() << "No identification properties found!";
         return false;
     }
