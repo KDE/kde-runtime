@@ -1110,18 +1110,15 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             if( newResUri.isEmpty() ) {
                 // Resolution of one file failed. Assign it a random blank uri
                 newResUri = resGraph.createBlankNode();
+                
+                res.addProperty( NIE::url(), fileUrl );
+                res.addProperty( RDF::type(), NFO::FileDataObject() );
+                if( QFileInfo( fileUrl.toString() ).isDir() )
+                    res.addProperty( RDF::type(), NFO::Folder() );
             }
             resolvedNodes.insert( fileUrl, newResUri );
 
             res.setUri( newResUri );
-
-            if( !res.contains( NIE::url(), fileUrl ) )
-                res.addProperty( NIE::url(), fileUrl );
-            if( !res.contains( RDF::type(), NFO::FileDataObject() ) )
-                res.addProperty( RDF::type(), NFO::FileDataObject() );
-            if( QFileInfo( fileUrl.toString() ).isDir() && !res.contains( RDF::type(), NFO::Folder() )) {
-                res.addProperty( RDF::type(), NFO::Folder() );
-            }
         }
         else {
             allNonFileResources << res.uri();
@@ -1169,20 +1166,23 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                         resolvedRes.addProperty(it.key(), findIter.value());
                     }
                     else {
+                        Sync::SyncResource newRes;
+                        
                         // It doesn't exist, create it
                         QUrl resolvedUri = resolveUrl( fileUrl );
-                        if( resolvedUri.isEmpty() )
+                        if( resolvedUri.isEmpty() ) {
                             resolvedUri = resGraph.createBlankNode();
+                            
+                            newRes.insert( RDF::type(), NFO::FileDataObject() );
+                            newRes.insert( NIE::url(), fileUrl );
+                            if( QFileInfo( fileUrl.toString() ).isDir() )
+                                newRes.insert( RDF::type(), NFO::Folder() );
+                        }
 
-                        Sync::SyncResource newRes;
                         newRes.setUri( resolvedUri );
-                        newRes.insert( RDF::type(), NFO::FileDataObject() );
-                        newRes.insert( NIE::url(), fileUrl );
-                        if( QFileInfo( fileUrl.toString() ).isDir() )
-                            newRes.insert( RDF::type(), NFO::Folder() );
-
                         extraResources.append( newRes );
 
+                        resolvedNodes.insert( fileUrl, resolvedUri );
                         resolvedRes.addProperty(it.key(), resolvedUri);
                     }
                 }
@@ -1222,6 +1222,33 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             return;
         }
     }
+    
+    //
+    // For better identification add rdf:type and nie:url to resolvedNodes
+    //
+    QHashIterator<QUrl, QUrl> it( resolvedNodes );
+    while( it.hasNext() ) {
+        it.next();
+        
+        const QUrl fileUrl = it.key();
+        const QUrl uri = it.value();
+        
+        const Sync::SyncResource existingRes = resIdent.simpleResource( uri );
+        
+        Sync::SyncResource res;
+        res.setUri( uri );
+        
+        if( !existingRes.contains( RDF::type(), NFO::FileDataObject() ) )
+            res.insert( RDF::type(), NFO::FileDataObject() );
+        
+        if( !existingRes.contains( NIE::url(), fileUrl ) )
+            res.insert( NIE::url(), fileUrl );
+        
+        if( QFileInfo( fileUrl.toString() ).isDir() && !existingRes.contains( RDF::type(), NFO::Folder() ) )
+            res.insert( RDF::type(), NFO::Folder() );
+        
+        resIdent.addSyncResource( res );
+    }
 
     clearError();
 
@@ -1254,7 +1281,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     foreach( const Sync::SyncResource & res, extraResources ) {
         allStatements << res.toStatementList();
     }
-
+    
 #warning Stuff is sometimes changed even if the call fails! Looks like it happens if the graph metadata check fails - Does TransactionModel actually work? Was it tested?
     TransactionModel trModel(this);
     ResourceMerger merger( this, app, additionalMetadata );
