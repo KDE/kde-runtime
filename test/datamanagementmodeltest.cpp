@@ -111,6 +111,11 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NAO::lastModified(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NAO::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
     m_model->addStatement( NAO::lastModified(), NRL::maxCardinality(), LiteralValue(1), graph );
+    
+    // used in testStoreResources_sameNieUrl
+    m_model->addStatement( NAO::numericRating(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NAO::numericRating(), RDFS::range(), XMLSchema::xsdInt(), graph );
+    m_model->addStatement( NAO::numericRating(), NRL::maxCardinality(), LiteralValue(1), graph );
 
     // some ontology things we need in testStoreResources_realLife
     m_model->addStatement( NMM::season(), RDF::type(), RDF::Property(), graph );
@@ -2564,6 +2569,42 @@ void DataManagementModelTest::testStoreResources_file4()
     QCOMPARE( fileResUri, fileResUri2 );
 }
 
+void DataManagementModelTest::testStoreResources_sameNieUrl()
+{
+    QTemporaryFile fileA;
+    fileA.open();
+    const QUrl fileUrl = QUrl::fromLocalFile(fileA.fileName());
+    
+    SimpleResource res;
+    res.setUri( fileUrl );
+    res.addProperty( RDF::type(), NFO::FileDataObject() );
+    
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app1") );
+    QVERIFY( !m_dmModel->lastError() );
+    
+    // Make sure the fileUrl got added
+    QList< Statement > stList = m_model->listStatements( Node(), NIE::url(), fileUrl ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+    
+    QUrl fileResUri = stList.first().subject().uri();
+    
+    // Make sure there is only one rdf:type nfo:FileDataObject
+    stList = m_model->listStatements( Node(), RDF::type(), NFO::FileDataObject() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+    QCOMPARE( stList.first().subject().uri(), fileResUri );
+    
+    SimpleResource res2;
+    res2.addProperty( NIE::url(), fileUrl );
+    res2.addProperty( NAO::numericRating(), QVariant(10) );
+    
+    m_dmModel->storeResources( SimpleResourceGraph() << res2, QLatin1String("app1") );
+    QVERIFY( !m_dmModel->lastError() );
+    
+    // Make sure it got mapped
+    stList = m_model->listStatements( Node(), NAO::numericRating(), LiteralValue(10) ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+    QCOMPARE( stList.first().subject().uri(), fileResUri );
+}
 
 // metadata should be ignored when merging one resource into another
 void DataManagementModelTest::testStoreResources_metadata()
@@ -3003,6 +3044,7 @@ void DataManagementModelTest::testStoreResources_trivialMerge()
     // the two resources should NOT have been merged
     QCOMPARE(m_model->listStatements(Node(), RDF::type(), QUrl("class:/typeA")).allElements().count(), 2);
 }
+
 
 void DataManagementModelTest::testMergeResources()
 {

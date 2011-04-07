@@ -92,6 +92,7 @@ private Q_SLOTS:
     void testStoreResources_file2();
     void testStoreResources_file3();
     void testStoreResources_file4();
+    void testStoreResources_sameNieUrl();
     void testStoreResources_metadata();
     void testStoreResources_protectedTypes();
     void testStoreResources_superTypes();
