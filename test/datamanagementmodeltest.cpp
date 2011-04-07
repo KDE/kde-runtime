@@ -1925,49 +1925,7 @@ namespace {
         return numPushed;
     }
 }
-void DataManagementModelTest::testStoreResources()
-{
-    Nepomuk::ResourceManager::instance()->setOverrideMainModel( m_model );
-    
-    //
-    // Test Identification
-    //
-    
-    QUrl resUri("nepomuk:/mergeTest/res1");
-    QUrl graphUri("nepomuk:/ctx/TestGraph");
 
-    int stCount = m_model->statementCount();
-    m_model->addStatement( resUri, RDF::type(), NFO::FileDataObject(), graphUri );
-    m_model->addStatement( resUri, QUrl("nepomuk:/mergeTest/prop1"),
-                           Soprano::LiteralValue(10), graphUri );
-    QCOMPARE( m_model->statementCount(), stCount + 2 );
-
-    Nepomuk::SimpleResource res;
-    res.setUri( QUrl("nepomuk:/mergeTest/res2") );
-    res.addProperty( RDF::type(), NFO::FileDataObject() );
-    res.addProperty( QUrl("nepomuk:/mergeTest/prop1"), QVariant(10) );
-
-    Nepomuk::SimpleResourceGraph graph;
-    graph << res;
-
-    // Try merging it.
-    m_dmModel->storeResources( graph, QLatin1String("Testapp") );
-    QVERIFY( !m_dmModel->lastError() );
-    
-    // res2 shouldn't exists as it is the same as res1 and should have gotten merged.
-    QVERIFY( !m_model->containsAnyStatement( QUrl("nepomuk:/mergeTest/res2"), QUrl(), QUrl() ) );
-
-    // Try merging it as a blank uri
-    res.setUri( QUrl("_:blah") );
-    graph.clear();
-    graph << res;
-
-    m_dmModel->storeResources( graph, QLatin1String("Testapp") );
-    QVERIFY( !m_dmModel->lastError() );
-    QVERIFY( !m_model->containsAnyStatement( QUrl("_:blah"), QUrl(), QUrl() ) );
-
-    QVERIFY(!haveTrailingGraphs());
-}
 
 void DataManagementModelTest::testStoreResources_strigiCase()
 {
