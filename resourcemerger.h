@@ -23,6 +23,8 @@
 
 #include <QtCore/QHash>
 #include <QtCore/QVariant>
+#include <QtCore/QUrl>
+#include <QtCore/QSet>
 
 #include <nepomuk/resourcemerger.h>
 
@@ -50,6 +52,7 @@ namespace Nepomuk {
         virtual bool resolveDuplicate(const Soprano::Statement& newSt);
         virtual KUrl resolveUnidentifiedResource(const KUrl& uri);
         virtual Soprano::Error::ErrorCode addStatement( const Soprano::Statement & st );
+        virtual Soprano::Error::ErrorCode addResMetadataStatement( const Soprano::Statement & st );  
         
     private:
         /**
@@ -82,6 +85,11 @@ namespace Nepomuk {
          * Returns true if all the types in \p types are present in \p masterTypes
          */
         bool containsAllTypes( const QSet<QUrl>& types, const QSet<QUrl>& masterTypes );
+        
+        /// Refers to the properties which are considered as resource metadata
+        QSet<QUrl> metadataProperties;
+        
+        QSet<QUrl> m_modifiedResources;
     };
 
 }

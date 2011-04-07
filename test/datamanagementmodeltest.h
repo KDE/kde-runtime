@@ -89,6 +89,8 @@ private Q_SLOTS:
     void testStoreResources_invalid_args_with_existing();
     void testStoreResources_file1();
     void testStoreResources_file2();
+    void testStoreResources_file3();
+    void testStoreResources_file4();
     void testStoreResources_metadata();
     void testStoreResources_protectedTypes();
     void testStoreResources_superTypes();

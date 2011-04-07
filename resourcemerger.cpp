@@ -47,6 +47,13 @@ Nepomuk::ResourceMerger::ResourceMerger(Nepomuk::DataManagementModel* model, con
     m_model = model;
     
     setModel( m_model );
+    
+    // Resource Metadata
+    metadataProperties.reserve( 4 );
+    metadataProperties.insert( NAO::lastModified() );
+    metadataProperties.insert( NAO::userVisible() );
+    metadataProperties.insert( NAO::created() );
+    metadataProperties.insert( NAO::creator() );
 }
 
 Nepomuk::ResourceMerger::~ResourceMerger()
@@ -428,16 +435,11 @@ namespace {
     }
 }
 
-bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
-{
-    // Special handling for resource metadata
-    QSet<QUrl> metadataProperties;
-    metadataProperties.reserve( 4 );
-    metadataProperties.insert( NAO::lastModified() );
-    metadataProperties.insert( NAO::userVisible() );
-    metadataProperties.insert( NAO::created() );
-    metadataProperties.insert( NAO::creator() );
+namespace {
     
+}
+bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
+{
     QMultiHash<QUrl, QUrl> types;
     QHash<QPair<QUrl,QUrl>, int> cardinality;
 
@@ -447,14 +449,23 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
     //
     QList<Soprano::Statement> remainingStatements;
     QList<Soprano::Statement> typeStatements;
+    QList<Soprano::Statement> metadataStatements;
 
-    foreach( const Soprano::Statement & st, graph.toList() ) {
+    foreach( const Soprano::Statement & st, stGraph.toList() ) {
         const QUrl subUri = getBlankOrResourceUri( st.subject() );
         const QUrl objUri = getBlankOrResourceUri( st.object() );
         
-        if( st.predicate() == RDF::type() ) {
+        const QUrl prop = st.predicate().uri();
+        if( prop == RDF::type() ) {
             typeStatements << st;
             types.insert( subUri, objUri );
+            continue;
+        }        
+        // we ignore the metadata properties as they will get special
+        // treatment duing the merging
+        else if( metadataProperties.contains( prop ) ) {
+            metadataStatements << st;
+            continue;
         }
         else {
             remainingStatements << st;
@@ -486,9 +497,7 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
 
         int maxCardinality = tree->maxCardinality( propUri );
 
-        // we ignore the metadata properties as they will get special
-        // treatment duing the merging
-        if( maxCardinality > 0 && !metadataProperties.contains( propUri ) ) {
+        if( maxCardinality > 0 ) {
             int existingCardinality = 0;
             if(!st.subject().isBlank()) {
                 existingCardinality = m_model->executeQuery(QString::fromLatin1("select count(distinct ?v) where { %1 %2 ?v . FILTER(?v!=%3) . }")
@@ -561,9 +570,10 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
         
     }
 
-    // The graph is error free. Merge all its statements
-    foreach( const Soprano::Statement & st, graph.toList() ) {
-        kDebug() << "Trying to merge : " << st;
+    // The graph is error free. Merge its statements except for the resource metadata statements
+    const QList<Soprano::Statement> statements = remainingStatements + typeStatements;
+    foreach( const Soprano::Statement & st, statements ) {
+        //kDebug() << "Trying to merge : " << st;
         if(!mergeStatement( st )) {
             kDebug() << "Merge statement error: " << lastError();
             //m_model->setError(QLatin1String("Failed to merge one statement. FIXME: add more useful error info."));
@@ -571,19 +581,47 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& graph )
         }
     }
     
+    //
+    // Handle Resource metadata
+    //
+    
+    // First update the mtime of all the resources
+    Soprano::Node currentDateTime = Soprano::LiteralValue( QDateTime::currentDateTime() );
+    foreach( const QUrl & resUri, m_modifiedResources ) {
+        Soprano::Statement st( resUri, NAO::lastModified(), currentDateTime, graph() );
+        if( resolveStatement( st ) )
+            addResMetadataStatement( st );
+    }
+    
+    // then push the individual metadata statements
+    foreach( Soprano::Statement st, metadataStatements ) {
+        if( resolveStatement( st ) )
+            addResMetadataStatement( st );
+    }
+    
     return true;
 }
 
 Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::Statement& st)
 {
+    m_modifiedResources << st.subject().uri();
+
+    return model()->addStatement( st );
+}
+
+
+Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addResMetadataStatement(const Soprano::Statement& st)
+{
+    const QUrl & predicate = st.predicate().uri();
+    
     // Special handling for nao:lastModified and nao:userVisible: only the latest value is correct
-    if( st.predicate().uri() == NAO::lastModified() ||
-            st.predicate().uri() == NAO::userVisible() ) {
+    if( predicate == NAO::lastModified() ||
+            predicate == NAO::userVisible() ) {
         model()->removeAllStatements( st.subject(), st.predicate(), Soprano::Node() );
     }
 
     // Special handling for nao:created: only the first value is correct
-    else if( st.predicate().uri() == NAO::created() ) {
+    else if( predicate == NAO::created() ) {
         // If nao:created already exists, then do nothing
         // FIXME: only write nao:created if we actually create the resource or if it was provided by the client, otherwise drop it.
         if( model()->containsAnyStatement( st.subject(), NAO::created(), Soprano::Node() ) )
@@ -591,9 +629,9 @@ Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::S
     }
 
     // Special handling for nao:creator
-    else if( st.predicate().uri() == NAO::creator() ) {
+    else if( predicate == NAO::creator() ) {
         // FIXME: handle nao:creator somehow
     }
-
+    
     return model()->addStatement( st );
 }
