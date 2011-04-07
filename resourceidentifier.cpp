@@ -90,9 +90,6 @@ bool Nepomuk::ResourceIdentifier::isIdentfyingProperty(const QUrl& uri)
         || uri == NAO::userVisible() )
         return false;
     
-    if( uri == NIE::url() || uri == RDF::type() )
-        return true;
-    
     // TODO: Hanlde nxx:FluxProperty and nxx:resourceRangePropWhichCanIdentified
     const QString query = QString::fromLatin1("ask { %1 %2 ?range . "
                                               " %1 a %3 . "
@@ -120,6 +117,25 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
     const Sync::SyncResource & res = simpleResource( uri );
     kDebug() << res;
     
+    //
+    // Check if a uri with the same nie:url exists
+    //
+    QUrl nieUrl = res.nieUrl();
+    if( !nieUrl.isEmpty() ) {
+        QString query = QString::fromLatin1("select ?r where { ?r %1 %2 . }")
+                        .arg( Soprano::Node::resourceToN3( NIE::url() ),
+                              Soprano::Node::resourceToN3( nieUrl ) );
+        Soprano::QueryResultIterator it = model()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+        if( it.next() ) {
+            const QUrl newUri = it["r"].uri();
+            kDebug() << uri << " --> " << newUri;
+            manualIdentification( uri, newUri );
+            return true;
+        }
+        
+        return false;
+    }
+    
     QString query = QString::fromLatin1("where { ?r ?p ?o. ");
     
     int num = 0;
@@ -127,6 +143,12 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
     QHash< KUrl, Soprano::Node >::const_iterator it = res.constBegin();
     for( ; it != res.constEnd(); it ++ ) {
         const QUrl & prop = it.key();
+        
+        // Special handling for rdf:type
+        if( prop == RDF::type() ) {
+            query += QString::fromLatin1(" ?r a %1 . ").arg( it.value().toN3() );
+            continue;
+        }
         
         if( !isIdentfyingProperty( prop ) ) {
             continue;
