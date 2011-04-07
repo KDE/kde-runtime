@@ -31,11 +31,13 @@
 #include <Soprano/NodeIterator>
 #include <Soprano/Vocabulary/RDFS>
 #include <Soprano/Vocabulary/RDF>
+#include <Nepomuk/Vocabulary/NIE>
 
 #include <nepomuk/syncresource.h>
 #include <KDebug>
 
 using namespace Soprano::Vocabulary;
+using namespace Nepomuk::Vocabulary;
 
 Nepomuk::ResourceIdentifier::ResourceIdentifier()
 {
@@ -87,6 +89,9 @@ bool Nepomuk::ResourceIdentifier::isIdentfyingProperty(const QUrl& uri)
     if( uri == NAO::created() || uri == NAO::creator() || uri == NAO::lastModified() 
         || uri == NAO::userVisible() )
         return false;
+    
+    if( uri == NIE::url() || uri == RDF::type() )
+        return true;
     
     // TODO: Hanlde nxx:FluxProperty and nxx:resourceRangePropWhichCanIdentified
     const QString query = QString::fromLatin1("ask { %1 %2 ?range . "
