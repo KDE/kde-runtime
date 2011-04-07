@@ -83,7 +83,8 @@ private Q_SLOTS:
     void testRemoveDataByApplication5();
     void testRemoveDataByApplication6();
 
-    void testStoreResources();
+    void testStoreResources_strigiCase();
+    void testStoreResources_graphRules();
     void testStoreResources_createResource();
     void testStoreResources_invalid_args();
     void testStoreResources_invalid_args_with_existing();
@@ -91,6 +92,7 @@ private Q_SLOTS:
     void testStoreResources_file2();
     void testStoreResources_file3();
     void testStoreResources_file4();
+    void testStoreResources_sameNieUrl();
     void testStoreResources_metadata();
     void testStoreResources_protectedTypes();
     void testStoreResources_superTypes();
