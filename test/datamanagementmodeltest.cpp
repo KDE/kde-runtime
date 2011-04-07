@@ -1967,93 +1967,98 @@ void DataManagementModelTest::testStoreResources()
     QVERIFY( !m_model->containsAnyStatement( QUrl("_:blah"), QUrl(), QUrl() ) );
 
     QVERIFY(!haveTrailingGraphs());
+}
 
+void DataManagementModelTest::testStoreResources_strigiCase()
+{
     //
-    // Test 2 -
     // This is for testing exactly how Strigi will use storeResources ie
     // have some blank nodes ( some of which may already exists ) and a
     // main resources which does not exist
     //
-    {
-        kDebug() << "Starting Strigi merge test";
 
-        QUrl graphUri("nepomuk:/ctx/afd"); // TODO: Actually Create one
-
-        Nepomuk::SimpleResource coldplay;
-        coldplay.addProperty( RDF::type(), NCO::Contact() );
-        coldplay.addProperty( NCO::fullname(), "Coldplay" );
-
-        // Push it into the model with a proper uri
-        coldplay.setUri( QUrl("nepomuk:/res/coldplay") );
-        QVERIFY( push( m_model, coldplay, graphUri ) == coldplay.properties().size() );
-
-        // Now keep it as a blank node
-        coldplay.setUri( QUrl("_:coldplay") );
-
-        Nepomuk::SimpleResource album;
-        album.setUri( QUrl("_:XandY") );
-        album.addProperty( RDF::type(), NMM::MusicAlbum() );
-        album.addProperty( NIE::title(), "X&Y" );
-
-        Nepomuk::SimpleResource res1;
-        res1.setUri( QUrl("nepomuk:/res/m/Res1") );
-        res1.addProperty( RDF::type(), NFO::FileDataObject() );
-        res1.addProperty( RDF::type(), NMM::MusicPiece() );
-        res1.addProperty( NFO::fileName(), "Yellow.mp3" );
-        res1.addProperty( NMM::performer(), QUrl("_:coldplay") );
-        res1.addProperty( NMM::musicAlbum(), QUrl("_:XandY") );
-        Nepomuk::SimpleResourceGraph resGraph;
-        resGraph << res1 << coldplay << album;
-
-        //
-        // Do the actual merging
-        //
-        kDebug() << "Perform the merge";
-        m_dmModel->storeResources( resGraph, "TestApp" );
-        QVERIFY( !m_dmModel->lastError() );
-        
-        QVERIFY( m_model->containsAnyStatement( res1.uri(), Soprano::Node(),
-                                                Soprano::Node() ) );
-        QVERIFY( m_model->containsAnyStatement( res1.uri(), NFO::fileName(),
-                                                Soprano::LiteralValue("Yellow.mp3") ) );
-        // Make sure we have the nao:created and nao:lastModified
-        QVERIFY( m_model->containsAnyStatement( res1.uri(), NAO::lastModified(),
-                                                Soprano::Node() ) );
-        QVERIFY( m_model->containsAnyStatement( res1.uri(), NAO::created(),
-                                                Soprano::Node() ) );
-        kDebug() << m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements();
-        // The +2 is because nao:created and nao:lastModified would have also been added
-        QCOMPARE( m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements().size(),
-                  res1.properties().size() + 2 );
-
-        QList< Node > objects = m_model->listStatements( res1.uri(), NMM::performer(), Soprano::Node() ).iterateObjects().allNodes();
-
-        QVERIFY( objects.size() == 1 );
-        QVERIFY( objects.first().isResource() );
-
-        QUrl coldplayUri = objects.first().uri();
-        QCOMPARE( coldplayUri, QUrl("nepomuk:/res/coldplay") );
-        QList< Soprano::Statement > stList = coldplay.toStatementList();
-        foreach( Soprano::Statement st, stList ) {
-            st.setSubject( coldplayUri );
-            QVERIFY( m_model->containsAnyStatement( st ) );
-        }
-
-        objects = m_model->listStatements( res1.uri(), NMM::musicAlbum(), Soprano::Node() ).iterateObjects().allNodes();
-
-        QVERIFY( objects.size() == 1 );
-        QVERIFY( objects.first().isResource() );
-
-        QUrl albumUri = objects.first().uri();
-        stList = album.toStatementList();
-        foreach( Soprano::Statement st, stList ) {
-            st.setSubject( albumUri );
-            QVERIFY( m_model->containsAnyStatement( st ) );
-        }
-
-        QVERIFY(!haveTrailingGraphs());
+    kDebug() << "Starting Strigi merge test";
+    
+    QUrl graphUri("nepomuk:/ctx/afd"); // TODO: Actually Create one
+    
+    Nepomuk::SimpleResource coldplay;
+    coldplay.addProperty( RDF::type(), NCO::Contact() );
+    coldplay.addProperty( NCO::fullname(), "Coldplay" );
+    
+    // Push it into the model with a proper uri
+    coldplay.setUri( QUrl("nepomuk:/res/coldplay") );
+    QVERIFY( push( m_model, coldplay, graphUri ) == coldplay.properties().size() );
+    
+    // Now keep it as a blank node
+    coldplay.setUri( QUrl("_:coldplay") );
+    
+    Nepomuk::SimpleResource album;
+    album.setUri( QUrl("_:XandY") );
+    album.addProperty( RDF::type(), NMM::MusicAlbum() );
+    album.addProperty( NIE::title(), "X&Y" );
+    
+    Nepomuk::SimpleResource res1;
+    res1.setUri( QUrl("nepomuk:/res/m/Res1") );
+    res1.addProperty( RDF::type(), NFO::FileDataObject() );
+    res1.addProperty( RDF::type(), NMM::MusicPiece() );
+    res1.addProperty( NFO::fileName(), "Yellow.mp3" );
+    res1.addProperty( NMM::performer(), QUrl("_:coldplay") );
+    res1.addProperty( NMM::musicAlbum(), QUrl("_:XandY") );
+    Nepomuk::SimpleResourceGraph resGraph;
+    resGraph << res1 << coldplay << album;
+    
+    //
+    // Do the actual merging
+    //
+    kDebug() << "Perform the merge";
+    m_dmModel->storeResources( resGraph, "TestApp" );
+    QVERIFY( !m_dmModel->lastError() );
+    
+    QVERIFY( m_model->containsAnyStatement( res1.uri(), Soprano::Node(),
+                                            Soprano::Node() ) );
+    QVERIFY( m_model->containsAnyStatement( res1.uri(), NFO::fileName(),
+                                            Soprano::LiteralValue("Yellow.mp3") ) );
+    // Make sure we have the nao:created and nao:lastModified
+    QVERIFY( m_model->containsAnyStatement( res1.uri(), NAO::lastModified(),
+                                            Soprano::Node() ) );
+    QVERIFY( m_model->containsAnyStatement( res1.uri(), NAO::created(),
+                                            Soprano::Node() ) );
+    kDebug() << m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements();
+    // The +2 is because nao:created and nao:lastModified would have also been added
+    QCOMPARE( m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements().size(),
+                res1.properties().size() + 2 );
+    
+    QList< Node > objects = m_model->listStatements( res1.uri(), NMM::performer(), Soprano::Node() ).iterateObjects().allNodes();
+    
+    QVERIFY( objects.size() == 1 );
+    QVERIFY( objects.first().isResource() );
+    
+    QUrl coldplayUri = objects.first().uri();
+    QCOMPARE( coldplayUri, QUrl("nepomuk:/res/coldplay") );
+    QList< Soprano::Statement > stList = coldplay.toStatementList();
+    foreach( Soprano::Statement st, stList ) {
+        st.setSubject( coldplayUri );
+        QVERIFY( m_model->containsAnyStatement( st ) );
     }
+    
+    objects = m_model->listStatements( res1.uri(), NMM::musicAlbum(), Soprano::Node() ).iterateObjects().allNodes();
+    
+    QVERIFY( objects.size() == 1 );
+    QVERIFY( objects.first().isResource() );
+    
+    QUrl albumUri = objects.first().uri();
+    stList = album.toStatementList();
+    foreach( Soprano::Statement st, stList ) {
+        st.setSubject( albumUri );
+        QVERIFY( m_model->containsAnyStatement( st ) );
+    }
+    
+    QVERIFY(!haveTrailingGraphs());
+}
 
+
+void DataManagementModelTest::testStoreResources_graphRules()
+{
     //
     // Test 3 -
     // Test the graph rules. If a resource exists in a nrl:DiscardableInstanceBase
@@ -2135,6 +2140,7 @@ void DataManagementModelTest::testStoreResources()
         QVERIFY(!haveTrailingGraphs());
     }
 }
+
 
 void DataManagementModelTest::testStoreResources_createResource()
 {

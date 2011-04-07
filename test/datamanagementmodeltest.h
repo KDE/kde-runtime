@@ -84,6 +84,8 @@ private Q_SLOTS:
     void testRemoveDataByApplication6();
 
     void testStoreResources();
+    void testStoreResources_strigiCase();
+    void testStoreResources_graphRules();
     void testStoreResources_createResource();
     void testStoreResources_invalid_args();
     void testStoreResources_invalid_args_with_existing();
