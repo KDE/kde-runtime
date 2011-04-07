@@ -119,6 +119,8 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NMM::episodeNumber(), RDFS::range(), XMLSchema::xsdInt(), graph );
     m_model->addStatement( NIE::description(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NIE::description(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NMM::synopsis(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NMM::synopsis(), RDFS::range(), XMLSchema::string(), graph );
     m_model->addStatement( NIE::title(), RDFS::subClassOf(), QUrl("http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifyingProperty"), graph );
 
     // rebuild the internals of the data management model
@@ -2913,6 +2915,7 @@ void DataManagementModelTest::testStoreResources_realLife()
     m_model->addStatement(fileResUri, NIE::title(), Soprano::LiteralValue(episodeTitle), dmsG1);
     m_model->addStatement(fileResUri, NAO::lastModified(), Soprano::LiteralValue::fromString("2011-03-14T10:06:38.317Z", XMLSchema::dateTime()), dmsG1);
     m_model->addStatement(fileResUri, NMM::synopsis(), Soprano::LiteralValue(episodeOverview), dmsG1);
+    m_model->addStatement(fileResUri, NMM::series(), tvSeriesUri, dmsG1);
     m_model->addStatement(fileResUri, NMM::season(), Soprano::LiteralValue::fromString("1", XMLSchema::xsdInt()), dmsG1);
     m_model->addStatement(fileResUri, NMM::episodeNumber(), Soprano::LiteralValue::fromString("1", XMLSchema::xsdInt()), dmsG1);
     m_model->addStatement(fileResUri, RDF::type(), NIE::InformationElement(), dmsG2);
@@ -2989,7 +2992,6 @@ void DataManagementModelTest::testStoreResources_realLife()
 
     m_dmModel->storeResources(graph, QLatin1String("nepomuktvnamer"));
     QVERIFY(!m_dmModel->lastError());
-
 
     // now test the data - nothing should have changed at all
     // no data should have been changed
