@@ -15,6 +15,7 @@
 #include "repository.h"
 #include "modelcopyjob.h"
 #include "crappyinferencer2.h"
+#include "removablemediamodel.h"
 
 #include <Soprano/Backend>
 #include <Soprano/PluginManager>
@@ -53,6 +54,7 @@ Nepomuk::Repository::Repository( const QString& name )
       m_state( CLOSED ),
       m_model( 0 ),
       m_inferencer( 0 ),
+      m_removableStorageModel( 0 ),
       m_backend( 0 ),
       m_modelCopyJob( 0 ),
       m_oldStorageBackend( 0 )
@@ -73,6 +75,9 @@ void Nepomuk::Repository::close()
 
     delete m_inferencer;
     m_inferencer = 0;
+
+    delete m_removableStorageModel;
+    m_removableStorageModel = 0;
 
     delete m_modelCopyJob;
     m_modelCopyJob = 0;
@@ -166,16 +171,22 @@ void Nepomuk::Repository::open()
 
     kDebug() << "Successfully created new model for repository" << name();
 
-    // create a SignalCacheModel to make sure no client slows us down by listening to the stupid signals
-    // =================================
-    Soprano::Util::SignalCacheModel* scm = new Soprano::Util::SignalCacheModel( m_model );
-    scm->setParent(this); // memory management
-    setParentModel( scm );
 
     // create the crappy inference model which handles rdfs:subClassOf only -> we only use this to improve performance of ResourceTypeTerms
     // =================================
-    m_inferencer = new CrappyInferencer2( scm );
+    m_inferencer = new CrappyInferencer2( m_model );
     setParentModel(m_inferencer);
+
+    // create the RemovableMediaModel which does the transparent handling of removable mounts
+    // =================================
+    m_removableStorageModel = new Nepomuk::RemovableMediaModel(m_inferencer);
+    setParentModel(m_removableStorageModel);
+
+    // create a SignalCacheModel to make sure no client slows us down by listening to the stupid signals
+    // =================================
+    Soprano::Util::SignalCacheModel* scm = new Soprano::Util::SignalCacheModel( m_removableStorageModel );
+    scm->setParent(this); // memory management
+    setParentModel( scm );
 
     // check if we have to convert
     // =================================
