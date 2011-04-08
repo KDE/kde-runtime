@@ -225,7 +225,7 @@ QString Nepomuk::StrigiService::currentFolder() const
 }
 
 
-void Nepomuk::StrigiService::updateFolder(const QString& path, bool forced)
+void Nepomuk::StrigiService::updateFolder(const QString& path, bool recursive, bool forced)
 {
     kDebug() << "Called with path: " << path;
     QFileInfo info( path );
@@ -237,8 +237,7 @@ void Nepomuk::StrigiService::updateFolder(const QString& path, bool forced)
             dirPath = info.absolutePath();
 
         if ( StrigiServiceConfig::self()->shouldFolderBeIndexed( dirPath ) ) {
-            kDebug() << "Updating : " << dirPath;
-            m_indexScheduler->updateDir( dirPath, forced );
+            indexFolder(path, recursive, forced);
         }
     }
 }
@@ -255,9 +254,8 @@ void Nepomuk::StrigiService::indexFile(const QString& path)
     m_indexScheduler->analyzeFile( path );
 }
 
-//FIXME: Code duplication in updateFolder, avoid if possible. Maybe with an extra
-//       default parameter
-void Nepomuk::StrigiService::indexFolder(const QString& path, bool forced)
+
+void Nepomuk::StrigiService::indexFolder(const QString& path, bool recursive, bool forced)
 {
     QFileInfo info( path );
     if ( info.exists() ) {
@@ -267,7 +265,15 @@ void Nepomuk::StrigiService::indexFolder(const QString& path, bool forced)
         else
             dirPath = info.absolutePath();
 
-        m_indexScheduler->updateDir( dirPath, forced );
+        kDebug() << "Updating : " << dirPath;
+
+        Nepomuk::IndexScheduler::UpdateDirFlags flags;
+        if(recursive)
+            flags |= Nepomuk::IndexScheduler::UpdateRecursive;
+        if(forced)
+            flags |= Nepomuk::IndexScheduler::ForceUpdate;
+
+        m_indexScheduler->updateDir( dirPath, flags );
     }
 }
 
