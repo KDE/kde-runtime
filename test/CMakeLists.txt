@@ -51,21 +51,6 @@ target_link_libraries(datamanagementadaptortest
 )
 
 
-kde4_add_unit_test(removablemediamodeltest
-  removablemediamodeltest.cpp
-  ../removablemediamodel.cpp
-)
-add_definitions(-DFAKE_COMPUTER_XML="\\"${CMAKE_CURRENT_SOURCE_DIR}/solid/fakecomputer.xml\\"")
-
-target_link_libraries(removablemediamodeltest
-  ${QT_QTTEST_LIBRARY}
-  ${SOPRANO_LIBRARIES}
-  ${KDE4_KDECORE_LIBS}
-  ${KDE4_SOLID_LIBS}
-  ${NEPOMUK_LIBRARIES}
-)
-
-
 configure_file(nepomuk_dms_test_config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/nepomuk_dms_test_config.h)
 
 kde4_add_executable(fakedms
@@ -74,7 +59,6 @@ kde4_add_executable(fakedms
   ../datamanagementmodel.cpp
   ../datamanagementadaptor.cpp
   ../datamanagementcommand.cpp
-  ../removablemediamodel.cpp
   ../resourcemerger.cpp
   ../resourceidentifier.cpp
   ../transactionmodel.cpp)
