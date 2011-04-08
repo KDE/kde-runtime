@@ -485,7 +485,6 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
                 // look for the end of the file URL
                 int pos = query.indexOf('>', i+6);
                 if(pos > i+6) {
-                    kDebug() << "Found resource at" << i;
                     // convert the file URL into a filex URL (if necessary)
                     const KUrl fileUrl = query.mid(i+1, pos-i-1);
                     newQuery += convertFileUrl(fileUrl).toN3();
@@ -510,7 +509,6 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
                     query[i+2].toLower() == 'g' &&
                     query[i+3].toLower() == 'e' &&
                     query[i+4].toLower() == 'x') {
-                kDebug() << "Found regex filter at" << i;
                 inRegEx = true;
             }
         }
@@ -547,7 +545,6 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
                 }
                 int pos = query.indexOf(quoteEnd, i+6);
                 if(pos > 0) {
-                    kDebug() << "Found file:/ regex filter at" << i;
                     // convert the file URL into a filex URL (if necessary)
                     const KUrl fileUrl = query.mid(i, pos-i);
                     newQuery += KUrl(convertFileUrl(fileUrl).uri()).url();
