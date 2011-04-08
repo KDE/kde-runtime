@@ -102,6 +102,8 @@ public:
         // resources that do not have visibility set are treated as invisible, thus there is no need
         // to write their visibility value
         Q_FOREACH(const QUrl& type, m_model->d->m_typeVisibilityTree->visibleTypes()) {
+            if(m_canceled)
+                break;
             const QString query = QString::fromLatin1("insert into graph %1 { ?r %2 1 . } where { "
                                                       "graph ?g { ?r a %3 . } . "
                                                       "FILTER(?g!=%1) . "
@@ -122,7 +124,7 @@ public:
                                                                 .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::Class()),
                                                                      Soprano::Node::resourceToN3(m_model->crappyInferenceContext())),
                                                                 Soprano::Query::QueryLanguageSparql);
-        while(it.next()) {
+        while(!m_canceled && it.next()) {
             const QUrl type = it["t"].uri();
             const QSet<QUrl> superClasses = m_model->d->m_superClasses[type];
             QString superTypeTerms;
