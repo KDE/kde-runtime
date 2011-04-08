@@ -1,18 +1,11 @@
 project(nepomukdatamanagement)
 
-set(KDE_MIN_VERSION "4.5.80")  # for the < 4.2 macro
-find_package(KDE4 4.5.80 REQUIRED)
-find_package(Nepomuk REQUIRED)
-
-include(KDE4Defaults)
-include(SopranoAddOntology)
-
 include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
   ${SOPRANO_INCLUDE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
-  ${CMAKE_SOURCE_DIR}/lib
+  ${CMAKE_CURRENT_SOURCE_DIR}/lib
 )
 
 set( datamanagement_BIN_SRCS
