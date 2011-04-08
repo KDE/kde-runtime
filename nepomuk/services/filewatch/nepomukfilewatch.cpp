@@ -34,6 +34,7 @@
 #include <KDebug>
 #include <KUrl>
 #include <KPluginFactory>
+#include <KConfigGroup>
 
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Vocabulary/NIE>
@@ -370,6 +371,21 @@ void Nepomuk::FileWatch::slotDeviceAccessibilityChanged(bool accessible, const Q
         if(Solid::StorageAccess* sa = dev.as<Solid::StorageAccess>()) {
             kDebug() << "Installing watch for removable storage at mount point" << sa->filePath();
             watchFolder(sa->filePath());
+
+            // TODO: start an InvalidFileResourceCleaner thread on this path
+
+            //
+            // tell Strigi to update the newly mounted device
+            // TODO: create a better config for this: let the user decide on a case-by-case thingi
+            //       very much like KDE's auto-mounting handling. (maybe both KCMs can be combined
+            //       into one removable media KCM)
+            //
+            if( KConfig( "nepomukstrigirc" ).group( "General" ).readEntry( "index newly mounted", false ) ) {
+                org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
+                if ( strigi.isValid() ) {
+                    strigi.indexFolder( sa->filePath(), false );
+                }
+            }
         }
     }
 }
