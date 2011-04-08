@@ -286,7 +286,7 @@ void Nepomuk::RemovableStorageService::slotAccessibilityChanged( bool accessible
                 org::kde::nepomuk::Strigi( "org.kde.nepomuk.services.nepomukstrigiservice",
                                            "/nepomukstrigiservice",
                                            QDBusConnection::sessionBus() )
-                    .indexFolder( entry.m_lastMountPath, false );
+                    .indexFolder( entry.m_lastMountPath, true /* recursive */, false /* no force */ );
             }
         }
 

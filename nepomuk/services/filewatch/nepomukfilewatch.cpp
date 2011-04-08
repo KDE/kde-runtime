@@ -249,7 +249,7 @@ void Nepomuk::FileWatch::updateFolderViaStrigi( const QString& path )
         //
         org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
         if ( strigi.isValid() ) {
-            strigi.updateFolder( path, false /* no forced update */ );
+            strigi.updateFolder( path, false /* non-recursive */, false /* no forced update */ );
         }
     }
 }
@@ -296,6 +296,5 @@ void Nepomuk::FileWatch::updateIndexedFoldersWatches()
     }
 #endif
 }
-
 
 #include "nepomukfilewatch.moc"
