@@ -472,10 +472,10 @@ bool Nepomuk::IndexScheduler::waitForContinue( bool disableDelay )
 }
 
 
-void Nepomuk::IndexScheduler::updateDir( const QString& path, bool forceUpdate )
+void Nepomuk::IndexScheduler::updateDir( const QString& path, UpdateDirFlags flags )
 {
     QMutexLocker lock( &m_dirsToUpdateMutex );
-    m_dirsToUpdate.prependDir( path, UpdateDirFlags( forceUpdate ? ForceUpdate : NoUpdateFlags ) );
+    m_dirsToUpdate.prependDir( path, flags & ~AutoUpdateFolder );
     m_dirsToUpdateWc.wakeAll();
 }
 

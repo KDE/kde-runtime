@@ -78,7 +78,7 @@ namespace Nepomuk {
         /**
          * Update folder \a path if it is configured to be indexed.
          */
-        void updateFolder( const QString& path, bool forced );
+        void updateFolder( const QString& path, bool recursive, bool forced );
 
         /**
          * Update all folders configured to be indexed.
@@ -88,7 +88,7 @@ namespace Nepomuk {
         /**
          * Index a folder independent of its configuration status.
          */
-        void indexFolder( const QString& path, bool forced );
+        void indexFolder( const QString& path, bool recursive, bool forced );
 
         /**
          * Index a specific file

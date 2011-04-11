@@ -75,6 +75,24 @@ void Nepomuk::OntologyLoader::Private::updateOntology( const QString& filename )
     // only update if the modification date of the ontology file changed (not the desktop file).
     // ------------------------------------
     QFileInfo ontoFileInf( df.readEntry( QLatin1String("Path") ) );
+
+#ifdef Q_OS_WIN
+    if ( ! ontoFileInf.exists() ) {
+        // On Windows the Path setting is always the install directory which is not
+        // something like /usr/share/ontologies but something like
+        // r:\kderoot\build\shared-desktop-ontologies-mingw-i686\image\shared\ontologies
+        // so if you did not compile shared-desktop-ontologies yourself the Path
+        // is useless.
+        // We expect a default ontologies installation where the .ontology files are placed
+        // in the same directory as the .trig files.
+        QString alt_filename = filename;
+        QFileInfo ontoAlternative( alt_filename.replace( QLatin1String(".ontology"),
+                                                         QLatin1String(".trig") ) );
+        ontoFileInf = ontoAlternative;
+        kDebug() << "Ontology path: " << filename << " does not exist. Using "
+                 << alt_filename << " instead";
+    }
+#endif
     QString ontoNamespace = df.readEntry( QLatin1String("Namespace") );
     QDateTime ontoLastModified = model->ontoModificationDate( ontoNamespace );
     bool update = false;

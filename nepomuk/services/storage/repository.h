@@ -32,7 +32,7 @@ class KJob;
 class CrappyInferencer2;
 
 namespace Nepomuk {
-
+    class RemovableMediaModel;
     class ModelCopyJob;
 
     /**
@@ -43,6 +43,10 @@ namespace Nepomuk {
      * uses a Soprano::Utils::SignalCacheModel to compact the several statementsAdded()
      * and statementsRemoved() signals, and uses CrappyInferencer2 to keep rdfs:subClassOf
      * and nao:userVisible inference up-to-date.
+     *
+     * In addition it uses RemovableMediaModel to automatically convert the URLs of files
+     * on USB keys, network shares, and so on from and into mount-point independant URLs
+     * like nfs://<HOST>/<HOST-PATH>/local/path.ext.
      *
      * On construction it checks for and optionally performs conversion from an old repository
      * type (pre-Virtuoso times) and runs CrappyInferencer2::updateAllResources() which is
@@ -93,6 +97,7 @@ namespace Nepomuk {
 
         Soprano::Model* m_model;
         CrappyInferencer2* m_inferencer;
+        RemovableMediaModel* m_removableStorageModel;
         const Soprano::Backend* m_backend;
 
         // only used during opening
