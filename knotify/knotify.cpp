@@ -280,8 +280,10 @@ int KNotifyAdaptor::event(const QString &event, const QString &fromApp, const QV
 		QString s=v.toString();
 		if(context_key.isEmpty())
 			context_key=s;
-		else
+		else {
 			contextlist << qMakePair(context_key , s);
+			context_key = "";
+		}
 	}
 
 	return static_cast<KNotify *>(parent())->event(event, fromApp, contextlist, title, text, image, actions, timeout, WId(winId));
@@ -296,8 +298,10 @@ void KNotifyAdaptor::reemit(int id, const QVariantList& contexts)
 		QString s=v.toString();
 		if(context_key.isEmpty())
 			context_key=s;
-		else
+		else {
 			contextlist << qMakePair(context_key , s);
+			context_key = "";
+		}
 	}
 	static_cast<KNotify *>(parent())->reemit(id, contextlist);
 }
