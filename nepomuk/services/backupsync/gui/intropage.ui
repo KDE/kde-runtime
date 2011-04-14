@@ -41,7 +41,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string extracomment="@info">Create a backup of the current Nepomuk database including all manually created data. This backup can later be restored by choosing the &lt;interface&gt;Restore&lt;/interface&gt; option below.</string>
+        <string comment="@info">Create a backup of the current Nepomuk database including all manually created data. This backup can later be restored by choosing the &lt;interface&gt;Restore&lt;/interface&gt; option below.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -117,7 +117,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string extracomment="@info">Restore an automated Nepomuk system backup or a manual backup created with the &lt;interface&gt;Backup&lt;/interface&gt; tool above.</string>
+        <string comment="@info">Restore an automated Nepomuk system backup or a manual backup created with the &lt;interface&gt;Backup&lt;/interface&gt; tool above.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
