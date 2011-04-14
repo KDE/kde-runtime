@@ -428,7 +428,7 @@
           <item>
            <widget class="QLabel" name="label">
             <property name="text">
-             <string extracomment="@info">Nepomuk can perform regular automatic backups of all data that could not be restored otherwise. This includes manually created tags, ratings, but also statistical data.</string>
+             <string comment="@info">Nepomuk can perform regular automatic backups of all data that could not be restored otherwise. This includes manually created tags, ratings, but also statistical data.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>

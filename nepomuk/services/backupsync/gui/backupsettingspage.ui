@@ -23,7 +23,7 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string extracomment="@info">Please choose a file for the backup. Make sure that enough hard disk space is available.</string>
+         <string comment="@info">Please choose a file for the backup. Make sure that enough hard disk space is available.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
