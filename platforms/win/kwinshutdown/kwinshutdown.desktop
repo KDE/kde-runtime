@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=KDE Shutdown
 Name[ca]=Aturada del KDE
+Name[ca@valencia]=Aturada del KDE
 Name[cs]=Vypínání KDE
 Name[da]=Nedlukning af KDE 
 Name[es]=Apagado de KDE
@@ -9,6 +10,7 @@ Name[fr]=Arrêt de KDE
 Name[hr]=Isključivanje KDE-a
 Name[hu]=KDE Shutdown
 Name[ia]=Shutdown (Clausura) de KDE
+Name[ja]=KDE シャットダウン
 Name[kk]=KDE доғарғышы
 Name[ko]=KDE 종료
 Name[nb]=KDE avslutting
@@ -29,6 +31,7 @@ Name[x-test]=xxKDE Shutdownxx
 Name[zh_TW]=關閉 KDE
 Comment=kill running KDE applications and processes
 Comment[ca]=Mata totes les aplicacions i processos en execució del KDE
+Comment[ca@valencia]=Mata totes les aplicacions i processos en execució del KDE
 Comment[cs]=zabít bežící aplikace a procesy KDE
 Comment[da]=Dræb kørende KDE-programmer og -processer
 Comment[es]=Matar las aplicaciones y procesos de KDE en ejecución
