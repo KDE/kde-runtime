@@ -279,8 +279,7 @@ DevicePreference::DevicePreference(QWidget *parent)
 DevicePreference::~DevicePreference()
 {
     // Ensure that the video widget is destroyed, if it remains active
-    if (m_videoWidget)
-        delete m_videoWidget;
+    delete m_videoWidget;
 }
 
 void DevicePreference::updateDeviceList()
@@ -907,20 +906,12 @@ void DevicePreference::on_testPlaybackButton_toggled(bool down)
 
         // Shouldn't happen, but better to be on the safe side
         if (m_testingType != InvalidDevice) {
-            if (m_media) {
-                delete m_media;
-                m_media = NULL;
-            }
-
-            if (m_audioOutput) {
-                delete m_audioOutput;
-                m_audioOutput = NULL;
-            }
-
-            if (m_videoWidget) {
-                delete m_videoWidget;
-                m_videoWidget = NULL;
-            }
+            delete m_media;
+            m_media = NULL;
+            delete m_audioOutput;
+            m_audioOutput = NULL;
+            delete m_videoWidget;
+            m_videoWidget = NULL;
         }
 
         // Setup the Phonon objects according to the testing type
