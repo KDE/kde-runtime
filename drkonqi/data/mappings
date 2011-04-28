@@ -105,6 +105,11 @@ kjscmd=konqueror|kjs
 nspluginscan=konqueror|nsplugins
 nspluginviewer=konqueror|nspluginviewer
 
+# KDE Telepathy
+telepathy-kde-contactlist=telepathy|contactlist
+telepathy-kde-text-ui=telepathy|text-chat-ui
+telepathy-kde-call-ui=telepathy|call-ui
+
 #Other KDE Applications and Technologies
 ksysguardd=ksysguard|ksysguardd
 kmixctrl=kmix|general
