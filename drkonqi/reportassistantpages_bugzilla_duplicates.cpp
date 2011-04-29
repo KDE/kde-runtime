@@ -658,8 +658,17 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                 || report.bugStatus() == QLatin1String("CLOSED")) {
                 QString customResolutionString;
                 if (report.resolution() == QLatin1String("FIXED")) {
-                    customResolutionString = i18nc("@info bug resolution", "Fixed");
-                    m_closedStateString = i18nc("@info bug resolution", "the bug was fixed by KDE developers");
+                    if (!report.versionFixedIn().isEmpty()) {
+                        customResolutionString = i18nc("@info bug resolution, fixed in version",
+                                                       "Fixed in version \"%1\"",
+                                                       report.versionFixedIn());
+                        m_closedStateString = i18nc("@info bug resolution, fixed by kde devs in version",
+                                                    "the bug was fixed by KDE developers in version \"%1\"",
+                                                    report.versionFixedIn());
+                    } else {
+                        customResolutionString = i18nc("@info bug resolution", "Fixed");
+                        m_closedStateString = i18nc("@info bug resolution", "the bug was fixed by KDE developers");
+                    }
                 } else if (report.resolution() == QLatin1String("WORKSFORME")) {
                     customResolutionString = i18nc("@info bug resolution", "Non-reproducible");
                 } else if (report.resolution() == QLatin1String("DUPLICATE")) {
