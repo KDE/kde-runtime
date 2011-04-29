@@ -1,6 +1,6 @@
 /*******************************************************************
 * bugzillalib.cpp
-* Copyright  2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright  2009, 2011    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * //Http-post file upload (bz attachments)
 * Copyright (C) 2007 by Artur Duque de Souza <morpheuz@gmail.com>
@@ -257,12 +257,12 @@ void BugzillaManager::loginJobFinished(KJob* job)
         }
 
         if (error) {
-            emit loginError(i18nc("@info","Unknown response from the server"));
+            emit loginError(i18nc("@info","Unknown response from the server"), response);
         } else {
             emit loginFinished(m_logged);
         }
     } else {
-        emit loginError(job->errorString());
+        emit loginError(job->errorString(), QString());
     }
 }
 
@@ -337,20 +337,20 @@ void BugzillaManager::sendReportJobFinished(KJob * job)
                             response.contains(illegalPlatformMessage2)) {
                     emit sendReportErrorInvalidValues();
                     return;
-                } else {
-                    error = i18nc("@info","Unknown error");
                 }
             }
 
             if (error.contains(QLatin1String("does not exist or you aren't authorized to"))
                 || error.contains(QLatin1String("There is no component named 'general'"))) {
                 emit sendReportErrorInvalidValues();
+            } else if (!error.isEmpty()){
+                emit sendReportError(error, QString());
             } else {
-                emit sendReportError(error);
+                emit sendReportError(i18nc("@info","Unknown error"), response);
             }
         }
     } else {
-        emit sendReportError(job->errorString());
+        emit sendReportError(job->errorString(), QString());
     }
 
 }
@@ -373,10 +373,10 @@ void BugzillaManager::attachToReportJobFinished(KJob * job)
 
             QString error = i18nc("@info", "Error while attaching the data to the bug report: %1", 
                                   errorMessage);
-            emit attachToReportError(error);
+            emit attachToReportError(error, response);
         }
     } else {
-        emit attachToReportError(job->errorString());
+        emit attachToReportError(job->errorString(), QString());
     }
 }
 
@@ -411,11 +411,11 @@ void BugzillaManager::addCommentSubJobFinished(KJob * job)
             connect(addCommentJob, SIGNAL(finished(KJob*)) , this, SLOT(addCommentJobFinished(KJob*)));
             addCommentJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
         } else {
-            emit addCommentError(i18nc("@info","Missing bug ID or comment in the query. Unknown error"));
+            emit addCommentError(i18nc("@info","Missing bug ID or comment in the query. Unknown error"), response);
         }
 
     } else {
-        emit addCommentError(job->errorString());
+        emit addCommentError(job->errorString(), QString());
     }
 }
 
@@ -434,12 +434,18 @@ void BugzillaManager::addCommentJobFinished(KJob * job)
         } else {
             QString errorMessage = getErrorMessage(response);
 
-            QString error = i18nc("@info", "Error while adding a new comment into the bug report: %1", 
+            if (!errorMessage.isEmpty()) {
+                QString error = i18nc("@info", "Error while adding a new comment into the bug report: %1",
                                   errorMessage);
-            emit addCommentError(error);
+                emit addCommentError(error, QString());
+            } else {
+                QString error = i18nc("@info", "Unknown error while adding a new comment into the bug report");
+                emit addCommentError(error, response);
+            }
+
         }
     } else {
-        emit addCommentError(job->errorString());
+        emit addCommentError(job->errorString(), QString());
     }  
 }
 
@@ -469,11 +475,11 @@ void BugzillaManager::addMeToCCSubJobFinished(KJob * job)
             addCCJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
             connect(addCCJob, SIGNAL(finished(KJob*)) , this, SLOT(addMeToCCJobFinished(KJob*)));
         } else {
-            emit addMeToCCError(i18nc("@info","Missing bug ID in the query. Unknown error"));
+            emit addMeToCCError(i18nc("@info","Missing bug ID in the query. Unknown error"), response);
         }
 
     } else {
-        emit addMeToCCError(job->errorString());
+        emit addMeToCCError(job->errorString(), QString());
     }
 }
 
@@ -495,10 +501,10 @@ void BugzillaManager::addMeToCCJobFinished(KJob * job)
             QString error = i18nc("@info", "Error while adding yourself to the CC list: %1", 
                                   errorMessage);
 
-            emit addMeToCCError(error);
+            emit addMeToCCError(error, response);
         }
     } else {
-        emit addMeToCCError(job->errorString());
+        emit addMeToCCError(job->errorString(), QString());
     }
 }
 

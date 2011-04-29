@@ -1,6 +1,6 @@
 /*******************************************************************
 * reportinterface.h
-* Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009, 2011    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 * Copyright 2009    George Kiagiadakis <gkiagia@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or
@@ -95,7 +95,7 @@ private Q_SLOTS:
 
 Q_SIGNALS:
     void reportSent(int);
-    void sendReportError(const QString &);
+    void sendReportError(const QString &, const QString &);
 
 private:
     //Information the user can provide
