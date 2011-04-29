@@ -424,6 +424,8 @@ void BugzillaInformationPage::aboutToShow()
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Pardus"), "Pardus Packages");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Chakra"), "Chakra");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Archlinux"), "Archlinux Packages");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "FreeBSD (Ports)"), "FreeBSD Ports");
