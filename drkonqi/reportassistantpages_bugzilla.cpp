@@ -515,8 +515,22 @@ bool BugzillaInformationPage::showNextPage()
         if (detailsShort) {
             //The user input is less than we want.... encourage to write more
             QString message = i18nc("@info","The description about the crash details does not provide "
-                                        "enough information.");
-            message += ' ' + i18nc("@info","If you cannot provide enough information, your report "
+                                        "enough information yet.<br /><br />");
+
+            message += ' ' + i18nc("@info","The amount of required information is proportional to "
+                                        "the quality of the other information like the backtrace "
+                                        "or the reproducibility rate."
+                                        "<br /><br />");
+
+            if (reportInterface()->userCanProvideActionsAppDesktop()
+                || reportInterface()->userCanProvideUnusualBehavior()
+                || reportInterface()->userCanProvideApplicationConfigDetails()) {
+                message += ' ' + i18nc("@info","Previously, you told DrKonqi that you could provide some "
+                                        "contextual information. Try writing more details about your situation. "
+                                        "(even little ones could help us.)<br /><br />");
+            }
+
+            message += ' ' + i18nc("@info","If you cannot provide more information, your report "
                                     "will probably waste developers' time. Can you tell us more?");
 
             KGuiItem yesItem = KStandardGuiItem::yes();
