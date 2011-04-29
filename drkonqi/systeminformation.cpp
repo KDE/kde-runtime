@@ -78,6 +78,8 @@ void SystemInformation::lsbReleaseFinished()
         setBugzillaPlatform(QLatin1String("RedHat RPMs"));
     } else if ( m_lsbRelease.contains("mandriva",Qt::CaseInsensitive) ) {
         setBugzillaPlatform(QLatin1String("Mandriva RPMs"));
+    } else if ( m_lsbRelease.contains("mageia",Qt::CaseInsensitive) ) {
+        setBugzillaPlatform(QLatin1String("Mageia RPMs"));
     } else if ( m_lsbRelease.contains("slack",Qt::CaseInsensitive) ) {
         setBugzillaPlatform(QLatin1String("Slackware Packages"));
     } else if ( m_lsbRelease.contains("pardus",Qt::CaseInsensitive) ) {

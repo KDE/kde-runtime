@@ -409,6 +409,8 @@ void BugzillaInformationPage::aboutToShow()
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Mandriva"), "Mandriva RPMs");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Mageia"), "Mageia RPMs");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Slackware"), "Slackware Packages");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "SuSE/OpenSUSE"), "openSUSE RPMs");
