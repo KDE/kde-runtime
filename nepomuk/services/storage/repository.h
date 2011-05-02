@@ -33,6 +33,7 @@ class CrappyInferencer2;
 
 namespace Nepomuk {
     class RemovableMediaModel;
+    class ResourceWatcherModel;
     class ModelCopyJob;
 
     /**
@@ -98,6 +99,8 @@ namespace Nepomuk {
         Soprano::Model* m_model;
         CrappyInferencer2* m_inferencer;
         RemovableMediaModel* m_removableStorageModel;
+        ResourceWatcherModel* m_resourceWatcherModel;
+        
         const Soprano::Backend* m_backend;
 
         // only used during opening

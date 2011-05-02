@@ -20,6 +20,10 @@ set(storage_SRCS
   crappyinferencer2.cpp
   removablemediamodel.cpp
   typevisibilitytree.cpp
+  # Resource watching
+  resourcewatcher.cpp
+  resourcewatchermodel.cpp
+  resourcewatcherconnection.cpp
   )
 
 soprano_add_ontology(storage_SRCS

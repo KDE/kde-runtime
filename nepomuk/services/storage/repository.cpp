@@ -16,6 +16,7 @@
 #include "modelcopyjob.h"
 #include "crappyinferencer2.h"
 #include "removablemediamodel.h"
+#include "resourcewatchermodel.h"
 
 #include <Soprano/Backend>
 #include <Soprano/PluginManager>
@@ -55,6 +56,7 @@ Nepomuk::Repository::Repository( const QString& name )
       m_model( 0 ),
       m_inferencer( 0 ),
       m_removableStorageModel( 0 ),
+      m_resourceWatcherModel( 0 ),
       m_backend( 0 ),
       m_modelCopyJob( 0 ),
       m_oldStorageBackend( 0 )
@@ -79,6 +81,9 @@ void Nepomuk::Repository::close()
     delete m_removableStorageModel;
     m_removableStorageModel = 0;
 
+    delete m_resourceWatcherModel;
+    m_resourceWatcherModel = 0;
+    
     delete m_modelCopyJob;
     m_modelCopyJob = 0;
 
@@ -171,12 +176,16 @@ void Nepomuk::Repository::open()
 
     kDebug() << "Successfully created new model for repository" << name();
 
+    // Create the ResourceWatcher model which handles resource change monitoring
+    // =================================
+    m_resourceWatcherModel = new Nepomuk::ResourceWatcherModel( m_model );
+    setParentModel( m_resourceWatcherModel );
 
     // create the crappy inference model which handles rdfs:subClassOf only -> we only use this to improve performance of ResourceTypeTerms
     // =================================
-    m_inferencer = new CrappyInferencer2( m_model );
+    m_inferencer = new CrappyInferencer2( m_resourceWatcherModel );
     setParentModel(m_inferencer);
-
+    
     // create the RemovableMediaModel which does the transparent handling of removable mounts
     // =================================
     m_removableStorageModel = new Nepomuk::RemovableMediaModel(m_inferencer);
