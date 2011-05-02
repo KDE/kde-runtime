@@ -28,6 +28,9 @@ set(storage_SRCS
   classandpropertytree.cpp
   resourcemerger.cpp
   resourceidentifier.cpp
+  resourcewatcher.h
+  resourcewatchermodel.cpp
+  resourcewatcherconnection.cpp
   )
 
 soprano_add_ontology(storage_SRCS
