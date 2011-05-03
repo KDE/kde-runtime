@@ -101,12 +101,14 @@ namespace {
     {
         Q_UNUSED( flags );
 
-        //Only watch the strigi index folders for file creation.
+        //Only watch the strigi index folders for file creation and change.
         if( Nepomuk::StrigiServiceConfig::self()->shouldFolderBeIndexed( path ) ) {
             modes |= KInotify::EventCreate;
+            modes |= KInotify::EventModify;
         }
         else {
             modes &= (~KInotify::EventCreate);
+            modes &= (~KInotify::EventModify);
         }
 
         return true;
@@ -190,7 +192,7 @@ void Nepomuk::FileWatch::watchFolder( const QString& path )
 #ifdef BUILD_KINOTIFY
     if ( m_dirWatch && !m_dirWatch->watchingPath( path ) )
         m_dirWatch->addWatch( path,
-                              KInotify::WatchEvents( KInotify::EventMove|KInotify::EventDelete|KInotify::EventDeleteSelf|KInotify::EventCreate ),
+                              KInotify::WatchEvents( KInotify::EventMove|KInotify::EventDelete|KInotify::EventDeleteSelf|KInotify::EventCreate|KInotify::EventModify ),
                               KInotify::WatchFlags() );
 #endif
 }
