@@ -1581,7 +1581,7 @@ void sftpProtocol::mkdir(const KUrl &url, int permissions) {
 }
 
 void sftpProtocol::rename(const KUrl& src, const KUrl& dest, KIO::JobFlags flags) {
-  kDebug(KIO_SFTP_DB) << "rename " << src << " to " << dest;
+  kDebug(KIO_SFTP_DB) << "rename " << src << " to " << dest << flags;
 
   openConnection();
   if (!mConnected) {
@@ -1603,7 +1603,18 @@ void sftpProtocol::rename(const KUrl& src, const KUrl& dest, KIO::JobFlags flags
       return;
     }
 
-    del(dest, sb->type == SSH_FILEXFER_TYPE_DIRECTORY ? true : false);
+    // Delete the existing destination file/dir...
+    if (sb->type == SSH_FILEXFER_TYPE_DIRECTORY) {
+      if (sftp_rmdir(mSftp, qdest.constData()) < 0) {
+        reportError(dest, sftp_get_error(mSftp));
+        return;
+      }
+    } else {
+      if (sftp_unlink(mSftp, qdest.constData()) < 0) {
+        reportError(dest, sftp_get_error(mSftp));
+        return;
+      }
+    }
   }
   sftp_attributes_free(sb);
 
