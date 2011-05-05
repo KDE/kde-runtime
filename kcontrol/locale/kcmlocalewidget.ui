@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>702</width>
-    <height>408</height>
+    <height>439</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -158,6 +158,30 @@
         <enum>QFormLayout::ExpandingFieldsGrow</enum>
        </property>
        <item row="0" column="0">
+        <widget class="QLabel" name="m_labelNumericDigitGrouping">
+         <property name="text">
+          <string>Digit grouping:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_28">
+         <item>
+          <widget class="KComboBox" name="m_comboNumericDigitGrouping">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="KPushButton" name="m_buttonDefaultNumericDigitGrouping"/>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0">
         <widget class="QLabel" name="m_labelThousandsSeparator">
          <property name="toolTip">
           <string/>
@@ -173,7 +197,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item row="1" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_12">
          <item>
           <widget class="KComboBox" name="m_comboThousandsSeparator">
@@ -193,7 +217,7 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QLabel" name="m_labelDecimalSymbol">
          <property name="toolTip">
           <string/>
@@ -209,7 +233,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="2" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_14">
          <item>
           <widget class="KComboBox" name="m_comboDecimalSymbol">
@@ -229,7 +253,7 @@
          </item>
         </layout>
        </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QLabel" name="m_labelDecimalPlaces">
          <property name="toolTip">
           <string/>
@@ -248,7 +272,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="3" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_13">
          <item>
           <widget class="KIntNumInput" name="m_intDecimalPlaces">
@@ -277,7 +301,7 @@
          </item>
         </layout>
        </item>
-       <item row="3" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="m_labelPositiveFormat">
          <property name="toolTip">
           <string/>
@@ -293,7 +317,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="4" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_11">
          <item>
           <widget class="KComboBox" name="m_comboPositiveSign">
@@ -319,7 +343,7 @@
          </item>
         </layout>
        </item>
-       <item row="4" column="0">
+       <item row="5" column="0">
         <widget class="QLabel" name="m_labelNegativeFormat">
          <property name="toolTip">
           <string/>
@@ -335,7 +359,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="5" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_10">
          <item>
           <widget class="KComboBox" name="m_comboNegativeSign">
@@ -361,7 +385,7 @@
          </item>
         </layout>
        </item>
-       <item row="5" column="0">
+       <item row="6" column="0">
         <widget class="QLabel" name="m_labelDigitSet">
          <property name="toolTip">
           <string/>
@@ -377,7 +401,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="6" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_16">
          <item>
           <widget class="KComboBox" name="m_comboDigitSet">
@@ -483,6 +507,30 @@
         </layout>
        </item>
        <item row="2" column="0">
+        <widget class="QLabel" name="m_labelMonetaryDigitGrouping">
+         <property name="text">
+          <string>Digit grouping:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_38">
+         <item>
+          <widget class="KComboBox" name="m_comboMonetaryDigitGrouping">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="KPushButton" name="m_buttonDefaultMonetaryDigitGrouping"/>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="0">
         <widget class="QLabel" name="m_labelMonetaryThousandsSeparator">
          <property name="toolTip">
           <string/>
@@ -501,7 +549,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="3" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="KComboBox" name="m_comboMonetaryThousandsSeparator">
@@ -521,7 +569,7 @@
          </item>
         </layout>
        </item>
-       <item row="3" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="m_labelMonetaryDecimalSymbol">
          <property name="toolTip">
           <string/>
@@ -540,7 +588,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="4" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="KComboBox" name="m_comboMonetaryDecimalSymbol">
@@ -560,7 +608,7 @@
          </item>
         </layout>
        </item>
-       <item row="4" column="0">
+       <item row="5" column="0">
         <widget class="QLabel" name="m_labelMonetaryDecimalPlaces">
          <property name="toolTip">
           <string/>
@@ -579,7 +627,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="5" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
           <widget class="KIntNumInput" name="m_intMonetaryDecimalPlaces">
@@ -608,7 +656,7 @@
          </item>
         </layout>
        </item>
-       <item row="5" column="0">
+       <item row="6" column="0">
         <widget class="QLabel" name="m_labelMonetaryPositiveFormat">
          <property name="toolTip">
           <string/>
@@ -624,7 +672,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="6" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
           <widget class="KComboBox" name="m_comboMonetaryPositiveFormat">
@@ -647,7 +695,7 @@
          </item>
         </layout>
        </item>
-       <item row="6" column="0">
+       <item row="7" column="0">
         <widget class="QLabel" name="m_labelMonetaryNegativeFormat">
          <property name="toolTip">
           <string/>
@@ -663,7 +711,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="1">
+       <item row="7" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
           <widget class="KComboBox" name="m_comboMonetaryNegativeFormat">
@@ -686,24 +734,7 @@
          </item>
         </layout>
        </item>
-       <item row="7" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_8">
-         <item>
-          <widget class="KComboBox" name="m_comboMonetaryDigitSet">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="KPushButton" name="m_buttonDefaultMonetaryDigitSet"/>
-         </item>
-        </layout>
-       </item>
-       <item row="7" column="0">
+       <item row="8" column="0">
         <widget class="QLabel" name="m_labelMonetaryDigitSet">
          <property name="toolTip">
           <string/>
@@ -721,6 +752,23 @@
           <cstring>m_comboMonetaryDigitSet</cstring>
          </property>
         </widget>
+       </item>
+       <item row="8" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="KComboBox" name="m_comboMonetaryDigitSet">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="KPushButton" name="m_buttonDefaultMonetaryDigitSet"/>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>

@@ -99,6 +99,7 @@ LanguageSensitiveDigits=true
 
 DecimalPlaces=2
 DecimalSymbol=.
+DigitGroupFormat=3
 ThousandsSeparator=,
 PositiveSign=
 NegativeSign=-
@@ -109,6 +110,7 @@ CurrencyCodesInUse=USD
 #CurrencySymbol=$ Don't default as will use default for CurrencyCode
 MonetaryDecimalPlaces=2
 MonetaryDecimalSymbol=.
+MonetaryDigitGroupFormat=3
 MonetaryThousandsSeparator=,
 PositivePrefixCurrencySymbol=true
 NegativePrefixCurrencySymbol=true
