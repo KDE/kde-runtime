@@ -44,10 +44,10 @@ namespace Nepomuk {
         ResourceWatcherModel( Soprano::Model* parent );
 
     public slots:
-        Q_SCRIPTABLE QDBusObjectPath watchResource( const QStringList & resources,
-                                                    const QStringList & properties,
-                                                    const QStringList & types );
-        Q_SCRIPTABLE void stopWatchingResource( const QString& objectName );
+        Q_SCRIPTABLE QDBusObjectPath watch( const QList<QString> & resources,
+                                            const QList<QString> & properties,
+                                            const QList<QString> & types );
+        Q_SCRIPTABLE void stopWatcher( const QString& objectName );
 
     private:
         QMultiHash<QUrl, ResourceWatcherConnection*> m_subHash;

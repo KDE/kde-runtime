@@ -26,15 +26,16 @@
 
 int Nepomuk::ResourceWatcherConnection::Id = 0;
 
-Nepomuk::ResourceWatcherConnection::ResourceWatcherConnection( QObject* parent )
-    : QObject( parent )
+Nepomuk::ResourceWatcherConnection::ResourceWatcherConnection( QObject* parent, bool hasProperties )
+    : QObject( parent ),
+      m_hasProperties( hasProperties )
 {
     // create the query adaptor on this connection
     //( void )new QueryAdaptor( this );
     
     // build the dbus object path from the id and register the connection as a Query dbus object
     m_objectPath = QString( "/watcher/%1" ).arg( Id++ );
-    QDBusConnection::sessionBus().registerObject( m_objectPath, this );
+    QDBusConnection::sessionBus().registerObject( m_objectPath, this, QDBusConnection::ExportScriptableSignals );
     
     // watch the dbus client for unregistration for auto-cleanup
 //     m_serviceWatcher = new QDBusServiceWatcher( dbusClient,
@@ -52,4 +53,9 @@ Nepomuk::ResourceWatcherConnection::ResourceWatcherConnection( QObject* parent )
 QDBusObjectPath Nepomuk::ResourceWatcherConnection::dBusPath() const
 {
     return QDBusObjectPath( m_objectPath );
+}
+
+bool Nepomuk::ResourceWatcherConnection::hasProperties() const
+{
+    return m_hasProperties;
 }
