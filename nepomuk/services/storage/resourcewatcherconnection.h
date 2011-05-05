@@ -37,21 +37,26 @@ namespace Nepomuk {
     {
         Q_OBJECT
     public:
-        ResourceWatcherConnection( QObject * parent );
+        ResourceWatcherConnection( QObject* parent, bool hasProperties );
 
     signals:
-        void statementAdded();
-        void statementAdded( const Soprano::Statement & st );
+        Q_SCRIPTABLE void resourceDeleted( const QString & uri );
 
-        void statementRemoved();
-        void statementRemoved( const Soprano::Statement & st );
+        Q_SCRIPTABLE void resourceTypeCreated( const QString & resUri, const QString & type );
 
-        void removed();
-
+        Q_SCRIPTABLE void propertyAdded( const QString & resource,
+                                         const QString & property,
+                                         const QString & value );
+        Q_SCRIPTABLE void propertyRemoved( const QString & resource,
+                                           const QString & property,
+                                           const QString & value );
     public:
         QDBusObjectPath dBusPath() const;
+        bool hasProperties() const;
+        
     private:
         QString m_objectPath;
+        bool m_hasProperties;
 
         static int Id;
         friend class ResourceWatcherModel;
