@@ -480,8 +480,12 @@ void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult* idx,
 
         //
         // ignore the path as we handle that ourselves in startAnalysis
+        // ignore the mimetype since we handle that ourselves in finishAnalysis
+        //  and KDE's mimetype is much more reliable than Strigi's.
+        // TODO: remember the mimetype and use it only if KMimeType does not find one.
         //
-        else if ( field->key() != FieldRegister::pathFieldName ) {
+        else if ( field->key() != FieldRegister::pathFieldName &&
+                  field->key() != FieldRegister::mimetypeFieldName ) {
             statement.setObject( rfd->createObject( value ) );
         }
 
@@ -566,7 +570,6 @@ void Nepomuk::StrigiIndexWriter::addTriplet( const std::string& s,
     if ( d->currentResultStack.top()->depth() > 0 ) {
         return;
     }
-
     //FileMetaData* md = fileDataForResult( d->currentResultStack.top() );
 
     Soprano::Node subject( createBlankOrResourceNode( s ) );
@@ -576,8 +579,13 @@ void Nepomuk::StrigiIndexWriter::addTriplet( const std::string& s,
         object = Soprano::Node( createBlankOrResourceNode( o ) );
     else
         object = Soprano::LiteralValue::fromString( QString::fromUtf8( o.c_str() ), property.literalRangeType().dataTypeUri() );
-
-    d->feeder->addStatement( subject, property.uri(), object );
+    
+    if( object.isValid() )
+        d->feeder->addStatement( subject, property.uri(), object );
+    else {
+        kDebug() << QString::fromUtf8( o.c_str() ) << " could not be parsed as a " << property.literalRangeType().dataTypeUri();
+    }
+        
 }
 
 

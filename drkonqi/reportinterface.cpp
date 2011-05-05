@@ -1,6 +1,6 @@
 /*******************************************************************
 * reportinterface.cpp
-* Copyright 2009,2010    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009,2010, 2011    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 * Copyright 2009    George Kiagiadakis <gkiagia@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or
@@ -310,7 +310,8 @@ void ReportInterface::sendBugReport() const
     {
         //We are going to attach the report to an existent one
         connect(m_bugzillaManager, SIGNAL(addMeToCCFinished(int)), this, SLOT(addedToCC()));
-        connect(m_bugzillaManager, SIGNAL(addMeToCCError(QString)), this, SIGNAL(sendReportError(QString)));
+        connect(m_bugzillaManager, SIGNAL(addMeToCCError(QString,QString)),
+                this, SIGNAL(sendReportError(QString,QString)));
         //First add the user to the CC list, then attach
         m_bugzillaManager->addMeToCC(m_attachToBugNumber);
     } else {
@@ -321,7 +322,8 @@ void ReportInterface::sendBugReport() const
 
         connect(m_bugzillaManager, SIGNAL(sendReportErrorInvalidValues()), this, SLOT(sendUsingDefaultProduct()));
         connect(m_bugzillaManager, SIGNAL(reportSent(int)), this, SIGNAL(reportSent(int)));
-        connect(m_bugzillaManager, SIGNAL(sendReportError(QString)), this, SIGNAL(sendReportError(QString)));
+        connect(m_bugzillaManager, SIGNAL(sendReportError(QString,QString)),
+                this, SIGNAL(sendReportError(QString,QString)));
         m_bugzillaManager->sendReport(report);
     }
 }
@@ -343,8 +345,8 @@ void ReportInterface::addedToCC()
 {
     //The user was added to the CC list, proceed with the attachment
     connect(m_bugzillaManager, SIGNAL(attachToReportSent(int, int)), this, SLOT(attachSent(int, int)));
-    connect(m_bugzillaManager, SIGNAL(attachToReportError(QString)), this,
-                                                            SIGNAL(sendReportError(QString)));
+    connect(m_bugzillaManager, SIGNAL(attachToReportError(QString,QString)),
+            this, SIGNAL(sendReportError(QString,QString)));
     BugReport report = newBugReportTemplate();
 
     QString reportText = generateReport(true);

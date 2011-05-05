@@ -40,6 +40,7 @@ target_link_libraries(nepomukfilewatch
   ${SOPRANO_LIBRARIES}
   ${KDE4_KDEUI_LIBS}
   ${KDE4_KIO_LIBS}
+  ${KDE4_SOLID_LIBS}
   ${NEPOMUK_LIBRARIES}
   ${NEPOMUK_QUERY_LIBRARIES}
   )

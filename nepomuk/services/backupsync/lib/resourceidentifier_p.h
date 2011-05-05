@@ -31,7 +31,7 @@
 #include <KUrl>
 
 #include "resourceidentifier.h"
-#include "simpleresource.h"
+#include "syncresource.h"
 #include <Nepomuk/ResourceManager>
 
 
@@ -92,14 +92,6 @@ namespace Nepomuk {
 
             bool identify( const KUrl & uri );
             
-            /**
-             * Checks if the @p oldUri is already in the process of being identified.
-             * The function returns false if it is being identified otherwise it
-             * returns the value of identify( const KUrl & )
-             *
-             * \sa identify
-             */
-            bool queryIdentify( const KUrl & oldUri );
             
             /**
              * Finds the best possible match for \p rs from the internal model. It uses
@@ -109,7 +101,7 @@ namespace Nepomuk {
              *
              * \sa queryIdentify
              */
-            KUrl findMatch( const Nepomuk::Sync::SimpleResource& simpleRes );
+            KUrl findMatch( const Nepomuk::Sync::SyncResource& simpleRes );
 
             /**
              * This function does not take the minScore into evalutation. It returns
@@ -117,7 +109,7 @@ namespace Nepomuk {
              *
              * This should be used in the special case when the minScore = 1.0
              */
-            KUrl findMatchForAll( const Nepomuk::Sync::SimpleResource& simpleRes );
+            KUrl findMatchForAll( const Nepomuk::Sync::SyncResource& simpleRes );
         };
     }
 }

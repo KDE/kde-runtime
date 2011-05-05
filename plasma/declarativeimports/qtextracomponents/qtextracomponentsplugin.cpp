@@ -1,6 +1,8 @@
 /*
- *   Copyright 2010 Marco Martin <mart@kde.org>
- *
+ *   Copyright 2009 by Alan Alpert <alan.alpert@nokia.com>
+ *   Copyright 2010 by Ménard Alexis <menard@kde.org>
+ *   Copyright 2010 by Marco Martin <mart@kde.org>
+
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
  *   published by the Free Software Foundation; either version 2, or
@@ -17,24 +19,23 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "engineaccess.h"
-#include "scriptenv.h"
+#include "qtextracomponentsplugin.h"
 
-#include "plasmoid/declarativeappletscript.h"
+#include <QtDeclarative/qdeclarative.h>
 
-EngineAccess::EngineAccess(DeclarativeAppletScript *parent)
-    : QObject(parent),
-      m_appletScriptEngine(parent)
+#include "qpixmapitem.h"
+#include "qimageitem.h"
+#include "qiconitem.h"
+
+void QtExtraComponentsPlugin::registerTypes(const char *uri)
 {
+    Q_ASSERT(uri == QLatin1String("org.kde.qtextracomponents"));
+
+    qmlRegisterType<QPixmapItem>(uri, 0, 1, "QPixmapItem");
+    qmlRegisterType<QImageItem>(uri, 0, 1, "QImageItem");
+    qmlRegisterType<QIconItem>(uri, 0, 1, "QIconItem");
 }
 
-EngineAccess::~EngineAccess()
-{
-}
 
-void EngineAccess::setEngine(QScriptValue val)
-{
-    m_appletScriptEngine->setEngine(val);
-}
+#include "qtextracomponentsplugin.moc"
 
-#include "engineaccess.moc"

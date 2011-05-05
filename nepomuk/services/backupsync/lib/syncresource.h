@@ -41,9 +41,9 @@ namespace Nepomuk {
     namespace Sync {
 
         /**
-         * \class SimpleResource simpleresource.h
+         * \class SyncResource syncresource.h
          *
-         * A SimpleResource is a convenient way of storing a set of properties and objects for
+         * A SyncResource is a convenient way of storing a set of properties and objects for
          * a common subject. This class does not represent an actual resource present in the
          * repository. It's just a collection of in-memory statements.
          *
@@ -51,19 +51,19 @@ namespace Nepomuk {
          * 
          * \author Vishesh Handa <handa.vish@gmail.com>
          */
-        class NEPOMUKSYNC_EXPORT SimpleResource : public QMultiHash<KUrl, Soprano::Node>
+        class NEPOMUKSYNC_EXPORT SyncResource : public QMultiHash<KUrl, Soprano::Node>
         {
         public :
-            SimpleResource();
-            SimpleResource( const KUrl & uri );
-            SimpleResource( const SimpleResource & rhs );
-            virtual ~SimpleResource();
+            SyncResource();
+            SyncResource( const KUrl & uri );
+            SyncResource( const SyncResource & rhs );
+            virtual ~SyncResource();
 
             /**
              * It uses the the first element's subject as the uri and ignores all further subjects.
              * Please make sure all the subjects are the same cause no kind of checks are made.
              */
-            static SimpleResource fromStatementList(const QList<Soprano::Statement> & list);
+            static SyncResource fromStatementList(const QList<Soprano::Statement> & list);
             
             QList<Soprano::Statement> toStatementList() const;
 
@@ -87,8 +87,8 @@ namespace Nepomuk {
              */
             void removeObject( const KUrl & uri );
 
-            SimpleResource& operator=( const SimpleResource & rhs );
-            bool operator==( const SimpleResource & res ) const;
+            SyncResource& operator=( const SyncResource & rhs );
+            bool operator==( const SyncResource & res ) const;
 
             bool isValid() const;
         private:
@@ -97,15 +97,15 @@ namespace Nepomuk {
         };
 
         /**
-         * \class ResourceHash simpleresource.h
+         * \class ResourceHash syncresource.h
          *
-         * A SimpleResource is a convenient way of representing a list of Soprano::Statements
+         * A SyncResource is a convenient way of representing a list of Soprano::Statements
          * or a Soprano::Graph.
          * It provides easy lookup of resources.
          *
          * \author Vishesh Handa <handa.vish@gmail.com>
          */
-        class NEPOMUKSYNC_EXPORT ResourceHash : public QHash<KUrl, SimpleResource> {
+        class NEPOMUKSYNC_EXPORT ResourceHash : public QHash<KUrl, SyncResource> {
         public :
             static ResourceHash fromStatementList( const QList<Soprano::Statement> & list );
             static ResourceHash fromGraph( const Soprano::Graph & graph );

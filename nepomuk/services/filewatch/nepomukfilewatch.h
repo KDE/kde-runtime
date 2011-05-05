@@ -76,7 +76,23 @@ namespace Nepomuk {
          */
         void updateIndexedFoldersWatches();
 
+        /**
+         * Connects removable media to slotDeviceAccessibilityChanged().
+         */
+        void slotSolidDeviceAdded(const QString& udi);
+
+        /**
+         * Connected to each removable media. Adds a watch for the mount point if
+         * \p accessible is \p true.
+         */
+        void slotDeviceAccessibilityChanged( bool accessible, const QString& udi );
+
     private:
+        /**
+         * Adds watches for all mounted removable media.
+         */
+        void addWatchesForMountedRemovableMedia();
+
         /**
          * Returns true if the path is one that should be always ignored.
          * This includes such things like temporary files and folders as

@@ -48,6 +48,7 @@ AppletInterface::AppletInterface(AbstractJsAppletScript *parent)
     connect(this, SIGNAL(releaseVisualFocus()), applet(), SIGNAL(releaseVisualFocus()));
     connect(this, SIGNAL(configNeedsSaving()), applet(), SIGNAL(configNeedsSaving()));
     connect(applet(), SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)), this, SIGNAL(immutableChanged()));
+    connect(applet(), SIGNAL(newStatus(Plasma::ItemStatus)), this, SIGNAL(statusChanged()));
 }
 
 AppletInterface::~AppletInterface()
@@ -373,6 +374,25 @@ Plasma::Extender *AppletInterface::extender() const
     return m_appletScriptEngine->extender();
 }
 
+void AppletInterface::setAssociatedApplication(const QString &string)
+{
+    applet()->setAssociatedApplication(string);
+}
+
+QString AppletInterface::associatedApplication() const
+{
+    return applet()->associatedApplication();
+}
+
+void AppletInterface::setStatus(const AppletInterface::ItemStatus &status)
+{
+    applet()->setStatus((Plasma::ItemStatus)status);
+}
+
+AppletInterface::ItemStatus AppletInterface::status() const
+{
+    return (AppletInterface::ItemStatus)((int)(applet()->status()));
+}
 
 void AppletInterface::gc()
 {
@@ -436,16 +456,20 @@ QGraphicsWidget *PopupAppletInterface::popupWidget()
 }
 
 ContainmentInterface::ContainmentInterface(AbstractJsAppletScript *parent)
-    : APPLETSUPERCLASS(parent)
+    : APPLETSUPERCLASS(parent),
+      m_movableApplets(true)
 {
     connect(containment(), SIGNAL(appletRemoved(Plasma::Applet *)), this, SLOT(appletRemovedForward(Plasma::Applet *)));
 
     connect(containment(), SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)), this, SLOT(appletAddedForward(Plasma::Applet *, const QPointF &)));
 
     connect(containment(), SIGNAL(screenChanged(int, int, Plasma::Containment)), this, SLOT(screenChanged()));
+
+    connect(containment()->context(), SIGNAL(activityChanged(Plasma::Context *)), this, SIGNAL(activityNameChanged()));
+    connect(containment()->context(), SIGNAL(changed(Plasma::Context *)), this, SIGNAL(activityIdChanged()));
 }
 
-QScriptValue ContainmentInterface::applets() 
+QScriptValue ContainmentInterface::applets()
 {
     QScriptValue list = m_appletScriptEngine->engine()->newArray(containment()->applets().size());
     int i = 0;
@@ -496,14 +520,64 @@ QScriptValue ContainmentInterface::screenGeometry(int id) const
     return val;
 }
 
+QScriptValue ContainmentInterface::availableScreenRegion(int id) const
+{
+    QRegion reg;
+    if (containment()->corona()) {
+        reg = containment()->corona()->availableScreenRegion(id);
+    }
+
+    QScriptValue regVal = m_appletScriptEngine->engine()->newArray(reg.rects().size());
+    int i = 0;
+    foreach (QRect rect, reg.rects()) {
+        QScriptValue val = m_appletScriptEngine->engine()->newObject();
+        val.setProperty("x", rect.x());
+        val.setProperty("y", rect.y());
+        val.setProperty("width", rect.width());
+        val.setProperty("height", rect.height());
+        regVal.setProperty(i++, val);
+    }
+    return regVal;
+}
+
 void ContainmentInterface::appletAddedForward(Plasma::Applet *applet, const QPointF &pos)
 {
+    applet->setFlag(QGraphicsItem::ItemIsMovable, m_movableApplets);
     emit appletAdded(applet, pos);
 }
 
 void ContainmentInterface::appletRemovedForward(Plasma::Applet *applet)
 {
+    applet->setFlag(QGraphicsItem::ItemIsMovable, true);
     emit appletRemoved(applet);
+}
+
+void ContainmentInterface::setMovableApplets(bool movable)
+{
+    if (m_movableApplets == movable) {
+        return;
+    }
+
+    m_movableApplets = movable;
+
+    foreach (Plasma::Applet *applet, containment()->applets()) {
+        applet->setFlag(QGraphicsItem::ItemIsMovable, movable);
+    }
+}
+
+bool ContainmentInterface::hasMovableApplets() const
+{
+    return m_movableApplets;
+}
+
+QString ContainmentInterface::activityName() const
+{
+    return containment()->context()->currentActivity();
+}
+
+QString ContainmentInterface::activityId() const
+{
+    return containment()->context()->currentActivityId();
 }
 
 #ifndef USE_JS_SCRIPTENGINE

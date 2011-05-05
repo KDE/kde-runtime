@@ -143,10 +143,14 @@ namespace Nepomuk {
          * Slot to connect to certain event systems like KDirNotify
          * or KDirWatch
          *
-         * Updates a complete folder (non-recursively). Makes sense for
+         * Updates a complete folder. Makes sense for
          * signals like KDirWatch::dirty.
+         *
+         * \param path The folder to update
+         * \param flags Additional flags, all except AutoUpdateFolder are supported. This
+         * also means that by default \p path is updated non-recursively.
          */
-        void updateDir( const QString& path, bool forceUpdate = false );
+        void updateDir( const QString& path, UpdateDirFlags flags = NoUpdateFlags );
 
         /**
          * Updates all configured folders.

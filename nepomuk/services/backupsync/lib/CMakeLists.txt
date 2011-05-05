@@ -22,7 +22,7 @@ set(nepomuksync_SRCS
     resourceidentifier.cpp
     resourceidentifier_p.cpp
     identificationsetgenerator.cpp
-    simpleresource.cpp
+    syncresource.cpp
 )
 
 soprano_add_ontology(nepomuksync_SRCS
@@ -49,7 +49,7 @@ install(TARGETS nepomuksync EXPORT kdelibsLibraryTargets ${INSTALL_TARGETS_DEFAU
 install(FILES
     resourceidentifier.h
     resourcemerger.h
-    simpleresource.h
+    syncresource.h
     nepomuksync_export.h
     DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk COMPONENT Devel
 )

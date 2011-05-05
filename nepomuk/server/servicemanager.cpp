@@ -257,7 +257,11 @@ bool Nepomuk::ServiceManager::Private::stopService( ServiceController* sc )
 {
     // shut down any service depending of this one first
     foreach( const QString &dep, dependencyTree.servicesDependingOn( sc->name() ) ) {
-        stopService( services[dep] );
+        ServiceController* sc = services[dep];
+        if( sc->isRunning() ) {
+            pendingServices.insert( sc );
+            stopService( sc );
+        }
     }
 
     // stop it if already running

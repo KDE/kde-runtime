@@ -21,7 +21,7 @@
 
 #include "syncfileidentifier.h"
 #include "changelogrecord.h"
-#include "simpleresource.h"
+#include "syncresource.h"
 
 #include <QtCore/QFile>
 #include <QtCore/QDir>
@@ -152,7 +152,7 @@ int Nepomuk::SyncFileIdentifier::id()
 }
 
 
-Nepomuk::Resource Nepomuk::SyncFileIdentifier::createNewResource(const Sync::SimpleResource & simpleRes) const
+Nepomuk::Resource Nepomuk::SyncFileIdentifier::createNewResource(const Sync::SyncResource & simpleRes) const
 {
     kDebug();
     Nepomuk::Resource res;
@@ -178,9 +178,9 @@ Nepomuk::Resource Nepomuk::SyncFileIdentifier::createNewResource(const Sync::Sim
     return res.resourceUri();
 }
 
-Nepomuk::Resource Nepomuk::SyncFileIdentifier::additionalIdentification(const KUrl& uri)
+KUrl Nepomuk::SyncFileIdentifier::additionalIdentification(const KUrl& uri)
 {
-    Sync::SimpleResource res = simpleResource( uri );
+    Sync::SyncResource res = simpleResource( uri );
 
     // Add the resource if ( it is NOT a FileDataObject ) or ( if is a FileDataObject and
     // exists in the filesystem at the nie:url )
@@ -195,8 +195,8 @@ Nepomuk::Resource Nepomuk::SyncFileIdentifier::additionalIdentification(const KU
         if( newRes.isValid() )
             forceResource( uri, newRes );
         else
-            return Resource();
+            return KUrl();
     }
 
-    return Resource();
+    return KUrl();
 }

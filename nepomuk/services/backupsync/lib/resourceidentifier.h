@@ -40,7 +40,7 @@ namespace Nepomuk {
     
     namespace Sync {
 
-        class SimpleResource;
+        class SyncResource;
 
         /**
          * \class ResourceIdentifier resourceidentifier.h
@@ -63,14 +63,14 @@ namespace Nepomuk {
             //
             // Processing
             //
-            virtual void identifyAll();
+            void identifyAll();
 
-            virtual bool identify( const KUrl & uri );
+            bool identify( const KUrl & uri );
 
             /**
              * Identifies all the resources present in the \p uriList.
              */
-            virtual void identify( const KUrl::List & uriList );
+            void identify( const KUrl::List & uriList );
             
             /**
              * This returns true if ALL the external ResourceUris have been identified.
@@ -84,7 +84,7 @@ namespace Nepomuk {
             virtual void addStatement( const Soprano::Statement & st );
             virtual void addStatements( const Soprano::Graph& graph );
             virtual void addStatements( const QList<Soprano::Statement> & stList );
-            virtual void addSimpleResource( const SimpleResource & res );
+            virtual void addSyncResource( const SyncResource & res );
             
             //
             // Getting the info
@@ -106,6 +106,8 @@ namespace Nepomuk {
              * Returns urls that were not successfully identified
              */
             QSet<KUrl> unidentified() const;
+            
+            QSet<KUrl> identified() const;
 
             /**
              * Returns all the statements that are being used to identify \p uri
@@ -114,7 +116,7 @@ namespace Nepomuk {
 
             QList<Soprano::Statement> identifyingStatements() const;
 
-            SimpleResource simpleResource( const KUrl & uri );
+            SyncResource simpleResource( const KUrl & uri );
             //
             // Score
             //
@@ -202,7 +204,21 @@ namespace Nepomuk {
              * In case identification fails for \p uri this method would be called. Derived classes
              * can implement their own identification mechanisms over here.
              */
-            virtual Nepomuk::Resource additionalIdentification( const KUrl & uri );
+            virtual KUrl additionalIdentification( const KUrl & uri );
+            
+            
+            /**
+             * This function returns true if identification was successful, and false if it was not.
+             * If you need to customize the identification process, you will need to overload this
+             * function.
+             */
+            virtual bool runIdentification( const KUrl& uri );
+            
+            /**
+             * Sets oldUri -> newUri in the mappings. 
+             * This is useful when runIdentification has been reimplemented.
+             */
+            void manualIdentification( const KUrl & oldUri, const KUrl & newUri );
         };
     }
 }

@@ -43,7 +43,7 @@ namespace Nepomuk {
         void load();
 
     protected:
-        virtual Resource additionalIdentification(const KUrl& uri);
+        virtual KUrl additionalIdentification(const KUrl& uri);
         
     private:
         ChangeLog m_changeLog;
@@ -52,7 +52,7 @@ namespace Nepomuk {
         static int NextId;
         int m_id;
 
-        Resource createNewResource(const Nepomuk::Sync::SimpleResource& simpleRes) const;
+        Resource createNewResource(const Nepomuk::Sync::SyncResource& simpleRes) const;
         
     };
 }

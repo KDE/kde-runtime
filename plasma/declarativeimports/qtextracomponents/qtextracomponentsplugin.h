@@ -1,6 +1,8 @@
 /*
- *   Copyright 2010 Marco Martin <mart@kde.org>
- *
+ *   Copyright 2009 by Alan Alpert <alan.alpert@nokia.com>
+ *   Copyright 2010 by Ménard Alexis <menard@kde.org>
+ *   Copyright 2011 by Marco Martin <mart@kde.org>
+
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
  *   published by the Free Software Foundation; either version 2, or
@@ -17,29 +19,20 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef ENGINEACCESS_H
-#define ENGINEACCESS_H
+#ifndef QTEXTRACOMPONENTSPLUGIN_H
+#define QTEXTRACOMPONENTSPLUGIN_H
 
-#include <QObject>
+#include <QDeclarativeExtensionPlugin>
 
-#include <QScriptValue>
 
-class DeclarativeAppletScript;
-
-class EngineAccess : public QObject
+class QtExtraComponentsPlugin : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT
 
-
 public:
-    EngineAccess(DeclarativeAppletScript *parent);
-    ~EngineAccess();
-
-    Q_INVOKABLE void setEngine(QScriptValue val);
-
-private:
-    DeclarativeAppletScript *m_appletScriptEngine;
-
+    void registerTypes(const char *uri);
 };
+
+Q_EXPORT_PLUGIN2(qtextracomponentsplugin, QtExtraComponentsPlugin);
 
 #endif
