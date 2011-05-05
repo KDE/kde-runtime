@@ -66,6 +66,9 @@ static QString eventManifestation(Event::Reason reason)
         case Event::World:
             return QtZeitgeist::Manifestation::Event::ZGWorldActivity;
     }
+
+    // shut up GCC
+    return QtZeitgeist::Manifestation::Event::ZGUserActivity;
 }
 
 static QString applicationUri(const QString & application)

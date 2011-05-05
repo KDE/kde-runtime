@@ -21,6 +21,7 @@
 #define EVENT_H_
 
 #include <QString>
+#include <QtCore/QDateTime>
 
 /**
  *
@@ -51,7 +52,7 @@ public:
     QString uri;
     Type    type;
     Reason  reason;
-
+    QDateTime timestamp;
 };
 
 typedef QList<Event> EventList;

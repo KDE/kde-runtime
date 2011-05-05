@@ -23,8 +23,12 @@
 
 #include "config-features.h"
 
-#ifndef HAVE_QZEITGEIST
-    #warning "No QtZeitgeist, disabling desktop events processing"
+#ifdef HAVE_QZEITGEIST
+#include "ZeitgeistEventBackend.h"
+#endif
+
+#ifdef HAVE_NEPOMUK
+#include "NepomukEventBackend.h"
 #endif
 
 #include <QDateTime>
@@ -32,13 +36,6 @@
 #include <QMutex>
 
 #include <KDebug>
-
-#ifdef HAVE_QZEITGEIST
-    #include <QtZeitgeist/QtZeitgeist>
-    #include <QtZeitgeist/DataModel/Event>
-    #include <QtZeitgeist/Manifestation>
-    #include <QtZeitgeist/Interpretation>
-#endif
 
 #include <time.h>
 
@@ -96,10 +93,17 @@ EventProcessor * EventProcessor::self()
 EventProcessor::EventProcessor()
     : d(new EventProcessorPrivate())
 {
+#ifdef HAVE_QZEITGEIST
+    d->backends.append(new ZeitgeistEventBackend());
+#endif
+#ifdef HAVE_NEPOMUK
+    d->backends.append(new NepomukEventBackend());
+#endif
 }
 
 EventProcessor::~EventProcessor()
 {
+    qDeleteAll(d->backends);
     delete d;
 }
 

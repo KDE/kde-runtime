@@ -20,7 +20,7 @@
 #include "Event.h"
 
 Event::Event(const QString & vApplication, const QString & vUri, Type vType, Reason vReason)
-    : application(vApplication), uri(vUri), type(vType), reason(vReason)
+    : application(vApplication), uri(vUri), type(vType), reason(vReason), timestamp(QDateTime::currentDateTime())
 {
 }
 
