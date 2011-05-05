@@ -59,6 +59,7 @@ set(activity_manager_SRCS
     ZeitgeistEventBackend.cpp
     NepomukEventBackend.cpp
     EventBackend.cpp
+    Event.cpp
     main.cpp
     )
 

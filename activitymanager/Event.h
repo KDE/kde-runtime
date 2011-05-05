@@ -20,6 +20,8 @@
 #ifndef EVENT_H_
 #define EVENT_H_
 
+#include <QString>
+
 /**
  *
  */
@@ -41,6 +43,8 @@ public:
     };
 
     Event(const QString & application, const QString & uri, Type type = Accessed, Reason reason = User);
+
+    bool operator == (const Event & other) const;
 
 public:
     QString application;

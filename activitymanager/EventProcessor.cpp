@@ -44,6 +44,7 @@
 
 class EventProcessorPrivate: public QThread {
 public:
+    QList < EventBackend * > backends;
     QList < Event > events;
     QMutex events_mutex;
 
@@ -61,7 +62,7 @@ void EventProcessorPrivate::run()
 
     forever {
         // initial delay before processing the events
-        // sleep(5); // do we need it?
+        sleep(5); // do we need it?
 
         EventProcessorPrivate::events_mutex.lock();
 
@@ -77,72 +78,56 @@ void EventProcessorPrivate::run()
 
         EventProcessorPrivate::events_mutex.unlock();
 
-        foreach (const Event & event, currentEvents) {
-            Q_UNUSED(event)
-            // TODO: Do something ;)
-            sleep(2);
+        foreach (EventBackend * backend, backends) {
+            backend->addEvents(currentEvents);
         }
     }
 }
 
 EventProcessor * EventProcessor::self()
 {
-#ifdef HAVE_QZEITGEIST
-
     if (!EventProcessorPrivate::s_instance) {
-        QtZeitgeist::init();
-
         EventProcessorPrivate::s_instance = new EventProcessor();
     }
 
     return EventProcessorPrivate::s_instance;
-
-#else // not HAVE_QZEITGEIST
-
-    return NULL;
-
-#endif // HAVE_QZEITGEIST
 }
 
 EventProcessor::EventProcessor()
+    : d(new EventProcessorPrivate())
 {
 }
 
 EventProcessor::~EventProcessor()
 {
+    delete d;
 }
-
-// void EventProcessor::_event(const QString & application, const QString & uri,
-//         Event::Type type, Event::Reason reason)
-// {
-//     Event newEvent(application, uri, type, reason);
-//
-//     d->events_mutex.lock();
-//
-//     foreach (const Event & event, d->events) {
-//         if (event._type == Accessed && event._uri == uri
-//                 && event._application == application) {
-//             // Accessed events are of a lower priority
-//             // then the other ones
-//             if (type == Accessed) {
-//                 d->events.removeAll(newEvent);
-//             }
-//         }
-//     }
-//
-//     d->events.append(newEvent);
-//
-//     d->events_mutex.unlock();
-//
-//     d->start();
-// }
 
 void EventProcessor::addEvent(const QString & application, const QString & uri,
         Event::Type type, Event::Reason reason)
 {
-//     EventProcessor * ep = self();
-//     if (ep) {
-//         ep->_event(application, uri, type, reason);
-//     }
+    Event newEvent(application, uri, type, reason);
+
+    d->events_mutex.lock();
+
+    if (newEvent.type != Event::Accessed) {
+        foreach (const Event & event, d->events) {
+            if (event.type == Event::Accessed && event.uri == uri
+                    && event.application == application) {
+                // Accessed events are of a lower priority
+                // then the other ones
+                if (type == Event::Accessed) {
+                    d->events.removeAll(newEvent);
+                }
+            }
+        }
+    }
+
+    d->events.append(newEvent);
+
+    d->events_mutex.unlock();
+
+    d->start();
 }
+
 

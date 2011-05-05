@@ -24,3 +24,11 @@ Event::Event(const QString & vApplication, const QString & vUri, Type vType, Rea
 {
 }
 
+bool Event::operator == (const Event & other) const
+{
+    return
+        application == other.application &&
+        uri         == other.uri         &&
+        type        == other.type        &&
+        reason      == other.reason;
+}

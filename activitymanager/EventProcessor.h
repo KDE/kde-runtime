@@ -36,13 +36,13 @@ public:
 
     virtual ~EventProcessor();
 
-    static void addEvent(const QString & application, const QString & uri,
+    void addEvent(const QString & application, const QString & uri,
             Event::Type type = Event::Accessed, Event::Reason reason = Event::User);
 
 private:
     EventProcessor();
 
-    QList < EventBackend * > m_backends;
+    class EventProcessorPrivate * const d;
 };
 
 #endif // EVENT_PROCESSOR_H
