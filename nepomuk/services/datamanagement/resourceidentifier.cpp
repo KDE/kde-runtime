@@ -39,6 +39,17 @@
 using namespace Soprano::Vocabulary;
 using namespace Nepomuk::Vocabulary;
 
+namespace {
+    /// used to handle sets and lists of QUrls
+    template<typename T> QStringList resourcesToN3(const T& urls) {
+        QStringList n3;
+        Q_FOREACH(const QUrl& url, urls) {
+            n3 << Soprano::Node::resourceToN3(url);
+        }
+        return n3;
+    }
+}
+
 Nepomuk::ResourceIdentifier::ResourceIdentifier()
 {
     setMinScore( 1.0 );
@@ -61,21 +72,20 @@ KUrl Nepomuk::ResourceIdentifier::duplicateMatch(const KUrl& origUri, const QSet
 {
     // 
     // We return the uri that has the oldest nao:created
+    // For backwards compatibility we keep in mind that three are resources which do not have nao:created defined.
     //
-    KUrl oldestUri;
-    QDateTime naoCreated = QDateTime::currentDateTime();
-    foreach( const KUrl & uri, matchedUris ) {
-        QList< Soprano::Node > nodes = model()->listStatements( uri, NAO::created(), Soprano::Node() ).iterateObjects().allNodes();
-        Q_ASSERT( nodes.size() == 1 );
-        
-        QDateTime dt = nodes.first().literal().toDateTime();
-        if( dt < naoCreated ) {
-            oldestUri = uri;
-            naoCreated = dt;
-        }
+    Soprano::QueryResultIterator it
+            = model()->executeQuery(QString::fromLatin1("select ?r where { ?r %1 ?date . FILTER(?r in (%2)) . } ORDER BY ASC(?date) LIMIT 1")
+                                    .arg(Soprano::Node::resourceToN3(NAO::created()),
+                                         resourcesToN3(matchedUris).join(QLatin1String(","))),
+                                    Soprano::Query::QueryLanguageSparql);
+    if(it.next()) {
+        return it[0].uri();
     }
-    
-    return oldestUri;
+    else {
+        // FIXME: fallback to what? a random one from the set?
+        return KUrl();
+    }
 }
 
 bool Nepomuk::ResourceIdentifier::isIdentfyingProperty(const QUrl& uri)

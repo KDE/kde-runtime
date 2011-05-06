@@ -42,9 +42,13 @@ class Nepomuk::ClassAndPropertyTree::ClassOrProperty
 {
 public:
     ClassOrProperty()
-        : maxCardinality(0),
+        : isProperty(false),
+          maxCardinality(0),
           userVisible(0) {
     }
+
+    /// true if this is a property, for classes this is false
+    bool isProperty;
 
     /// the uri of the class or property
     QUrl uri;
@@ -223,12 +227,12 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
     m_tree.clear();
 
     const QString query
-            = QString::fromLatin1("select distinct ?r ?p ?v ?mc ?c ?domain ?range "
+            = QString::fromLatin1("select distinct ?r ?p ?v ?mc ?c ?domain ?range ?ct ?pt "
                                   "where { "
-                                  "{ ?r a rdfs:Class . "
+                                  "{ ?r a ?ct . FILTER(?ct=rdfs:Class) . "
                                   "OPTIONAL { ?r rdfs:subClassOf ?p . ?p a rdfs:Class . } . } "
                                   "UNION "
-                                  "{ ?r a rdf:Property . "
+                                  "{ ?r a ?pt . FILTER(?pt=rdf:Property) . "
                                   "OPTIONAL { ?r rdfs:subPropertyOf ?p . ?p a rdf:Property . } . } "
                                   "OPTIONAL { ?r %1 ?mc . } . "
                                   "OPTIONAL { ?r %2 ?c . } . "
@@ -256,15 +260,17 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
         const QUrl range = it["range"].uri();
 
         ClassOrProperty* r_cop = 0;
-        QHash<QUrl, ClassOrProperty*>::iterator it = m_tree.find(r);
-        if(it != m_tree.end()) {
-            r_cop = it.value();
+        QHash<QUrl, ClassOrProperty*>::iterator copIt = m_tree.find(r);
+        if(copIt != m_tree.end()) {
+            r_cop = copIt.value();
         }
         else {
             r_cop = new ClassOrProperty;
             r_cop->uri = r;
             m_tree.insert( r, r_cop );
         }
+
+        r_cop->isProperty = it["pt"].isValid();
 
         if( v.isLiteral() ) {
             r_cop->userVisible = (v.literal().toBool() ? 1 : -1);
@@ -419,6 +425,19 @@ QList<Soprano::Statement> Nepomuk::ClassAndPropertyTree::simpleResourceToStateme
                                    convertIfBlankNode(object));
     }
     return list;
+}
+
+QList<QUrl> Nepomuk::ClassAndPropertyTree::visibleTypes() const
+{
+    QList<QUrl> types;
+    QHash<QUrl, ClassOrProperty*>::const_iterator end = m_tree.constEnd();
+    for(QHash<QUrl, ClassOrProperty*>::const_iterator it = m_tree.constBegin(); it != end; ++it) {
+        const ClassOrProperty* cop = *it;
+        if(!cop->isProperty && cop->userVisible) {
+            types << cop->uri;
+        }
+    }
+    return types;
 }
 
 #include "classandpropertytree.moc"
