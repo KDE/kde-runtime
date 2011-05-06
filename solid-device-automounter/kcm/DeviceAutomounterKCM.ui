@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>615</width>
-    <height>380</height>
+    <width>619</width>
+    <height>378</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -84,7 +84,7 @@
      </property>
     </spacer>
    </item>
-   <item row="2" column="0" colspan="3">
+   <item row="3" column="0" colspan="3">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Device Overrides</string>
@@ -141,6 +141,18 @@ If &quot;Enable automatic mounting of removable media&quot; is unchecked, the ov
        </layout>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QCheckBox" name="indexingEnabled">
+     <property name="whatsThis">
+      <string>When enabled all newly mounted removable devices which are not explicitely disabled in the list of Device Overrides will be indexed.
+Indexed in this case means that all the files on the device will be analyzed to allow fast desktop searches through the Nepomuk semantic desktop.
+If disabled the system will ask for every newly mounted device whether the files on it should be indexed.</string>
+     </property>
+     <property name="text">
+      <string>Enable automatic indexing of removable media for fast desktop searches</string>
+     </property>
     </widget>
    </item>
   </layout>

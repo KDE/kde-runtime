@@ -1,5 +1,6 @@
 /**************************************************************************
 *   Copyright (C) 2009-2010 Trever Fischer <tdfischer@fedoraproject.org>  *
+*   Copyright (c) 2011 Sebastian Trueg <trueg@kde.org>                    *
 *                                                                         *
 *   This program is free software; you can redistribute it and/or modify  *
 *   it under the terms of the GNU General Public License as published by  *
@@ -51,6 +52,7 @@ DeviceAutomounterKCM::DeviceAutomounterKCM(QWidget *parent, const QVariantList &
                                        KAboutData::License_GPL_V2,
                                        ki18n("(c) 2009 Trever Fischer"));
     about->addAuthor(ki18n("Trever Fischer"));
+    about->addCredit(ki18n("Sebastian Trüg"), ki18n("Nepomuk file indexing config integration"), "trueg@kde.org");
 
     setAboutData(about);
     setupUi(this);
@@ -76,25 +78,25 @@ DeviceAutomounterKCM::DeviceAutomounterKCM(QWidget *parent, const QVariantList &
 void
 DeviceAutomounterKCM::updateForgetDeviceButton()
 {
-	foreach(QModelIndex idx, deviceView->selectionModel()->selectedIndexes()) {
-		if (idx.data(DeviceModel::TypeRole) == DeviceModel::Detatched) {
-			forgetDevice->setEnabled(true);
-			return;
-		}
-	}
-	forgetDevice->setEnabled(false);
+    foreach(QModelIndex idx, deviceView->selectionModel()->selectedIndexes()) {
+        if (idx.data(DeviceModel::TypeRole) == DeviceModel::Detatched) {
+            forgetDevice->setEnabled(true);
+            return;
+        }
+    }
+    forgetDevice->setEnabled(false);
 }
 
 void
 DeviceAutomounterKCM::forgetSelectedDevices()
 {
     QItemSelectionModel* selected = deviceView->selectionModel();
-	int offset = 0;
+    int offset = 0;
     while(selected->selectedIndexes().size()>0 && selected->selectedIndexes().size() > offset) {
-		if (selected->selectedIndexes()[offset].data(DeviceModel::TypeRole) == DeviceModel::Attached)
-			offset++;
-		else
-			m_devices->forgetDevice(selected->selectedIndexes()[offset].data(DeviceModel::UdiRole).toString());
+        if (selected->selectedIndexes()[offset].data(DeviceModel::TypeRole) == DeviceModel::Attached)
+            offset++;
+        else
+            m_devices->forgetDevice(selected->selectedIndexes()[offset].data(DeviceModel::UdiRole).toString());
     }
     changed();
 }
@@ -144,6 +146,10 @@ DeviceAutomounterKCM::load()
     else
         automountOnPlugin->setCheckState(Qt::Unchecked);
 
+    // TODO: put the config in a lib since it is used in more than one place
+    KConfig nepomukConfig("nepomukstrigirc");
+    indexingEnabled->setChecked(nepomukConfig.group( "General" ).readEntry( "index newly mounted", false ) );
+
     m_devices->reload();
     enabledChanged();
     loadLayout();
@@ -173,6 +179,9 @@ DeviceAutomounterKCM::save()
     else
         AutomounterSettings::setAutomountOnPlugin(false);
 
+    KConfig nepomukConfig("nepomukstrigirc");
+    nepomukConfig.group( "General" ).writeEntry( "index newly mounted", indexingEnabled->isChecked() );
+
     QStringList validDevices;
     for(int i = 0;i < m_devices->rowCount();i++) {
         QModelIndex idx = m_devices->index(i, 0);
@@ -189,6 +198,8 @@ DeviceAutomounterKCM::save()
                 AutomounterSettings::deviceSettings(device).writeEntry("ForceAttachAutomount", true);
             else
                 AutomounterSettings::deviceSettings(device).writeEntry("ForceAttachAutomount", false);
+            dev = dev.sibling(j, 3);
+            nepomukConfig.group("Devices").writeEntry(device, dev.data(Qt::CheckStateRole).toBool());
         }
     }
 

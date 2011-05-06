@@ -11,15 +11,15 @@ class DeviceModel : public QAbstractItemModel {
     Q_OBJECT
 
     public:
-		enum DeviceType {
-			Attached,
-			Detatched
-		};
+        enum DeviceType {
+            Attached,
+            Detatched
+        };
 
-		enum {
-			UdiRole = Qt::UserRole,
-			TypeRole
-		};
+        enum {
+            UdiRole = Qt::UserRole,
+            TypeRole
+        };
         DeviceModel(QObject* parent = 0);
         ~DeviceModel();
         Qt::ItemFlags flags(const QModelIndex &index) const;
@@ -42,6 +42,7 @@ class DeviceModel : public QAbstractItemModel {
         QList<QString> m_disconnected;
         QHash<QString, bool> m_loginForced;
         QHash<QString, bool> m_attachedForced;
+        QHash<QString, bool> m_indexingForced;
 };
 
 #endif
