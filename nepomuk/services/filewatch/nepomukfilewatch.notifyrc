@@ -1,0 +1,8 @@
+[Global]
+IconName=nepomuk
+Comment=Nepomuk file watch service
+
+[Event/nepomuk_new_removable_device]
+Name=New Removable Device
+Comment=A new unknown removable device has been mounted
+Action=Popup

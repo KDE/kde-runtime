@@ -18,6 +18,7 @@ set(SRCS
   updaterequest.cpp
   invalidfileresourcecleaner.cpp
   ../strigi/strigiserviceconfig.cpp
+  removabledeviceindexnotification.cpp
   )
 
 qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.Strigi.xml strigiserviceinterface)
@@ -51,5 +52,8 @@ install(
 install(
   TARGETS nepomukfilewatch
   DESTINATION ${PLUGIN_INSTALL_DIR})
+install(
+  FILES nepomukfilewatch.notifyrc
+  DESTINATION ${DATA_INSTALL_DIR}/nepomukfilewatch)
 
 add_subdirectory(test)

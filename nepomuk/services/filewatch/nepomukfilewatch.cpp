@@ -21,6 +21,7 @@
 #include "strigiserviceinterface.h"
 #include "fileexcludefilters.h"
 #include "invalidfileresourcecleaner.h"
+#include "removabledeviceindexnotification.h"
 #include "../strigi/strigiserviceconfig.h"
 
 #ifdef BUILD_KINOTIFY
@@ -378,15 +379,35 @@ void Nepomuk::FileWatch::slotDeviceAccessibilityChanged(bool accessible, const Q
 
             //
             // tell Strigi to update the newly mounted device
-            // TODO: create a better config for this: let the user decide on a case-by-case thingi
-            //       very much like KDE's auto-mounting handling. (maybe both KCMs can be combined
-            //       into one removable media KCM)
             //
-            if( KConfig( "nepomukstrigirc" ).group( "General" ).readEntry( "index newly mounted", false ) ) {
+            KConfig strigiConfig( "nepomukstrigirc" );
+            int index = 0;
+            if(strigiConfig.group("Devices").hasKey(udi)) {
+                index = strigiConfig.group("Devices").readEntry(udi, false) ? 1 : -1;
+            }
+
+            if( index == 0 && strigiConfig.group( "General" ).readEntry( "index newly mounted", false ) ) {
+                index = 1;
+            }
+
+            // index automatically
+            if( index == 1 ) {
+                kDebug() << "Device configured for automatic indexing. Calling Strigi service.";
                 org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
                 if ( strigi.isValid() ) {
                     strigi.indexFolder( sa->filePath(), true /* recursive */, false /* no forced update */ );
                 }
+            }
+
+            // ask the user if we should index
+            else if( index == 0 ) {
+                kDebug() << "Device unknown. Asking user for action.";
+                (new RemovableDeviceIndexNotification(dev, this))->sendEvent();
+            }
+
+            else {
+                // TODO: remove all the indexed info
+                kDebug() << "Device configured to not be indexed.";
             }
         }
     }
