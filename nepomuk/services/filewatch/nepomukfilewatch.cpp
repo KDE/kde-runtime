@@ -374,7 +374,12 @@ void Nepomuk::FileWatch::slotDeviceAccessibilityChanged(bool accessible, const Q
             kDebug() << "Installing watch for removable storage at mount point" << sa->filePath();
             watchFolder(sa->filePath());
 
-            // TODO: start an InvalidFileResourceCleaner thread on this path
+            //
+            // now that the device is mounted we can clean up our db - in case we have any
+            // data for file that have been deleted from the device in the meantime.
+            //
+            InvalidFileResourceCleaner* cleaner = new InvalidFileResourceCleaner(this);
+            cleaner->start(sa->filePath());
 
             //
             // tell Strigi to update the newly mounted device
