@@ -20,7 +20,7 @@
 */
 
 #include "nepomukindexer.h"
-#include "indexer/nepomukindexfeeder.h"
+#include "util.h"
 
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>
@@ -133,19 +133,19 @@ void Nepomuk::Indexer::indexResource( const KUrl& uri, const QDateTime& modifica
 
 void Nepomuk::Indexer::clearIndexedData( const KUrl& url )
 {
-    Nepomuk::IndexFeeder::clearIndexedDataForUrl( url );
+    Nepomuk::clearIndexedDataForUrl( url );
 }
 
 
 void Nepomuk::Indexer::clearIndexedData( const QFileInfo& info )
 {
-    Nepomuk::IndexFeeder::clearIndexedDataForUrl( KUrl(info.filePath()) );
+    Nepomuk::clearIndexedDataForUrl( KUrl(info.filePath()) );
 }
 
 
 void Nepomuk::Indexer::clearIndexedData( const Nepomuk::Resource& res )
 {
-    Nepomuk::IndexFeeder::clearIndexedDataForResourceUri( res.resourceUri() );
+    Nepomuk::clearIndexedDataForResourceUri( res.resourceUri() );
 }
 
 

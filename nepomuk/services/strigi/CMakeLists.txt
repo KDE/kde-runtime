@@ -17,7 +17,6 @@ set(strigiservice_SRCS
   indexscheduler.cpp
   strigiserviceconfig.cpp
   eventmonitor.cpp
-  indexer/nepomukindexfeeder.cpp
   util.cpp
   nepomukindexer.cpp
   )

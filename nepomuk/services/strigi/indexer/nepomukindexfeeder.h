@@ -87,10 +87,7 @@ namespace Nepomuk {
          * \sa begin
          */
         void end();
-
-        static bool clearIndexedDataForUrl( const KUrl& url );
-        static bool clearIndexedDataForResourceUri( const KUrl& res );
-
+        
     private:
 
         struct ResourceStruct {
