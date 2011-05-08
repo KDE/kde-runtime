@@ -24,11 +24,7 @@
 #ifndef NEPOMUKINDEXFEEDER_H
 #define NEPOMUKINDEXFEEDER_H
 
-#include <QtCore/QThread>
-#include <QtCore/QMutex>
-#include <QtCore/QWaitCondition>
 #include <QtCore/QUrl>
-#include <QtCore/QQueue>
 #include <QtCore/QStack>
 #include <QtCore/QSet>
 
@@ -39,14 +35,12 @@ namespace Soprano {
 class KUrl;
 
 namespace Nepomuk {
-    class IndexFeeder : public QThread
+    class IndexFeeder : public QObject
     {
         Q_OBJECT
     public:
         IndexFeeder( QObject* parent = 0 );
         virtual ~IndexFeeder();
-
-        void stop();
 
     public Q_SLOTS:
         /**
@@ -92,7 +86,7 @@ namespace Nepomuk {
          *
          * \sa begin
          */
-        void end( bool forceCommit = false );
+        void end();
 
         static bool clearIndexedDataForUrl( const KUrl& url );
         static bool clearIndexedDataForResourceUri( const KUrl& res );
@@ -112,21 +106,12 @@ namespace Nepomuk {
             ResourceHash hash;
         };
 
-        /// The thread uses this queue to check if it has any requests that need processing
-        QQueue<Request> m_updateQueue;
-
         /**
          * The stack is used to store the internal state of the Feeder, a new item is pushed into
          * the stack every time begin() is called, and the top most item is poped and sent into the
          * update queue when end() is called.
          */
         QStack<Request> m_stack;
-
-        QMutex m_queueMutex;
-        QWaitCondition m_queueWaiter;
-        bool m_stopped;
-
-        void run();
 
         /**
          * Handle a single request, i.e. store all its data to Nepomuk.

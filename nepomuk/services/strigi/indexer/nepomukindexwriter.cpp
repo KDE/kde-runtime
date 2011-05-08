@@ -37,6 +37,7 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QByteArray>
 #include <QtCore/QStack>
+#include <QtCore/QMutex>
 
 #include <KUrl>
 #include <KDebug>
@@ -628,7 +629,7 @@ void Nepomuk::StrigiIndexWriter::finishAnalysis( const AnalysisResult* idx )
 #endif // Q_OS_UNIX
     }
 
-    d->feeder->end( md->fileInfo.isDir() );
+    d->feeder->end();
 
     // cleanup
     delete md;

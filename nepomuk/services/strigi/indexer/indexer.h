@@ -62,8 +62,6 @@ namespace Nepomuk {
          * file.
          */
         void indexFile( const QFileInfo& info );
-
-        void stop();
     private:
         class Private;
         Private* const d;

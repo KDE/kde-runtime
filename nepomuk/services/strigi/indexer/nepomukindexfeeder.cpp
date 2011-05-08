@@ -41,17 +41,13 @@
 
 
 Nepomuk::IndexFeeder::IndexFeeder( QObject* parent )
-    : QThread( parent )
+    : QObject( parent )
 {
-    m_stopped = false;
-    start();
 }
 
 
 Nepomuk::IndexFeeder::~IndexFeeder()
 {
-    stop();
-    wait();
 }
 
 
@@ -97,30 +93,14 @@ void Nepomuk::IndexFeeder::addStatement(const Soprano::Node& subject, const Sopr
 }
 
 
-void Nepomuk::IndexFeeder::end( bool forceCommit )
+void Nepomuk::IndexFeeder::end()
 {
     if( m_stack.isEmpty() )
         return;
     //kDebug() << "ENDING";
 
     Request req = m_stack.pop();
-
-    if ( forceCommit ) {
-        handleRequest( req );
-    }
-    else {
-        QMutexLocker lock( &m_queueMutex );
-        m_updateQueue.enqueue( req );
-        m_queueWaiter.wakeAll();
-    }
-}
-
-
-void Nepomuk::IndexFeeder::stop()
-{
-    //QMutexLocker lock( &m_queueMutex );
-    m_stopped = true;
-    m_queueWaiter.wakeAll();
+    handleRequest( req );
 }
 
 
@@ -154,46 +134,6 @@ void Nepomuk::IndexFeeder::addToModel(const Nepomuk::IndexFeeder::ResourceStruct
         ResourceManager::instance()->mainModel()->addStatement( st );
     }
 }
-
-
-//BUG: When indexing a file, there is one main uri ( in Request ) and other additional uris
-//     If there is a statement connecting the main uri with the additional ones, it will be
-//     resolved correctly, but not if one of the additional one links to another additional one.
-void Nepomuk::IndexFeeder::run()
-{
-    m_stopped = false;
-    while( !m_stopped ) {
-
-        // lock for initial iteration
-        m_queueMutex.lock();
-
-        // work the queue
-        while( !m_updateQueue.isEmpty() ) {
-            Request request = m_updateQueue.dequeue();
-
-            // unlock after queue utilization
-            m_queueMutex.unlock();
-
-            handleRequest( request );
-
-            // lock for next iteration
-            m_queueMutex.lock();
-        }
-
-        // FIXME: this is not very secure. In theory m_stopped could be changed
-        // just after the if but before the m_queueWaiter has been entered.
-        // Then we would just hang there forever!
-        if ( !m_stopped ) {
-            // wait for more input
-            kDebug() << "Waiting...";
-            m_queueWaiter.wait( &m_queueMutex );
-            m_queueMutex.unlock();
-            kDebug() << "Woke up.";
-        }
-
-    }
-}
-
 
 void Nepomuk::IndexFeeder::handleRequest( Request& request ) const
 {

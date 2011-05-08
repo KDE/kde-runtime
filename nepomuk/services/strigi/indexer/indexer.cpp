@@ -97,8 +97,6 @@ Nepomuk::Indexer::Indexer( QObject* parent )
 
 Nepomuk::Indexer::~Indexer()
 {
-    stop();
-    
     delete d->m_streamAnalyzer;
     delete d->m_indexWriter;
     delete d->m_indexFeeder;
@@ -137,13 +135,5 @@ void Nepomuk::Indexer::indexFile( const QFileInfo& info )
     }
 }
 
-void Nepomuk::Indexer::stop()
-{
-    kDebug();
-    d->m_analyzerConfig.setStop( true );
-    d->m_indexFeeder->stop();
-    d->m_indexFeeder->wait();
-    kDebug() << "done";
-}
 
 #include "indexer.moc"
