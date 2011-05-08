@@ -20,7 +20,7 @@
 
 #include "nepomukindexwriter.h"
 #include "nepomukindexfeeder.h"
-#include "util.h"
+#include "../util.h"
 #include "kext.h"
 
 #include <Soprano/Vocabulary/RDF>

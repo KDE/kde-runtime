@@ -17,8 +17,7 @@ set(strigiservice_SRCS
   indexscheduler.cpp
   strigiserviceconfig.cpp
   eventmonitor.cpp
-  nepomukindexwriter.cpp
-  nepomukindexfeeder.cpp
+  indexer/nepomukindexfeeder.cpp
   util.cpp
   nepomukindexer.cpp
   )
@@ -56,4 +55,6 @@ install(
 install(
   TARGETS nepomukstrigiservice
   DESTINATION ${PLUGIN_INSTALL_DIR})
+
+add_subdirectory(indexer)
 # -----------------------------

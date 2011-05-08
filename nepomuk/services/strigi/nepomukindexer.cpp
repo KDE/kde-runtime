@@ -20,8 +20,7 @@
 */
 
 #include "nepomukindexer.h"
-#include "nepomukindexwriter.h"
-#include "nepomukindexfeeder.h"
+#include "indexer/nepomukindexfeeder.h"
 
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>
@@ -30,6 +29,8 @@
 
 #include <KUrl>
 #include <KDebug>
+#include <KProcess>
+#include <KStandardDirs>
 
 #include <QtCore/QDataStream>
 #include <QtCore/QDateTime>
@@ -43,44 +44,9 @@
 #include <strigi/analyzerconfiguration.h>
 
 
-namespace {
-    class StoppableConfiguration : public Strigi::AnalyzerConfiguration
-    {
-    public:
-        StoppableConfiguration()
-            : m_stop(false) {
-#if defined(STRIGI_IS_VERSION)
-#if STRIGI_IS_VERSION( 0, 6, 1 )
-            setIndexArchiveContents( false );
-#endif
-#endif
-        }
-
-        bool indexMore() const {
-            return !m_stop;
-        }
-
-        bool addMoreText() const {
-            return !m_stop;
-        }
-
-        void setStop( bool s ) {
-            m_stop = s;
-        }
-
-    private:
-        bool m_stop;
-    };
-}
-
-
 class Nepomuk::Indexer::Private
 {
 public:
-    StoppableConfiguration m_analyzerConfig;
-    IndexFeeder* m_indexFeeder;
-    StrigiIndexWriter* m_indexWriter;
-    Strigi::StreamAnalyzer* m_streamAnalyzer;
 };
 
 
@@ -88,54 +54,33 @@ Nepomuk::Indexer::Indexer( QObject* parent )
     : QObject( parent ),
       d( new Private() )
 {
-    d->m_indexFeeder = new IndexFeeder( this );
-    d->m_indexWriter = new StrigiIndexWriter( d->m_indexFeeder );
-    d->m_streamAnalyzer = new Strigi::StreamAnalyzer( d->m_analyzerConfig );
-    d->m_streamAnalyzer->setIndexWriter( *d->m_indexWriter );
 }
 
 
 Nepomuk::Indexer::~Indexer()
 {
-    delete d->m_streamAnalyzer;
-    delete d->m_indexWriter;
-    delete d->m_indexFeeder;
-    delete d;
 }
 
 
 void Nepomuk::Indexer::indexFile( const KUrl& url )
 {
-    indexFile( QFileInfo( url.toLocalFile() ) );
+    const QString exe = KStandardDirs::findExe(QLatin1String("nepomukstrigiindexer"));
+    KProcess process;
+    process.setOutputChannelMode( KProcess::MergedChannels );
+    kDebug() << exe;
+    kDebug() << "Executing the process with args " << url.toLocalFile();
+    process.setProgram( exe, QStringList() << url.toLocalFile() );
+    kDebug() << process.execute();
+    kDebug() << "Done executing";
 }
 
 
 void Nepomuk::Indexer::indexFile( const QFileInfo& info )
 {
-    d->m_analyzerConfig.setStop( false );
-
-    KUrl url( info.filePath() );
-
-    // strigi asserts if the file path has a trailing slash
-    QString filePath = url.toLocalFile( KUrl::RemoveTrailingSlash );
-    QString dir = url.directory( KUrl::IgnoreTrailingSlash );
-
-    Strigi::AnalysisResult analysisresult( QFile::encodeName( filePath ).data(),
-                                           info.lastModified().toTime_t(),
-                                           *d->m_indexWriter,
-                                           *d->m_streamAnalyzer,
-                                           QFile::encodeName( dir ).data() );
-    if ( info.isFile() && !info.isSymLink() ) {
-        Strigi::InputStream* stream = Strigi::FileInputStream::open( QFile::encodeName( info.filePath() ) );
-        analysisresult.index( stream );
-        delete stream;
-    }
-    else {
-        analysisresult.index(0);
-    }
+    indexFile( KUrl(info.absoluteFilePath()) );
 }
 
-
+/*
 namespace {
     class QDataStreamStrigiBufferedStream : public Strigi::BufferedStream<char>
     {
@@ -164,11 +109,11 @@ namespace {
         QDataStream& m_stream;
     };
 }
-
+*/
 
 void Nepomuk::Indexer::indexResource( const KUrl& uri, const QDateTime& modificationTime, QDataStream& data )
 {
-    d->m_analyzerConfig.setStop( false );
+    /*d->m_analyzerConfig.setStop( false );
 
     Resource dirRes( uri );
     if ( !dirRes.exists() ||
@@ -182,7 +127,7 @@ void Nepomuk::Indexer::indexResource( const KUrl& uri, const QDateTime& modifica
     }
     else {
         kDebug() << uri << "up to date";
-    }
+    }*/
 }
 
 
@@ -206,20 +151,21 @@ void Nepomuk::Indexer::clearIndexedData( const Nepomuk::Resource& res )
 
 void Nepomuk::Indexer::stop()
 {
-    kDebug();
+    /*kDebug();
     d->m_analyzerConfig.setStop( true );
     d->m_indexFeeder->stop();
     d->m_indexFeeder->wait();
-    kDebug() << "done";
+    kDebug() << "done";*/
 }
 
 
 void Nepomuk::Indexer::start()
 {
+    /*
     kDebug();
     d->m_analyzerConfig.setStop( false );
     d->m_indexFeeder->start();
-    kDebug() << "Started";
+    kDebug() << "Started";*/
 }
 
 #include "nepomukindexer.moc"

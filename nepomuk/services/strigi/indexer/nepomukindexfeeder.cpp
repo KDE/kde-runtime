@@ -22,7 +22,7 @@
 
 
 #include "nepomukindexfeeder.h"
-#include "util.h"
+#include "../util.h"
 
 #include <QtCore/QDateTime>
 
@@ -118,7 +118,7 @@ void Nepomuk::IndexFeeder::end( bool forceCommit )
 
 void Nepomuk::IndexFeeder::stop()
 {
-    QMutexLocker lock( &m_queueMutex );
+    //QMutexLocker lock( &m_queueMutex );
     m_stopped = true;
     m_queueWaiter.wakeAll();
 }
@@ -150,7 +150,7 @@ void Nepomuk::IndexFeeder::addToModel(const Nepomuk::IndexFeeder::ResourceStruct
         iter.next();
 
         Soprano::Statement st( rs.uri, iter.key(), iter.value(), context );
-        //kDebug() << "ADDING : " << st;
+        kDebug() << "ADDING : " << st;
         ResourceManager::instance()->mainModel()->addStatement( st );
     }
 }
