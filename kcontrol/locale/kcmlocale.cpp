@@ -1753,7 +1753,7 @@ void KCMLocale::initMonetaryDigitGrouping()
     m_ui->m_comboMonetaryDigitGrouping->blockSignals( true );
 
     m_ui->m_labelMonetaryDigitGrouping->setText( ki18n( "Digit grouping:" ).toString( m_kcmLocale ) );
-    QString helpText = ki18n( "<p>Here you can define the digit grouping used to display monetary"
+    QString helpText = ki18n( "<p>Here you can define the digit grouping used to display monetary "
                               "values.</p><p>Note that the digit grouping used to display "
                               "other numbers has to be defined separately (see the 'Numbers' tab)."
                               "</p>" ).toString( m_kcmLocale );
