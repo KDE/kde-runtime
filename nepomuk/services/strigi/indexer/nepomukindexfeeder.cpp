@@ -130,12 +130,12 @@ void Nepomuk::IndexFeeder::addToModel(const Nepomuk::IndexFeeder::ResourceStruct
         iter.next();
 
         Soprano::Statement st( rs.uri, iter.key(), iter.value(), context );
-        kDebug() << "ADDING : " << st;
+        //kDebug() << "ADDING : " << st;
         ResourceManager::instance()->mainModel()->addStatement( st );
     }
 }
 
-void Nepomuk::IndexFeeder::handleRequest( Request& request ) const
+void Nepomuk::IndexFeeder::handleRequest( Request& request )
 {
     // Search for the resources or create them
     //kDebug() << " Searching for duplicates or creating them ... ";
@@ -187,6 +187,8 @@ void Nepomuk::IndexFeeder::handleRequest( Request& request ) const
 
     // Add main file to the repository
     addToModel( rs );
+
+    m_lastRequestUri = request.uri;
 }
 
 
@@ -222,3 +224,7 @@ QUrl Nepomuk::IndexFeeder::generateGraph( const QUrl& resourceUri ) const
     return context;
 }
 
+QUrl Nepomuk::IndexFeeder::lastRequestUri() const
+{
+    return m_lastRequestUri;
+}

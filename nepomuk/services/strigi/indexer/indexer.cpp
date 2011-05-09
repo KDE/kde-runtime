@@ -42,6 +42,8 @@
 #include <strigi/fileinputstream.h>
 #include <strigi/analyzerconfiguration.h>
 
+#include <iostream>
+
 namespace {
     class StoppableConfiguration : public Strigi::AnalyzerConfiguration
     {
@@ -120,19 +122,25 @@ void Nepomuk::Indexer::indexFile( const QFileInfo& info, const KUrl resUri )
     QString filePath = url.toLocalFile( KUrl::RemoveTrailingSlash );
     QString dir = url.directory( KUrl::IgnoreTrailingSlash );
 
-    Strigi::AnalysisResult analysisresult( QFile::encodeName( filePath ).data(),
-                                           info.lastModified().toTime_t(),
-                                           *d->m_indexWriter,
-                                           *d->m_streamAnalyzer,
-                                           QFile::encodeName( dir ).data() );
-    if ( info.isFile() && !info.isSymLink() ) {
-        Strigi::InputStream* stream = Strigi::FileInputStream::open( QFile::encodeName( info.filePath() ) );
-        analysisresult.index( stream );
-        delete stream;
+    // A new block so as to force destruction of the analysisresult
+    {
+        Strigi::AnalysisResult analysisresult( QFile::encodeName( filePath ).data(),
+                                            info.lastModified().toTime_t(),
+                                            *d->m_indexWriter,
+                                            *d->m_streamAnalyzer,
+                                            QFile::encodeName( dir ).data() );
+        if ( info.isFile() && !info.isSymLink() ) {
+            Strigi::InputStream* stream = Strigi::FileInputStream::open( QFile::encodeName( info.filePath() ) );
+            analysisresult.index( stream );
+            delete stream;
+        }
+        else {
+            analysisresult.index(0);
+        }
     }
-    else {
-        analysisresult.index(0);
-    }
+    
+    QTextStream out(stdout);
+    out << d->m_indexFeeder->lastRequestUri().toString();
 }
 
 void Nepomuk::Indexer::indexStdin(const KUrl resUri)
@@ -141,16 +149,22 @@ void Nepomuk::Indexer::indexStdin(const KUrl resUri)
     d->m_indexWriter->forceUri( resUri );
 
     QString filename;
-    
-    Strigi::AnalysisResult analysisresult( QFile::encodeName( filename ).data(),
-                                           QDateTime::currentDateTime().toTime_t(),
-                                           *d->m_indexWriter,
-                                           *d->m_streamAnalyzer );
-    Strigi::FileInputStream stream( stdin, QFile::encodeName( filename ).data() );
-    analysisresult.index( &stream );
 
+    // A new block so as to force destruction of the analysisresult
+    {
+        Strigi::AnalysisResult analysisresult( QFile::encodeName( filename ).data(),
+                                            QDateTime::currentDateTime().toTime_t(),
+                                            *d->m_indexWriter,
+                                            *d->m_streamAnalyzer );
+        Strigi::FileInputStream stream( stdin, QFile::encodeName( filename ).data() );
+        analysisresult.index( &stream );
+    }
+    
     // Remove the false nie:url
     // TODO: Implement me!
+
+    QTextStream out(stdout);
+    out << d->m_indexFeeder->lastRequestUri().toString();
 }
 
 

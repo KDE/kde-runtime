@@ -87,6 +87,11 @@ namespace Nepomuk {
          * \sa begin
          */
         void end();
+
+        /**
+         * Returns the uri of the main resource of the last request that was handled
+         */
+        QUrl lastRequestUri() const;
         
     private:
 
@@ -103,6 +108,8 @@ namespace Nepomuk {
             ResourceHash hash;
         };
 
+        QUrl m_lastRequestUri;
+        
         /**
          * The stack is used to store the internal state of the Feeder, a new item is pushed into
          * the stack every time begin() is called, and the top most item is poped and sent into the
@@ -113,7 +120,7 @@ namespace Nepomuk {
         /**
          * Handle a single request, i.e. store all its data to Nepomuk.
          */
-        void handleRequest( Request& request ) const;
+        void handleRequest( Nepomuk::IndexFeeder::Request& request );
 
         /// Generates a discardable graph for \p resourceUri
         QUrl generateGraph( const QUrl& resourceUri ) const;
