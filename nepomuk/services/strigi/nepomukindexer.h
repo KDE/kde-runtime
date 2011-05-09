@@ -78,15 +78,6 @@ namespace Nepomuk {
         void indexFile( const QFileInfo& info );
 
         /**
-         * Index a random resource.
-         *
-         * \param url The URL of the resource.
-         * \param modificationTime the last modification date of the resource.
-         * \param data The data to be analyzed
-         */
-        void indexResource( const KUrl& url, const QDateTime& modificationTime, QDataStream& data );
-
-        /**
          * Remove all indexed data for the file/resource identified by \p res.
          */
         void clearIndexedData( const Nepomuk::Resource& res );

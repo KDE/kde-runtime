@@ -80,57 +80,6 @@ void Nepomuk::Indexer::indexFile( const QFileInfo& info )
     indexFile( KUrl(info.absoluteFilePath()) );
 }
 
-/*
-namespace {
-    class QDataStreamStrigiBufferedStream : public Strigi::BufferedStream<char>
-    {
-    public:
-        QDataStreamStrigiBufferedStream( QDataStream& stream )
-            : m_stream( stream ) {
-        }
-
-        int32_t fillBuffer( char* start, int32_t space ) {
-            int r = m_stream.readRawData( start, space );
-            if ( r == 0 ) {
-                // Strigi's API is so weird!
-                return -1;
-            }
-            else if ( r < 0 ) {
-                // Again: weird API. m_status is a protected member of StreamBaseBase (yes, 2x Base)
-                m_status = Strigi::Error;
-                return -1;
-            }
-            else {
-                return r;
-            }
-        }
-
-    private:
-        QDataStream& m_stream;
-    };
-}
-*/
-
-void Nepomuk::Indexer::indexResource( const KUrl& uri, const QDateTime& modificationTime, QDataStream& data )
-{
-    /*d->m_analyzerConfig.setStop( false );
-
-    Resource dirRes( uri );
-    if ( !dirRes.exists() ||
-         dirRes.property( Nepomuk::Vocabulary::NIE::lastModified() ).toDateTime() != modificationTime ) {
-        Strigi::AnalysisResult analysisresult( uri.toEncoded().data(),
-                                               modificationTime.toTime_t(),
-                                               *d->m_indexWriter,
-                                               *d->m_streamAnalyzer );
-        QDataStreamStrigiBufferedStream stream( data );
-        analysisresult.index( &stream );
-    }
-    else {
-        kDebug() << uri << "up to date";
-    }*/
-}
-
-
 void Nepomuk::Indexer::clearIndexedData( const KUrl& url )
 {
     Nepomuk::clearIndexedDataForUrl( url );

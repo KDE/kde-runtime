@@ -513,13 +513,6 @@ void Nepomuk::IndexScheduler::slotConfigChanged()
 }
 
 
-void Nepomuk::IndexScheduler::analyzeResource( const QUrl& uri, const QDateTime& modificationTime, QDataStream& data )
-{
-    Indexer indexer;
-    indexer.indexResource( uri, modificationTime, data );
-}
-
-
 void Nepomuk::IndexScheduler::analyzeFile( const QString& path )
 {
     Indexer indexer;
