@@ -38,7 +38,11 @@ NEPOMUK_EXPORT_SERVICE( Nepomuk::Storage, "nepomukstorage" )
 Nepomuk::Storage::Storage( QObject* parent, const QList<QVariant>& )
     : Service( parent, true /* delayed initialization */ )
 {
+    // register the fancier name for this important service
     QDBusConnection::sessionBus().registerService( "org.kde.NepomukStorage" );
+
+    // TODO: remove this one
+    QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.nepomuk.DataManagement"));
 
     m_core = new Core( this );
     connect( m_core, SIGNAL( initializationDone(bool) ),

@@ -10,7 +10,7 @@ set(datamanagement_SRC
   datamanagement.cpp
 )
 
-set(datamanagementservice_dbus_desc ${CMAKE_CURRENT_SOURCE_DIR}/../org.kde.nepomuk.DataManagement.xml)
+set(datamanagementservice_dbus_desc ../../../interfaces/org.kde.nepomuk.DataManagement.xml)
 
 set_source_files_properties(
   ${datamanagementservice_dbus_desc}

@@ -16,6 +16,8 @@
 #include "modelcopyjob.h"
 #include "crappyinferencer2.h"
 #include "removablemediamodel.h"
+#include "datamanagementmodel.h"
+#include "datamanagementadaptor.h"
 
 #include <Soprano/Backend>
 #include <Soprano/PluginManager>
@@ -39,6 +41,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QThread>
 #include <QtCore/QCoreApplication>
+#include <QtDBus/QDBusConnection>
 
 
 namespace {
@@ -187,6 +190,13 @@ void Nepomuk::Repository::open()
     Soprano::Util::SignalCacheModel* scm = new Soprano::Util::SignalCacheModel( m_removableStorageModel );
     scm->setParent(this); // memory management
     setParentModel( scm );
+
+    // create the DataManagementModel on top of everything
+    // =================================
+    m_dataManagementModel = new DataManagementModel(scm, this);
+    Nepomuk::DataManagementAdaptor* adaptor = new Nepomuk::DataManagementAdaptor(m_dataManagementModel);
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagementmodel"), adaptor, QDBusConnection::ExportScriptableContents);
+
 
     // check if we have to convert
     // =================================

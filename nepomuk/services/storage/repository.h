@@ -34,6 +34,7 @@ class CrappyInferencer2;
 namespace Nepomuk {
     class RemovableMediaModel;
     class ModelCopyJob;
+    class DataManagementModel;
 
     /**
      * Represents the main Nepomuk model. While it looks as if there could be more than
@@ -98,6 +99,7 @@ namespace Nepomuk {
         Soprano::Model* m_model;
         CrappyInferencer2* m_inferencer;
         RemovableMediaModel* m_removableStorageModel;
+        DataManagementModel* m_dataManagementModel;
         const Soprano::Backend* m_backend;
 
         // only used during opening
