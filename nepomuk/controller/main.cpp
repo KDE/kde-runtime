@@ -20,6 +20,7 @@
 */
 
 #include "systray.h"
+#include "statuswidget.h"
 
 #include <KUniqueApplication>
 #include <KCmdLineArgs>
@@ -30,7 +31,7 @@ int main( int argc, char *argv[] )
     KAboutData aboutData( "nepomukcontroller",
                           "nepomukcontroller",
                           ki18n("Nepomuk Controller"),
-                          "0.2",
+                          "1.0",
                           ki18n("A small tool to monitor and control Nepomuk file indexing"),
                           KAboutData::License_GPL,
                           ki18n("(c) 2008-2011, Sebastian Trüg"),
@@ -45,8 +46,9 @@ int main( int argc, char *argv[] )
 
     if( KUniqueApplication::start() ) {
         KUniqueApplication app;
-        // trueg: Hack: we need to pass a 0 parent since otherwise the app would crash on exit due to some double deletion in K/QMenu
-        (void)new Nepomuk::SystemTray( 0 /* &app */ );
+        app.setQuitOnLastWindowClosed(false);
+        Nepomuk::StatusWidget* statusWidget = new Nepomuk::StatusWidget();
+        (void)new Nepomuk::SystemTray( statusWidget );
         return app.exec();
     }
 }

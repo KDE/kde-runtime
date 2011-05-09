@@ -76,9 +76,6 @@ Nepomuk::SystemTray::SystemTray( QObject* parent )
     connect( dbusServiceWatcher, SIGNAL( serviceUnregistered( QString ) ),
              this, SLOT( slotUpdateStrigiStatus()) );
 
-    // we do not have a dedicated status widget yet, thus we show the context menu on click
-    setAssociatedWidget( contextMenu() );
-
     slotUpdateStrigiStatus();
 }
 
