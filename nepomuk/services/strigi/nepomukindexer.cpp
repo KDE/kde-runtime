@@ -37,13 +37,6 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 
-#include <strigi/strigiconfig.h>
-#include <strigi/indexwriter.h>
-#include <strigi/analysisresult.h>
-#include <strigi/fileinputstream.h>
-#include <strigi/analyzerconfiguration.h>
-
-
 class Nepomuk::Indexer::Private
 {
 public:
