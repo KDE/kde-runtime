@@ -211,7 +211,6 @@ void Nepomuk::IndexScheduler::stop()
         QMutexLocker locker( &m_resumeStopMutex );
         m_stopped = true;
         m_suspended = false;
-        m_indexer->stop();
         m_dirsToUpdateWc.wakeAll();
         m_resumeStopWc.wakeAll();
     }
@@ -283,7 +282,6 @@ void Nepomuk::IndexScheduler::run()
 {
     // set lowest priority for this thread
     setPriority( QThread::IdlePriority );
-    m_indexer->start();
     
     setIndexingStarted( true );
 

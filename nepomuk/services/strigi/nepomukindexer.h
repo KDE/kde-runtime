@@ -95,14 +95,6 @@ namespace Nepomuk {
          * Remove all indexed data for the file identifies by \p info.
          */
         void clearIndexedData( const QFileInfo& info );
-
-        /**
-         * This method stops the indexer, i.e. cancels potentially
-         * long indexing operations and any queued data is thrown away.
-         */
-        void stop();
-
-        void start();
         
     Q_SIGNALS:
         /**
