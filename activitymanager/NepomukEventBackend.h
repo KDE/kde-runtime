@@ -23,6 +23,11 @@
 
 #include "EventBackend.h"
 
+#include <Nepomuk/Resource>
+
+class KUrl;
+class QDateTime;
+
 /**
  *
  */
@@ -33,7 +38,9 @@ public:
     virtual void addEvents(const EventList & events);
 
 private:
-    /* data */
+    Nepomuk::Resource createDesktopEvent(const KUrl& uri, const QDateTime& startTime, const QString& app);
+
+    Nepomuk::Resource m_currentActivity;
 };
 
 #endif // NEPOMUK_EVENT_BACKEND_H_

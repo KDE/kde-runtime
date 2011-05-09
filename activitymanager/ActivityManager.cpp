@@ -692,3 +692,10 @@ QStringList ActivityManager::ActivitiesForResource(const QString & uri) const
 }
 
 
+// static
+ActivityManager * ActivityManager::self()
+{
+    return static_cast<ActivityManager*>(kapp);
+}
+
+

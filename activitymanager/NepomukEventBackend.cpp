@@ -27,6 +27,8 @@
 
 #include "NepomukEventBackend.h"
 #include "Event.h"
+#include "ActivityManager.h"
+#include "kext.h"
 
 #include <nepomuk/resource.h>
 #include <nepomuk/nuao.h>
@@ -53,22 +55,6 @@ using namespace Soprano::Vocabulary;
 
 NepomukEventBackend::NepomukEventBackend()
 {
-}
-
-namespace {
-Nepomuk::Resource createDesktopEvent(const KUrl& uri, const QDateTime& startTime, const QString& app)
-{
-    // one-shot event
-    Nepomuk::Resource eventRes(QUrl(), NUAO::DesktopEvent());
-    eventRes.addProperty(NUAO::involves(), Nepomuk::Resource(uri));
-    eventRes.addProperty(NUAO::start(), startTime);
-
-    // the app
-    Nepomuk::Resource appRes(app, NAO::Agent());
-    eventRes.addProperty(NUAO::involves(), appRes);
-
-    return eventRes;
-}
 }
 
 void NepomukEventBackend::addEvents(const EventList & events)
@@ -138,6 +124,43 @@ void NepomukEventBackend::addEvents(const EventList & events)
             }
         }
     }
+}
+
+Nepomuk::Resource NepomukEventBackend::createDesktopEvent(const KUrl& uri, const QDateTime& startTime, const QString& app)
+{
+    // one-shot event
+    Nepomuk::Resource eventRes(QUrl(), NUAO::DesktopEvent());
+    eventRes.addProperty(NUAO::involves(), Nepomuk::Resource(uri));
+    eventRes.addProperty(NUAO::start(), startTime);
+
+    // the app
+    Nepomuk::Resource appRes(app, NAO::Agent());
+    eventRes.addProperty(NUAO::involves(), appRes);
+
+    // the activity
+    if(!m_currentActivity.isValid()
+            || m_currentActivity.identifiers().isEmpty()
+            || m_currentActivity.identifiers().first() != ActivityManager::self()->CurrentActivity()) {
+        // update the current activity resource
+        Soprano::QueryResultIterator it
+                = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(QString::fromLatin1("select ?r where { ?r a %1 . ?r %2 %3 . } LIMIT 1")
+                                                                                  .arg(Soprano::Node::resourceToN3(KExt::Activity()),
+                                                                                       Soprano::Node::resourceToN3(NAO::identifier()),
+                                                                                       Soprano::Node::literalToN3(ActivityManager::self()->CurrentActivity())),
+                                                                                  Soprano::Query::QueryLanguageSparql);
+        if(it.next()) {
+            m_currentActivity = it[0].uri();
+        }
+        else {
+            m_currentActivity = Nepomuk::Resource();
+        }
+    }
+
+    if(m_currentActivity.isValid()) {
+        eventRes.addProperty(KExt::usedActivity(), m_currentActivity);
+    }
+
+    return eventRes;
 }
 
 #endif // HAVE_NEPOMUK

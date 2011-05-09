@@ -68,6 +68,10 @@ qt4_add_dbus_adaptor(
     ActivityManager.h ActivityManager
     )
 
+if(Nepomuk_FOUND)
+    soprano_add_ontology(activity_manager_SRCS ${CMAKE_SOURCE_DIR}/nepomuk/ontologies/kext.trig "KExt" "Nepomuk::Vocabulary" "trig")
+endif()
+
 kde4_add_executable(activity-manager ${activity_manager_SRCS})
 
 target_link_libraries(
