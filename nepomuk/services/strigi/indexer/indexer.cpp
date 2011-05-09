@@ -43,6 +43,7 @@
 #include <strigi/analyzerconfiguration.h>
 
 #include <iostream>
+#include <Soprano/Model>
 
 namespace {
     class StoppableConfiguration : public Strigi::AnalyzerConfiguration
@@ -161,8 +162,10 @@ void Nepomuk::Indexer::indexStdin(const KUrl resUri)
     }
     
     // Remove the false nie:url
-    // TODO: Implement me!
-
+    QUrl uri = d->m_indexFeeder->lastRequestUri();
+    Soprano::Model* model = Nepomuk::ResourceManager::instance()->mainModel();
+    model->removeAllStatements( uri, Nepomuk::Vocabulary::NIE::url(), Soprano::Node() );
+    
     QTextStream out(stdout);
     out << d->m_indexFeeder->lastRequestUri().toString();
 }
