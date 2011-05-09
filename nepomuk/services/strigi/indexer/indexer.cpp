@@ -29,7 +29,6 @@
 #include <Nepomuk/Variant>
 #include <Nepomuk/Vocabulary/NIE>
 
-#include <KUrl>
 #include <KDebug>
 
 #include <QtCore/QDataStream>
@@ -104,16 +103,17 @@ Nepomuk::Indexer::~Indexer()
 }
 
 
-void Nepomuk::Indexer::indexFile( const KUrl& url )
+void Nepomuk::Indexer::indexFile( const KUrl& url, const KUrl resUri )
 {
-    indexFile( QFileInfo( url.toLocalFile() ) );
+    indexFile( QFileInfo( url.toLocalFile() ), resUri );
 }
 
 
-void Nepomuk::Indexer::indexFile( const QFileInfo& info )
+void Nepomuk::Indexer::indexFile( const QFileInfo& info, const KUrl resUri )
 {
     d->m_analyzerConfig.setStop( false );
-
+    d->m_indexWriter->forceUri( resUri );
+    
     KUrl url( info.filePath() );
 
     // strigi asserts if the file path has a trailing slash

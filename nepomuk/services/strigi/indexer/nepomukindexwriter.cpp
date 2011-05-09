@@ -186,7 +186,7 @@ namespace {
     class FileMetaData
     {
     public:
-        FileMetaData( const Strigi::AnalysisResult* idx );
+        FileMetaData( const Strigi::AnalysisResult* idx, const QUrl & resUri );
 
         /// stores basic data including the nie:url and the nrl:GraphMetadata in \p model
         void storeBasicData( Nepomuk::IndexFeeder* feeder );
@@ -298,7 +298,7 @@ namespace {
     }
 
 
-    FileMetaData::FileMetaData( const Strigi::AnalysisResult* idx )
+    FileMetaData::FileMetaData( const Strigi::AnalysisResult* idx, const QUrl & resUri )
         : m_analysisResult( idx )
     {
         fileUrl = createFileUrl( idx );
@@ -307,7 +307,10 @@ namespace {
         // determine the resource URI by using Nepomuk::Resource's power
         // this will automatically find previous uses of the file in question
         // with backwards compatibility
-        resourceUri = Nepomuk::Resource( fileUrl ).resourceUri();
+        if( !resUri.isEmpty() )
+            resourceUri = resUri;
+        else
+            resourceUri = Nepomuk::Resource( fileUrl ).resourceUri();
     }
 
     void FileMetaData::storeBasicData( Nepomuk::IndexFeeder * feeder )
@@ -347,6 +350,9 @@ public:
     QStack<const Strigi::AnalysisResult*> currentResultStack;
 
     Nepomuk::IndexFeeder* feeder;
+
+    // Some services may need to force a specific resource uri
+    QUrl resourceUri;
 };
 
 
@@ -401,7 +407,7 @@ void Nepomuk::StrigiIndexWriter::startAnalysis( const AnalysisResult* idx )
     }
 
     // create the file data used during the analysis
-    FileMetaData* data = new FileMetaData( idx );
+    FileMetaData* data = new FileMetaData( idx, d->resourceUri );
 
     // remove previously indexed data
     Nepomuk::clearIndexedDataForResourceUri( data->resourceUri );
@@ -691,4 +697,9 @@ QUrl Nepomuk::StrigiIndexWriter::determineFolderResourceUri( const KUrl& fileUrl
         kDebug() << "Could not find resource URI for folder (this is not an error)" << fileUrl;
         return QUrl();
     }
+}
+
+void Nepomuk::StrigiIndexWriter::forceUri(const QUrl& uri)
+{
+    d->resourceUri = uri;
 }

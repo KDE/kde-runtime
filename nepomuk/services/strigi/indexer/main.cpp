@@ -42,21 +42,24 @@ int main(int argc, char *argv[])
     KCmdLineArgs::init(argc, argv, &aboutData);
     
     KCmdLineOptions options;
-    //options.add("file", ki18n("Only the meta data that is part of the file is read"));
-    options.add("+[arg]", ki18n("List of URLs where the meta-data should be read from"));
+    options.add("uri <uri>", ki18n("The uri provided will be forced on the resource"));
+    options.add("+url", ki18n("The url of the file to be indexed"));
     
     KCmdLineArgs::addCmdLineOptions(options);   
     const KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    
+
     const int argsCount = args->count();
     if( argsCount != 1 ) {
-        kError() << "Only one argument containing the file name must be specified";
+        kError() << "Only one argument containing the file url must be specified";
         return 1;
     }
-
-    KUrl url = args->arg( 0 );
-    kDebug() << "Received - " << url;
-
+    
+    KUrl url = args->arg(0);
+    KUrl uri = args->getOption("uri");
+    
+    kDebug() << "Url: " << url;
+    kDebug() << "Uri: " << uri;
+    
     //KApplication app( false );
     //app.disableSessionManagement();
     
@@ -64,7 +67,7 @@ int main(int argc, char *argv[])
     // Index the url
     //
     Nepomuk::Indexer indexer;
-    indexer.indexFile( url );
+    indexer.indexFile( url, uri );
 
     kDebug() << "Done Indexing";
 

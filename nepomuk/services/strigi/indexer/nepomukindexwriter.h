@@ -73,6 +73,7 @@ namespace Nepomuk {
                        const std::string& name, const std::string& value );
         void finishAnalysis( const Strigi::AnalysisResult* );
 
+        void forceUri( const QUrl & uri );
     private:
         QUrl determineFolderResourceUri( const KUrl& fileUrl );
 

@@ -24,8 +24,8 @@
 #define _NEPOMUK_STRIG_INDEXER_H_
 
 #include <QtCore/QObject>
+#include <KUrl>
 
-class KUrl;
 class QDateTime;
 class QDataStream;
 class QFileInfo;
@@ -53,7 +53,7 @@ namespace Nepomuk {
          * Index a single local file or folder (files in a folder will
          * not be indexed recursively).
          */
-        void indexFile( const KUrl& localUrl );
+        void indexFile( const KUrl& localUrl, const KUrl resUri = KUrl() );
 
         /**
          * Index a single local file or folder (files in a folder will
@@ -61,7 +61,7 @@ namespace Nepomuk {
          * as the above except that it saves an addditional stat of the
          * file.
          */
-        void indexFile( const QFileInfo& info );
+        void indexFile( const QFileInfo& info, const KUrl resUri = KUrl()  );
     private:
         class Private;
         Private* const d;
