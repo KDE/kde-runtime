@@ -135,5 +135,23 @@ void Nepomuk::Indexer::indexFile( const QFileInfo& info, const KUrl resUri )
     }
 }
 
+void Nepomuk::Indexer::indexStdin(const KUrl resUri)
+{
+    d->m_analyzerConfig.setStop( false );
+    d->m_indexWriter->forceUri( resUri );
+
+    QString filename;
+    
+    Strigi::AnalysisResult analysisresult( QFile::encodeName( filename ).data(),
+                                           QDateTime::currentDateTime().toTime_t(),
+                                           *d->m_indexWriter,
+                                           *d->m_streamAnalyzer );
+    Strigi::FileInputStream stream( stdin, QFile::encodeName( filename ).data() );
+    analysisresult.index( &stream );
+
+    // Remove the false nie:url
+    // TODO: Implement me!
+}
+
 
 #include "indexer.moc"

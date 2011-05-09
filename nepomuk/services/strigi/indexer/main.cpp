@@ -43,22 +43,25 @@ int main(int argc, char *argv[])
     
     KCmdLineOptions options;
     options.add("uri <uri>", ki18n("The uri provided will be forced on the resource"));
-    options.add("+url", ki18n("The url of the file to be indexed"));
+    options.add("+[url]", ki18n("The url of the file to be indexed"));
     
     KCmdLineArgs::addCmdLineOptions(options);   
     const KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-    const int argsCount = args->count();
-    if( argsCount != 1 ) {
-        kError() << "Only one argument containing the file url must be specified";
-        return 1;
-    }
-    
-    KUrl url = args->arg(0);
+    Nepomuk::Indexer indexer;
+
     KUrl uri = args->getOption("uri");
-    
-    kDebug() << "Url: " << url;
     kDebug() << "Uri: " << uri;
+    
+    if( args->count() == 0 ) {
+        indexer.indexStdin( uri );
+        return 0;
+    }
+
+    KUrl url = args->arg(0);
+    kDebug() << "Url: " << url;
+
+    indexer.indexFile( url, uri );
     
     //KApplication app( false );
     //app.disableSessionManagement();
@@ -66,8 +69,6 @@ int main(int argc, char *argv[])
     //
     // Index the url
     //
-    Nepomuk::Indexer indexer;
-    indexer.indexFile( url, uri );
 
     kDebug() << "Done Indexing";
 

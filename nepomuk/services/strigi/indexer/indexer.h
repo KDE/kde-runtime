@@ -62,6 +62,12 @@ namespace Nepomuk {
          * file.
          */
         void indexFile( const QFileInfo& info, const KUrl resUri = KUrl()  );
+
+        /**
+         * Index a file whose contents are provided via standard input.
+         */
+        void indexStdin( const KUrl resUri = KUrl() );
+        
     private:
         class Private;
         Private* const d;
