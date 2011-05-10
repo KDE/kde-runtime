@@ -47,10 +47,10 @@ namespace Nepomuk {
      * 3. By Types -
      *    Specific types may be specified via add/setType. If types are set, then notifications will be
      *    sent for all new resources of that type.
-     * vHanda: is this enough? Or would we want property notifications from those types as well?
      *
      * 4. By Types and properties -
-     *   vHanda: How do I implement this?
+     *    Both the types and properties may be specified. Notifications will be sent for property changes
+     *    in resource with the specified types.
      *
      * \code
      * Nepomuk::ResourceWatcher rw;
@@ -84,14 +84,12 @@ namespace Nepomuk {
 
     Q_SIGNALS:
         /**
-         * This signal is emitted when the nao:created of a resource is set.
+         * This signal is emitted when a new resource is created.
          */
-        //void resourceCreated( const Nepomuk::Resource & resource );
+        void resourceCreated( const Nepomuk::Resource & resource );
 
         /**
-         * This signal is emitted when the nao:created of a resource is removed.
-         * This probably means that the resource has been removed, or is about to be
-         * removed.
+         * This signal is emitted when a resource is deleted. 
          */
         void resourceDeleted( const QUrl & uri );
 
@@ -111,14 +109,6 @@ namespace Nepomuk {
         void propertyRemoved( const Nepomuk::Resource & resource,
                               const Types::Property & property,
                               const Nepomuk::Variant & value );
-
-        void metaPropertyAdded( const Nepomuk::Resource & resource,
-                                const Types::Property & property,
-                                const Nepomuk::Variant & value );
-        void metaPropertyRemoved( const Nepomuk::Resource & resource,
-                                  const Types::Property & property,
-                                  const Nepomuk::Variant & value );
-
     private:
         class Private;
         Private * d;
