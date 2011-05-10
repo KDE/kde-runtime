@@ -27,6 +27,8 @@
 #include <Soprano/Error/Error>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Util/SignalCacheModel>
+#define USING_SOPRANO_NRLMODEL_UNSTABLE_API
+#include <Soprano/NRLModel>
 
 #include <KStandardDirs>
 #include <KDebug>
@@ -178,25 +180,27 @@ void Nepomuk::Repository::open()
     // create the crappy inference model which handles rdfs:subClassOf only -> we only use this to improve performance of ResourceTypeTerms
     // =================================
     m_inferencer = new CrappyInferencer2( m_model );
-    setParentModel(m_inferencer);
 
     // create the RemovableMediaModel which does the transparent handling of removable mounts
     // =================================
     m_removableStorageModel = new Nepomuk::RemovableMediaModel(m_inferencer);
-    setParentModel(m_removableStorageModel);
 
     // create a SignalCacheModel to make sure no client slows us down by listening to the stupid signals
     // =================================
     Soprano::Util::SignalCacheModel* scm = new Soprano::Util::SignalCacheModel( m_removableStorageModel );
     scm->setParent(this); // memory management
-    setParentModel( scm );
+
+    // Create the NRLModel which is required by the DMM below
+    // =================================
+    m_nrlModel = new Soprano::NRLModel(scm);
+    m_nrlModel->setParent(this); // memory management
 
     // create the DataManagementModel on top of everything
     // =================================
-    m_dataManagementModel = new DataManagementModel(scm, this);
+    m_dataManagementModel = new DataManagementModel(m_nrlModel, this);
     Nepomuk::DataManagementAdaptor* adaptor = new Nepomuk::DataManagementAdaptor(m_dataManagementModel);
     QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagementmodel"), adaptor, QDBusConnection::ExportScriptableContents);
-
+    setParentModel(m_dataManagementModel);
 
     // check if we have to convert
     // =================================
@@ -377,6 +381,11 @@ Soprano::BackendSettings Nepomuk::Repository::readVirtuosoSettings() const
 
 void Nepomuk::Repository::updateInference()
 {
+    // the funny way to update the query prefix cache
+    m_nrlModel->setEnableQueryPrefixExpansion(false);
+    m_nrlModel->setEnableQueryPrefixExpansion(true);
+
+    // update the rest
     m_inferencer->updateInferenceIndex();
     m_inferencer->updateAllResources();
 }

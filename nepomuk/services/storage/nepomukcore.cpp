@@ -83,10 +83,6 @@ void Nepomuk::Core::slotRepositoryOpened( Repository* repo, bool success )
 
 void Nepomuk::Core::slotOntologiesLoaded()
 {
-    // once ontologies are updated we should update the query prefixes
-    m_repository->setEnableQueryPrefixExpansion(false);
-    m_repository->setEnableQueryPrefixExpansion(true);
-
     // the first time this is a very long procedure. Thus, we do it while Nepomuk is active although then some queries might return invalid results
     m_repository->updateInference();
 
