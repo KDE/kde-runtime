@@ -57,7 +57,7 @@ Nepomuk::Indexer::~Indexer()
 
 void Nepomuk::Indexer::indexFile( const KUrl& url )
 {
-    const QString exe = KStandardDirs::findExe(QLatin1String("nepomukstrigiindexer"));
+    const QString exe = KStandardDirs::findExe(QLatin1String("nepomukindexer"));
     KProcess process;
     process.setOutputChannelMode( KProcess::MergedChannels );
     kDebug() << exe;

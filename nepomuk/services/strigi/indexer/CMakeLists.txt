@@ -1,4 +1,4 @@
-project(nepomukstrigiindexer)
+project(nepomukindexer)
 
 find_package(KDE4 REQUIRED)
 find_package(Nepomuk REQUIRED)
@@ -24,9 +24,9 @@ set(indexer_SRCS
 
 soprano_add_ontology(indexer_SRCS ${nepomuk_ontologies_SOURCE_DIR}/kext.trig "KExt" "Nepomuk::Vocabulary" "trig")
 
-kde4_add_executable( nepomukstrigiindexer ${indexer_SRCS} )
+kde4_add_executable( nepomukindexer ${indexer_SRCS} )
 
-target_link_libraries( nepomukstrigiindexer
+target_link_libraries( nepomukindexer
   nepomukcommon
   ${STRIGI_STREAMANALYZER_LIBRARY}
   ${STRIGI_STREAMS_LIBRARY}
@@ -37,6 +37,6 @@ target_link_libraries( nepomukstrigiindexer
   )
 
 install(
-  TARGETS nepomukstrigiindexer
+  TARGETS nepomukindexer
   DESTINATION ${BIN_INSTALL_DIR} )
 # -----------------------------
