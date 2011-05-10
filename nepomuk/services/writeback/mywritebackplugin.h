@@ -19,17 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef NEPOMUKWRITEBACKPLUGIN_H
 #define NEPOMUKWRITEBACKPLUGIN_H
+#include "writebackplugin.h"
 
-#include<kurl.h>
 namespace Nepomuk
 {
-  class MyWritebackPlugin : pubic Nepomuk::WritebackPlugin
+  class MyWritebackPlugin : public Nepomuk::WritebackPlugin
   {
   public:
-    MyWritebackPlugin(QObject* parent, const QVariantList&);
+    MyWritebackPlugin(QObject* parent);
     ~MyWritebackPlugin();
   protected:
-    void doWriteback(const Nepomuk::QString& );
+    void doWriteback(const QString& url);
   };
   
 }

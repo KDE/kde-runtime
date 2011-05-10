@@ -18,14 +18,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include<QString>
+#include <QFile>
+
 #include<taglib/fileref.h>
 #include<taglib/tag.h>
+#include<taglib/tstring.h>
 
 #include<mywritebackplugin.h>
 
-Nepomuk::MyWritebackPlugin::MyWritebackPlugin(QObject* parent, const QVariantList&)
-{
+Nepomuk::MyWritebackPlugin::MyWritebackPlugin(QObject* parent): WritebackPlugin(parent)
 
+{
 
 }
 
@@ -47,7 +51,7 @@ void Nepomuk::MyWritebackPlugin::doWriteback(const QString& url)
     f.tag()->setArtist("Who");
     f.tag()->setComment("this is the best song,ever !");
 
-    emitFinsihed();
+    emitFinished();
 }
 
 

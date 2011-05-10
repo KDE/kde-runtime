@@ -1,5 +1,8 @@
 project(nepomukwritebackservice)
 
+find_package(KDE4 REQUIRED)
+find_package(Nepomuk REQUIRED)
+
 add_definitions(-DDISABLE_NEPOMUK_LEGACY=1)
 
 include (KDE4Defaults)
@@ -25,7 +28,7 @@ target_link_libraries(nepomukwritebackservice
   ${NEPOMUK_LIBRARIES}
   ${NEPOMUK_QUERY_LIBRARIES}
   ${SOPRANO_LIBRARIES}
-${TAGLIB_LIBRARIES})
+  ${TAGLIB_LIBRARIES})
 
 install(
   FILES nepomukwritebackservice.desktop
