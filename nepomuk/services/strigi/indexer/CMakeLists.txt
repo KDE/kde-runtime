@@ -22,7 +22,7 @@ set(indexer_SRCS
   ../util.cpp
   )
 
-soprano_add_ontology(indexer_SRCS /home/vishesh/kde/src/kde-runtime/nepomuk/ontologies/kext.trig "KExt" "Nepomuk::Vocabulary" "trig")
+soprano_add_ontology(indexer_SRCS ${nepomuk_ontologies_SOURCE_DIR}/kext.trig "KExt" "Nepomuk::Vocabulary" "trig")
 
 kde4_add_executable( nepomukstrigiindexer ${indexer_SRCS} )
 
