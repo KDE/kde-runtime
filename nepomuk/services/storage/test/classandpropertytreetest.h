@@ -45,6 +45,7 @@ private Q_SLOTS:
     void testVariantToNode_data();
     void testVariantToNode();
     void testProperties();
+    void testVisibleType();
 
 private:
     KTempDir* m_storageDir;

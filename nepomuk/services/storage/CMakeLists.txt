@@ -20,7 +20,6 @@ set(storage_SRCS
   crappyinferencer.cpp
   crappyinferencer2.cpp
   removablemediamodel.cpp
-  typevisibilitytree.cpp
   transactionmodel.cpp
   datamanagementmodel.cpp
   datamanagementadaptor.cpp

@@ -29,9 +29,10 @@
 #include <Soprano/Soprano>
 
 #include <ktempdir.h>
-
+#include <kdebug.h>
 
 using namespace Soprano;
+using namespace Soprano::Vocabulary;
 
 Q_DECLARE_METATYPE(Soprano::Node)
 
@@ -262,6 +263,18 @@ void ClassAndPropertyTreeTest::testProperties()
 {
     QCOMPARE(m_typeTree->maxCardinality(QUrl("prop:/C")), 1);
     QCOMPARE(m_typeTree->maxCardinality(QUrl("prop:/D")), 1);
+}
+
+void ClassAndPropertyTreeTest::testVisibleType()
+{
+    const QList<QUrl> types = m_typeTree->visibleTypes();
+    kDebug() << types;
+    QCOMPARE(types.count(), 5);
+    QVERIFY(types.contains(RDFS::Resource()));
+    QVERIFY(types.contains(QUrl("onto:/A")));
+    QVERIFY(types.contains(QUrl("onto:/D")));
+    QVERIFY(types.contains(QUrl("onto:/E")));
+    QVERIFY(types.contains(QUrl("onto:/F")));
 }
 
 QTEST_KDEMAIN_CORE(ClassAndPropertyTreeTest)

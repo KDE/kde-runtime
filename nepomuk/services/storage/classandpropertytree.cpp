@@ -433,7 +433,7 @@ QList<QUrl> Nepomuk::ClassAndPropertyTree::visibleTypes() const
     QHash<QUrl, ClassOrProperty*>::const_iterator end = m_tree.constEnd();
     for(QHash<QUrl, ClassOrProperty*>::const_iterator it = m_tree.constBegin(); it != end; ++it) {
         const ClassOrProperty* cop = *it;
-        if(!cop->isProperty && cop->userVisible) {
+        if(!cop->isProperty && cop->userVisible == 1) {
             types << cop->uri;
         }
     }
