@@ -157,7 +157,7 @@ Nepomuk::Resource NepomukEventBackend::createDesktopEvent(const KUrl& uri, const
         }
     }
 
-    eventRes.addProperty(KExt::usedActivity(), m_currentActivity);
+    eventRes.setProperty(KExt::usedActivity(), m_currentActivity);
 
     return eventRes;
 }
