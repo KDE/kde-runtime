@@ -239,6 +239,7 @@ void ActivityManagerPrivate::configSync()
 }
 
 #ifdef HAVE_NEPOMUK
+
 Nepomuk::Resource ActivityManagerPrivate::activityResource(const QString & id)
 {
     kDebug() << "testing for nepomuk";
@@ -272,6 +273,13 @@ void ActivityManagerPrivate::backstoreAvailable()
         emit q->ActivityChanged(i.key());
     }
 }
+
+#else // HAVE_NEPOMUK
+
+void ActivityManagerPrivate::backstoreAvailable()
+{
+}
+
 #endif // HAVE_NEPOMUK
 
 // Main
