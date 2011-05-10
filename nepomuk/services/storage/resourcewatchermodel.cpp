@@ -80,7 +80,7 @@ Soprano::Error::ErrorCode Nepomuk::ResourceWatcherModel::addStatement(const Sopr
         const QUrl & objUri = statement.object().uri();
         QList<RWC*> conList = m_typeHash.values( objUri );
         foreach( RWC * con, conList ) {
-            emit con->resourceTypeCreated( subUri, objUri );
+            emit con->resourceTypeCreated( subUri.toString(), objUri.toString() );
         }
     }
 
