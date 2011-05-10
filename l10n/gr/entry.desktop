@@ -113,3 +113,5 @@ TimeFormat=%H:%M:%S
 #MonetaryDecimalPlaces=2
 CurrencyCodesInUse=EUR
 CurrencyCode=EUR
+AddressFormat=%0(%n\n)%0(%cm\n)%0(%S\n)%0(P.O. BOX %p\n)%z%w%L
+AddressCountryPosition=BELOW

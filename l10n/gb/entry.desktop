@@ -105,3 +105,5 @@ WeekStartDay=7
 #MonetaryDecimalPlaces=2
 CurrencyCodesInUse=GBP
 CurrencyCode=GBP
+AddressFormat=%0(%n\n)%0(%cm\n)%0(PO Box %p\n)%0(%s\n)%0(%L\n)%0(%r\n)%0(%z\n)
+AddressCountryPosition=BELOW
