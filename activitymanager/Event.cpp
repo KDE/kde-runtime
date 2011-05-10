@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010 Ivan Cukic <ivan.cukic(at)kde.org>
+ *   Copyright (C) 2011 Ivan Cukic <ivan.cukic(at)kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License version 2,
@@ -17,32 +17,18 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef EVENT_PROCESSOR_H
-#define EVENT_PROCESSOR_H
-
-#include <QThread>
-
 #include "Event.h"
 
-class EventBackend;
-class EventProcessorPrivate;
+Event::Event(const QString & vApplication, const QString & vUri, Type vType, Reason vReason)
+    : application(vApplication), uri(vUri), type(vType), reason(vReason), timestamp(QDateTime::currentDateTime())
+{
+}
 
-/**
- * Thread to process desktop/usage events
- */
-class EventProcessor: public QThread {
-public:
-    static EventProcessor * self();
-
-    virtual ~EventProcessor();
-
-    void addEvent(const QString & application, const QString & uri,
-            Event::Type type = Event::Accessed, Event::Reason reason = Event::User);
-
-private:
-    EventProcessor();
-
-    class EventProcessorPrivate * const d;
-};
-
-#endif // EVENT_PROCESSOR_H
+bool Event::operator == (const Event & other) const
+{
+    return
+        application == other.application &&
+        uri         == other.uri         &&
+        type        == other.type        &&
+        reason      == other.reason;
+}

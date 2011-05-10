@@ -60,7 +60,7 @@ public:
      */
     virtual ~ActivityManager();
 
-
+    static ActivityManager* self();
 
 // service control methods
 public Q_SLOTS:

@@ -19,47 +19,29 @@
  */
 
 #include "EventProcessor.h"
+#include "EventBackend.h"
+
 #include "config-features.h"
 
-#ifndef HAVE_NEPOMUK
-    #warning "No Nepomuk, disabling desktop events processing"
+#ifdef HAVE_QZEITGEIST
+#include "ZeitgeistEventBackend.h"
 #endif
 
+#ifdef HAVE_NEPOMUK
+#include "NepomukEventBackend.h"
+#endif
+
+#include <QDateTime>
 #include <QList>
 #include <QMutex>
 
 #include <KDebug>
 
-#ifdef HAVE_NEPOMUK
-    #include <Nepomuk/ResourceManager>
-#endif
-
 #include <time.h>
-
-class Event {
-public:
-    Event(const QString & application, const QString & uri, EventProcessor::EventType type, time_t timestamp)
-        : _application(application), _uri(uri), _type(type), _timestamp(timestamp)
-    {
-    }
-
-    bool operator == (const Event & event)
-    {
-        // we don't want the timestamp here
-        return
-            (_type == event._type) &&
-            (_application == event._application) &&
-            (_uri == event._uri);
-    }
-
-    QString _application;
-    QString _uri;
-    EventProcessor::EventType _type;
-    time_t _timestamp;
-};
 
 class EventProcessorPrivate: public QThread {
 public:
+    QList < EventBackend * > backends;
     QList < Event > events;
     QMutex events_mutex;
 
@@ -77,7 +59,7 @@ void EventProcessorPrivate::run()
 
     forever {
         // initial delay before processing the events
-        // sleep(5); // do we need it?
+        sleep(5); // do we need it?
 
         EventProcessorPrivate::events_mutex.lock();
 
@@ -93,60 +75,54 @@ void EventProcessorPrivate::run()
 
         EventProcessorPrivate::events_mutex.unlock();
 
-        foreach (const Event & event, currentEvents) {
-            kDebug() << "processing"
-                     << event._application
-                     << event._uri;
-
-            sleep(2);
+        foreach (EventBackend * backend, backends) {
+            backend->addEvents(currentEvents);
         }
     }
 }
 
 EventProcessor * EventProcessor::self()
 {
-#ifdef HAVE_NEPOMUK
-
-    if (!Nepomuk::ResourceManager::instance()->initialized()) {
-        return NULL;
-    }
-
     if (!EventProcessorPrivate::s_instance) {
         EventProcessorPrivate::s_instance = new EventProcessor();
     }
 
     return EventProcessorPrivate::s_instance;
-
-#else // not HAVE_NEPOMUK
-
-    return NULL;
-
-#endif // HAVE_NEPOMUK
 }
 
 EventProcessor::EventProcessor()
     : d(new EventProcessorPrivate())
 {
+#ifdef HAVE_QZEITGEIST
+    d->backends.append(new ZeitgeistEventBackend());
+#endif
+#ifdef HAVE_NEPOMUK
+    d->backends.append(new NepomukEventBackend());
+#endif
 }
 
 EventProcessor::~EventProcessor()
 {
+    qDeleteAll(d->backends);
     delete d;
 }
 
-void EventProcessor::_event(const QString & application, const QString & uri, EventType type)
+void EventProcessor::addEvent(const QString & application, const QString & uri,
+        Event::Type type, Event::Reason reason)
 {
-    Event newEvent(application, uri, type, time(0));
+    Event newEvent(application, uri, type, reason);
 
     d->events_mutex.lock();
 
-    foreach (const Event & event, d->events) {
-        if (event._type == Accessed && event._uri == uri
-                && event._application == application) {
-            // Accessed events are of a lower priority
-            // then the other ones
-            if (type == Accessed) {
-                d->events.removeAll(newEvent);
+    if (newEvent.type != Event::Accessed) {
+        foreach (const Event & event, d->events) {
+            if (event.type == Event::Accessed && event.uri == uri
+                    && event.application == application) {
+                // Accessed events are of a lower priority
+                // then the other ones
+                if (type == Event::Accessed) {
+                    d->events.removeAll(newEvent);
+                }
             }
         }
     }
@@ -158,12 +134,4 @@ void EventProcessor::_event(const QString & application, const QString & uri, Ev
     d->start();
 }
 
-void EventProcessor::addEvent(const QString & application, const QString & uri, EventType type)
-{
-    // self() can return NULL if nepomuk is not available
-    EventProcessor * ep = self();
-    if (ep) {
-        ep->_event(application, uri, type);
-    }
-}
 

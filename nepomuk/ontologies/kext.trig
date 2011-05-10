@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2010 Sebastian Trueg <trueg@kde.org>
+# Copyright (c) 2010-2011 Sebastian Trueg <trueg@kde.org>
 # All rights reserved, licensed under either CC-BY or BSD.
 #
 # You are free:
@@ -66,6 +66,20 @@ kext: {
           rdfs:domain nfo:FileDataObject ;
           rdfs:range xsd:integer ;
           nao:userVisible false .
+
+    kext:Activity
+          a rdfs:Class ;
+          rdfs:subClassOf rdfs:Resource ;
+          rdfs:label "activity" ;
+          rdfs:comment "A Plasma activity." .
+
+    kext:usedActivity
+          a rdf:Property ;
+          rdfs:label "used activity" ;
+          rdfs:comment "The activity that was active when resource was created. This is mostly used for graphs or desktop events." ;
+          rdfs:domain rdfs:Resource ;
+          rdfs:range kext:Activity ;
+          nao:userVisible false .
 }
 
 <http://nepomuk.kde.org/ontologies/2010/11/29/kext/metadata> {
@@ -79,10 +93,10 @@ kext: {
           nao:prefLabel "KDE Extensions Ontology" ;
           nao:hasDefaultNamespace "http://nepomuk.kde.org/ontologies/2010/11/29/kext#" ;
           nao:hasDefaultNamespaceAbbreviation "kext" ;
-          nao:lastModified "2010-11-29T12:31:43Z" ;
+          nao:lastModified "2011-05-09T12:31:43Z" ;
           nao:serializationLanguage "TriG" ;
           nao:status "Unstable" ;
           nrl:updatable "0" ;
-          nao:version "1" .
+          nao:version "2" .
 }
 

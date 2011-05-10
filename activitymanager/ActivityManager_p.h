@@ -100,9 +100,7 @@ public Q_SLOTS:
     void reallyStartActivity(const QString & id);
     void reallyStopActivity(const QString & id);
 
-#ifdef HAVE_NEPOMUK
     void backstoreAvailable();
-#endif // HAVE_NEPOMUK
 
 private:
     ActivityManager * const q;
