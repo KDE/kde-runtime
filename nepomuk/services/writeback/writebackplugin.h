@@ -22,10 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include <QtCore/QObject>
-#include<QFile>
-
-#include <Nepomuk/Service>
-
+#include<QString>
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
@@ -36,33 +33,33 @@ clas Node;
 
 namespace Nepomuk {
 
-class  WritebackPlugin : public QObject, Service
+class  WritebackPlugin : public QObject
 {
         Q_OBJECT
 
 public:
-        WritebackPlugin( QObject* parent, const QList<QVariant>& args = QList<QVariant>());
+        WritebackPlugin( QObject* parent);
         virtual ~WritebackPlugin();
 
 Q_SIGNALS:
-      
-      void finished(); // to signal that writeback is finished
+      // to signal that writeback is finished
+      void finished(); 
       
 private:
-  
-       void finished( Nepomuk::WritebackPlugin* plugin );  // emited by plugin once plugin is done, can't be called directly must use emitfinished in public.
+  // emited by plugin once plugin is done, can't be called directly must use emitfinished // in public.
+       void finished( Nepomuk::WritebackPlugin* plugin );  
 
 public Q_SLOTS:
 
-        void Writeback( const File* file );
+        void writeback( const QString& url );
 
  protected:
-    
-         virtual void doWriteback( const File* file ); // its declared as virtual as subclasses will reimplement it based on what type of file it is.
+    // its declared as virtual as subclasses will reimplement it based on what type of //file it is.
+         virtual void doWriteback( const QString& url ); 
 
 protected Q_SLOTS:
- 
-  void emitFinished(); // emit finish signal by the subclass to clarify that writeback is over.
+ // emit finish signal by the subclass to clarify that writeback is over.
+  void emitFinished(); 
  
 private:
         class Private;

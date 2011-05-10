@@ -17,24 +17,47 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef NEPOMUKWRITEBACK_EXPORT_H
-#define NEPOMUKWRITEBACK_EXPORT_H
+#include "writebackplugin.h"
 
-/* needed for KDE_EXPORT and KDE_IMPORT macros */
-#include <kdemacros.h>
+class Nepomuk::WritebackPlugin::Private
+{
+public:
+    Private( WritebackPlugin* parent)
+        : q (parent)
+    {
+     kDebug();
+    }
 
-#ifndef NEPOMUKWRITEBACK_EXPORT
-# if defined(MAKE_LIBNEPOMUKWRITEBACK_LIB)
-   /* We are building this library */ 
-#  define NEPOMUKWRITEBACK_EXPORT KDE_EXPORT
-# else
-   /* We are using this library */ 
-#  define NEPOMUKWRITEBACK_EXPORT KDE_IMPORT
-# endif
-#endif
+private:
+    WritebackPlugin* q;
+};
 
-# ifndef NEPOMUKWRITEBACK_EXPORT_DEPRECATED
-#  define NEPOMUKWRITEBACK_EXPORT_DEPRECATED KDE_DEPRECATED NEPOMUKWRITEBACK_EXPORT
-# endif
 
-#endif
+
+Nepomuk::WritebackPlugin::WritebackPlugin(QObject* parent)
+    : QObject(parent),
+      d( new Private(this) )
+{
+}
+
+Nepomuk::WritebackPlugin::~WritebackPlugin()
+{
+    delete d;
+}
+
+
+void Nepomuk::WritebackPlugin::writeback( const QString& url )
+{
+    doWriteback( url );
+}
+
+
+void Nepomuk::WritebackPlugin::emitFinished()
+{
+    emit finished();
+    emit finished( this );
+}
+
+
+
+#include "writebackplugin.moc"

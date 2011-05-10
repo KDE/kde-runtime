@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NEPOMUKWRITEBACKPLUGIN_H
 #define NEPOMUKWRITEBACKPLUGIN_H
 
-#include<Nepomuk/Services>
+#include<kurl.h>
 namespace Nepomuk
 {
   class MyWritebackPlugin : pubic Nepomuk::WritebackPlugin
@@ -29,7 +29,7 @@ namespace Nepomuk
     MyWritebackPlugin(QObject* parent, const QVariantList&);
     ~MyWritebackPlugin();
   protected:
-    void doWriteback(const Nepomuk::File*);
+    void doWriteback(const Nepomuk::QString& );
   };
   
 }

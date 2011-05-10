@@ -17,48 +17,38 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "writebackplugin.h"
 
-class Nepomuk::WritebackPlugin::Private
+#include<taglib/fileref.h>
+#include<taglib/tag.h>
+
+#include<mywritebackplugin.h>
+
+Nepomuk::MyWritebackPlugin::MyWritebackPlugin(QObject* parent, const QVariantList&)
 {
-public:
-    Private( WritebackPlugin* parent,const QList< QVariant >& )
-        : Service(parent)
-    {
-     kDebug();
-    }
-
-private:
-    WritebackPlugin* q;
-};
 
 
-
-Nepomuk::WritebackPlugin::WritebackPlugin(QObject* parent)
-    : QObject(parent),
-      d( new Private(this) )
-{
 }
 
-Nepomuk::WritebackPlugin::~WritebackPlugin()
+Nepomuk::MyWritebackPlugin::~MyWritebackPlugin()
 {
-    delete d;
+
 }
 
 
-void Nepomuk::WritebackPlugin::Writeback( const File* file )
+void Nepomuk::MyWritebackPlugin::doWriteback(const QString& url)
 {
-    doWriteback( file );
+    QByteArray fileName = QFile::encodeName( url );
+    const char * encodedName = fileName.constData();
+    // creating a reference of the file
+    TagLib::FileRef f(encodedName);
+    // just an example
+    f.tag()->setAlbum("XYZ");
+    f.tag()->setTitle("abc");
+    f.tag()->setArtist("Who");
+    f.tag()->setComment("this is the best song,ever !");
+
+    emitFinsihed();
 }
 
 
-void Nepomuk::WritebackPlugin::emitFinished()
-{
-    emit finished();
-    emit finished( this );
-}
 
-
-NEPOMUK_EXPORT_SERVICE( Nepomuk::WriteBackService, "nepomukwritebackservice" )
-
-#include "writebackplugin.moc"

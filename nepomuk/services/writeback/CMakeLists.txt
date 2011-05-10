@@ -1,8 +1,5 @@
 project(nepomukwritebackservice)
 
-find_package(KDE4 REQUIRED)
-find_package(Nepomuk REQUIRED)
-
 add_definitions(-DDISABLE_NEPOMUK_LEGACY=1)
 
 include (KDE4Defaults)
@@ -18,8 +15,7 @@ include_directories(
 
 set( SRCS
 mywritebackplugin.cpp
-writebackplugin.cpp
-writeplugin.cpp)
+writebackplugin.cpp)
 
 kde4_add_plugin(nepomukwritebackservice ${SRCS})
 
