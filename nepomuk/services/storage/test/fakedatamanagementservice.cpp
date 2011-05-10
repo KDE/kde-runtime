@@ -85,7 +85,8 @@ FakeDataManagementService::FakeDataManagementService(QObject *parent)
 
     // create the data management service stack connected to the fake storage
     m_nrlModel = new Soprano::NRLModel(m_model);
-    m_dmModel = new Nepomuk::DataManagementModel(m_nrlModel);
+    m_classAndPropertyTree = new Nepomuk::ClassAndPropertyTree(this);
+    m_dmModel = new Nepomuk::DataManagementModel(m_classAndPropertyTree, m_nrlModel);
     m_dmAdaptor = new Nepomuk::DataManagementAdaptor(m_dmModel);
 
     // register the adaptor

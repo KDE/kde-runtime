@@ -37,7 +37,7 @@ class DataManagementModel : public Soprano::FilterModel
     Q_OBJECT
 
 public:
-    DataManagementModel(Soprano::Model* model, QObject *parent = 0);
+    DataManagementModel(ClassAndPropertyTree* tree, Soprano::Model* model, QObject *parent = 0);
     ~DataManagementModel();
 
     /**
@@ -203,15 +203,6 @@ public Q_SLOTS:
     SimpleResourceGraph describeResources(const QList<QUrl>& resources,
                                           bool includeSubResources) const;
     //@}
-
-    /**
-     * Update any internal structures which are used for optimization purposes
-     * like the type tree.
-     */
-    void updateTypeCachesAndSoOn();
-
-Q_SIGNALS:
-    void typeAndPropertyUpdate();
 
 private:
     QUrl createGraph(const QString& app, const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>());

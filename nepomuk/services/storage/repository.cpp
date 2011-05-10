@@ -18,6 +18,7 @@
 #include "removablemediamodel.h"
 #include "datamanagementmodel.h"
 #include "datamanagementadaptor.h"
+#include "classandpropertytree.h"
 
 #include <Soprano/Backend>
 #include <Soprano/PluginManager>
@@ -176,10 +177,13 @@ void Nepomuk::Repository::open()
 
     kDebug() << "Successfully created new model for repository" << name();
 
+    // create the one class and property tree to be used in the crappy inferencer 2 and in DMS
+    // =================================
+    m_classAndPropertyTree = new Nepomuk::ClassAndPropertyTree(this);
 
     // create the crappy inference model which handles rdfs:subClassOf only -> we only use this to improve performance of ResourceTypeTerms
     // =================================
-    m_inferencer = new CrappyInferencer2( m_model );
+    m_inferencer = new CrappyInferencer2( m_classAndPropertyTree, m_model );
 
     // create the RemovableMediaModel which does the transparent handling of removable mounts
     // =================================
@@ -197,9 +201,9 @@ void Nepomuk::Repository::open()
 
     // create the DataManagementModel on top of everything
     // =================================
-    m_dataManagementModel = new DataManagementModel(m_nrlModel, this);
-    Nepomuk::DataManagementAdaptor* adaptor = new Nepomuk::DataManagementAdaptor(m_dataManagementModel);
-    QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagementmodel"), adaptor, QDBusConnection::ExportScriptableContents);
+    m_dataManagementModel = new DataManagementModel(m_classAndPropertyTree, m_nrlModel, this);
+    m_dataManagementAdaptor = new Nepomuk::DataManagementAdaptor(m_dataManagementModel);
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagementmodel"), m_dataManagementAdaptor, QDBusConnection::ExportScriptableContents);
     setParentModel(m_dataManagementModel);
 
     // check if we have to convert
@@ -385,7 +389,17 @@ void Nepomuk::Repository::updateInference()
     m_nrlModel->setEnableQueryPrefixExpansion(false);
     m_nrlModel->setEnableQueryPrefixExpansion(true);
 
+    // update the prefixes in the DMS adaptor for script convenience
+    QHash<QString, QString> prefixes;
+    const QHash<QString, QUrl> namespaces = m_nrlModel->queryPrefixes();
+    for(QHash<QString, QUrl>::const_iterator it = namespaces.constBegin();
+        it != namespaces.constEnd(); ++it) {
+        prefixes.insert(it.key(), QString::fromAscii(it.value().toEncoded()));
+    }
+    m_dataManagementAdaptor->setPrefixes(prefixes);
+
     // update the rest
+    m_classAndPropertyTree->rebuildTree(this);
     m_inferencer->updateInferenceIndex();
     m_inferencer->updateAllResources();
 }

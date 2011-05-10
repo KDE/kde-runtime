@@ -73,8 +73,16 @@ void DataManagementAdaptorTest::resetModel()
     m_model->addStatement( QUrl("graph:/onto2#T1"), RDFS::Class(), RDF::Property(), graph2 );
 
 
-    // rebuild the internals of the data management model
-    m_dmModel->updateTypeCachesAndSoOn();
+    m_classAndPropertyTree->rebuildTree(m_dmModel);
+    m_nrlModel->setEnableQueryPrefixExpansion(false);
+    m_nrlModel->setEnableQueryPrefixExpansion(true);
+    QHash<QString, QString> prefixes;
+    const QHash<QString, QUrl> namespaces = m_nrlModel->queryPrefixes();
+    for(QHash<QString, QUrl>::const_iterator it = namespaces.constBegin();
+        it != namespaces.constEnd(); ++it) {
+        prefixes.insert(it.key(), QString::fromAscii(it.value().toEncoded()));
+    }
+    m_dmAdaptor->setPrefixes(prefixes);
 }
 
 void DataManagementAdaptorTest::initTestCase()
@@ -88,7 +96,9 @@ void DataManagementAdaptorTest::initTestCase()
     // DataManagementModel relies on the ussage of a NRLModel in the storage service
     m_nrlModel = new Soprano::NRLModel(m_model);
 
-    m_dmModel = new Nepomuk::DataManagementModel(m_nrlModel);
+    m_classAndPropertyTree = new Nepomuk::ClassAndPropertyTree(this);
+
+    m_dmModel = new Nepomuk::DataManagementModel(m_classAndPropertyTree, m_nrlModel);
 
     m_dmAdaptor = new Nepomuk::DataManagementAdaptor(m_dmModel);
 }

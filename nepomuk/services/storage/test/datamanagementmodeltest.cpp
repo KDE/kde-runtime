@@ -129,7 +129,7 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NIE::title(), RDFS::subClassOf(), QUrl("http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifyingProperty"), graph );
 
     // rebuild the internals of the data management model
-    m_dmModel->updateTypeCachesAndSoOn();
+    m_classAndPropertyTree->rebuildTree(m_dmModel);
 }
 
 
@@ -143,8 +143,8 @@ void DataManagementModelTest::initTestCase()
 
     // DataManagementModel relies on the ussage of a NRLModel in the storage service
     m_nrlModel = new Soprano::NRLModel(m_model);
-
-    m_dmModel = new Nepomuk::DataManagementModel( m_nrlModel );
+    m_classAndPropertyTree = new Nepomuk::ClassAndPropertyTree(this);
+    m_dmModel = new Nepomuk::DataManagementModel(m_classAndPropertyTree, m_nrlModel);
 }
 
 void DataManagementModelTest::cleanupTestCase()
@@ -153,6 +153,7 @@ void DataManagementModelTest::cleanupTestCase()
     delete m_nrlModel;
     delete m_model;
     delete m_storageDir;
+    delete m_classAndPropertyTree;
 }
 
 void DataManagementModelTest::init()

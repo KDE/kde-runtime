@@ -142,18 +142,18 @@ namespace {
 class Nepomuk::DataManagementModel::Private
 {
 public:
-    ClassAndPropertyTree m_classAndPropertyTree;
+    ClassAndPropertyTree* m_classAndPropertyTree;
 
     /// a set of properties that are maintained by the service and cannot be changed by clients
     QSet<QUrl> m_protectedProperties;
 };
 
-Nepomuk::DataManagementModel::DataManagementModel(Soprano::Model* model, QObject *parent)
+Nepomuk::DataManagementModel::DataManagementModel(Nepomuk::ClassAndPropertyTree* tree, Soprano::Model* model, QObject *parent)
     : Soprano::FilterModel(model),
       d(new Private())
 {
+    d->m_classAndPropertyTree = tree;
     setParent(parent);
-    updateTypeCachesAndSoOn();
 
     // meta data properties are protected. This means they cannot be removed. But they
     // can be set.
@@ -230,7 +230,7 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     //
     // Convert all values to RDF nodes. This includes the property range check and conversion of local file paths to file URLs
     //
-    const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
+    const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree->variantListToNodeSet(values, property);
     if(nodes.isEmpty()) {
         setError(QString::fromLatin1("addProperty: At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
         return;
@@ -308,7 +308,7 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     //
     // Check cardinality conditions
     //
-    const int maxCardinality = d->m_classAndPropertyTree.maxCardinality(property);
+    const int maxCardinality = d->m_classAndPropertyTree->maxCardinality(property);
     if( maxCardinality == 1 ) {
         // check if any of the resources already has a value set which differs from the one we want to add
 
@@ -386,7 +386,7 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     //
     // Convert all values to RDF nodes. This includes the property range check and conversion of local file paths to file URLs
     //
-    const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
+    const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree->variantListToNodeSet(values, property);
     if(nodes.isEmpty()) {
         setError(QString::fromLatin1("setProperty: At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
         return;
@@ -515,7 +515,7 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
         return;
     }
 
-    const QSet<Soprano::Node> valueNodes = d->m_classAndPropertyTree.variantListToNodeSet(values, property);
+    const QSet<Soprano::Node> valueNodes = d->m_classAndPropertyTree->variantListToNodeSet(values, property);
     if(valueNodes.isEmpty()) {
         setError(QString::fromLatin1("removeProperty: At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
         return;
@@ -1197,7 +1197,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             }
         }
         
-        QList< Soprano::Statement > stList = d->m_classAndPropertyTree.simpleResourceToStatementList(resolvedRes);
+        QList< Soprano::Statement > stList = d->m_classAndPropertyTree->simpleResourceToStatementList(resolvedRes);
         allStatements << stList;
 
         if(stList.isEmpty()) {
@@ -1387,7 +1387,7 @@ void Nepomuk::DataManagementModel::mergeResources(const QUrl &res1, const QUrl &
     foreach(const Soprano::BindingSet& binding, res2Properties) {
         const QUrl& prop = binding["p"].uri();
         // if the property has no cardinality of 1 or no value is defined yet we can simply convert the value to res1
-        if(d->m_classAndPropertyTree.maxCardinality(prop) != 1 ||
+        if(d->m_classAndPropertyTree->maxCardinality(prop) != 1 ||
                 binding["c"].literal().toInt() == 0) {
             addStatement(res1, prop, binding["v"], binding["g"]);
         }
@@ -1545,7 +1545,7 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
 
     for(QHash<QUrl, QVariant>::const_iterator it = additionalMetadata.constBegin();
         it != additionalMetadata.constEnd(); ++it) {
-        Soprano::Node node = d->m_classAndPropertyTree.variantToNode(it.value(), it.key());
+        Soprano::Node node = d->m_classAndPropertyTree->variantToNode(it.value(), it.key());
         if(node.isValid()) {
             graphMetaData.insert(it.key(), node);
         }
@@ -1575,7 +1575,7 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString& app, const QMultiH
                 return QUrl();
             }
             else {
-                if(d->m_classAndPropertyTree.isChildOf(it.value().uri(), NRL::Graph()))
+                if(d->m_classAndPropertyTree->isChildOf(it.value().uri(), NRL::Graph()))
                     haveGraphType = true;
             }
         }
@@ -1686,12 +1686,6 @@ QUrl Nepomuk::DataManagementModel::createUri(Nepomuk::DataManagementModel::UriTy
     }
 }
 
-void Nepomuk::DataManagementModel::updateTypeCachesAndSoOn()
-{
-    d->m_classAndPropertyTree.rebuildTree(parentModel());
-    emit typeAndPropertyUpdate();
-}
-
 
 void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resources, const QUrl &property, const QHash<Soprano::Node, Soprano::Node> &nodes, const QString &app)
 {
@@ -1703,7 +1697,7 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
     //
     // Check cardinality conditions
     //
-    const int maxCardinality = d->m_classAndPropertyTree.maxCardinality(property);
+    const int maxCardinality = d->m_classAndPropertyTree->maxCardinality(property);
     if( maxCardinality == 1 ) {
         if( nodes.size() != 1 ) {
             setError(QString::fromLatin1("%1 has cardinality of 1. Cannot set more then one value.").arg(property.toString()), Soprano::Error::ErrorInvalidArgument);
@@ -2112,7 +2106,7 @@ bool Nepomuk::DataManagementModel::updateNieUrlOnLocalFile(const QUrl &resource,
 
 Nepomuk::ClassAndPropertyTree* Nepomuk::DataManagementModel::classAndPropertyTree()
 {
-    return &d->m_classAndPropertyTree;
+    return d->m_classAndPropertyTree;
 }
 
 bool Nepomuk::DataManagementModel::containsResourceWithProtectedType(const QSet<QUrl> &resources) const

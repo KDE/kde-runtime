@@ -57,10 +57,6 @@ Nepomuk::DataManagementAdaptor::DataManagementAdaptor(Nepomuk::DataManagementMod
 
     // N threads means N connections to Virtuoso
     m_threadPool->setMaxThreadCount(10);
-
-    // keep our list of namespace abbreviations up-to-date
-    updateNamespaces();
-    connect(m_model, SIGNAL(typeAndPropertyUpdate()), this, SLOT(updateNamespaces()));
 }
 
 Nepomuk::DataManagementAdaptor::~DataManagementAdaptor()
@@ -216,16 +212,9 @@ QList<QUrl> Nepomuk::DataManagementAdaptor::decodeUris(const QStringList &urlStr
     return urls;
 }
 
-void Nepomuk::DataManagementAdaptor::updateNamespaces()
+void Nepomuk::DataManagementAdaptor::setPrefixes(const QHash<QString, QString>& prefixes)
 {
-    Soprano::NRLModel nrlModel(m_model);
-    nrlModel.setEnableQueryPrefixExpansion(true);
-    m_namespaces.clear();
-    const QHash<QString, QUrl> namespaces = nrlModel.queryPrefixes();
-    for(QHash<QString, QUrl>::const_iterator it = namespaces.constBegin();
-        it != namespaces.constEnd(); ++it) {
-        m_namespaces.insert(it.key(), QString::fromAscii(it.value().toEncoded()));
-    }
+    m_namespaces = prefixes;
 }
 
 void Nepomuk::DataManagementAdaptor::importResources(const QString &url, const QString &serialization, const QString &app)

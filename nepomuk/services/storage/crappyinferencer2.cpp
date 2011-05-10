@@ -228,13 +228,13 @@ QSet<QUrl> CrappyInferencer2::Private::buildSuperClassesHash( const QUrl& type, 
     }
 }
 
-CrappyInferencer2::CrappyInferencer2(Soprano::Model* parent)
+CrappyInferencer2::CrappyInferencer2(Nepomuk::ClassAndPropertyTree* tree, Soprano::Model* parent)
     : Soprano::FilterModel(parent),
       d(new Private())
 {
     d->q = this;
     d->m_inferenceContext = QUrl::fromEncoded("urn:crappyinference2:inferredtriples");
-    d->m_typeVisibilityTree = new Nepomuk::ClassAndPropertyTree(this);
+    d->m_typeVisibilityTree = tree;
     if ( parent )
         updateInferenceIndex();
 }
@@ -487,10 +487,6 @@ void CrappyInferencer2::updateInferenceIndex()
         rdfsResIt.next();
         rdfsResIt.value().insert(Soprano::Vocabulary::RDFS::Resource());
     }
-
-    // Build visibility tree
-    // ==============================================
-    d->m_typeVisibilityTree->rebuildTree(this);
 
 #ifndef NDEBUG
     // count for debugging

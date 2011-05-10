@@ -35,6 +35,8 @@ namespace Nepomuk {
     class RemovableMediaModel;
     class ModelCopyJob;
     class DataManagementModel;
+    class DataManagementAdaptor;
+    class ClassAndPropertyTree;
 
     /**
      * Represents the main Nepomuk model. While it looks as if there could be more than
@@ -102,9 +104,11 @@ namespace Nepomuk {
         State m_state;
 
         Soprano::Model* m_model;
+        Nepomuk::ClassAndPropertyTree* m_classAndPropertyTree;
         CrappyInferencer2* m_inferencer;
         RemovableMediaModel* m_removableStorageModel;
         DataManagementModel* m_dataManagementModel;
+        Nepomuk::DataManagementAdaptor* m_dataManagementAdaptor;
         Soprano::NRLModel* m_nrlModel;
         const Soprano::Backend* m_backend;
 

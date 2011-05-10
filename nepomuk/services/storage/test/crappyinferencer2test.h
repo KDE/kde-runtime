@@ -29,6 +29,9 @@ class CrappyInferencer2;
 namespace Soprano {
 class Model;
 }
+namespace Nepomuk {
+class ClassAndPropertyTree;
+}
 
 class CrappyInferencer2Test : public QObject
 {
@@ -51,6 +54,7 @@ private Q_SLOTS:
 private:
     KTempDir* m_storageDir;
     Soprano::Model* m_baseModel;
+    Nepomuk::ClassAndPropertyTree* m_typeTree;
     CrappyInferencer2* m_model;
 };
 

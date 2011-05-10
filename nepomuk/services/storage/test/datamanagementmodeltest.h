@@ -30,6 +30,7 @@ class NRLModel;
 }
 namespace Nepomuk {
 class DataManagementModel;
+class ClassAndPropertyTree;
 }
 class KTempDir;
 
@@ -117,6 +118,7 @@ private:
     KTempDir* m_storageDir;
     Soprano::Model* m_model;
     Soprano::NRLModel* m_nrlModel;
+    Nepomuk::ClassAndPropertyTree* m_classAndPropertyTree;
     Nepomuk::DataManagementModel* m_dmModel;
 };
 

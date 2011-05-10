@@ -54,6 +54,12 @@ public:
     ~DataManagementAdaptor();
 
     /**
+     * Set the prefixes that will be supported for script convenience. The provided hash
+     * maps prefixes to namespaces. Typical prefixes include "nao" or "rdfs".
+     */
+    void setPrefixes(const QHash<QString, QString>& prefixes);
+
+    /**
      * Tries to decode a URI including namespace abbreviation lookup for known ontologies (Example: nao:Tag).
      */
     QUrl decodeUri(const QString& s, bool namespaceAbbrExpansion = true) const;
@@ -86,9 +92,6 @@ public Q_SLOTS:
     Q_SCRIPTABLE QString createResource(const QString &type, const QString &label, const QString &description, const QString &app);
     Q_SCRIPTABLE void removeResources(const QString &resource, int flags, const QString &app);
     Q_SCRIPTABLE void importResources(const QString& url, const QString& serialization, const QString& app);
-
-private Q_SLOTS:
-    void updateNamespaces();
 
 private:
     void enqueueCommand(Nepomuk::DataManagementCommand* cmd);
