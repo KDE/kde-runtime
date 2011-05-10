@@ -20,7 +20,6 @@
 */
 
 #include "systray.h"
-#include "statuswidget.h"
 
 #include <KUniqueApplication>
 #include <KCmdLineArgs>
@@ -47,8 +46,7 @@ int main( int argc, char *argv[] )
     if( KUniqueApplication::start() ) {
         KUniqueApplication app;
         app.setQuitOnLastWindowClosed(false);
-        Nepomuk::StatusWidget* statusWidget = new Nepomuk::StatusWidget();
-        (void)new Nepomuk::SystemTray( statusWidget );
+        (void)new Nepomuk::SystemTray(0);
         return app.exec();
     }
 }

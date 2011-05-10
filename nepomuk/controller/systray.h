@@ -28,6 +28,7 @@ class KToggleAction;
 namespace Nepomuk {
 
     class StrigiService;
+    class StatusWidget;
 
     class SystemTray : public KStatusNotifierItem
     {
@@ -42,12 +43,16 @@ namespace Nepomuk {
         void slotConfigure();
         void slotSuspend( bool suspended );
 
+        void slotActivateRequested();
+
     private:
         KToggleAction* m_suspendResumeAction;
 
         org::kde::nepomuk::Strigi* m_service;
         org::kde::nepomuk::ServiceControl* m_serviceControl;
         bool m_suspendedManually;
+
+        StatusWidget* m_statusWidget;
 
         // used to prevent endless status updates
         QString m_prevStatus;
