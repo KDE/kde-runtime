@@ -53,7 +53,7 @@ namespace Nepomuk {
          * Index a single local file or folder (files in a folder will
          * not be indexed recursively).
          */
-        void indexFile( const KUrl& localUrl, const KUrl resUri = KUrl() );
+        void indexFile( const KUrl& url, const KUrl resUri, uint mtime = 0 );
 
         /**
          * Index a single local file or folder (files in a folder will
@@ -61,12 +61,12 @@ namespace Nepomuk {
          * as the above except that it saves an addditional stat of the
          * file.
          */
-        void indexFile( const QFileInfo& info, const KUrl resUri = KUrl()  );
+        void indexFile( const QFileInfo& info, const KUrl resUri, uint mtime=0 );
 
         /**
          * Index a file whose contents are provided via standard input.
          */
-        void indexStdin( const KUrl resUri = KUrl() );
+        void indexStdin( const KUrl resUri, uint mtime=0 );
         
     private:
         class Private;

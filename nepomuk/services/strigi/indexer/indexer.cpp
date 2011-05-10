@@ -106,13 +106,13 @@ Nepomuk::Indexer::~Indexer()
 }
 
 
-void Nepomuk::Indexer::indexFile( const KUrl& url, const KUrl resUri )
+void Nepomuk::Indexer::indexFile( const KUrl& url, const KUrl resUri, uint mtime )
 {
     indexFile( QFileInfo( url.toLocalFile() ), resUri );
 }
 
 
-void Nepomuk::Indexer::indexFile( const QFileInfo& info, const KUrl resUri )
+void Nepomuk::Indexer::indexFile( const QFileInfo& info, const KUrl resUri, uint mtime )
 {
     d->m_analyzerConfig.setStop( false );
     d->m_indexWriter->forceUri( resUri );
@@ -126,7 +126,7 @@ void Nepomuk::Indexer::indexFile( const QFileInfo& info, const KUrl resUri )
     // A new block so as to force destruction of the analysisresult
     {
         Strigi::AnalysisResult analysisresult( QFile::encodeName( filePath ).data(),
-                                            info.lastModified().toTime_t(),
+                                            mtime ? mtime : info.lastModified().toTime_t(),
                                             *d->m_indexWriter,
                                             *d->m_streamAnalyzer,
                                             QFile::encodeName( dir ).data() );
@@ -144,7 +144,7 @@ void Nepomuk::Indexer::indexFile( const QFileInfo& info, const KUrl resUri )
     out << d->m_indexFeeder->lastRequestUri().toString();
 }
 
-void Nepomuk::Indexer::indexStdin(const KUrl resUri)
+void Nepomuk::Indexer::indexStdin(const KUrl resUri, uint mtime)
 {
     d->m_analyzerConfig.setStop( false );
     d->m_indexWriter->forceUri( resUri );
@@ -154,7 +154,7 @@ void Nepomuk::Indexer::indexStdin(const KUrl resUri)
     // A new block so as to force destruction of the analysisresult
     {
         Strigi::AnalysisResult analysisresult( QFile::encodeName( filename ).data(),
-                                            QDateTime::currentDateTime().toTime_t(),
+                                            mtime ? mtime : QDateTime::currentDateTime().toTime_t(),
                                             *d->m_indexWriter,
                                             *d->m_streamAnalyzer );
         Strigi::FileInputStream stream( stdin, QFile::encodeName( filename ).data() );

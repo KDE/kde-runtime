@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
     
     KCmdLineOptions options;
     options.add("uri <uri>", ki18n("The uri provided will be forced on the resource"));
+    options.add("mtime <time>", ki18n("The modification time of the resource"));
     options.add("+[url]", ki18n("The url of the file to be indexed"));
     
     KCmdLineArgs::addCmdLineOptions(options);   
@@ -52,22 +53,23 @@ int main(int argc, char *argv[])
 
     KUrl uri = args->getOption("uri");
     kDebug() << "Uri: " << uri;
+    uint mtime = args->getOption("mtime").toUInt();
     
     if( args->count() == 0 ) {
-        indexer.indexStdin( uri );
+        indexer.indexStdin( uri, mtime );
         return 0;
     }
 
     KUrl url = args->arg(0);
     kDebug() << "Url: " << url;
 
-    indexer.indexFile( url, uri );
+    indexer.indexFile( url, uri, mtime );
     
     //KApplication app( false );
     //app.disableSessionManagement();
     
     //
-    // Index the url
+    // Index the urls
     //
 
     kDebug() << "Done Indexing";
