@@ -19,9 +19,6 @@
 
 #include "util.h"
 
-#include <strigi/variant.h>
-#include <strigi/fieldtypes.h>
-
 #include <QtCore/QUrl>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
@@ -91,54 +88,6 @@ QUrl Strigi::Util::uniqueUri( const QString& ns, Soprano::Model* model )
     } while ( model->containsAnyStatement( Soprano::Statement( uri, Soprano::Node(), Soprano::Node() ) ) );
     return uri;
 }
-
-
-Strigi::Variant Strigi::Util::nodeToVariant( const Soprano::Node& node )
-{
-    if ( node.isLiteral() ) {
-        switch( node.literal().type() ) {
-        case QVariant::Int:
-        case QVariant::UInt:
-        case QVariant::LongLong:  // FIXME: no perfect conversion :(
-        case QVariant::ULongLong:
-            return Strigi::Variant( node.literal().toInt() );
-
-        case QVariant::Bool:
-            return Strigi::Variant( node.literal().toBool() );
-
-        default:
-            return Strigi::Variant( node.literal().toString().toUtf8().data() );
-        }
-    }
-    else {
-        qWarning() << "(Soprano::Util::nodeToVariant) cannot convert non-literal node to variant.";
-        return Strigi::Variant();
-    }
-}
-
-
-void Strigi::Util::storeStrigiMiniOntology( Soprano::Model* model )
-{
-    // we use some nice URI here although we still have the STRIGI_NS for backwards comp
-
-    QUrl graph( "http://nepomuk.kde.org/ontologies/2008/07/24/strigi/metadata" );
-    Soprano::Statement depthProp( fieldUri( FieldRegister::embeddepthFieldName ),
-                                  Soprano::Vocabulary::RDF::type(),
-                                  Soprano::Vocabulary::RDF::Property(),
-                                  graph );
-    Soprano::Statement metaDataType( graph,
-                                     Soprano::Vocabulary::RDF::type(),
-                                     Soprano::Vocabulary::NRL::Ontology(),
-                                     graph );
-
-    if ( !model->containsStatement( depthProp ) ) {
-        model->addStatement( depthProp );
-    }
-    if ( !model->containsStatement( metaDataType ) ) {
-        model->addStatement( metaDataType );
-    }
-}
-
 
 QUrl Strigi::Ontology::indexGraphFor()
 {

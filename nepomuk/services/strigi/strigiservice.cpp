@@ -38,11 +38,6 @@
 Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
     : Service( parent )
 {
-    // store the little bits of ontology we need in Strigi
-    // (TODO: this needs to be deprecated in favor of something NIE)
-    // ==============================================================
-    Strigi::Util::storeStrigiMiniOntology( mainModel() );
-
     // setup the actual index scheduler including strigi stuff
     // ==============================================================
     m_indexScheduler = new IndexScheduler( this );

@@ -40,13 +40,6 @@ namespace Strigi {
         QUrl fileUrl( const std::string& filename );
         std::string fieldName( const QUrl& uri );
         QUrl uniqueUri( const QString& ns, ::Soprano::Model* model );
-        Strigi::Variant nodeToVariant( const ::Soprano::Node& node );
-
-        /**
-         * For now only stores the parentUrl property so it can be
-         * searched.
-         */
-        void storeStrigiMiniOntology( ::Soprano::Model* model );
     }
 
     namespace Ontology {
