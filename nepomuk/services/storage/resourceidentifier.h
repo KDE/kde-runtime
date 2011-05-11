@@ -21,7 +21,7 @@
 #ifndef RESOURCEIDENTIFIER_H
 #define RESOURCEIDENTIFIER_H
 
-#include <nepomuk/resourceidentifier.h>
+#include "../backupsync/lib/resourceidentifier.h"
 
 #include <KUrl>
 

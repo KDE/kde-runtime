@@ -28,9 +28,9 @@
 #include "simpleresource.h"
 #include "transactionmodel.h"
 
-#include <nepomuk/syncresource.h>
-#include <nepomuk/resourceidentifier.h>
-#include <nepomuk/resourcemerger.h>
+#include "syncresource.h"
+#include "resourceidentifier.h"
+#include "resourcemerger.h"
 
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/NAO>

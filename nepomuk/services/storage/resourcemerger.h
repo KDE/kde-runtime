@@ -26,7 +26,7 @@
 #include <QtCore/QUrl>
 #include <QtCore/QSet>
 
-#include <nepomuk/resourcemerger.h>
+#include "../backupsync/lib/resourcemerger.h"
 
 namespace Soprano {
     class Node;

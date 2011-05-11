@@ -19,6 +19,7 @@
 
 
 #include "resourceidentifier.h"
+#include "syncresource.h"
 
 #include <QtCore/QDateTime>
 #include <QtCore/QSet>
@@ -33,7 +34,6 @@
 #include <Soprano/Vocabulary/RDF>
 #include <Nepomuk/Vocabulary/NIE>
 
-#include <nepomuk/syncresource.h>
 #include <KDebug>
 
 using namespace Soprano::Vocabulary;
