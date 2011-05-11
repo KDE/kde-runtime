@@ -46,6 +46,8 @@ target_link_libraries(datamanagementmodeltest
   ${QT_QTTEST_LIBRARY}
   ${SOPRANO_LIBRARIES}
   ${KDE4_KDECORE_LIBS}
+  ${KDE4_KIO_LIBS}
+  ${KDE4_SOLID_LIBS}
   nepomuksync
   nepomukdatamanagement
 )
@@ -65,6 +67,8 @@ target_link_libraries(datamanagementadaptortest
   ${QT_QTTEST_LIBRARY}
   ${SOPRANO_LIBRARIES}
   ${KDE4_KDECORE_LIBS}
+  ${KDE4_KIO_LIBS}
+  ${KDE4_SOLID_LIBS}
   ${NEPOMUK_LIBRARIES}
   nepomuksync
   nepomukdatamanagement
@@ -88,6 +92,8 @@ target_link_libraries(fakedms
   ${SOPRANO_LIBRARIES}
   ${SOPRANO_SERVER_LIBRARIES}
   ${KDE4_KDECORE_LIBS}
+  ${KDE4_KIO_LIBS}
+  ${KDE4_SOLID_LIBS}
   ${NEPOMUK_LIBRARIES}
   nepomuksync
   nepomukdatamanagement
