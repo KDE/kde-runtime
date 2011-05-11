@@ -199,10 +199,14 @@ QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QV
         }
         else {
             Q_FOREACH(const QVariant& value, vl) {
-                if(value.type() == literalType) {
-                    nodes.insert(Soprano::LiteralValue(value));
-                }
-                else {
+                // if the types differ we try to convert
+                // (We need to treat int and friends as a special case since xsd defines more than one
+                // type mapping to them.)
+                if(value.type() != literalType
+                        || ((value.type() == QVariant::Int ||
+                             value.type() == QVariant::UInt ||
+                             value.type() == QVariant::Double)
+                            && range != Soprano::LiteralValue::dataTypeUriFromType(value.type()))) {
                     Soprano::LiteralValue v = Soprano::LiteralValue::fromString(value.toString(), range);
                     if(v.isValid()) {
                         nodes.insert(v);
@@ -211,6 +215,10 @@ QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QV
                         // failed literal conversion
                         return QSet<Soprano::Node>();
                     }
+                }
+                else {
+                    // we already have the correct type
+                    nodes.insert(Soprano::LiteralValue(value));
                 }
             }
         }

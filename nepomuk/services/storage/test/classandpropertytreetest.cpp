@@ -126,12 +126,16 @@ void ClassAndPropertyTreeTest::init()
     // a few properties for node conversion testing and range checking
     m_model->addStatement( QUrl("prop:/A"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
     m_model->addStatement( QUrl("prop:/B"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/B1"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/B2"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
     m_model->addStatement( QUrl("prop:/C"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
     m_model->addStatement( QUrl("prop:/D"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
     m_model->addStatement( QUrl("prop:/E"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDF::Property(), graph );
 
     m_model->addStatement( QUrl("prop:/A"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::string(), graph );
     m_model->addStatement( QUrl("prop:/B"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdInt(), graph );
+    m_model->addStatement( QUrl("prop:/B1"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::integer(), graph );
+    m_model->addStatement( QUrl("prop:/B2"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::unsignedInt(), graph );
     m_model->addStatement( QUrl("prop:/C"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::xsdDouble(), graph );
     m_model->addStatement( QUrl("prop:/D"), Soprano::Vocabulary::RDFS::range(), Soprano::Vocabulary::XMLSchema::dateTime(), graph );
     m_model->addStatement( QUrl("prop:/E"), Soprano::Vocabulary::RDFS::range(), QUrl("onto:/A"), graph );
@@ -237,6 +241,10 @@ void ClassAndPropertyTreeTest::testVariantToNode_data()
     QTest::newRow("int-string") << QVariant("42") << QUrl("prop:/B") << Soprano::Node(LiteralValue(42));
     QTest::newRow("double-string") << QVariant("42.2") << QUrl("prop:/C") << Soprano::Node(LiteralValue(42.2));
     QTest::newRow("datetime-string") << QVariant(LiteralValue(now).toString()) << QUrl("prop:/D") << Soprano::Node(LiteralValue(now));
+
+    // different types of int
+    QTest::newRow("int-unsigned") << QVariant(42) << QUrl("prop:/B2") << Soprano::Node(LiteralValue(uint(42)));
+    QTest::newRow("int-integer") << QVariant(42) << QUrl("prop:/B1") << Soprano::Node(LiteralValue::fromString(QLatin1String("42"), XMLSchema::integer()));
 
     // literal values that cannot be converted
     QTest::newRow("int-invalid") << QVariant("43g") << QUrl("prop:/B") << Soprano::Node();
