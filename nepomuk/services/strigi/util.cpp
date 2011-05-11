@@ -18,6 +18,7 @@
 */
 
 #include "util.h"
+#include "datamanagement.h"
 
 #include <QtCore/QUrl>
 #include <QtCore/QFile>
@@ -35,6 +36,8 @@
 
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Vocabulary/NIE>
+#include <KJob>
+#include <KDebug>
 
 
 #define STRIGI_NS "http://www.strigi.org/data#"
@@ -99,6 +102,20 @@ bool Nepomuk::clearIndexedDataForUrl( const KUrl& url )
     if ( url.isEmpty() )
         return false;
 
+    //
+    // New way of storing Strigi Data
+    // The Datamanagement API will automatically find the resource corresponding to that url
+    //    
+    KJob* job = Nepomuk::removeDataByApplication( QList<QUrl>() << url );
+    job->exec();
+    
+    if( job->error() ) {
+        kError() << job->errorString();
+    }
+
+    //
+    // Old way
+    //
     QString query = QString::fromLatin1( "select ?g where { "
                                          "{ "
                                          "?r %2 %1 . "
@@ -127,6 +144,13 @@ bool Nepomuk::clearIndexedDataForResourceUri( const KUrl& res )
     if ( res.isEmpty() )
         return false;
 
+    KJob* job = Nepomuk::removeDataByApplication( QList<QUrl>() << res );
+    job->exec();
+
+    if( job->error() ) {
+        kError() << job->errorString();
+    }
+    
     QString query = QString::fromLatin1( "select ?g where { ?g %1 %2 . }" )
                     .arg( Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ),
                           Soprano::Node::resourceToN3( res ) );

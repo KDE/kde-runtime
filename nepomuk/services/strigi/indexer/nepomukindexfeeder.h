@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010 Vishesh Handa <handa.vish@gmail.com>
+   Copyright (C) 2010-11 Vishesh Handa <handa.vish@gmail.com>
    Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
@@ -27,6 +27,9 @@
 #include <QtCore/QUrl>
 #include <QtCore/QStack>
 #include <QtCore/QSet>
+
+#include "simpleresource.h"
+#include "simpleresourcegraph.h"
 
 namespace Soprano {
     class Statement;
@@ -95,17 +98,9 @@ namespace Nepomuk {
         
     private:
 
-        struct ResourceStruct {
-            QUrl uri;
-            QMultiHash<QUrl, Soprano::Node> propHash;
-        };
-
-        // Maps the uri to the ResourceStuct
-        typedef QHash<QUrl, ResourceStruct> ResourceHash;
-
         struct Request {
             QUrl uri;
-            ResourceHash hash;
+            SimpleResourceGraph graph;
         };
 
         QUrl m_lastRequestUri;
@@ -121,23 +116,6 @@ namespace Nepomuk {
          * Handle a single request, i.e. store all its data to Nepomuk.
          */
         void handleRequest( Nepomuk::IndexFeeder::Request& request );
-
-        /// Generates a discardable graph for \p resourceUri
-        QUrl generateGraph( const QUrl& resourceUri ) const;
-
-        /**
-         * Creates a sparql query which returns 1 resource which matches all the properties,
-         * and objects present in the propHash of the ResourceStruct
-         */
-        QString buildResourceQuery( const ResourceStruct & rs ) const;
-
-        /**
-         * Adds all the statements present in the ResourceStruct to the internal model.
-         * The contex is created via generateGraph
-         *
-         * \sa generateGraph
-         */
-        void addToModel( const ResourceStruct &rs ) const;
     };
 
 }

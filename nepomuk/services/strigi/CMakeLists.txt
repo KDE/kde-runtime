@@ -8,7 +8,8 @@ include_directories(
   ${SOPRANO_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
-)
+  ../storage/lib/
+  )
 
 set(strigiservice_SRCS
   strigiservice.cpp
@@ -28,6 +29,7 @@ kde4_add_plugin(nepomukstrigiservice ${strigiservice_SRCS})
 
 target_link_libraries(nepomukstrigiservice
   nepomukcommon
+  nepomukdatamanagement
   ${KDE4_KDEUI_LIBS}
   ${KDE4_KIO_LIBS}
   ${KDE4_SOLID_LIBS}
