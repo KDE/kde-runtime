@@ -28,6 +28,7 @@
 #include <KComponentData>
 
 #include <QtCore/QCoreApplication>
+#include <QtCore/QDir>
 
 #include <KDebug>
 #include <KUrl>
@@ -67,8 +68,11 @@ int main(int argc, char *argv[])
     }
 
     KUrl url = args->arg(0);
+    if( url.scheme().isEmpty() ) {
+        url = KUrl(QDir::current().absolutePath() + QDir::separator() + url.url());
+    }
     kDebug() << "Url: " << url;
-
+    
     indexer.indexFile( url, uri, mtime );
     
     //
