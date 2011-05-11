@@ -34,9 +34,9 @@
 #include <Soprano/Vocabulary/RDFS>
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/NRL>
+#include <Soprano/Vocabulary/XMLSchema>
 
 #include <KDebug>
-
 
 class Nepomuk::ClassAndPropertyTree::ClassOrProperty
 {
@@ -156,6 +156,15 @@ Soprano::Node Nepomuk::ClassAndPropertyTree::variantToNode(const QVariant &value
         return *nodes.begin();
 }
 
+
+namespace Vocabulary {
+    namespace XMLSchema {
+        QUrl xsdDuration() {
+            return QUrl( Soprano::Vocabulary::XMLSchema::xsdNamespace().toString() + QLatin1String("duration") );
+        }
+    }
+}
+
 QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QVariantList &vl, const QUrl &property) const
 {
     QSet<Soprano::Node> nodes;
@@ -164,6 +173,17 @@ QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QV
     if(range == Soprano::Vocabulary::RDFS::Literal()) {
         Q_FOREACH(const QVariant& value, vl) {
             nodes.insert(Soprano::LiteralValue::createPlainLiteral(value.toString()));
+        }
+    }
+    // Special case for xsd:duration - Soprano doesn't handle it
+    else if( range == Vocabulary::XMLSchema::xsdDuration() ) {
+        Q_FOREACH(const QVariant& value, vl ) {
+            if( value.canConvert( QVariant::UInt ) ) {
+                nodes.insert( Soprano::LiteralValue( value.toUInt() ));
+            }
+            else {
+                return QSet<Soprano::Node>();
+            }
         }
     }
     else {
