@@ -30,6 +30,7 @@ Name[uk]=Завершення роботи KDE
 Name[x-test]=xxKDE Shutdownxx
 Name[zh_TW]=關閉 KDE
 Comment=kill running KDE applications and processes
+Comment[bs]=Ugasite sve KDE programe i procese u pogonu
 Comment[ca]=Mata totes les aplicacions i processos en execució del KDE
 Comment[cs]=zabít bežící aplikace a procesy KDE
 Comment[da]=Dræb kørende KDE-programmer og -processer
