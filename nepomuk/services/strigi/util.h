@@ -21,6 +21,7 @@
 #define _STRIGI_NEPOMUK_UTIL_H_
 
 #include <string>
+#include <KUrl>
 
 class QUrl;
 class QString;
@@ -53,4 +54,9 @@ namespace Strigi {
     }
 }
 
+namespace Nepomuk {
+    
+    bool clearIndexedDataForUrl( const KUrl& url );
+    bool clearIndexedDataForResourceUri( const KUrl& res );
+}
 #endif

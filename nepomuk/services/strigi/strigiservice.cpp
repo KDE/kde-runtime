@@ -278,28 +278,6 @@ void Nepomuk::StrigiService::indexFolder(const QString& path, bool recursive, bo
 }
 
 
-void Nepomuk::StrigiService::analyzeResource(const QString& uri, uint mTime, const QByteArray& data)
-{
-    QDataStream stream( data );
-    m_indexScheduler->analyzeResource( QUrl::fromEncoded( uri.toAscii() ), QDateTime::fromTime_t( mTime ), stream );
-}
-
-
-void Nepomuk::StrigiService::analyzeResourceFromTempFileAndDeleteTempFile(const QString& uri, uint mTime, const QString& tmpFile)
-{
-    QFile file( tmpFile );
-    if ( file.open( QIODevice::ReadOnly ) ) {
-        QDataStream stream( &file );
-        m_indexScheduler->analyzeResource( QUrl::fromEncoded( uri.toAscii() ), QDateTime::fromTime_t( mTime ), stream );
-        file.remove();
-    }
-    else {
-        kDebug() << "Failed to open" << tmpFile;
-    }
-}
-
-
-
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
