@@ -8,8 +8,8 @@ include_directories(
   ${SOPRANO_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
-  ${STRIGI_INCLUDE_DIR}
-  ${nepomukstrigiservice_BUILD_DIR}
+  ${LIBSTREAMS_INCLUDE_DIRS}
+  ${LIBSTREAMANALYZER_INCLUDE_DIRS}
   )
 
 set(strigiservice_SRCS
