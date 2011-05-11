@@ -25,7 +25,9 @@
 #include <KAboutData>
 #include <KCmdLineArgs>
 #include <KLocale>
-#include <KApplication>
+#include <KComponentData>
+
+#include <QtCore/QCoreApplication>
 
 #include <KDebug>
 #include <KUrl>
@@ -49,6 +51,10 @@ int main(int argc, char *argv[])
     KCmdLineArgs::addCmdLineOptions(options);   
     const KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
+    // Application
+    KComponentData data( aboutData, KComponentData::RegisterAsMainComponent );
+    QCoreApplication app( argc, argv );
+    
     Nepomuk::Indexer indexer;
 
     KUrl uri = args->getOption("uri");
@@ -65,9 +71,6 @@ int main(int argc, char *argv[])
 
     indexer.indexFile( url, uri, mtime );
     
-    //KApplication app( false );
-    //app.disableSessionManagement();
-    
     //
     // Index the urls
     //
@@ -75,5 +78,5 @@ int main(int argc, char *argv[])
     kDebug() << "Done Indexing";
 
     return 0;
-    //return app.exec();
+//    return app.exec();
 }

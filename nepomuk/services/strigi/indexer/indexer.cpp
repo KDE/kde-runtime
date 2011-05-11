@@ -123,6 +123,7 @@ void Nepomuk::Indexer::indexFile( const QFileInfo& info, const KUrl resUri, uint
     QString filePath = url.toLocalFile( KUrl::RemoveTrailingSlash );
     QString dir = url.directory( KUrl::IgnoreTrailingSlash );
 
+    kDebug() << "Starting to index ..";
     // A new block so as to force destruction of the analysisresult
     {
         Strigi::AnalysisResult analysisresult( QFile::encodeName( filePath ).data(),
