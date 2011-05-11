@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Nepomuk File Indexing Controller
+Comment=System tray icon to control the behaviour of the Nepomuk file indexer
+Icon=nepomuk
+Exec=nepomukcontroller
+Type=Application
+Categories=Qt;KDE;
+X-DBUS-StartupType=Unique

@@ -17,6 +17,7 @@ add_subdirectory(kcm)
 add_subdirectory(services)
 add_subdirectory(servicestub)
 add_subdirectory(kioslaves)
+add_subdirectory(controller)
 add_subdirectory(interfaces)
 add_subdirectory(removed-services)
 
