@@ -6,6 +6,7 @@ include_directories(
   ${SOPRANO_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/lib
   )
 
 set(storage_SRCS
@@ -19,7 +20,13 @@ set(storage_SRCS
   crappyinferencer.cpp
   crappyinferencer2.cpp
   removablemediamodel.cpp
-  typevisibilitytree.cpp
+  transactionmodel.cpp
+  datamanagementmodel.cpp
+  datamanagementadaptor.cpp
+  datamanagementcommand.cpp
+  classandpropertytree.cpp
+  resourcemerger.cpp
+  resourceidentifier.cpp
   )
 
 soprano_add_ontology(storage_SRCS
@@ -44,6 +51,8 @@ target_link_libraries(nepomukstorage
   ${KDE4_KIO_LIBS}
   ${KDE4_SOLID_LIBS}
   ${NEPOMUK_LIBRARIES}
+  nepomuksync
+  nepomukdatamanagement
   )
 
 install(
@@ -59,4 +68,5 @@ install(
   DESTINATION ${PLUGIN_INSTALL_DIR})
 # -----------------------------
 
+add_subdirectory(lib)
 add_subdirectory(test)

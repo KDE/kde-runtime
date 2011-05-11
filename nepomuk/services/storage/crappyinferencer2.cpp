@@ -20,7 +20,7 @@
 */
 
 #include "crappyinferencer2.h"
-#include "typevisibilitytree.h"
+#include "classandpropertytree.h"
 
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/NAO>
@@ -61,7 +61,7 @@ public:
     QSet<QUrl> buildSuperClassesHash( const QUrl& type, QSet<QUrl>& visitedTypes, const QMultiHash<QUrl, QUrl>& rdfsSubClassRelations );
 
     QHash<QUrl, QSet<QUrl> > m_superClasses;
-    TypeVisibilityTree* m_typeVisibilityTree;
+    Nepomuk::ClassAndPropertyTree* m_typeVisibilityTree;
     QMutex m_mutex;
 
     UpdateAllResourcesThread* m_updateAllResourcesThread;
@@ -182,7 +182,7 @@ bool CrappyInferencer2::Private::isVisibleFromTypes(const QSet<QUrl> &types) con
 
     // if there is one leaf type left that is visible the resource is visible, too
     Q_FOREACH( const QUrl& type, leafTypes ) {
-        if( m_typeVisibilityTree->isVisible(type) ) {
+        if( m_typeVisibilityTree->isUserVisible(type) ) {
             return true;
         }
     }
@@ -228,13 +228,13 @@ QSet<QUrl> CrappyInferencer2::Private::buildSuperClassesHash( const QUrl& type, 
     }
 }
 
-CrappyInferencer2::CrappyInferencer2(Soprano::Model* parent)
+CrappyInferencer2::CrappyInferencer2(Nepomuk::ClassAndPropertyTree* tree, Soprano::Model* parent)
     : Soprano::FilterModel(parent),
       d(new Private())
 {
     d->q = this;
     d->m_inferenceContext = QUrl::fromEncoded("urn:crappyinference2:inferredtriples");
-    d->m_typeVisibilityTree = new TypeVisibilityTree(this);
+    d->m_typeVisibilityTree = tree;
     if ( parent )
         updateInferenceIndex();
 }
@@ -488,10 +488,6 @@ void CrappyInferencer2::updateInferenceIndex()
         rdfsResIt.value().insert(Soprano::Vocabulary::RDFS::Resource());
     }
 
-    // Build visibility tree
-    // ==============================================
-    d->m_typeVisibilityTree->rebuildTree();
-
 #ifndef NDEBUG
     // count for debugging
     int cnt = 0;
@@ -527,7 +523,7 @@ void CrappyInferencer2::addInferenceStatements( const QUrl& resource, const QSet
     QSet<QUrl> superTypes;
     Q_FOREACH( const QUrl& type, types ) {
         superTypes += d->superClasses(type);
-        if( !haveVisibleType && d->m_typeVisibilityTree->isVisible(type) )
+        if( !haveVisibleType && d->m_typeVisibilityTree->isUserVisible(type) )
             haveVisibleType = true;
     }
     QSet<QUrl>::const_iterator end = superTypes.constEnd();
@@ -577,7 +573,7 @@ void CrappyInferencer2::removeInferenceStatements(const QUrl &resource, const QL
 
     bool haveVisibleType = false;
     Q_FOREACH( const QUrl& typeToRemove, typesToRemove ) {
-        if( !haveVisibleType && d->m_typeVisibilityTree->isVisible(typeToRemove) )
+        if( !haveVisibleType && d->m_typeVisibilityTree->isUserVisible(typeToRemove) )
             haveVisibleType = true;
         parentModel()->removeStatement(resource,
                                        Soprano::Vocabulary::RDF::type(),

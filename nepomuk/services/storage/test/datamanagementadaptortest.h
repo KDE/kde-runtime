@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2011 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,21 +19,23 @@
    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CRAPPYINFERENCER2TEST_H
-#define CRAPPYINFERENCER2TEST_H
+#ifndef DATAMANAGEMENTADAPTORTEST_H
+#define DATAMANAGEMENTADAPTORTEST_H
 
 #include <QObject>
 
-class KTempDir;
-class CrappyInferencer2;
 namespace Soprano {
 class Model;
+class NRLModel;
 }
 namespace Nepomuk {
+class DataManagementModel;
+class DataManagementAdaptor;
 class ClassAndPropertyTree;
 }
+class KTempDir;
 
-class CrappyInferencer2Test : public QObject
+class DataManagementAdaptorTest : public QObject
 {
     Q_OBJECT
 
@@ -41,21 +43,18 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
     void init();
-    void testAddAnyStatement();
-    void testAddTypeStatement();
-    void testAddSubClassOfStatement();
-    void testRemoveAnyStatement();
-    void testRemoveTypeStatement();
-    void testRemoveSubClassOfStatement();
-    void testRemoveAllStatements();
-    void testCyclicSubClassRelation();
-    void testUpdateAllResources();
+
+    void testNamespaceExpansion();
 
 private:
+    void resetModel();
+
     KTempDir* m_storageDir;
-    Soprano::Model* m_baseModel;
-    Nepomuk::ClassAndPropertyTree* m_typeTree;
-    CrappyInferencer2* m_model;
+    Soprano::Model* m_model;
+    Soprano::NRLModel* m_nrlModel;
+    Nepomuk::ClassAndPropertyTree* m_classAndPropertyTree;
+    Nepomuk::DataManagementModel* m_dmModel;
+    Nepomuk::DataManagementAdaptor* m_dmAdaptor;
 };
 
 #endif

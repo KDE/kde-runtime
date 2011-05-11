@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2011 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,43 +19,37 @@
    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CRAPPYINFERENCER2TEST_H
-#define CRAPPYINFERENCER2TEST_H
+#ifndef GENERICDATAMANAGEMENTJOB_H
+#define GENERICDATAMANAGEMENTJOB_H
 
-#include <QObject>
+#include <KJob>
 
-class KTempDir;
-class CrappyInferencer2;
-namespace Soprano {
-class Model;
-}
+class QDBusPendingCallWatcher;
+
 namespace Nepomuk {
-class ClassAndPropertyTree;
-}
-
-class CrappyInferencer2Test : public QObject
+class GenericDataManagementJob : public KJob
 {
     Q_OBJECT
 
-private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
-    void init();
-    void testAddAnyStatement();
-    void testAddTypeStatement();
-    void testAddSubClassOfStatement();
-    void testRemoveAnyStatement();
-    void testRemoveTypeStatement();
-    void testRemoveSubClassOfStatement();
-    void testRemoveAllStatements();
-    void testCyclicSubClassRelation();
-    void testUpdateAllResources();
+public:
+    /**
+     * Start any Data Management Service method with a void
+     * return type.
+     */
+    GenericDataManagementJob(const char* methodName,
+                             QGenericArgument val0,
+                             QGenericArgument val1 = QGenericArgument(),
+                             QGenericArgument val2 = QGenericArgument(),
+                             QGenericArgument val3 = QGenericArgument(),
+                             QGenericArgument val4 = QGenericArgument());
+    ~GenericDataManagementJob();
 
-private:
-    KTempDir* m_storageDir;
-    Soprano::Model* m_baseModel;
-    Nepomuk::ClassAndPropertyTree* m_typeTree;
-    CrappyInferencer2* m_model;
+    /// does nothing, we do all in the constructor - it simply needs to be implemented
+    void start();
+
+private Q_SLOTS:
+    void slotDBusCallFinished(QDBusPendingCallWatcher*);
 };
+}
 
 #endif
