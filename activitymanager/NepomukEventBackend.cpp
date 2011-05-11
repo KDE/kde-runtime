@@ -145,20 +145,19 @@ Nepomuk::Resource NepomukEventBackend::createDesktopEvent(const KUrl& uri, const
         Soprano::QueryResultIterator it
                 = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(QString::fromLatin1("select ?r where { ?r a %1 . ?r %2 %3 . } LIMIT 1")
                                                                                   .arg(Soprano::Node::resourceToN3(KExt::Activity()),
-                                                                                       Soprano::Node::resourceToN3(NAO::identifier()),
+                                                                                       Soprano::Node::resourceToN3(KExt::activityIdentifier()),
                                                                                        Soprano::Node::literalToN3(ActivityManager::self()->CurrentActivity())),
                                                                                   Soprano::Query::QueryLanguageSparql);
         if(it.next()) {
             m_currentActivity = it[0].uri();
         }
         else {
-            m_currentActivity = Nepomuk::Resource();
+            m_currentActivity = Nepomuk::Resource(ActivityManager::self()->CurrentActivity(), Nepomuk::Vocabulary::KExt::Activity());
+            m_currentActivity.setProperty(Nepomuk::Vocabulary::KExt::activityIdentifier(), ActivityManager::self()->CurrentActivity());
         }
     }
 
-    if(m_currentActivity.isValid()) {
-        eventRes.addProperty(KExt::usedActivity(), m_currentActivity);
-    }
+    eventRes.setProperty(KExt::usedActivity(), m_currentActivity);
 
     return eventRes;
 }

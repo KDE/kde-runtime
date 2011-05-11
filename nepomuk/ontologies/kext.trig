@@ -80,6 +80,15 @@ kext: {
           rdfs:domain rdfs:Resource ;
           rdfs:range kext:Activity ;
           nao:userVisible false .
+
+    kext:activityIdentifier
+          a rdf:Property ;
+          rdfs:subPropertyOf nao:identifier ;
+          rdfs:label "activity identifier" ;
+          rdfs:comment "The unique ID of the activity as used outside of Nepomuk. Typically this is a UUID." ;
+          rdfs:domain kext:Activity ;
+          rdfs:range xsd:string ;
+          nao:userVisible false .
 }
 
 <http://nepomuk.kde.org/ontologies/2010/11/29/kext/metadata> {
@@ -93,7 +102,7 @@ kext: {
           nao:prefLabel "KDE Extensions Ontology" ;
           nao:hasDefaultNamespace "http://nepomuk.kde.org/ontologies/2010/11/29/kext#" ;
           nao:hasDefaultNamespaceAbbreviation "kext" ;
-          nao:lastModified "2011-05-09T12:31:43Z" ;
+          nao:lastModified "2011-05-10T12:31:43Z" ;
           nao:serializationLanguage "TriG" ;
           nao:status "Unstable" ;
           nrl:updatable "0" ;
