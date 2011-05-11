@@ -131,9 +131,14 @@ void Nepomuk::Indexer::indexFile( const QFileInfo& info, const KUrl resUri, uint
                                             *d->m_streamAnalyzer,
                                             QFile::encodeName( dir ).data() );
         if ( info.isFile() && !info.isSymLink() ) {
-            Strigi::InputStream* stream = Strigi::FileInputStream::open( QFile::encodeName( info.filePath() ) );
-            analysisresult.index( stream );
-            delete stream;
+            #ifdef STRIGI_HAS_FILEINPUTSTREAM_OPEN
+                Strigi::InputStream* stream = Strigi::FileInputStream::open( QFile::encodeName( info.filePath() ) );
+                analysisresult.index( stream );
+                delete stream;
+            #else
+                Strigi::FileInputStream stream( QFile::encodeName( info.filePath() ) );
+                analysisresult.index( &stream );
+            #endif
         }
         else {
             analysisresult.index(0);

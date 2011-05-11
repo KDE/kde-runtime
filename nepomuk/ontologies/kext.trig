@@ -64,7 +64,7 @@ kext: {
           rdfs:label "Unix file group" ;
           rdfs:comment "The group of the file as seen on unix file systems." ;
           rdfs:domain nfo:FileDataObject ;
-          rdfs:range xsd:integer ;
+          rdfs:range xsd:string ;
           nao:userVisible false .
 
     kext:Activity
