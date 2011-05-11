@@ -108,7 +108,7 @@ Nepomuk::Indexer::~Indexer()
 
 void Nepomuk::Indexer::indexFile( const KUrl& url, const KUrl resUri, uint mtime )
 {
-    indexFile( QFileInfo( url.toLocalFile() ), resUri );
+    indexFile( QFileInfo( url.toLocalFile() ), resUri, mtime );
 }
 
 
