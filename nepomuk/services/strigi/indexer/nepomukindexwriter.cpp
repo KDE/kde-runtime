@@ -626,12 +626,14 @@ void Nepomuk::StrigiIndexWriter::finishAnalysis( const AnalysisResult* idx )
                                     Nepomuk::Vocabulary::KExt::unixFileMode(),
                                     LiteralValue( int(statBuf.st_mode) ) );
         }
-        d->feeder->addStatement( md->resourceUri,
-                                Nepomuk::Vocabulary::KExt::unixFileOwner(),
-                                LiteralValue( md->fileInfo.owner() ) );
-        d->feeder->addStatement( md->resourceUri,
-                                Nepomuk::Vocabulary::KExt::unixFileGroup(),
-                                LiteralValue( md->fileInfo.group() ) );
+        if( !md->fileInfo.owner().isEmpty() )
+            d->feeder->addStatement( md->resourceUri,
+                                     Nepomuk::Vocabulary::KExt::unixFileOwner(),
+                                     LiteralValue( md->fileInfo.owner() ) );
+        if( !md->fileInfo.group().isEmpty() )
+            d->feeder->addStatement( md->resourceUri,
+                                     Nepomuk::Vocabulary::KExt::unixFileGroup(),
+                                     LiteralValue( md->fileInfo.group() ) );
 #endif // Q_OS_UNIX
     }
 
