@@ -193,7 +193,7 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
     }
     query += QString::fromLatin1(" bound(?o%1) ) . }").arg( QString::number( num - 1 ) );
     
-    QString queryBegin = QString::fromLatin1("select distinct ?r ?p as ?cnt "
+    QString queryBegin = QString::fromLatin1("select distinct ?r count(?p) as ?cnt "
                                              "where { ?r ?p ?o. filter( ?p in (%1) ).")
                          .arg( identifyingProperties.join(",") );
 
