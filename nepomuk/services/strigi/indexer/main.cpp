@@ -55,32 +55,26 @@ int main(int argc, char *argv[])
     const KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     // Application
-    KComponentData data( aboutData, KComponentData::RegisterAsMainComponent );
     QCoreApplication app( argc, argv );
+    KComponentData data( aboutData, KComponentData::RegisterAsMainComponent );
     
-    Nepomuk::Indexer indexer;
+    const KUrl uri = args->getOption("uri");
+    const uint mtime = args->getOption("mtime").toUInt();
 
-    KUrl uri = args->getOption("uri");
-    kDebug() << "Uri: " << uri;
-    uint mtime = args->getOption("mtime").toUInt();
-    
     if( args->count() == 0 ) {
+        Nepomuk::Indexer indexer;
         indexer.indexStdin( uri, mtime );
         return 0;
     }
-
-    KUrl url = args->arg(0);
-    if( url.scheme().isEmpty() ) {
-        url = KUrl(QDir::current().absolutePath() + QDir::separator() + url.url());
-    }
-    kDebug() << "Url: " << url;
-
-    if( args->isSet("clear") ) {
-        Nepomuk::clearIndexedDataForUrl( url );
+    else if( args->isSet("clear") ) {
+        Nepomuk::clearIndexedDataForUrl( args->url(0) );
+        kDebug() << "Removed indexed data for" << args->url(0);
         return 0;
     }
-    indexer.indexFile( url, uri, mtime );
-    kDebug() << "Done Indexing";
-
-    return 0;
+    else {
+        Nepomuk::Indexer indexer;
+        indexer.indexFile( args->url(0), uri, mtime );
+        kDebug() << "Indexed data for" << args->url(0);
+        return 0;
+    }
 }
