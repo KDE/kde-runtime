@@ -21,6 +21,7 @@ target_link_libraries(removablemediamodeltest
   ${KDE4_KDECORE_LIBS}
   ${KDE4_SOLID_LIBS}
   ${NEPOMUK_LIBRARIES}
+  nepomukcommon
 )
 
 kde4_add_unit_test(classandpropertytreetest

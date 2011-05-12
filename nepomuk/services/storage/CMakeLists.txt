@@ -54,6 +54,7 @@ target_link_libraries(nepomukstorage
   ${NEPOMUK_LIBRARIES}
   nepomuksync
   nepomukdatamanagement
+  nepomukcommon
   )
 
 install(

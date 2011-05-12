@@ -19,38 +19,30 @@
    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef REMOVABLEMEDIAMODELTEST_H
-#define REMOVABLEMEDIAMODELTEST_H
+#ifndef REMOVABLEDEVICEINDEXNOTIFICATION_H
+#define REMOVABLEDEVICEINDEXNOTIFICATION_H
 
-#include <QObject>
-#include <QStringList>
+#include "removablemediacache.h"
 
-namespace Nepomuk {
-class RemovableMediaModel;
-}
-namespace Soprano {
-class Model;
-}
+#include <KNotification>
 
-class RemovableMediaModelTest : public QObject
+#include <Solid/Device>
+
+class RemovableDeviceIndexNotification : public KNotification
 {
     Q_OBJECT
 
-private Q_SLOTS:
-    void initTestCase();
-    void testConvertFileUrlsInStatement_data();
-    void testConvertFileUrlsInStatement();
-    void testConvertFileUrlsInQuery_data();
-    void testConvertFileUrlsInQuery();
-    void testConvertFilxUrl_data();
-    void testConvertFilxUrl();
-    void testConvertFilxUrls_data();
-    void testConvertFilxUrls();
-    void testConversionWithUnmount();
+public:
+    RemovableDeviceIndexNotification(const Nepomuk::RemovableMediaCache::Entry* medium, QObject *parent = 0);
+
+private slots:
+    void slotActionActivated(uint action);
+    void slotActionDoIndexActivated();
+    void slotActionDoNotIndexActivated();
+    void slotActionConfigureActivated();
 
 private:
-    Soprano::Model* m_model;
-    Nepomuk::RemovableMediaModel* m_rmModel;
+    const Nepomuk::RemovableMediaCache::Entry* m_medium;
 };
 
-#endif
+#endif // REMOVABLEDEVICEINDEXNOTIFICATION_H

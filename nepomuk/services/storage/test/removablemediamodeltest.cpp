@@ -74,6 +74,8 @@ void unplugDevice(const QString& udi) {
     QDBusInterface(SOLID_FAKEHW_SERVICE, SOLID_FAKEHW_PATH, SOLID_FAKEHW_INTERFACE, QDBusConnection::sessionBus())
             .call(QLatin1String("unplug"), udi);
 }
+
+const char* s_udiXyz123 = "/org/kde/solid/fakehw/volume_part1_size_993284096";
 }
 
 void RemovableMediaModelTest::initTestCase()
@@ -230,6 +232,55 @@ void RemovableMediaModelTest::testConvertFilxUrls()
     QFETCH(Statement, converted);
 
     QCOMPARE(m_rmModel->convertFilexUrls(original), converted);
+}
+
+void RemovableMediaModelTest::testConversionWithUnmount()
+{
+    KUrl fileXUrl("filex://xyz-123/hello/world");
+    KUrl fileUrl("file:///media/XO-Y4/hello/world");
+
+    // device mounted
+    plugDevice(QLatin1String(s_udiXyz123));
+
+    // conversion should work
+    QCOMPARE(m_rmModel->convertFileUrl(fileUrl), Soprano::Node(fileXUrl));
+    QCOMPARE(m_rmModel->convertFilexUrl(fileXUrl), Soprano::Node(fileUrl));
+
+
+    // add some data to query
+    m_rmModel->addStatement(QUrl("nepomuk:/res/foobar"), NIE::url(), fileUrl);
+
+    // make sure it is converted when queried
+    QCOMPARE(m_rmModel->listStatements(QUrl("nepomuk:/res/foobar"), NIE::url(), Soprano::Node()).allElements().count(), 1);
+    QCOMPARE(m_rmModel->listStatements(QUrl("nepomuk:/res/foobar"), NIE::url(), Soprano::Node()).allElements().first().object(),
+             Soprano::Node(fileUrl));
+    QCOMPARE(m_rmModel->executeQuery(QString::fromLatin1("select ?u where { <nepomuk:/res/foobar> ?p ?u . }"),
+                                     Soprano::Query::QueryLanguageSparql).iterateBindings(0).allElements().count(), 1);
+    QCOMPARE(m_rmModel->executeQuery(QString::fromLatin1("select ?u where { <nepomuk:/res/foobar> ?p ?u . }"),
+                                     Soprano::Query::QueryLanguageSparql).iterateBindings(0).allElements().first(),
+             Soprano::Node(fileUrl));
+
+
+    // unmount device
+    unplugDevice(s_udiXyz123);
+
+    // now conversion should do noting
+    QCOMPARE(m_rmModel->convertFileUrl(fileUrl), Soprano::Node(fileUrl));
+    QCOMPARE(m_rmModel->convertFilexUrl(fileXUrl), Soprano::Node(fileXUrl));
+
+    // make sure nothing is converted anymore
+    QCOMPARE(m_rmModel->listStatements(QUrl("nepomuk:/res/foobar"), NIE::url(), Soprano::Node()).allElements().count(), 1);
+    QCOMPARE(m_rmModel->listStatements(QUrl("nepomuk:/res/foobar"), NIE::url(), Soprano::Node()).allElements().first().object(),
+             Soprano::Node(fileXUrl));
+    QCOMPARE(m_rmModel->executeQuery(QString::fromLatin1("select ?u where { <nepomuk:/res/foobar> ?p ?u . }"),
+                                     Soprano::Query::QueryLanguageSparql).iterateBindings(0).allElements().count(), 1);
+    QCOMPARE(m_rmModel->executeQuery(QString::fromLatin1("select ?u where { <nepomuk:/res/foobar> ?p ?u . }"),
+                                     Soprano::Query::QueryLanguageSparql).iterateBindings(0).allElements().first(),
+             Soprano::Node(fileXUrl));
+
+
+    // re-plug device for other tests
+    plugDevice(QLatin1String(s_udiXyz123));
 }
 
 QTEST_KDEMAIN_CORE(RemovableMediaModelTest)
