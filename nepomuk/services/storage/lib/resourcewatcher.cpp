@@ -22,7 +22,6 @@
 #include "resourcewatcherconnectioninterface.h"
 #include "resourcewatchermanagerinterface.h"
 
-typedef local::Nepomuk::ResourceWatcherConnection ResourceWatcherConnection;
 
 class Nepomuk::ResourceWatcher::Private {
 public:
@@ -30,13 +29,13 @@ public:
     QList<Nepomuk::Resource> m_resources;
     QList<Types::Property> m_properties;
 
-    ResourceWatcherConnection * m_connection;
-    org::kde::nepomuk::ResourceWatcher * m_watchManager;
+    org::kde::nepomuk::ResourceWatcherConnection * m_connectionInterface;
+    org::kde::nepomuk::ResourceWatcher * m_watchManagerInterface;
 };
 
 Nepomuk::ResourceWatcher::ResourceWatcher(QObject* parent): QObject(parent)
 {
-    d->m_watchManager = new org::kde::nepomuk::ResourceWatcher( "org.kde.nepomuk.ResourceWatcher",
+    d->m_watchManagerInterface = new org::kde::nepomuk::ResourceWatcher( "org.kde.nepomuk.ResourceWatcher",
                                                                 "/resourcewatcher",
                                                                 QDBusConnection::sessionBus() );
 }
@@ -69,21 +68,21 @@ void Nepomuk::ResourceWatcher::start()
     //
     // Create the dbus object to watch
     //
-    QDBusPendingReply<QDBusObjectPath> reply = d->m_watchManager->watch( uris, props, types_ );
+    QDBusPendingReply<QDBusObjectPath> reply = d->m_watchManagerInterface->watch( uris, props, types_ );
     QDBusObjectPath path = reply.value();
 
-    d->m_connection =  new ResourceWatcherConnection( "org.kde.nepomuk.ResourceWatcher",
-                                                       path.path(),
-                                                       QDBusConnection::sessionBus() );
-    connect( d->m_connection, SIGNAL(propertyAdded(QString,QString,QString)),
+    d->m_connectionInterface =  new org::kde::nepomuk::ResourceWatcherConnection( "org.kde.nepomuk.ResourceWatcher",
+                                                                                  path.path(),
+                                                                                  QDBusConnection::sessionBus() );
+    connect( d->m_connectionInterface, SIGNAL(propertyAdded(QString,QString,QString)),
              this, SLOT(slotPropertyAdded(QString,QString,QString)) );
-    connect( d->m_connection, SIGNAL(propertyRemoved(QString,QString,QString)),
+    connect( d->m_connectionInterface, SIGNAL(propertyRemoved(QString,QString,QString)),
              this, SLOT(slotPropertyRemoved(QString,QString,QString)) );
 }
 
 void Nepomuk::ResourceWatcher::stop()
 {
-    d->m_connection->disconnect( this );
+    d->m_connectionInterface->disconnect( this );
     // TODO: Remove the connection as well!
 }
 

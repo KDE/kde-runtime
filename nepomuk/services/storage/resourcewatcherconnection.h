@@ -37,6 +37,8 @@ namespace Nepomuk {
     class ResourceWatcherConnection : public QObject
     {
         Q_OBJECT
+        Q_CLASSINFO( "D-Bus Interface", "org.kde.nepomuk.ResourceWatcherConnection" )
+
     public:
         ResourceWatcherConnection( ResourceWatcherManager* parent, bool hasProperties );
         ~ResourceWatcherConnection();
