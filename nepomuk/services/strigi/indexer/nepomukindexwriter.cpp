@@ -570,6 +570,14 @@ void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult* idx,
 }
 
 
+namespace {
+    Soprano::Node convertToMainResource( const Soprano::Node & n, FileMetaData * md ) {
+        if( n.isResource() && n.uri().toLocalFile() == md->fileUrl.toLocalFile() ) {
+            return md->resourceUri;
+        }
+        return n;
+    }
+}
 void Nepomuk::StrigiIndexWriter::addTriplet( const std::string& s,
                                              const std::string& p,
                                              const std::string& o )
@@ -577,13 +585,17 @@ void Nepomuk::StrigiIndexWriter::addTriplet( const std::string& s,
     if ( d->currentResultStack.top()->depth() > 0 ) {
         return;
     }
-    //FileMetaData* md = fileDataForResult( d->currentResultStack.top() );
+    FileMetaData* md = fileDataForResult( d->currentResultStack.top() );
 
     Soprano::Node subject( createBlankOrResourceNode( s ) );
+    subject = convertToMainResource( subject, md );
+    
     Nepomuk::Types::Property property( QUrl( QString::fromUtf8(p.c_str()) ) ); // Was mapped earlier
     Soprano::Node object;
-    if ( property.range().isValid() )
+    if ( property.range().isValid() ) {
         object = Soprano::Node( createBlankOrResourceNode( o ) );
+        object = convertToMainResource( object, md );
+    }
     else
         object = Soprano::LiteralValue::fromString( QString::fromUtf8( o.c_str() ), property.literalRangeType().dataTypeUri() );
     
@@ -592,7 +604,6 @@ void Nepomuk::StrigiIndexWriter::addTriplet( const std::string& s,
     else {
         kDebug() << QString::fromUtf8( o.c_str() ) << " could not be parsed as a " << property.literalRangeType().dataTypeUri();
     }
-        
 }
 
 
