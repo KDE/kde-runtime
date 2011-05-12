@@ -17,7 +17,6 @@
 */
 
 #include "strigiserviceconfig.h"
-#include "removablestorageserviceinterface.h"
 #include "fileexcludefilters.h"
 
 #include <QtCore/QStringList>

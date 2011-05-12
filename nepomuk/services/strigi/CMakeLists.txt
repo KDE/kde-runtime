@@ -22,7 +22,6 @@ set(strigiservice_SRCS
 
 qt4_add_dbus_adaptor(strigiservice_SRCS ../../interfaces/org.kde.nepomuk.Strigi.xml strigiservice.h Nepomuk::StrigiService )
 
-qt4_add_dbus_interface(strigiservice_SRCS ../../interfaces/org.kde.nepomuk.RemovableStorage.xml removablestorageserviceinterface)
 qt4_add_dbus_interface(strigiservice_SRCS ../../interfaces/org.kde.nepomuk.FileWatch.xml filewatchserviceinterface)
 
 kde4_add_plugin(nepomukstrigiservice ${strigiservice_SRCS})

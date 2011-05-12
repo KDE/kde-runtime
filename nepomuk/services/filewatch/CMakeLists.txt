@@ -22,8 +22,6 @@ set(SRCS
   )
 
 qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.Strigi.xml strigiserviceinterface)
-qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.RemovableStorage.xml removablestorageserviceinterface)
-
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   set(SRCS
