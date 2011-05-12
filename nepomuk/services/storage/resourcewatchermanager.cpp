@@ -30,6 +30,8 @@
 
 #include <QtCore/QStringList>
 #include <QtCore/QMutableSetIterator>
+#include <QtCore/QMutableHashIterator>
+
 
 using namespace Soprano::Vocabulary;
 
@@ -146,20 +148,6 @@ QDBusObjectPath Nepomuk::ResourceWatcherManager::watch(const QList< QString >& r
     return con->registerDBusObject(message().service(), ++m_connectionCount);
 }
 
-namespace {
-    void remove( QMultiHash<QUrl, Nepomuk::ResourceWatcherConnection*> & hash,
-                 const Nepomuk::ResourceWatcherConnection * con )
-    {
-        QMutableHashIterator<QUrl, Nepomuk::ResourceWatcherConnection*> it( hash );
-        while( it.hasNext() ) {
-            it.next();
-
-            if( it.value() == con )
-                it.remove();
-        }
-    }
-}
-
 void Nepomuk::ResourceWatcherManager::stopWatcher(const QString& objectName)
 {
     kDebug();
@@ -177,11 +165,23 @@ void Nepomuk::ResourceWatcherManager::stopWatcher(const QString& objectName)
     delete con;
 }
 
+namespace {
+    void removeConnectionFromHash( QMultiHash<QUrl, Nepomuk::ResourceWatcherConnection*> & hash,
+                 const Nepomuk::ResourceWatcherConnection * con )
+    {
+        QMutableHashIterator<QUrl, Nepomuk::ResourceWatcherConnection*> it( hash );
+        while( it.hasNext() ) {
+            if( it.next().value() == con )
+                it.removeConnectionFromHash();
+        }
+    }
+}
+
 void Nepomuk::ResourceWatcherManager::removeConnection(Nepomuk::ResourceWatcherConnection *con)
 {
-    remove( m_resHash, con );
-    remove( m_propHash, con );
-    remove( m_typeHash, con );
+    removeConnectionFromHash( m_resHash, con );
+    removeConnectionFromHash( m_propHash, con );
+    removeConnectionFromHash( m_typeHash, con );
 }
 
 #include "resourcewatchermanager.moc"
