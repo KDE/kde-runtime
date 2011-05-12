@@ -27,7 +27,7 @@
 #include "simpleresourcegraph.h"
 #include "simpleresource.h"
 #include "transactionmodel.h"
-
+#include "resourcewatchermanager.h"
 #include "syncresource.h"
 #include "resourceidentifier.h"
 #include "resourcemerger.h"
@@ -143,7 +143,8 @@ class Nepomuk::DataManagementModel::Private
 {
 public:
     ClassAndPropertyTree* m_classAndPropertyTree;
-
+    ResourceWatcherManager m_watchManager;
+    
     /// a set of properties that are maintained by the service and cannot be changed by clients
     QSet<QUrl> m_protectedProperties;
 };
@@ -345,6 +346,9 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     // Do the actual work
     //
     addProperty(uriHash, property, resolvedNodes, app);
+
+    // Emit the singals
+    d->m_watchManager.addProperty( resources, property, values );
 }
 
 

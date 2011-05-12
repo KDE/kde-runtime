@@ -32,7 +32,7 @@
 
 using namespace Soprano::Vocabulary;
 
-Nepomuk::ResourceWatcherManager::ResourceWatcherManager(Soprano::Model* parent)
+Nepomuk::ResourceWatcherManager::ResourceWatcherManager(QObject* parent)
     : QObject(parent)
 {
     // Register the service
@@ -42,45 +42,39 @@ Nepomuk::ResourceWatcherManager::ResourceWatcherManager(Soprano::Model* parent)
     sessionBus.registerObject("/watcher", this, QDBusConnection::ExportScriptableSlots);
 }
 
-Soprano::Error::ErrorCode Nepomuk::ResourceWatcherManager::addStatement(const Soprano::Statement& statement)
+void Nepomuk::ResourceWatcherManager::addProperty(QList<QUrl> resources, QUrl property, QVariantList values)
 {
-    Soprano::Error::ErrorCode err;// = Soprano::FilterModel::addStatement(statement);
-
-    const QUrl & subUri = statement.subject().uri();
-    const QUrl & propUri = statement.predicate().uri();
-
     typedef ResourceWatcherConnection RWC;
 
     //
     // Emit signals for all the connections that are only watching specific resources
     //
-    QSet<RWC*> subConections = m_subHash.values( subUri ).toSet();
-    QMutableSetIterator<RWC*> iter( subConections );
-    while( iter.hasNext() ) {
-        RWC* con = iter.next();
-        if( !con->hasProperties() ) {
-            emit con->propertyAdded( subUri.toString(), propUri.toString(), statement.object().toN3() );
-            iter.remove();
+    QHash<RWC*, QUrl> resConections;
+    foreach( const QUrl resUri, resources ) {
+        QList<RWC*> connections = m_resHash.values( resUri );
+        foreach( RWC* con, connections ) {
+            if( !con->hasProperties() ) {
+                emit con->propertyAdded( resUri.toString(),
+                                         property.toString(),
+                                         values.at( resources.indexOf(resUri) ).toString() );
+            }
+            else {
+                resConections.insert( con, resUri );
+            }
         }
     }
-
+    
     //
     // Emit signals for the connections that are watching specific resources and properties
     //
-    QSet<RWC*> propConnections = m_propHash.values( propUri ).toSet();
-    QSet<RWC*> finalSet = propConnections.intersect( subConections );
-    foreach( RWC * con, finalSet ) {
-        emit con->propertyAdded( subUri.toString(), propUri.toString(), statement.object().toN3() );
-    }
-
-    //
-    // Emit type signals
-    //
-    if( propUri == RDF::type() ) {
-        const QUrl & objUri = statement.object().uri();
-        QList<RWC*> conList = m_typeHash.values( objUri );
-        foreach( RWC * con, conList ) {
-            emit con->resourceTypeCreated( subUri.toString(), objUri.toString() );
+    QList<RWC*> propConnections = m_propHash.values( property );
+    foreach( RWC* con, propConnections ) {
+        QHash< RWC*, QUrl >::const_iterator it = resConections.constFind( con );
+        if( it != resConections.constEnd() ) {
+            const QUrl resUri = it.value();
+            emit con->propertyAdded( resUri.toString(),
+                                     property.toString(),
+                                     values.at( resources.indexOf(resUri) ).toString() );
         }
     }
 
@@ -88,31 +82,6 @@ Soprano::Error::ErrorCode Nepomuk::ResourceWatcherManager::addStatement(const So
     // Emit type + property signals
     //
     //TODO: Implement me! ( How? )
-
-    return err;
-}
-
-Soprano::Error::ErrorCode Nepomuk::ResourceWatcherManager::removeAllStatements(const Soprano::Statement& statement)
-{
-    Soprano::Error::ErrorCode err;// = Soprano::FilterModel::removeAllStatements(statement);
-    /*const QUrl & subUri = statement.subject().uri();
-    
-    QHash<QUrl, ResourceWatcherConnection*>::iterator i = m_hash.find( subUri );
-    if( i != m_hash.end() ) {
-        ResourceWatcherConnection * res = i.value();
-        emit res->statementRemoved();
-        emit res->statementRemoved( statement );
-
-        if( statement.predicate().isEmpty() && statement.object().isEmpty() )
-            emit res->removed();
-    }*/
-
-    return err;
-}
-
-Soprano::Error::ErrorCode Nepomuk::ResourceWatcherManager::removeStatement(const Soprano::Statement& statement)
-{
-    return removeAllStatements( statement );
 }
 
 QDBusObjectPath Nepomuk::ResourceWatcherManager::watch(const QList< QString >& resources, const QList< QString >& properties, const QList< QString >& types)
@@ -124,7 +93,7 @@ QDBusObjectPath Nepomuk::ResourceWatcherManager::watch(const QList< QString >& r
 
     ResourceWatcherConnection * con = new ResourceWatcherConnection( this, !properties.isEmpty() );
     foreach( const QString & res, resources ) {
-        m_subHash.insert( QUrl(res), con );
+        m_resHash.insert( QUrl(res), con );
     }
 
     foreach( const QString & prop, properties ) {
@@ -166,7 +135,7 @@ void Nepomuk::ResourceWatcherManager::stopWatcher(const QString& objectName)
         }
     }
 
-    remove( m_subHash, con );
+    remove( m_resHash, con );
     remove( m_propHash, con );
     remove( m_typeHash, con );
 

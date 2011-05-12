@@ -37,12 +37,10 @@ namespace Nepomuk {
         Q_CLASSINFO( "D-Bus Interface", "org.kde.nepomuk.ResourceWatcher" )
         
     public:
-        virtual Soprano::Error::ErrorCode addStatement(const Soprano::Statement& statement);
-        virtual Soprano::Error::ErrorCode removeStatement(const Soprano::Statement& statement);
-        virtual Soprano::Error::ErrorCode removeAllStatements(const Soprano::Statement& statement);
+        ResourceWatcherManager( QObject* parent=0 );
 
-        ResourceWatcherManager( Soprano::Model* parent );
-
+        void addProperty(QList<QUrl> resources, QUrl property, QVariantList values);
+        
     public slots:
         Q_SCRIPTABLE QDBusObjectPath watch( const QList<QString> & resources,
                                             const QList<QString> & properties,
@@ -50,7 +48,7 @@ namespace Nepomuk {
         Q_SCRIPTABLE void stopWatcher( const QString& objectName );
 
     private:
-        QMultiHash<QUrl, ResourceWatcherConnection*> m_subHash;
+        QMultiHash<QUrl, ResourceWatcherConnection*> m_resHash;
         QMultiHash<QUrl, ResourceWatcherConnection*> m_propHash;
         QMultiHash<QUrl, ResourceWatcherConnection*> m_typeHash;
         QSet<QUrl> m_metaProperties; 
