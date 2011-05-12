@@ -110,10 +110,15 @@ namespace Nepomuk {
          */
         void propertyAdded( const Nepomuk::Resource & resource,
                             const Types::Property & property,
-                            const Nepomuk::Variant & value );
+                            const QVariant & value );
         void propertyRemoved( const Nepomuk::Resource & resource,
                               const Types::Property & property,
-                              const Nepomuk::Variant & value );
+                              const QVariant & value );
+
+    private Q_SLOTS:
+        void slotPropertyAdded(QString res, QString prop, QString object);
+        void slotropertyRemoved(QString,QString,QString);
+        
     private:
         class Private;
         Private * d;

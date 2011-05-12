@@ -1,0 +1,23 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="local.Nepomuk.ResourceWatcherConnection">
+    <signal name="resourceDeleted">
+      <arg name="uri" type="s" direction="out"/>
+    </signal>
+    <signal name="resourceTypeCreated">
+      <arg name="resUri" type="s" direction="out"/>
+      <arg name="type" type="s" direction="out"/>
+    </signal>
+    <signal name="propertyAdded">
+      <arg name="resource" type="s" direction="out"/>
+      <arg name="property" type="s" direction="out"/>
+      <arg name="value" type="s" direction="out"/>
+    </signal>
+    <signal name="propertyRemoved">
+      <arg name="resource" type="s" direction="out"/>
+      <arg name="property" type="s" direction="out"/>
+      <arg name="value" type="s" direction="out"/>
+    </signal>
+    <method name="close" />
+  </interface>
+</node>

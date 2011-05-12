@@ -19,6 +19,14 @@ set_source_files_properties(
   INCLUDE "dbustypes.h")
 
 qt4_add_dbus_interface(datamanagement_SRC
+  ../../../interfaces/org.kde.nepomuk.ResourceWatcherConnection.xml
+  resourcewatcherconnectioninterface)
+
+qt4_add_dbus_interface(datamanagement_SRC
+  ../../../interfaces/org.kde.nepomuk.ResourceWatcher.xml
+  resourcewatchermanagerinterface)
+
+qt4_add_dbus_interface(datamanagement_SRC
   ${datamanagementservice_dbus_desc}
   datamanagementinterface)
 
