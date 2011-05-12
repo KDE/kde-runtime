@@ -4,7 +4,11 @@
     <signal name="resourceDeleted">
       <arg name="uri" type="s" direction="out"/>
     </signal>
-    <signal name="resourceTypeCreated">
+    <signal name="resourceTypeAdded">
+      <arg name="resUri" type="s" direction="out"/>
+      <arg name="type" type="s" direction="out"/>
+    </signal>
+    <signal name="resourceTypeRemoved">
       <arg name="resUri" type="s" direction="out"/>
       <arg name="type" type="s" direction="out"/>
     </signal>
