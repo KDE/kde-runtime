@@ -21,6 +21,7 @@
 */
 
 #include "indexer.h"
+#include "../util.h"
 
 #include <KAboutData>
 #include <KCmdLineArgs>
@@ -48,6 +49,7 @@ int main(int argc, char *argv[])
     options.add("uri <uri>", ki18n("The URI provided will be forced on the resource"));
     options.add("mtime <time>", ki18n("The modification time of the resource"));
     options.add("+[url]", ki18n("The URL of the file to be indexed"));
+    options.add("clear", ki18n("Remove all indexed data of the URL provided"));
     
     KCmdLineArgs::addCmdLineOptions(options);   
     const KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
@@ -72,15 +74,13 @@ int main(int argc, char *argv[])
         url = KUrl(QDir::current().absolutePath() + QDir::separator() + url.url());
     }
     kDebug() << "Url: " << url;
-    
-    indexer.indexFile( url, uri, mtime );
-    
-    //
-    // Index the urls
-    //
 
+    if( args->isSet("clear") ) {
+        Nepomuk::clearIndexedDataForUrl( url );
+        return 0;
+    }
+    indexer.indexFile( url, uri, mtime );
     kDebug() << "Done Indexing";
 
     return 0;
-//    return app.exec();
 }
