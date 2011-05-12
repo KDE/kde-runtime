@@ -43,7 +43,7 @@ Nepomuk::ResourceWatcherManager::ResourceWatcherManager(QObject* parent)
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
     sessionBus.registerService("org.kde.nepomuk.ResourceWatcher");
 
-    sessionBus.registerObject("/watcher", this, QDBusConnection::ExportScriptableSlots);
+    sessionBus.registerObject("/resourcewatcher", this, QDBusConnection::ExportScriptableSlots);
 }
 
 void Nepomuk::ResourceWatcherManager::addProperty(QList<QUrl> resources, QUrl property, QVariantList values)

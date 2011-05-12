@@ -46,7 +46,7 @@ bool Nepomuk::ResourceWatcherConnection::hasProperties() const
 QDBusObjectPath Nepomuk::ResourceWatcherConnection::registerDBusObject( const QString& dbusClient, int id )
 {
     // build the dbus object path from the id and register the connection as a Query dbus object
-    const QString dbusObjectPath = QString( "/nepomukqueryservice/query%1" ).arg( id );
+    const QString dbusObjectPath = QString( "/resourcewatcher/watch%1" ).arg( id );
     QDBusConnection::sessionBus().registerObject( dbusObjectPath, this, QDBusConnection::ExportScriptableSignals );
 
     // watch the dbus client for unregistration for auto-cleanup
