@@ -29,8 +29,7 @@
 #include <KDebug>
 
 #include <QtCore/QStringList>
-#include <QtCore/QMutableSetIterator>
-#include <QtCore/QMutableHashIterator>
+#include <QtCore/QSet>
 
 
 using namespace Soprano::Vocabulary;
@@ -42,43 +41,37 @@ Nepomuk::ResourceWatcherManager::ResourceWatcherManager(QObject* parent)
     QDBusConnection::sessionBus().registerObject("/resourcewatcher", this, QDBusConnection::ExportScriptableSlots);
 }
 
-void Nepomuk::ResourceWatcherManager::addProperty(QList<QUrl> resources, QUrl property, QVariantList values)
+
+void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value)
 {
     typedef ResourceWatcherConnection RWC;
-
+    
     //
     // Emit signals for all the connections that are only watching specific resources
     //
-    QHash<RWC*, QUrl> resConections;
-    foreach( const QUrl resUri, resources ) {
-        QList<RWC*> connections = m_resHash.values( resUri );
-        foreach( RWC* con, connections ) {
-            if( !con->hasProperties() ) {
-                foreach( const QVariant & value, values ) {
-                    emit con->propertyAdded( resUri.toString(),
-                                             property.toString(),
-                                             value.toString() );
-                }
-            }
-            else {
-                resConections.insert( con, resUri );
-            }
+    QSet<RWC*> resConections;
+    QList<RWC*> connections = m_resHash.values( res.uri() );
+    foreach( RWC* con, connections ) {
+        if( !con->hasProperties() ) {
+            emit con->propertyAdded( res.uri().toString(),
+                                     property.toString(),
+                                     value.toString() );
+        }
+        else {
+            resConections << con;
         }
     }
-    
+
     //
     // Emit signals for the connections that are watching specific resources and properties
     //
     QList<RWC*> propConnections = m_propHash.values( property );
     foreach( RWC* con, propConnections ) {
-        QHash< RWC*, QUrl >::const_iterator it = resConections.constFind( con );
+        QSet<RWC*>::const_iterator it = resConections.constFind( con );
         if( it != resConections.constEnd() ) {
-            const QUrl resUri = it.value();
-            foreach( const QVariant & value, values ) {
-                emit con->propertyAdded( resUri.toString(),
-                                         property.toString(),
-                                         value.toString() );
-            }
+            emit con->propertyAdded( res.uri().toString(),
+                                     property.toString(),
+                                     value.toString() );
         }
     }
 
@@ -88,43 +81,36 @@ void Nepomuk::ResourceWatcherManager::addProperty(QList<QUrl> resources, QUrl pr
     //TODO: Implement me! ( How? )
 }
 
-void Nepomuk::ResourceWatcherManager::removeProperty(QList< QUrl > resources, QUrl property, QVariantList values)
+void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value)
 {
     typedef ResourceWatcherConnection RWC;
     
     //
     // Emit signals for all the connections that are only watching specific resources
     //
-    QHash<RWC*, QUrl> resConections;
-    foreach( const QUrl resUri, resources ) {
-        QList<RWC*> connections = m_resHash.values( resUri );
-        foreach( RWC* con, connections ) {
-            if( !con->hasProperties() ) {
-                foreach( const QVariant & value, values ) {
-                    emit con->propertyRemoved( resUri.toString(),
-                                               property.toString(),
-                                               value.toString() );
-                }
-            }
-            else {
-                resConections.insert( con, resUri );
-            }
+    QSet<RWC*> resConections;
+    QList<RWC*> connections = m_resHash.values( res.uri() );
+    foreach( RWC* con, connections ) {
+        if( !con->hasProperties() ) {
+            emit con->propertyRemoved( res.uri().toString(),
+                                       property.toString(),
+                                       value.toString() );
+        }
+        else {
+            resConections << con;
         }
     }
     
     //
-    // Emit signals for the connections that are watching specific resources and properties
+    // Emit signals for the conn2ections that are watching specific resources and properties
     //
     QList<RWC*> propConnections = m_propHash.values( property );
     foreach( RWC* con, propConnections ) {
-        QHash< RWC*, QUrl >::const_iterator it = resConections.constFind( con );
+        QSet<RWC*>::const_iterator it = resConections.constFind( con );
         if( it != resConections.constEnd() ) {
-            const QUrl resUri = it.value();
-            foreach( const QVariant & value, values ) {
-                emit con->propertyRemoved( resUri.toString(),
-                                           property.toString(),
-                                           value.toString() );
-            }
+            emit con->propertyRemoved( res.uri().toString(),
+                                       property.toString(),
+                                       value.toString() );
         }
     }
 }

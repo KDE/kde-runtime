@@ -346,9 +346,6 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     // Do the actual work
     //
     addProperty(uriHash, property, resolvedNodes, app);
-
-    // Emit the singals
-    d->m_watchManager.addProperty( resources, property, values );
 }
 
 
@@ -474,9 +471,11 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
         if(!existingValues.contains(binding["v"])) {
             removeAllStatements(binding["r"], property, binding["v"]);
             graphs.insert(binding["g"].uri());
+            d->m_watchManager.removeProperty(binding["r"], property, binding["v"]);
         }
     }
     removeTrailingGraphs(graphs);
+
 
     //
     // And finally add the rest of the statements (only if there is anything to add)
@@ -588,8 +587,6 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
     }
 
     removeTrailingGraphs( graphs );
-
-    d->m_watchManager.removeProperty( resources, property, values );
 }
 
 void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources, const QList<QUrl> &properties, const QString &app)
@@ -1852,6 +1849,7 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
         for(QSet<QPair<QUrl, Soprano::Node> >::const_iterator it = finalProperties.constBegin(); it != finalProperties.constEnd(); ++it) {
             addStatement(it->first, property, it->second, graph);
             finalResources.insert(it->first);
+            d->m_watchManager.addProperty( it->first, property, it->second);
         }
 
         // update modification date
