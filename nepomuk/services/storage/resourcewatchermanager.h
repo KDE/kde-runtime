@@ -50,7 +50,6 @@ namespace Nepomuk {
         Q_SCRIPTABLE QDBusObjectPath watch( const QList<QString> & resources,
                                             const QList<QString> & properties,
                                             const QList<QString> & types );
-        Q_SCRIPTABLE void stopWatcher( const QString& objectName );
 
     private:
         /// called by ResourceWatcherConnection destructor

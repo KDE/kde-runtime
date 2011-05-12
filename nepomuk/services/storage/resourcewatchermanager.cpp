@@ -192,23 +192,6 @@ QDBusObjectPath Nepomuk::ResourceWatcherManager::watch(const QList< QString >& r
     return con->registerDBusObject(message().service(), ++m_connectionCount);
 }
 
-void Nepomuk::ResourceWatcherManager::stopWatcher(const QString& objectName)
-{
-    kDebug();
-
-    ResourceWatcherConnection * con = 0;
-    QObjectList cl = children();
-    foreach( QObject * obj, cl ) {
-        ResourceWatcherConnection * c = static_cast<ResourceWatcherConnection*>( obj );
-        if( c->objectName() == objectName ) {
-            con = c;
-            break;
-        }
-    }
-
-    delete con;
-}
-
 namespace {
     void removeConnectionFromHash( QMultiHash<QUrl, Nepomuk::ResourceWatcherConnection*> & hash,
                  const Nepomuk::ResourceWatcherConnection * con )
