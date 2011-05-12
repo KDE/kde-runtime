@@ -146,7 +146,7 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
         return false;
     }
     
-    QString query = QString::fromLatin1("where { ?r ?p ?o. ");
+    QString query;
     
     int num = 0;
     QStringList identifyingProperties;
@@ -193,9 +193,11 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
     }
     query += QString::fromLatin1(" bound(?o%1) ) . }").arg( QString::number( num - 1 ) );
     
-    QString insideQuery = QString::fromLatin1("select count(*) where { ?r ?p ?o. filter( ?p in (%1) ). }")
-                            .arg( identifyingProperties.join(",") );
-    query = QString::fromLatin1("select distinct ?r (%1) as ?cnt ").arg( insideQuery ) + query + 
+    QString queryBegin = QString::fromLatin1("select distinct ?r ?p as ?cnt "
+                                             "where { ?r ?p ?o. filter( ?p in (%1) ).")
+                         .arg( identifyingProperties.join(",") );
+
+    query = queryBegin + query +
             QString::fromLatin1(" order by desc(?cnt)");
     
     kDebug() << query;
