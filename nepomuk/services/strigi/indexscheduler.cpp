@@ -24,6 +24,7 @@
 #include "strigiserviceconfig.h"
 #include "nepomukindexer.h"
 #include "util.h"
+#include "datamanagement.h"
 
 #include <QtCore/QMutexLocker>
 #include <QtCore/QList>
@@ -52,12 +53,15 @@
 
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/Xesam>
+#include <Soprano/Vocabulary/NAO>
 #include <Nepomuk/Vocabulary/NFO>
 #include <Nepomuk/Vocabulary/NIE>
 
 #include <map>
 #include <vector>
 
+using namespace Soprano::Vocabulary;
+using namespace Nepomuk::Vocabulary;
 
 namespace {
     const int s_reducedSpeedDelay = 500; // ms
@@ -604,14 +608,40 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
         folderFilter = QString::fromLatin1("FILTER(%1) .").arg(folderFilter);
 
     //
+    // Query all the resources which are maintained by nepomukindexer
+    // and are not in one of the indexed folders
+    //
+    QString query = QString::fromLatin1( "select distinct ?r where { "
+                                         "graph ?g { ?r %1 ?url . } "
+                                         "?g %2 ?app . "
+                                         "?app %3 %4 . "
+                                         " %5 }" )
+                    .arg( Soprano::Node::resourceToN3( NIE::url() ),
+                          Soprano::Node::resourceToN3( NAO::maintainedBy() ),
+                          Soprano::Node::resourceToN3( NAO::prefLabel() ),
+                          Soprano::Node::literalToN3(QLatin1String("nepomukindexer")),
+                          folderFilter );
+
+    QList<QUrl> resources;
+    Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    while( it.next() ) {
+        resources << it[0].uri();
+    }
+
+    KComponentData fakeComponent( QByteArray("nepomukindexer"),
+                                  QByteArray(), KComponentData::SkipMainComponentRegistration );
+    KJob* job = Nepomuk::removeDataByApplication( resources, RemoveSubResoures, fakeComponent );
+    job->exec();
+    
+    //
     // We query all files that should not be in the store
     // This for example excludes all filex:/ URLs.
     //
-    QString query = QString::fromLatin1( "select distinct ?g where { "
-                                         "?r %1 ?url . "
-                                         "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
-                                         "FILTER(REGEX(STR(?url),'^file:/')) . "
-                                         "%2 }" )
+    query = QString::fromLatin1( "select distinct ?g where { "
+                                 "?r %1 ?url . "
+                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
+                                 "FILTER(REGEX(STR(?url),'^file:/')) . "
+                                 "%2 }" )
                     .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
                           folderFilter );
     kDebug() << query;
