@@ -59,7 +59,7 @@ namespace Nepomuk {
         bool m_hasProperties;
 
         static int Id;
-        friend class ResourceWatcherModel;
+        friend class ResourceWatcherManager;
     };
 
 }

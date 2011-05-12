@@ -19,7 +19,7 @@
 
 
 #include "resourcewatcherconnection.h"
-#include "resourcewatchermodel.h"
+#include "resourcewatchermanager.h"
 
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusObjectPath>

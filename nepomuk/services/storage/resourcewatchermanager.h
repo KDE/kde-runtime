@@ -18,8 +18,8 @@
 */
 
 
-#ifndef RESOURCEWATCHERMODEL_H
-#define RESOURCEWATCHERMODEL_H
+#ifndef RESOURCEWATCHMANAGER_H
+#define RESOURCEWATCHMANAGER_H
 
 #include <QtCore/QMultiHash>
 #include <QtCore/QSet>
@@ -31,7 +31,7 @@ namespace Nepomuk {
 
     class ResourceWatcherConnection;
     
-    class ResourceWatcherModel : public Soprano::FilterModel
+    class ResourceWatcherManager : public QObject
     {
         Q_OBJECT
         Q_CLASSINFO( "D-Bus Interface", "org.kde.nepomuk.ResourceWatcher" )
@@ -41,7 +41,7 @@ namespace Nepomuk {
         virtual Soprano::Error::ErrorCode removeStatement(const Soprano::Statement& statement);
         virtual Soprano::Error::ErrorCode removeAllStatements(const Soprano::Statement& statement);
 
-        ResourceWatcherModel( Soprano::Model* parent );
+        ResourceWatcherManager( Soprano::Model* parent );
 
     public slots:
         Q_SCRIPTABLE QDBusObjectPath watch( const QList<QString> & resources,
@@ -60,4 +60,4 @@ namespace Nepomuk {
 
 }
 
-#endif // RESOURCEWATCHERMODEL_H
+#endif // RESOURCEWATCHMANAGER_H

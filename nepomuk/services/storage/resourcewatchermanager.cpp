@@ -18,7 +18,7 @@
 */
 
 
-#include "resourcewatchermodel.h"
+#include "resourcewatchermanager.h"
 #include "resourcewatcherconnection.h"
 
 #include <Soprano/Statement>
@@ -32,8 +32,8 @@
 
 using namespace Soprano::Vocabulary;
 
-Nepomuk::ResourceWatcherModel::ResourceWatcherModel(Soprano::Model* parent)
-    : FilterModel(parent)
+Nepomuk::ResourceWatcherManager::ResourceWatcherManager(Soprano::Model* parent)
+    : QObject(parent)
 {
     // Register the service
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
@@ -42,9 +42,9 @@ Nepomuk::ResourceWatcherModel::ResourceWatcherModel(Soprano::Model* parent)
     sessionBus.registerObject("/watcher", this, QDBusConnection::ExportScriptableSlots);
 }
 
-Soprano::Error::ErrorCode Nepomuk::ResourceWatcherModel::addStatement(const Soprano::Statement& statement)
+Soprano::Error::ErrorCode Nepomuk::ResourceWatcherManager::addStatement(const Soprano::Statement& statement)
 {
-    Soprano::Error::ErrorCode err = Soprano::FilterModel::addStatement(statement);
+    Soprano::Error::ErrorCode err;// = Soprano::FilterModel::addStatement(statement);
 
     const QUrl & subUri = statement.subject().uri();
     const QUrl & propUri = statement.predicate().uri();
@@ -92,9 +92,9 @@ Soprano::Error::ErrorCode Nepomuk::ResourceWatcherModel::addStatement(const Sopr
     return err;
 }
 
-Soprano::Error::ErrorCode Nepomuk::ResourceWatcherModel::removeAllStatements(const Soprano::Statement& statement)
+Soprano::Error::ErrorCode Nepomuk::ResourceWatcherManager::removeAllStatements(const Soprano::Statement& statement)
 {
-    Soprano::Error::ErrorCode err = Soprano::FilterModel::removeAllStatements(statement);
+    Soprano::Error::ErrorCode err;// = Soprano::FilterModel::removeAllStatements(statement);
     /*const QUrl & subUri = statement.subject().uri();
     
     QHash<QUrl, ResourceWatcherConnection*>::iterator i = m_hash.find( subUri );
@@ -110,12 +110,12 @@ Soprano::Error::ErrorCode Nepomuk::ResourceWatcherModel::removeAllStatements(con
     return err;
 }
 
-Soprano::Error::ErrorCode Nepomuk::ResourceWatcherModel::removeStatement(const Soprano::Statement& statement)
+Soprano::Error::ErrorCode Nepomuk::ResourceWatcherManager::removeStatement(const Soprano::Statement& statement)
 {
     return removeAllStatements( statement );
 }
 
-QDBusObjectPath Nepomuk::ResourceWatcherModel::watch(const QList< QString >& resources, const QList< QString >& properties, const QList< QString >& types)
+QDBusObjectPath Nepomuk::ResourceWatcherManager::watch(const QList< QString >& resources, const QList< QString >& properties, const QList< QString >& types)
 {
     kDebug();
 
@@ -152,7 +152,7 @@ namespace {
     }
 }
 
-void Nepomuk::ResourceWatcherModel::stopWatcher(const QString& objectName)
+void Nepomuk::ResourceWatcherManager::stopWatcher(const QString& objectName)
 {
     kDebug();
 

@@ -29,7 +29,7 @@ set(storage_SRCS
   resourcemerger.cpp
   resourceidentifier.cpp
   resourcewatcher.cpp
-  resourcewatchermodel.cpp
+  resourcewatchermanager.cpp
   resourcewatcherconnection.cpp
   )
 
