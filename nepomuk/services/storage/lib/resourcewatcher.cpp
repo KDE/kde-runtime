@@ -28,6 +28,15 @@
 
 #include <KUrl>
 
+namespace {
+QList<QUrl> convertUris(const QStringList& uris) {
+    QList<QUrl> us;
+    foreach(const QString& uri, uris) {
+        us << KUrl(uri);
+    }
+    return us;
+}
+}
 
 class Nepomuk::ResourceWatcher::Private {
 public:
@@ -148,16 +157,35 @@ void Nepomuk::ResourceWatcher::setTypes(const QList< Nepomuk::Types::Class >& ty
     d->m_types = types_;
 }
 
-void Nepomuk::ResourceWatcher::slotPropertyAdded(QString res, QString prop, QString object)
+void Nepomuk::ResourceWatcher::slotResourceCreated(const QString &res, const QStringList &types)
 {
-    emit propertyAdded( Resource::fromResourceUri(res), Types::Property( KUrl(prop) ), QVariant(object) );
+    emit resourceCreated(Nepomuk::Resource::fromResourceUri(KUrl(res)), convertUris(types));
 }
 
-void Nepomuk::ResourceWatcher::slotPropertyRemoved(QString res, QString prop, QString object)
+void Nepomuk::ResourceWatcher::slotResourceRemoved(const QString &res, const QStringList &types)
 {
-    emit propertyRemoved( Resource::fromResourceUri(res), Types::Property( KUrl(prop) ), QVariant(object) );
+    emit resourceRemoved(KUrl(res), convertUris(types));
 }
 
+void Nepomuk::ResourceWatcher::slotResourceTypeAdded(const QString &res, const QString &type)
+{
+    emit resourceTypeAdded(KUrl(res), KUrl(type));
+}
+
+void Nepomuk::ResourceWatcher::slotResourceTypeRemoved(const QString &res, const QString &type)
+{
+    emit resourceTypeRemoved(KUrl(res), KUrl(type));
+}
+
+void Nepomuk::ResourceWatcher::slotPropertyAdded(const QString& res, const QString& prop, const QVariant& object)
+{
+    emit propertyAdded( Resource::fromResourceUri(KUrl(res)), Types::Property( KUrl(prop) ), object );
+}
+
+void Nepomuk::ResourceWatcher::slotPropertyRemoved(const QString& res, const QString& prop, const QVariant& object)
+{
+    emit propertyRemoved( Resource::fromResourceUri(KUrl(res)), Types::Property( KUrl(prop) ), object );
+}
 
 #include "resourcewatcher.moc"
 

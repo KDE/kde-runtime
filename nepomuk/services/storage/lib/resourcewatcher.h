@@ -89,12 +89,12 @@ namespace Nepomuk {
         /**
          * This signal is emitted when a new resource is created.
          */
-        void resourceCreated( const Nepomuk::Resource & resource );
+        void resourceCreated( const Nepomuk::Resource & resource, const QList<QUrl>& types );
 
         /**
          * This signal is emitted when a resource is deleted. 
          */
-        void resourceDeleted( const QUrl & uri );
+        void resourceRemoved( const QUrl & uri, const QList<QUrl>& types );
 
         /**
          * Emitted on addition of any statement of the form -
@@ -116,14 +116,17 @@ namespace Nepomuk {
                               const QVariant & value );
 
     private Q_SLOTS:
-        void slotPropertyAdded(QString res, QString prop, QString object);
-        void slotPropertyRemoved(QString,QString,QString);
+        void slotResourceCreated(const QString& res, const QStringList& types);
+        void slotResourceRemoved(const QString& res, const QStringList& types);
+        void slotResourceTypeAdded(const QString& res, const QString& type);
+        void slotResourceTypeRemoved(const QString& res, const QString& type);
+        void slotPropertyAdded(const QString& res, const QString& prop, const QVariant& object);
+        void slotPropertyRemoved(const QString&, const QString&, const QVariant&);
         
     private:
         class Private;
         Private * d;
     };
-
 }
 
 #endif // RESOURCEWATCHER_H
