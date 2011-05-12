@@ -36,9 +36,11 @@
 
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Vocabulary/NIE>
+
 #include <KJob>
 #include <KDebug>
-
+#include <KGlobal>
+#include <KComponentData>
 
 #define STRIGI_NS "http://www.strigi.org/data#"
 
@@ -105,8 +107,13 @@ bool Nepomuk::clearIndexedDataForUrl( const KUrl& url )
     //
     // New way of storing Strigi Data
     // The Datamanagement API will automatically find the resource corresponding to that url
-    //    
-    KJob* job = Nepomuk::removeDataByApplication( QList<QUrl>() << url );
+    //
+    KComponentData component = KGlobal::mainComponent();
+    if( component.componentName() != QLatin1String("nepomukindexer") ) {
+        component = KComponentData( QByteArray("nepomukindexer"),
+                                    QByteArray(), KComponentData::SkipMainComponentRegistration );
+    }
+    KJob* job = Nepomuk::removeDataByApplication( QList<QUrl>() << url, RemoveSubResoures, component );
     job->exec();
     
     if( job->error() ) {
@@ -143,8 +150,14 @@ bool Nepomuk::clearIndexedDataForResourceUri( const KUrl& res )
 {
     if ( res.isEmpty() )
         return false;
-
-    KJob* job = Nepomuk::removeDataByApplication( QList<QUrl>() << res );
+    
+    KComponentData component = KGlobal::mainComponent();
+    if( component.componentName() != QLatin1String("nepomukindexer") ) {
+        component = KComponentData( QByteArray("nepomukindexer"),
+                                    QByteArray(), KComponentData::SkipMainComponentRegistration );
+    }
+    kDebug() << component.componentName();
+    KJob* job = Nepomuk::removeDataByApplication( QList<QUrl>() << res, RemoveSubResoures, component );
     job->exec();
 
     if( job->error() ) {
