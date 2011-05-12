@@ -42,9 +42,9 @@ int main(int argc, char *argv[])
     KCmdLineArgs::init(argc, argv, &aboutData);
     
     KCmdLineOptions options;
-    options.add("uri <uri>", ki18n("The uri provided will be forced on the resource"));
+    options.add("uri <uri>", ki18n("The URI provided will be forced on the resource"));
     options.add("mtime <time>", ki18n("The modification time of the resource"));
-    options.add("+[url]", ki18n("The url of the file to be indexed"));
+    options.add("+[url]", ki18n("The URL of the file to be indexed"));
     
     KCmdLineArgs::addCmdLineOptions(options);   
     const KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
