@@ -40,6 +40,7 @@ namespace Nepomuk {
         ResourceWatcherManager( QObject* parent=0 );
 
         void addProperty(QList<QUrl> resources, QUrl property, QVariantList values);
+        void removeProperty(QList<QUrl> resources, QUrl property, QVariantList values);
         
     public slots:
         Q_SCRIPTABLE QDBusObjectPath watch( const QList<QString> & resources,

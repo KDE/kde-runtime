@@ -588,6 +588,8 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
     }
 
     removeTrailingGraphs( graphs );
+
+    d->m_watchManager.removeProperty( resources, property, values );
 }
 
 void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources, const QList<QUrl> &properties, const QString &app)

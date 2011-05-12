@@ -84,6 +84,43 @@ void Nepomuk::ResourceWatcherManager::addProperty(QList<QUrl> resources, QUrl pr
     //TODO: Implement me! ( How? )
 }
 
+void Nepomuk::ResourceWatcherManager::removeProperty(QList< QUrl > resources, QUrl property, QVariantList values)
+{
+    typedef ResourceWatcherConnection RWC;
+    
+    //
+    // Emit signals for all the connections that are only watching specific resources
+    //
+    QHash<RWC*, QUrl> resConections;
+    foreach( const QUrl resUri, resources ) {
+        QList<RWC*> connections = m_resHash.values( resUri );
+        foreach( RWC* con, connections ) {
+            if( !con->hasProperties() ) {
+                emit con->propertyRemoved( resUri.toString(),
+                                           property.toString(),
+                                           values.at( resources.indexOf(resUri) ).toString() );
+            }
+            else {
+                resConections.insert( con, resUri );
+            }
+        }
+    }
+    
+    //
+    // Emit signals for the connections that are watching specific resources and properties
+    //
+    QList<RWC*> propConnections = m_propHash.values( property );
+    foreach( RWC* con, propConnections ) {
+        QHash< RWC*, QUrl >::const_iterator it = resConections.constFind( con );
+        if( it != resConections.constEnd() ) {
+            const QUrl resUri = it.value();
+            emit con->propertyRemoved( resUri.toString(),
+                                       property.toString(),
+                                       values.at( resources.indexOf(resUri) ).toString() );
+        }
+    }
+}
+
 QDBusObjectPath Nepomuk::ResourceWatcherManager::watch(const QList< QString >& resources, const QList< QString >& properties, const QList< QString >& types)
 {
     kDebug();
