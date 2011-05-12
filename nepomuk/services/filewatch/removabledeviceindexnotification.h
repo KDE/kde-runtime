@@ -22,6 +22,8 @@
 #ifndef REMOVABLEDEVICEINDEXNOTIFICATION_H
 #define REMOVABLEDEVICEINDEXNOTIFICATION_H
 
+#include "removablemediacache.h"
+
 #include <KNotification>
 
 #include <Solid/Device>
@@ -31,7 +33,7 @@ class RemovableDeviceIndexNotification : public KNotification
     Q_OBJECT
 
 public:
-    RemovableDeviceIndexNotification(const Solid::Device& dev, QObject *parent = 0);
+    RemovableDeviceIndexNotification(const Nepomuk::RemovableMediaCache::Entry* medium, QObject *parent = 0);
 
 private slots:
     void slotActionActivated(uint action);
@@ -40,7 +42,7 @@ private slots:
     void slotActionConfigureActivated();
 
 private:
-    Solid::Device m_device;
+    const Nepomuk::RemovableMediaCache::Entry* m_medium;
 };
 
 #endif // REMOVABLEDEVICEINDEXNOTIFICATION_H

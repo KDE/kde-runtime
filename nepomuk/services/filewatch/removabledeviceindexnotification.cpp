@@ -31,15 +31,15 @@
 
 #include <Solid/StorageAccess>
 
-RemovableDeviceIndexNotification::RemovableDeviceIndexNotification(const Solid::Device& device,
+RemovableDeviceIndexNotification::RemovableDeviceIndexNotification(const Nepomuk::RemovableMediaCache::Entry* medium,
                                                                    QObject *parent)
     : KNotification(QLatin1String("nepomuk_new_removable_device"),
           KNotification::Persistent,
           parent),
-      m_device(device)
+      m_medium(medium)
 {
     setTitle(i18nc("@title", "New removable device detected"));
-    setText(i18nc("@info", "Do you want files on removable device <resource>%1</resource> to be indexed for fast desktop searches?", device.description()));
+    setText(i18nc("@info", "Do you want files on removable device <resource>%1</resource> to be indexed for fast desktop searches?", m_medium->device().description()));
     setPixmap(KIcon(QLatin1String("nepomuk")).pixmap(32, 32));
 
     setActions(QStringList()
@@ -49,7 +49,7 @@ RemovableDeviceIndexNotification::RemovableDeviceIndexNotification(const Solid::
     connect(this, SIGNAL(activated(uint)), this, SLOT(slotActionActivated(uint)));
 
     // as soon as the device is unmounted this notification becomes pointless
-    if ( const Solid::StorageAccess* storage = m_device.as<Solid::StorageAccess>() ) {
+    if ( const Solid::StorageAccess* storage = m_medium->device().as<Solid::StorageAccess>() ) {
         connect(storage, SIGNAL(accessibilityChanged(bool,QString)), SLOT(close()));
     }
 }
@@ -57,13 +57,10 @@ RemovableDeviceIndexNotification::RemovableDeviceIndexNotification(const Solid::
 void RemovableDeviceIndexNotification::slotActionDoIndexActivated()
 {
     KConfig strigiConfig( "nepomukstrigirc" );
-    strigiConfig.group("Devices").writeEntry(m_device.udi(), true);
+    strigiConfig.group("Devices").writeEntry(m_medium->url(), true);
 
     org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
-    const Solid::StorageAccess* storage = m_device.as<Solid::StorageAccess>();
-    if ( strigi.isValid() && storage ) {
-        strigi.indexFolder( storage->filePath(), true /* recursive */, false /* no forced update */ );
-    }
+    strigi.indexFolder( m_medium->mountPath(), true /* recursive */, false /* no forced update */ );
 
     close();
 }
@@ -71,7 +68,7 @@ void RemovableDeviceIndexNotification::slotActionDoIndexActivated()
 void RemovableDeviceIndexNotification::slotActionDoNotIndexActivated()
 {
     KConfig strigiConfig( "nepomukstrigirc" );
-    strigiConfig.group("Devices").writeEntry(m_device.udi(), false);
+    strigiConfig.group("Devices").writeEntry(m_medium->url(), false);
 
     close();
 }

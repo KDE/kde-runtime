@@ -61,6 +61,7 @@ public:
         Solid::Device device() const { return m_device; }
         QString url() const { return m_urlPrefix; }
 
+        bool isMounted() const;
         QString mountPath() const;
 
     private:
@@ -72,6 +73,8 @@ public:
 
     const Entry* findEntryByFilePath( const QString& path ) const;
     const Entry* findEntryByUrl(const KUrl& url) const;
+
+    QList<const Entry*> allMedia() const;
 
     /**
      * Returns true if the URL might be pointing to a file on a

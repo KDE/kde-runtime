@@ -97,6 +97,14 @@ void Nepomuk::RemovableMediaCache::initCacheEntries()
     }
 }
 
+QList<const Nepomuk::RemovableMediaCache::Entry *> Nepomuk::RemovableMediaCache::allMedia() const
+{
+    QList<const Entry*> media;
+    for(QHash<QString, Entry>::const_iterator it = m_metadataCache.begin(); it != m_metadataCache.end(); ++it)
+        media.append(&(*it));
+    return media;
+}
+
 Nepomuk::RemovableMediaCache::Entry* Nepomuk::RemovableMediaCache::createCacheEntry( const Solid::Device& dev )
 {
     QMutexLocker lock(&m_entryCacheMutex);
@@ -262,6 +270,16 @@ QString Nepomuk::RemovableMediaCache::Entry::mountPath() const
     }
     else {
         return QString();
+    }
+}
+
+bool Nepomuk::RemovableMediaCache::Entry::isMounted() const
+{
+    if(const Solid::StorageAccess* sa = m_device.as<Solid::StorageAccess>()) {
+        return sa->isAccessible();
+    }
+    else {
+        return false;
     }
 }
 
