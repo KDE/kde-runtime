@@ -81,7 +81,10 @@ public:
     bool containsStatement(const Soprano::Statement &statement) const;
     bool containsAnyStatement(const Soprano::Statement &statement) const;
     Soprano::StatementIterator listStatements(const Soprano::Statement &partial) const;
-    Soprano::QueryResultIterator executeQuery(const QString &query, Soprano::Query::QueryLanguage language, const QString &userQueryLanguage) const;
+    Soprano::QueryResultIterator executeQuery(const QString &query, Soprano::Query::QueryLanguage language, const QString &userQueryLanguage = QString()) const;
+
+    using FilterModel::addStatement;
+    using FilterModel::listStatements;
 
 private:
     /**

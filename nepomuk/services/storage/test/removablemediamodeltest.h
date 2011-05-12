@@ -46,6 +46,7 @@ private Q_SLOTS:
     void testConvertFilxUrl();
     void testConvertFilxUrls_data();
     void testConvertFilxUrls();
+    void testConversionWithUnmount();
 
 private:
     Soprano::Model* m_model;

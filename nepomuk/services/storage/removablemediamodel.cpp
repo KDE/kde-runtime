@@ -200,7 +200,9 @@ Soprano::Node Nepomuk::RemovableMediaModel::convertFileUrl(const Soprano::Node &
         if(url.scheme() == QLatin1String("file")) {
             const QString localFilePath = url.toLocalFile();
             if(const RemovableMediaCache::Entry* entry = m_removableMediaCache->findEntryByFilePath(localFilePath)) {
-                return entry->constructRelativeUrl(localFilePath);
+                if(entry->isMounted()) {
+                    return entry->constructRelativeUrl(localFilePath);
+                }
             }
         }
     }
@@ -240,7 +242,9 @@ Soprano::Node Nepomuk::RemovableMediaModel::convertFilexUrl(const Soprano::Node 
         const QUrl url = node.uri();
         if(m_removableMediaCache->hasRemovableSchema(url)) {
             if(const RemovableMediaCache::Entry* entry = m_removableMediaCache->findEntryByUrl(url)) {
-                return QUrl::fromLocalFile(entry->constructLocalPath(url));
+                if(entry->isMounted()) {
+                    return QUrl::fromLocalFile(entry->constructLocalPath(url));
+                }
             }
         }
     }
