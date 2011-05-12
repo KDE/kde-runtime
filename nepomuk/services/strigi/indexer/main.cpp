@@ -35,9 +35,9 @@
 
 int main(int argc, char *argv[])
 {
-    KAboutData aboutData("nepomukstrigiindexer", 0, ki18n("NepomukStrigiIndexer"),
+    KAboutData aboutData("nepomukindexer", 0, ki18n("NepomukIndexer"),
                          "1.0",
-                         ki18n("NepomukStrigiIndexder indexes the contents of a file and saves the results in Nepomuk"),
+                         ki18n("NepomukIndexder indexes the contents of a file and saves the results in Nepomuk"),
                          KAboutData::License_LGPL_V2,
                          ki18n("(C) 2011, Vishesh Handa"));
     aboutData.addAuthor(ki18n("Vishesh Handa"), ki18n("Current maintainer"), "handa.vish@gmail.com");
