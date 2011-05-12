@@ -54,9 +54,11 @@ void Nepomuk::ResourceWatcherManager::addProperty(QList<QUrl> resources, QUrl pr
         QList<RWC*> connections = m_resHash.values( resUri );
         foreach( RWC* con, connections ) {
             if( !con->hasProperties() ) {
-                emit con->propertyAdded( resUri.toString(),
-                                         property.toString(),
-                                         values.at( resources.indexOf(resUri) ).toString() );
+                foreach( const QVariant & value, values ) {
+                    emit con->propertyAdded( resUri.toString(),
+                                             property.toString(),
+                                             value.toString() );
+                }
             }
             else {
                 resConections.insert( con, resUri );
@@ -72,9 +74,11 @@ void Nepomuk::ResourceWatcherManager::addProperty(QList<QUrl> resources, QUrl pr
         QHash< RWC*, QUrl >::const_iterator it = resConections.constFind( con );
         if( it != resConections.constEnd() ) {
             const QUrl resUri = it.value();
-            emit con->propertyAdded( resUri.toString(),
-                                     property.toString(),
-                                     values.at( resources.indexOf(resUri) ).toString() );
+            foreach( const QVariant & value, values ) {
+                emit con->propertyAdded( resUri.toString(),
+                                         property.toString(),
+                                         value.toString() );
+            }
         }
     }
 
@@ -96,9 +100,11 @@ void Nepomuk::ResourceWatcherManager::removeProperty(QList< QUrl > resources, QU
         QList<RWC*> connections = m_resHash.values( resUri );
         foreach( RWC* con, connections ) {
             if( !con->hasProperties() ) {
-                emit con->propertyRemoved( resUri.toString(),
-                                           property.toString(),
-                                           values.at( resources.indexOf(resUri) ).toString() );
+                foreach( const QVariant & value, values ) {
+                    emit con->propertyRemoved( resUri.toString(),
+                                               property.toString(),
+                                               value.toString() );
+                }
             }
             else {
                 resConections.insert( con, resUri );
@@ -114,9 +120,11 @@ void Nepomuk::ResourceWatcherManager::removeProperty(QList< QUrl > resources, QU
         QHash< RWC*, QUrl >::const_iterator it = resConections.constFind( con );
         if( it != resConections.constEnd() ) {
             const QUrl resUri = it.value();
-            emit con->propertyRemoved( resUri.toString(),
-                                       property.toString(),
-                                       values.at( resources.indexOf(resUri) ).toString() );
+            foreach( const QVariant & value, values ) {
+                emit con->propertyRemoved( resUri.toString(),
+                                           property.toString(),
+                                           value.toString() );
+            }
         }
     }
 }
