@@ -114,11 +114,17 @@ void Nepomuk::Indexer::indexFile( const KUrl& url, const KUrl resUri, uint mtime
 
 void Nepomuk::Indexer::indexFile( const QFileInfo& info, const KUrl resUri, uint mtime )
 {
+    if( !info.exists() ) {
+        kDebug() << info.filePath() << " does not exist";
+        return;
+    }
+    
     d->m_analyzerConfig.setStop( false );
     d->m_indexWriter->forceUri( resUri );
     
     KUrl url( info.filePath() );
-
+    kDebug() << "Using " << info.filePath();
+    
     // strigi asserts if the file path has a trailing slash
     QString filePath = url.toLocalFile( KUrl::RemoveTrailingSlash );
     QString dir = url.directory( KUrl::IgnoreTrailingSlash );
