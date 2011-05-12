@@ -33,6 +33,7 @@ class CrappyInferencer2;
 
 namespace Nepomuk {
     class RemovableMediaModel;
+    class ResourceWatcherModel;
     class ModelCopyJob;
     class DataManagementModel;
     class DataManagementAdaptor;

@@ -8,6 +8,7 @@ set(datamanagement_SRC
   describeresourcesjob.cpp
   dbustypes.cpp
   datamanagement.cpp
+  resourcewatcher.cpp
 )
 
 set(datamanagementservice_dbus_desc ../../../interfaces/org.kde.nepomuk.DataManagement.xml)
@@ -16,6 +17,14 @@ set_source_files_properties(
   ${datamanagementservice_dbus_desc}
   PROPERTIES
   INCLUDE "dbustypes.h")
+
+qt4_add_dbus_interface(datamanagement_SRC
+  ../../../interfaces/org.kde.nepomuk.ResourceWatcherConnection.xml
+  resourcewatcherconnectioninterface)
+
+qt4_add_dbus_interface(datamanagement_SRC
+  ../../../interfaces/org.kde.nepomuk.ResourceWatcher.xml
+  resourcewatchermanagerinterface)
 
 qt4_add_dbus_interface(datamanagement_SRC
   ${datamanagementservice_dbus_desc}
@@ -38,5 +47,6 @@ install(FILES
   datamanagement.h
   createresourcejob.h
   describeresourcesjob.h
+  resourcewatcher.h
   nepomukdatamanagement_export.h
   DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk)

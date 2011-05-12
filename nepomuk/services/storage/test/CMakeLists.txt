@@ -39,6 +39,8 @@ kde4_add_unit_test(datamanagementmodeltest
   datamanagementmodeltest.cpp
   ../classandpropertytree.cpp
   ../datamanagementmodel.cpp
+  ../resourcewatchermanager.cpp
+  ../resourcewatcherconnection.cpp
   ../resourcemerger.cpp
   ../resourceidentifier.cpp
   ../transactionmodel.cpp)
@@ -58,6 +60,8 @@ kde4_add_unit_test(datamanagementadaptortest
   datamanagementadaptortest.cpp
   ../classandpropertytree.cpp
   ../datamanagementmodel.cpp
+  ../resourcewatchermanager.cpp
+  ../resourcewatcherconnection.cpp
   ../datamanagementadaptor.cpp
   ../datamanagementcommand.cpp
   ../resourcemerger.cpp
@@ -82,6 +86,8 @@ kde4_add_executable(fakedms
   fakedatamanagementservice.cpp
   ../classandpropertytree.cpp
   ../datamanagementmodel.cpp
+  ../resourcewatchermanager.cpp
+  ../resourcewatcherconnection.cpp
   ../datamanagementadaptor.cpp
   ../datamanagementcommand.cpp
   ../resourcemerger.cpp
