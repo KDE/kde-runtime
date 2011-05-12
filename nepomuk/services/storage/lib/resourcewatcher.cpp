@@ -42,7 +42,7 @@ Nepomuk::ResourceWatcher::ResourceWatcher(QObject* parent): QObject(parent)
 
 Nepomuk::ResourceWatcher::~ResourceWatcher()
 {
-
+    stop();
 }
 
 void Nepomuk::ResourceWatcher::start()
@@ -83,7 +83,7 @@ void Nepomuk::ResourceWatcher::start()
 void Nepomuk::ResourceWatcher::stop()
 {
     d->m_connectionInterface->disconnect( this );
-    // TODO: Remove the connection as well!
+    d->m_connectionInterface->close();
 }
 
 void Nepomuk::ResourceWatcher::addProperty(const Nepomuk::Types::Property& property)
