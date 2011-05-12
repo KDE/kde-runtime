@@ -30,6 +30,7 @@
 #include <Soprano/Statement>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/NRL>
+#include <Soprano/Vocabulary/NAO>
 #include <Nepomuk/Vocabulary/NFO>
 
 #include <KDebug>
@@ -102,6 +103,16 @@ void Nepomuk::IndexFeeder::handleRequest( Request& request )
 {   
     QHash<QUrl, QVariant> additionalMetadata;
     additionalMetadata.insert( RDF::type(), NRL::DiscardableInstanceBase() );
+
+    //
+    // Add all the resources as sub-resources of the main resource
+    //
+    foreach( const SimpleResource & res, request.graph.toList() ) {
+        if( res.uri() != request.uri ) {
+            request.graph.addStatement( request.uri, NAO::hasSubResource(), res.uri() );
+        }
+    }
+
     
     KJob* job = Nepomuk::storeResources( request.graph, additionalMetadata );
     job->exec();
