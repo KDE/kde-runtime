@@ -168,7 +168,7 @@ namespace {
         QMutableHashIterator<QUrl, Nepomuk::ResourceWatcherConnection*> it( hash );
         while( it.hasNext() ) {
             if( it.next().value() == con )
-                it.removeConnectionFromHash();
+                it.remove();
         }
     }
 }
