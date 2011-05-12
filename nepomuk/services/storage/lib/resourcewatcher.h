@@ -82,7 +82,7 @@ namespace Nepomuk {
         QList<Types::Property> properties() const;
 
     public Q_SLOTS:
-        void start();
+        bool start();
         void stop();
 
     Q_SIGNALS:
@@ -117,7 +117,7 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void slotPropertyAdded(QString res, QString prop, QString object);
-        void slotropertyRemoved(QString,QString,QString);
+        void slotPropertyRemoved(QString,QString,QString);
         
     private:
         class Private;

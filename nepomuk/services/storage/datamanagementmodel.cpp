@@ -569,6 +569,7 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
         foreach(const Soprano::BindingSet& binding, valueGraphs) {
             graphs.insert( binding["g"].uri() );
             removeAllStatements( res, property, binding["v"] );
+            d->m_watchManager.removeProperty( res, property, binding["v"]);
         }
 
         // we only update the mtime in case we actually remove anything
@@ -656,19 +657,32 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
     QUrl mtimeGraph;
     QSet<QUrl> graphs;
     foreach( const QUrl & res, resolvedResources ) {
-        const QList<Soprano::BindingSet> valueGraphs
-                = executeQuery(QString::fromLatin1("select ?g ?p where { graph ?g { %1 ?p ?v . } . FILTER(?p in (%2)) . }")
+        QSet<Soprano::Node> propertiesToRemove;
+        QList<QPair<Soprano::Node, Soprano::Node> > propertyValues;
+        Soprano::QueryResultIterator it
+                = executeQuery(QString::fromLatin1("select distinct ?g ?p ?v where { graph ?g { %1 ?p ?v . } . FILTER(?p in (%2)) . }")
                                .arg(Soprano::Node::resourceToN3(res),
                                     resourcesToN3(properties).join(QLatin1String(","))),
-                               Soprano::Query::QueryLanguageSparql).allBindings();
+                               Soprano::Query::QueryLanguageSparql);
+        while(it.next()) {
+            graphs.insert(it["g"].uri());
+            propertiesToRemove.insert(it["p"]);
+            propertyValues.append(qMakePair(it["p"], it["v"]));
+        }
 
-        foreach(const Soprano::BindingSet& binding, valueGraphs) {
-            graphs.insert( binding["g"].uri() );
-            removeAllStatements( res, binding["p"], Soprano::Node() );
+        // remove the data
+        foreach(const Soprano::Node& property, propertiesToRemove) {
+            removeAllStatements( res, property, Soprano::Node() );
+        }
+
+        // inform interested parties
+        for(QList<QPair<Soprano::Node, Soprano::Node> >::const_iterator it = propertyValues.constBegin();
+            it != propertyValues.constEnd(); ++it) {
+            d->m_watchManager.removeProperty(res, it->first.uri(), it->second);
         }
 
         // we only update the mtime in case we actually remove anything
-        if(!valueGraphs.isEmpty()) {
+        if(!propertiesToRemove.isEmpty()) {
             // If the resource is now empty we remove it completely
             if(!doesResourceExist(res)) {
                 removeResources(QList<QUrl>() << res, NoRemovalFlags, app);
@@ -728,6 +742,9 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
     const QDateTime now = QDateTime::currentDateTime();
     addStatement(resUri, NAO::created(), Soprano::LiteralValue(now), graph);
     addStatement(resUri, NAO::lastModified(), Soprano::LiteralValue(now), graph);
+
+    // inform interested parties
+    d->m_watchManager.createResource(resUri, types);
 
     return resUri;
 }
@@ -813,18 +830,26 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
 
     // get the graphs we need to check with removeTrailingGraphs later on
     QSet<QUrl> graphs;
+    QSet<QUrl> actuallyRemovedResources;
     Soprano::QueryResultIterator it
-            = executeQuery(QString::fromLatin1("select distinct ?g where { graph ?g { ?r ?p ?o . } . FILTER(?r in (%1)) . }")
+            = executeQuery(QString::fromLatin1("select distinct ?g ?r where { graph ?g { ?r ?p ?o . } . FILTER(?r in (%1)) . }")
                            .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
                            Soprano::Query::QueryLanguageSparql);
     while(it.next()) {
         graphs << it[0].uri();
+        actuallyRemovedResources << it[1].uri();
     }
 
     // remove the resources
-    foreach(const QUrl & res, resolvedResources) {
+    foreach(const Soprano::Node& res, actuallyRemovedResources) {
         removeAllStatements(res, Soprano::Node(), Soprano::Node());
         removeAllStatements(Soprano::Node(), Soprano::Node(), res);
+    }
+
+    // inform interested parties
+    // TODO: ideally we should also report the types the removed resources had
+    foreach(const Soprano::Node& res, actuallyRemovedResources) {
+        d->m_watchManager.removeResource(res.uri(), QList<QUrl>());
     }
 
     removeTrailingGraphs(graphs);
@@ -1690,6 +1715,7 @@ QUrl Nepomuk::DataManagementModel::createUri(Nepomuk::DataManagementModel::UriTy
 }
 
 
+// TODO: emit resource watcher resource creation signals
 void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resources, const QUrl &property, const QHash<Soprano::Node, Soprano::Node> &nodes, const QString &app)
 {
     kDebug() << resources << property << nodes << app;

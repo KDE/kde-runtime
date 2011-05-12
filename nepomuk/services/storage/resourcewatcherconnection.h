@@ -26,9 +26,6 @@
 #include <QtDBus/QDBusObjectPath>
 
 class QDBusServiceWatcher;
-namespace Soprano {
-    class Statement;
-}
 
 namespace Nepomuk {
 
@@ -44,18 +41,16 @@ namespace Nepomuk {
         ~ResourceWatcherConnection();
 
     signals:
-        Q_SCRIPTABLE void resourceDeleted( const QString & uri );
-
+        Q_SCRIPTABLE void resourceCreated( const QString & uri, const QStringList& types );
+        Q_SCRIPTABLE void resourceRemoved( const QString & uri, const QStringList& types );
         Q_SCRIPTABLE void resourceTypeAdded( const QString & resUri, const QString & type );
-
         Q_SCRIPTABLE void resourceTypeRemoved( const QString & resUri, const QString & type );
-
         Q_SCRIPTABLE void propertyAdded( const QString & resource,
                                          const QString & property,
-                                         const QString & value );
+                                         const QVariant & value );
         Q_SCRIPTABLE void propertyRemoved( const QString & resource,
                                            const QString & property,
-                                           const QString & value );
+                                           const QVariant & value );
 
     public Q_SLOTS:
         Q_SCRIPTABLE void close();

@@ -42,7 +42,9 @@ namespace Nepomuk {
 
         void addProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value);
         void removeProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value);
-        
+        void createResource(const QUrl& uri, const QList<QUrl>& types);
+        void removeResource(const QUrl& uri, const QList<QUrl>& types);
+
     public slots:
         Q_SCRIPTABLE QDBusObjectPath watch( const QList<QString> & resources,
                                             const QList<QString> & properties,

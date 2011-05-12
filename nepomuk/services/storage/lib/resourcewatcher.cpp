@@ -22,6 +22,12 @@
 #include "resourcewatcherconnectioninterface.h"
 #include "resourcewatchermanagerinterface.h"
 
+#include <QtDBus/QDBusObjectPath>
+
+#include <Nepomuk/Resource>
+
+#include <KUrl>
+
 
 class Nepomuk::ResourceWatcher::Private {
 public:
@@ -33,11 +39,14 @@ public:
     org::kde::nepomuk::ResourceWatcher * m_watchManagerInterface;
 };
 
-Nepomuk::ResourceWatcher::ResourceWatcher(QObject* parent): QObject(parent)
+Nepomuk::ResourceWatcher::ResourceWatcher(QObject* parent)
+    : QObject(parent)
 {
-    d->m_watchManagerInterface = new org::kde::nepomuk::ResourceWatcher( "org.kde.nepomuk.ResourceWatcher",
-                                                                "/resourcewatcher",
-                                                                QDBusConnection::sessionBus() );
+    d->m_watchManagerInterface
+            = new org::kde::nepomuk::ResourceWatcher( "org.kde.nepomuk.ResourceWatcher",
+                                                      "/resourcewatcher",
+                                                      QDBusConnection::sessionBus() );
+    d->m_connectionInterface = 0;
 }
 
 Nepomuk::ResourceWatcher::~ResourceWatcher()
@@ -45,24 +54,24 @@ Nepomuk::ResourceWatcher::~ResourceWatcher()
     stop();
 }
 
-void Nepomuk::ResourceWatcher::start()
+bool Nepomuk::ResourceWatcher::start()
 {
     //
     // Convert to list of strings
     //
     QList<QString> uris;
     foreach( const Nepomuk::Resource & res, d->m_resources ) {
-        uris << res.resourceUri().toString();
+        uris << KUrl(res.resourceUri()).url();
     }
 
     QList<QString> props;
     foreach( const Types::Property & prop, d->m_properties ) {
-        props << prop.uri().toString();
+        props << KUrl(prop.uri()).url();
     }
 
     QList<QString> types_;
     foreach( const Types::Class & cl, d->m_types ) {
-        types_ << cl.uri().toString();
+        types_ << KUrl(cl.uri()).url();
     }
 
     //
@@ -71,19 +80,27 @@ void Nepomuk::ResourceWatcher::start()
     QDBusPendingReply<QDBusObjectPath> reply = d->m_watchManagerInterface->watch( uris, props, types_ );
     QDBusObjectPath path = reply.value();
 
-    d->m_connectionInterface =  new org::kde::nepomuk::ResourceWatcherConnection( "org.kde.nepomuk.ResourceWatcher",
-                                                                                  path.path(),
-                                                                                  QDBusConnection::sessionBus() );
-    connect( d->m_connectionInterface, SIGNAL(propertyAdded(QString,QString,QString)),
-             this, SLOT(slotPropertyAdded(QString,QString,QString)) );
-    connect( d->m_connectionInterface, SIGNAL(propertyRemoved(QString,QString,QString)),
-             this, SLOT(slotPropertyRemoved(QString,QString,QString)) );
+    if(!path.path().isEmpty()) {
+        d->m_connectionInterface = new org::kde::nepomuk::ResourceWatcherConnection( "org.kde.nepomuk.ResourceWatcher",
+                                                                                     path.path(),
+                                                                                     QDBusConnection::sessionBus() );
+        connect( d->m_connectionInterface, SIGNAL(propertyAdded(QString,QString,QString)),
+                 this, SLOT(slotPropertyAdded(QString,QString,QString)) );
+        connect( d->m_connectionInterface, SIGNAL(propertyRemoved(QString,QString,QString)),
+                 this, SLOT(slotPropertyRemoved(QString,QString,QString)) );
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 void Nepomuk::ResourceWatcher::stop()
 {
     d->m_connectionInterface->disconnect( this );
     d->m_connectionInterface->close();
+    delete d->m_connectionInterface;
+    d->m_connectionInterface = 0;
 }
 
 void Nepomuk::ResourceWatcher::addProperty(const Nepomuk::Types::Property& property)
@@ -133,12 +150,12 @@ void Nepomuk::ResourceWatcher::setTypes(const QList< Nepomuk::Types::Class >& ty
 
 void Nepomuk::ResourceWatcher::slotPropertyAdded(QString res, QString prop, QString object)
 {
-    emit propertyAdded( Resource(res), Types::Property( QUrl(prop) ), QVariant(object) );
+    emit propertyAdded( Resource::fromResourceUri(res), Types::Property( KUrl(prop) ), QVariant(object) );
 }
 
-void Nepomuk::ResourceWatcher::slotropertyRemoved(QString res, QString prop, QString object)
+void Nepomuk::ResourceWatcher::slotPropertyRemoved(QString res, QString prop, QString object)
 {
-    emit propertyRemoved( Resource(res), Types::Property( QUrl(prop) ), QVariant(object) );
+    emit propertyRemoved( Resource::fromResourceUri(res), Types::Property( KUrl(prop) ), QVariant(object) );
 }
 
 

@@ -26,6 +26,8 @@
 
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusMessage>
+
+#include <KUrl>
 #include <KDebug>
 
 #include <QtCore/QStringList>
@@ -33,6 +35,24 @@
 
 
 using namespace Soprano::Vocabulary;
+
+namespace {
+QVariant nodeToVariant(const Soprano::Node& node) {
+    if(node.isResource()) {
+        return node.uri();
+    }
+    else {
+        return node.literal().variant();
+    }
+}
+
+QStringList convertUris(const QList<QUrl>& uris) {
+    QStringList sl;
+    foreach(const QUrl& uri, uris)
+        sl << KUrl(uri).url();
+    return sl;
+}
+}
 
 Nepomuk::ResourceWatcherManager::ResourceWatcherManager(QObject* parent)
     : QObject(parent),
@@ -45,20 +65,22 @@ Nepomuk::ResourceWatcherManager::ResourceWatcherManager(QObject* parent)
 void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value)
 {
     typedef ResourceWatcherConnection RWC;
-    
+
+    // FIXME: take care of duplicate signals!
+
     //
     // Emit signals for all the connections that are only watching specific resources
     //
-    QSet<RWC*> resConections;
+    QSet<RWC*> resConnections;
     QList<RWC*> connections = m_resHash.values( res.uri() );
     foreach( RWC* con, connections ) {
         if( !con->hasProperties() ) {
-            emit con->propertyAdded( res.uri().toString(),
+            emit con->propertyAdded( KUrl(res.uri()).url(),
                                      property.toString(),
-                                     value.toString() );
+                                     nodeToVariant(value) );
         }
         else {
-            resConections << con;
+            resConnections << con;
         }
     }
 
@@ -67,11 +89,11 @@ void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const
     //
     QList<RWC*> propConnections = m_propHash.values( property );
     foreach( RWC* con, propConnections ) {
-        QSet<RWC*>::const_iterator it = resConections.constFind( con );
-        if( it != resConections.constEnd() ) {
-            emit con->propertyAdded( res.uri().toString(),
+        QSet<RWC*>::const_iterator it = resConnections.constFind( con );
+        if( it != resConnections.constEnd() ) {
+            emit con->propertyAdded( KUrl(res.uri()).url(),
                                      property.toString(),
-                                     value.toString() );
+                                     nodeToVariant(value) );
         }
     }
 
@@ -88,16 +110,16 @@ void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, co
     //
     // Emit signals for all the connections that are only watching specific resources
     //
-    QSet<RWC*> resConections;
+    QSet<RWC*> resConnections;
     QList<RWC*> connections = m_resHash.values( res.uri() );
     foreach( RWC* con, connections ) {
         if( !con->hasProperties() ) {
-            emit con->propertyRemoved( res.uri().toString(),
+            emit con->propertyRemoved( KUrl(res.uri()).url(),
                                        property.toString(),
-                                       value.toString() );
+                                       nodeToVariant(value) );
         }
         else {
-            resConections << con;
+            resConnections << con;
         }
     }
     
@@ -106,12 +128,43 @@ void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, co
     //
     QList<RWC*> propConnections = m_propHash.values( property );
     foreach( RWC* con, propConnections ) {
-        QSet<RWC*>::const_iterator it = resConections.constFind( con );
-        if( it != resConections.constEnd() ) {
-            emit con->propertyRemoved( res.uri().toString(),
+        QSet<RWC*>::const_iterator it = resConnections.constFind( con );
+        if( it != resConnections.constEnd() ) {
+            emit con->propertyRemoved( KUrl(res.uri()).url(),
                                        property.toString(),
-                                       value.toString() );
+                                       nodeToVariant(value) );
         }
+    }
+}
+
+void Nepomuk::ResourceWatcherManager::createResource(const QUrl &uri, const QList<QUrl> &types)
+{
+    QSet<ResourceWatcherConnection*> connections;
+    foreach(const QUrl& type, types) {
+        foreach(ResourceWatcherConnection* con, m_typeHash.values( type )) {
+            connections += con;
+        }
+    }
+
+    foreach(ResourceWatcherConnection* con, connections) {
+        con->resourceCreated(KUrl(uri).url(), convertUris(types));
+    }
+}
+
+void Nepomuk::ResourceWatcherManager::removeResource(const QUrl &res, const QList<QUrl>& types)
+{
+    QSet<ResourceWatcherConnection*> connections;
+    foreach(const QUrl& type, types) {
+        foreach(ResourceWatcherConnection* con, m_typeHash.values( type )) {
+            connections += con;
+        }
+    }
+    foreach(ResourceWatcherConnection* con, m_resHash.values( res )) {
+        connections += con;
+    }
+
+    foreach(ResourceWatcherConnection* con, connections) {
+        con->resourceRemoved(KUrl(res).url(), convertUris(types));
     }
 }
 
