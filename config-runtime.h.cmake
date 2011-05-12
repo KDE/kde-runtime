@@ -3,9 +3,6 @@
 /* media HAL backend compilation */
 #undef COMPILE_HALBACKEND
 
-/* Define to 1 if you have the `getpeereid' function. */
-#cmakedefine HAVE_GETPEEREID 1
-
 /* Define if you have long long as datatype */
 #cmakedefine HAVE_LONG_LONG 1
 

@@ -22,7 +22,7 @@
 
 
 #include "nepomukindexfeeder.h"
-#include "util.h"
+#include "../util.h"
 
 #include <QtCore/QDateTime>
 
@@ -41,17 +41,13 @@
 
 
 Nepomuk::IndexFeeder::IndexFeeder( QObject* parent )
-    : QThread( parent )
+    : QObject( parent )
 {
-    m_stopped = false;
-    start();
 }
 
 
 Nepomuk::IndexFeeder::~IndexFeeder()
 {
-    stop();
-    wait();
 }
 
 
@@ -97,30 +93,14 @@ void Nepomuk::IndexFeeder::addStatement(const Soprano::Node& subject, const Sopr
 }
 
 
-void Nepomuk::IndexFeeder::end( bool forceCommit )
+void Nepomuk::IndexFeeder::end()
 {
     if( m_stack.isEmpty() )
         return;
     //kDebug() << "ENDING";
 
     Request req = m_stack.pop();
-
-    if ( forceCommit ) {
-        handleRequest( req );
-    }
-    else {
-        QMutexLocker lock( &m_queueMutex );
-        m_updateQueue.enqueue( req );
-        m_queueWaiter.wakeAll();
-    }
-}
-
-
-void Nepomuk::IndexFeeder::stop()
-{
-    QMutexLocker lock( &m_queueMutex );
-    m_stopped = true;
-    m_queueWaiter.wakeAll();
+    handleRequest( req );
 }
 
 
@@ -155,47 +135,7 @@ void Nepomuk::IndexFeeder::addToModel(const Nepomuk::IndexFeeder::ResourceStruct
     }
 }
 
-
-//BUG: When indexing a file, there is one main uri ( in Request ) and other additional uris
-//     If there is a statement connecting the main uri with the additional ones, it will be
-//     resolved correctly, but not if one of the additional one links to another additional one.
-void Nepomuk::IndexFeeder::run()
-{
-    m_stopped = false;
-    while( !m_stopped ) {
-
-        // lock for initial iteration
-        m_queueMutex.lock();
-
-        // work the queue
-        while( !m_updateQueue.isEmpty() ) {
-            Request request = m_updateQueue.dequeue();
-
-            // unlock after queue utilization
-            m_queueMutex.unlock();
-
-            handleRequest( request );
-
-            // lock for next iteration
-            m_queueMutex.lock();
-        }
-
-        // FIXME: this is not very secure. In theory m_stopped could be changed
-        // just after the if but before the m_queueWaiter has been entered.
-        // Then we would just hang there forever!
-        if ( !m_stopped ) {
-            // wait for more input
-            kDebug() << "Waiting...";
-            m_queueWaiter.wait( &m_queueMutex );
-            m_queueMutex.unlock();
-            kDebug() << "Woke up.";
-        }
-
-    }
-}
-
-
-void Nepomuk::IndexFeeder::handleRequest( Request& request ) const
+void Nepomuk::IndexFeeder::handleRequest( Request& request )
 {
     // Search for the resources or create them
     //kDebug() << " Searching for duplicates or creating them ... ";
@@ -247,6 +187,8 @@ void Nepomuk::IndexFeeder::handleRequest( Request& request ) const
 
     // Add main file to the repository
     addToModel( rs );
+
+    m_lastRequestUri = request.uri;
 }
 
 
@@ -282,51 +224,7 @@ QUrl Nepomuk::IndexFeeder::generateGraph( const QUrl& resourceUri ) const
     return context;
 }
 
-
-// static
-bool Nepomuk::IndexFeeder::clearIndexedDataForUrl( const KUrl& url )
+QUrl Nepomuk::IndexFeeder::lastRequestUri() const
 {
-    if ( url.isEmpty() )
-        return false;
-
-    QString query = QString::fromLatin1( "select ?g where { "
-                                         "{ "
-                                         "?r %2 %1 . "
-                                         "?g %3 ?r . } "
-                                         "UNION "
-                                         "{ ?g %3 %1 . }"
-                                         "}")
-                    .arg( Soprano::Node::resourceToN3( url ),
-                          Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                          Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ) );
-
-    Soprano::QueryResultIterator result = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    while ( result.next() ) {
-        // delete the indexed data (The Soprano::NRLModel in the storage service will take care of
-        // the metadata graph)
-        Nepomuk::ResourceManager::instance()->mainModel()->removeContext( result.binding( "g" ) );
-    }
-
-    return true;
-}
-
-
-// static
-bool Nepomuk::IndexFeeder::clearIndexedDataForResourceUri( const KUrl& res )
-{
-    if ( res.isEmpty() )
-        return false;
-
-    QString query = QString::fromLatin1( "select ?g where { ?g %1 %2 . }" )
-                    .arg( Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ),
-                          Soprano::Node::resourceToN3( res ) );
-
-    Soprano::QueryResultIterator result = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    while ( result.next() ) {
-        // delete the indexed data (The Soprano::NRLModel in the storage service will take care of
-        // the metadata graph)
-        Nepomuk::ResourceManager::instance()->mainModel()->removeContext( result.binding( "g" ) );
-    }
-
-    return true;
+    return m_lastRequestUri;
 }

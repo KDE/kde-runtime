@@ -7,8 +7,8 @@ a sane installation and packaging of kdebase/runtime.
 
 network:/ kio-slave
 ------------------
-This kio-slave (in runtime/kioslave/network) has an optional runtime dependency:
- * Cagibi daemon (0.1.1 or higher)  <http://websvn.kde.org/trunk/kdesupport/cagibi/>
+This kio-slave (in kioslave/network) has an optional runtime dependency:
+ * Cagibi daemon (0.2.0 or higher)  <ftp://ftp.kde.org/pub/kde/stable/cagibi>
    SSDP (Simple Service Discovery Protocol, used by UPnP) cache/proxy daemon
    Provides listing of UPnP devices/services in the network:/ kio-slave.
 

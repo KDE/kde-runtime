@@ -53,6 +53,7 @@ Name[x-test]=xxNepomuk Backup and Syncxx
 Name[zh_TW]=Nepomuk 備份與同步
 Comment=Nepomuk Service which handles backup and sync.
 Comment[bg]=Услуга на Nepomuk, която се грижи за архивиране и синхронизиране
+Comment[bs]=Servis Nepomuka za pravljenje rezervi i sinhronizaciju.
 Comment[ca]=Servei del Nepomuk que gestiona còpies de seguretat i sincronització.
 Comment[ca@valencia]=Servei del Nepomuk que gestiona còpies de seguretat i sincronització.
 Comment[cs]=Služba Nepomuku pro zálohu a synchronizaci.

@@ -202,6 +202,11 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
     connect( m_ui->m_buttonDefaultShortYearWindow,  SIGNAL( clicked() ),
              this,                                SLOT( defaultShortYearWindow() ) );
 
+    connect( m_ui->m_comboWeekNumberSystem,         SIGNAL( currentIndexChanged( int ) ),
+             this,                                  SLOT(   changedWeekNumberSystemIndex( int ) ) );
+    connect( m_ui->m_buttonDefaultWeekNumberSystem, SIGNAL( clicked() ),
+             this,                                  SLOT(   defaultWeekNumberSystem() ) );
+
     connect( m_ui->m_comboWeekStartDay,       SIGNAL( currentIndexChanged( int ) ),
              this,                            SLOT( changedWeekStartDayIndex( int ) ) );
     connect( m_ui->m_buttonDefaultWeekStartDay, SIGNAL( clicked() ),
@@ -495,6 +500,7 @@ void KCMLocale::copySettings( KConfigGroup *fromGroup, KConfigGroup *toGroup, KC
     copySetting( fromGroup, toGroup, "DateFormat", flags );
     copySetting( fromGroup, toGroup, "DateFormatShort", flags );
     copySetting( fromGroup, toGroup, "DateMonthNamePossessive", flags );
+    copySetting( fromGroup, toGroup, "WeekNumberSystem", flags );
     copySetting( fromGroup, toGroup, "WeekStartDay", flags );
     copySetting( fromGroup, toGroup, "WorkingWeekStartDay", flags );
     copySetting( fromGroup, toGroup, "WorkingWeekEndDay", flags );
@@ -734,6 +740,7 @@ void KCMLocale::initResetButtons()
     m_ui->m_buttonDefaultCalendarSystem->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultCalendarGregorianUseCommonEra->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultShortYearWindow->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultWeekNumberSystem->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultWeekStartDay->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultWorkingWeekStartDay->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultWorkingWeekEndDay->setGuiItem( defaultItem );
@@ -1746,7 +1753,7 @@ void KCMLocale::initMonetaryDigitGrouping()
     m_ui->m_comboMonetaryDigitGrouping->blockSignals( true );
 
     m_ui->m_labelMonetaryDigitGrouping->setText( ki18n( "Digit grouping:" ).toString( m_kcmLocale ) );
-    QString helpText = ki18n( "<p>Here you can define the digit grouping used to display monetary"
+    QString helpText = ki18n( "<p>Here you can define the digit grouping used to display monetary "
                               "values.</p><p>Note that the digit grouping used to display "
                               "other numbers has to be defined separately (see the 'Numbers' tab)."
                               "</p>" ).toString( m_kcmLocale );
@@ -2293,6 +2300,7 @@ void KCMLocale::setCalendarSystem( const QString &newValue )
     // Update the Calendar dependent widgets with the new Calendar System details
     initUseCommonEra();
     initShortYearWindow();
+    initWeekNumberSystem();
     initWeekStartDay();
     initWorkingWeekStartDay();
     initWorkingWeekEndDay();
@@ -2387,13 +2395,73 @@ void KCMLocale::setShortYearWindow( int newValue )
     m_kcmLocale->setCalendar( m_kcmSettings.readEntry( "CalendarSystem", QString() ) );
 }
 
+void KCMLocale::initWeekNumberSystem()
+{
+    m_ui->m_comboWeekNumberSystem->blockSignals( true );
+
+    m_ui->m_labelWeekNumberSystem->setText( ki18n( "Week number system:" ).toString( m_kcmLocale ) );
+    QString helpText = ki18n( "<p>This option determines how the Week Number will be calculated. "
+                              "There are four options available:</p> "
+                              "<ul>"
+                              "<li><b>ISO Week</b> Use the ISO standard Week Number. This will always "
+                              "use Monday as the first day of the ISO week. This is the most commonly "
+                              "used system.</li>"
+                              "<li><b>Full First Week</b> The first week of the year starts on the "
+                              "first occurrence of the <i>First day of the week</i>, and lasts for "
+                              "seven days.  Any days before Week 1 are considered part of the last "
+                              "week of the previous year. This system is most commonly used in the "
+                              "USA.</li>"
+                              "<li><b>Partial First Week</b> The first week starts on the first day "
+                              "of the year. The second week of the year starts on the first "
+                              "occurrence of the <i>First day of the week</i>, and lasts for "
+                              "seven days. The first week may not contain seven days.</li>"
+                              "<li><b>Simple Week</b> The first week starts on the first day of the "
+                              "year and lasts seven days, will all new weeks starting on the same "
+                              "weekday as the first day of the year.</li>"
+                              "</ul>"
+                            ).toString( m_kcmLocale );
+    m_ui->m_comboWeekNumberSystem->setToolTip( helpText );
+    m_ui->m_comboWeekNumberSystem->setWhatsThis( helpText );
+
+    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "ISO Week" ).toString( m_kcmLocale ),
+                                            QVariant( KLocale::IsoWeekNumber ) );
+    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "Full First Week" ).toString( m_kcmLocale ),
+                                            QVariant( KLocale::FirstFullWeek ) );
+    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "Partial First Week" ).toString( m_kcmLocale ),
+                                            QVariant( KLocale::FirstPartialWeek ) );
+    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "Simple Week" ).toString( m_kcmLocale ),
+                                            QVariant( KLocale::SimpleWeek ) );
+
+    setWeekNumberSystem( (KLocale::WeekNumberSystem) m_kcmSettings.readEntry( "WeekNumberSystem", 0 ) );
+
+    m_ui->m_comboWeekNumberSystem->blockSignals( false );
+}
+
+void KCMLocale::defaultWeekNumberSystem()
+{
+    setWeekNumberSystem( m_defaultSettings.readEntry( "WeekNumberSystem", 0 ) );
+}
+
+void KCMLocale::changedWeekNumberSystemIndex( int index )
+{
+    setWeekNumberSystem( m_ui->m_comboWeekNumberSystem->itemData( index ).toInt() );
+}
+
+void KCMLocale::setWeekNumberSystem( int newValue )
+{
+    setComboItem( "WeekNumberSystem", newValue,
+                  m_ui->m_comboWeekNumberSystem, m_ui->m_buttonDefaultWeekNumberSystem );
+    m_kcmLocale->setWeekNumberSystem( (KLocale::WeekNumberSystem) m_kcmSettings.readEntry( "WeekNumberSystem", 0 ) );
+}
+
 void KCMLocale::initWeekStartDay()
 {
     m_ui->m_comboWeekStartDay->blockSignals( true );
 
     m_ui->m_labelWeekStartDay->setText( ki18n( "First day of week:" ).toString( m_kcmLocale ) );
     QString helpText = ki18n( "<p>This option determines which day will be considered as the first "
-                              "one of the week.</p> " ).toString( m_kcmLocale );
+                              "one of the week.  This value may affect the Week Number System.</p> "
+                            ).toString( m_kcmLocale );
     m_ui->m_comboWeekStartDay->setToolTip( helpText );
     m_ui->m_comboWeekStartDay->setWhatsThis( helpText );
 

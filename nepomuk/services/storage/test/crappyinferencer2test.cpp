@@ -21,6 +21,7 @@
 
 #include "crappyinferencer2test.h"
 #include "../crappyinferencer2.h"
+#include "../classandpropertytree.h"
 
 #include <QtTest>
 #include "qtest_kde.h"
@@ -45,7 +46,8 @@ void CrappyInferencer2Test::initTestCase()
     m_baseModel = backend->createModel( Soprano::BackendSettings() << Soprano::BackendSetting(Soprano::BackendOptionStorageDir, m_storageDir->name()) );
     QVERIFY( m_baseModel );
 
-    m_model = new CrappyInferencer2( m_baseModel );
+    m_typeTree = new Nepomuk::ClassAndPropertyTree( this );
+    m_model = new CrappyInferencer2( m_typeTree, m_baseModel );
 }
 
 void CrappyInferencer2Test::cleanupTestCase()
@@ -101,6 +103,7 @@ void CrappyInferencer2Test::init()
     m_baseModel->addStatement( QUrl("onto:/L2"), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::RDFS::Class(), graph );
     m_baseModel->addStatement( QUrl("onto:/L2"), Soprano::Vocabulary::RDFS::subClassOf(), QUrl("onto:/L1"), graph );
 
+    m_typeTree->rebuildTree(m_model);
     m_model->updateInferenceIndex();
 }
 

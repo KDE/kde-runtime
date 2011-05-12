@@ -19,9 +19,6 @@
 
 #include "util.h"
 
-#include <strigi/variant.h>
-#include <strigi/fieldtypes.h>
-
 #include <QtCore/QUrl>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
@@ -30,10 +27,14 @@
 
 #include <Soprano/Model>
 #include <Soprano/Statement>
+#include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/XMLSchema>
+
+#include <Nepomuk/ResourceManager>
+#include <Nepomuk/Vocabulary/NIE>
 
 
 #define STRIGI_NS "http://www.strigi.org/data#"
@@ -88,55 +89,54 @@ QUrl Strigi::Util::uniqueUri( const QString& ns, Soprano::Model* model )
     return uri;
 }
 
-
-Strigi::Variant Strigi::Util::nodeToVariant( const Soprano::Node& node )
-{
-    if ( node.isLiteral() ) {
-        switch( node.literal().type() ) {
-        case QVariant::Int:
-        case QVariant::UInt:
-        case QVariant::LongLong:  // FIXME: no perfect conversion :(
-        case QVariant::ULongLong:
-            return Strigi::Variant( node.literal().toInt() );
-
-        case QVariant::Bool:
-            return Strigi::Variant( node.literal().toBool() );
-
-        default:
-            return Strigi::Variant( node.literal().toString().toUtf8().data() );
-        }
-    }
-    else {
-        qWarning() << "(Soprano::Util::nodeToVariant) cannot convert non-literal node to variant.";
-        return Strigi::Variant();
-    }
-}
-
-
-void Strigi::Util::storeStrigiMiniOntology( Soprano::Model* model )
-{
-    // we use some nice URI here although we still have the STRIGI_NS for backwards comp
-
-    QUrl graph( "http://nepomuk.kde.org/ontologies/2008/07/24/strigi/metadata" );
-    Soprano::Statement depthProp( fieldUri( FieldRegister::embeddepthFieldName ),
-                                  Soprano::Vocabulary::RDF::type(),
-                                  Soprano::Vocabulary::RDF::Property(),
-                                  graph );
-    Soprano::Statement metaDataType( graph,
-                                     Soprano::Vocabulary::RDF::type(),
-                                     Soprano::Vocabulary::NRL::Ontology(),
-                                     graph );
-
-    if ( !model->containsStatement( depthProp ) ) {
-        model->addStatement( depthProp );
-    }
-    if ( !model->containsStatement( metaDataType ) ) {
-        model->addStatement( metaDataType );
-    }
-}
-
-
 QUrl Strigi::Ontology::indexGraphFor()
 {
     return QUrl::fromEncoded( "http://www.strigi.org/fields#indexGraphFor", QUrl::StrictMode );
+}
+
+bool Nepomuk::clearIndexedDataForUrl( const KUrl& url )
+{
+    if ( url.isEmpty() )
+        return false;
+
+    QString query = QString::fromLatin1( "select ?g where { "
+                                         "{ "
+                                         "?r %2 %1 . "
+                                         "?g %3 ?r . } "
+                                         "UNION "
+                                         "{ ?g %3 %1 . }"
+                                         "}")
+                    .arg( Soprano::Node::resourceToN3( url ),
+                          Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                          Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ) );
+
+    Soprano::QueryResultIterator result = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    while ( result.next() ) {
+        // delete the indexed data (The Soprano::NRLModel in the storage service will take care of
+        // the metadata graph)
+        Nepomuk::ResourceManager::instance()->mainModel()->removeContext( result.binding( "g" ) );
+    }
+
+    return true;
+}
+
+
+// static
+bool Nepomuk::clearIndexedDataForResourceUri( const KUrl& res )
+{
+    if ( res.isEmpty() )
+        return false;
+
+    QString query = QString::fromLatin1( "select ?g where { ?g %1 %2 . }" )
+                    .arg( Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ),
+                          Soprano::Node::resourceToN3( res ) );
+
+    Soprano::QueryResultIterator result = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    while ( result.next() ) {
+        // delete the indexed data (The Soprano::NRLModel in the storage service will take care of
+        // the metadata graph)
+        Nepomuk::ResourceManager::instance()->mainModel()->removeContext( result.binding( "g" ) );
+    }
+
+    return true;
 }

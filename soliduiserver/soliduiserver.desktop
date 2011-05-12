@@ -68,6 +68,7 @@ Name[zh_TW]=硬體偵測
 Comment=Provides a user interface for hardware events
 Comment[ar]=يوفر واجهة المستخدم لأحداث العتاد
 Comment[ast]=Ufre una interface d'usuariu pa eventos de hardware
+Comment[bs]=Daje korisničko sučelje za hardverske događaje
 Comment[ca]=Proporciona una interfície d'usuari pels esdeveniments del maquinari
 Comment[ca@valencia]=Proporciona una interfície d'usuari pels esdeveniments del maquinari
 Comment[cs]=Poskytuje uživatelské rozhraní pro hardwarové události

@@ -229,6 +229,9 @@ private:
     void initShortYearWindow();
     void setShortYearWindow( int newValue );
 
+    void initWeekNumberSystem();
+    void setWeekNumberSystem( int newValue );
+
     void initWeekStartDay();
     void setWeekStartDay( int newValue );
 
@@ -355,6 +358,9 @@ private Q_SLOTS:
 
     void defaultShortYearWindow();
     void changedShortYearWindow( int newValue );
+
+    void defaultWeekNumberSystem();
+    void changedWeekNumberSystemIndex( int index );
 
     void defaultWeekStartDay();
     void changedWeekStartDayIndex( int index );

@@ -24,6 +24,10 @@
 
 #include <Soprano/FilterModel>
 
+namespace Nepomuk {
+class ClassAndPropertyTree;
+}
+
 /**
  * The second version of the crappy inferencer it even crappier than the first.
  * It only does rdf:type inferencing, nothing else. In the long run this is not
@@ -38,7 +42,7 @@ class CrappyInferencer2 : public Soprano::FilterModel
     Q_OBJECT
 
 public:
-    CrappyInferencer2(Soprano::Model* parent = 0);
+    CrappyInferencer2(Nepomuk::ClassAndPropertyTree* tree, Soprano::Model* parent = 0);
     ~CrappyInferencer2();
 
     /**

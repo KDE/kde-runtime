@@ -95,9 +95,6 @@ namespace Nepomuk {
          */
         void indexFile( const QString& path );
 
-        void analyzeResource( const QString& uri, uint mTime, const QByteArray& data );
-        void analyzeResourceFromTempFileAndDeleteTempFile( const QString& uri, uint mTime, const QString& tmpFile );
-
     private Q_SLOTS:
         void finishInitialization();
         void updateWatches();
