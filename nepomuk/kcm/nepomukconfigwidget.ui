@@ -8,7 +8,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="KTabWidget" name="tabWidget">
+    <widget class="KTabWidget" name="m_mainTabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -207,7 +207,7 @@
                </font>
               </property>
               <property name="text">
-               <string/>
+               <string>KSqueezedTextLabel</string>
               </property>
              </widget>
             </item>
@@ -221,14 +221,34 @@
            </layout>
           </item>
           <item>
-           <widget class="QCheckBox" name="m_checkIndexRemovableMedia">
-            <property name="toolTip">
-             <string>Index the files on removable media like USB sticks when they are mounted</string>
-            </property>
-            <property name="text">
-             <string>Index files on removable media</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <item>
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Removable media handling:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="KComboBox" name="m_comboRemovableMediaHandling">
+              <item>
+               <property name="text">
+                <string>Ignore all removable media</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Index files on all removable devices</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Ask individually when newly mounted</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -322,7 +342,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string/>
+                 <string>KSqueezedTextLabel</string>
                 </property>
                </widget>
               </item>
