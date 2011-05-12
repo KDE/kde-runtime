@@ -25,19 +25,21 @@
 #include <QtCore/QUrl>
 #include <QtDBus/QDBusObjectPath>
 
+class QDBusServiceWatcher;
 namespace Soprano {
     class Statement;
 }
 
 namespace Nepomuk {
 
-    class ResourceWatcherModel;
+    class ResourceWatcherManager;
     
     class ResourceWatcherConnection : public QObject
     {
         Q_OBJECT
     public:
-        ResourceWatcherConnection( QObject* parent, bool hasProperties );
+        ResourceWatcherConnection( ResourceWatcherManager* parent, bool hasProperties );
+        ~ResourceWatcherConnection();
 
     signals:
         Q_SCRIPTABLE void resourceDeleted( const QString & uri );
@@ -50,15 +52,22 @@ namespace Nepomuk {
         Q_SCRIPTABLE void propertyRemoved( const QString & resource,
                                            const QString & property,
                                            const QString & value );
+
+    public Q_SLOTS:
+        void close();
+
     public:
-        QDBusObjectPath dBusPath() const;
         bool hasProperties() const;
         
+        QDBusObjectPath registerDBusObject(const QString &dbusClient, int id);
+
     private:
         QString m_objectPath;
         bool m_hasProperties;
 
-        static int Id;
+        ResourceWatcherManager* m_manager;
+        QDBusServiceWatcher* m_serviceWatcher;
+
         friend class ResourceWatcherManager;
     };
 

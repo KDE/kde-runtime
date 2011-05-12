@@ -23,39 +23,47 @@
 
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusObjectPath>
+#include <QtDBus/QDBusServiceWatcher>
 
-int Nepomuk::ResourceWatcherConnection::Id = 0;
 
-Nepomuk::ResourceWatcherConnection::ResourceWatcherConnection( QObject* parent, bool hasProperties )
+Nepomuk::ResourceWatcherConnection::ResourceWatcherConnection( ResourceWatcherManager* parent, bool hasProperties )
     : QObject( parent ),
-      m_hasProperties( hasProperties )
+      m_hasProperties( hasProperties ),
+      m_manager(parent)
 {
-    // create the query adaptor on this connection
-    //( void )new QueryAdaptor( this );
-    
-    // build the dbus object path from the id and register the connection as a Query dbus object
-    m_objectPath = QString( "/watcher/%1" ).arg( Id++ );
-    QDBusConnection::sessionBus().registerObject( m_objectPath, this, QDBusConnection::ExportScriptableSignals );
-    
-    // watch the dbus client for unregistration for auto-cleanup
-//     m_serviceWatcher = new QDBusServiceWatcher( dbusClient,
-//                                                 QDBusConnection::sessionBus(),
-//                                                 QDBusServiceWatcher::WatchForUnregistration,
-//                                                 this );
-//     connect( m_serviceWatcher, SIGNAL(serviceUnregistered(QString)),
-//              this, SLOT(close()) );
-    
-    // finally return the dbus object path this connection can be found on
-    //return QDBusObjectPath( dbusObjectPath );
 }
 
-
-QDBusObjectPath Nepomuk::ResourceWatcherConnection::dBusPath() const
+Nepomuk::ResourceWatcherConnection::~ResourceWatcherConnection()
 {
-    return QDBusObjectPath( m_objectPath );
+    m_manager->removeConnection(this);
 }
 
 bool Nepomuk::ResourceWatcherConnection::hasProperties() const
 {
     return m_hasProperties;
 }
+
+QDBusObjectPath Nepomuk::ResourceWatcherConnection::registerDBusObject( const QString& dbusClient, int id )
+{
+    // build the dbus object path from the id and register the connection as a Query dbus object
+    const QString dbusObjectPath = QString( "/nepomukqueryservice/query%1" ).arg( id );
+    QDBusConnection::sessionBus().registerObject( dbusObjectPath, this, QDBusConnection::ExportScriptableSignals );
+
+    // watch the dbus client for unregistration for auto-cleanup
+    m_serviceWatcher = new QDBusServiceWatcher( dbusClient,
+                                                QDBusConnection::sessionBus(),
+                                                QDBusServiceWatcher::WatchForUnregistration,
+                                                this );
+    connect( m_serviceWatcher, SIGNAL(serviceUnregistered(QString)),
+             this, SLOT(close()) );
+
+    // finally return the dbus object path this connection can be found on
+    return QDBusObjectPath( dbusObjectPath );
+}
+
+void Nepomuk::ResourceWatcherConnection::close()
+{
+    deleteLater();
+}
+
+#include "resourcewatcherconnection.moc"

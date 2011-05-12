@@ -26,12 +26,13 @@
 
 #include <Soprano/FilterModel>
 #include <QtDBus/QDBusObjectPath>
+#include <QtDBus/QDBusContext>
 
 namespace Nepomuk {
 
     class ResourceWatcherConnection;
     
-    class ResourceWatcherManager : public QObject
+    class ResourceWatcherManager : public QObject, protected QDBusContext
     {
         Q_OBJECT
         Q_CLASSINFO( "D-Bus Interface", "org.kde.nepomuk.ResourceWatcher" )
@@ -49,10 +50,16 @@ namespace Nepomuk {
         Q_SCRIPTABLE void stopWatcher( const QString& objectName );
 
     private:
+        /// called by ResourceWatcherConnection destructor
+        void removeConnection(ResourceWatcherConnection*);
+
         QMultiHash<QUrl, ResourceWatcherConnection*> m_resHash;
         QMultiHash<QUrl, ResourceWatcherConnection*> m_propHash;
         QMultiHash<QUrl, ResourceWatcherConnection*> m_typeHash;
         QSet<QUrl> m_metaProperties; 
+
+        // only used to generate unique dbus paths
+        int m_connectionCount;
         
         friend class ResourceWatcherConnection;
     };

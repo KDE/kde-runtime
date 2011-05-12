@@ -25,6 +25,7 @@
 #include <Soprano/Vocabulary/RDF>
 
 #include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusMessage>
 #include <KDebug>
 
 #include <QtCore/QStringList>
@@ -33,7 +34,8 @@
 using namespace Soprano::Vocabulary;
 
 Nepomuk::ResourceWatcherManager::ResourceWatcherManager(QObject* parent)
-    : QObject(parent)
+    : QObject(parent),
+      m_connectionCount(0)
 {
     // Register the service
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
@@ -141,7 +143,7 @@ QDBusObjectPath Nepomuk::ResourceWatcherManager::watch(const QList< QString >& r
         m_typeHash.insert( QUrl(type), con );
     }
     
-    return con->dBusPath();
+    return con->registerDBusObject(message().service(), ++m_connectionCount);
 }
 
 namespace {
@@ -172,11 +174,14 @@ void Nepomuk::ResourceWatcherManager::stopWatcher(const QString& objectName)
         }
     }
 
+    delete con;
+}
+
+void Nepomuk::ResourceWatcherManager::removeConnection(Nepomuk::ResourceWatcherConnection *con)
+{
     remove( m_resHash, con );
     remove( m_propHash, con );
     remove( m_typeHash, con );
-
-    con->deleteLater();
 }
 
-
+#include "resourcewatchermanager.moc"
