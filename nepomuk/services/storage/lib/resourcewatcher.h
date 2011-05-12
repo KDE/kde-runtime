@@ -21,10 +21,11 @@
 #ifndef RESOURCEWATCHER_H
 #define RESOURCEWATCHER_H
 
-#include <QObject>
 #include <Nepomuk/Types/Class>
 #include <Nepomuk/Types/Property>
 #include <Nepomuk/Resource>
+
+#include "nepomukdatamanagement_export.h"
 
 namespace Nepomuk {
 
@@ -61,7 +62,7 @@ namespace Nepomuk {
      * 
      * \author Vishesh Handa <handa.vish@gmail.com>
      */
-    class KDE_EXPORT ResourceWatcher : public QObject
+    class NEPOMUK_DATA_MANAGEMENT_EXPORT ResourceWatcher : public QObject
     {
         Q_OBJECT
     public:

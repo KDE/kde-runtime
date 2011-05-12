@@ -8,6 +8,7 @@ set(datamanagement_SRC
   describeresourcesjob.cpp
   dbustypes.cpp
   datamanagement.cpp
+  resourcewatcher.cpp
 )
 
 set(datamanagementservice_dbus_desc ../../../interfaces/org.kde.nepomuk.DataManagement.xml)
@@ -38,5 +39,6 @@ install(FILES
   datamanagement.h
   createresourcejob.h
   describeresourcesjob.h
+  resourcewatcher.h
   nepomukdatamanagement_export.h
   DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk)
