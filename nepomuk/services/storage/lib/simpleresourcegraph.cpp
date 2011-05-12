@@ -164,6 +164,12 @@ void Nepomuk::SimpleResourceGraph::addStatement(const Soprano::Statement &s)
     d->resources[uri].addProperty(s.predicate().uri(), value);
 }
 
+void Nepomuk::SimpleResourceGraph::addStatement(const Soprano::Node& subject, const Soprano::Node& predicate, const Soprano::Node& object)
+{
+    addStatement( Soprano::Statement( subject, predicate, object ) );
+}
+
+
 KJob* Nepomuk::SimpleResourceGraph::save(const KComponentData& component) const
 {
     return Nepomuk::storeResources(*this, QHash<QUrl, QVariant>(), component);

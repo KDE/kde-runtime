@@ -35,6 +35,7 @@
 class KJob;
 namespace Soprano {
 class Statement;
+class Node;
 }
 namespace Nepomuk {
 class SimpleResource;
@@ -75,7 +76,8 @@ public:
     QList<SimpleResource> toList() const;
 
     void addStatement(const Soprano::Statement& statement);
-
+    void addStatement( const Soprano::Node & subject, const Soprano::Node & predicate,
+                       const Soprano::Node & object );
     /**
      * Save the graph to the Nepomuk database.
      * \return A job that will perform the saving
