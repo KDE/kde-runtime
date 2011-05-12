@@ -18,5 +18,6 @@
       <arg name="property" type="s" direction="out"/>
       <arg name="value" type="s" direction="out"/>
     </signal>
+    <method name="close" />
   </interface>
 </node>

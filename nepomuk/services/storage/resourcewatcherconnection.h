@@ -54,7 +54,7 @@ namespace Nepomuk {
                                            const QString & value );
 
     public Q_SLOTS:
-        void close();
+        Q_SCRIPTABLE void close();
 
     public:
         bool hasProperties() const;
