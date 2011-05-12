@@ -37,7 +37,7 @@ Nepomuk::ResourceWatcher::~ResourceWatcher()
 
 }
 
-void Nepomuk::ResourceWatcher::watch()
+void Nepomuk::ResourceWatcher::start()
 {
     //
     // Convert to list of strings
@@ -60,6 +60,10 @@ void Nepomuk::ResourceWatcher::watch()
     //
     // Create the dbus object to watch
     //
+}
+
+void Nepomuk::ResourceWatcher::stop()
+{
 }
 
 void Nepomuk::ResourceWatcher::addProperty(const Nepomuk::Types::Property& property)

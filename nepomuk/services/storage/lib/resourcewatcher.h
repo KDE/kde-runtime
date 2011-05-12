@@ -81,7 +81,9 @@ namespace Nepomuk {
         QList<Nepomuk::Resource> resources() const;
         QList<Types::Property> properties() const;
 
-        void watch();
+    public Q_SLOTS:
+        void start();
+        void stop();
 
     Q_SIGNALS:
         /**
@@ -98,7 +100,9 @@ namespace Nepomuk {
          * Emitted on addition of any statement of the form -
          * <res> rdf:type <types>, where <types> may be any of the set types
          */
-        void resourceTypeCreated( const Nepomuk::Resource & res, const Types::Class & type );
+        void resourceTypeAdded( const Nepomuk::Resource & res, const Types::Class & type );
+
+        void resourceTypeRemoved( const Nepomuk::Resource & res, const Types::Class & type );
 
         /**
          * Emitted when a property is added to the list of resources being watched OR
