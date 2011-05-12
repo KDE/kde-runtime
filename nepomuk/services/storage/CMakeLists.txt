@@ -28,7 +28,7 @@ set(storage_SRCS
   classandpropertytree.cpp
   resourcemerger.cpp
   resourceidentifier.cpp
-  resourcewatcher.h
+  resourcewatcher.cpp
   resourcewatchermodel.cpp
   resourcewatcherconnection.cpp
   )
