@@ -27,6 +27,7 @@
 #include <KConfigGroup>
 #include <KIcon>
 #include <KDebug>
+#include <KToolInvocation>
 
 #include <Solid/StorageAccess>
 
@@ -42,11 +43,9 @@ RemovableDeviceIndexNotification::RemovableDeviceIndexNotification(const Solid::
     setPixmap(KIcon(QLatin1String("nepomuk")).pixmap(32, 32));
 
     setActions(QStringList()
-               << i18nc("@action", "Index files on this device")
-               << i18nc("@action", "Do not index files on this device")
-               << i18nc("@action", "Always index files on removable devices")
-               << i18nc("@action", "Never index files on removable media")
-               << i18nc("@action", "Ask me later"));
+               << i18nc("@action", "Index files")
+               << i18nc("@action", "Ignore device")
+               << i18nc("@action", "Configure"));
     connect(this, SIGNAL(activated(uint)), this, SLOT(slotActionActivated(uint)));
 
     // as soon as the device is unmounted this notification becomes pointless
@@ -77,45 +76,25 @@ void RemovableDeviceIndexNotification::slotActionDoNotIndexActivated()
     close();
 }
 
-void RemovableDeviceIndexNotification::slotActionDoIndexAllActivated()
+void RemovableDeviceIndexNotification::slotActionConfigureActivated()
 {
-    KConfig strigiConfig( "nepomukstrigirc" );
-    strigiConfig.group( "General" ).writeEntry( "index newly mounted", true );
-
-    slotActionDoIndexActivated();
-}
-
-void RemovableDeviceIndexNotification::slotActionDoNotIndexAnyActivated()
-{
-    KConfig strigiConfig( "nepomukstrigirc" );
-    strigiConfig.group( "General" ).writeEntry( "index newly mounted", false );
-
-    close();
-}
-
-void RemovableDeviceIndexNotification::slotActionIgnoreActivated()
-{
-    close();
+    QStringList args;
+    args << "kcm_nepomuk" << "--args" << "1";
+    KToolInvocation::kdeinitExec("kcmshell4", args);
 }
 
 void RemovableDeviceIndexNotification::slotActionActivated(uint action)
 {
     kDebug() << action;
     switch(action) {
-    case 0:
+    case 1:
         slotActionDoIndexActivated();
         break;
-    case 1:
+    case 2:
         slotActionDoNotIndexActivated();
         break;
-    case 2:
-        slotActionDoIndexAllActivated();
-        break;
     case 3:
-        slotActionDoNotIndexAnyActivated();
-        break;
-    case 4:
-        slotActionIgnoreActivated();
+        slotActionConfigureActivated();
         break;
     }
 }

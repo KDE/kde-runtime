@@ -37,9 +37,7 @@ private slots:
     void slotActionActivated(uint action);
     void slotActionDoIndexActivated();
     void slotActionDoNotIndexActivated();
-    void slotActionDoIndexAllActivated();
-    void slotActionDoNotIndexAnyActivated();
-    void slotActionIgnoreActivated();
+    void slotActionConfigureActivated();
 
 private:
     Solid::Device m_device;
