@@ -104,6 +104,8 @@ bool Nepomuk::clearIndexedDataForUrl( const KUrl& url )
     if ( url.isEmpty() )
         return false;
 
+    kDebug() << "Clearing " << url;
+    
     //
     // New way of storing Strigi Data
     // The Datamanagement API will automatically find the resource corresponding to that url
@@ -117,7 +119,7 @@ bool Nepomuk::clearIndexedDataForUrl( const KUrl& url )
     job->exec();
     
     if( job->error() ) {
-        kError() << job->errorString();
+        kDebug() << job->errorString();
     }
 
     //
@@ -148,6 +150,7 @@ bool Nepomuk::clearIndexedDataForUrl( const KUrl& url )
 // static
 bool Nepomuk::clearIndexedDataForResourceUri( const KUrl& res )
 {
+    kDebug() << "Clearing " << res;
     if ( res.isEmpty() )
         return false;
     
@@ -161,7 +164,7 @@ bool Nepomuk::clearIndexedDataForResourceUri( const KUrl& res )
     job->exec();
 
     if( job->error() ) {
-        kError() << job->errorString();
+        kDebug() << job->errorString();
     }
     
     QString query = QString::fromLatin1( "select ?g where { ?g %1 %2 . }" )

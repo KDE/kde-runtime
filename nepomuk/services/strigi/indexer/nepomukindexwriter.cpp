@@ -583,6 +583,7 @@ void Nepomuk::StrigiIndexWriter::addTriplet( const std::string& s,
                                              const std::string& o )
 {
     if ( d->currentResultStack.top()->depth() > 0 ) {
+        kDebug() << "Depth > 0 - " << s.c_str() << " " << p.c_str() << " " << o.c_str();
         return;
     }
     FileMetaData* md = fileDataForResult( d->currentResultStack.top() );

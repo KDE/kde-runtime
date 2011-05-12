@@ -76,7 +76,9 @@ void Nepomuk::IndexFeeder::addStatement(const Soprano::Statement& st)
     }
     
     req.graph.addStatement( st );
-    kDebug() << st;
+
+    // Debug info
+    qDebug() << st.subject().toN3() << " " << st.predicate().toN3() << " " << st.object().toN3();
 }
 
 
