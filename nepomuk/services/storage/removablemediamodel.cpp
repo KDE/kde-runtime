@@ -20,17 +20,7 @@
 */
 
 #include "removablemediamodel.h"
-
-#include <Solid/DeviceNotifier>
-#include <Solid/DeviceInterface>
-#include <Solid/Block>
-#include <Solid/Device>
-#include <Solid/StorageDrive>
-#include <Solid/StorageVolume>
-#include <Solid/StorageAccess>
-#include <Solid/NetworkShare>
-#include <Solid/OpticalDisc>
-#include <Solid/Predicate>
+#include "removablemediacache.h"
 
 #include <Soprano/Statement>
 #include <Soprano/StatementIterator>
@@ -53,33 +43,6 @@ using namespace Nepomuk::Vocabulary;
 // TODO: how do we handle this scenario: the indexer indexes files on a removable medium. This includes
 //       a nie:isPartOf relation to the parent folder of the mount point. This is technically not correct
 //       as it should be part of the removable file system instead. Right?
-
-
-namespace {
-    bool isUsableVolume( const Solid::Device& dev ) {
-        if ( dev.is<Solid::StorageAccess>() ) {
-            if( dev.is<Solid::StorageVolume>() &&
-                    dev.parent().is<Solid::StorageDrive>() &&
-                    ( dev.parent().as<Solid::StorageDrive>()->isRemovable() ||
-                      dev.parent().as<Solid::StorageDrive>()->isHotpluggable() ) ) {
-                const Solid::StorageVolume* volume = dev.as<Solid::StorageVolume>();
-                if ( !volume->isIgnored() && volume->usage() == Solid::StorageVolume::FileSystem )
-                    return true;
-            }
-            else if(dev.is<Solid::NetworkShare>()) {
-                return !dev.as<Solid::NetworkShare>()->url().isEmpty();
-            }
-        }
-
-        // fallback
-        return false;
-    }
-
-    bool isUsableVolume( const QString& udi ) {
-        Solid::Device dev( udi );
-        return isUsableVolume( dev );
-    }
-}
 
 
 /**
@@ -177,12 +140,7 @@ Nepomuk::RemovableMediaModel::RemovableMediaModel(Soprano::Model* parentModel, Q
     : Soprano::FilterModel(parentModel)
 {
     setParent(parent);
-    initCacheEntries();
-
-    connect( Solid::DeviceNotifier::instance(), SIGNAL( deviceAdded( const QString& ) ),
-             this, SLOT( slotSolidDeviceAdded( const QString& ) ) );
-    connect( Solid::DeviceNotifier::instance(), SIGNAL( deviceRemoved( const QString& ) ),
-             this, SLOT( slotSolidDeviceRemoved( const QString& ) ) );
+    m_removableMediaCache = new RemovableMediaCache(this);
 }
 
 Nepomuk::RemovableMediaModel::~RemovableMediaModel()
@@ -235,127 +193,13 @@ Soprano::QueryResultIterator Nepomuk::RemovableMediaModel::executeQuery(const QS
     return new QueryResultIteratorBackend(this, FilterModel::executeQuery(convertFileUrls(query), language, userQueryLanguage));
 }
 
-void Nepomuk::RemovableMediaModel::initCacheEntries()
-{
-    QList<Solid::Device> devices
-            = Solid::Device::listFromQuery(QLatin1String("StorageVolume.usage=='FileSystem'"))
-            + Solid::Device::listFromType(Solid::DeviceInterface::NetworkShare);
-    foreach( const Solid::Device& dev, devices ) {
-        if ( isUsableVolume( dev ) ) {
-            if(Entry* entry = createCacheEntry( dev )) {
-                const Solid::StorageAccess* storage = entry->m_device.as<Solid::StorageAccess>();
-                if ( storage && storage->isAccessible() )
-                    slotAccessibilityChanged( true, dev.udi() );
-            }
-        }
-    }
-}
-
-Nepomuk::RemovableMediaModel::Entry* Nepomuk::RemovableMediaModel::createCacheEntry( const Solid::Device& dev )
-{
-    QMutexLocker lock(&m_entryCacheMutex);
-
-    Entry entry(dev);
-    if(!entry.m_urlPrefix.isEmpty()) {
-        kDebug() << "Usable" << dev.udi();
-
-        // we only add to this set and never remove. This is no problem as this is a small set
-        m_usedSchemas.insert(KUrl(entry.m_urlPrefix).scheme());
-
-        connect( dev.as<Solid::StorageAccess>(), SIGNAL(accessibilityChanged(bool, QString)),
-                this, SLOT(slotAccessibilityChanged(bool, QString)) );
-                m_metadataCache.insert( dev.udi(), entry );
-        return &m_metadataCache[dev.udi()];
-    }
-    else {
-        kDebug() << "Cannot use device due to empty identifier:" << dev.udi();
-        return 0;
-    }
-}
-
-
-Nepomuk::RemovableMediaModel::Entry* Nepomuk::RemovableMediaModel::findEntryByFilePath( const QString& path )
-{
-    QMutexLocker lock(&m_entryCacheMutex);
-
-    for( QHash<QString, Entry>::iterator it = m_metadataCache.begin();
-         it != m_metadataCache.end(); ++it ) {
-        Entry& entry = *it;
-        if ( entry.m_device.as<Solid::StorageAccess>()->isAccessible() &&
-             path.startsWith( entry.m_device.as<Solid::StorageAccess>()->filePath() ) )
-            return &entry;
-    }
-
-    return 0;
-}
-
-
-const Nepomuk::RemovableMediaModel::Entry* Nepomuk::RemovableMediaModel::findEntryByFilePath( const QString& path ) const
-{
-    return const_cast<RemovableMediaModel*>(this)->findEntryByFilePath(path);
-}
-
-
-const Nepomuk::RemovableMediaModel::Entry* Nepomuk::RemovableMediaModel::findEntryByUrl(const KUrl &url) const
-{
-    QMutexLocker lock(&m_entryCacheMutex);
-
-    for( QHash<QString, Entry>::const_iterator it = m_metadataCache.constBegin();
-        it != m_metadataCache.constEnd(); ++it ) {
-        const Entry& entry = *it;
-        kDebug() << url << entry.m_urlPrefix;
-        if(url.url().startsWith(entry.m_urlPrefix)) {
-            return &entry;
-        }
-    }
-
-    return 0;
-}
-
-
-void Nepomuk::RemovableMediaModel::slotSolidDeviceAdded( const QString& udi )
-{
-    kDebug() << udi;
-
-    if ( isUsableVolume( udi ) ) {
-        createCacheEntry( Solid::Device( udi ) );
-    }
-}
-
-
-void Nepomuk::RemovableMediaModel::slotSolidDeviceRemoved( const QString& udi )
-{
-    kDebug() << udi;
-    if ( m_metadataCache.contains( udi ) ) {
-        kDebug() << "Found removable storage volume for Nepomuk undocking:" << udi;
-        m_metadataCache.remove( udi );
-    }
-}
-
-
-void Nepomuk::RemovableMediaModel::slotAccessibilityChanged( bool accessible, const QString& udi )
-{
-    kDebug() << accessible << udi;
-
-    //
-    // cache new mount path
-    //
-    if ( accessible ) {
-        QMutexLocker lock(&m_entryCacheMutex);
-        Entry& entry = m_metadataCache[udi];
-        entry.m_lastMountPath = entry.m_device.as<Solid::StorageAccess>()->filePath();
-        kDebug() << udi << "accessible at" << entry.m_lastMountPath << "with identifier" << entry.m_urlPrefix;
-    }
-}
-
-
 Soprano::Node Nepomuk::RemovableMediaModel::convertFileUrl(const Soprano::Node &node) const
 {
     if(node.isResource()) {
         const QUrl url = node.uri();
         if(url.scheme() == QLatin1String("file")) {
             const QString localFilePath = url.toLocalFile();
-            if(const Entry* entry = findEntryByFilePath(localFilePath)) {
+            if(const RemovableMediaCache::Entry* entry = m_removableMediaCache->findEntryByFilePath(localFilePath)) {
                 return entry->constructRelativeUrl(localFilePath);
             }
         }
@@ -394,8 +238,8 @@ Soprano::Node Nepomuk::RemovableMediaModel::convertFilexUrl(const Soprano::Node 
 {
     if(node.isResource()) {
         const QUrl url = node.uri();
-        if(m_usedSchemas.contains(url.scheme())) {
-            if(const Entry* entry = findEntryByUrl(url)) {
+        if(m_removableMediaCache->hasRemovableSchema(url)) {
+            if(const RemovableMediaCache::Entry* entry = m_removableMediaCache->findEntryByUrl(url)) {
                 return QUrl::fromLocalFile(entry->constructLocalPath(url));
             }
         }
@@ -559,49 +403,6 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
     }
 
     return newQuery;
-}
-
-
-Nepomuk::RemovableMediaModel::Entry::Entry()
-{
-}
-
-Nepomuk::RemovableMediaModel::Entry::Entry(const Solid::Device& device)
-    : m_device(device)
-{
-    m_description = device.description();
-    if(device.is<Solid::StorageVolume>()) {
-        const Solid::StorageVolume* volume = m_device.as<Solid::StorageVolume>();
-        if(device.is<Solid::OpticalDisc>()) {
-            // we use the label as is - it is not even close to unique but
-            // so far we have nothing better
-            m_urlPrefix = QLatin1String("optical://") + volume->label();
-        }
-        else if(!volume->uuid().isEmpty()) {
-            // we always use lower-case uuids
-            m_urlPrefix = QLatin1String("filex://") + volume->uuid().toLower();
-        }
-    }
-    else if(device.is<Solid::NetworkShare>()) {
-        m_urlPrefix = device.as<Solid::NetworkShare>()->url().toString();
-    }
-}
-
-KUrl Nepomuk::RemovableMediaModel::Entry::constructRelativeUrl( const QString& path ) const
-{
-    const QString relativePath = path.mid( m_lastMountPath.count() );
-    return KUrl( m_urlPrefix + relativePath );
-}
-
-
-QString Nepomuk::RemovableMediaModel::Entry::constructLocalPath( const KUrl& filexUrl ) const
-{
-    // the base of the path: the mount path
-    QString path( m_lastMountPath );
-    if ( path.endsWith( QLatin1String( "/" ) ) )
-        path.truncate( path.length()-1 );
-
-    return path + filexUrl.url().mid(m_urlPrefix.count());
 }
 
 #include "removablemediamodel.moc"

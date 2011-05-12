@@ -1,0 +1,111 @@
+/*
+   This file is part of the Nepomuk KDE project.
+   Copyright (C) 2011 Sebastian Trueg <trueg@kde.org>
+
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) version 3, or any
+   later version accepted by the membership of KDE e.V. (or its
+   successor approved by the membership of KDE e.V.), which shall
+   act as a proxy defined in Section 6 of version 3 of the license.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef NEPOMUK_REMOVABLEMEDIACACHE_H
+#define NEPOMUK_REMOVABLEMEDIACACHE_H
+
+#include "nepomukcommon_export.h"
+
+#include <QtCore/QObject>
+#include <QtCore/QMutex>
+#include <QtCore/QSet>
+
+#include <Solid/Device>
+
+#include <KUrl>
+
+
+namespace Nepomuk {
+
+/**
+ * The removable media cache provides access to all removable
+ * media that are supported by Nepomuk. It allows to convert
+ * URLs the way RemovableMediaModel requires it and provides
+ * more or less unique URIs for each device allowing to store
+ * device-specific configuration.
+ */
+class NEPOMUKCOMMON_EXPORT RemovableMediaCache : public QObject
+{
+    Q_OBJECT
+
+public:
+    RemovableMediaCache(QObject *parent = 0);
+    ~RemovableMediaCache();
+
+    class Entry {
+    public:
+        Entry();
+        Entry(const Solid::Device& device);
+
+        KUrl constructRelativeUrl( const QString& path ) const;
+        QString constructLocalPath( const KUrl& filexUrl ) const;
+
+        Solid::Device device() const { return m_device; }
+        QString url() const { return m_urlPrefix; }
+
+        QString mountPath() const;
+
+    private:
+        Solid::Device m_device;
+
+        /// The prefix to be used for URLs
+        QString m_urlPrefix;
+    };
+
+    const Entry* findEntryByFilePath( const QString& path ) const;
+    const Entry* findEntryByUrl(const KUrl& url) const;
+
+    /**
+     * Returns true if the URL might be pointing to a file on a
+     * removable device as handled by this class, ie. a non-local
+     * URL which can be converted to a local one.
+     * This method is primarily used for performance gain.
+     */
+    bool hasRemovableSchema(const KUrl& url) const;
+
+signals:
+    void deviceAdded(const Nepomuk::RemovableMediaCache::Entry* entry);
+    void deviceMounted(const Nepomuk::RemovableMediaCache::Entry* entry);
+
+private slots:
+    void slotSolidDeviceAdded(const QString &udi);
+    void slotSolidDeviceRemoved(const QString &udi);
+    void slotAccessibilityChanged(bool accessible, const QString &udi);
+
+private:
+    void initCacheEntries();
+
+    Entry* createCacheEntry( const Solid::Device& dev );
+
+    /// maps Solid UDI to Entry
+    QHash<QString, Entry> m_metadataCache;
+
+    /// contains all schemas that are used as url prefixes in m_metadataCache
+    /// this is used to avoid trying to convert each and every resource in
+    /// convertFilexUrl
+    QSet<QString> m_usedSchemas;
+
+    mutable QMutex m_entryCacheMutex;
+};
+
+} // namespace Nepomuk
+
+#endif // NEPOMUK_REMOVABLEMEDIACACHE_H
