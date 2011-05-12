@@ -100,6 +100,7 @@ namespace Nepomuk {
 
         struct Request {
             QUrl uri;
+            bool durationPassed;
             SimpleResourceGraph graph;
         };
 

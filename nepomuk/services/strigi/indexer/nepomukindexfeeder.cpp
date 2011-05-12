@@ -30,11 +30,13 @@
 #include <Soprano/Statement>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/NRL>
+#include <Nepomuk/Vocabulary/NFO>
 
 #include <KDebug>
 #include <KJob>
 
 using namespace Soprano::Vocabulary;
+using namespace Nepomuk::Vocabulary;
 
 Nepomuk::IndexFeeder::IndexFeeder( QObject* parent )
     : QObject( parent )
@@ -52,7 +54,8 @@ void Nepomuk::IndexFeeder::begin( const QUrl & url )
     //kDebug() << "BEGINNING";
     Request req;
     req.uri = url;
-
+    req.durationPassed = false;
+    
     m_stack.push( req );
 }
 
@@ -60,13 +63,20 @@ void Nepomuk::IndexFeeder::begin( const QUrl & url )
 void Nepomuk::IndexFeeder::addStatement(const Soprano::Statement& st)
 {
     Q_ASSERT( !m_stack.isEmpty() );
-
     Request & req = m_stack.top();
-    req.graph.addStatement( st );
-    kDebug() << st;
     
     if( st.subject().isResource() )
         req.uri = st.subject().uri();
+
+    // Make sure nfo:duration has a max cardinality of 1
+    if( req.uri == st.subject().uri() && st.predicate().uri() == NFO::duration() ) {
+        if( req.durationPassed )
+            return;
+        req.durationPassed = true;
+    }
+    
+    req.graph.addStatement( st );
+    kDebug() << st;
 }
 
 
