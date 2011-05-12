@@ -26,6 +26,7 @@
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
 #include <Soprano/Vocabulary/NAO>
+#include <Soprano/Vocabulary/XMLSchema>
 
 #include <Soprano/StatementIterator>
 #include <Soprano/QueryResultIterator>
@@ -436,8 +437,11 @@ namespace {
 }
 
 namespace {
-    
+    QUrl xsdDuration() {
+        return QUrl( Soprano::Vocabulary::XMLSchema::xsdNamespace().toString() + QLatin1String("duration") );
+    }
 }
+
 bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
 {
     QMultiHash<QUrl, QUrl> types;
@@ -557,6 +561,10 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
             }
             else if( st.object().isLiteral() ) {
                 const Soprano::LiteralValue lv = st.object().literal();
+                // Special handling for xsd:duration
+                if( range == xsdDuration() && lv.isUnsignedInt() ) {
+                    continue;
+                }
                 if( (!lv.isPlain() && lv.dataTypeUri() != range) ||
                         (lv.isPlain() && range != RDFS::Literal()) ) {
                     kDebug() << "Invalid literal range" << Soprano::Node::literalToN3(lv);
@@ -568,7 +576,7 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
             }
         } // range
         
-    }
+    } // foreach
 
     // The graph is error free. Merge its statements except for the resource metadata statements
     const QList<Soprano::Statement> statements = remainingStatements + typeStatements;
