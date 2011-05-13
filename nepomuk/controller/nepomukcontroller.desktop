@@ -1,6 +1,16 @@
 [Desktop Entry]
 Name=Nepomuk File Indexing Controller
+Name[nl]=Besturing door Nepomuk van bestandenindexering
+Name[pt]=Controlador de Indexação de Ficheiros do Nepomuk
+Name[sv]=Nepomuk-styrning av filindexering
+Name[uk]=Засіб керування індексуванням файлів у Nepomuk
+Name[x-test]=xxNepomuk File Indexing Controllerxx
 Comment=System tray icon to control the behaviour of the Nepomuk file indexer
+Comment[nl]=Pictogram in het systeemvak om het gedrag van bestandenindexering van Nepomuk te besturen
+Comment[pt]=Ícone da bandeja para controlar o comportamento de indexação de ficheiros do Nepomuk
+Comment[sv]=Ikon i systembrickan för att styra beteendet hos Nepomuk-filindexering
+Comment[uk]=Піктограма системного лотка для керування поведінкою служб індексування файлів Nepomuk
+Comment[x-test]=xxSystem tray icon to control the behaviour of the Nepomuk file indexerxx
 Icon=nepomuk
 Exec=nepomukcontroller
 Type=Application
