@@ -117,6 +117,18 @@ public:
     void addPropertyNode(const QUrl& property, const Soprano::Node& value);
 
     /**
+     * A convenience method which adds a property of type rdf:type.
+     * \param type The type to add to the resource. Must be the URI of an RDF class.
+     */
+    void addType(const QUrl& type);
+
+    /**
+     * A convenience method which sets the property of type rdf:type.
+     * \param types The types to set to the resource. Must be URIs of RDF classes.
+     */
+    void setTypes(const QList<QUrl>& types);
+
+    /**
      * Get all values for \p property.
      */
     QVariantList property(const QUrl& property) const;

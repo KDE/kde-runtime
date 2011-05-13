@@ -28,6 +28,7 @@
 
 #include <Soprano/Node>
 #include <Soprano/LiteralValue>
+#include <Soprano/Vocabulary/RDF>
 
 
 namespace {
@@ -202,6 +203,20 @@ void Nepomuk::SimpleResource::addPropertyNode(const QUrl &property, const Sopran
     else if(node.isLiteral())
         addProperty(property, node.literal().variant());
     // else do nothing
+}
+
+void Nepomuk::SimpleResource::addType(const QUrl &type)
+{
+    addProperty(Soprano::Vocabulary::RDF::type(), type);
+}
+
+void Nepomuk::SimpleResource::setTypes(const QList<QUrl> &types)
+{
+    QVariantList values;
+    foreach(const QUrl& type, types) {
+        values << type;
+    }
+    setProperty(Soprano::Vocabulary::RDF::type(), values);
 }
 
 void Nepomuk::SimpleResource::setProperties(const Nepomuk::PropertyHash &properties)
