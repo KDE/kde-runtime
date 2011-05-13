@@ -46,6 +46,9 @@ static QString eventInterpretation(Event::Type type)
             return QtZeitgeist::Interpretation::Event::ZGLeaveEvent;
 
     }
+
+    // shut up GCC
+    return QString();
 }
 
 static QString eventManifestation(Event::Reason reason)
