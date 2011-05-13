@@ -53,7 +53,7 @@ Nepomuk::ResourceWatcher::ResourceWatcher(QObject* parent)
     : QObject(parent)
 {
     d->m_watchManagerInterface
-            = new org::kde::nepomuk::ResourceWatcher( "org.kde.nepomuk.ResourceWatcher",
+            = new org::kde::nepomuk::ResourceWatcher( "org.kde.nepomuk.DataManagement",
                                                       "/resourcewatcher",
                                                       QDBusConnection::sessionBus() );
     d->m_connectionInterface = 0;
@@ -91,7 +91,7 @@ bool Nepomuk::ResourceWatcher::start()
     QDBusObjectPath path = reply.value();
 
     if(!path.path().isEmpty()) {
-        d->m_connectionInterface = new org::kde::nepomuk::ResourceWatcherConnection( "org.kde.nepomuk.ResourceWatcher",
+        d->m_connectionInterface = new org::kde::nepomuk::ResourceWatcherConnection( "org.kde.nepomuk.DataManagement",
                                                                                      path.path(),
                                                                                      QDBusConnection::sessionBus() );
         connect( d->m_connectionInterface, SIGNAL(propertyAdded(QString,QString,QString)),
