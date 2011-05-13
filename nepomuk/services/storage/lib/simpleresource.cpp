@@ -39,12 +39,12 @@ QUrl createBlankUri()
     // convert int to string (a...z,aa...az,ba....bz,...)
     int idCnt = s_idCnt.fetchAndAddRelaxed(1);
     QByteArray id;
-    while(idCnt > 0) {
+    do {
         const int rest = idCnt%26;
         id.append('a' + rest);
         idCnt -= rest;
         idCnt /= 26;
-    }
+    } while(idCnt > 0);
 
     const QUrl uri = QLatin1String("_:") + id;
     return uri;
@@ -244,7 +244,7 @@ uint Nepomuk::qHash(const SimpleResource& res)
     return qHash(res.uri());
 }
 
-QDebug Nepomuk::operator<<(QDebug& dbg, const Nepomuk::SimpleResource& res)
+QDebug Nepomuk::operator<<(QDebug dbg, const Nepomuk::SimpleResource& res)
 {
     return dbg << res.uri() << res.properties();
 }

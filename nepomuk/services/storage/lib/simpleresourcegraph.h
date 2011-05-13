@@ -94,7 +94,7 @@ private:
     QSharedDataPointer<Private> d;
 };
 
-NEPOMUK_DATA_MANAGEMENT_EXPORT QDebug operator<<(QDebug& dbg, const Nepomuk::SimpleResourceGraph& graph);
+NEPOMUK_DATA_MANAGEMENT_EXPORT QDebug operator<<(QDebug dbg, const Nepomuk::SimpleResourceGraph& graph);
 }
 
 #endif

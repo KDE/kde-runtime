@@ -169,7 +169,7 @@ KJob* Nepomuk::SimpleResourceGraph::save(const KComponentData& component) const
     return Nepomuk::storeResources(*this, QHash<QUrl, QVariant>(), component);
 }
 
-QDebug Nepomuk::operator<<(QDebug& dbg, const Nepomuk::SimpleResourceGraph& graph)
+QDebug Nepomuk::operator<<(QDebug dbg, const Nepomuk::SimpleResourceGraph& graph)
 {
     return dbg << graph.toList();
 }
