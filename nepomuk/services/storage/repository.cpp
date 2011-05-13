@@ -203,7 +203,7 @@ void Nepomuk::Repository::open()
     // =================================
     m_dataManagementModel = new DataManagementModel(m_classAndPropertyTree, m_nrlModel, this);
     m_dataManagementAdaptor = new Nepomuk::DataManagementAdaptor(m_dataManagementModel);
-    QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagementmodel"), m_dataManagementAdaptor, QDBusConnection::ExportScriptableContents);
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagement"), m_dataManagementAdaptor, QDBusConnection::ExportScriptableContents);
     setParentModel(m_dataManagementModel);
 
     // check if we have to convert

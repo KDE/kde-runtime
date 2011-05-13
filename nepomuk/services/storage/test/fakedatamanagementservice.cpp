@@ -90,7 +90,7 @@ FakeDataManagementService::FakeDataManagementService(QObject *parent)
     m_dmAdaptor = new Nepomuk::DataManagementAdaptor(m_dmModel);
 
     // register the adaptor
-    QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagementmodel"), m_dmAdaptor, QDBusConnection::ExportScriptableContents);
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagement"), m_dmAdaptor, QDBusConnection::ExportScriptableContents);
 
     // register the dm model itself - simply to let the test case have access to the updateTypeCachesAndSoOn() method
     QDBusConnection::sessionBus().registerObject(QLatin1String("/fakedms"), m_dmModel, QDBusConnection::ExportAllSlots);
