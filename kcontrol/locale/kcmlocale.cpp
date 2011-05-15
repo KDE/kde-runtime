@@ -410,19 +410,48 @@ void KCMLocale::load()
     // Throw away any unsaved changes then reload from file
     m_userConfig->markAsClean();
     m_userConfig->reparseConfiguration();
-    m_currentConfig->reparseConfiguration();
+
+    // Get the currently installed translations
+    m_installedTranslations.clear();
+    m_installedTranslations = m_kcmLocale->installedLanguages();
+
+    // Check if any of the user requested translations are no longer installed
+    // If any missing remove them and save the settings, we'll tell the user later
     m_kcmTranslations.clear();
+    QStringList missingLanguages;
+    QStringList userTranslations = m_userSettings.readEntry( "Language", QString() ).split( ':', QString::SkipEmptyParts );
+    foreach ( const QString &languageCode, userTranslations ) {
+        if ( m_installedTranslations.contains( languageCode ) ) {
+            m_kcmTranslations.append( languageCode );
+        } else {
+            missingLanguages.append( languageCode );
+        }
+    }
+    if (!missingLanguages.isEmpty()) {
+        m_userSettings.writeEntry( "Language", m_kcmTranslations.join( ":" ), KConfig::Persistent | KConfig::Global );
+        m_userConfig->sync();
+    }
+
+    // Now load the new current settings
+    m_currentConfig->reparseConfiguration();
     m_currentTranslations = m_userSettings.readEntry( "Language", QString() );
-    m_kcmTranslations = m_currentTranslations.split( ':', QString::SkipEmptyParts );
 
     // Then create the new settings using the default, include user settings
     mergeSettings();
 
-    // Save the current translations for checking later
-    m_currentTranslations = m_kcmSettings.readEntry( "Language", QString() );
-
     // The update all the widgets to use the new settings
     initAllWidgets();
+
+    // Now we have a ui built tell the user about the missing languages
+    foreach ( const QString &languageCode, missingLanguages ) {
+        KMessageBox::information(this, ki18n("You have the language with code '%1' in your list "
+                                             "of languages to use for translation but the "
+                                             "localization files for it could not be found. The "
+                                             "language has been removed from your configuration. "
+                                             "If you want to add it again please install the "
+                                             "localization files for it and add the language again.")
+                                             .subs( languageCode ).toString( m_kcmLocale ) );
+    }
 }
 
 // Defaults == User has clicked on Defaults to load default settings
@@ -1109,25 +1138,6 @@ void KCMLocale::initTranslations()
     QString enUS;
     QString defaultLang = ki18nc( "%1 = default language name", "%1 (Default)" ).subs( enUS ).toString( m_kcmLocale );
 
-    // Get the installed translations
-    m_installedTranslations.clear();
-    m_installedTranslations = m_kcmLocale->installedLanguages();
-    // Get the users choice of languages
-    m_kcmTranslations.clear();
-    m_kcmTranslations = m_kcmSettings.readEntry( "Language" ).split( ':', QString::SkipEmptyParts );
-    // Set up the locale, note it will throw away invalid langauges
-    m_kcmLocale->setLanguage( m_kcmTranslations );
-
-    // Check if any of the user requested translations are no longer installed
-    // If any missing remove them, we'll tell the user later
-    QStringList missingLanguages;
-    foreach ( const QString &languageCode, m_kcmTranslations ) {
-        if ( !m_installedTranslations.contains( languageCode ) ) {
-            missingLanguages.append( languageCode );
-            m_kcmTranslations.removeAll( languageCode );
-        }
-    }
-
     // Clear the selector before reloading
     m_ui->m_selectTranslations->availableListWidget()->clear();
     m_ui->m_selectTranslations->selectedListWidget()->clear();
@@ -1167,17 +1177,6 @@ void KCMLocale::initTranslations()
                        m_ui->m_selectTranslations, m_ui->m_buttonDefaultTranslations );
 
     m_ui->m_selectTranslations->blockSignals( false );
-
-    // Now tell the user about the missing languages
-    foreach ( const QString &languageCode, missingLanguages ) {
-        KMessageBox::information(this, ki18n("You have the language with code '%1' in your list "
-                                             "of languages to use for translation but the "
-                                             "localization files for it could not be found. The "
-                                             "language has been removed from your configuration. "
-                                             "If you want to add it again please install the "
-                                             "localization files for it and add the language again.")
-                                             .subs( languageCode ).toString( m_kcmLocale ) );
-    }
 }
 
 void KCMLocale::defaultTranslations()
