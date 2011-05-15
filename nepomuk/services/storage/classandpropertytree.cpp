@@ -38,13 +38,18 @@
 
 #include <KDebug>
 
+using namespace Soprano::Vocabulary;
+
+Nepomuk::ClassAndPropertyTree* Nepomuk::ClassAndPropertyTree::s_self = 0;
+
 class Nepomuk::ClassAndPropertyTree::ClassOrProperty
 {
 public:
     ClassOrProperty()
         : isProperty(false),
           maxCardinality(0),
-          userVisible(0) {
+          userVisible(0),
+          identifying(0) {
     }
 
     /// true if this is a property, for classes this is false
@@ -65,19 +70,26 @@ public:
     /// 0 - undecided, 1 - visible, -1 - non-visible
     int userVisible;
 
+    /// 0 - undecided, 1 - identifying, -1 - non-identifying
+    int identifying;
+
     /// only valid for properties
     QUrl domain;
     QUrl range;
 };
 
 Nepomuk::ClassAndPropertyTree::ClassAndPropertyTree(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      m_mutex(QMutex::Recursive)
 {
+    Q_ASSERT(s_self == 0);
+    s_self = this;
 }
 
 Nepomuk::ClassAndPropertyTree::~ClassAndPropertyTree()
 {
     qDeleteAll(m_tree);
+    s_self = 0;
 }
 
 QSet<QUrl> Nepomuk::ClassAndPropertyTree::allParents(const QUrl &uri) const
@@ -100,7 +112,7 @@ bool Nepomuk::ClassAndPropertyTree::isChildOf(const QUrl &type, const QUrl &supe
 
 bool Nepomuk::ClassAndPropertyTree::isChildOf(const QList< QUrl >& types, const QUrl& superClass) const
 {
-    if(superClass == Soprano::Vocabulary::RDFS::Resource()) {
+    if(superClass == RDFS::Resource()) {
         return true;
     }
 
@@ -147,6 +159,26 @@ QUrl Nepomuk::ClassAndPropertyTree::propertyRange(const QUrl &uri) const
         return QUrl();
 }
 
+bool Nepomuk::ClassAndPropertyTree::hasLiteralRange(const QUrl &uri) const
+{
+    // TODO: this is a rather crappy check for literal range
+    QMutexLocker lock(&m_mutex);
+    if(const ClassOrProperty* cop = findClassOrProperty(uri))
+        return (cop->range.toString().startsWith(XMLSchema::xsdNamespace().toString() ) ||
+                cop->range == RDFS::Literal());
+    else
+        return false;
+}
+
+bool Nepomuk::ClassAndPropertyTree::isIdentifyingProperty(const QUrl &uri) const
+{
+    QMutexLocker lock(&m_mutex);
+    if(const ClassOrProperty* cop = findClassOrProperty(uri))
+        return cop->identifying == 1;
+    else
+        return true; // we default to true for unknown properties to ensure that we never perform invalid merges
+}
+
 Soprano::Node Nepomuk::ClassAndPropertyTree::variantToNode(const QVariant &value, const QUrl &property) const
 {
     QSet<Soprano::Node> nodes = variantListToNodeSet(QVariantList() << value, property);
@@ -157,6 +189,7 @@ Soprano::Node Nepomuk::ClassAndPropertyTree::variantToNode(const QVariant &value
 }
 
 
+namespace Soprano {
 namespace Vocabulary {
     namespace XMLSchema {
         QUrl xsdDuration() {
@@ -164,19 +197,20 @@ namespace Vocabulary {
         }
     }
 }
+}
 
 QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QVariantList &vl, const QUrl &property) const
 {
     QSet<Soprano::Node> nodes;
     const QUrl range = propertyRange(property);
     // special case: rdfs:Literal
-    if(range == Soprano::Vocabulary::RDFS::Literal()) {
+    if(range == RDFS::Literal()) {
         Q_FOREACH(const QVariant& value, vl) {
             nodes.insert(Soprano::LiteralValue::createPlainLiteral(value.toString()));
         }
     }
     // Special case for xsd:duration - Soprano doesn't handle it
-    else if( range == Vocabulary::XMLSchema::xsdDuration() ) {
+    else if( range == XMLSchema::xsdDuration() ) {
         Q_FOREACH(const QVariant& value, vl ) {
             if( value.canConvert( QVariant::UInt ) ) {
                 nodes.insert( Soprano::LiteralValue( value.toUInt() ));
@@ -254,7 +288,7 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
     qDeleteAll(m_tree);
     m_tree.clear();
 
-    const QString query
+    QString query
             = QString::fromLatin1("select distinct ?r ?p ?v ?mc ?c ?domain ?range ?ct ?pt "
                                   "where { "
                                   "{ ?r a ?ct . FILTER(?ct=rdfs:Class) . "
@@ -269,12 +303,12 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
                                   "OPTIONAL { ?r %5 ?range . } . "
                                   "FILTER(?r!=%6) . "
                                   "}" )
-            .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::maxCardinality()),
-                 Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::cardinality()),
-                 Soprano::Node::resourceToN3(Soprano::Vocabulary::NAO::userVisible()),
-                 Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::domain()),
-                 Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::range()),
-                 Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::Resource()));
+            .arg(Soprano::Node::resourceToN3(NRL::maxCardinality()),
+                 Soprano::Node::resourceToN3(NRL::cardinality()),
+                 Soprano::Node::resourceToN3(NAO::userVisible()),
+                 Soprano::Node::resourceToN3(RDFS::domain()),
+                 Soprano::Node::resourceToN3(RDFS::range()),
+                 Soprano::Node::resourceToN3(RDFS::Resource()));
 //    kDebug() << query;
     Soprano::QueryResultIterator it
             = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
@@ -315,10 +349,14 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
         if(!range.isEmpty()) {
             r_cop->range = range;
         }
+        else {
+            // no range -> resource range
+            r_cop->identifying = -1;
+        }
 
         if ( p.isResource() &&
                 p.uri() != r &&
-                p.uri() != Soprano::Vocabulary::RDFS::Resource() ) {
+                p.uri() != RDFS::Resource() ) {
             ClassOrProperty* p_cop = 0;
             if ( !m_tree.contains( p.uri() ) ) {
                 p_cop = new ClassOrProperty;
@@ -331,11 +369,11 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
 
     // make sure rdfs:Resource is visible by default
     ClassOrProperty* rdfsResourceNode = 0;
-    QHash<QUrl, ClassOrProperty*>::iterator rdfsResourceIt = m_tree.find(Soprano::Vocabulary::RDFS::Resource());
+    QHash<QUrl, ClassOrProperty*>::iterator rdfsResourceIt = m_tree.find(RDFS::Resource());
     if( rdfsResourceIt == m_tree.end() ) {
         rdfsResourceNode = new ClassOrProperty;
-        rdfsResourceNode->uri = Soprano::Vocabulary::RDFS::Resource();
-        m_tree.insert( Soprano::Vocabulary::RDFS::Resource(), rdfsResourceNode );
+        rdfsResourceNode->uri = RDFS::Resource();
+        m_tree.insert( RDFS::Resource(), rdfsResourceNode );
     }
     else {
         rdfsResourceNode = rdfsResourceIt.value();
@@ -347,7 +385,7 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
     for ( QHash<QUrl, ClassOrProperty*>::iterator it = m_tree.begin();
           it != m_tree.end(); ++it ) {
         if( it.value() != rdfsResourceNode && it.value()->directParents.isEmpty() ) {
-            it.value()->directParents.insert( Soprano::Vocabulary::RDFS::Resource() );
+            it.value()->directParents.insert( RDFS::Resource() );
         }
     }
 
@@ -363,6 +401,32 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
           it != m_tree.end(); ++it ) {
         QSet<QUrl> visitedNodes;
         getAllParents( it.value(), visitedNodes );
+    }
+
+    // update all identifying and flux properties
+    // by default all properties with a literal range are identifying
+    // and all properties with a resource range are non-idenifying
+    query = QString::fromLatin1("select ?p ?t where { "
+                                "?p a rdf:Property . "
+                                "?p a ?t . FILTER(?t!=rdf:Property) . }");
+    it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    while( it.next() ) {
+        const QUrl p = it["p"].uri();
+        const QUrl t = it["t"].uri();
+
+        if(t == QUrl(NRL::nrlNamespace().toString() + QLatin1String("IdentifyingProperty"))) {
+            m_tree[p]->identifying = 1;
+        }
+        else if(t == QUrl(NRL::nrlNamespace().toString() + QLatin1String("FluxProperty"))) {
+            m_tree[p]->identifying = -1;
+        }
+    }
+    for ( QHash<QUrl, ClassOrProperty*>::iterator it = m_tree.begin();
+          it != m_tree.end(); ++it ) {
+        if(it.value()->isProperty) {
+            QSet<QUrl> visitedNodes;
+            updateIdentifying( it.value(), visitedNodes );
+        }
     }
 }
 
@@ -406,6 +470,36 @@ int Nepomuk::ClassAndPropertyTree::updateUserVisibility( ClassOrProperty* cop, Q
     }
 }
 
+/**
+ * Set the value of identifying.
+ * An identifying property has at least one identifying direct parent property.
+ */
+int Nepomuk::ClassAndPropertyTree::updateIdentifying( ClassOrProperty* cop, QSet<QUrl>& identifyingNodes )
+{
+    if ( cop->identifying != 0 ) {
+        return cop->identifying;
+    }
+    else {
+        for ( QSet<QUrl>::iterator it = cop->directParents.begin();
+             it != cop->directParents.end(); ++it ) {
+            // avoid endless loops
+            if( identifyingNodes.contains(*it) )
+                continue;
+            identifyingNodes.insert(*it);
+            if ( updateIdentifying( m_tree[*it], identifyingNodes ) == 1 ) {
+                cop->identifying = 1;
+                break;
+            }
+        }
+        if ( cop->identifying == 0 ) {
+            // properties with a literal range default to identifying
+            cop->identifying = hasLiteralRange(cop->uri) ? 1 : -1;
+        }
+        kDebug() << "Setting identifying of" << cop->uri.toString() << ( cop->identifying == 1 );
+        return cop->identifying;
+    }
+}
+
 QSet<QUrl> Nepomuk::ClassAndPropertyTree::getAllParents(ClassOrProperty* cop, QSet<QUrl>& visitedNodes)
 {
     if(cop->allParents.isEmpty()) {
@@ -420,7 +514,7 @@ QSet<QUrl> Nepomuk::ClassAndPropertyTree::getAllParents(ClassOrProperty* cop, QS
         cop->allParents += cop->directParents;
 
         // some cleanup to fix inheritance loops
-        cop->allParents << Soprano::Vocabulary::RDFS::Resource();
+        cop->allParents << RDFS::Resource();
         cop->allParents.remove(cop->uri);
     }
     return cop->allParents;
@@ -466,6 +560,11 @@ QList<QUrl> Nepomuk::ClassAndPropertyTree::visibleTypes() const
         }
     }
     return types;
+}
+
+Nepomuk::ClassAndPropertyTree * Nepomuk::ClassAndPropertyTree::self()
+{
+    return s_self;
 }
 
 #include "classandpropertytree.moc"

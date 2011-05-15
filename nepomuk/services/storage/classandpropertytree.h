@@ -58,6 +58,13 @@ public:
     QUrl propertyDomain(const QUrl& uri) const;
     QUrl propertyRange(const QUrl& uri) const;
 
+    /// \return \p true if \p uri is a property and has a literal range, \p false otherwise.
+    bool hasLiteralRange(const QUrl& uri) const;
+
+    /// \return \p true if \p uri is an identifying property, \p false otherwise
+    bool isIdentifyingProperty(const QUrl& uri) const;
+
+    /// \return A list of all known rdf classes that are visible (nao:userVisible)
     QList<QUrl> visibleTypes() const;
 
     /// will try very hard to convert a variant into a node. Supports literal XML types and QUrl
@@ -65,6 +72,8 @@ public:
     QSet<Soprano::Node> variantListToNodeSet(const QVariantList& vl, const QUrl& property) const;
 
     QList<Soprano::Statement> simpleResourceToStatementList(const Nepomuk::SimpleResource& res) const;
+
+    static ClassAndPropertyTree* self();
 
 public Q_SLOTS:
     void rebuildTree(Soprano::Model* model);
@@ -74,11 +83,14 @@ private:
 
     const ClassOrProperty* findClassOrProperty(const QUrl& uri) const;
     int updateUserVisibility(ClassOrProperty *cop, QSet<QUrl> &visitedNodes);
+    int updateIdentifying(ClassOrProperty* cop, QSet<QUrl>& identifyingNodes);
     QSet<QUrl> getAllParents(ClassOrProperty *cop, QSet<QUrl> &visitedNodes);
 
     QHash<QUrl, ClassOrProperty*> m_tree;
 
     mutable QMutex m_mutex;
+
+    static ClassAndPropertyTree* s_self;
 };
 }
 

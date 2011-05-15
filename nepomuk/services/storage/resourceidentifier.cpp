@@ -20,6 +20,7 @@
 
 #include "resourceidentifier.h"
 #include "syncresource.h"
+#include "classandpropertytree.h"
 
 #include <QtCore/QDateTime>
 #include <QtCore/QSet>
@@ -90,26 +91,15 @@ KUrl Nepomuk::ResourceIdentifier::duplicateMatch(const KUrl& origUri, const QSet
 
 bool Nepomuk::ResourceIdentifier::isIdentfyingProperty(const QUrl& uri)
 {
-    //- by default all properties with a literal range are identifying
-    // - by default all properties with a resource range are non-identifying
-    // - a few literal properties like nao:rating or nmo:imStatusMessage are marked as non-identifying
-    // - a few resource properties are marked as identifying
-    
-    //TODO: Implement me properly!
-    if( uri == NAO::created() || uri == NAO::creator() || uri == NAO::lastModified() 
-        || uri == NAO::userVisible() )
+    if( uri == NAO::created()
+            || uri == NAO::creator()
+            || uri == NAO::lastModified()
+            || uri == NAO::userVisible() ) {
         return false;
-    
-    // TODO: Hanlde nxx:FluxProperty and nxx:resourceRangePropWhichCanIdentified
-    const QString query = QString::fromLatin1("ask { %1 %2 ?range . "
-                                              " %1 a %3 . "
-                                              "{ FILTER( regex(str(?range), '^http://www.w3.org/2001/XMLSchema#') ) . }"
-                                              " UNION { %1 a rdf:Property . } }") // rdf:Property should be nxx:resourceRangePropWhichCanIdentified
-                          .arg( Soprano::Node::resourceToN3( uri ),
-                                Soprano::Node::resourceToN3( RDFS::range() ),
-                                Soprano::Node::resourceToN3( RDF::Property() ) );
-                          
-    return model()->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
+    }
+    else {
+        return ClassAndPropertyTree::self()->isIdentifyingProperty(uri);
+    }
 }
 
 
