@@ -1,11 +1,13 @@
 [Desktop Entry]
 Name=Nepomuk File Indexing Controller
+Name[ia]=Controlator de indicisation de file de Nepomuk
 Name[nl]=Besturing door Nepomuk van bestandenindexering
 Name[pt]=Controlador de Indexação de Ficheiros do Nepomuk
 Name[sv]=Nepomuk-styrning av filindexering
 Name[uk]=Засіб керування індексуванням файлів у Nepomuk
 Name[x-test]=xxNepomuk File Indexing Controllerxx
 Comment=System tray icon to control the behaviour of the Nepomuk file indexer
+Comment[ia]=Icone de tabuliero de systema per controlar le comportamento del indicisator de file de Nepomuk
 Comment[nl]=Pictogram in het systeemvak om het gedrag van bestandenindexering van Nepomuk te besturen
 Comment[pt]=Ícone da bandeja para controlar o comportamento de indexação de ficheiros do Nepomuk
 Comment[sv]=Ikon i systembrickan för att styra beteendet hos Nepomuk-filindexering

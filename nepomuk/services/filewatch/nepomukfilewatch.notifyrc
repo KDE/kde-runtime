@@ -1,6 +1,8 @@
 [Global]
 IconName=nepomuk
 Comment=Nepomuk file watch service
+Comment[ia]=Servicio de guarda de file de Nepomuk
+Comment[nl]=Nepomuk bestandenbewakingsdienst
 Comment[pt]=Serviço de pesquisa de ficheiros do Nepomuk
 Comment[sv]=Nepomuk-tjänst för filövervakning
 Comment[uk]=Служба нагляду за файлами Nepomuk
@@ -8,11 +10,15 @@ Comment[x-test]=xxNepomuk file watch servicexx
 
 [Event/nepomuk_new_removable_device]
 Name=New Removable Device
+Name[ia]=Nove dispositivo removibile
+Name[nl]=Nieuwe verwijderbare apparaten
 Name[pt]=Novo Dispositivo Removível
 Name[sv]=Flyttbara enheter
 Name[uk]=Новий портативний пристрій
 Name[x-test]=xxNew Removable Devicexx
 Comment=A new unknown removable device has been mounted
+Comment[ia]=Un nove dispositivo removibile incognite ha essite montate
+Comment[nl]=Een nieuw verwijderbaar apparaat is aangekoppeld
 Comment[pt]=Foi montado um novo dispositivo removível desconhecido
 Comment[sv]=En ny obekant flyttbar enhet har monterats
 Comment[uk]=Було змонтовано новий невідомий портативний пристрій
