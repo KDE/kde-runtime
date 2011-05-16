@@ -1655,6 +1655,7 @@ void DataManagementModelTest::testRemoveDataByApplication1()
 
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
 
     // delete the resource
     m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
