@@ -100,14 +100,22 @@ namespace {
         return n3;
     }
 
-    QString createResourceMetadataPropertyFilter(const QString& propVar) {
-        return QString::fromLatin1("%1!=%2 && %1!=%3 && %1!=%4 && %1!=%5 && %1!=%6")
+    /*
+     * Creates a filter (without the "FILTER" keyword) which either excludes the \p propVar
+     * as once of the metadata properties or forces it to be one.
+     */
+    QString createResourceMetadataPropertyFilter(const QString& propVar, bool exclude = true) {
+        const QString pred = exclude ? QLatin1String("&&") : QLatin1String("||");
+        const QString comp = exclude ? QLatin1String("!=") : QLatin1String("=");
+        return QString::fromLatin1("%1%7%2 %8 %1%7%3 %8 %1%7%4 %8 %1%7%5 %8 %1%7%6")
                 .arg(propVar,
                      Soprano::Node::resourceToN3(NAO::created()),
                      Soprano::Node::resourceToN3(NAO::lastModified()),
                      Soprano::Node::resourceToN3(NAO::creator()),
                      Soprano::Node::resourceToN3(NAO::userVisible()),
-                     Soprano::Node::resourceToN3(NIE::url()));
+                     Soprano::Node::resourceToN3(NIE::url()),
+                     comp,
+                     pred);
     }
 
     template<typename T> QString createResourceExcludeFilter(const T& resources, const QString& var) {
@@ -930,49 +938,65 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
 
 
     // Get the graphs we need to check with removeTrailingGraphs later on.
-    QHash<QUrl, int> graphs;
-    Soprano::QueryResultIterator it
-            = executeQuery(QString::fromLatin1("select distinct ?g (select count(distinct ?app) where { ?g %1 ?app . }) as ?c where { "
+    // query all graphs the app maintains which contain any information about one of the resources
+    // count the number of apps maintaining those graphs (later we will only remove the app as maintainer but keep the graph)
+    // count the number of metadata properties defined in those graphs (we will keep that information in case the resource is not fully removed)
+    QList<Soprano::BindingSet> graphRemovalCandidates
+            = executeQuery(QString::fromLatin1("select distinct "
+                                               "?g "
+                                               "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
+                                               "(select count (*) where { graph ?g { ?r ?mp ?mo . FILTER(%4) . } . }) as ?mc "
+                                               "where { "
                                                "graph ?g { ?r ?p ?o . } . "
                                                "?g %1 %2 . "
                                                "FILTER(?r in (%3)) . }")
                            .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
                                 Soprano::Node::resourceToN3(appRes),
-                                resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                           Soprano::Query::QueryLanguageSparql);
-    while(it.next()) {
-        graphs.insert(it["g"].uri(), it["c"].literal().toInt());
-    }
+                                resourcesToN3(resolvedResources).join(QLatin1String(",")),
+                                createResourceMetadataPropertyFilter(QLatin1String("?mp"), false)),
+                           Soprano::Query::QueryLanguageSparql).allElements();
 
 
     // remove the resources
     // Other apps might be maintainer, too. In that case only remove the app as a maintainer but keep the data
+    QSet<QUrl> graphs;
     const QDateTime now = QDateTime::currentDateTime();
     QUrl mtimeGraph;
-    for(QHash<QUrl, int>::const_iterator it = graphs.constBegin(); it != graphs.constEnd(); ++it) {
-        const QUrl& g = it.key();
-        const int appCnt = it.value();
+    for(QList<Soprano::BindingSet>::const_iterator it = graphRemovalCandidates.constBegin(); it != graphRemovalCandidates.constEnd(); ++it) {
+        const QUrl g = it->value("g").uri();
+        const int appCnt = it->value("c").literal().toInt();
+        const int metadataPropCount = it->value("mc").literal().toInt();
+        kDebug() << g << appCnt << metadataPropCount;
         if(appCnt == 1) {
             foreach(const QUrl& res, resolvedResources) {
                 if(doesResourceExist(res, g)) {
-                    // we cannot remove the nie:url since that would remove the tie to the desktop resource
-                    // thus, we remember it and re-add it later on
+                    //
+                    // We cannot remove the metadata if the resource is not removed completely
+                    // Thus, we re-add them later on.
+                    // trueg: as soon as we have real inference and do not rely on the crappy inferencer to update types via the
+                    //        Soprano statement manipulation methods we can use powerful queries like this one:
+                    //                    executeQuery(QString::fromLatin1("delete from %1 { %2 ?p ?o . } where { %2 ?p ?o . FILTER(%3) . }")
+                    //                                 .arg(Soprano::Node::resourceToN3(g),
+                    //                                      Soprano::Node::resourceToN3(res),
+                    //                                      createResourceMetadataPropertyFilter(QLatin1String("?p"))),
+                    //                                 Soprano::Query::QueryLanguageSparql);
+                    //
                     QUrl nieUrl;
-                    Soprano::QueryResultIterator nieUrlIt
-                            = executeQuery(QString::fromLatin1("select ?u where { graph %1 { %2 %3 ?u . } . } limit 1")
-                                           .arg(Soprano::Node::resourceToN3(g),
-                                                Soprano::Node::resourceToN3(res),
-                                                Soprano::Node::resourceToN3(NIE::url())),
-                                           Soprano::Query::QueryLanguageSparql);
-                    if(nieUrlIt.next()) {
-                        nieUrl = nieUrlIt[0].uri();
+                    QList<Soprano::BindingSet> metadataProps;
+                    if(metadataPropCount > 0) {
+                        // remember the metadata props
+                        metadataProps = executeQuery(QString::fromLatin1("select ?p ?o where { graph %1 { %2 ?p ?o . FILTER(%3) . } . }")
+                                                     .arg(Soprano::Node::resourceToN3(g),
+                                                          Soprano::Node::resourceToN3(res),
+                                                          createResourceMetadataPropertyFilter(QLatin1String("?p"), false)),
+                                                     Soprano::Query::QueryLanguageSparql).allBindings();
                     }
 
                     removeAllStatements(res, Soprano::Node(), Soprano::Node(), g);
                     removeAllStatements(Soprano::Node(), Soprano::Node(), res, g);
 
-                    if(!nieUrl.isEmpty()) {
-                        addStatement(res, NIE::url(), nieUrl, g);
+                    foreach(const Soprano::BindingSet& set, metadataProps)  {
+                        addStatement(res, set["p"], set["o"], g);
                     }
 
                     // update mtime
@@ -985,8 +1009,11 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                     updateModificationDate(res, mtimeGraph, now);
                 }
             }
+
+            graphs.insert(g);
         }
         else {
+            // we simply remove the app as maintainer of this graph
             removeAllStatements(g, NAO::maintainedBy(), appRes);
         }
     }
@@ -1003,7 +1030,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     }
 
 
-    removeTrailingGraphs(QSet<QUrl>::fromList(graphs.keys()));
+    removeTrailingGraphs(graphs);
 }
 
 void Nepomuk::DataManagementModel::removeDataByApplication(RemovalFlags flags, const QString &app)
