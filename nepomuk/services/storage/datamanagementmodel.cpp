@@ -937,10 +937,12 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     }
 
 
+    //
     // Get the graphs we need to check with removeTrailingGraphs later on.
     // query all graphs the app maintains which contain any information about one of the resources
     // count the number of apps maintaining those graphs (later we will only remove the app as maintainer but keep the graph)
     // count the number of metadata properties defined in those graphs (we will keep that information in case the resource is not fully removed)
+    //
     QList<Soprano::BindingSet> graphRemovalCandidates
             = executeQuery(QString::fromLatin1("select distinct "
                                                "?g "
@@ -966,7 +968,6 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
         const QUrl g = it->value("g").uri();
         const int appCnt = it->value("c").literal().toInt();
         const int metadataPropCount = it->value("mc").literal().toInt();
-        kDebug() << g << appCnt << metadataPropCount;
         if(appCnt == 1) {
             foreach(const QUrl& res, resolvedResources) {
                 if(doesResourceExist(res, g)) {
@@ -981,7 +982,6 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                     //                                      createResourceMetadataPropertyFilter(QLatin1String("?p"))),
                     //                                 Soprano::Query::QueryLanguageSparql);
                     //
-                    QUrl nieUrl;
                     QList<Soprano::BindingSet> metadataProps;
                     if(metadataPropCount > 0) {
                         // remember the metadata props
@@ -1033,11 +1033,15 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     removeTrailingGraphs(graphs);
 }
 
+namespace {
+struct GraphRemovalCandidate {
+    int appCnt;
+    QHash<QUrl, int> resources;
+};
+}
+
 void Nepomuk::DataManagementModel::removeDataByApplication(RemovalFlags flags, const QString &app)
 {
-    setError("Not implemented yet");
-    return;
-
     //
     // Check parameters
     //
@@ -1053,67 +1057,114 @@ void Nepomuk::DataManagementModel::removeDataByApplication(RemovalFlags flags, c
         return;
     }
 
-    // TODO: remove all graphs maintained by app alone
-    //       without deleting any resource metadata for resources that still exist in other graphs
 
-    // We use two steps:
-    // 1. remove all graphs that do not contain any data that is vital to any other graph we cannot delete
-    // 2. remove the parts of the graphs that we can delete
-
-    QSet<QUrl> graphsToRemove;
-    QSet<QUrl> resourcesToCheckForRemoval;
+    //
+    // Get the graphs we need to check with removeTrailingGraphs later on.
+    // query all graphs the app maintains
+    // count the number of apps maintaining those graphs (later we will only remove the app as maintainer but keep the graph)
+    // count the number of metadata properties defined in those graphs (we will keep that information in case the resource is not fully removed)
+    //
+    QHash<QUrl, GraphRemovalCandidate> graphRemovalCandidates;
     Soprano::QueryResultIterator it
-            = executeQuery(QString::fromLatin1("select ?g ?r where { graph ?g { ?r ?p ?o . } . "
-                                               "?g %1 %2 . FILTER(!bif:exists((select (1) where { ?g %1 ?a . FILTER(?a!=%2) . }))) . "
-                                               "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r ?p2 ?o2 . } . ?g2 %1 ?a2 . FILTER(?a2!=%2) . FILTER(%3)})) || %4) . " // %4 is incorrect. What we actually want is to check that there is no metadata ?p in the graph
+            = executeQuery(QString::fromLatin1("select distinct "
+                                               "?g ?r "
+                                               "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
+                                               "(select count (*) where { graph ?g { ?r ?mp ?mo . FILTER(%3) . } . }) as ?mc "
+                                               "where { "
+                                               "graph ?g { ?r ?p ?o . } . "
+                                               "?g %1 %2 . "
                                                "}")
                            .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
                                 Soprano::Node::resourceToN3(appRes),
-                                createResourceMetadataPropertyFilter(QLatin1String("?p2")),
-                                createResourceMetadataPropertyFilter(QLatin1String("?p"))),
+                                createResourceMetadataPropertyFilter(QLatin1String("?mp"), false)),
                            Soprano::Query::QueryLanguageSparql);
     while(it.next()) {
-        graphsToRemove.insert(it["g"].uri());
-        resourcesToCheckForRemoval.insert(it["r"].uri());
+        GraphRemovalCandidate& g = graphRemovalCandidates[it["g"].uri()];
+        g.appCnt = it["c"].literal().toInt();
+        g.resources[it["r"].uri()] = it["mc"].literal().toInt();
     }
 
-    // remove the graphs we can remove without problems
-    Q_FOREACH(const QUrl& g, graphsToRemove) {
-        if(removeContext(g) != Soprano::Error::ErrorNone)
-            return;
-    }
-
-
-    // Now step 2: get the graphs that contain data from the app but cannot be removed entirely
-    QHash<QUrl, QPair<int, QUrl> > graphs;
-    it = executeQuery(QString::fromLatin1("select distinct ?g (select count(distinct ?app) where { ?g %1 ?app . }) as ?c ?a where { "
-                                          "graph ?g { ?r ?p ?o . } . "
-                                          "?g %1 ?a . "
-                                          "?a %2 %3 . }")
-                      .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
-                           Soprano::Node::resourceToN3(NAO::identifier()),
-                           Soprano::Node::literalToN3(app)),
-                      Soprano::Query::QueryLanguageSparql);
-    while(it.next()) {
-        graphs.insert(it["g"].uri(), qMakePair(it["c"].literal().toInt(), it["a"].uri()));
-    }
-
+    QSet<QUrl> allResources;
+    QSet<QUrl> graphs;
     const QDateTime now = QDateTime::currentDateTime();
     QUrl mtimeGraph;
-    for(QHash<QUrl, QPair<int, QUrl> >::const_iterator it = graphs.constBegin(); it != graphs.constEnd(); ++it) {
+    for(QHash<QUrl, GraphRemovalCandidate>::const_iterator it = graphRemovalCandidates.constBegin(); it != graphRemovalCandidates.constEnd(); ++it) {
         const QUrl& g = it.key();
-        const int appCnt = it.value().first;
-        const QUrl& appUri = it.value().second;
+        const int appCnt = it.value().appCnt;
         if(appCnt == 1) {
-            // remove the graph, but first check if we remove anything vital. This is tricky: it might only be vital to another graph we delete!
+            //
+            // Run through all resources and see what needs to be done
+            // TODO: this can surely be improved by moving at least one query
+            // one layer above
+            //
+            for(QHash<QUrl, int>::const_iterator resIt = it->resources.constBegin(); resIt != it->resources.constEnd(); ++resIt) {
+                const QUrl& res = resIt.key();
+                const int metadataPropCount = resIt.value();
+                if(doesResourceExist(res, g)) {
+                    //
+                    // We cannot remove the metadata if the resource is not removed completely
+                    // Thus, we re-add them later on.
+                    // trueg: as soon as we have real inference and do not rely on the crappy inferencer to update types via the
+                    //        Soprano statement manipulation methods we can use powerful queries like this one:
+                    //                    executeQuery(QString::fromLatin1("delete from %1 { %2 ?p ?o . } where { %2 ?p ?o . FILTER(%3) . }")
+                    //                                 .arg(Soprano::Node::resourceToN3(g),
+                    //                                      Soprano::Node::resourceToN3(res),
+                    //                                      createResourceMetadataPropertyFilter(QLatin1String("?p"))),
+                    //                                 Soprano::Query::QueryLanguageSparql);
+                    //
+                    QList<Soprano::BindingSet> metadataProps;
+                    if(metadataPropCount > 0) {
+                        // remember the metadata props
+                        metadataProps = executeQuery(QString::fromLatin1("select ?p ?o where { graph %1 { %2 ?p ?o . FILTER(%3) . } . }")
+                                                     .arg(Soprano::Node::resourceToN3(g),
+                                                          Soprano::Node::resourceToN3(res),
+                                                          createResourceMetadataPropertyFilter(QLatin1String("?p"), false)),
+                                                     Soprano::Query::QueryLanguageSparql).allBindings();
+                    }
 
+                    removeAllStatements(res, Soprano::Node(), Soprano::Node(), g);
+                    removeAllStatements(Soprano::Node(), Soprano::Node(), res, g);
+
+                    foreach(const Soprano::BindingSet& set, metadataProps)  {
+                        addStatement(res, set["p"], set["o"], g);
+                    }
+
+                    // update mtime
+                    if(mtimeGraph.isEmpty()) {
+                        mtimeGraph = createGraph(app);
+                        if(lastError()) {
+                            return;
+                        }
+                    }
+                    updateModificationDate(res, mtimeGraph, now);
+                }
+
+                allResources.insert(res);
+            }
+
+
+            graphs.insert(g);
         }
         else {
-            removeAllStatements(g, NAO::maintainedBy(), appUri);
+            // we simply remove the app as maintainer of this graph
+            removeAllStatements(g, NAO::maintainedBy(), appRes);
         }
     }
 
-    removeTrailingGraphs(QSet<QUrl>::fromList(graphs.keys()));
+
+    // make sure we do not leave anything empty trailing around and propery update the mtime
+    QList<QUrl> resourcesToRemoveCompletely;
+    foreach(const QUrl& res, allResources) {
+        if(!doesResourceExist(res)) {
+            resourcesToRemoveCompletely << res;
+        }
+    }
+    if(!resourcesToRemoveCompletely.isEmpty()){
+        removeResources(resourcesToRemoveCompletely, flags, app);
+    }
+
+
+    removeTrailingGraphs(graphs);
 }
 
 void Nepomuk::DataManagementModel::removePropertiesByApplication(const QList<QUrl> &resources, const QList<QUrl> &properties, const QString &app)
