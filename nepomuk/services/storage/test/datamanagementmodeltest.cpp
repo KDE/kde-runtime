@@ -2088,9 +2088,6 @@ void DataManagementModelTest::testStoreResources_graphRules()
 
 void DataManagementModelTest::testStoreResources_createResource()
 {
-#warning We need to get rid of the ResourceManager usage here!
-    ResourceManager::instance()->setOverrideMainModel( m_model );
-
     //
     // Simple case: create a resource by merging it
     //
@@ -2201,8 +2198,6 @@ void DataManagementModelTest::testStoreResources_createResource()
 
 void DataManagementModelTest::testStoreResources_invalid_args()
 {
-    ResourceManager::instance()->setOverrideMainModel( m_model );
-
     // remember current state to compare later on
     Soprano::Graph existingStatements = m_model->listStatements().allStatements();
 
@@ -2278,8 +2273,6 @@ void DataManagementModelTest::testStoreResources_invalid_args()
 
 void DataManagementModelTest::testStoreResources_invalid_args_with_existing()
 {
-    ResourceManager::instance()->setOverrideMainModel( m_model );
-
     // create a test resource
     QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
     m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
@@ -2378,8 +2371,6 @@ void DataManagementModelTest::testStoreResources_file1()
     QTemporaryFile fileA;
     fileA.open();
 
-    ResourceManager::instance()->setOverrideMainModel( m_model );
-
     // merge a file URL
     SimpleResource r1;
     r1.setUri(QUrl::fromLocalFile(fileA.fileName()));
@@ -2410,8 +2401,6 @@ void DataManagementModelTest::testStoreResources_file1()
 
 void DataManagementModelTest::testStoreResources_file2()
 {
-    ResourceManager::instance()->setOverrideMainModel( m_model );
-
     // merge a property with non-existing file value
     QTemporaryFile fileA;
     fileA.open();
@@ -2590,8 +2579,6 @@ void DataManagementModelTest::testStoreResources_sameNieUrl()
 // metadata should be ignored when merging one resource into another
 void DataManagementModelTest::testStoreResources_metadata()
 {
-    ResourceManager::instance()->setOverrideMainModel( m_model );
-
     // create our app
     const QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
     m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
@@ -2677,8 +2664,6 @@ void DataManagementModelTest::testStoreResources_metadata()
 
 void DataManagementModelTest::testStoreResources_protectedTypes()
 {
-    ResourceManager::instance()->setOverrideMainModel( m_model );
-
     // remember current state to compare later on
     Soprano::Graph existingStatements = m_model->listStatements().allStatements();
 
@@ -2728,8 +2713,6 @@ void DataManagementModelTest::testStoreResources_protectedTypes()
 // make sure storeResources ignores supertypes
 void DataManagementModelTest::testStoreResources_superTypes()
 {
-    ResourceManager::instance()->setOverrideMainModel( m_model );
-
     // 1. create a resource to merge
     QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
     m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
@@ -2762,8 +2745,6 @@ void DataManagementModelTest::testStoreResources_superTypes()
 // make sure merging even works with missing metadata in store
 void DataManagementModelTest::testStoreResources_missingMetadata()
 {
-    ResourceManager::instance()->setOverrideMainModel( m_model );
-
     // create our app
     const QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
     m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
@@ -2820,8 +2801,6 @@ void DataManagementModelTest::testStoreResources_missingMetadata()
 // test merging when there is more than one candidate resource to merge with
 void DataManagementModelTest::testStoreResources_multiMerge()
 {
-    ResourceManager::instance()->setOverrideMainModel( m_model );
-
     // create two resource which could be matches for the one we will store
     const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
 
@@ -2857,8 +2836,6 @@ void DataManagementModelTest::testStoreResources_multiMerge()
 // an example from real-life which made an early version of DMS fail
 void DataManagementModelTest::testStoreResources_realLife()
 {
-    ResourceManager::instance()->setOverrideMainModel( m_model );
-
     // we deal with one file
     QTemporaryFile theFile;
     theFile.open();
@@ -3003,8 +2980,6 @@ void DataManagementModelTest::testStoreResources_realLife()
 
 void DataManagementModelTest::testStoreResources_trivialMerge()
 {
-    ResourceManager::instance()->setOverrideMainModel( m_model );
-
     // we create a resource with some properties
     const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
 
