@@ -72,6 +72,7 @@ Name[be@latin]=Aplikacyja
 Name[bg]=Програма
 Name[bn]=অ্যাপলিকেশন
 Name[bn_IN]=অ্যাপ্লিকেশন
+Name[bs]=Program
 Name[ca]=Aplicació
 Name[ca@valencia]=Aplicació
 Name[cs]=Aplikace
@@ -149,6 +150,7 @@ Name[zh_TW]=應用程式
 [Event/AudioDeviceFallback]
 Name=Audio Output Device Changed
 Name[ast]=Cambeos en preseos de salida d'audiu
+Name[bs]=Promijenjen uređaj audio izlaza
 Name[ca]=Ha canviat el dispositiu de sortida de l'àudio
 Name[ca@valencia]=Ha canviat el dispositiu d'eixida de l'àudio
 Name[cs]=Zvukové výstupní zařízení změněno
