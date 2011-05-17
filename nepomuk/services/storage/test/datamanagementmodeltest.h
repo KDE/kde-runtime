@@ -86,6 +86,11 @@ private Q_SLOTS:
     void testRemoveDataByApplication7();
     void testRemoveDataByApplication8();
 
+    void testRemoveAllDataByApplication1();
+    void testRemoveAllDataByApplication2();
+    void testRemoveAllDataByApplication3();
+    void testRemoveAllDataByApplication4();
+
     void testStoreResources_strigiCase();
     void testStoreResources_graphRules();
     void testStoreResources_createResource();
