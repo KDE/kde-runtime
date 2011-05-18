@@ -14,6 +14,7 @@ install(FILES
   org.kde.nepomuk.services.nepomukbackupsync.syncmanager.xml
   org.kde.nepomuk.services.nepomukbackupsync.identifier.xml
   org.kde.nepomuk.services.nepomukbackupsync.merger.xml
+  org.kde.nepomuk.DataManagement.xml
   org.kde.nepomuk.ResourceWatcher.xml
   org.kde.nepomuk.ResourceWatcherConnection.xml
   DESTINATION ${DBUS_INTERFACES_INSTALL_DIR}
