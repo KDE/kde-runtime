@@ -116,14 +116,14 @@ void Nepomuk::DataManagementAdaptor::removeDataByApplication(int flags, const QS
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new RemoveDataByApplicationCommand(QList<QUrl>(), app, flags, m_model, message()));
+    enqueueCommand(new RemoveDataByApplicationCommand(app, flags, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::removeDataByApplication(const QStringList &resources, int flags, const QString &app)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new RemoveDataByApplicationCommand(decodeUris(resources), app, flags, m_model, message()));
+    enqueueCommand(new RemoveResourcesByApplicationCommand(decodeUris(resources), app, flags, m_model, message()));
 }
 
 void Nepomuk::DataManagementAdaptor::removeProperties(const QStringList &resources, const QStringList &properties, const QString &app)

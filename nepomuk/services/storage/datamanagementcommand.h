@@ -190,14 +190,14 @@ private:
     QString m_app;
 };
 
-class RemoveDataByApplicationCommand : public DataManagementCommand
+class RemoveResourcesByApplicationCommand : public DataManagementCommand
 {
 public:
-    RemoveDataByApplicationCommand(const QList<QUrl>& res,
-                                   const QString& app,
-                                   int flags,
-                                   Nepomuk::DataManagementModel* model,
-                                   const QDBusMessage& msg)
+    RemoveResourcesByApplicationCommand(const QList<QUrl>& res,
+                                        const QString& app,
+                                        int flags,
+                                        Nepomuk::DataManagementModel* model,
+                                        const QDBusMessage& msg)
         : DataManagementCommand(model, msg),
           m_resources(res),
           m_app(app),
@@ -205,14 +205,32 @@ public:
 
 private:
     QVariant runCommand() {
-        if(m_resources.isEmpty())
-            model()->removeDataByApplication(m_flags, m_app);
-        else
-            model()->removeDataByApplication(m_resources, m_flags, m_app);
+        model()->removeDataByApplication(m_resources, m_flags, m_app);
         return QVariant();
     }
 
     QList<QUrl> m_resources;
+    QString m_app;
+    DataManagementModel::RemovalFlags m_flags;
+};
+
+class RemoveDataByApplicationCommand : public DataManagementCommand
+{
+public:
+    RemoveDataByApplicationCommand(const QString& app,
+                                   int flags,
+                                   Nepomuk::DataManagementModel* model,
+                                   const QDBusMessage& msg)
+        : DataManagementCommand(model, msg),
+          m_app(app),
+          m_flags(flags) {}
+
+private:
+    QVariant runCommand() {
+        model()->removeDataByApplication(m_flags, m_app);
+        return QVariant();
+    }
+
     QString m_app;
     DataManagementModel::RemovalFlags m_flags;
 };
