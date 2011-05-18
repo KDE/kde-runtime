@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2010-2011 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -22,19 +22,13 @@
 #include "nepomukindexer.h"
 #include "util.h"
 
-#include <Nepomuk/ResourceManager>
 #include <Nepomuk/Resource>
-#include <Nepomuk/Variant>
-#include <Nepomuk/Vocabulary/NIE>
 
 #include <KUrl>
 #include <KDebug>
 #include <KProcess>
 #include <KStandardDirs>
 
-#include <QtCore/QDataStream>
-#include <QtCore/QDateTime>
-#include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 
 
@@ -52,13 +46,9 @@ Nepomuk::Indexer::~Indexer()
 void Nepomuk::Indexer::indexFile( const KUrl& url )
 {
     const QString exe = KStandardDirs::findExe(QLatin1String("nepomukindexer"));
-    KProcess process;
-    process.setOutputChannelMode( KProcess::MergedChannels );
-    kDebug() << exe;
-    kDebug() << "Executing the process with args " << url.toLocalFile();
-    process.setProgram( exe, QStringList() << url.toLocalFile() );
-    kDebug() << process.execute();
-    kDebug() << "Done executing";
+    kDebug() << "Running" << exe << url.toLocalFile();
+    int r = QProcess::execute(exe, QStringList() << url.toLocalFile());
+    kDebug() << "Indexing of" << url.toLocalFile() << "finished with exit code" << r;
 }
 
 
@@ -69,20 +59,21 @@ void Nepomuk::Indexer::indexFile( const QFileInfo& info )
 
 void Nepomuk::Indexer::clearIndexedData( const KUrl& url )
 {
-    Nepomuk::clearIndexedDataForUrl( url );
+    Nepomuk::clearLegacyIndexedDataForUrl(url);
+    Nepomuk::clearIndexedData(url);
 }
 
 
 void Nepomuk::Indexer::clearIndexedData( const QFileInfo& info )
 {
-    Nepomuk::clearIndexedDataForUrl( KUrl(info.filePath()) );
+    clearIndexedData(KUrl(info.filePath()));
 }
 
 
 void Nepomuk::Indexer::clearIndexedData( const Nepomuk::Resource& res )
 {
-    Nepomuk::clearIndexedDataForResourceUri( res.resourceUri() );
+    Nepomuk::clearLegacyIndexedDataForResourceUri( res.resourceUri() );
+    Nepomuk::clearIndexedData(res.resourceUri());
 }
-
 
 #include "nepomukindexer.moc"

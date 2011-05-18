@@ -630,8 +630,11 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
 
     KComponentData fakeComponent( QByteArray("nepomukindexer"),
                                   QByteArray(), KComponentData::SkipMainComponentRegistration );
+    // we do not have an event loop - thus, we need to delete the job ourselves
     KJob* job = Nepomuk::removeDataByApplication( resources, RemoveSubResoures, fakeComponent );
+    job->setAutoDelete(false);
     job->exec();
+    delete job;
     
     //
     // We query all files that should not be in the store

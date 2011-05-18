@@ -383,7 +383,8 @@ void Nepomuk::StrigiIndexWriter::deleteEntries( const std::vector<std::string>& 
 {
     for ( unsigned int i = 0; i < entries.size(); ++i ) {
         QString path = QString::fromUtf8( entries[i].c_str() );
-        Nepomuk::clearIndexedDataForUrl( KUrl( path ) );
+        Nepomuk::clearLegacyIndexedDataForUrl( KUrl( path ) );
+        Nepomuk::clearIndexedData(KUrl(path));
     }
 }
 
@@ -410,7 +411,8 @@ void Nepomuk::StrigiIndexWriter::startAnalysis( const AnalysisResult* idx )
     FileMetaData* data = new FileMetaData( idx, d->resourceUri );
 
     // remove previously indexed data
-    Nepomuk::clearIndexedDataForResourceUri( data->resourceUri );
+    Nepomuk::clearLegacyIndexedDataForResourceUri( data->resourceUri );
+    Nepomuk::clearIndexedData(data->resourceUri);
 
     // It is important to keep the resource URI between updates (especially for sharing of files)
     // However, when updating data from pre-KDE 4.4 times we want to get rid of old file:/ resource

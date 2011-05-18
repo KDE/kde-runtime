@@ -26,6 +26,7 @@
 #include "datamanagement.h"
 
 #include <QtCore/QDateTime>
+#include <QtCore/QScopedPointer>
 
 #include <Soprano/Statement>
 #include <Soprano/Vocabulary/RDF>
@@ -114,7 +115,9 @@ void Nepomuk::IndexFeeder::handleRequest( Request& request )
     }
 
     
-    KJob* job = Nepomuk::storeResources( request.graph, additionalMetadata );
+    // we do not have an event loop - thus, we need to delete the job ourselves
+    QScopedPointer<KJob> job( Nepomuk::storeResources( request.graph, additionalMetadata ) );
+    job->setAutoDelete(false);
     job->exec();
     if( job->error() ) {
         kDebug() << job->errorString();

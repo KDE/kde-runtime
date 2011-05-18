@@ -24,6 +24,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QUuid>
+#include <QtCore/QScopedPointer>
 #include <QtCore/QDebug>
 
 #include <Soprano/Model>
@@ -99,12 +100,12 @@ QUrl Strigi::Ontology::indexGraphFor()
     return QUrl::fromEncoded( "http://www.strigi.org/fields#indexGraphFor", QUrl::StrictMode );
 }
 
-bool Nepomuk::clearIndexedDataForUrl( const KUrl& url )
+bool Nepomuk::clearIndexedData( const KUrl& url )
 {
     if ( url.isEmpty() )
         return false;
 
-    kDebug() << "Clearing " << url;
+    kDebug() << url;
     
     //
     // New way of storing Strigi Data
@@ -115,13 +116,26 @@ bool Nepomuk::clearIndexedDataForUrl( const KUrl& url )
         component = KComponentData( QByteArray("nepomukindexer"),
                                     QByteArray(), KComponentData::SkipMainComponentRegistration );
     }
-    KJob* job = Nepomuk::removeDataByApplication( QList<QUrl>() << url, RemoveSubResoures, component );
+    QScopedPointer<KJob> job(Nepomuk::removeDataByApplication( QList<QUrl>() << url, RemoveSubResoures, component ));
+
+    // we do not have an event loop in the index scheduler, thus, we need to delete ourselves.
+    job->setAutoDelete(false);
+
+    // run the job with a local event loop
     job->exec();
-    
     if( job->error() ) {
         kDebug() << job->errorString();
     }
 
+    return job->error() == KJob::NoError;
+}
+
+bool Nepomuk::clearLegacyIndexedDataForUrl( const KUrl& url )
+{
+    if ( url.isEmpty() )
+        return false;
+
+    kDebug() << url;
     //
     // Old way
     //
@@ -146,27 +160,13 @@ bool Nepomuk::clearIndexedDataForUrl( const KUrl& url )
     return true;
 }
 
-
-// static
-bool Nepomuk::clearIndexedDataForResourceUri( const KUrl& res )
+bool Nepomuk::clearLegacyIndexedDataForResourceUri( const KUrl& res )
 {
-    kDebug() << "Clearing " << res;
     if ( res.isEmpty() )
         return false;
     
-    KComponentData component = KGlobal::mainComponent();
-    if( component.componentName() != QLatin1String("nepomukindexer") ) {
-        component = KComponentData( QByteArray("nepomukindexer"),
-                                    QByteArray(), KComponentData::SkipMainComponentRegistration );
-    }
-    kDebug() << component.componentName();
-    KJob* job = Nepomuk::removeDataByApplication( QList<QUrl>() << res, RemoveSubResoures, component );
-    job->exec();
+    kDebug() << res;
 
-    if( job->error() ) {
-        kDebug() << job->errorString();
-    }
-    
     QString query = QString::fromLatin1( "select ?g where { ?g %1 %2 . }" )
                     .arg( Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ),
                           Soprano::Node::resourceToN3( res ) );

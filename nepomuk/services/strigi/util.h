@@ -48,8 +48,13 @@ namespace Strigi {
 }
 
 namespace Nepomuk {
-    
-    bool clearIndexedDataForUrl( const KUrl& url );
-    bool clearIndexedDataForResourceUri( const KUrl& res );
+    /// remove all indexed data for \p url the datamanagement way
+    bool clearIndexedData( const KUrl& url );
+
+    /// clears data from pre-datamanagement days
+    bool clearLegacyIndexedDataForUrl( const KUrl& url );
+
+    /// clears data from pre-datamanagement days
+    bool clearLegacyIndexedDataForResourceUri( const KUrl& res );
 }
 #endif
