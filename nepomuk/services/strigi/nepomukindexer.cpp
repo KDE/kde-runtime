@@ -37,15 +37,9 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 
-class Nepomuk::Indexer::Private
-{
-public:
-};
-
 
 Nepomuk::Indexer::Indexer( QObject* parent )
-    : QObject( parent ),
-      d( new Private() )
+    : QObject( parent )
 {
 }
 

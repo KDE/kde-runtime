@@ -110,8 +110,6 @@ namespace Nepomuk {
         // TODO: actually emit the indexingDone signal
 
     private:
-        class Private;
-        Private* const d;
     };
 }
 
