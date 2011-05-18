@@ -79,7 +79,7 @@ void Nepomuk::GenericDataManagementJob::slotDBusCallFinished(QDBusPendingCallWat
         setError(int(error.type()));
         setErrorText(error.message());
     }
-    watcher->deleteLater();
+    delete watcher;
     emitResult();
 }
 
