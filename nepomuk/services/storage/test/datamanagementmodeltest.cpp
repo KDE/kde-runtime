@@ -3211,6 +3211,64 @@ void DataManagementModelTest::testStoreResources_trivialMerge()
     QCOMPARE(m_model->listStatements(Node(), RDF::type(), QUrl("class:/typeA")).allElements().count(), 2);
 }
 
+// make sure that two resources are not merged if they have no matching type even if the rest of the idenfifying props match.
+// the merged resource does not have any type
+void DataManagementModelTest::testStoreResources_noTypeMatch1()
+{
+    // we create a resource with some properties
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), QUrl("class:/typeA"), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g1);
+
+    // now we store the resource without a type
+    SimpleResource res;
+    res.addProperty(QUrl("prop:/int"), 42);
+    res.addProperty(QUrl("prop:/string"), QLatin1String("foobar"));
+
+    m_dmModel->storeResources(SimpleResourceGraph() << res, QLatin1String("A"));
+    QVERIFY( !m_dmModel->lastError() );
+
+    // the two resources should NOT have been merged - we should have a new resource
+    QCOMPARE(m_model->listStatements(Soprano::Node(), QUrl("prop:/int"), Soprano::LiteralValue(42)).allStatements().count(), 2);
+    QCOMPARE(m_model->listStatements(Soprano::Node(), QUrl("prop:/string"), Soprano::LiteralValue(QLatin1String("foobar"))).allStatements().count(), 2);
+
+    // two different subjects
+    QCOMPARE(m_model->listStatements(Soprano::Node(), QUrl("prop:/int"), Soprano::LiteralValue(42)).iterateSubjects().allNodes().toSet().count(), 2);
+}
+
+// make sure that two resources are not merged if they have no matching type even if the rest of the idenfifying props match.
+// the merged resource has a different type than the one in store
+void DataManagementModelTest::testStoreResources_noTypeMatch2()
+{
+    // we create a resource with some properties
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), QUrl("class:/typeA"), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g1);
+
+    // now we store the resource with a different type
+    SimpleResource res;
+    res.addType(QUrl("class:/typeB"));
+    res.addProperty(QUrl("prop:/int"), 42);
+    res.addProperty(QUrl("prop:/string"), QLatin1String("foobar"));
+
+    m_dmModel->storeResources(SimpleResourceGraph() << res, QLatin1String("A"));
+    QVERIFY( !m_dmModel->lastError() );
+
+    // the two resources should NOT have been merged - we should have a new resource
+    QCOMPARE(m_model->listStatements(Soprano::Node(), QUrl("prop:/int"), Soprano::LiteralValue(42)).allStatements().count(), 2);
+    QCOMPARE(m_model->listStatements(Soprano::Node(), QUrl("prop:/string"), Soprano::LiteralValue(QLatin1String("foobar"))).allStatements().count(), 2);
+
+    // two different subjects
+    QCOMPARE(m_model->listStatements(Soprano::Node(), QUrl("prop:/int"), Soprano::LiteralValue(42)).iterateSubjects().allNodes().toSet().count(), 2);
+}
 
 void DataManagementModelTest::testMergeResources()
 {

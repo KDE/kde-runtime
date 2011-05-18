@@ -108,6 +108,8 @@ private Q_SLOTS:
     void testStoreResources_multiMerge();
     void testStoreResources_realLife();
     void testStoreResources_trivialMerge();
+    void testStoreResources_noTypeMatch1();
+    void testStoreResources_noTypeMatch2();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();
