@@ -186,20 +186,13 @@ bool Nepomuk::ResourceMerger::containsAllTypes(const QSet< QUrl >& types, const 
 {
     ClassAndPropertyTree* tree = m_model->classAndPropertyTree();
     foreach( const QUrl & type, types ) {
-        if( masterTypes.contains( type) )
-            continue;
-        
-        // If type has a super-class in masterTypes
-        QSet< QUrl > superTypes = tree->allParents( type );
-        foreach( const QUrl & superType, superTypes ) {
-            if( masterTypes.contains(superType) )
-                goto continueOuterLoop;
+        if( !masterTypes.contains( type) ) {
+            QSet<QUrl> superTypes = tree->allParents( type );
+            superTypes.intersect(masterTypes);
+            if(superTypes.isEmpty()) {
+                return false;
+            }
         }
-        
-        return false;
-        
-        continueOuterLoop:
-        ;
     }
     
     return true;
