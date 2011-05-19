@@ -58,7 +58,6 @@ namespace Nepomuk {
         QMultiHash<QUrl, ResourceWatcherConnection*> m_resHash;
         QMultiHash<QUrl, ResourceWatcherConnection*> m_propHash;
         QMultiHash<QUrl, ResourceWatcherConnection*> m_typeHash;
-        QSet<QUrl> m_metaProperties; 
 
         // only used to generate unique dbus paths
         int m_connectionCount;
