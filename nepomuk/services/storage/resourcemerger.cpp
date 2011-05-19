@@ -69,8 +69,20 @@ KUrl Nepomuk::ResourceMerger::createGraph()
 bool Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
 {
     kDebug() << newSt;
-    
-    const QUrl oldGraph = model()->listStatements( newSt.subject(), newSt.predicate(), newSt.object() ).allStatements().first().context().uri();
+
+    QUrl oldGraph;
+    Soprano::QueryResultIterator it = model()->executeQuery(QString::fromLatin1("select ?g where { graph ?g { %1 %2 %3 . } . } LIMIT 1")
+                                                            .arg(newSt.subject().toN3(),
+                                                                 newSt.predicate().toN3(),
+                                                                 newSt.object().toN3()),
+                                                            Soprano::Query::QueryLanguageSparql);
+    if(it.next()) {
+        oldGraph = it[0].uri();
+        it.close();
+    }
+    else {
+        return false;
+    }
 
     //kDebug() << m_model->statementCount();
     if( mergeGraphs( oldGraph ) ) {
