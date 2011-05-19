@@ -32,12 +32,6 @@ set(storage_SRCS
   resourcewatcherconnection.cpp
   )
 
-soprano_add_ontology(storage_SRCS
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../ontologies/kuvo.trig
-  "KUVO"
-  "Nepomuk::Vocabulary"
-  "trig")
-
 qt4_add_dbus_adaptor(storage_SRCS
   ../../interfaces/org.kde.nepomuk.OntologyManager.xml
   ontologyloader.h

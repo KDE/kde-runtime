@@ -20,7 +20,6 @@
 #include "ontologymanagermodel.h"
 #include "ontologymanageradaptor.h"
 #include "graphretriever.h"
-#include "kuvo.h"
 
 #include <Soprano/Global>
 #include <Soprano/Node>
