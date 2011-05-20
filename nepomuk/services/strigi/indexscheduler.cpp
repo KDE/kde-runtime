@@ -621,20 +621,14 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
                           Soprano::Node::resourceToN3( NAO::identifier() ),
                           Soprano::Node::literalToN3(QLatin1String("nepomukindexer")),
                           folderFilter );
-    kDebug() << query;
-    QList<QUrl> resources;
+
+    KUrl::List resources;
     Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
     while( it.next() ) {
         resources << it[0].uri();
     }
+    Nepomuk::clearIndexedData(resources);
 
-    KComponentData fakeComponent( QByteArray("nepomukindexer"),
-                                  QByteArray(), KComponentData::SkipMainComponentRegistration );
-    // we do not have an event loop - thus, we need to delete the job ourselves
-    KJob* job = Nepomuk::removeDataByApplication( resources, RemoveSubResoures, fakeComponent );
-    job->setAutoDelete(false);
-    job->exec();
-    delete job;
     
     //
     // We query all files that should not be in the store

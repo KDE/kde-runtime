@@ -102,10 +102,23 @@ QUrl Strigi::Ontology::indexGraphFor()
 
 bool Nepomuk::clearIndexedData( const KUrl& url )
 {
-    if ( url.isEmpty() )
+    return clearIndexedData(QList<KUrl>() << url);
+}
+
+namespace {
+QList<QUrl> urlList2UrlList(const KUrl::List& urls) {
+    QList<QUrl> r;
+    foreach(const KUrl& url, urls)
+            r << url;
+    return r;
+}
+}
+bool Nepomuk::clearIndexedData( const KUrl::List& urls )
+{
+    if ( urls.isEmpty() )
         return false;
 
-    kDebug() << url;
+    kDebug() << urls;
     
     //
     // New way of storing Strigi Data
@@ -116,7 +129,7 @@ bool Nepomuk::clearIndexedData( const KUrl& url )
         component = KComponentData( QByteArray("nepomukindexer"),
                                     QByteArray(), KComponentData::SkipMainComponentRegistration );
     }
-    QScopedPointer<KJob> job(Nepomuk::removeDataByApplication( QList<QUrl>() << url, RemoveSubResoures, component ));
+    QScopedPointer<KJob> job(Nepomuk::removeDataByApplication( urlList2UrlList(urls), RemoveSubResoures, component ));
 
     // we do not have an event loop in the index scheduler, thus, we need to delete ourselves.
     job->setAutoDelete(false);
