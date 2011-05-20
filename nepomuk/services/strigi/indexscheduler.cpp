@@ -618,10 +618,10 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
                                          " %5 }" )
                     .arg( Soprano::Node::resourceToN3( NIE::url() ),
                           Soprano::Node::resourceToN3( NAO::maintainedBy() ),
-                          Soprano::Node::resourceToN3( NAO::prefLabel() ),
+                          Soprano::Node::resourceToN3( NAO::identifier() ),
                           Soprano::Node::literalToN3(QLatin1String("nepomukindexer")),
                           folderFilter );
-
+    kDebug() << query;
     QList<QUrl> resources;
     Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
     while( it.next() ) {
