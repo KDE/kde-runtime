@@ -729,9 +729,11 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
     // for video and audio streams.
     //
     Query::Query q(
-        Strigi::Ontology::indexGraphFor() == ( Soprano::Vocabulary::RDF::type() == Query::ResourceTerm( Nepomuk::Vocabulary::NFO::FileDataObject() ) &&
-                                               !( Nepomuk::Vocabulary::NIE::url() == Query::Term() ) &&
-                                               !( Nepomuk::Vocabulary::NIE::isPartOf() == Query::Term() ) )
+        Strigi::Ontology::indexGraphFor()
+                == ( Soprano::Vocabulary::RDF::type()
+                     == Query::ResourceTerm( Nepomuk::Resource::fromResourceUri(Nepomuk::Vocabulary::NFO::FileDataObject()) ) &&
+                     !( Nepomuk::Vocabulary::NIE::url() == Query::Term() ) &&
+                     !( Nepomuk::Vocabulary::NIE::isPartOf() == Query::Term() ) )
         );
     q.setQueryFlags(Query::Query::NoResultRestrictions);
     query = q.toSparqlQuery();
