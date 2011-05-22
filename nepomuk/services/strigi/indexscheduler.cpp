@@ -111,6 +111,31 @@ namespace {
 
         return children;
     }
+
+    QDateTime indexedMTimeForUrl(const KUrl& url)
+    {
+        Soprano::QueryResultIterator it
+                = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(QString::fromLatin1("select ?mt where { ?r %1 %2 . ?r %3 ?mt . } LIMIT 1")
+                                                                                  .arg(Soprano::Node::resourceToN3(NIE::url()),
+                                                                                       Soprano::Node::resourceToN3(url),
+                                                                                       Soprano::Node::resourceToN3(NIE::lastModified())),
+                                                                                  Soprano::Query::QueryLanguageSparql);
+        if(it.next()) {
+            return it[0].literal().toDateTime();
+        }
+        else {
+            return QDateTime();
+        }
+    }
+
+    bool compareIndexedMTime(const KUrl& url, const QDateTime& mtime)
+    {
+        const QDateTime indexedMTime = indexedMTimeForUrl(url);
+        if(indexedMTime.isNull())
+            return false;
+        else
+            return indexedMTime == mtime;
+    }
 }
 
 
@@ -372,9 +397,7 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, UpdateDirFlags fl
     // we start by updating the folder itself
     QFileInfo dirInfo( dir );
     KUrl dirUrl( dir );
-    Nepomuk::Resource dirRes( dirUrl );
-    if ( !dirRes.exists() ||
-         dirRes.property( Nepomuk::Vocabulary::NIE::lastModified() ).toDateTime() != dirInfo.lastModified() ) {
+    if ( !compareIndexedMTime(dirUrl, dirInfo.lastModified()) ) {
         m_indexer->indexFile( dirInfo );
     }
 
