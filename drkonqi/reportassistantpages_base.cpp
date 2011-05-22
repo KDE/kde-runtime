@@ -236,7 +236,7 @@ void ConclusionPage::finishClicked()
             KToolInvocation::invokeMailer(reportAddress, "", "" , subject, report);
         } else {
             if (KUrl(reportAddress).isRelative()) { //Scheme is missing
-                reportAddress = QLatin1String("http://") + reportAddress;
+                reportAddress = QString::fromLatin1("http://%1").arg(reportAddress);
             }
             KToolInvocation::invokeBrowser(reportAddress);
         }
