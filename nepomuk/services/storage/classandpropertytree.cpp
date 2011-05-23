@@ -25,8 +25,10 @@
 #include <QtCore/QSet>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
+#include <QtCore/QDateTime>
 #include <QtCore/QMutexLocker>
 
+#include <Soprano/Version>
 #include <Soprano/Node>
 #include <Soprano/LiteralValue>
 #include <Soprano/QueryResultIterator>
@@ -253,9 +255,31 @@ QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QV
         }
         else {
             Q_FOREACH(const QVariant& value, vl) {
+#if SOPRANO_IS_VERSION(2, 6, 51)
+                Soprano::LiteralValue v = Soprano::LiteralValue::fromVariant(value, range);
+                if(v.isValid())
+                    nodes.insert(v);
+#else
+                //
+                // We handle a few special cases here.
+                //
+                // Special Case 1: support conversion from time_t to QDateTime
+                //
+                if(range == XMLSchema::dateTime() &&
+                        value.canConvert(QVariant::UInt)) {
+                    bool ok = false;
+                    int v = value.toUInt(&ok);
+                    if(ok) {
+                        nodes.insert(Soprano::LiteralValue(QDateTime::fromTime_t(v)));
+                        continue;
+                    }
+                }
+
+                //
                 // if the types differ we try to convert
                 // (We need to treat int and friends as a special case since xsd defines more than one
                 // type mapping to them.)
+                //
                 if(value.type() != literalType
                         || ((value.type() == QVariant::Int ||
                              value.type() == QVariant::UInt ||
@@ -274,6 +298,7 @@ QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QV
                     // we already have the correct type
                     nodes.insert(Soprano::LiteralValue(value));
                 }
+#endif
             }
         }
     }
