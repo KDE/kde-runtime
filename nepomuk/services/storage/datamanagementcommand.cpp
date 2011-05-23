@@ -28,6 +28,7 @@
 #include <QtDBus/QDBusConnection>
 
 #include <QtCore/QStringList>
+#include <QtCore/QEventLoop>
 
 #include <KUrl>
 
@@ -76,6 +77,17 @@ void Nepomuk::DataManagementCommand::run()
             QDBusConnection::sessionBus().send(m_msg.createReply());
         }
     }
+
+    //
+    // DBus requires event handling for signals to be emitted properly.
+    // (for example the Soprano statement signals which are emitted a
+    // lot during command execution.)
+    // Otherwise memory will fill up with queued DBus message objects.
+    // Instead of executing an event loop we avoid all the hassle and
+    // simply handle all events here.
+    //
+    QEventLoop loop;
+    loop.processEvents();
 }
 
 
