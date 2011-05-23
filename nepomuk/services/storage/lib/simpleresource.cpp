@@ -46,7 +46,7 @@ QUrl createBlankUri()
         idCnt /= 26;
     } while(idCnt > 0);
 
-    const QUrl uri = QLatin1String("_:") + id;
+    const QUrl uri = QString(QLatin1String("_:") + id);
     return uri;
 }
 }

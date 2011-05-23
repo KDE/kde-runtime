@@ -161,7 +161,7 @@ void Nepomuk::Repository::open()
     // remove old pre 4.4 clucene index
     // =================================
     if ( QFile::exists( m_basePath + QLatin1String( "index" ) ) ) {
-        KIO::del( m_basePath + QLatin1String( "index" ) );
+        KIO::del( QString( m_basePath + QLatin1String( "index" ) ) );
     }
 
     // open storage

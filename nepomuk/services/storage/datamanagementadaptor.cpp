@@ -194,7 +194,7 @@ QUrl Nepomuk::DataManagementAdaptor::decodeUri(const QString &s, bool namespaceA
             const QString name = m_namespacePrefixRx.cap(2);
             QHash<QString, QString>::const_iterator it = m_namespaces.constFind(ns);
             if(it != m_namespaces.constEnd()) {
-                return QUrl::fromEncoded((it.value() + name).toAscii());
+                return QUrl::fromEncoded(QString(it.value() + name).toAscii());
             }
         }
     }

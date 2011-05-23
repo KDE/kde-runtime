@@ -435,7 +435,7 @@ namespace {
             return n.uri();
         }
         else if( n.isBlank() ) {
-            return QLatin1String("_:") + n.identifier();
+            return QString( QLatin1String("_:") + n.identifier() );
         }
         return QUrl();
     }
