@@ -806,7 +806,7 @@ void DataManagementModelTest::testSetProperty_nieUrl2()
     KTempDir* dir = createNieUrlTestData();
 
     // change the nie:url of one of the top level dirs
-    const QUrl newDir1Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1-new");
+    const QUrl newDir1Url = QUrl(QLatin1String("file://") + dir->name() + QLatin1String("dir1-new"));
 
     // we first need to move the file, otherwise the file check in the dms kicks in
     QVERIFY(QFile::rename(dir->name() + QLatin1String("dir1"), newDir1Url.toLocalFile()));
@@ -833,8 +833,8 @@ void DataManagementModelTest::testSetProperty_nieUrl3()
     KTempDir* dir = createNieUrlTestData();
 
     // change the nie:url of one of the top level dirs
-    const QUrl oldDir1Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1");
-    const QUrl newDir1Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1-new");
+    const QUrl oldDir1Url = QUrl(QLatin1String("file://") + dir->name() + QLatin1String("dir1"));
+    const QUrl newDir1Url = QUrl(QLatin1String("file://") + dir->name() + QLatin1String("dir1-new"));
 
     // we first need to move the file, otherwise the file check in the dms kicks in
     QVERIFY(QFile::rename(oldDir1Url.toLocalFile(), newDir1Url.toLocalFile()));
@@ -860,8 +860,8 @@ void DataManagementModelTest::testSetProperty_nieUrl4()
     KTempDir* dir = createNieUrlTestData();
 
     // move one of the dirs to a new parent
-    const QUrl oldDir121Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1/dir12/dir121");
-    const QUrl newDir121Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1/dir12/dir121-new");
+    const QUrl oldDir121Url = QUrl(QLatin1String("file://") + dir->name() + QLatin1String("dir1/dir12/dir121"));
+    const QUrl newDir121Url = QUrl(QLatin1String("file://") + dir->name() + QLatin1String("dir1/dir12/dir121-new"));
 
     // we first need to move the file, otherwise the file check in the dms kicks in
     QVERIFY(QFile::rename(oldDir121Url.toLocalFile(), newDir121Url.toLocalFile()));
@@ -887,8 +887,8 @@ void DataManagementModelTest::testSetProperty_nieUrl5()
     KTempDir* dir = createNieUrlTestData();
 
     // move one of the dirs to a new parent
-    const QUrl oldDir121Url = QLatin1String("file://") + dir->name() + QLatin1String("dir1/dir12/dir121");
-    const QUrl newDir121Url = QLatin1String("file://") + dir->name() + QLatin1String("dir2/dir121");
+    const QUrl oldDir121Url = QUrl(QLatin1String("file://") + dir->name() + QLatin1String("dir1/dir12/dir121"));
+    const QUrl newDir121Url = QUrl(QLatin1String("file://") + dir->name() + QLatin1String("dir2/dir121"));
 
     // we first need to move the file, otherwise the file check in the dms kicks in
     QVERIFY(QFile::rename(oldDir121Url.toLocalFile(), newDir121Url.toLocalFile()));
