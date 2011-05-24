@@ -1958,6 +1958,58 @@ void DataManagementModelTest::testRemoveDataByApplication8()
     QVERIFY(!haveTrailingGraphs());
 }
 
+// make sure that we still maintain other resources in the same graph after deleting one resource
+void DataManagementModelTest::testRemoveDataByApplication9()
+{
+    // create our apps
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+    appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/B"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/B"), NAO::identifier(), LiteralValue(QLatin1String("B")), appG);
+
+    // create the graph
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/B"), mg1);
+
+    // create the resources
+    const QDateTime dt = QDateTime::currentDateTime();
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(dt), g1);
+
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+    m_model->addStatement(QUrl("res:/B"), NAO::created(), LiteralValue(dt), g1);
+
+    // now remove res:/A by app A
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+
+    // now there should be 2 graphs - once for res:/A which is only maintained by B, and one for res:/B which is still
+    // maintained by A and B
+    // 1. check that B still maintains res:/A (all of it in one graph)
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { graph ?g { <res:/A> <prop:/string> %1 . <res:/A> %2 %3 . } . ?g %4 <app:/B> . }")
+                                  .arg(Soprano::Node::literalToN3(LiteralValue(QLatin1String("foobar"))),
+                                       Soprano::Node::resourceToN3(NAO::created()),
+                                       Soprano::Node::literalToN3(LiteralValue(dt)),
+                                       Soprano::Node::resourceToN3(NAO::maintainedBy())),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
+
+    // 2. check that A does not maintain res:/A anymore
+    QVERIFY(!m_model->executeQuery(QString::fromLatin1("ask where { graph ?g { <res:/A> ?p ?o } . ?g %1 <app:/A> . }")
+                                  .arg(Soprano::Node::resourceToN3(NAO::maintainedBy())),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
+
+    // 3. check that both A and B do still maintain res:/B
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { graph ?g { <res:/B> <prop:/string> %1 . <res:/B> %2 %3 . } . ?g %4 <app:/A> . ?g %4 <app:/B> . }")
+                                  .arg(Soprano::Node::literalToN3(LiteralValue(QLatin1String("hello world"))),
+                                       Soprano::Node::resourceToN3(NAO::created()),
+                                       Soprano::Node::literalToN3(LiteralValue(dt)),
+                                       Soprano::Node::resourceToN3(NAO::maintainedBy())),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
+}
+
 // test that all is removed, ie. storage is clear afterwards
 void DataManagementModelTest::testRemoveAllDataByApplication1()
 {

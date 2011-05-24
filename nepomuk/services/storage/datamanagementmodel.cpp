@@ -906,7 +906,6 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     //
     // Explanation of the query:
     // The query selects all subresources of the resources in resolvedResources.
-    // It then filters out those resources that are maintained by another app.
     // It then filters out the sub-resources that have properties defined by other apps which are not metadata.
     // It then filters out the sub-resources that are related from other resources that are not the ones being deleted.
     //
@@ -917,7 +916,6 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                                                    "?parent %1 ?r . "
                                                    "FILTER(?parent in (%2)) . "
                                                    "?g %3 %4 . "
-                                                   "FILTER(!bif:exists((select (1) where { ?g %3 ?a . FILTER(?a!=%4) . }))) . "
                                                    "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r ?p2 ?o2 . } . ?g2 %3 ?a2 . FILTER(?a2!=%4) . FILTER(%6) . }))) . "
                                                    "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r2 ?p3 ?r . } . FILTER(%5) . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
                                                    "}")
@@ -942,12 +940,14 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // query all graphs the app maintains which contain any information about one of the resources
     // count the number of apps maintaining those graphs (later we will only remove the app as maintainer but keep the graph)
     // count the number of metadata properties defined in those graphs (we will keep that information in case the resource is not fully removed)
+    // count the number of resources that we do not want to delete in the graph
     //
     QList<Soprano::BindingSet> graphRemovalCandidates
             = executeQuery(QString::fromLatin1("select distinct "
                                                "?g "
                                                "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
                                                "(select count (*) where { graph ?g { ?r ?mp ?mo . FILTER(%4) . } . }) as ?mc "
+                                               "(select count (distinct ?other) where { graph ?g { ?other ?op ?oo . FILTER(!(?other in (%3)) && !(?oo in (%3))) . } . }) as ?otherCnt "
                                                "where { "
                                                "graph ?g { ?r ?p ?o . } . "
                                                "?g %1 %2 . "
@@ -1013,8 +1013,40 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
             graphs.insert(g);
         }
         else {
-            // we simply remove the app as maintainer of this graph
-            removeAllStatements(g, NAO::maintainedBy(), appRes);
+            const int otherCnt = it->value("otherCnt").literal().toInt();
+            if(otherCnt > 0) {
+                //
+                // if the graph contains anything else besides the data we want to delete
+                // we need to keep the app as maintainer of that data. That is only possible
+                // by splitting the graph.
+                //
+                QUrl newGraph = splitGraph(g, QUrl(), QUrl());
+
+                //
+                // we now have two graphs the the same metadata: g and newGraph.
+                // we now move the resources we delete into the new graph and only
+                // remove the app as maintainer from that graph.
+                // (we can use fancy queries since we do not actually change data. Thus
+                // the crappy inferencer and other models which act on statement commands
+                // are not really interested)
+                //
+                executeQuery(QString::fromLatin1("insert into %1 { ?r ?p ?o . } where { graph %2 { ?r ?p ?o . FILTER(?r in (%3) || ?o in (%3)) . } . }")
+                             .arg(Soprano::Node::resourceToN3(newGraph),
+                                  Soprano::Node::resourceToN3(g),
+                                  resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                             Soprano::Query::QueryLanguageSparql);
+                executeQuery(QString::fromLatin1("delete from %1 { ?r ?p ?o . } where { ?r ?p ?o . FILTER(?r in (%2) || ?o in (%2)) . }")
+                             .arg(Soprano::Node::resourceToN3(g),
+                                  resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                             Soprano::Query::QueryLanguageSparql);
+
+                // and finally remove the app as maintainer of the new graph
+                removeAllStatements(newGraph, NAO::maintainedBy(), appRes);
+            }
+            else {
+                // we simply remove the app as maintainer of this graph
+                removeAllStatements(g, NAO::maintainedBy(), appRes);
+            }
         }
     }
 
@@ -1729,6 +1761,46 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString& app, const QMultiH
 }
 
 
+QUrl Nepomuk::DataManagementModel::splitGraph(const QUrl &graph, const QUrl& metadataGraph_, const QUrl &appRes)
+{
+    const QUrl newGraph = createUri(GraphUri);
+    const QUrl newMetadataGraph = createUri(GraphUri);
+
+    QUrl metadataGraph(metadataGraph_);
+    if(metadataGraph.isEmpty()) {
+        Soprano::QueryResultIterator it = executeQuery(QString::fromLatin1("select ?m where { ?m %1 %2 . } LIMIT 1")
+                                                       .arg(Soprano::Node::resourceToN3(NRL::coreGraphMetadataFor()),
+                                                            Soprano::Node::resourceToN3(graph)),
+                                                       Soprano::Query::QueryLanguageSparql);
+        if(it.next()) {
+            metadataGraph = it[0].uri();
+        }
+        else {
+            kError() << "Failed to get metadata graph for" << graph;
+            return QUrl();
+        }
+    }
+
+    // add metadata graph
+    addStatement( newMetadataGraph, NRL::coreGraphMetadataFor(), newGraph, newMetadataGraph );
+    addStatement( newMetadataGraph, RDF::type(), NRL::GraphMetadata(), newMetadataGraph );
+
+    // copy the metadata from the old graph to the new one
+    executeQuery(QString::fromLatin1("insert into %1 { %2 ?p ?o . } where { graph %3 { %4 ?p ?o . } . }")
+                 .arg(Soprano::Node::resourceToN3(newMetadataGraph),
+                      Soprano::Node::resourceToN3(newGraph),
+                      Soprano::Node::resourceToN3(metadataGraph),
+                      Soprano::Node::resourceToN3(graph)),
+                 Soprano::Query::QueryLanguageSparql);
+
+    // add the new app
+    if(!appRes.isEmpty())
+        addStatement(newGraph, NAO::maintainedBy(), appRes, newMetadataGraph);
+
+    return newGraph;
+}
+
+
 QUrl Nepomuk::DataManagementModel::findApplicationResource(const QString &app, bool create)
 {
     Soprano::QueryResultIterator it =
@@ -1910,29 +1982,12 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
             }
             else {
                 // we need to split the graph
-                const QUrl graph = createUri(GraphUri);
-                const QUrl metadataGraph = createUri(GraphUri);
-
                 // FIXME: do not split the same graph again and again. Check if the graph in question already is the one we created.
-
-                // add metadata graph
-                addStatement( metadataGraph, NRL::coreGraphMetadataFor(), graph, metadataGraph );
-                addStatement( metadataGraph, RDF::type(), NRL::GraphMetadata(), metadataGraph );
-
-                // copy the metadata from the old graph to the new one
-                executeQuery(QString::fromLatin1("insert into %1 { %2 ?p ?o . } where { graph %3 { %4 ?p ?o . } . }")
-                             .arg(Soprano::Node::resourceToN3(metadataGraph),
-                                  Soprano::Node::resourceToN3(graph),
-                                  Soprano::Node::resourceToN3(m),
-                                  Soprano::Node::resourceToN3(g)),
-                             Soprano::Query::QueryLanguageSparql);
-
-                // add the new app
-                addStatement(graph, NAO::maintainedBy(), appRes, metadataGraph);
+                const QUrl newGraph = splitGraph(g, m, appRes);
 
                 // and finally move the actual property over to the new graph
                 removeStatement(r, property, v, g);
-                addStatement(r, property, v, graph);
+                addStatement(r, property, v, newGraph);
             }
         }
     }
