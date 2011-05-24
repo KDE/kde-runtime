@@ -206,10 +206,17 @@ QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QV
     clearError();
 
     QSet<Soprano::Node> nodes;
-    const QUrl range = propertyRange(property);
+    QUrl range = propertyRange(property);
 
     //
-    // special case: rdfs:Literal
+    // Special case: xsd:duration - Soprano doesn't handle it
+    //
+    if(range == XMLSchema::xsdDuration()) {
+        range = XMLSchema::unsignedInt();
+    }
+
+    //
+    // Special case: rdfs:Literal
     //
     if(range == RDFS::Literal()) {
         Q_FOREACH(const QVariant& value, vl) {
@@ -218,37 +225,11 @@ QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QV
     }
 
     //
-    // Special case for xsd:duration - Soprano doesn't handle it
-    //
-    else if( range == XMLSchema::xsdDuration() ) {
-        Q_FOREACH(const QVariant& value, vl ) {
-            bool ok = false;
-            uint num = value.toUInt(&ok);
-            if(!ok) {
-                setError(QString::fromLatin1("Cannot convert '%1' to duration (unsigned int).").arg(value.toString()), Soprano::Error::ErrorInvalidArgument);
-                return QSet<Soprano::Node>();
-            }
-            else {
-                nodes.insert(Soprano::LiteralValue(num));
-            }
-        }
-    }
-
-    //
     // Special case: abstract properties - we do not allow setting them
     //
     else if(range.isEmpty()) {
-        // we have one exception nao:identifier. It has been used in Nepomuk for a long time
-        // and, thus, is still allowed, although one should rather use nao:personalIdentifier
-        if(property == NAO::identifier()) {
-            foreach(const QVariant& v, vl) {
-                nodes.insert(Soprano::LiteralValue(v.toString()));
-            }
-        }
-        else {
-            setError(QString::fromLatin1("Cannot set values for abstract property '%1'.").arg(property.toString()), Soprano::Error::ErrorInvalidArgument);
-            return QSet<Soprano::Node>();
-        }
+        setError(QString::fromLatin1("Cannot set values for abstract property '%1'.").arg(property.toString()), Soprano::Error::ErrorInvalidArgument);
+        return QSet<Soprano::Node>();
     }
 
     //
@@ -432,6 +413,12 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
             r_cop->directParents.insert(p.uri());
         }
     }
+
+    // although nao:identifier is actually an abstract property Nepomuk has been using
+    // it for very long to store string identifiers (instead of nao:personalIdentifier).
+    // Thus, we force its range to xsd:string for correct conversion in variantListToNodeSet()
+    if(m_tree.contains(NAO::identifier()))
+        m_tree[NAO::identifier()]->range = XMLSchema::string();
 
     // make sure rdfs:Resource is visible by default
     ClassOrProperty* rdfsResourceNode = 0;
