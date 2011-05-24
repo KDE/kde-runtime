@@ -68,7 +68,7 @@ KUrl Nepomuk::ResourceMerger::createGraph()
 
 bool Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
 {
-    kDebug() << newSt;
+    //kDebug() << newSt;
 
     QUrl oldGraph;
     Soprano::QueryResultIterator it = model()->executeQuery(QString::fromLatin1("select ?g where { graph ?g { %1 %2 %3 . } . } LIMIT 1")
@@ -88,7 +88,7 @@ bool Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
     if( mergeGraphs( oldGraph ) ) {
         const QUrl newGraph = m_graphHash[oldGraph];
         if( newGraph.isValid() ) {
-            kDebug() << "Is valid!  " << newGraph;
+            //kDebug() << "Is valid!  " << newGraph;
             //kDebug() << "Removing " << newSt;
             model()->removeAllStatements( newSt.subject(), newSt.predicate(), newSt.object() );
             
@@ -151,9 +151,9 @@ bool Nepomuk::ResourceMerger::areEqual(const QMultiHash<QUrl, Soprano::Node>& ol
             continue;
         }
         
-        kDebug() << " --> " << it.key() << " " << it.value();
+        //kDebug() << " --> " << it.key() << " " << it.value();
         if( !newPropHash.contains( it.key(), it.value() ) ) {
-            kDebug() << "False value : " << newPropHash.value( it.key() );
+            //kDebug() << "False value : " << newPropHash.value( it.key() );
             return false;
         }
     }
@@ -169,9 +169,9 @@ bool Nepomuk::ResourceMerger::areEqual(const QMultiHash<QUrl, Soprano::Node>& ol
             continue;
         }
         
-        kDebug() << " --> " << it.key() << " " << it.value();
+        //kDebug() << " --> " << it.key() << " " << it.value();
         if( !oldPropHash.contains( it.key(), it.value() ) ) {
-            kDebug() << "False value : " << oldPropHash.value( it.key() );
+            //kDebug() << "False value : " << oldPropHash.value( it.key() );
             return false;
         }
     }
@@ -231,7 +231,7 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     // Check if mergeGraphs has already been called for oldGraph
     //
     if(m_graphHash.contains(oldGraph)) {
-        kDebug() << "Already merged once, just returning";
+        //kDebug() << "Already merged once, just returning";
         return true;
     }
     
@@ -252,7 +252,7 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     // If both have the same properties then there is no point in creating a new graph.
     // vHanda: This check is very expensive. Is it worth it?
     if( areEqual( oldPropHash, newPropHash ) ) {
-        kDebug() << "SAME!!";
+        //kDebug() << "SAME!!";
         // They are the same - Don't do anything
         m_graphHash.insert( oldGraph, QUrl() );
         return true;
@@ -285,7 +285,7 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     if( !finalPropHash.contains( NAO::maintainedBy(), m_appUri ) )
         finalPropHash.insert( NAO::maintainedBy(), m_appUri );
     
-    kDebug() << "Creating : " << finalPropHash;
+    //kDebug() << "Creating : " << finalPropHash;
     QUrl graph = m_model->createGraph( m_app, finalPropHash );
 
     m_graphHash.insert( oldGraph, graph );
@@ -373,7 +373,7 @@ bool Nepomuk::ResourceMerger::checkGraphMetadata(const QMultiHash< QUrl, Soprano
         } // range
     }
 
-    kDebug() << hash;
+    //kDebug() << hash;
     return true;
 }
 
@@ -400,7 +400,7 @@ QUrl Nepomuk::ResourceMerger::createGraphUri()
 
 bool Nepomuk::ResourceMerger::isOfType(const Soprano::Node & node, const QUrl& type, const QList<QUrl> & newTypes) const
 {
-    kDebug() << "Checking " << node << " for type " << type;
+    //kDebug() << "Checking " << node << " for type " << type;
     
     ClassAndPropertyTree * tree = m_model->classAndPropertyTree();
     QList<QUrl> types;

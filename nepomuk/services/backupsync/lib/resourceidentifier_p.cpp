@@ -64,7 +64,7 @@ void Nepomuk::Sync::ResourceIdentifier::Private::init( Soprano::Model * model )
 
 bool Nepomuk::Sync::ResourceIdentifier::Private::identify( const KUrl& oldUri )
 {
-    kDebug() << oldUri;
+    //kDebug() << oldUri;
     
     if( m_hash.contains( oldUri ) )
         return true;
@@ -120,13 +120,13 @@ KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatch(const Nepomuk::Sync::
         return findMatchForAll( simpleRes );
     }
     
-    kDebug() << "SyncResource: " << simpleRes;
+    //kDebug() << "SyncResource: " << simpleRes;
     //
     // Vital Properties
     //
     int numOfVitalStatements = 0;
     QString query = QString::fromLatin1("select distinct ?r where {");
-    kDebug() << m_vitalProperties;
+    //kDebug() << m_vitalProperties;
     foreach( const KUrl & prop, m_vitalProperties ) {
         QList<Soprano::Node> objects = simpleRes.property( prop );
         foreach( const Soprano::Node & obj, objects ) {
@@ -138,7 +138,7 @@ KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatch(const Nepomuk::Sync::
     }
     query += " }";
 
-    kDebug() << "Number of Vital Statements : " << numOfVitalStatements;
+    //kDebug() << "Number of Vital Statements : " << numOfVitalStatements;
     kDebug() << query;
     //
     // Insert them in resourceCount with count = 0

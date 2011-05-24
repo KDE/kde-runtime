@@ -69,8 +69,11 @@ bool Nepomuk::ResourceIdentifier::exists(const KUrl& uri)
     return model()->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
 }
 
-KUrl Nepomuk::ResourceIdentifier::duplicateMatch(const KUrl& origUri, const QSet<KUrl>& matchedUris, float score)
+KUrl Nepomuk::ResourceIdentifier::duplicateMatch(const KUrl& origUri, 
+                                                 const QSet<KUrl>& matchedUris, float score)
 {
+    Q_UNUSED( origUri );
+    Q_UNUSED( score );
     // 
     // We return the uri that has the oldest nao:created
     // For backwards compatibility we keep in mind that three are resources which do not have nao:created defined.
@@ -105,7 +108,7 @@ bool Nepomuk::ResourceIdentifier::isIdentfyingProperty(const QUrl& uri)
 
 bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
 {
-    kDebug() << "Identifying : " << uri;
+    //kDebug() << "Identifying : " << uri;
     //
     // Check if a uri with the same name exists
     //
@@ -115,7 +118,7 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
     }
     
     const Sync::SyncResource & res = simpleResource( uri );
-    kDebug() << res;
+    //kDebug() << res;
     
     //
     // Check if a uri with the same nie:url exists
@@ -161,7 +164,7 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
                 || ( object.isResource() && object.uri().scheme() == QLatin1String("nepomuk") ) ) {
             QUrl objectUri = object.isResource() ? object.uri() : QString( "_:" + object.identifier() );
             if( !identify( objectUri ) ) {
-                kDebug() << "Identification of object " << objectUri << " failed";
+                //kDebug() << "Identification of object " << objectUri << " failed";
                 continue;
             }
 
@@ -175,7 +178,7 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
     }
     
     if( identifyingProperties.isEmpty() || num == 0 ) {
-        kDebug() << "No identification properties found!";
+        //kDebug() << "No identification properties found!";
         return false;
     }
     
@@ -202,7 +205,7 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
     int score = -1;
     Soprano::QueryResultIterator qit = model()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
     while( qit.next() ) {
-        kDebug() << "RESULT: " << qit["r"] << " " << qit["cnt"];
+        //kDebug() << "RESULT: " << qit["r"] << " " << qit["cnt"];
         
         int count = qit["cnt"].literal().toInt();
         if( score == -1 ) {
@@ -214,7 +217,7 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
         results << qit["r"].uri();
     }
     
-    kDebug() << "Got " << results.size() << " results";
+    //kDebug() << "Got " << results.size() << " results";
     if( results.empty() )
         return false;
     
