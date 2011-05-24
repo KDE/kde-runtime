@@ -28,6 +28,8 @@
 #include <QtCore/QMutex>
 #include <QtCore/QList>
 
+#include <Soprano/Error/ErrorCache>
+
 namespace Soprano {
 class Model;
 class Node;
@@ -37,7 +39,7 @@ class Statement;
 
 namespace Nepomuk {
 class SimpleResource;
-class ClassAndPropertyTree : public QObject
+class ClassAndPropertyTree : public QObject, public Soprano::Error::ErrorCache
 {
     Q_OBJECT
 

@@ -203,25 +203,57 @@ namespace Vocabulary {
 
 QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QVariantList &vl, const QUrl &property) const
 {
+    clearError();
+
     QSet<Soprano::Node> nodes;
     const QUrl range = propertyRange(property);
+
+    //
     // special case: rdfs:Literal
+    //
     if(range == RDFS::Literal()) {
         Q_FOREACH(const QVariant& value, vl) {
             nodes.insert(Soprano::LiteralValue::createPlainLiteral(value.toString()));
         }
     }
+
+    //
     // Special case for xsd:duration - Soprano doesn't handle it
+    //
     else if( range == XMLSchema::xsdDuration() ) {
         Q_FOREACH(const QVariant& value, vl ) {
-            if( value.canConvert( QVariant::UInt ) ) {
-                nodes.insert( Soprano::LiteralValue( value.toUInt() ));
+            bool ok = false;
+            uint num = value.toUInt(&ok);
+            if(!ok) {
+                setError(QString::fromLatin1("Cannot convert '%1' to duration (unsigned int).").arg(value.toString()), Soprano::Error::ErrorInvalidArgument);
+                return QSet<Soprano::Node>();
             }
             else {
-                return QSet<Soprano::Node>();
+                nodes.insert(Soprano::LiteralValue(num));
             }
         }
     }
+
+    //
+    // Special case: abstract properties - we do not allow setting them
+    //
+    else if(range.isEmpty()) {
+        // we have one exception nao:identifier. It has been used in Nepomuk for a long time
+        // and, thus, is still allowed, although one should rather use nao:personalIdentifier
+        if(property == NAO::identifier()) {
+            foreach(const QVariant& v, vl) {
+                nodes.insert(Soprano::LiteralValue(v.toString()));
+            }
+        }
+        else {
+            setError(QString::fromLatin1("Cannot set values for abstract property '%1'.").arg(property.toString()), Soprano::Error::ErrorInvalidArgument);
+            return QSet<Soprano::Node>();
+        }
+    }
+
+    //
+    // The standard case
+    //
     else {
         const QVariant::Type literalType = Soprano::LiteralValue::typeFromDataTypeUri(range);
         if(literalType == QVariant::Invalid) {
@@ -244,11 +276,13 @@ QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QV
                     }
                     else {
                         // empty string
+                        setError(QString::fromLatin1("Encountered an empty string where a resource URI was expected."), Soprano::Error::ErrorInvalidArgument);
                         return QSet<Soprano::Node>();
                     }
                 }
                 else {
                     // invalid type
+                    setError(QString::fromLatin1("Encountered '%1' where a resource URI was expected.").arg(value.toString()), Soprano::Error::ErrorInvalidArgument);
                     return QSet<Soprano::Node>();
                 }
             }
@@ -257,8 +291,14 @@ QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QV
             Q_FOREACH(const QVariant& value, vl) {
 #if SOPRANO_IS_VERSION(2, 6, 51)
                 Soprano::LiteralValue v = Soprano::LiteralValue::fromVariant(value, range);
-                if(v.isValid())
+                if(v.isValid()) {
                     nodes.insert(v);
+                }
+                else {
+                    // failed literal conversion
+                    setError(QString::fromLatin1("Failed to convert '%1' to literal of type '%2'.").arg(value.toString(), range.toString()), Soprano::Error::ErrorInvalidArgument);
+                    return QSet<Soprano::Node>();
+                }
 #else
                 //
                 // We handle a few special cases here.
@@ -291,6 +331,7 @@ QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QV
                     }
                     else {
                         // failed literal conversion
+                        setError(QString::fromLatin1("Failed to convert '%1' to literal of type '%2'.").arg(value.toString(), range.toString()), Soprano::Error::ErrorInvalidArgument);
                         return QSet<Soprano::Node>();
                     }
                 }
@@ -520,7 +561,7 @@ int Nepomuk::ClassAndPropertyTree::updateIdentifying( ClassOrProperty* cop, QSet
             // properties with a literal range default to identifying
             cop->identifying = hasLiteralRange(cop->uri) ? 1 : -1;
         }
-        kDebug() << "Setting identifying of" << cop->uri.toString() << ( cop->identifying == 1 );
+        //kDebug() << "Setting identifying of" << cop->uri.toString() << ( cop->identifying == 1 );
         return cop->identifying;
     }
 }

@@ -229,6 +229,10 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
         setError(QLatin1String("addProperty: Property needs to be specified."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
+    if(values.isEmpty()) {
+        setError(QLatin1String("addProperty: Values needs to be specified."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
     if(d->m_protectedProperties.contains(property)) {
         setError(QString::fromLatin1("addProperty: %1 is a protected property which can only be set.").arg(property.toString()),
                  Soprano::Error::ErrorInvalidArgument);
@@ -241,7 +245,7 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     //
     const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree->variantListToNodeSet(values, property);
     if(nodes.isEmpty()) {
-        setError(QString::fromLatin1("addProperty: At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
+        setError(d->m_classAndPropertyTree->lastError());
         return;
     }
 
@@ -397,7 +401,7 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     //
     const QSet<Soprano::Node> nodes = d->m_classAndPropertyTree->variantListToNodeSet(values, property);
     if(nodes.isEmpty()) {
-        setError(QString::fromLatin1("setProperty: At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
+        setError(d->m_classAndPropertyTree->lastError());
         return;
     }
 
@@ -520,6 +524,10 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
         setError(QLatin1String("removeProperty: Property needs to be specified."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
+    if(values.isEmpty()) {
+        setError(QLatin1String("removeProperty: Values needs to be specified."), Soprano::Error::ErrorInvalidArgument);
+        return;
+    }
     if(d->m_protectedProperties.contains(property)) {
         setError(QString::fromLatin1("removeProperty: %1 is a protected property which can only be changed by the data management service itself.").arg(property.toString()),
                  Soprano::Error::ErrorInvalidArgument);
@@ -528,7 +536,7 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
 
     const QSet<Soprano::Node> valueNodes = d->m_classAndPropertyTree->variantListToNodeSet(values, property);
     if(valueNodes.isEmpty()) {
-        setError(QString::fromLatin1("removeProperty: At least one value could not be converted into an RDF node."), Soprano::Error::ErrorInvalidArgument);
+        setError(d->m_classAndPropertyTree->lastError());
         return;
     }
 
@@ -1020,7 +1028,8 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                 // we need to keep the app as maintainer of that data. That is only possible
                 // by splitting the graph.
                 //
-                QUrl newGraph = splitGraph(g, QUrl(), QUrl());
+                const QUrl newGraph = splitGraph(g, QUrl(), QUrl());
+                Q_ASSERT(!newGraph.isEmpty());
 
                 //
                 // we now have two graphs the the same metadata: g and newGraph.
@@ -1339,7 +1348,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         allStatements << stList;
 
         if(stList.isEmpty()) {
-            setError(QLatin1String("storeResources: Encountered invalid resource"), Soprano::Error::ErrorInvalidArgument);
+            setError(d->m_classAndPropertyTree->lastError());
             return;
         }
 
@@ -1422,7 +1431,6 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         allStatements << res.toStatementList();
     }
     
-#warning Stuff is sometimes changed even if the call fails! Looks like it happens if the graph metadata check fails - Does TransactionModel actually work? Was it tested?
     TransactionModel trModel(this);
     ResourceMerger merger( this, app, additionalMetadata );
     merger.setMappings( resIdent.mappings() );
@@ -1691,7 +1699,7 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString &app, const QHash<Q
             graphMetaData.insert(it.key(), node);
         }
         else {
-            setError(QString::fromLatin1("Cannot convert %1 to literal value.").arg(it.value().type()), Soprano::Error::ErrorInvalidArgument);
+            setError(d->m_classAndPropertyTree->lastError());
             return QUrl();
         }
     }

@@ -50,6 +50,7 @@ private Q_SLOTS:
     void testAddProperty_invalidFile();
     void testAddProperty_invalid_args();
     void testAddProperty_protectedTypes();
+    void testAddProperty_akonadi();
 
     void testSetProperty();
     void testSetProperty_createRes();

@@ -90,6 +90,12 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( QUrl("class:/typeB"), RDF::type(), RDFS::Class(), graph );
     m_model->addStatement( QUrl("class:/typeB"), RDFS::subClassOf(), QUrl("class:/typeA"), graph );
 
+    // properties used all the time
+    m_model->addStatement( RDF::type(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( RDF::type(), RDFS::range(), RDFS::Class(), graph );
+    m_model->addStatement( NIE::url(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NIE::url(), RDFS::range(), RDFS::Resource(), graph );
+
 
     // some ontology things the ResourceMerger depends on
     m_model->addStatement( RDFS::Class(), RDF::type(), RDFS::Class(), graph );
@@ -122,11 +128,21 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NMM::season(), RDFS::range(), XMLSchema::xsdInt(), graph );
     m_model->addStatement( NMM::episodeNumber(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NMM::episodeNumber(), RDFS::range(), XMLSchema::xsdInt(), graph );
+    m_model->addStatement( NMM::hasEpisode(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NMM::hasEpisode(), RDFS::range(), NMM::TVShow(), graph );
     m_model->addStatement( NIE::description(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NIE::description(), RDFS::range(), XMLSchema::string(), graph );
     m_model->addStatement( NMM::synopsis(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NMM::synopsis(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NMM::series(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NMM::series(), RDFS::range(), NMM::TVSeries(), graph );
     m_model->addStatement( NIE::title(), RDFS::subClassOf(), QUrl("http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifyingProperty"), graph );
+
+    // some ontology things we need in testStoreResources_strigiCase
+    m_model->addStatement( NMM::performer(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NMM::performer(), RDFS::range(), NCO::Contact(), graph );
+    m_model->addStatement( NMM::musicAlbum(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NMM::musicAlbum(), RDFS::range(), NMM::MusicAlbum(), graph );
 
     // rebuild the internals of the data management model
     m_classAndPropertyTree->rebuildTree(m_dmModel);
@@ -520,6 +536,39 @@ void DataManagementModelTest::testAddProperty_protectedTypes()
 
     // no data should have been changed
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+}
+
+void DataManagementModelTest::testAddProperty_akonadi()
+{
+    // create our app
+    const QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+
+    // create the graph
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    QUrl resA("nepomuk:/res/A");
+    QUrl akonadiUrl("akonadi:id=5");
+    m_model->addStatement( resA, RDF::type(), NIE::DataObject(), g1 );
+    m_model->addStatement( resA, NIE::url(), akonadiUrl, g1 );
+
+    // add a property using the akonadi URL
+    // the tricky thing here is that nao:identifier does not have a range!
+    m_dmModel->addProperty( QList<QUrl>() << akonadiUrl,
+                            NAO::identifier(),
+                            QVariantList() << QString("akon"),
+                            QLatin1String("AppA") );
+
+    QVERIFY(!m_dmModel->lastError());
+
+    // check that the akonadi URL has been resolved to the resource URI
+    QVERIFY(m_model->containsAnyStatement( resA, NAO::identifier(), Soprano::Node() ));
+
+    // check that the property has the desired value
+    QVERIFY(m_model->containsAnyStatement( resA, NAO::identifier(), LiteralValue("akon") ));
 }
 
 void DataManagementModelTest::testSetProperty()
@@ -2703,7 +2752,7 @@ void DataManagementModelTest::testStoreResources_file3()
     
     SimpleResource r1;
     r1.setUri( fileUrl );
-    r1.addProperty( RDF::type(), QUrl("newtype:/1") );
+    r1.addProperty( RDF::type(), QUrl("class:/typeA") );
     
     m_dmModel->storeResources( SimpleResourceGraph() << r1, QLatin1String("origApp") );
     QVERIFY( !m_dmModel->lastError() );
@@ -2713,7 +2762,7 @@ void DataManagementModelTest::testStoreResources_file3()
                                         " ?r %7 %1 . "
                                         " ?r a %2 . } ?g %3 ?app . ?app %4 %5 . }")
                     .arg( Soprano::Node::resourceToN3( fileUrl ),
-                          Soprano::Node::resourceToN3( QUrl("newtype:/1") ),
+                          Soprano::Node::resourceToN3( QUrl("class:/typeA") ),
                           Soprano::Node::resourceToN3( NAO::maintainedBy() ),
                           Soprano::Node::resourceToN3( NAO::identifier() ),
                           Soprano::Node(Soprano::LiteralValue("origApp")).toN3(),
@@ -2731,7 +2780,7 @@ void DataManagementModelTest::testStoreResources_file3()
     
     SimpleResource r2;
     r2.setUri( fileUrl );
-    r2.addProperty( QUrl("prop:/custom"), QUrl("object:/custom") );
+    r2.addProperty( QUrl("prop:/res"), QUrl("object:/custom") );
     
     m_dmModel->storeResources( SimpleResourceGraph() << r2, QLatin1String("newApp") );
     QVERIFY( !m_dmModel->lastError() );
@@ -2745,7 +2794,7 @@ void DataManagementModelTest::testStoreResources_file3()
     QCOMPARE( resUri, resUri2 );
     
     // The only statement that should have acquired "newApp" as the maintainer should be 
-    // r2 <prop:/custom> <object:/custom>
+    // r2 <prop:/res> <object:/custom>
     
     query = QString::fromLatin1("select ?name where { graph ?g { %1 %2 %3 . %1 a %4. }"
                                 " ?g %5 ?app . ?app %6 ?name . }")
@@ -2776,7 +2825,7 @@ void DataManagementModelTest::testStoreResources_file4()
     
     SimpleResource res;
     res.addProperty( RDF::type(), fileUrl );
-    res.addProperty( QUrl("prop2:/prop"), fileUrl );
+    res.addProperty( QUrl("prop:/res"), fileUrl );
     
     m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app1") );
     QVERIFY( !m_dmModel->lastError() );
@@ -2794,7 +2843,7 @@ void DataManagementModelTest::testStoreResources_file4()
     QUrl resUri = stList.first().subject().uri();
     
     // Check for the other statement
-    stList = m_model->listStatements( resUri, QUrl("prop2:/prop"), Node() ).allStatements();
+    stList = m_model->listStatements( resUri, QUrl("prop:/res"), Node() ).allStatements();
     QCOMPARE( stList.size(), 1 );
     
     QUrl fileResUri2 = stList.first().object().uri();
