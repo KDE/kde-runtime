@@ -142,14 +142,14 @@ Nepomuk::Query::RequestPropertyMap Nepomuk::Query::Folder::requestPropertyMap() 
 // called from SearchRunnable in the search thread
 void Nepomuk::Query::Folder::addResults( const QList<Nepomuk::Query::Result>& results )
 {
+    m_newResults += QSet<Result>::fromList(results);
+
     QSet<Result> newResults;
     Q_FOREACH( const Result& result, results ) {
         if ( !m_results.contains( result ) ) {
             newResults.insert( result );
         }
     }
-
-    m_newResults += newResults;
 
     if( !newResults.isEmpty() ) {
         emit newEntries( newResults.toList() );
