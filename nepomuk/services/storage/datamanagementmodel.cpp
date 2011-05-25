@@ -925,7 +925,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                                                    "FILTER(?parent in (%2)) . "
                                                    "?g %3 %4 . "
                                                    "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r ?p2 ?o2 . } . ?g2 %3 ?a2 . FILTER(?a2!=%4) . FILTER(%6) . }))) . "
-                                                   "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r2 ?p3 ?r . } . FILTER(%5) . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
+                                                   "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r2 ?p3 ?r . FILTER(%5) . } . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
                                                    "}")
                                .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
                                     resourcesToN3(resolvedResources).join(QLatin1String(",")),
@@ -942,7 +942,6 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
         }
     }
 
-
     //
     // Get the graphs we need to check with removeTrailingGraphs later on.
     // query all graphs the app maintains which contain any information about one of the resources
@@ -955,7 +954,6 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                                                "?g "
                                                "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
                                                "(select count (*) where { graph ?g { ?r ?mp ?mo . FILTER(%4) . } . }) as ?mc "
-                                               "(select count (distinct ?other) where { graph ?g { ?other ?op ?oo . FILTER(!(?other in (%3)) && !(?oo in (%3))) . } . }) as ?otherCnt "
                                                "where { "
                                                "graph ?g { ?r ?p ?o . } . "
                                                "?g %1 %2 . "
@@ -965,7 +963,6 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                                 resourcesToN3(resolvedResources).join(QLatin1String(",")),
                                 createResourceMetadataPropertyFilter(QLatin1String("?mp"), false)),
                            Soprano::Query::QueryLanguageSparql).allElements();
-
 
     // remove the resources
     // Other apps might be maintainer, too. In that case only remove the app as a maintainer but keep the data
@@ -1021,7 +1018,13 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
             graphs.insert(g);
         }
         else {
-            const int otherCnt = it->value("otherCnt").literal().toInt();
+            const int otherCnt = executeQuery(QString::fromLatin1("select count (distinct ?other) where { "
+                                                                  "graph %1 { ?other ?op ?oo . "
+                                                                  "FILTER(!(?other in (%2)) && !(?oo in (%2))) . "
+                                                                  "} . }")
+                                              .arg(Soprano::Node::resourceToN3(g),
+                                                   resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                                              Soprano::Query::QueryLanguageSparql).iterateBindings(0).allElements().first().literal().toInt();
             if(otherCnt > 0) {
                 //
                 // if the graph contains anything else besides the data we want to delete
