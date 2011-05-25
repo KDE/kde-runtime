@@ -645,7 +645,7 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
                           Soprano::Node::literalToN3(QLatin1String("nepomukindexer")),
                           folderFilter );
 
-    KUrl::List resources;
+    QList<QUrl> resources;
     Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
     while( it.next() ) {
         resources << it[0].uri();

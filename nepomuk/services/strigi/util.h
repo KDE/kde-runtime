@@ -49,8 +49,8 @@ namespace Strigi {
 
 namespace Nepomuk {
     /// remove all indexed data for \p url the datamanagement way
-    bool clearIndexedData( const KUrl& url );
-    bool clearIndexedData( const KUrl::List& urls );
+    bool clearIndexedData( const QUrl& url );
+    bool clearIndexedData( const QList<QUrl>& urls );
 
     /// clears data from pre-datamanagement days
     bool clearLegacyIndexedDataForUrl( const KUrl& url );
