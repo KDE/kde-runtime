@@ -100,29 +100,27 @@ namespace {
         return n3;
     }
 
+    template<typename T> QString createResourceFilter(const T& resources, const QString& var, bool exclude = true) {
+        QString filter = QString::fromLatin1("%1 in (%2)").arg(var, resourcesToN3(resources).join(QLatin1String(",")));
+        if(exclude) {
+            filter = QString::fromLatin1("!(%1)").arg(filter);
+        }
+        return filter;
+    }
+
     /*
      * Creates a filter (without the "FILTER" keyword) which either excludes the \p propVar
      * as once of the metadata properties or forces it to be one.
      */
     QString createResourceMetadataPropertyFilter(const QString& propVar, bool exclude = true) {
-        const QString pred = exclude ? QLatin1String("&&") : QLatin1String("||");
-        const QString comp = exclude ? QLatin1String("!=") : QLatin1String("=");
-        return QString::fromLatin1("%1%7%2 %8 %1%7%3 %8 %1%7%4 %8 %1%7%5 %8 %1%7%6")
-                .arg(propVar,
-                     Soprano::Node::resourceToN3(NAO::created()),
-                     Soprano::Node::resourceToN3(NAO::lastModified()),
-                     Soprano::Node::resourceToN3(NAO::creator()),
-                     Soprano::Node::resourceToN3(NAO::userVisible()),
-                     Soprano::Node::resourceToN3(NIE::url()),
-                     comp,
-                     pred);
-    }
-
-    template<typename T> QString createResourceExcludeFilter(const T& resources, const QString& var) {
-        QStringList terms = resourcesToN3(resources);
-        for(int i = 0; i < terms.count(); ++i)
-            terms[i].prepend(QString::fromLatin1("%1!=").arg(var));
-        return terms.join(QLatin1String(" && "));
+        return createResourceFilter(QList<QUrl>()
+                                    << NAO::created()
+                                    << NAO::lastModified()
+                                    << NAO::creator()
+                                    << NAO::userVisible()
+                                    << NIE::url(),
+                                    propVar,
+                                    exclude);
     }
 
     enum LocalFileState {
@@ -833,7 +831,7 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
                                                    "}")
                                .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
                                     resourcesToN3(resolvedResources).join(QLatin1String(",")),
-                                    createResourceExcludeFilter(resolvedResources, QLatin1String("?r2"))),
+                                    createResourceFilter(resolvedResources, QLatin1String("?r2"))),
                                Soprano::Query::QueryLanguageSparql);
         while(it.next()) {
             subResources << it[0].uri();
@@ -931,7 +929,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                                     resourcesToN3(resolvedResources).join(QLatin1String(",")),
                                     Soprano::Node::resourceToN3(NAO::maintainedBy()),
                                     Soprano::Node::resourceToN3(appRes),
-                                    createResourceExcludeFilter(resolvedResources, QLatin1String("?r2")),
+                                    createResourceFilter(resolvedResources, QLatin1String("?r2")),
                                     createResourceMetadataPropertyFilter(QLatin1String("?p2"))),
                                Soprano::Query::QueryLanguageSparql);
         while(it.next()) {
