@@ -145,10 +145,10 @@ void Nepomuk::Query::Folder::addResults( const QList<Nepomuk::Query::Result>& re
     }
 
     if ( m_initialListingDone ) {
-        m_newResults += newResults;
+        m_newResults += QSet<Result>::fromList(results);
     }
     else {
-        m_results += newResults;
+        m_results += QSet<Result>::fromList(results);
     }
 
     if( !newResults.isEmpty() ) {
