@@ -238,8 +238,8 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     QMultiHash<QUrl, Soprano::Node> oldPropHash = getPropertyHashForGraph( oldGraph );
     
     QMultiHash<QUrl, Soprano::Node> newPropHash;
-    QHash< QUrl, QVariant >::const_iterator it = m_additionalMetadata.begin();
-    for( ; it != m_additionalMetadata.end(); it++ ) {
+    QHash< QUrl, QVariant >::const_iterator it = m_additionalMetadata.constBegin();
+    for( ; it != m_additionalMetadata.constEnd(); ++it ) {
         Soprano::Node n = variantToNode( it.value() );
         if( !n.isValid() ) {
             //TODO: Set a proper error over here?

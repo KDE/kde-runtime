@@ -1309,8 +1309,8 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                 else if(localFileState == ExistingLocalFile) {
                     const QUrl fileUrl = value.toUrl();
                     // Need to resolve it
-                    QHash< QUrl, QUrl >::const_iterator findIter = resolvedNodes.find( fileUrl );
-                    if( findIter != resolvedNodes.end() ) {
+                    QHash< QUrl, QUrl >::const_iterator findIter = resolvedNodes.constFind( fileUrl );
+                    if( findIter != resolvedNodes.constEnd() ) {
                         resolvedRes.addProperty(it.key(), findIter.value());
                     }
                     else {
