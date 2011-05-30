@@ -30,5 +30,5 @@ Comment[zh_TW]=控制 Nepomuk 檔案索引行為的系統匣圖示
 Icon=nepomuk
 Exec=nepomukcontroller
 Type=Application
-Categories=Qt;KDE;
+Categories=Qt;KDE;System;
 X-DBUS-StartupType=Unique
