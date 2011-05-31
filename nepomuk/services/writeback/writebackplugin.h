@@ -55,7 +55,7 @@ public Q_SLOTS:
 
  protected:
     // its declared as virtual as subclasses will reimplement it based on what type of //file it is.
-         virtual void doWriteback( const QString& url ); 
+         virtual void doWriteback( const QString& url )=0;; 
 
 protected Q_SLOTS:
  // emit finish signal by the subclass to clarify that writeback is over.

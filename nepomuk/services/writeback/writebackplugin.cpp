@@ -56,7 +56,7 @@ void Nepomuk::WritebackPlugin::writeback( const QString& url )
 void Nepomuk::WritebackPlugin::emitFinished()
 {
     emit finished();
-    emit finished( this );
+    //emit finished( this );
 }
 
 
