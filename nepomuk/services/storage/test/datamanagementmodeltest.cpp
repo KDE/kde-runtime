@@ -2060,6 +2060,58 @@ void DataManagementModelTest::testRemoveDataByApplication9()
                                   Soprano::Query::QueryLanguageSparql).boolValue());
 }
 
+// This test simply creates a lot of resources using storeResources and then
+// removes all of them using removeDataByApplication.
+// This is exactly what the strigi service does.
+void DataManagementModelTest::testRemoveDataByApplication10()
+{
+    QLatin1String app("AppA");
+    QList<QUrl> uris;
+
+    for( int i=0; i<10; i++ ) {
+        QTemporaryFile fileA;
+        fileA.open();
+
+        SimpleResource res;
+        res.addProperty( RDF::type(), NFO::FileDataObject() );
+        res.addProperty( NIE::url(), QUrl(fileA.fileName()) );
+
+        m_dmModel->storeResources( SimpleResourceGraph() << res, app );
+        QVERIFY( !m_dmModel->lastError() );
+
+        QString query = QString::fromLatin1("select ?r where { ?r %1 %2 . }")
+                        .arg( Node::resourceToN3( NIE::url() ),
+                            Node::resourceToN3( QUrl(fileA.fileName()) ) );
+
+        QList<Node> list = m_dmModel->executeQuery( query, Soprano::Query::QueryLanguageSparql ).iterateBindings(0).allNodes();
+        QCOMPARE( list.size(), 1 );
+
+        uris << list.first().uri();
+    }
+
+    //
+    // Remove the data
+    //
+
+    m_dmModel->removeDataByApplication( uris, DataManagementModel::RemoveSubResoures,
+                                        QLatin1String("AppA") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QString query = QString::fromLatin1("ask where { graph ?g { ?r ?p ?o . } ?g %1 ?app . ?app %2 %3 . }")
+                    .arg( Node::resourceToN3( NAO::maintainedBy() ),
+                          Node::resourceToN3( NAO::identifier() ),
+                          Node::literalToN3( app ) );
+
+    QVERIFY( !m_dmModel->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue() );
+
+    foreach( const QUrl resUri, uris ) {
+
+        // The Resource should no longer have any statements
+        QList<Soprano::Statement> l = m_dmModel->listStatements( resUri, Node(), Node() ).allStatements();
+        QVERIFY( l.isEmpty() );
+    }
+}
+
 // test that all is removed, ie. storage is clear afterwards
 void DataManagementModelTest::testRemoveAllDataByApplication1()
 {
