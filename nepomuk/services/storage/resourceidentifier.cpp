@@ -116,10 +116,10 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
         manualIdentification( uri, uri );
         return true;
     }
-    
+
     const Sync::SyncResource & res = simpleResource( uri );
     //kDebug() << res;
-    
+
     //
     // Check if a uri with the same nie:url exists
     //
@@ -135,30 +135,36 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
             manualIdentification( uri, newUri );
             return true;
         }
-        
+
         return false;
     }
-    
+
+    // Make sure that the res has some rdf:type statements
+    if( !res.contains( RDF::type() ) ) {
+        kDebug() << "No rdf:type statements - Not identifying";
+        return false;
+    }
+
     QString query;
-    
+
     int num = 0;
     QStringList identifyingProperties;
     QHash< KUrl, Soprano::Node >::const_iterator it = res.constBegin();
     for( ; it != res.constEnd(); it ++ ) {
         const QUrl & prop = it.key();
-        
+
         // Special handling for rdf:type
         if( prop == RDF::type() ) {
             query += QString::fromLatin1(" ?r a %1 . ").arg( it.value().toN3() );
             continue;
         }
-        
+
         if( !isIdentfyingProperty( prop ) ) {
             continue;
         }
-        
+
         identifyingProperties << Soprano::Node::resourceToN3( prop );
-        
+
         Soprano::Node object = it.value();
         if( object.isBlank()
                 || ( object.isResource() && object.uri().scheme() == QLatin1String("nepomuk") ) ) {
@@ -170,7 +176,7 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
 
             object = mappedUri( objectUri );
         }
-                
+
         query += QString::fromLatin1(" optional { ?r %1 ?o%3 . } . filter(!bound(?o%3) || ?o%3=%2). ")
                  .arg( Soprano::Node::resourceToN3( prop ), 
                        object.toN3(),
