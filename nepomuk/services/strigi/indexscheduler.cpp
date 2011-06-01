@@ -634,25 +634,39 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
     // Query all the resources which are maintained by nepomukindexer
     // and are not in one of the indexed folders
     //
+    // vHanda: trying to remove more than 20 resources via removeDataByApp occasionally times out.
+    const int limit = 20;
     QString query = QString::fromLatin1( "select distinct ?r where { "
                                          "graph ?g { ?r %1 ?url . } "
                                          "?g %2 ?app . "
                                          "?app %3 %4 . "
-                                         " %5 }" )
+                                         " %5 } LIMIT %6" )
                     .arg( Soprano::Node::resourceToN3( NIE::url() ),
                           Soprano::Node::resourceToN3( NAO::maintainedBy() ),
                           Soprano::Node::resourceToN3( NAO::identifier() ),
                           Soprano::Node::literalToN3(QLatin1String("nepomukindexer")),
-                          folderFilter );
+                          folderFilter,
+                          QString::number( limit ) );
 
-    QList<QUrl> resources;
-    Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    while( it.next() ) {
-        resources << it[0].uri();
+    while( true ) {
+        QList<QUrl> resources;
+        Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+        while( it.next() ) {
+            resources << it[0].uri();
+        }
+        Nepomuk::clearIndexedData(resources);
+
+        // wait for resume or stop (or simply continue)
+        kDebug() << "CHECKING";
+        if ( !waitForContinue() ) {
+            kDebug() << "RETURNING";
+            return;
+        }
+
+        if( resources.size() < limit )
+            break;
     }
-    Nepomuk::clearIndexedData(resources);
 
-    
     //
     // We query all files that should not be in the store
     // This for example excludes all filex:/ URLs.
