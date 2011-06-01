@@ -72,12 +72,12 @@ private Q_SLOTS:
     void testRemoveProperties();
     void testRemoveProperties_invalid_args();
     void testRemoveProperties_protectedTypes();
-    
+
     void testRemoveResources();
     void testRemoveResources_subresources();
     void testRemoveResources_invalid_args();
     void testRemoveResources_protectedTypes();
-    
+
     void testRemoveDataByApplication1();
     void testRemoveDataByApplication2();
     void testRemoveDataByApplication3();
@@ -88,6 +88,7 @@ private Q_SLOTS:
     void testRemoveDataByApplication8();
     void testRemoveDataByApplication9();
     void testRemoveDataByApplication10();
+    void testRemoveDataByApplication_realLife();
 
     void testRemoveAllDataByApplication1();
     void testRemoveAllDataByApplication2();
