@@ -2905,12 +2905,14 @@ void DataManagementModelTest::testStoreResources_metadata()
     m_model->addStatement(QUrl("res:/A"), RDF::type(), NAO::Tag(), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("Foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string2"), LiteralValue(QLatin1String("Foobar2")), g1);
     m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(now), g1);
     m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(now), g1);
 
 
     // now we merge the same resource (with differing metadata)
     SimpleResource a;
+    a.addProperty(RDF::type(), NAO::Tag());
     a.addProperty(QUrl("prop:/int"), QVariant(42));
     a.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("Foobar")));
     a.addProperty(NAO::created(), QVariant(QDateTime(QDate(2010, 12, 24), QTime::currentTime())));
@@ -2945,8 +2947,13 @@ void DataManagementModelTest::testStoreResources_metadata()
                                        Node::resourceToN3(NAO::maintainedBy()),
                                        Node::resourceToN3(appBRes)),
                                   Soprano::Query::QueryLanguageSparql).boolValue());
-    QVERIFY(!m_model->executeQuery(QString::fromLatin1("ask where { graph ?g { <res:/A> a %1 . } . ?g %2 %3 . ?g %2 <app:/A> . }")
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { graph ?g { <res:/A> a %1 . } . ?g %2 %3 . ?g %2 <app:/A> . }")
                                   .arg(Node::resourceToN3(NAO::Tag()),
+                                       Node::resourceToN3(NAO::maintainedBy()),
+                                       Node::resourceToN3(appBRes)),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
+    QVERIFY(!m_model->executeQuery(QString::fromLatin1("ask where { graph ?g { <res:/A> <prop:/string2> %1 . } . ?g %2 %3 . ?g %2 <app:/A> . }")
+                                  .arg(Node::literalToN3(QLatin1String("Foobar2")),
                                        Node::resourceToN3(NAO::maintainedBy()),
                                        Node::resourceToN3(appBRes)),
                                   Soprano::Query::QueryLanguageSparql).boolValue());
@@ -2956,6 +2963,7 @@ void DataManagementModelTest::testStoreResources_metadata()
 
     // now merge the same resource with some new data - just to make sure the metadata is updated properly
     SimpleResource resA(QUrl("res:/A"));
+    resA.addProperty(RDF::type(), NAO::Tag());
     resA.addProperty(QUrl("prop:/int2"), 42);
 
     // merge the resource
@@ -3076,13 +3084,14 @@ void DataManagementModelTest::testStoreResources_missingMetadata()
 
     // now we merge the same resource
     SimpleResource a;
+    a.addProperty(RDF::type(), NAO::Tag());
     a.addProperty(QUrl("prop:/int"), QVariant(42));
     a.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("Foobar")));
 
     // merge the resource
     m_dmModel->storeResources(SimpleResourceGraph() << a, QLatin1String("B"));
     QVERIFY( !m_dmModel->lastError() );
-    
+
     // make sure no new resource has been created
     QCOMPARE(m_model->listStatements(Node(), RDF::type(), NAO::Tag()).allStatements().count(), 1);
     QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/int"), Node()).allStatements().count(), 1);
@@ -3093,12 +3102,13 @@ void DataManagementModelTest::testStoreResources_missingMetadata()
 
     // now merge the same resource with some new data - just to make sure the metadata is updated properly
     SimpleResource resA(QUrl("res:/A"));
+    resA.addProperty(RDF::type(), NAO::Tag());
     resA.addProperty(QUrl("prop:/int2"), 42);
 
     // merge the resource
     m_dmModel->storeResources(SimpleResourceGraph() << resA, QLatin1String("B"));
     QVERIFY( !m_dmModel->lastError() );
-    
+
     // make sure the new data is there
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int2"), LiteralValue(42)));
 
@@ -3118,11 +3128,13 @@ void DataManagementModelTest::testStoreResources_multiMerge()
 
     // the resource in which we want to merge
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), NAO::Tag(), g1);
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
     m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
     m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g1);
 
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(42), g1);
+    m_model->addStatement(QUrl("res:/B"), RDF::type(), NAO::Tag(), g1);
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
     m_model->addStatement(QUrl("res:/B"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
     m_model->addStatement(QUrl("res:/B"), NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g1);
@@ -3130,6 +3142,7 @@ void DataManagementModelTest::testStoreResources_multiMerge()
 
     // now store the exact same resource
     SimpleResource res;
+    res.addProperty(RDF::type(), NAO::Tag());
     res.addProperty(QUrl("prop:/int"), 42);
     res.addProperty(QUrl("prop:/string"), QLatin1String("foobar"));
 
