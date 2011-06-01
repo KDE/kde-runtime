@@ -95,7 +95,7 @@ bool Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
             Soprano::Statement st( newSt );
             st.setContext( newGraph );
             
-            if( addStatement( st ) != Soprano::Error::ErrorNone )
+            if( m_model->addStatement( st ) != Soprano::Error::ErrorNone )
                 return false;
             
             return true;
@@ -597,21 +597,21 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
     //
     // Handle Resource metadata
     //
-    
-    // First update the mtime of all the resources
+
+    // First update the mtime of all the modified resources
     Soprano::Node currentDateTime = Soprano::LiteralValue( QDateTime::currentDateTime() );
     foreach( const QUrl & resUri, m_modifiedResources ) {
         Soprano::Statement st( resUri, NAO::lastModified(), currentDateTime, graph() );
-        if( resolveStatement( st ) )
-            addResMetadataStatement( st );
+        addResMetadataStatement( st );
     }
-    
+
     // then push the individual metadata statements
     foreach( Soprano::Statement st, metadataStatements ) {
-        if( resolveStatement( st ) )
+        if( resolveStatement( st ) ) {
             addResMetadataStatement( st );
+        }
     }
-    
+
     return true;
 }
 

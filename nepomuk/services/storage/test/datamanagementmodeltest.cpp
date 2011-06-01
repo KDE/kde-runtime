@@ -2110,6 +2110,8 @@ void DataManagementModelTest::testRemoveDataByApplication10()
         QList<Soprano::Statement> l = m_dmModel->listStatements( resUri, Node(), Node() ).allStatements();
         QVERIFY( l.isEmpty() );
     }
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 // test that all is removed, ie. storage is clear afterwards
@@ -2967,7 +2969,8 @@ void DataManagementModelTest::testStoreResources_metadata()
     a.addProperty(RDF::type(), NAO::Tag());
     a.addProperty(QUrl("prop:/int"), QVariant(42));
     a.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("Foobar")));
-    a.addProperty(NAO::created(), QVariant(QDateTime(QDate(2010, 12, 24), QTime::currentTime())));
+    QDateTime creationDateTime(QDate(2010, 12, 24), QTime::currentTime());
+    a.addProperty(NAO::created(), QVariant(creationDateTime));
 
     // merge the resource
     m_dmModel->storeResources(SimpleResourceGraph() << a, QLatin1String("B"));
@@ -2978,7 +2981,8 @@ void DataManagementModelTest::testStoreResources_metadata()
     QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/int"), Node()).allStatements().count(), 1);
     QCOMPARE(m_model->listStatements(Node(), QUrl("prop:/string"), Node()).allStatements().count(), 1);
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).allStatements().count(), 1);
-
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).allStatements().count(), 1);
+    
     // make sure the new app has been created
     QueryResultIterator it = m_model->executeQuery(QString::fromLatin1("select ?a where { ?a a %1 . ?a %2 %3 . }")
                                                    .arg(Node::resourceToN3(NAO::Agent()),
@@ -3010,6 +3014,15 @@ void DataManagementModelTest::testStoreResources_metadata()
                                        Node::resourceToN3(appBRes)),
                                   Soprano::Query::QueryLanguageSparql).boolValue());
 
+    // Make sure that the nao:lastModified and nao:created have not changed
+    QDateTime mod = m_model->listStatements( QUrl("res:/A"), NAO::lastModified(), Soprano::Node() ).iterateObjects().allNodes().first().literal().toDateTime();
+    QDateTime creation = m_model->listStatements( QUrl("res:/A"), NAO::created(), Soprano::Node() ).iterateObjects().allNodes().first().literal().toDateTime();
+
+    QCOMPARE( mod, now );
+    // The creation date for now will always stay the same.
+    // FIXME: Should we allow changes?
+    QVERIFY( creation != creationDateTime );
+    
     QVERIFY(!haveTrailingGraphs());
 
 
@@ -3169,7 +3182,32 @@ void DataManagementModelTest::testStoreResources_missingMetadata()
 
     // make sure the last mtime has been updated
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).allStatements().count(), 1);
-    QVERIFY(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first().literal().toDateTime() > now);
+    QDateTime newDt = m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first().literal().toDateTime();
+    QVERIFY( newDt > now);
+
+    //
+    // Merge the resource again, but this time make sure it is identified as well
+    //
+    SimpleResource resB;
+    resB.addProperty(RDF::type(), NAO::Tag());
+    resB.addProperty(QUrl("prop:/int"), QVariant(42));
+    resB.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("Foobar")));
+    resB.addProperty(QUrl("prop:/int2"), 42);
+    resB.addProperty(QUrl("prop:/int3"), 50);
+
+    // merge the resource
+    m_dmModel->storeResources(SimpleResourceGraph() << resB, QLatin1String("B"));
+    QVERIFY( !m_dmModel->lastError() );
+
+    // make sure the new data is there
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/int3"), LiteralValue(50)));
+    
+    // make sure creation date did not change, ie. it was not created as that would be wrong
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), NAO::created(), Node()));
+    
+    // make sure the last mtime has been updated
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).allStatements().count(), 1);
+    QVERIFY(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first().literal().toDateTime() > newDt);
 }
 
 // test merging when there is more than one candidate resource to merge with
