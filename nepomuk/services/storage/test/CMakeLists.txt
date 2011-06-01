@@ -24,26 +24,34 @@ target_link_libraries(removablemediamodeltest
   nepomukcommon
 )
 
+set( DMTEST
+  ../classandpropertytree.cpp
+  ../datamanagementmodel.cpp
+  ../resourcewatchermanager.cpp
+  ../resourcewatcherconnection.cpp
+  ../datamanagementadaptor.cpp
+  ../datamanagementcommand.cpp
+  ../resourcemerger.cpp
+  ../resourceidentifier.cpp
+  ../transactionmodel.cpp
+)
+
+kde4_add_library( datamanagementtestlib STATIC ${DMTEST} )
+
 kde4_add_unit_test(classandpropertytreetest
   classandpropertytreetest.cpp
-  ../classandpropertytree.cpp)
+)
 target_link_libraries(classandpropertytreetest
   ${QT_QTTEST_LIBRARY}
   ${SOPRANO_LIBRARIES}
   ${KDE4_KDECORE_LIBS}
   nepomukdatamanagement
+  datamanagementtestlib
 )
-
 
 kde4_add_unit_test(datamanagementmodeltest
   datamanagementmodeltest.cpp
-  ../classandpropertytree.cpp
-  ../datamanagementmodel.cpp
-  ../resourcewatchermanager.cpp
-  ../resourcewatcherconnection.cpp
-  ../resourcemerger.cpp
-  ../resourceidentifier.cpp
-  ../transactionmodel.cpp)
+)
 
 target_link_libraries(datamanagementmodeltest
   ${QT_QTTEST_LIBRARY}
@@ -53,20 +61,13 @@ target_link_libraries(datamanagementmodeltest
   ${NEPOMUK_LIBRARIES}
   nepomuksync
   nepomukdatamanagement
+  datamanagementtestlib
 )
 
 
 kde4_add_unit_test(datamanagementadaptortest
   datamanagementadaptortest.cpp
-  ../classandpropertytree.cpp
-  ../datamanagementmodel.cpp
-  ../resourcewatchermanager.cpp
-  ../resourcewatcherconnection.cpp
-  ../datamanagementadaptor.cpp
-  ../datamanagementcommand.cpp
-  ../resourcemerger.cpp
-  ../resourceidentifier.cpp
-  ../transactionmodel.cpp)
+)
 
 target_link_libraries(datamanagementadaptortest
   ${QT_QTTEST_LIBRARY}
@@ -77,6 +78,7 @@ target_link_libraries(datamanagementadaptortest
   ${NEPOMUK_LIBRARIES}
   nepomuksync
   nepomukdatamanagement
+  datamanagementtestlib
 )
 
 
@@ -84,15 +86,7 @@ configure_file(nepomuk_dms_test_config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/nepom
 
 kde4_add_executable(fakedms
   fakedatamanagementservice.cpp
-  ../classandpropertytree.cpp
-  ../datamanagementmodel.cpp
-  ../resourcewatchermanager.cpp
-  ../resourcewatcherconnection.cpp
-  ../datamanagementadaptor.cpp
-  ../datamanagementcommand.cpp
-  ../resourcemerger.cpp
-  ../resourceidentifier.cpp
-  ../transactionmodel.cpp)
+)
 
 target_link_libraries(fakedms
   ${QT_QTTEST_LIBRARY}
@@ -104,6 +98,7 @@ target_link_libraries(fakedms
   ${NEPOMUK_LIBRARIES}
   nepomuksync
   nepomukdatamanagement
+  datamanagementtestlib
 )
 
 
