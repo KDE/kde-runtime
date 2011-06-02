@@ -35,43 +35,43 @@ namespace Nepomuk {
 
 class  WritebackPlugin : public QObject
 {
-        Q_OBJECT
+    Q_OBJECT
 
 public:
-        WritebackPlugin( QObject* parent);
-        virtual ~WritebackPlugin();
+    WritebackPlugin( QObject* parent);
+    virtual ~WritebackPlugin();
 
 Q_SIGNALS:
-      // to signal that writeback is finished
-      void finished(); 
-      
-private:
-  // emited by plugin once plugin is done, can't be called directly must use emitfinished // in public.
-       void finished( Nepomuk::WritebackPlugin* plugin );  
+    // to signal that writeback is finished
+    void finished();
+
+    //private:
+    // emited by plugin once plugin is done, can't be called directly must use emitfinished // in public.
+    //void finished( Nepomuk::WritebackPlugin* plugin );
 
 public Q_SLOTS:
 
-        void writeback( const QString& url );
+    void writeback( const QUrl& url );
 
- protected:
+protected:
     // its declared as virtual as subclasses will reimplement it based on what type of //file it is.
-         virtual void doWriteback( const QString& url )=0;; 
+    virtual void doWriteback( const QUrl& url )=0;
 
 protected Q_SLOTS:
- // emit finish signal by the subclass to clarify that writeback is over.
-  void emitFinished(); 
- 
-private:
-        class Private;
-        Private* const d;
+    // emit finish signal by the subclass to clarify that writeback is over.
+    void emitFinished();
 
-    };
+private:
+    class Private;
+    Private* const d;
+
+};
 
 } // End namespace Nepomuk
 
- 
-#define NEPOMUK_EXPORT_ANNOTATION_PLUGIN( classname, libname )  \
-K_PLUGIN_FACTORY(factory, registerPlugin<classname>();)     \
-K_EXPORT_PLUGIN(factory(#libname))
+
+#define NEPOMUK_EXPORT_WRITEBACK_PLUGIN( classname, libname )  \
+    K_PLUGIN_FACTORY(factory, registerPlugin<classname>();)     \
+    K_EXPORT_PLUGIN(factory(#libname))
 
 #endif

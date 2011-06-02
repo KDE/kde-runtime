@@ -1,6 +1,6 @@
 /*
     <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) 2011  Vishesh Handa <handa.vish@gmail.com>
+    Copyright (C) 2011  Smit Shah <who828@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "writebackservice.h"
 #include "mywritebackplugin.h"
 #include <KDebug>
+#include <KUrl>
 
 #include <QString>
 
@@ -38,10 +39,12 @@ Nepomuk::WriteBackService::~WriteBackService()
 {
 }
 
-void Nepomuk::WriteBackService::test(const QString url)
+void Nepomuk::WriteBackService::test(const QString& url)
 {
-    Nepomuk::MyWritebackPlugin d= new MyWritebackPlugin();
-d.doWriteback(url);
+
+
+    Nepomuk::MyWritebackPlugin d;
+    d.doWriteback(KUrl(url));
 }
     //    QByteArray fileName = QFile::encodeName( url );
 //    const char * encodedName = fileName.constData();
@@ -53,7 +56,6 @@ d.doWriteback(url);
 
 //}
 
-d.
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 

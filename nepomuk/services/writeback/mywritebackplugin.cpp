@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include<QString>
 #include <QFile>
+#include <QUrl>
 
 #include<taglib/fileref.h>
 #include<taglib/tag.h>
@@ -39,17 +40,17 @@ Nepomuk::MyWritebackPlugin::~MyWritebackPlugin()
 }
 
 
-void Nepomuk::MyWritebackPlugin::doWriteback(const QString& url)
+void Nepomuk::MyWritebackPlugin::doWriteback(const QUrl& url)
 {
-    QByteArray fileName = QFile::encodeName( url );
-    const char * encodedName = fileName.constData();
+
     // creating a reference of the file
-    TagLib::FileRef f(encodedName);
+    TagLib::FileRef f(QFile::encodeName( url.toLocalFile()).data());
     // just an example
-    f.tag()->setAlbum("XYZ");
-    f.tag()->setTitle("abc");
+    f.tag()->setAlbum("Life");
+    f.tag()->setTitle("Joy");
     f.tag()->setArtist("Who");
     f.tag()->setComment("this is the best song,ever !");
+    f.save();
 
     emitFinished();
 }

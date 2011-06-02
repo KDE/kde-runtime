@@ -47,7 +47,7 @@ Nepomuk::WritebackPlugin::~WritebackPlugin()
 }
 
 
-void Nepomuk::WritebackPlugin::writeback( const QString& url )
+void Nepomuk::WritebackPlugin::writeback( const QUrl& url )
 {
     doWriteback( url );
 }

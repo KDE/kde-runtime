@@ -1,6 +1,6 @@
 /*
     <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) 2011  Vishesh Handa <handa.vish@gmail.com>
+    Copyright (C) 2011  Smit Shah <who828@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,18 +20,19 @@
 #ifndef NEPOMUKEXAMPLESERVICE_H
 #define NEPOMUKEXAMPLESERVICE_H
 #include <Nepomuk/Service>
-mywritebackplugin
+
 namespace Nepomuk {
 
     class WriteBackService : public Service
     {
         Q_OBJECT
+    
     public:
         WriteBackService( QObject * parent = 0, const QList<QVariant>& args = QList<QVariant>() );
         ~WriteBackService();
 
     public Q_SLOTS:
-       Q_SCRIPTABLE void test( const QString url);
+       Q_SCRIPTABLE void test( const QString& url);
       
     };
 
