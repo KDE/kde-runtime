@@ -18,7 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include<QString>
+
+#include<QStringList>
 #include <QFile>
 #include <QUrl>
 
@@ -26,8 +27,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include<taglib/tag.h>
 #include<taglib/tstring.h>
 
-#include<mywritebackplugin.h>
+#include<Nepomuk/Resource>
+#include <Nepomuk/Vocabulary/NIE>
+#include <Nepomuk/Variant>
 
+#include<mywritebackplugin.h>
+using namespace Nepomuk::Vocabulary;
 Nepomuk::MyWritebackPlugin::MyWritebackPlugin(QObject* parent): WritebackPlugin(parent)
 
 {
@@ -42,18 +47,23 @@ Nepomuk::MyWritebackPlugin::~MyWritebackPlugin()
 
 void Nepomuk::MyWritebackPlugin::doWriteback(const QUrl& url)
 {
-
-    // creating a reference of the file
+    Nepomuk::Resource resource(url);
+if(resource.exists())
+   {
+    // creatin  Nepomuk::Resource resource(KUrl(url));
     TagLib::FileRef f(QFile::encodeName( url.toLocalFile()).data());
     // just an example
-    f.tag()->setAlbum("Life");
-    f.tag()->setTitle("Joy");
-    f.tag()->setArtist("Who");
-    f.tag()->setComment("this is the best song,ever !");
+    QString m_album = (resource.property(NIE::title())).toString();
+    if(Q4StringToTString(m_album) == f.tag()->album())
+{
+    f.tag()->setAlbum(Q4StringToTString(m_album));
+   // f.tag()->setTitle("Joy");
+    //f.tag()->setArtist("Who");
+    //f.tag()->setComment("this is the best song,ever !");
     f.save();
 
     emitFinished();
 }
-
-
+}
+}
 

@@ -18,7 +18,9 @@ include_directories(
 
 set( SRCS
 mywritebackplugin.cpp
-writebackplugin.cpp)
+writebackplugin.cpp
+writebackservice.cpp
+)
 
 kde4_add_plugin(nepomukwritebackservice ${SRCS})
 
