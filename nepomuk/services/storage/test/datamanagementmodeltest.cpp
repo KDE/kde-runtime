@@ -3628,6 +3628,34 @@ void DataManagementModelTest::testStoreResources_noTypeMatch2()
     QCOMPARE(m_model->listStatements(Soprano::Node(), QUrl("prop:/int"), Soprano::LiteralValue(42)).iterateSubjects().allNodes().toSet().count(), 2);
 }
 
+void DataManagementModelTest::testStoreResources_faultyMetadata()
+{
+    KTemporaryFile file;
+    file.open();
+    const QUrl fileUrl( file.fileName() );
+
+    SimpleResource res;
+    res.addProperty( RDF::type(), NFO::FileDataObject() );
+    res.addProperty( NIE::url(), fileUrl );
+    res.addProperty( NAO::lastModified(), QVariant( 5 ) );
+    res.addProperty( NAO::created(), QVariant(QLatin1String("oh no") ) );
+
+    QList<Soprano::Statement> list = m_model->listStatements().allStatements();
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp") );
+
+    // The should be an error
+    QVERIFY(m_dmModel->lastError());
+
+    // And the statements should not exist
+    QVERIFY(!m_model->containsAnyStatement( Node(), RDF::type(), NFO::FileDataObject() ));
+    QVERIFY(!m_model->containsAnyStatement( Node(), NIE::url(), fileUrl ));
+    QVERIFY(!m_model->containsAnyStatement( Node(), NAO::lastModified(), Node() ));
+    QVERIFY(!m_model->containsAnyStatement( Node(), NAO::created(), Node() ));
+
+    QList<Soprano::Statement> list2 = m_model->listStatements().allStatements();
+    QCOMPARE( list, list2 );
+}
+
 void DataManagementModelTest::testMergeResources()
 {
     // first we need to create the two resources we want to merge as well as one that should not be touched

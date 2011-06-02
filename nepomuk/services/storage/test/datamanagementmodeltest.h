@@ -115,6 +115,7 @@ private Q_SLOTS:
     void testStoreResources_trivialMerge();
     void testStoreResources_noTypeMatch1();
     void testStoreResources_noTypeMatch2();
+    void testStoreResources_faultyMetadata();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();
