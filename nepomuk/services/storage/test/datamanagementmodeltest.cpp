@@ -2211,6 +2211,60 @@ void DataManagementModelTest::testRemoveDataByApplication_realLife()
     QVERIFY( !m_model->executeQuery( query2, Soprano::Query::QueryLanguageSparql ).boolValue() );
 }
 
+void DataManagementModelTest::testRemoveDataByApplication_nieUrl()
+{
+    KTemporaryFile file;
+    file.open();
+    const QUrl fileUrl( file.fileName() );
+
+    const QUrl res1("nepomuk:/res/1");
+
+    // The file is tagged via Dolphin
+    const QUrl g1 = m_nrlModel->createGraph( NRL::InstanceBase() );
+    m_model->addStatement( res1, RDF::type(), NFO::FileDataObject() );
+    m_model->addStatement( res1, NIE::url(), fileUrl, g1 );
+    QDateTime now = QDateTime::currentDateTime();
+    m_model->addStatement( res1, NAO::created(), LiteralValue(QVariant(now)), g1 );
+    m_model->addStatement( res1, NAO::lastModified(), LiteralValue(QVariant(now)), g1 );
+
+    const QUrl tag("nepomuk:/res/tag");
+    m_model->addStatement( tag, RDF::type(), NAO::Tag(), g1 );
+    m_model->addStatement( tag, NAO::identifier(), LiteralValue("tag"), g1 );
+    m_model->addStatement( res1, NAO::hasTag(), tag, g1 );
+
+    // Indexed via strigi
+    SimpleResource simpleRes( res1 );
+    simpleRes.addProperty( RDF::type(), NFO::FileDataObject() );
+    simpleRes.addProperty( RDF::type(), NMM::MusicPiece() );
+    simpleRes.addProperty( NIE::url(), fileUrl );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << simpleRes, QLatin1String("nepomukindexer"));
+    QVERIFY( !m_dmModel->lastError() );
+
+    // Remove strigi indexed content
+    m_dmModel->removeDataByApplication( QList<QUrl>() << res1, DataManagementModel::RemoveSubResoures,
+                                        QLatin1String("nepomukindexer") );
+
+    // The tag should still be there
+    QVERIFY( m_model->containsStatement( tag, RDF::type(), NAO::Tag(), g1 ) );
+    QVERIFY( m_model->containsStatement( tag, NAO::identifier(), LiteralValue("tag"), g1 ) );
+    QVERIFY( m_model->containsStatement( res1, NAO::hasTag(), tag, g1 ) );
+
+    // The resource should not have any data maintained by "nepomukindexer"
+    QString query = QString::fromLatin1("select * where { graph ?g { %1 ?p ?o. } ?g %2 ?a . ?a %3 %4. }")
+                    .arg( Node::resourceToN3( res1 ),
+                          Node::resourceToN3( NAO::maintainedBy() ),
+                          Node::resourceToN3( NAO::identifier() ),
+                          Node::literalToN3( LiteralValue("nepomukindexer") ) );
+
+    QList< BindingSet > bs = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql ).allBindings();
+    kDebug() << bs;
+    QVERIFY( bs.isEmpty() );
+
+    // The nie:url should still exist
+    QVERIFY( m_model->containsAnyStatement( res1, NIE::url(), fileUrl ) );
+}
+
 
 // test that all is removed, ie. storage is clear afterwards
 void DataManagementModelTest::testRemoveAllDataByApplication1()

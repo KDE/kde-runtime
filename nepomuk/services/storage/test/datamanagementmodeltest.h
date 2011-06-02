@@ -89,6 +89,7 @@ private Q_SLOTS:
     void testRemoveDataByApplication9();
     void testRemoveDataByApplication10();
     void testRemoveDataByApplication_realLife();
+    void testRemoveDataByApplication_nieUrl();
 
     void testRemoveAllDataByApplication1();
     void testRemoveAllDataByApplication2();
