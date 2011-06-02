@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtCore/QObject>
 #include<QString>
 
+#include "nepomukwriteback_export.h"
+
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 
@@ -33,7 +35,7 @@ class Node;
 
 namespace Nepomuk {
 
-class  WritebackPlugin : public QObject
+class NEPOMUK_WRITEBACK_EXPORT WritebackPlugin : public QObject
 {
     Q_OBJECT
 

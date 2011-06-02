@@ -53,10 +53,10 @@ if(resource.exists())
     // creatin  Nepomuk::Resource resource(KUrl(url));
     TagLib::FileRef f(QFile::encodeName( url.toLocalFile()).data());
     // just an example
-    QString m_album = (resource.property(NIE::title())).toString();
-    if(Q4StringToTString(m_album) == f.tag()->album())
+    QString album = (resource.property(NIE::title())).toString();
+    if(Q4StringToTString(album) == f.tag()->album())
 {
-    f.tag()->setAlbum(Q4StringToTString(m_album));
+    f.tag()->setAlbum(Q4StringToTString(album));
    // f.tag()->setTitle("Joy");
     //f.tag()->setArtist("Who");
     //f.tag()->setComment("this is the best song,ever !");

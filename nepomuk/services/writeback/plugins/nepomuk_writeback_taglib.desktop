@@ -4,7 +4,7 @@ Name[x-test]=xxTaglib pluginxx
 Comment=Nepomuk Taglib Plugin which writeback to the metadata to the file.
 X-KDE-ServiceTypes=Nepomuk/WritebackPlugin
 Type=Service
-X-KDE-Library=nepomuk_writebackplugin
+X-KDE-Library=nepomuk_writeback_taglib
 
 # FIXME
 X-Nepomuk-ResourceTypes=*

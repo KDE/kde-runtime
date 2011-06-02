@@ -18,7 +18,8 @@
 */
 
 #include "writebackservice.h"
-#include "mywritebackplugin.h"
+#include "writebackplugin.h"
+
 #include <KDebug>
 #include <KUrl>
 
@@ -29,7 +30,7 @@
 #include<taglib/tstring.h>
 
 Nepomuk::WriteBackService::WriteBackService( QObject* parent, const QList< QVariant >& )
-	: Service(parent)
+    : Service(parent)
 {
     kDebug();
 
@@ -41,20 +42,20 @@ Nepomuk::WriteBackService::~WriteBackService()
 
 void Nepomuk::WriteBackService::test(const QString& url)
 {
+    // Nepomuk::Resource resource(KUrl(url));
+    // const QStringList mimetypes = resource.property(NIE::mimeType()).toStringList();
+    //   if(!mimetypes.isEmpty())
+    //      {
+    //       QString mimetype = mimetypes.first();
+    //       QStringList supported_mimetypes;
+    //       supported_mimetypes <<"audio/mpeg
 
+    //       if(mimetype==)
 
-    Nepomuk::MyWritebackPlugin d;
-    d.doWriteback(KUrl(url));
+   // Nepomuk::MyWritebackPlugin d;
+   // d.doWriteback(KUrl(url));
 }
-    //    QByteArray fileName = QFile::encodeName( url );
-//    const char * encodedName = fileName.constData();
-//    TagLib::FileRef f (encodedName);
-//    f.tag()->setTitle(QStringToTString(title));
-//    f.tag()->setArtist("life");
-//    f.tag()->setAlbum("goon");
-//    f.save();
 
-//}
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
