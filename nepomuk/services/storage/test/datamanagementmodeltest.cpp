@@ -3656,6 +3656,34 @@ void DataManagementModelTest::testStoreResources_faultyMetadata()
     QCOMPARE( list, list2 );
 }
 
+void DataManagementModelTest::testStoreResources_additionalMetadataApp()
+{
+    KTemporaryFile file;
+    file.open();
+    const QUrl fileUrl( file.fileName() );
+
+    SimpleResource res;
+    res.addProperty( RDF::type(), NFO::FileDataObject() );
+    res.addProperty( NIE::url(), fileUrl );
+
+    SimpleResource app;
+    app.addProperty( RDF::type(), NAO::Agent() );
+    app.addProperty( NAO::identifier(), "appB" );
+
+    SimpleResourceGraph g;
+    g << res << app;
+
+    QHash<QUrl, QVariant> additionalMetadata;
+    additionalMetadata.insert( NAO::maintainedBy(), app.uri() );
+
+    m_dmModel->storeResources( g, QLatin1String("appA"), additionalMetadata );
+
+    //FIXME: for now this should fail as nao:maintainedBy is protected,
+    //       but what if we want to add some additionalMetadata which references
+    //       a node in the SimpleResourceGraph. There needs to be a test for that.
+    QVERIFY(m_dmModel->lastError());
+}
+
 void DataManagementModelTest::testMergeResources()
 {
     // first we need to create the two resources we want to merge as well as one that should not be touched
