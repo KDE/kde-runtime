@@ -38,6 +38,15 @@ set( DMTEST
 
 kde4_add_library( datamanagementtestlib STATIC ${DMTEST} )
 
+target_link_libraries( datamanagementtestlib
+  ${SOPRANO_LIBRARIES}
+  ${KDE4_KIO_LIBS}
+  ${KDE4_SOLID_LIBS}
+  ${NEPOMUK_LIBRARIES}
+  nepomukdatamanagement
+  nepomuksync
+)
+
 kde4_add_unit_test(classandpropertytreetest
   classandpropertytreetest.cpp
 )
