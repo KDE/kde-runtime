@@ -19,8 +19,8 @@
 
 #include "Event.h"
 
-Event::Event(const QString & vApplication, const QString & vUri, Type vType, Reason vReason)
-    : application(vApplication), uri(vUri), type(vType), reason(vReason), timestamp(QDateTime::currentDateTime())
+Event::Event(const QString & vApplication, WId vWid, const QString & vUri, Type vType, Reason vReason)
+    : application(vApplication), wid(vWid), uri(vUri), type(vType), reason(vReason), timestamp(QDateTime::currentDateTime())
 {
 }
 
@@ -28,6 +28,7 @@ bool Event::operator == (const Event & other) const
 {
     return
         application == other.application &&
+        wid         == other.wid         &&
         uri         == other.uri         &&
         type        == other.type        &&
         reason      == other.reason;

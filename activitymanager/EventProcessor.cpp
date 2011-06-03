@@ -107,10 +107,10 @@ EventProcessor::~EventProcessor()
     delete d;
 }
 
-void EventProcessor::addEvent(const QString & application, const QString & uri,
-        Event::Type type, Event::Reason reason)
+void EventProcessor::addEvent(const QString & application, WId wid, const QString & uri,
+            Event::Type type, Event::Reason reason)
 {
-    Event newEvent(application, uri, type, reason);
+    Event newEvent(application, wid, uri, type, reason);
 
     d->events_mutex.lock();
 

@@ -36,7 +36,7 @@ public:
 
     virtual ~EventProcessor();
 
-    void addEvent(const QString & application, const QString & uri,
+    void addEvent(const QString & application, WId wid, const QString & uri,
             Event::Type type = Event::Accessed, Event::Reason reason = Event::User);
 
 private:

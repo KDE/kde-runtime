@@ -29,6 +29,7 @@
 #include <KUrl>
 
 #include "ActivityManager.h"
+#include "Event.h"
 #include "config-features.h"
 
 #ifdef HAVE_NEPOMUK
@@ -56,9 +57,20 @@ public:
     bool setCurrentActivity(const QString & id);
 
     // URIs and WIDs for open resources
-    QHash < WId, QSet < KUrl > > resourcesForWindow;
-    QHash < WId, QString > applicationForWindow;
-    QHash < KUrl, QSet < QString > > activitiesForUrl;
+    struct WindowData {
+        QSet < KUrl > resources;
+        QString application;
+    };
+
+    QHash < WId, WindowData > windows;
+
+    struct ResourceData {
+        Event::Reason reason;
+        QSet < QString > activities;
+        QString mimetype;
+    };
+
+    QHash < KUrl, ResourceData > resources;
 
     void setActivityState(const QString & id, ActivityManager::State state);
     QHash < QString, ActivityManager::State > activities;
