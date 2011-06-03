@@ -58,7 +58,8 @@ namespace Nepomuk {
      * Nepomuk::ResourceWatcher rw;
      * rw.addResource( res );
      * rw.addProperty( Types::Property(NMM:performer()) );
-     * rw.watch();
+     * connect the signals..
+     * rw.start();
      * \endcode
      * 
      * \author Vishesh Handa <handa.vish@gmail.com>
@@ -91,7 +92,7 @@ namespace Nepomuk {
         /**
          * This signal is emitted when a new resource is created.
          */
-        void resourceCreated( const Nepomuk::Resource & resource, const QList<QUrl>& types );
+        void resourceCreated( const Nepomuk::Resource & resource, const QList<QUrl>& types ); //FIXME: Use either Resource or uri, not a mix
 
         /**
          * This signal is emitted when a resource is deleted. 
