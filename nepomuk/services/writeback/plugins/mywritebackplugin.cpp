@@ -29,6 +29,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include<Nepomuk/Resource>
 #include <Nepomuk/Vocabulary/NIE>
+#include <Nepomuk/Vocabulary/NMM>
+#include <Nepomuk/Vocabulary/NCO>
+
 #include <Nepomuk/Variant>
 
 #include<mywritebackplugin.h>
@@ -48,22 +51,72 @@ Nepomuk::MyWritebackPlugin::~MyWritebackPlugin()
 void Nepomuk::MyWritebackPlugin::doWriteback(const QUrl& url)
 {
     Nepomuk::Resource resource(url);
-if(resource.exists())
-   {
-    // creatin  Nepomuk::Resource resource(KUrl(url));
-    TagLib::FileRef f(QFile::encodeName( url.toLocalFile()).data());
-    // just an example
-    QString album = (resource.property(NIE::title())).toString();
-    if(Q4StringToTString(album) == f.tag()->album())
-{
-    f.tag()->setAlbum(Q4StringToTString(album));
-   // f.tag()->setTitle("Joy");
-    //f.tag()->setArtist("Who");
-    //f.tag()->setComment("this is the best song,ever !");
-    f.save();
+    if(resource.exists())
+    {
+        // creatin  Nepomuk::Resource resource(KUrl(url));
+        TagLib::FileRef f(QFile::encodeName( url.toLocalFile()).data());
+        // just an example
 
-    emitFinished();
+        if((resource.property(NIE::title())).isString())
+        {
+            QString title = (resource.property(NIE::title())).toString();
+            if(title != TStringToQString(f.tag()->title()))
+            {
+                f.tag()->setTitle(Q4StringToTString(title));
+                f.save();
+            }
+        }
+        if((resource.property(NMM::musicAlbum())).isValid())
+        {
+            if((((resource.property(NMM::musicAlbum())).toResource()).property(NIE::title())).isString())
+            {
+                QString album =(((resource.property(NMM::musicAlbum())).toResource()).property(NIE::title())).toString();
+                if(album != TStringToQString(f.tag()->album()))
+                {
+                    f.tag()->setAlbum(Q4StringToTString(album));
+                    f.save();
+                }
+            }
+        }
+        if((resource.property(NIE::comment())).isString())
+        {
+            QString comment = (resource.property(NIE::comment())).toString();
+            if(comment != TStringToQString(f.tag()->comment()))
+            {
+                f.tag()->setComment(Q4StringToTString(comment));
+                f.save();
+            }
+        }
+        if((resource.property(NMM::genre()).isString()))
+        {
+            QString genre = (resource.property(NMM::genre())).toString();
+            if(genre != TStringToQString(f.tag()->genre()))
+            {
+                f.tag()->setGenre(Q4StringToTString(genre));
+                f.save();
+            }
+        }
+        if((resource.property(NMM::trackNumber()).isInt()))
+        {
+            uint track = (resource.property(NMM::trackNumber())).toInt();
+            if(track != f.tag()->track())
+            {
+                f.tag()->setTrack(track);
+                f.save();
+            }
+        }
+        if((resource.property(NMM::performer())).isValid())
+        {
+            if(((((resource.property(NMM::performer())).toResource()).property(NCO::fullname())).isString()))
+            {
+                QString artist =(((resource.property(NMM::performer())).toResource()).property(NCO::fullname())).toString();
+                if(artist != TStringToQString(f.tag()->artist()))
+                {
+                    f.tag()->setArtist(Q4StringToTString(artist));
+                    f.save();
+                }
+            }
+        }
+     emitFinished();
+    }
 }
-}
-}
-

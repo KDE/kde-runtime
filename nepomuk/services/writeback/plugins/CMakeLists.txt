@@ -28,7 +28,7 @@ target_link_libraries(nepomukwritebackplugins
   ${NEPOMUK_QUERY_LIBRARIES}
   ${SOPRANO_LIBRARIES}
   ${TAGLIB_LIBRARIES}
-  nepomukwriteback  
+    nepomukwriteback  
 )
 
 
