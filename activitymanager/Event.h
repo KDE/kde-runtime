@@ -21,6 +21,7 @@
 #define EVENT_H_
 
 #include <QString>
+#include <QWidget>
 #include <QtCore/QDateTime>
 
 /**
@@ -29,26 +30,34 @@
 class Event {
 public:
     enum Type {
-        Accessed,   ///< resource was accessed, but we don't know for how long it will be open/used
-        Opened,     ///< resource was opened
-        Modified,   ///< previously opened resource was modified
-        Closed      ///< previously opened resource was closed
+        Accessed = 0,    ///< resource was accessed, but we don't know for how long it will be open/used
+        Opened = 1,      ///< resource was opened
+        Modified = 2,    ///< previously opened resource was modified
+        Closed = 3,      ///< previously opened resource was closed
+        FocussedIn = 4,  ///< resource get the keyboard focus
+        FocussedOut = 5, ///< resource lost the focus
+
+        LastEventType = 5
+
     };
 
     enum Reason {
-        User,
-        Scheduled,
-        Heuristic,
-        System,
-        World
+        User = 0,
+        Scheduled = 1,
+        Heuristic = 2,
+        System = 3,
+        World = 4,
+
+        LastEventReason = 4
     };
 
-    Event(const QString & application, const QString & uri, Type type = Accessed, Reason reason = User);
+    Event(const QString & application, WId wid, const QString & uri, Type type = Accessed, Reason reason = User);
 
     bool operator == (const Event & other) const;
 
 public:
     QString application;
+    WId     wid;
     QString uri;
     Type    type;
     Reason  reason;
