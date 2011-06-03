@@ -32,20 +32,20 @@
 
 static QString eventInterpretation(Event::Type type)
 {
-    switch (type) {
-        case Event::Accessed:
-            return QtZeitgeist::Interpretation::Event::ZGAccessEvent;
+    // switch (type) {
+    //     case Event::Accessed:
+    //         return QtZeitgeist::Interpretation::Event::ZGAccessEvent;
 
-        case Event::Opened:
-            return QtZeitgeist::Interpretation::Event::ZGAccessEvent;
+    //     case Event::Opened:
+    //         return QtZeitgeist::Interpretation::Event::ZGAccessEvent;
 
-        case Event::Modified:
-            return QtZeitgeist::Interpretation::Event::ZGModifyEvent;
+    //     case Event::Modified:
+    //         return QtZeitgeist::Interpretation::Event::ZGModifyEvent;
 
-        case Event::Closed:
-            return QtZeitgeist::Interpretation::Event::ZGLeaveEvent;
+    //     case Event::Closed:
+    //         return QtZeitgeist::Interpretation::Event::ZGLeaveEvent;
 
-    }
+    // }
 
     // shut up GCC
     return QString();
@@ -53,22 +53,22 @@ static QString eventInterpretation(Event::Type type)
 
 static QString eventManifestation(Event::Reason reason)
 {
-    switch (reason) {
-        case Event::User:
-            return QtZeitgeist::Manifestation::Event::ZGUserActivity;
+    // switch (reason) {
+    //     case Event::User:
+    //         return QtZeitgeist::Manifestation::Event::ZGUserActivity;
 
-        case Event::Heuristic:
-            return QtZeitgeist::Manifestation::Event::ZGHeuristicActivity;
+    //     case Event::Heuristic:
+    //         return QtZeitgeist::Manifestation::Event::ZGHeuristicActivity;
 
-        case Event::Scheduled:
-            return QtZeitgeist::Manifestation::Event::ZGScheduledActivity;
+    //     case Event::Scheduled:
+    //         return QtZeitgeist::Manifestation::Event::ZGScheduledActivity;
 
-        case Event::System:
-            return QtZeitgeist::Manifestation::Event::ZGSystemNotification;
+    //     case Event::System:
+    //         return QtZeitgeist::Manifestation::Event::ZGSystemNotification;
 
-        case Event::World:
-            return QtZeitgeist::Manifestation::Event::ZGWorldActivity;
-    }
+    //     case Event::World:
+    //         return QtZeitgeist::Manifestation::Event::ZGWorldActivity;
+    // }
 
     // shut up GCC
     return QtZeitgeist::Manifestation::Event::ZGUserActivity;
