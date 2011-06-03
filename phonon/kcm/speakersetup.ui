@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <author>Matthias Kretz &lt;kretz@kde.org</author>
+ <author>Colin Guthrie</author>
  <class>SpeakerSetup</class>
  <widget class="QWidget" name="SpeakerSetup">
   <property name="geometry">
