@@ -73,11 +73,11 @@ void Nepomuk::WriteBackService::test(const QString& url)
         foreach(const KSharedPtr<KService>& service, services) {
             WritebackPlugin* plugin = service-> createInstance<WritebackPlugin>();
 
-   if (!plugin)
+   if (plugin)
         {
-            kError(5001) << "read write part" << service->createInstance<WritebackPlugin>();
+           // kError(5001) << "read write part" << service->createInstance<WritebackPlugin>();
 
-            //plugin->writeback(KUrl(url));
+            plugin->writeback(KUrl(url));
         }
 
         }
