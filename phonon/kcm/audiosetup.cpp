@@ -681,7 +681,7 @@ void AudioSetup::updateIndependantDevices()
     if (haveID && !showID)
         cardBox->removeItem(0);
     else if (!haveID && showID)
-        cardBox->insertItem(0, KIcon(SS_DEFAULT_ICON), "Independent Devices", PA_INVALID_INDEX);
+        cardBox->insertItem(0, KIcon(SS_DEFAULT_ICON), i18n("Independent Devices"), PA_INVALID_INDEX);
     cardBox->blockSignals(bs);
 }
 
@@ -836,7 +836,7 @@ void AudioSetup::_updatePlacementTester()
             continue;
         }
 
-        KPushButton* btn = new TestSpeakerWidget(pos, m_Canberra, this);//KPushButton(KIcon("audio-card"), (name ? name : "Unknown Channel"), this);
+        KPushButton* btn = new TestSpeakerWidget(pos, m_Canberra, this);
         placementGrid->addWidget(btn, position_table[i+2], position_table[i+1], Qt::AlignCenter);
     }
 
