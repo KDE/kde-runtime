@@ -163,7 +163,6 @@ DevicePreference::DevicePreference(QWidget *parent)
     testPlaybackButton->setIcon(KIcon("media-playback-start"));
     testPlaybackButton->setEnabled(false);
     testPlaybackButton->setToolTip(i18n("Test the selected device"));
-    removeButton->setIcon(KIcon("list-remove"));
     deferButton->setIcon(KIcon("go-down"));
     preferButton->setIcon(KIcon("go-up"));
 
@@ -561,14 +560,6 @@ void DevicePreference::loadCategoryDevices()
 
 void DevicePreference::save()
 {
-    if (!m_removeOnApply.isEmpty()) {
-        QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.kded", "/modules/phononserver",
-                "org.kde.PhononServer", "removeAudioDevices");
-        msg << QVariant::fromValue(m_removeOnApply);
-        QDBusConnection::sessionBus().send(msg);
-        m_removeOnApply.clear();
-    }
-
     for (int i = 0; i < audioOutCategoriesCount; ++i) {
         const Phonon::Category cat = audioOutCategories[i];
         Q_ASSERT(m_audioOutputModel.value(cat));
@@ -680,37 +671,6 @@ void DevicePreference::on_deferButton_clicked()
     }
 }
 
-template<Phonon::ObjectDescriptionType T>
-void DevicePreference::removeDevice(const Phonon::ObjectDescription<T> &deviceToRemove,
-        QMap<int, Phonon::ObjectDescriptionModel<T> *> *modelMap)
-{
-    QDBusInterface phononServer(QLatin1String("org.kde.kded"), QLatin1String("/modules/phononserver"),
-            QLatin1String("org.kde.PhononServer"));
-    QDBusReply<bool> reply = phononServer.call(QLatin1String("isAudioDeviceRemovable"), deviceToRemove.index());
-    if (!reply.isValid()) {
-        kError(600) << reply.error();
-        return;
-    }
-    if (!reply.value()) {
-        return;
-    }
-
-    m_removeOnApply << deviceToRemove.index();
-
-    // remove from all models, idx.row() is only correct for the current model
-    foreach (Phonon::ObjectDescriptionModel<T> *model, *modelMap) {
-        QList<Phonon::ObjectDescription<T> > data = model->modelData();
-        for (int row = 0; row < data.size(); ++row) {
-            if (data[row] == deviceToRemove) {
-                model->removeRows(row, 1);
-                break;
-            }
-        }
-    }
-
-    updateButtonsEnabled();
-    emit changed();
-}
 
 DevicePreference::DeviceType DevicePreference::shownModelType() const
 {
@@ -733,32 +693,6 @@ DevicePreference::DeviceType DevicePreference::shownModelType() const
     default:
         return InvalidDevice;
     }
-}
-
-void DevicePreference::on_removeButton_clicked()
-{
-    const QModelIndex idx = deviceList->currentIndex();
-
-    if (idx.isValid()) {
-        QAbstractItemModel *model = deviceList->model();
-        Phonon::AudioOutputDeviceModel *aPlaybackModel = qobject_cast<Phonon::AudioOutputDeviceModel *>(model);
-        Phonon::AudioCaptureDeviceModel *aCaptureModel = qobject_cast<Phonon::AudioCaptureDeviceModel *>(model);
-        Phonon::VideoCaptureDeviceModel *vCaptureModel = qobject_cast<Phonon::VideoCaptureDeviceModel *>(model);
-
-        if (aPlaybackModel) {
-            removeDevice(aPlaybackModel->modelData(idx), &m_audioOutputModel);
-        }
-
-        if (aCaptureModel) {
-            removeDevice(aCaptureModel->modelData(idx), &m_audioCaptureModel);
-        }
-
-        if (vCaptureModel) {
-            removeDevice(vCaptureModel->modelData(idx), &m_videoCaptureModel);
-        }
-    }
-
-    deviceList->resizeColumnToContents(0);
 }
 
 void DevicePreference::on_applyPreferencesButton_clicked()
@@ -1029,12 +963,10 @@ void DevicePreference::updateButtonsEnabled()
         QModelIndex idx = deviceList->currentIndex();
         preferButton->setEnabled(idx.isValid() && idx.row() > 0);
         deferButton->setEnabled(idx.isValid() && idx.row() < deviceList->model()->rowCount() - 1);
-        removeButton->setEnabled(idx.isValid() && !(idx.flags() & Qt::ItemIsEnabled));
         testPlaybackButton->setEnabled(idx.isValid() && (idx.flags() & Qt::ItemIsEnabled));
     } else {
         preferButton->setEnabled(false);
         deferButton->setEnabled(false);
-        removeButton->setEnabled(false);
         testPlaybackButton->setEnabled(false);
     }
 }

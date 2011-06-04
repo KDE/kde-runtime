@@ -56,7 +56,6 @@ class DevicePreference : public QWidget, private Ui::DevicePreference
     private Q_SLOTS:
         void on_preferButton_clicked();
         void on_deferButton_clicked();
-        void on_removeButton_clicked();
         void on_showCheckBox_toggled();
         void on_applyPreferencesButton_clicked();
         void on_testPlaybackButton_toggled(bool down);
@@ -79,7 +78,6 @@ class DevicePreference : public QWidget, private Ui::DevicePreference
         DeviceType shownModelType() const;
 
     private:
-        QList<int> m_removeOnApply;
         QMap<int, Phonon::AudioOutputDeviceModel *> m_audioOutputModel;
         QMap<int, Phonon::AudioCaptureDeviceModel *> m_audioCaptureModel;
         QMap<int, Phonon::VideoCaptureDeviceModel *> m_videoCaptureModel;
