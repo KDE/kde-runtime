@@ -628,7 +628,7 @@ void AudioSetup::cardChanged()
     }
     for (QMap<uint32_t,deviceInfo>::iterator it = s_Sources.begin(); it != s_Sources.end(); ++it) {
         if (it->cardIndex == card_index)
-            deviceBox->addItem(KIcon(it->icon), i18n("Capture (%1)", it->name), ((-1*it->index) - 1));
+            deviceBox->addItem(KIcon(it->icon), i18n("Recording (%1)", it->name), ((-1*it->index) - 1));
     }
     deviceBox->blockSignals(bs);
 

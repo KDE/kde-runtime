@@ -102,7 +102,7 @@ class CategoryItem : public QStandardItem {
                 m_odtype(Phonon::AudioOutputDeviceType)
         {
             if (cat == Phonon::NoCategory) {
-                setText(i18n("Audio Output"));
+                setText(i18n("Audio Playback"));
             } else {
                 setText(Phonon::categoryToString(cat));
             }
@@ -116,10 +116,10 @@ class CategoryItem : public QStandardItem {
             if (cat == Phonon::NoCaptureCategory) {
                 switch(t) {
                 case Phonon::AudioCaptureDeviceType:
-                    setText(i18n("Audio Capture"));
+                    setText(i18n("Audio Recording"));
                     break;
                 case Phonon::VideoCaptureDeviceType:
-                    setText(i18n("Video Capture"));
+                    setText(i18n("Video Recording"));
                     break;
                 default:
                     setText(i18n("Invalid"));
@@ -319,28 +319,28 @@ void DevicePreference::updateDeviceList()
         if (cap ? capcat == Phonon::NoCaptureCategory : cat == Phonon::NoCategory) {
             switch (catItem->odtype()) {
             case Phonon::AudioOutputDeviceType:
-                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Audio Output Device Preference"), Qt::DisplayRole);
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Audio Playback Device Preference"), Qt::DisplayRole);
                 break;
             case Phonon::AudioCaptureDeviceType:
-                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Audio Capture Device Preference"), Qt::DisplayRole);
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Audio Recording Device Preference"), Qt::DisplayRole);
                 break;
             case Phonon::VideoCaptureDeviceType:
-                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Video Capture Device Preference"), Qt::DisplayRole);
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Default Video Recording Device Preference"), Qt::DisplayRole);
                 break;
             default: ;
             }
         } else {
             switch (catItem->odtype()) {
             case Phonon::AudioOutputDeviceType:
-                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Audio Output Device Preference for the '%1' Category",
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Audio Playback Device Preference for the '%1' Category",
                         Phonon::categoryToString(cat)), Qt::DisplayRole);
                 break;
             case Phonon::AudioCaptureDeviceType:
-                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Audio Capture Device Preference for the '%1' Category",
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Audio Recording Device Preference for the '%1' Category",
                         Phonon::categoryToString(capcat)), Qt::DisplayRole);
                 break;
             case Phonon::VideoCaptureDeviceType:
-                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Video Capture Device Preference for the '%1' Category ",
+                m_headerModel.setHeaderData(0, Qt::Horizontal, i18n("Video Recording Device Preference for the '%1' Category ",
                         Phonon::categoryToString(capcat)), Qt::DisplayRole);
                 break;
             default: ;
@@ -815,7 +815,7 @@ void DevicePreference::on_applyPreferencesButton_clicked()
 
     QLabel label(&mainWidget);
     label.setText(i18n("Apply the currently shown device preference list to the following other "
-                "audio output categories:"));
+                "audio playback categories:"));
     label.setWordWrap(true);
 
     KListWidget list(&mainWidget);
@@ -948,7 +948,7 @@ void DevicePreference::on_testPlaybackButton_toggled(bool down)
 
             // Try to create a path
             if (!Phonon::createPath(m_media, m_audioOutput).isValid()) {
-                KMessageBox::error(this, i18n("Your backend may not support audio capture"));
+                KMessageBox::error(this, i18n("Your backend may not support audio recording"));
                 break;
             }
 
@@ -967,7 +967,7 @@ void DevicePreference::on_testPlaybackButton_toggled(bool down)
 
             // Try to create a path
             if (!Phonon::createPath(m_media, m_videoWidget).isValid()) {
-                KMessageBox::error(this, i18n("Your backend may not support video capture"));
+                KMessageBox::error(this, i18n("Your backend may not support video recording"));
                 break;
             }
 
