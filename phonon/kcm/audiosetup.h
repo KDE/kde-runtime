@@ -17,13 +17,13 @@
 
 */
 
-#ifndef PHONON_SPEAKERSETUP_H
-#define PHONON_SPEAKERSETUP_H
+#ifndef PHONON_AUDIOSETUP_H
+#define PHONON_AUDIOSETUP_H
 
 #include <canberra.h>
 #include <pulse/pulseaudio.h>
 
-#include "ui_speakersetup.h"
+#include "ui_audiosetup.h"
 #define KDE3_SUPPORT
 #include <kcmodule.h>
 #undef KDE3_SUPPORT
@@ -31,12 +31,12 @@
 
 class QTimer;
 
-class SpeakerSetup : public QWidget, private Ui::SpeakerSetup
+class AudioSetup : public QWidget, private Ui::AudioSetup
 {
     Q_OBJECT
     public:
-        SpeakerSetup(QWidget *parent = 0);
-        ~SpeakerSetup();
+        AudioSetup(QWidget *parent = 0);
+        ~AudioSetup();
 
         void load();
         void save();
@@ -76,4 +76,4 @@ class SpeakerSetup : public QWidget, private Ui::SpeakerSetup
   
 };
 
-#endif // PHONON_SPEAKERSETUP_H
+#endif // PHONON_AUDIOSETUP_H

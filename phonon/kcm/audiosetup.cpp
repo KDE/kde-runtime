@@ -17,7 +17,7 @@
 
 */
 
-#include "speakersetup.h"
+#include "audiosetup.h"
 #include "testspeakerwidget.h"
 #include <kconfiggroup.h>
 #include <kaboutdata.h>
@@ -104,7 +104,7 @@ static void card_cb(pa_context *c, const pa_card_info *i, int eol, void *userdat
     Q_ASSERT(c);
     Q_ASSERT(userdata);
 
-    SpeakerSetup* ss = static_cast<SpeakerSetup*>(userdata);
+    AudioSetup* ss = static_cast<AudioSetup*>(userdata);
 
     if (eol < 0) {
         if (pa_context_errno(c) == PA_ERR_NOENTITY)
@@ -127,7 +127,7 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *userdat
     Q_ASSERT(c);
     Q_ASSERT(userdata);
 
-    SpeakerSetup* ss = static_cast<SpeakerSetup*>(userdata);
+    AudioSetup* ss = static_cast<AudioSetup*>(userdata);
 
     if (eol < 0) {
         if (pa_context_errno(c) == PA_ERR_NOENTITY)
@@ -151,7 +151,7 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *use
     Q_ASSERT(c);
     Q_ASSERT(userdata);
 
-    SpeakerSetup* ss = static_cast<SpeakerSetup*>(userdata);
+    AudioSetup* ss = static_cast<AudioSetup*>(userdata);
 
     if (eol < 0) {
         if (pa_context_errno(c) == PA_ERR_NOENTITY)
@@ -175,7 +175,7 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
     Q_ASSERT(c);
     Q_ASSERT(userdata);
 
-    SpeakerSetup* ss = static_cast<SpeakerSetup*>(userdata);
+    AudioSetup* ss = static_cast<AudioSetup*>(userdata);
 
     switch (t & PA_SUBSCRIPTION_EVENT_FACILITY_MASK) {
         case PA_SUBSCRIPTION_EVENT_CARD:
@@ -243,7 +243,7 @@ static void context_state_callback(pa_context *c, void *userdata)
     Q_ASSERT(c);
     Q_ASSERT(userdata);
 
-    SpeakerSetup* ss = static_cast<SpeakerSetup*>(userdata);
+    AudioSetup* ss = static_cast<AudioSetup*>(userdata);
 
     logMessage(QString("context_state_callback %1").arg(statename(pa_context_get_state(c))));
     pa_context_state_t state = pa_context_get_state(c);
@@ -298,14 +298,14 @@ static void context_state_callback(pa_context *c, void *userdata)
 }
 
 static void suspended_callback(pa_stream *s, void *userdata) {
-    SpeakerSetup *ss = static_cast<SpeakerSetup*>(userdata);
+    AudioSetup *ss = static_cast<AudioSetup*>(userdata);
 
     if (pa_stream_is_suspended(s))
         ss->updateVUMeter(-1);
 }
 
 static void read_callback(pa_stream *s, size_t length, void *userdata) {
-    SpeakerSetup *ss = static_cast<SpeakerSetup*>(userdata);
+    AudioSetup *ss = static_cast<AudioSetup*>(userdata);
     const void *data;
     int v;
 
@@ -330,7 +330,7 @@ static void read_callback(pa_stream *s, size_t length, void *userdata) {
 }
 
 
-SpeakerSetup::SpeakerSetup(QWidget *parent)
+AudioSetup::AudioSetup(QWidget *parent)
     : QWidget(parent)
     , m_OutstandingRequests(3)
     , m_Canberra(NULL)
@@ -384,7 +384,7 @@ SpeakerSetup::SpeakerSetup(QWidget *parent)
 
     pa_mainloop_api *api = pa_glib_mainloop_get_api(s_mainloop);
 
-    s_context = pa_context_new(api, "kspeakersetup");
+    s_context = pa_context_new(api, "kaudiosetup");
     int rv;
     rv = pa_context_connect(s_context, NULL, PA_CONTEXT_NOFAIL, 0);
     Q_ASSERT(rv >= 0);
@@ -395,7 +395,7 @@ SpeakerSetup::SpeakerSetup(QWidget *parent)
     Q_ASSERT(rv >= 0);
 }
 
-SpeakerSetup::~SpeakerSetup()
+AudioSetup::~AudioSetup()
 {
     if (m_Canberra)
         ca_context_destroy(m_Canberra);
@@ -409,19 +409,19 @@ SpeakerSetup::~SpeakerSetup()
     }
 }
 
-void SpeakerSetup::load()
+void AudioSetup::load()
 {
 }
 
-void SpeakerSetup::save()
+void AudioSetup::save()
 {
 }
 
-void SpeakerSetup::defaults()
+void AudioSetup::defaults()
 {
 }
 
-void SpeakerSetup::updateCard(const pa_card_info* i)
+void AudioSetup::updateCard(const pa_card_info* i)
 {
     cardInfo info;
     info.index = i->index;
@@ -457,7 +457,7 @@ void SpeakerSetup::updateCard(const pa_card_info* i)
     logMessage(QString("Got info about card %1").arg(info.name));
 }
 
-void SpeakerSetup::removeCard(uint32_t index)
+void AudioSetup::removeCard(uint32_t index)
 {
     s_Cards.remove(index);
     updateFromPulse();
@@ -466,7 +466,7 @@ void SpeakerSetup::removeCard(uint32_t index)
         cardBox->removeItem(idx);
 }
 
-void SpeakerSetup::updateSink(const pa_sink_info* i)
+void AudioSetup::updateSink(const pa_sink_info* i)
 {
     deviceInfo info;
     info.index = i->index;
@@ -501,7 +501,7 @@ void SpeakerSetup::updateSink(const pa_sink_info* i)
     logMessage(QString("Got info about sink %1").arg(info.name));
 }
 
-void SpeakerSetup::removeSink(uint32_t index)
+void AudioSetup::removeSink(uint32_t index)
 {
     s_Sinks.remove(index);
     updateIndependantDevices();
@@ -511,7 +511,7 @@ void SpeakerSetup::removeSink(uint32_t index)
         deviceBox->removeItem(idx);
 }
 
-void SpeakerSetup::updateSource(const pa_source_info* i)
+void AudioSetup::updateSource(const pa_source_info* i)
 {
     if (i->monitor_of_sink != PA_INVALID_INDEX)
         return;
@@ -549,7 +549,7 @@ void SpeakerSetup::updateSource(const pa_source_info* i)
     logMessage(QString("Got info about source %1").arg(info.name));
 }
 
-void SpeakerSetup::removeSource(uint32_t index)
+void AudioSetup::removeSource(uint32_t index)
 {
     s_Sources.remove(index);
     updateIndependantDevices();
@@ -559,7 +559,7 @@ void SpeakerSetup::removeSource(uint32_t index)
         deviceBox->removeItem(idx);
 }
 
-void SpeakerSetup::updateFromPulse()
+void AudioSetup::updateFromPulse()
 {
     if (m_OutstandingRequests > 0) {
         if (0 == --m_OutstandingRequests) {
@@ -595,7 +595,7 @@ void SpeakerSetup::updateFromPulse()
     }
 }
 
-void SpeakerSetup::cardChanged()
+void AudioSetup::cardChanged()
 {
     int idx = cardBox->currentIndex();
     if (idx < 0) {
@@ -641,7 +641,7 @@ void SpeakerSetup::cardChanged()
     emit changed();
 }
 
-void SpeakerSetup::profileChanged()
+void AudioSetup::profileChanged()
 {
     uint32_t card_index = cardBox->itemData(cardBox->currentIndex()).toUInt();
     Q_ASSERT(PA_INVALID_INDEX != card_index);
@@ -661,7 +661,7 @@ void SpeakerSetup::profileChanged()
     emit changed();
 }
 
-void SpeakerSetup::updateIndependantDevices()
+void AudioSetup::updateIndependantDevices()
 {
     // Should we display the "Independent Devices" drop down?
     // Count all the sinks without cards
@@ -685,7 +685,7 @@ void SpeakerSetup::updateIndependantDevices()
     cardBox->blockSignals(bs);
 }
 
-void SpeakerSetup::updateVUMeter(int vol)
+void AudioSetup::updateVUMeter(int vol)
 {
   if (vol < 0) {
       inputLevels->setEnabled(false);
@@ -699,7 +699,7 @@ void SpeakerSetup::updateVUMeter(int vol)
   }
 }
 
-void SpeakerSetup::reallyUpdateVUMeter()
+void AudioSetup::reallyUpdateVUMeter()
 {
     int val = inputLevels->value();
     if (val > m_VURealValue)
@@ -718,7 +718,7 @@ static deviceInfo & getDeviceInfo(int64_t index)
     return s_Sources[index];
 }
 
-void SpeakerSetup::deviceChanged()
+void AudioSetup::deviceChanged()
 {
     int idx = deviceBox->currentIndex();
     if (idx < 0) {
@@ -753,7 +753,7 @@ void SpeakerSetup::deviceChanged()
     emit changed();
 }
 
-void SpeakerSetup::portChanged()
+void AudioSetup::portChanged()
 {
     int64_t index = deviceBox->itemData(deviceBox->currentIndex()).toInt();
 
@@ -779,7 +779,7 @@ void SpeakerSetup::portChanged()
     emit changed();
 }
 
-void SpeakerSetup::_updatePlacementTester()
+void AudioSetup::_updatePlacementTester()
 {
     static const int position_table[] = {
         /* Position, X, Y */
@@ -842,7 +842,7 @@ void SpeakerSetup::_updatePlacementTester()
 
 }
 
-void SpeakerSetup::_createMonitorStreamForSource(uint32_t source_idx)
+void AudioSetup::_createMonitorStreamForSource(uint32_t source_idx)
 {
     if (m_VUStream) {
         pa_stream_disconnect(m_VUStream);
@@ -878,7 +878,7 @@ void SpeakerSetup::_createMonitorStreamForSource(uint32_t source_idx)
     }
 }
 
-uint32_t SpeakerSetup::getCurrentSinkIndex()
+uint32_t AudioSetup::getCurrentSinkIndex()
 {
     int idx = deviceBox->currentIndex();
     if (idx < 0)
@@ -892,5 +892,5 @@ uint32_t SpeakerSetup::getCurrentSinkIndex()
 }
 
 
-#include "speakersetup.moc"
+#include "audiosetup.moc"
 // vim: sw=4 sts=4 et tw=100

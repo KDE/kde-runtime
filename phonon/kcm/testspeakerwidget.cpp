@@ -18,10 +18,10 @@
 */
 
 #include "testspeakerwidget.h"
-#include "speakersetup.h"
+#include "audiosetup.h"
 #include <stdio.h>
 
-TestSpeakerWidget::TestSpeakerWidget(const pa_channel_position_t pos, ca_context *canberra, SpeakerSetup* ss)
+TestSpeakerWidget::TestSpeakerWidget(const pa_channel_position_t pos, ca_context *canberra, AudioSetup* ss)
   : KPushButton(KIcon("preferences-desktop-sound"), "Test", ss)
   , m_Ss(ss)
   , m_Pos(pos)

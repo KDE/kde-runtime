@@ -26,7 +26,7 @@ class DevicePreference;
 class BackendSelection;
 
 #ifdef HAVE_PULSEAUDIO
-class SpeakerSetup;
+class AudioSetup;
 #endif
 class KTabWidget;
 
@@ -50,7 +50,7 @@ class PhononKcm : public KCModule
         DevicePreference *m_devicePreferenceWidget;
         BackendSelection *m_backendSelection;
 #ifdef HAVE_PULSEAUDIO
-        SpeakerSetup* m_speakerSetup;
+        AudioSetup* m_speakerSetup;
 #endif
 };
 
