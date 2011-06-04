@@ -47,6 +47,7 @@ void TestSpeakerWidget::clicked()
     ca_proplist_sets(proplist, CA_PROP_CANBERRA_FORCE_CHANNEL, _positionAsString());
     ca_proplist_sets(proplist, CA_PROP_CANBERRA_ENABLE, "1");
 
+    ca_context_cancel(m_Canberra, 0);
     ca_proplist_sets(proplist, CA_PROP_EVENT_ID, sound_name);
     if (ca_context_play_full(m_Canberra, 0, proplist, NULL, NULL) < 0) {
         // Try a different sound name.
