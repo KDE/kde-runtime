@@ -79,7 +79,10 @@ void Nepomuk::WriteBackService::test(const QString& url)
 
             plugin->writeback(KUrl(url));
         }
-
+else
+   {
+   kError(5001) << "read write part";
+   }
         }
 
         // Nepomuk::MyWritebackPlugin d;

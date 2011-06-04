@@ -52,10 +52,8 @@ Nepomuk::MyWritebackPlugin::~MyWritebackPlugin()
 
 void Nepomuk::MyWritebackPlugin::doWriteback(const QUrl& url)
 {
-    TagLib::FileRef f(QFile::encodeName( url.toLocalFile()).data());
-    f.tag()->setTitle("Good God");
-    f.save();
-    /*
+
+
     Nepomuk::Resource resource(url);
     if(resource.exists())
     {
@@ -122,7 +120,7 @@ void Nepomuk::MyWritebackPlugin::doWriteback(const QUrl& url)
                     f.save();
                 }
             }
-        }*/
+        }
      emitFinished();
     }
 //}
