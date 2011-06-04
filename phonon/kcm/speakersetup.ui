@@ -7,11 +7,11 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>537</width>
-    <height>465</height>
+    <width>654</width>
+    <height>480</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
     <widget class="QGroupBox" name="hardwareGroupBox">
      <property name="title">
@@ -62,13 +62,13 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="outputGroupBox">
+    <widget class="QGroupBox" name="deviceGroupBox">
      <property name="title">
-      <string>Output</string>
+      <string>Device Configuration</string>
      </property>
      <layout class="QGridLayout" name="_2">
       <item row="0" column="1">
-       <widget class="KComboBox" name="sinkBox">
+       <widget class="KComboBox" name="deviceBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -98,12 +98,12 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="sinkLabel">
+       <widget class="QLabel" name="deviceLabel">
         <property name="text">
-         <string>Sound Output</string>
+         <string>Sound Device</string>
         </property>
         <property name="buddy">
-         <cstring>sinkBox</cstring>
+         <cstring>deviceBox</cstring>
         </property>
        </widget>
       </item>
@@ -111,21 +111,103 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QStackedWidget" name="playbackOrCaptureStack">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="title">
-      <string>Speaker Placement and Testing</string>
+     <property name="currentIndex">
+      <number>1</number>
      </property>
-     <layout class="QVBoxLayout" name="_4">
-      <item>
-       <layout class="QGridLayout" name="placementGrid"/>
-      </item>
-     </layout>
+     <widget class="QWidget" name="playbackPage">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QGroupBox" name="outputGroupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>Speaker Placement and Testing</string>
+         </property>
+         <layout class="QVBoxLayout" name="_4">
+          <item>
+           <layout class="QGridLayout" name="placementGrid"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="capturePage">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QGroupBox" name="inputGroupBox">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>26</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Input Levels</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QProgressBar" name="inputLevels">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>10</height>
+             </size>
+            </property>
+            <property name="value">
+             <number>50</number>
+            </property>
+            <property name="textVisible">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>

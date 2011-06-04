@@ -29,7 +29,7 @@
 #undef KDE3_SUPPORT
 #include <kconfig.h>
 
-//class QLabel;
+class QTimer;
 
 class SpeakerSetup : public QWidget, private Ui::SpeakerSetup
 {
@@ -46,14 +46,18 @@ class SpeakerSetup : public QWidget, private Ui::SpeakerSetup
         void removeCard(uint32_t idx);
         void updateSink(const pa_sink_info*);
         void removeSink(uint32_t idx);
+        void updateSource(const pa_source_info*);
+        void removeSource(uint32_t idx);
         void updateFromPulse();
         void updateIndependantDevices();
+        void updateVUMeter(int vol);
 
     public Q_SLOTS:
         void cardChanged();
         void profileChanged();
-        void sinkChanged();
+        void deviceChanged();
         void portChanged();
+        void reallyUpdateVUMeter();
 
     Q_SIGNALS:
         void changed();
@@ -61,10 +65,15 @@ class SpeakerSetup : public QWidget, private Ui::SpeakerSetup
 
     private:
         void _updatePlacementTester();
+        void _createMonitorStreamForSource(uint32_t);
 
         QLabel* m_Icon;
         int m_OutstandingRequests;
         ca_context* m_Canberra;
+        pa_stream* m_VUStream;
+        int m_VURealValue;
+        QTimer* m_VUTimer;
+  
 };
 
 #endif // PHONON_SPEAKERSETUP_H
