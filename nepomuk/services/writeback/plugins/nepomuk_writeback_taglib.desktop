@@ -7,5 +7,5 @@ Type=Service
 X-KDE-Library=nepomuk_writeback_taglib
 
 # FIXME
-X-Nepomuk-MimeTypes=audio/mpeg;audio/x-musepack;audio/flac;video/mp4;video/x-ms-asf;audio/x-aiff;audio/x-wav;audio/ogg;
+MimeType=audio/mpeg;audio/x-musepack;audio/flac;video/mp4;video/x-ms-asf;audio/x-aiff;audio/x-wav;audio/ogg;
 

@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include<QStringList>
 #include <QFile>
 #include <QUrl>
+#include <KDebug>
 
 #include<taglib/fileref.h>
 #include<taglib/tag.h>
@@ -52,8 +53,6 @@ Nepomuk::MyWritebackPlugin::~MyWritebackPlugin()
 
 void Nepomuk::MyWritebackPlugin::doWriteback(const QUrl& url)
 {
-
-
     Nepomuk::Resource resource(url);
     if(resource.exists())
     {
@@ -67,7 +66,6 @@ void Nepomuk::MyWritebackPlugin::doWriteback(const QUrl& url)
             if(title != TStringToQString(f.tag()->title()))
             {
                 f.tag()->setTitle(Q4StringToTString(title));
-                f.save();
             }
         }
         if((resource.property(NMM::musicAlbum())).isValid())
@@ -78,7 +76,6 @@ void Nepomuk::MyWritebackPlugin::doWriteback(const QUrl& url)
                 if(album != TStringToQString(f.tag()->album()))
                 {
                     f.tag()->setAlbum(Q4StringToTString(album));
-                    f.save();
                 }
             }
         }
@@ -88,7 +85,6 @@ void Nepomuk::MyWritebackPlugin::doWriteback(const QUrl& url)
             if(comment != TStringToQString(f.tag()->comment()))
             {
                 f.tag()->setComment(Q4StringToTString(comment));
-                f.save();
             }
         }
         if((resource.property(NMM::genre()).isString()))
@@ -97,7 +93,6 @@ void Nepomuk::MyWritebackPlugin::doWriteback(const QUrl& url)
             if(genre != TStringToQString(f.tag()->genre()))
             {
                 f.tag()->setGenre(Q4StringToTString(genre));
-                f.save();
             }
         }
         if((resource.property(NMM::trackNumber()).isInt()))
@@ -106,7 +101,7 @@ void Nepomuk::MyWritebackPlugin::doWriteback(const QUrl& url)
             if(track != f.tag()->track())
             {
                 f.tag()->setTrack(track);
-                f.save();
+
             }
         }
         if((resource.property(NMM::performer())).isValid())
@@ -117,12 +112,12 @@ void Nepomuk::MyWritebackPlugin::doWriteback(const QUrl& url)
                 if(artist != TStringToQString(f.tag()->artist()))
                 {
                     f.tag()->setArtist(Q4StringToTString(artist));
-                    f.save();
                 }
             }
         }
-     emitFinished();
+        f.save();
+        emitFinished();
     }
-//}
+}
 NEPOMUK_EXPORT_WRITEBACK_PLUGIN(Nepomuk::MyWritebackPlugin,"nepomuk_writeback_taglib")
-//#include "mywritebackplugin.moc"
+#include "mywritebackplugin.moc"

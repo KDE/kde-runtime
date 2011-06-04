@@ -20,7 +20,8 @@
 #include "writebackservice.h"
 #include "writebackplugin.h"
 
-#include <kservicetypetrader.h>
+#include <kmimetypetrader.h>
+
 #include <KDebug>
 #include <KUrl>
 #include <kservice.h>
@@ -53,45 +54,25 @@ Nepomuk::WriteBackService::~WriteBackService()
 
 void Nepomuk::WriteBackService::test(const QString& url)
 {
-   // KUrl url_(url);
-    //Nepomuk::Resource resource(url_);
+    KUrl url_(url);
+    Nepomuk::Resource resource(url_);
 
-  //  const QStringList mimetypes = resource.property(NIE::mimeType()).toStringList();
-    //if(!mimetypes.isEmpty())
+    const QStringList mimetypes = resource.property(NIE::mimeType()).toStringList();
+    if(!mimetypes.isEmpty())
     {
-       // QStringList subQueries;//( "'*' in [X-Nepomuk-MimeTypes]" );
-        //for( int i = 0; i < mimetypes.count(); ++i ) {
-          //  subQueries << QString( "'%1' in [X-Nepomuk-MimeTypes]" ).arg( mimetypes[i]);
-        }
-       KService::List services;
-        KServiceTypeTrader* trader = KServiceTypeTrader::self();
-//        QString mimetype = mimetypes.first();
-//        QString y =" in MimeTypes";
-//        mimetype += y;
-        services = trader->query("Nepomuk/WritebackPlugin");
-       // WritebackPlugin* plugin= KServiceTypeTrader::createInstanceFromQuery<WritebackPlugin>("Nepomuk/WritebackPlugin",constraint, this);
-        foreach(const KSharedPtr<KService>& service, services) {
-            WritebackPlugin* plugin = service-> createInstance<WritebackPlugin>();
+        QString  mimetype = mimetypes.first();
+        WritebackPlugin* plugin= KMimeTypeTrader::createInstanceFromQuery<WritebackPlugin>(mimetype,"Nepomuk/WritebackPlugin",this);
 
-   if (plugin)
+        if (plugin)
         {
-           // kError(5001) << "read write part" << service->createInstance<WritebackPlugin>();
-
-            plugin->writeback(KUrl(url));
+            plugin->writeback(url_);
         }
-else
-   {
-   kError(5001) << "read write part";
-   }
+        else
+        {
+            kError(5001) << "read write part";
         }
-
-        // Nepomuk::MyWritebackPlugin d;
-        // d.doWriteback(KUrl(url));
-
-
     }
-//}
-
+}
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>

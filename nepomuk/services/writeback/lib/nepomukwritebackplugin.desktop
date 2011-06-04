@@ -5,8 +5,5 @@ X-KDE-ServiceType=Nepomuk/WritebackPlugin
 Comment=Nepomuk Writeback plugin
 Comment[x-test]=xxNepomuk Writeback pluginxx
 
-# The types of resources supported by the plugin, i.e. it can create annotations
-# for this kind of resource. Wildcard * is allowed to indicate all resource types
-[PropertyDef::X-Nepomuk-MimeTypes]
-Type=QStringList
+
  
