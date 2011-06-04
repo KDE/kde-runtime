@@ -490,7 +490,7 @@ void AudioSetup::updateSink(const pa_sink_info* i)
         int idx = deviceBox->currentIndex();
         if (idx >= 0) {
             int64_t index = deviceBox->itemData(idx).toInt();
-            if (index > 0 && index == i->index) {
+            if (index >= 0 && index == i->index) {
                 bool bs = portBox->blockSignals(true);
                 portBox->setCurrentIndex(portBox->findData(info.activePort));
                 portBox->blockSignals(bs);
@@ -538,7 +538,7 @@ void AudioSetup::updateSource(const pa_source_info* i)
         int idx = deviceBox->currentIndex();
         if (idx >= 0) {
             int64_t index = deviceBox->itemData(idx).toInt();
-            if (index < 0 && -1*index == i->index) {
+            if (index < 0 && ((-1*index) - 1) == i->index) {
                 bool bs = portBox->blockSignals(true);
                 portBox->setCurrentIndex(portBox->findData(info.activePort));
                 portBox->blockSignals(bs);
@@ -628,7 +628,7 @@ void AudioSetup::cardChanged()
     }
     for (QMap<uint32_t,deviceInfo>::iterator it = s_Sources.begin(); it != s_Sources.end(); ++it) {
         if (it->cardIndex == card_index)
-            deviceBox->addItem(KIcon(it->icon), i18n("Capture (%1)", it->name), -1*it->index);
+            deviceBox->addItem(KIcon(it->icon), i18n("Capture (%1)", it->name), ((-1*it->index) - 1));
     }
     deviceBox->blockSignals(bs);
 
@@ -708,12 +708,12 @@ void AudioSetup::reallyUpdateVUMeter()
 
 static deviceInfo & getDeviceInfo(int64_t index)
 {
-    if (index > 0) {
+    if (index >= 0) {
       Q_ASSERT(s_Sinks.contains(index));
       return s_Sinks[index];
     }
     
-    index *= -1;
+    index = (-1*index) - 1;
     Q_ASSERT(s_Sources.contains(index));
     return s_Sources[index];
 }
@@ -746,7 +746,7 @@ void AudioSetup::deviceChanged()
 
     if (deviceBox->currentIndex() >= 0) {
         if (index < 0)
-            _createMonitorStreamForSource(-1*index);
+            _createMonitorStreamForSource((-1*index) - 1);
         _updatePlacementTester();
     }
 
@@ -764,13 +764,13 @@ void AudioSetup::portChanged()
     Q_ASSERT(device_info.ports.size());
 
     pa_operation *o;
-    if (index > 0) {
+    if (index >= 0) {
         if (!(o = pa_context_set_sink_port_by_index(s_context, (uint32_t)index, port.toAscii().constData(), NULL, NULL)))
             logMessage(QString("pa_context_set_sink_port_by_index() failed"));
         else
             pa_operation_unref(o);
     } else {
-        if (!(o = pa_context_set_source_port_by_index(s_context, (uint32_t)(-1*index), port.toAscii().constData(), NULL, NULL)))
+        if (!(o = pa_context_set_source_port_by_index(s_context, (uint32_t)((-1*index) - 1), port.toAscii().constData(), NULL, NULL)))
             logMessage(QString("pa_context_set_source_port_by_index() failed"));
         else
             pa_operation_unref(o);
@@ -885,7 +885,7 @@ uint32_t AudioSetup::getCurrentSinkIndex()
         return PA_INVALID_INDEX;
 
     int64_t index = deviceBox->itemData(idx).toInt();
-    if (index > 0)
+    if (index >= 0)
         return (uint32_t)index;
 
     return PA_INVALID_INDEX;
