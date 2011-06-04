@@ -24,6 +24,7 @@
 #include <KDebug>
 #include <KUrl>
 #include <kservice.h>
+#include <KService>
 
 #include <QString>
 
@@ -52,31 +53,33 @@ Nepomuk::WriteBackService::~WriteBackService()
 
 void Nepomuk::WriteBackService::test(const QString& url)
 {
-    KUrl url_(url);
-    Nepomuk::Resource resource(url_);
+   // KUrl url_(url);
+    //Nepomuk::Resource resource(url_);
 
-    const QStringList mimetypes = resource.property(NIE::mimeType()).toStringList();
-    if(!mimetypes.isEmpty())
+  //  const QStringList mimetypes = resource.property(NIE::mimeType()).toStringList();
+    //if(!mimetypes.isEmpty())
     {
-        QStringList subQueries;//( "'*' in [X-Nepomuk-MimeTypes]" );
-        for( int i = 0; i < mimetypes.count(); ++i ) {
-            subQueries << QString( "'%1' in [X-Nepomuk-MimeTypes]" ).arg( mimetypes[i]);
+       // QStringList subQueries;//( "'*' in [X-Nepomuk-MimeTypes]" );
+        //for( int i = 0; i < mimetypes.count(); ++i ) {
+          //  subQueries << QString( "'%1' in [X-Nepomuk-MimeTypes]" ).arg( mimetypes[i]);
         }
-//        KService::List services;
-//        KServiceTypeTrader* trader = KServiceTypeTrader::self();
+       KService::List services;
+        KServiceTypeTrader* trader = KServiceTypeTrader::self();
 //        QString mimetype = mimetypes.first();
 //        QString y =" in MimeTypes";
 //        mimetype += y;
+        services = trader->query("Nepomuk/WritebackPlugin");
+       // WritebackPlugin* plugin= KServiceTypeTrader::createInstanceFromQuery<WritebackPlugin>("Nepomuk/WritebackPlugin",constraint, this);
+        foreach(const KSharedPtr<KService>& service, services) {
+            WritebackPlugin* plugin = service-> createInstance<WritebackPlugin>();
 
-       // services = trader->query("Nepouk/WritebackPlugin", mimetype);
-        WritebackPlugin* plugin= KServiceTypeTrader::createInstanceFromQuery<WritebackPlugin>("Nepouk/WritebackPlugin",subQueries.join( " or " ), this);
-        if (plugin)
+   if (!plugin)
         {
-            plugin->writeback(KUrl(url));
+            kError(5001) << "read write part" << service->createInstance<WritebackPlugin>();
+
+            //plugin->writeback(KUrl(url));
         }
-else
-        {
-            kDbug();
+
         }
 
         // Nepomuk::MyWritebackPlugin d;
@@ -84,7 +87,7 @@ else
 
 
     }
-}
+//}
 
 
 #include <kpluginfactory.h>

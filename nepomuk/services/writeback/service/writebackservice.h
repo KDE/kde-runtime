@@ -33,6 +33,7 @@ namespace Nepomuk {
 
     public Q_SLOTS:
        Q_SCRIPTABLE void test( const QString& url);
+
       
     };
 

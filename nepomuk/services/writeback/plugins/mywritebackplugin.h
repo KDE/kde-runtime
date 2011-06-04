@@ -26,7 +26,7 @@ namespace Nepomuk
   class MyWritebackPlugin : public Nepomuk::WritebackPlugin
   {
   public:
-    MyWritebackPlugin(QObject* parent=0);
+    MyWritebackPlugin(QObject* parent,const QList<QVariant>&);
     ~MyWritebackPlugin();
   public:
     void doWriteback(const QUrl& url);

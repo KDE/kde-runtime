@@ -18,10 +18,10 @@ include_directories(
 set( writebackplugins_SCR
 mywritebackplugin.cpp
 )
-kde4_add_plugin(nepomukwritebackplugins ${writebackplugins_SCR})
+kde4_add_plugin(nepomuk_writeback_taglib ${writebackplugins_SCR})
 
 
-target_link_libraries(nepomukwritebackplugins
+target_link_libraries(nepomuk_writeback_taglib
   ${KDE4_KDEUI_LIBS}
   ${KDE4_KIO_LIBS}
   ${NEPOMUK_LIBRARIES}
@@ -37,6 +37,6 @@ install(
   DESTINATION ${SERVICES_INSTALL_DIR})
 
 install(
-  TARGETS nepomukwritebackplugins
+  TARGETS nepomuk_writeback_taglib
   DESTINATION ${PLUGIN_INSTALL_DIR})
 # -----------------------------

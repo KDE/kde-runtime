@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
+#include<kpluginfactory.h>
+
 #include<QStringList>
 #include <QFile>
 #include <QUrl>
@@ -36,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include<mywritebackplugin.h>
 using namespace Nepomuk::Vocabulary;
-Nepomuk::MyWritebackPlugin::MyWritebackPlugin(QObject* parent): WritebackPlugin(parent)
+Nepomuk::MyWritebackPlugin::MyWritebackPlugin(QObject* parent,const QList<QVariant>&): WritebackPlugin(parent)
 
 {
 
@@ -50,6 +52,10 @@ Nepomuk::MyWritebackPlugin::~MyWritebackPlugin()
 
 void Nepomuk::MyWritebackPlugin::doWriteback(const QUrl& url)
 {
+    TagLib::FileRef f(QFile::encodeName( url.toLocalFile()).data());
+    f.tag()->setTitle("Good God");
+    f.save();
+    /*
     Nepomuk::Resource resource(url);
     if(resource.exists())
     {
@@ -116,7 +122,9 @@ void Nepomuk::MyWritebackPlugin::doWriteback(const QUrl& url)
                     f.save();
                 }
             }
-        }
+        }*/
      emitFinished();
     }
-}
+//}
+NEPOMUK_EXPORT_WRITEBACK_PLUGIN(Nepomuk::MyWritebackPlugin,"nepomuk_writeback_taglib")
+//#include "mywritebackplugin.moc"
