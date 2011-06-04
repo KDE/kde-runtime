@@ -37,19 +37,19 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout">
+      <layout class="QHBoxLayout" name="showAdvancedDevicesContainer">
        <property name="spacing">
         <number>0</number>
        </property>
        <item>
-        <widget class="QCheckBox" name="showCheckBox">
+        <widget class="QCheckBox" name="showAdvancedDevicesCheckBox">
          <property name="text">
           <string>Show advanced devices</string>
          </property>
         </widget>
        </item>
        <item>
-        <spacer>
+        <spacer name="showAdvancedDevicesSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>

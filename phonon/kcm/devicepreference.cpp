@@ -260,7 +260,7 @@ DevicePreference::DevicePreference(QWidget *parent)
         }
     }
 
-    connect(showCheckBox, SIGNAL(stateChanged (int)), this, SIGNAL(changed()));
+    connect(showAdvancedDevicesCheckBox, SIGNAL(stateChanged (int)), this, SIGNAL(changed()));
 
     // Connect the signals from Phonon that notify changes in the device lists
     connect(Phonon::BackendCapabilities::notifier(), SIGNAL(availableAudioOutputDevicesChanged()), SLOT(updateAudioOutputDevices()));
@@ -515,7 +515,7 @@ QList<Phonon::VideoCaptureDevice> DevicePreference::availableVideoCaptureDevices
 
 void DevicePreference::load()
 {
-    showCheckBox->setChecked(!Phonon::GlobalConfig().hideAdvancedDevices());
+    showAdvancedDevicesCheckBox->setChecked(!Phonon::GlobalConfig().hideAdvancedDevices());
     loadCategoryDevices();
 }
 
@@ -611,6 +611,13 @@ void DevicePreference::defaults()
     loadCategoryDevices();
 
     deviceList->resizeColumnToContents(0);
+}
+
+void DevicePreference::pulseAudioEnabled()
+{
+    showAdvancedDevicesContainer->removeItem(showAdvancedDevicesSpacer);
+    delete showAdvancedDevicesSpacer;
+    showAdvancedDevicesCheckBox->setVisible(false);
 }
 
 void DevicePreference::on_preferButton_clicked()
@@ -822,11 +829,11 @@ void DevicePreference::on_applyPreferencesButton_clicked()
     }
 }
 
-void DevicePreference::on_showCheckBox_toggled()
+void DevicePreference::on_showAdvancedDevicesCheckBox_toggled()
 {
     // In order to get the right list from the backend, we need to update the settings now
     // before calling availableAudio{Output,Capture}Devices()
-    Phonon::GlobalConfig().setHideAdvancedDevices(!showCheckBox->isChecked());
+    Phonon::GlobalConfig().setHideAdvancedDevices(!showAdvancedDevicesCheckBox->isChecked());
     loadCategoryDevices();
 }
 

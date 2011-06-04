@@ -95,6 +95,7 @@ void PhononKcm::defaults()
 void PhononKcm::speakerSetupReady()
 {
   m_tabs->insertTab(1, m_speakerSetup, i18n("Audio Hardware Setup"));
+  m_devicePreferenceWidget->pulseAudioEnabled();
   emit changed();
 }
 #endif
