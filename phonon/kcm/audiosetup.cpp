@@ -384,7 +384,7 @@ AudioSetup::AudioSetup(QWidget *parent)
 
     pa_mainloop_api *api = pa_glib_mainloop_get_api(s_mainloop);
 
-    s_context = pa_context_new(api, "kaudiosetup");
+    s_context = pa_context_new(api, i18n("KDE Audio Hardware Setup").toUtf8().constData());
     int rv;
     rv = pa_context_connect(s_context, NULL, PA_CONTEXT_NOFAIL, 0);
     Q_ASSERT(rv >= 0);
@@ -747,6 +747,11 @@ void AudioSetup::deviceChanged()
     if (deviceBox->currentIndex() >= 0) {
         if (index < 0)
             _createMonitorStreamForSource((-1*index) - 1);
+        else if (m_VUStream) {
+            pa_stream_disconnect(m_VUStream);
+            m_VUStream = NULL;
+        }
+
         _updatePlacementTester();
     }
 
