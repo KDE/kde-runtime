@@ -33,9 +33,10 @@ class TestSpeakerWidget: public KPushButton
     Q_OBJECT
     public:
         TestSpeakerWidget(const pa_channel_position_t pos, ca_context *canberra, AudioSetup* ss);
+        ~TestSpeakerWidget();
 
     private slots:
-        void clicked();
+        void toggled(bool);
 
     private:
         QString _positionName();

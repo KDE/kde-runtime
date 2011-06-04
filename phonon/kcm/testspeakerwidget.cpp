@@ -21,18 +21,50 @@
 #include "audiosetup.h"
 #include <stdio.h>
 
+static uint32_t s_CurrentIndex = PA_INVALID_INDEX;
+static TestSpeakerWidget *s_CurrentWidget = NULL;
+
+static void finish_cb(ca_context *, uint32_t id, int, void *)
+{
+  Q_ASSERT(id == 0);
+  if (s_CurrentWidget && s_CurrentWidget->isChecked()) {
+    s_CurrentIndex = PA_INVALID_INDEX;
+    s_CurrentWidget->setChecked(false);
+    s_CurrentWidget = NULL;
+  }
+}
+
 TestSpeakerWidget::TestSpeakerWidget(const pa_channel_position_t pos, ca_context *canberra, AudioSetup* ss)
   : KPushButton(KIcon("preferences-desktop-sound"), "Test", ss)
   , m_Ss(ss)
   , m_Pos(pos)
   , m_Canberra(canberra)
 {
+    setCheckable(true);
     setText(_positionName());
-    connect(this, SIGNAL(clicked()), SLOT(clicked()));
+    connect(this, SIGNAL(toggled(bool)), SLOT(toggled(bool)));
 }
 
-void TestSpeakerWidget::clicked()
+TestSpeakerWidget::~TestSpeakerWidget()
 {
+    if (this == s_CurrentWidget)
+        s_CurrentWidget = NULL;
+}
+
+void TestSpeakerWidget::toggled(bool state)
+{
+    if (s_CurrentIndex != PA_INVALID_INDEX) {
+        ca_context_cancel(m_Canberra, s_CurrentIndex);
+        s_CurrentIndex = PA_INVALID_INDEX;
+    }
+    if (s_CurrentWidget) {
+        if (this != s_CurrentWidget && state)
+            s_CurrentWidget->setChecked(false);
+        s_CurrentWidget = NULL;
+    }
+    if (!state)
+        return;
+
     uint32_t sink_index = m_Ss->getCurrentSinkIndex();
     char dev[64];
     snprintf(dev, sizeof(dev), "%lu", (unsigned long) sink_index);
@@ -47,15 +79,20 @@ void TestSpeakerWidget::clicked()
     ca_proplist_sets(proplist, CA_PROP_CANBERRA_FORCE_CHANNEL, _positionAsString());
     ca_proplist_sets(proplist, CA_PROP_CANBERRA_ENABLE, "1");
 
-    ca_context_cancel(m_Canberra, 0);
     ca_proplist_sets(proplist, CA_PROP_EVENT_ID, sound_name);
-    if (ca_context_play_full(m_Canberra, 0, proplist, NULL, NULL) < 0) {
+    s_CurrentIndex = 0;
+    s_CurrentWidget = this;
+    if (ca_context_play_full(m_Canberra, s_CurrentIndex, proplist, finish_cb, NULL) < 0) {
         // Try a different sound name.
         ca_proplist_sets(proplist, CA_PROP_EVENT_ID, "audio-test-signal");
-        if (ca_context_play_full(m_Canberra, 0, proplist, NULL, NULL) < 0) {
+        if (ca_context_play_full(m_Canberra, s_CurrentIndex, proplist, finish_cb, NULL) < 0) {
             // Finaly try this... if this doesn't work, then stuff it.
             ca_proplist_sets(proplist, CA_PROP_EVENT_ID, "bell-window-system");
-            ca_context_play_full(m_Canberra, 0, proplist, NULL, NULL);
+            if (ca_context_play_full(m_Canberra, s_CurrentIndex, proplist, finish_cb, NULL) < 0) {
+                s_CurrentIndex = PA_INVALID_INDEX;
+                s_CurrentWidget = NULL;
+                setChecked(false);
+            }
         }
     }
 
