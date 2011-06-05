@@ -70,6 +70,7 @@ void SlcEventBackend::addEvents(const EventList & events)
 
             default:
                 // nothing
+                break;
         }
     }
 }
