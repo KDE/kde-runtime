@@ -43,7 +43,9 @@
 
 class EventProcessorPrivate: public QThread {
 public:
-    QList < EventBackend * > backends;
+    QList < EventBackend * > lazyBackends;
+    QList < EventBackend * > syncBackends;
+
     QList < Event > events;
     QMutex events_mutex;
 
@@ -77,7 +79,7 @@ void EventProcessorPrivate::run()
 
         EventProcessorPrivate::events_mutex.unlock();
 
-        foreach (EventBackend * backend, backends) {
+        foreach (EventBackend * backend, lazyBackends) {
             backend->addEvents(currentEvents);
         }
     }
@@ -96,26 +98,29 @@ EventProcessor::EventProcessor()
     : d(new EventProcessorPrivate())
 {
 #ifdef HAVE_QZEITGEIST
-    d->backends.append(new ZeitgeistEventBackend());
+    d->lazyBackends.append(new ZeitgeistEventBackend());
 #endif
 #ifdef HAVE_NEPOMUK
-    d->backends.append(new NepomukEventBackend());
+    d->lazyBackends.append(new NepomukEventBackend());
 #endif
-    d->backends.append(new SlcEventBackend());
+    d->syncBackends.append(new SlcEventBackend());
 }
 
 EventProcessor::~EventProcessor()
 {
-    qDeleteAll(d->backends);
+    qDeleteAll(d->lazyBackends);
+    qDeleteAll(d->syncBackends);
     delete d;
 }
 
 void EventProcessor::addEvent(const QString & application, WId wid, const QString & uri,
             Event::Type type, Event::Reason reason)
 {
-    kDebug() << application << wid << uri << type << reason;
-
     Event newEvent(application, wid, uri, type, reason);
+
+    foreach (EventBackend * backend, d->syncBackends) {
+        backend->addEvents(QList < Event > () << newEvent);
+    }
 
     d->events_mutex.lock();
 

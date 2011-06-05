@@ -41,43 +41,86 @@ SlcEventBackend::SlcEventBackend()
 void SlcEventBackend::addEvents(const EventList & events)
 {
     foreach (const Event & event, events) {
-        if (event.type == Event::FocussedIn) {
-            lastFocussedResource[event.wid] = event.uri;
+        switch (event.type) {
+            case Event::FocussedIn:
+            case Event::Opened:
+                kDebug() << "Event::FocussedIn" << focussedWindow << event.wid << event.uri;
 
-        } else if (event.type == Event::FocussedOut) {
-            lastFocussedResource[event.wid] = KUrl();
+                lastFocussedResource[event.wid] = event.uri;
 
+                if (event.wid == focussedWindow) {
+                    updateFocus(focussedWindow);
+                }
+
+                break;
+
+            case Event::FocussedOut:
+            case Event::Closed:
+                kDebug() << "Event::FocussedOut" << focussedWindow << event.wid << event.uri;
+
+                if (lastFocussedResource[event.wid] == event.uri) {
+                    lastFocussedResource[event.wid] = KUrl();
+                }
+
+                if (event.wid == focussedWindow) {
+                    updateFocus();
+                }
+
+                break;
+
+            default:
+                // nothing
         }
     }
 }
 
+KUrl SlcEventBackend::_focussedResourceURI()
+{
+    KUrl kuri;
+
+    if (lastFocussedResource.contains(focussedWindow)) {
+        kuri = lastFocussedResource[focussedWindow];
+    } else {
+        foreach (const KUrl & uri, SharedInfo::self()->windows()[focussedWindow].resources) {
+            kuri = uri;
+            break;
+        }
+    }
+
+    return kuri;
+}
+
 QString SlcEventBackend::focussedResourceURI()
 {
-    return "42";
+    return _focussedResourceURI().url();
 }
 
 QString SlcEventBackend::focussedResourceMimetype()
 {
-    return "text/answer";
+    return SharedInfo::self()->resources().contains(_focussedResourceURI()) ?
+        SharedInfo::self()->resources()[_focussedResourceURI()].mimetype : QString();
 }
 
 void SlcEventBackend::activeWindowChanged(WId wid)
 {
+    if (wid == focussedWindow) return;
+
+    focussedWindow = wid;
+
     updateFocus(wid);
 }
 
 void SlcEventBackend::updateFocus(WId wid)
 {
-    if (wid == focussedWindow) {
-        KUrl kuri = lastFocussedResource[wid];
+    kDebug() << "Updating focus for " << wid;
 
-        if (kuri == KUrl()) {
-            foreach (const KUrl & uri, SharedInfo::self()->windows()[wid].resources) {
-                kuri = uri;
-                break;
-            }
-        }
+    if (wid == 0 || !SharedInfo::self()->windows().contains(wid)) {
+        kDebug() << "Clearing focus";
+        emit focusChanged(QString(), QString());
 
-        emit focusChanged(kuri.url(), SharedInfo::self()->resources()[kuri].mimetype);
+    } else if (wid == focussedWindow) {
+        kDebug() << "It is the currently focussed window";
+        emit focusChanged(focussedResourceURI(), SharedInfo::self()->resources()[_focussedResourceURI()].mimetype);
+
     }
 }
