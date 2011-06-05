@@ -17,24 +17,42 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#ifndef SLC_EVENT_BACKEND_H_
+#define SLC_EVENT_BACKEND_H_
+
 #include "EventBackend.h"
 
-EventBackend::EventBackend()
-{
-}
+#include <QObject>
+#include <KUrl>
 
-EventBackend::~EventBackend()
-{
-}
+/**
+ *
+ */
+class SlcEventBackend: public QObject, public EventBackend {
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.kde.ActivityManager.SLC")
 
-void EventBackend::addEvents(const EventList & events)
-{
-    Q_UNUSED(events)
-}
+public:
+    SlcEventBackend();
 
-void EventBackend::setResourceMimeType(const QString & uri, const QString & mimetype)
-{
-    Q_UNUSED(uri)
-    Q_UNUSED(mimetype)
-}
+    virtual void addEvents(const EventList & events);
+
+private Q_SLOTS:
+    void activeWindowChanged(WId windowId);
+
+public Q_SLOTS:
+    QString focussedResourceURI();
+    QString focussedResourceMimetype();
+
+Q_SIGNALS:
+    void focusChanged(const QString & uri, const QString & mimetype);
+
+private:
+    void updateFocus(WId wid);
+
+    WId focussedWindow;
+    QHash < WId, KUrl > lastFocussedResource;
+};
+
+#endif // SLC_EVENT_BACKEND_H_
 

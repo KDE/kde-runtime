@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 Ivan Cukic <ivan.cukic(at)kde.org>
+ *   Copyright (C) 2010 Ivan Cukic <ivan.cukic(at)kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License version 2,
@@ -17,24 +17,35 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "EventBackend.h"
+#include "SharedInfo.h"
 
-EventBackend::EventBackend()
+SharedInfo * SharedInfo::s_instance = NULL;
+
+SharedInfo * SharedInfo::self()
+{
+    if (!s_instance) {
+        s_instance = new SharedInfo();
+    }
+
+    return s_instance;
+}
+
+SharedInfo::SharedInfo()
 {
 }
 
-EventBackend::~EventBackend()
+SharedInfo::~SharedInfo()
 {
 }
 
-void EventBackend::addEvents(const EventList & events)
+QHash < WId, SharedInfo::WindowData > const & SharedInfo::windows() const
 {
-    Q_UNUSED(events)
+    return m_windows;
 }
 
-void EventBackend::setResourceMimeType(const QString & uri, const QString & mimetype)
+QHash < KUrl, SharedInfo::ResourceData > const & SharedInfo::resources() const
 {
-    Q_UNUSED(uri)
-    Q_UNUSED(mimetype)
+    return m_resources;
 }
+
 

@@ -31,6 +31,8 @@
 #include "NepomukEventBackend.h"
 #endif
 
+#include "SlcEventBackend.h"
+
 #include <QDateTime>
 #include <QList>
 #include <QMutex>
@@ -99,6 +101,7 @@ EventProcessor::EventProcessor()
 #ifdef HAVE_NEPOMUK
     d->backends.append(new NepomukEventBackend());
 #endif
+    d->backends.append(new SlcEventBackend());
 }
 
 EventProcessor::~EventProcessor()
@@ -110,6 +113,8 @@ EventProcessor::~EventProcessor()
 void EventProcessor::addEvent(const QString & application, WId wid, const QString & uri,
             Event::Type type, Event::Reason reason)
 {
+    kDebug() << application << wid << uri << type << reason;
+
     Event newEvent(application, wid, uri, type, reason);
 
     d->events_mutex.lock();
