@@ -17,22 +17,47 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <ActivityManager.h>
+#ifndef SHARED_INFO_H_
+#define SHARED_INFO_H_
 
-#include <KAboutData>
-#include <KCmdLineArgs>
+#include <KUrl>
+#include <QSet>
+#include <QString>
+#include <QHash>
 
-int main(int argc, char ** argv)
-{
-    KAboutData about("kactivitymanagerd", 0, ki18n("KDE Activity Manager"), "1.0",
-            ki18n("KDE Activity Management Service"),
-            KAboutData::License_GPL,
-            ki18n("(c) 2010 Ivan Cukic, Sebastian Trueg"), KLocalizedString(),
-            "http://www.kde.org/");
+#include "Event.h"
 
-    KCmdLineArgs::init(argc, argv, &about);
+/**
+ *
+ */
+class SharedInfo {
+public:
+    static SharedInfo * self();
 
-    ActivityManager application;
+    virtual ~SharedInfo();
 
-    return application.exec();
-}
+    struct WindowData {
+        QSet < KUrl > resources;
+        QString application;
+    };
+
+    struct ResourceData {
+        Event::Reason reason;
+        QSet < QString > activities;
+        QString mimetype;
+    };
+
+    QHash < WId, WindowData > const & windows() const;
+    QHash < KUrl, ResourceData > const & resources() const;
+
+private:
+    QHash < WId, WindowData > m_windows;
+    QHash < KUrl, ResourceData > m_resources;
+
+    static SharedInfo * s_instance;
+    SharedInfo();
+
+    friend class ActivityManager;
+};
+
+#endif // SHARED_INFO_H_

@@ -56,11 +56,16 @@ include_directories(
 set(activity_manager_SRCS
     ActivityManager.cpp
     EventProcessor.cpp
-    ZeitgeistEventBackend.cpp
-    NepomukEventBackend.cpp
     EventBackend.cpp
     Event.cpp
+    SharedInfo.cpp
     main.cpp
+    )
+
+set(activity_manager_backends_SRCS
+    NepomukEventBackend.cpp
+    ZeitgeistEventBackend.cpp
+    SlcEventBackend.cpp
     )
 
 qt4_add_dbus_adaptor(
@@ -68,11 +73,16 @@ qt4_add_dbus_adaptor(
     ActivityManager.h ActivityManager
     )
 
+qt4_add_dbus_adaptor(
+    activity_manager_SRCS org.kde.ActivityManager.SLC.xml
+    SlcEventBackend.h SlcEventBackend
+    )
+
 if(Nepomuk_FOUND)
     soprano_add_ontology(activity_manager_SRCS ${CMAKE_SOURCE_DIR}/nepomuk/ontologies/kext.trig "KExt" "Nepomuk::Vocabulary" "trig")
 endif()
 
-kde4_add_executable(activity-manager ${activity_manager_SRCS})
+kde4_add_executable(activity-manager ${activity_manager_SRCS} ${activity_manager_backends_SRCS})
 
 target_link_libraries(
     activity-manager

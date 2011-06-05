@@ -30,6 +30,7 @@
 
 #include "ActivityManager.h"
 #include "Event.h"
+#include "SharedInfo.h"
 #include "config-features.h"
 
 #ifdef HAVE_NEPOMUK
@@ -47,7 +48,10 @@ class ActivityManagerPrivate: public QObject {
     Q_OBJECT
 
 public:
-    ActivityManagerPrivate(ActivityManager * parent);
+    ActivityManagerPrivate(ActivityManager * parent,
+            QHash < WId, SharedInfo::WindowData > & _windows,
+            QHash < KUrl, SharedInfo::ResourceData > & _resources
+        );
     ~ActivityManagerPrivate();
 
     void addRunningActivity(const QString & id);
@@ -55,22 +59,6 @@ public:
 
     void ensureCurrentActivityIsRunning();
     bool setCurrentActivity(const QString & id);
-
-    // URIs and WIDs for open resources
-    struct WindowData {
-        QSet < KUrl > resources;
-        QString application;
-    };
-
-    QHash < WId, WindowData > windows;
-
-    struct ResourceData {
-        Event::Reason reason;
-        QSet < QString > activities;
-        QString mimetype;
-    };
-
-    QHash < KUrl, ResourceData > resources;
 
     void setActivityState(const QString & id, ActivityManager::State state);
     QHash < QString, ActivityManager::State > activities;
@@ -85,6 +73,9 @@ public:
     // Configuration
     QTimer configSyncTimer;
     KConfig config;
+
+    QHash < WId, SharedInfo::WindowData > & windows;
+    QHash < KUrl, SharedInfo::ResourceData > & resources;
 
 public:
     void initConifg();
@@ -103,6 +94,7 @@ public Q_SLOTS:
     void scheduleConfigSync();
     void configSync();
     void windowClosed(WId windowId);
+    void activeWindowChanged(WId windowId);
 
     void startCompleted();
     void stopCompleted();
