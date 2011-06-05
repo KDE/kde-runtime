@@ -50,7 +50,8 @@ public:
 };
 
 Nepomuk::ResourceWatcher::ResourceWatcher(QObject* parent)
-    : QObject(parent)
+    : QObject(parent),
+      d(new Private)
 {
     d->m_watchManagerInterface
             = new org::kde::nepomuk::ResourceWatcher( "org.kde.nepomuk.DataManagement",
@@ -62,6 +63,7 @@ Nepomuk::ResourceWatcher::ResourceWatcher(QObject* parent)
 Nepomuk::ResourceWatcher::~ResourceWatcher()
 {
     stop();
+    delete d;
 }
 
 bool Nepomuk::ResourceWatcher::start()
@@ -107,10 +109,12 @@ bool Nepomuk::ResourceWatcher::start()
 
 void Nepomuk::ResourceWatcher::stop()
 {
-    d->m_connectionInterface->disconnect( this );
-    d->m_connectionInterface->close();
-    delete d->m_connectionInterface;
-    d->m_connectionInterface = 0;
+    if (d->m_connectionInterface) {
+        d->m_connectionInterface->disconnect( this );
+        d->m_connectionInterface->close();
+        delete d->m_connectionInterface;
+        d->m_connectionInterface = 0;
+    }
 }
 
 void Nepomuk::ResourceWatcher::addProperty(const Nepomuk::Types::Property& property)
