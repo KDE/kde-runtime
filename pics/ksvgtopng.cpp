@@ -2,7 +2,7 @@
 #include <QtGui/QImage>
 #include <QtCore/QString>
 
-#include <ksvgrenderer.h>
+#include <QtSvg/QSvgRenderer>
 #include <QtGui/QPainter>
 #include <iostream>
 
@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 	QImage img(width, height, QImage::Format_ARGB32_Premultiplied);
 	img.fill(0);
 
-	KSvgRenderer renderer(QString::fromLocal8Bit(argv[3]));
+	QSvgRenderer renderer(QString::fromLocal8Bit(argv[3]));
 	if(renderer.isValid())
 	{
 	        QPainter p(&img);
