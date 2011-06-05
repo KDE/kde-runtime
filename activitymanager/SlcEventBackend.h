@@ -48,9 +48,10 @@ Q_SIGNALS:
     void focusChanged(const QString & uri, const QString & mimetype);
 
 private:
-    void updateFocus(WId wid);
+    void updateFocus(WId wid = 0);
 
     WId focussedWindow;
+    KUrl _focussedResourceURI();
     QHash < WId, KUrl > lastFocussedResource;
 };
 
