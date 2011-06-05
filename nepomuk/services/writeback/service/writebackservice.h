@@ -20,22 +20,29 @@
 #ifndef NEPOMUKEXAMPLESERVICE_H
 #define NEPOMUKEXAMPLESERVICE_H
 #include <Nepomuk/Service>
+#include <Nepomuk/Resource>
+#include <Nepomuk/Types/Property>
+#include <QVariant>
+#include <nepomuk/resourcewatcher.h>
 
 namespace Nepomuk {
 
-    class WriteBackService : public Service
-    {
-        Q_OBJECT
+class WriteBackService : public Service
+{
+    Q_OBJECT
     
-    public:
-        WriteBackService( QObject * parent = 0, const QList<QVariant>& args = QList<QVariant>() );
-        ~WriteBackService();
+private:
+    ResourceWatcher* resourcewatcher;
 
-    public Q_SLOTS:
-       Q_SCRIPTABLE void test( const QString& url);
+public:
+    WriteBackService( QObject * parent = 0, const QList<QVariant>& args = QList<QVariant>() );
+    ~WriteBackService();
 
-      
-    };
+public Q_SLOTS:
+    void test( const Nepomuk::Resource & resource,const Types::Property & property,const QVariant & value );
+
+
+};
 
 }
 

@@ -1,82 +1,88 @@
-/*
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) 2011  Smit Shah <who828@gmail.com>
+    /*
+        <one line to give the program's name and a brief idea of what it does.>
+        Copyright (C) 2011  Smit Shah <who828@gmail.com>
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-*/
+    */
 
-#include "writebackservice.h"
-#include "writebackplugin.h"
+    #include "writebackservice.h"
+    #include "writebackplugin.h"
 
-#include <kmimetypetrader.h>
+    #include <kmimetypetrader.h>
+    #include <KDebug>
+    #include <KUrl>
+    #include <KService>
 
-#include <KDebug>
-#include <KUrl>
-#include <kservice.h>
-#include <KService>
+    #include <QString>
 
-#include <QString>
+    #include <taglib/fileref.h>
+    #include <taglib/tag.h>
+    #include<taglib/tstring.h>
 
-#include <taglib/fileref.h>
-#include <taglib/tag.h>
-#include<taglib/tstring.h>
+    #include<Nepomuk/Resource>
+    #include <Nepomuk/Vocabulary/NIE>
+    #include <Nepomuk/Vocabulary/NFO>
+    #include <Nepomuk/Variant>
+    #include <Nepomuk/Types/Class>
+    #include <Nepomuk/Types/Property>
 
-#include<Nepomuk/Resource>
-#include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/Variant>
-#include <Nepomuk/Types/Class>
-#include <Nepomuk/Types/Property>
+    using namespace Nepomuk::Vocabulary;
 
-using namespace Nepomuk::Vocabulary;
-
-Nepomuk::WriteBackService::WriteBackService( QObject* parent, const QList< QVariant >& )
-    : Service(parent)
-{
-    kDebug();
-
-}
-
-Nepomuk::WriteBackService::~WriteBackService()
-{
-}
-
-void Nepomuk::WriteBackService::test(const QString& url)
-{
-    KUrl url_(url);
-    Nepomuk::Resource resource(url_);
-
-    const QStringList mimetypes = resource.property(NIE::mimeType()).toStringList();
-    if(!mimetypes.isEmpty())
+    Nepomuk::WriteBackService::WriteBackService( QObject* parent, const QList< QVariant >& )
+        : Service(parent)
     {
-        QString  mimetype = mimetypes.first();
-        WritebackPlugin* plugin= KMimeTypeTrader::createInstanceFromQuery<WritebackPlugin>(mimetype,"Nepomuk/WritebackPlugin",this);
+        kDebug();
+        resourcewatcher  = new ResourceWatcher(this);
+        resourcewatcher->addProperty(Types::Property(NFO::FileDataObject()));
+        resourcewatcher->start();
 
-        if (plugin)
+        connect( resourcewatcher, SIGNAL( propertyAdded(Nepomuk::Resource, Types::Property,QVariant) ),
+                 this, SLOT ( test(Nepomuk::Resource, Types::Property, QVariant) ) );
+        connect( resourcewatcher, SIGNAL( propertyRemoved(Nepomuk::Resource, Types::Property, QVariant) ),
+                 this, SLOT ( test(Nepomuk::Resource, Types::Property, QVariant) ) );
+    }
+
+    Nepomuk::WriteBackService::~WriteBackService()
+    {
+        resourcewatcher->stop();
+    }
+
+    void Nepomuk::WriteBackService::test(const Nepomuk::Resource & resource,const Types::Property & property,const QVariant & value)
+    {
+        Q_UNUSED(property);
+        Q_UNUSED (value);
+     const QStringList mimetypes = resource.property(NIE::mimeType()).toStringList();
+        if(!mimetypes.isEmpty())
         {
-            plugin->writeback(url_);
-        }
-        else
-        {
-            kError(5001) << "read write part";
+            QString  mimetype = mimetypes.first();
+            WritebackPlugin* plugin= KMimeTypeTrader::createInstanceFromQuery<WritebackPlugin>(mimetype,"Nepomuk/WritebackPlugin",this);
+
+            if (plugin)
+            {
+                plugin->writeback(resource.resourceUri());
+            }
+            else
+            {
+                kError(5001) << "read write part";
+            }
         }
     }
-}
 
-#include <kpluginfactory.h>
-#include <kpluginloader.h>
+    #include <kpluginfactory.h>
+    #include <kpluginloader.h>
 
-NEPOMUK_EXPORT_SERVICE( Nepomuk::WriteBackService, "nepomukwritebackservice" )
+    NEPOMUK_EXPORT_SERVICE( Nepomuk::WriteBackService, "nepomukwritebackservice" )
 
-#include "writebackservice.moc"
+    #include "writebackservice.moc"

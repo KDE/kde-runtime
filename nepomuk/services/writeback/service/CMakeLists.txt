@@ -25,6 +25,7 @@ target_link_libraries(nepomukwritebackservice
   ${NEPOMUK_QUERY_LIBRARIES}
   ${SOPRANO_LIBRARIES}
   nepomukwriteback 
+  nepomukdatamanagement
   )
 
 
