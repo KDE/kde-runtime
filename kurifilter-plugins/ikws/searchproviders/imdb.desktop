@@ -11,6 +11,7 @@ Name[bg]=Internet Movie Database
 Name[bn]=ইন্টারনেট চলচ্চিত্র ডেটাবেস
 Name[bn_IN]=ইন্টারনেট ছায়াছবির ডাটাবেস
 Name[br]=Stlennvon filmoù Internet
+Name[bs]=Internet baza filmova
 Name[ca]=Base de dades de pel·lícules a Internet
 Name[ca@valencia]=Base de dades de pel·lícules a Internet
 Name[cs]=Internetová databáze filmů
@@ -26,7 +27,7 @@ Name[et]=Interneti filmide andmebaas
 Name[eu]=Interneteko filmeen datu-basea
 Name[fa]=دادگان فیلم اینترنت
 Name[fi]=Internet Movie Database
-Name[fr]=Base de données vidéo sur Internet
+Name[fr]=Base de données de films sur Internet
 Name[fy]=Ynternetfilm-databank
 Name[ga]=Internet Movie Database
 Name[gl]=Base de datos de filmes de Internet
@@ -96,6 +97,7 @@ Query[ar]=http://imdb.com/Find?\\{@}
 Query[ast]=http://imdb.com/find?s=all&q=\\{@}
 Query[bg]=http://imdb.com/find?s=all&q=\\{@}
 Query[bn]=http://imdb.com/find?s=all&q=\\{@}
+Query[bs]=http://imdb.com/find?s=all&q=\\{@}
 Query[ca]=http://imdb.com/find?s=all&q=\\{@}
 Query[ca@valencia]=http://imdb.com/find?s=all&q=\\{@}
 Query[cs]=http://imdb.com/find?s=all&q=\\{@}

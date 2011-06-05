@@ -43,10 +43,10 @@ qt4_add_dbus_adaptor(kded_networkstatus_PART_SRCS
 
 kde4_add_plugin(kded_networkstatus ${kded_networkstatus_PART_SRCS})
 
+target_link_libraries(kded_networkstatus ${KDE4_KDECORE_LIBS})
+
 if(QNTRACK_FOUND)
-   target_link_libraries(kded_networkstatus ${KDE4_KDECORE_LIBS} ${QNTRACK_LIBRARIES})
-else(QNTRACK_FOUND)
-   target_link_libraries(kded_networkstatus ${KDE4_KDECORE_LIBS})
+   target_link_libraries(kded_networkstatus ${QNTRACK_LIBRARIES})
 endif(QNTRACK_FOUND)
 
 install(TARGETS kded_networkstatus DESTINATION ${PLUGIN_INSTALL_DIR})

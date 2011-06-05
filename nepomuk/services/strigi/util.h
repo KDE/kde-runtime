@@ -21,6 +21,7 @@
 #define _STRIGI_NEPOMUK_UTIL_H_
 
 #include <string>
+#include <KUrl>
 
 class QUrl;
 class QString;
@@ -39,13 +40,6 @@ namespace Strigi {
         QUrl fileUrl( const std::string& filename );
         std::string fieldName( const QUrl& uri );
         QUrl uniqueUri( const QString& ns, ::Soprano::Model* model );
-        Strigi::Variant nodeToVariant( const ::Soprano::Node& node );
-
-        /**
-         * For now only stores the parentUrl property so it can be
-         * searched.
-         */
-        void storeStrigiMiniOntology( ::Soprano::Model* model );
     }
 
     namespace Ontology {
@@ -53,4 +47,15 @@ namespace Strigi {
     }
 }
 
+namespace Nepomuk {
+    /// remove all indexed data for \p url the datamanagement way
+    bool clearIndexedData( const QUrl& url );
+    bool clearIndexedData( const QList<QUrl>& urls );
+
+    /// clears data from pre-datamanagement days
+    bool clearLegacyIndexedDataForUrl( const KUrl& url );
+
+    /// clears data from pre-datamanagement days
+    bool clearLegacyIndexedDataForResourceUri( const KUrl& res );
+}
 #endif

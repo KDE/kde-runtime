@@ -32,16 +32,6 @@
     <method name="indexFile">
       <arg name="path" type="s" direction="in" />
     </method>
-    <method name="analyzeResource" >
-      <arg name="uri" direction="in" type="s" />
-      <arg name="lastModificationDate" direction="in" type="u" />
-      <arg name="data" direction="in" type="ay" />
-    </method>
-    <method name="analyzeResourceFromTempFileAndDeleteTempFile" >
-      <arg name="uri" direction="in" type="s" />
-      <arg name="lastModificationDate" direction="in" type="u" />
-      <arg name="tmpFileName" direction="in" type="s" />
-    </method>
     <method name="userStatusString">
       <arg type="s" direction="out" />
     </method>

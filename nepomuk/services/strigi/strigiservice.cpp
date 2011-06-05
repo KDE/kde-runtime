@@ -38,11 +38,6 @@
 Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
     : Service( parent )
 {
-    // store the little bits of ontology we need in Strigi
-    // (TODO: this needs to be deprecated in favor of something NIE)
-    // ==============================================================
-    Strigi::Util::storeStrigiMiniOntology( mainModel() );
-
     // setup the actual index scheduler including strigi stuff
     // ==============================================================
     m_indexScheduler = new IndexScheduler( this );
@@ -276,28 +271,6 @@ void Nepomuk::StrigiService::indexFolder(const QString& path, bool recursive, bo
         m_indexScheduler->updateDir( dirPath, flags );
     }
 }
-
-
-void Nepomuk::StrigiService::analyzeResource(const QString& uri, uint mTime, const QByteArray& data)
-{
-    QDataStream stream( data );
-    m_indexScheduler->analyzeResource( QUrl::fromEncoded( uri.toAscii() ), QDateTime::fromTime_t( mTime ), stream );
-}
-
-
-void Nepomuk::StrigiService::analyzeResourceFromTempFileAndDeleteTempFile(const QString& uri, uint mTime, const QString& tmpFile)
-{
-    QFile file( tmpFile );
-    if ( file.open( QIODevice::ReadOnly ) ) {
-        QDataStream stream( &file );
-        m_indexScheduler->analyzeResource( QUrl::fromEncoded( uri.toAscii() ), QDateTime::fromTime_t( mTime ), stream );
-        file.remove();
-    }
-    else {
-        kDebug() << "Failed to open" << tmpFile;
-    }
-}
-
 
 
 

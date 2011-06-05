@@ -22,6 +22,9 @@
 
 #include <QThread>
 
+#include "Event.h"
+
+class EventBackend;
 class EventProcessorPrivate;
 
 /**
@@ -33,17 +36,8 @@ public:
 
     virtual ~EventProcessor();
 
-    enum EventType {
-        Accessed,
-        Opened,
-        Modified,
-        Closed
-    };
-
-    static void addEvent(const QString & application, const QString & uri, EventType type);
-
-protected:
-    void _event(const QString & application, const QString & uri, EventType type);
+    void addEvent(const QString & application, const QString & uri,
+            Event::Type type = Event::Accessed, Event::Reason reason = Event::User);
 
 private:
     EventProcessor();

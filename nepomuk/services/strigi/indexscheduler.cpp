@@ -24,6 +24,7 @@
 #include "strigiserviceconfig.h"
 #include "nepomukindexer.h"
 #include "util.h"
+#include "datamanagement.h"
 
 #include <QtCore/QMutexLocker>
 #include <QtCore/QList>
@@ -52,12 +53,15 @@
 
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/Xesam>
+#include <Soprano/Vocabulary/NAO>
 #include <Nepomuk/Vocabulary/NFO>
 #include <Nepomuk/Vocabulary/NIE>
 
 #include <map>
 #include <vector>
 
+using namespace Soprano::Vocabulary;
+using namespace Nepomuk::Vocabulary;
 
 namespace {
     const int s_reducedSpeedDelay = 500; // ms
@@ -106,6 +110,31 @@ namespace {
         }
 
         return children;
+    }
+
+    QDateTime indexedMTimeForUrl(const KUrl& url)
+    {
+        Soprano::QueryResultIterator it
+                = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(QString::fromLatin1("select ?mt where { ?r %1 %2 . ?r %3 ?mt . } LIMIT 1")
+                                                                                  .arg(Soprano::Node::resourceToN3(NIE::url()),
+                                                                                       Soprano::Node::resourceToN3(url),
+                                                                                       Soprano::Node::resourceToN3(NIE::lastModified())),
+                                                                                  Soprano::Query::QueryLanguageSparql);
+        if(it.next()) {
+            return it[0].literal().toDateTime();
+        }
+        else {
+            return QDateTime();
+        }
+    }
+
+    bool compareIndexedMTime(const KUrl& url, const QDateTime& mtime)
+    {
+        const QDateTime indexedMTime = indexedMTimeForUrl(url);
+        if(indexedMTime.isNull())
+            return false;
+        else
+            return indexedMTime == mtime;
     }
 }
 
@@ -211,7 +240,6 @@ void Nepomuk::IndexScheduler::stop()
         QMutexLocker locker( &m_resumeStopMutex );
         m_stopped = true;
         m_suspended = false;
-        m_indexer->stop();
         m_dirsToUpdateWc.wakeAll();
         m_resumeStopWc.wakeAll();
     }
@@ -283,7 +311,6 @@ void Nepomuk::IndexScheduler::run()
 {
     // set lowest priority for this thread
     setPriority( QThread::IdlePriority );
-    m_indexer->start();
     
     setIndexingStarted( true );
 
@@ -370,9 +397,7 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, UpdateDirFlags fl
     // we start by updating the folder itself
     QFileInfo dirInfo( dir );
     KUrl dirUrl( dir );
-    Nepomuk::Resource dirRes( dirUrl );
-    if ( !dirRes.exists() ||
-         dirRes.property( Nepomuk::Vocabulary::NIE::lastModified() ).toDateTime() != dirInfo.lastModified() ) {
+    if ( !compareIndexedMTime(dirUrl, dirInfo.lastModified()) ) {
         m_indexer->indexFile( dirInfo );
     }
 
@@ -513,13 +538,6 @@ void Nepomuk::IndexScheduler::slotConfigChanged()
 }
 
 
-void Nepomuk::IndexScheduler::analyzeResource( const QUrl& uri, const QDateTime& modificationTime, QDataStream& data )
-{
-    Indexer indexer;
-    indexer.indexResource( uri, modificationTime, data );
-}
-
-
 void Nepomuk::IndexScheduler::analyzeFile( const QString& path )
 {
     Indexer indexer;
@@ -613,14 +631,51 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
         folderFilter = QString::fromLatin1("FILTER(%1) .").arg(folderFilter);
 
     //
+    // Query all the resources which are maintained by nepomukindexer
+    // and are not in one of the indexed folders
+    //
+    // vHanda: trying to remove more than 20 resources via removeDataByApp occasionally times out.
+    const int limit = 20;
+    QString query = QString::fromLatin1( "select distinct ?r where { "
+                                         "graph ?g { ?r %1 ?url . } "
+                                         "?g %2 ?app . "
+                                         "?app %3 %4 . "
+                                         " %5 } LIMIT %6" )
+                    .arg( Soprano::Node::resourceToN3( NIE::url() ),
+                          Soprano::Node::resourceToN3( NAO::maintainedBy() ),
+                          Soprano::Node::resourceToN3( NAO::identifier() ),
+                          Soprano::Node::literalToN3(QLatin1String("nepomukindexer")),
+                          folderFilter,
+                          QString::number( limit ) );
+
+    while( true ) {
+        QList<QUrl> resources;
+        Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+        while( it.next() ) {
+            resources << it[0].uri();
+        }
+        Nepomuk::clearIndexedData(resources);
+
+        // wait for resume or stop (or simply continue)
+        kDebug() << "CHECKING";
+        if ( !waitForContinue() ) {
+            kDebug() << "RETURNING";
+            return;
+        }
+
+        if( resources.size() < limit )
+            break;
+    }
+
+    //
     // We query all files that should not be in the store
     // This for example excludes all filex:/ URLs.
     //
-    QString query = QString::fromLatin1( "select distinct ?g where { "
-                                         "?r %1 ?url . "
-                                         "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
-                                         "FILTER(REGEX(STR(?url),'^file:/')) . "
-                                         "%2 }" )
+    query = QString::fromLatin1( "select distinct ?g where { "
+                                 "?r %1 ?url . "
+                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
+                                 "FILTER(REGEX(STR(?url),'^file:/')) . "
+                                 "%2 }" )
                     .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
                           folderFilter );
     kDebug() << query;
@@ -688,9 +743,11 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
     // for video and audio streams.
     //
     Query::Query q(
-        Strigi::Ontology::indexGraphFor() == ( Soprano::Vocabulary::RDF::type() == Query::ResourceTerm( Nepomuk::Vocabulary::NFO::FileDataObject() ) &&
-                                               !( Nepomuk::Vocabulary::NIE::url() == Query::Term() ) &&
-                                               !( Nepomuk::Vocabulary::NIE::isPartOf() == Query::Term() ) )
+        Strigi::Ontology::indexGraphFor()
+                == ( Soprano::Vocabulary::RDF::type()
+                     == Query::ResourceTerm( Nepomuk::Resource::fromResourceUri(Nepomuk::Vocabulary::NFO::FileDataObject()) ) &&
+                     !( Nepomuk::Vocabulary::NIE::url() == Query::Term() ) &&
+                     !( Nepomuk::Vocabulary::NIE::isPartOf() == Query::Term() ) )
         );
     q.setQueryFlags(Query::Query::NoResultRestrictions);
     query = q.toSparqlQuery();

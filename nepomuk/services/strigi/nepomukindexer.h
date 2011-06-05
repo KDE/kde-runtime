@@ -78,15 +78,6 @@ namespace Nepomuk {
         void indexFile( const QFileInfo& info );
 
         /**
-         * Index a random resource.
-         *
-         * \param url The URL of the resource.
-         * \param modificationTime the last modification date of the resource.
-         * \param data The data to be analyzed
-         */
-        void indexResource( const KUrl& url, const QDateTime& modificationTime, QDataStream& data );
-
-        /**
          * Remove all indexed data for the file/resource identified by \p res.
          */
         void clearIndexedData( const Nepomuk::Resource& res );
@@ -104,14 +95,6 @@ namespace Nepomuk {
          * Remove all indexed data for the file identifies by \p info.
          */
         void clearIndexedData( const QFileInfo& info );
-
-        /**
-         * This method stops the indexer, i.e. cancels potentially
-         * long indexing operations and any queued data is thrown away.
-         */
-        void stop();
-
-        void start();
         
     Q_SIGNALS:
         /**
@@ -127,8 +110,6 @@ namespace Nepomuk {
         // TODO: actually emit the indexingDone signal
 
     private:
-        class Private;
-        Private* const d;
     };
 }
 

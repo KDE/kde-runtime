@@ -160,10 +160,10 @@ namespace Nepomuk {
             bool m_initialListingDone;
 
             /// the actual current results
-            QSet<Result> m_results;
+            QHash<QUrl, Result> m_results;
 
             /// the results gathered during an update, needed to find removed items
-            QSet<Result> m_newResults;
+            QHash<QUrl, Result> m_newResults;
 
             /// the runnable doing work at the moment or 0 if idle
             SearchRunnable* m_currentSearchRunnable;

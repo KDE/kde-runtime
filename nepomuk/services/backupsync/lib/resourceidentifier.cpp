@@ -286,7 +286,7 @@ void Nepomuk::Sync::ResourceIdentifier::setMinScore(float score)
 namespace {
     
     QString stripFileName( const QString & url ) {
-        kDebug() << url;
+        //kDebug() << url;
         int lastIndex = url.lastIndexOf('/') + 1; // the +1 is because we want to keep the trailing /
         return QString(url).remove( lastIndex, url.size() );
     }

@@ -208,7 +208,7 @@ bool Nepomuk::Sync::ResourceMerger::Private::push(const Soprano::Statement& st)
             return false;
     }
     statement.setContext( m_graph );
-    kDebug() << "Pushing - " << statement;
+    //kDebug() << "Pushing - " << statement;
     return q->addStatement( statement ) == Soprano::Error::ErrorNone;
 }
 

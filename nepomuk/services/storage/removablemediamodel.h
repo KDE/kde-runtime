@@ -24,13 +24,8 @@
 
 #include <Soprano/FilterModel>
 
-#include <QtCore/QMutex>
-
 #include <QtCore/QVariant>
 #include <QtCore/QHash>
-#include <QtCore/QSet>
-
-#include <Solid/Device>
 
 namespace Solid {
     class StorageAccess;
@@ -40,6 +35,8 @@ namespace Solid {
 class KUrl;
 
 namespace Nepomuk {
+class RemovableMediaCache;
+
 /**
  * Filter model that performs automatic conversion of file URLs
  * from and to the filex:/ protocol.
@@ -84,20 +81,12 @@ public:
     bool containsStatement(const Soprano::Statement &statement) const;
     bool containsAnyStatement(const Soprano::Statement &statement) const;
     Soprano::StatementIterator listStatements(const Soprano::Statement &partial) const;
-    Soprano::QueryResultIterator executeQuery(const QString &query, Soprano::Query::QueryLanguage language, const QString &userQueryLanguage) const;
+    Soprano::QueryResultIterator executeQuery(const QString &query, Soprano::Query::QueryLanguage language, const QString &userQueryLanguage = QString()) const;
 
-private Q_SLOTS:
-    void slotSolidDeviceAdded( const QString& udi );
-    void slotSolidDeviceRemoved( const QString& udi );
-
-    /**
-     * Reacts on Solid::StorageAccess::accessibilityChanged and updates the entry cache.
-     */
-    void slotAccessibilityChanged( bool accessible, const QString& udi );
+    using FilterModel::addStatement;
+    using FilterModel::listStatements;
 
 private:
-    void initCacheEntries();
-
     /**
      * Converts file:/ URLs into their filex:/ counterpart if necessary.
      * Used in all statement handling methods.
@@ -115,40 +104,7 @@ private:
     Soprano::Statement convertFilexUrls(const Soprano::Statement& s) const;
     Soprano::Node convertFilexUrl(const Soprano::Node& node) const;
 
-    class Entry {
-    public:
-        Entry();
-        Entry(const Solid::Device& device);
-
-        KUrl constructRelativeUrl( const QString& path ) const;
-        QString constructLocalPath( const KUrl& filexUrl ) const;
-
-        Solid::Device m_device;
-        QString m_lastMountPath;
-
-        // need to cache the device properties in case
-        // an USB device is simply ejected without properly
-        // unmounting before
-        QString m_description;
-
-        /// The prefix to be used for URLs
-        QString m_urlPrefix;
-    };
-
-    /// maps Solid UDI to Entry
-    QHash<QString, Entry> m_metadataCache;
-
-    /// contains all schemas that are used as url prefixes in m_metadataCache
-    /// this is used to avoid trying to convert each and every resource in
-    /// convertFilexUrl
-    QSet<QString> m_usedSchemas;
-
-    Entry* createCacheEntry( const Solid::Device& dev );
-    Entry* findEntryByFilePath( const QString& path );
-    const Entry* findEntryByFilePath( const QString& path ) const;
-    const Entry* findEntryByUrl(const KUrl& url) const;
-
-    mutable QMutex m_entryCacheMutex;
+    RemovableMediaCache* m_removableMediaCache;
 
     class StatementIteratorBackend;
     class QueryResultIteratorBackend;

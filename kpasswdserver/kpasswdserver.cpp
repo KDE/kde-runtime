@@ -74,6 +74,7 @@ KPasswdServer::AuthInfoContainer::Sorter::operator ()(AuthInfoContainer* n1, Aut
 KPasswdServer::KPasswdServer(QObject* parent, const QList<QVariant>&)
  : KDEDModule(parent)
 {
+    KIO::AuthInfo::registerMetaTypes();
     m_seqNr = 0;
     m_wallet = 0;
 
@@ -817,7 +818,7 @@ KPasswdServer::addAuthInfoItem(const QString &key, const KIO::AuthInfo &info, ql
    {
        if (current->info.realmValue == info.realmValue)
        {
-          authList->removeOne(current);
+          authList->removeAll(current);
           break;
        }
    }

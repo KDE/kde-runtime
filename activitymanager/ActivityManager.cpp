@@ -239,6 +239,7 @@ void ActivityManagerPrivate::configSync()
 }
 
 #ifdef HAVE_NEPOMUK
+
 Nepomuk::Resource ActivityManagerPrivate::activityResource(const QString & id)
 {
     kDebug() << "testing for nepomuk";
@@ -272,6 +273,13 @@ void ActivityManagerPrivate::backstoreAvailable()
         emit q->ActivityChanged(i.key());
     }
 }
+
+#else // HAVE_NEPOMUK
+
+void ActivityManagerPrivate::backstoreAvailable()
+{
+}
+
 #endif // HAVE_NEPOMUK
 
 // Main
@@ -651,7 +659,7 @@ void ActivityManager::SetActivityIcon(const QString & id, const QString & icon)
 
 void ActivityManager::NotifyResourceAccessed(const QString & application, const QString & uri)
 {
-    EventProcessor::addEvent(application, uri, EventProcessor::Accessed);
+    EventProcessor::self()->addEvent(application, uri, Event::Accessed);
 }
 
 void ActivityManager::NotifyResourceClosed(uint _windowId, const QString & uri)
@@ -659,7 +667,7 @@ void ActivityManager::NotifyResourceClosed(uint _windowId, const QString & uri)
     WId windowId = (WId)_windowId;
     d->resourcesForWindow[windowId].remove(KUrl(uri));
 
-    EventProcessor::addEvent(d->applicationForWindow[windowId], uri, EventProcessor::Closed);
+    EventProcessor::self()->addEvent(d->applicationForWindow[windowId], uri, Event::Closed);
 
     if (d->resourcesForWindow[windowId].size() == 0) {
         d->resourcesForWindow.remove(windowId);
@@ -669,7 +677,7 @@ void ActivityManager::NotifyResourceClosed(uint _windowId, const QString & uri)
 
 void ActivityManager::NotifyResourceModified(uint windowId, const QString & uri)
 {
-    EventProcessor::addEvent(d->applicationForWindow[(WId)windowId], uri, EventProcessor::Modified);
+    EventProcessor::self()->addEvent(d->applicationForWindow[(WId)windowId], uri, Event::Modified);
 }
 
 void ActivityManager::NotifyResourceOpened(const QString & application, uint _windowId, const QString & uri)
@@ -683,12 +691,19 @@ void ActivityManager::NotifyResourceOpened(const QString & application, uint _wi
     d->resourcesForWindow[windowId] << kuri;
     d->activitiesForUrl[kuri] << CurrentActivity();
 
-    EventProcessor::addEvent(application, uri, EventProcessor::Opened);
+    EventProcessor::self()->addEvent(application, uri, Event::Opened);
 }
 
 QStringList ActivityManager::ActivitiesForResource(const QString & uri) const
 {
     return d->activitiesForUrl.value(uri).toList();
+}
+
+
+// static
+ActivityManager * ActivityManager::self()
+{
+    return static_cast<ActivityManager*>(kapp);
 }
 
 

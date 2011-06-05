@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010 Vishesh Handa <handa.vish@gmail.com>
+   Copyright (C) 2010-11 Vishesh Handa <handa.vish@gmail.com>
    Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
@@ -24,13 +24,12 @@
 #ifndef NEPOMUKINDEXFEEDER_H
 #define NEPOMUKINDEXFEEDER_H
 
-#include <QtCore/QThread>
-#include <QtCore/QMutex>
-#include <QtCore/QWaitCondition>
 #include <QtCore/QUrl>
-#include <QtCore/QQueue>
 #include <QtCore/QStack>
 #include <QtCore/QSet>
+
+#include "simpleresource.h"
+#include "simpleresourcegraph.h"
 
 namespace Soprano {
     class Statement;
@@ -39,14 +38,12 @@ namespace Soprano {
 class KUrl;
 
 namespace Nepomuk {
-    class IndexFeeder : public QThread
+    class IndexFeeder : public QObject
     {
         Q_OBJECT
     public:
         IndexFeeder( QObject* parent = 0 );
         virtual ~IndexFeeder();
-
-        void stop();
 
     public Q_SLOTS:
         /**
@@ -92,29 +89,23 @@ namespace Nepomuk {
          *
          * \sa begin
          */
-        void end( bool forceCommit = false );
+        void end();
 
-        static bool clearIndexedDataForUrl( const KUrl& url );
-        static bool clearIndexedDataForResourceUri( const KUrl& res );
-
+        /**
+         * Returns the uri of the main resource of the last request that was handled
+         */
+        QUrl lastRequestUri() const;
+        
     private:
-
-        struct ResourceStruct {
-            QUrl uri;
-            QMultiHash<QUrl, Soprano::Node> propHash;
-        };
-
-        // Maps the uri to the ResourceStuct
-        typedef QHash<QUrl, ResourceStruct> ResourceHash;
 
         struct Request {
             QUrl uri;
-            ResourceHash hash;
+            bool durationPassed;
+            SimpleResourceGraph graph;
         };
 
-        /// The thread uses this queue to check if it has any requests that need processing
-        QQueue<Request> m_updateQueue;
-
+        QUrl m_lastRequestUri;
+        
         /**
          * The stack is used to store the internal state of the Feeder, a new item is pushed into
          * the stack every time begin() is called, and the top most item is poped and sent into the
@@ -122,33 +113,10 @@ namespace Nepomuk {
          */
         QStack<Request> m_stack;
 
-        QMutex m_queueMutex;
-        QWaitCondition m_queueWaiter;
-        bool m_stopped;
-
-        void run();
-
         /**
          * Handle a single request, i.e. store all its data to Nepomuk.
          */
-        void handleRequest( Request& request ) const;
-
-        /// Generates a discardable graph for \p resourceUri
-        QUrl generateGraph( const QUrl& resourceUri ) const;
-
-        /**
-         * Creates a sparql query which returns 1 resource which matches all the properties,
-         * and objects present in the propHash of the ResourceStruct
-         */
-        QString buildResourceQuery( const ResourceStruct & rs ) const;
-
-        /**
-         * Adds all the statements present in the ResourceStruct to the internal model.
-         * The contex is created via generateGraph
-         *
-         * \sa generateGraph
-         */
-        void addToModel( const ResourceStruct &rs ) const;
+        void handleRequest( Nepomuk::IndexFeeder::Request& request );
     };
 
 }

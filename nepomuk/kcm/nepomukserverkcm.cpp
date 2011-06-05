@@ -173,7 +173,8 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
                  this, SLOT( changed() ) );
         connect( m_sliderMemoryUsage, SIGNAL( valueChanged(int) ),
                  this, SLOT( changed() ) );
-        connect( m_checkIndexRemovableMedia, SIGNAL( toggled(bool) ),
+        connect( m_comboRemovableMediaHandling, SIGNAL( activated(int)
+                                                        ),
                  this, SLOT( changed() ) );
         connect( m_spinMaxResults, SIGNAL( valueChanged( int ) ),
                  this, SLOT( changed() ) );
@@ -220,6 +221,11 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
         // update backup status whenever manual backups are created
         KDirWatch::self()->addDir( KStandardDirs::locateLocal( "data", "nepomuk/backupsync/backups/" ) );
         connect( KDirWatch::self(), SIGNAL(dirty(QString)), this, SLOT(updateBackupStatus()) );
+
+        // args[0] can be the page index allowing to open the config with a specific page
+        if(args.count() > 0 && args[0].toInt() < m_mainTabWidget->count()) {
+            m_mainTabWidget->setCurrentIndex(args[0].toInt());
+        }
     }
     else {
         QLabel* label = new QLabel( i18n( "The Nepomuk installation is not complete. No Nepomuk settings can be provided." ) );
@@ -254,7 +260,11 @@ void Nepomuk::ServerConfigModule::load()
     m_indexFolderSelectionDialog->setFolders( strigiConfig.group( "General" ).readPathEntry( "folders", defaultFolders() ),
                                               strigiConfig.group( "General" ).readPathEntry( "exclude folders", QStringList() ) );
     m_indexFolderSelectionDialog->setExcludeFilters( strigiConfig.group( "General" ).readEntry( "exclude filters", Nepomuk::defaultExcludeFilterList() ) );
-    m_checkIndexRemovableMedia->setChecked( strigiConfig.group( "General" ).readEntry( "index newly mounted", false ) );
+
+    const bool indexNewlyMounted = strigiConfig.group( "RemovableMedia" ).readEntry( "index newly mounted", false );
+    const bool askIndividually = strigiConfig.group( "RemovableMedia" ).readEntry( "ask user", false );
+    // combobox items: 0 - ignore, 1 - index all, 2 - ask user
+    m_comboRemovableMediaHandling->setCurrentIndex(int(indexNewlyMounted) + int(askIndividually));
 
     groupBox->setEnabled(m_checkEnableNepomuk->isChecked());
 
@@ -325,7 +335,10 @@ void Nepomuk::ServerConfigModule::save()
     strigiConfig.group( "General" ).writePathEntry( "exclude folders", excludeFolders );
     strigiConfig.group( "General" ).writeEntry( "exclude filters", m_indexFolderSelectionDialog->excludeFilters() );
     strigiConfig.group( "General" ).writeEntry( "index hidden folders", m_indexFolderSelectionDialog->indexHiddenFolders() );
-    strigiConfig.group( "General" ).writeEntry( "index newly mounted", m_checkIndexRemovableMedia->isChecked() );
+
+    // combobox items: 0 - ignore, 1 - index all, 2 - ask user
+    strigiConfig.group( "RemovableMedia" ).writeEntry( "index newly mounted", m_comboRemovableMediaHandling->currentIndex() > 0 );
+    strigiConfig.group( "RemovableMedia" ).writeEntry( "ask user", m_comboRemovableMediaHandling->currentIndex() == 2 );
 
 
     // 3. update kio_nepomuksearch config

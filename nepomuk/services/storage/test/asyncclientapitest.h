@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2011 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,31 +19,41 @@
    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TYPEVISIBILITYTREETEST_H
-#define TYPEVISIBILITYTREETEST_H
+#ifndef ASYNCCLIENTAPITEST_H
+#define ASYNCCLIENTAPITEST_H
 
 #include <QObject>
 
-class KTempDir;
-class TypeVisibilityTree;
+class QProcess;
 namespace Soprano {
 class Model;
 }
-
-class TypeVisibilityTreeTest : public QObject
+class AsyncClientApiTest : public QObject
 {
     Q_OBJECT
 
-private Q_SLOTS:
+private slots:
     void initTestCase();
     void cleanupTestCase();
     void init();
-    void testTypeVisibilityTree();
+
+    void testAddProperty();
+    void testSetProperty();
+    void testCreateResource();
+    void testRemoveProperty();
+    void testRemoveProperties();
+    void testRemoveResources();
+    void testRemoveDataByApplication();
+    void testStoreResources();
+    void testMergeResources();
+    void testDescribeResources();
+    void testImportResources();
 
 private:
-    KTempDir* m_storageDir;
+    void resetModel();
+
+    QProcess* m_fakeDms;
     Soprano::Model* m_model;
-    TypeVisibilityTree* m_typeTree;
 };
 
-#endif // TYPEVISIBILITYTREETEST_H
+#endif

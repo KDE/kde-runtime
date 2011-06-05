@@ -6,6 +6,7 @@ Name=Duck Duck Go Info
 Name[ar]= معلومات Duck Duck Go
 Name[ast]=Duck Duck Go Info
 Name[bg]=Информация в Duck Duck Go
+Name[bs]=Dak dak go (informacije)
 Name[ca]=Duck Duck Go Info
 Name[ca@valencia]=Duck Duck Go Info
 Name[cs]=Duck Duck Go Info
@@ -65,6 +66,7 @@ Query[ar]=http://imdb.com/Find?\\{@}
 Query[ast]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[bg]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[bn]=http://duckduckgo.com/?q=\\{@}&v=r
+Query[bs]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[ca]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[ca@valencia]=http://duckduckgo.com/?q=\\{@}&v=r
 Query[cs]=http://duckduckgo.com/?q=\\{@}&v=r

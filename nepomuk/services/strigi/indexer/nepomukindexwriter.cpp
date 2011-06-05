@@ -20,7 +20,7 @@
 
 #include "nepomukindexwriter.h"
 #include "nepomukindexfeeder.h"
-#include "util.h"
+#include "../util.h"
 #include "kext.h"
 
 #include <Soprano/Vocabulary/RDF>
@@ -37,6 +37,7 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QByteArray>
 #include <QtCore/QStack>
+#include <QtCore/QMutex>
 
 #include <KUrl>
 #include <KDebug>
@@ -185,7 +186,7 @@ namespace {
     class FileMetaData
     {
     public:
-        FileMetaData( const Strigi::AnalysisResult* idx );
+        FileMetaData( const Strigi::AnalysisResult* idx, const QUrl & resUri );
 
         /// stores basic data including the nie:url and the nrl:GraphMetadata in \p model
         void storeBasicData( Nepomuk::IndexFeeder* feeder );
@@ -297,7 +298,7 @@ namespace {
     }
 
 
-    FileMetaData::FileMetaData( const Strigi::AnalysisResult* idx )
+    FileMetaData::FileMetaData( const Strigi::AnalysisResult* idx, const QUrl & resUri )
         : m_analysisResult( idx )
     {
         fileUrl = createFileUrl( idx );
@@ -306,7 +307,10 @@ namespace {
         // determine the resource URI by using Nepomuk::Resource's power
         // this will automatically find previous uses of the file in question
         // with backwards compatibility
-        resourceUri = Nepomuk::Resource( fileUrl ).resourceUri();
+        if( !resUri.isEmpty() )
+            resourceUri = resUri;
+        else
+            resourceUri = Nepomuk::Resource( fileUrl ).resourceUri();
     }
 
     void FileMetaData::storeBasicData( Nepomuk::IndexFeeder * feeder )
@@ -346,6 +350,9 @@ public:
     QStack<const Strigi::AnalysisResult*> currentResultStack;
 
     Nepomuk::IndexFeeder* feeder;
+
+    // Some services may need to force a specific resource uri
+    QUrl resourceUri;
 };
 
 
@@ -376,7 +383,8 @@ void Nepomuk::StrigiIndexWriter::deleteEntries( const std::vector<std::string>& 
 {
     for ( unsigned int i = 0; i < entries.size(); ++i ) {
         QString path = QString::fromUtf8( entries[i].c_str() );
-        IndexFeeder::clearIndexedDataForUrl( KUrl( path ) );
+        Nepomuk::clearLegacyIndexedDataForUrl( KUrl( path ) );
+        Nepomuk::clearIndexedData(KUrl(path));
     }
 }
 
@@ -400,10 +408,11 @@ void Nepomuk::StrigiIndexWriter::startAnalysis( const AnalysisResult* idx )
     }
 
     // create the file data used during the analysis
-    FileMetaData* data = new FileMetaData( idx );
+    FileMetaData* data = new FileMetaData( idx, d->resourceUri );
 
     // remove previously indexed data
-    IndexFeeder::clearIndexedDataForResourceUri( data->resourceUri );
+    Nepomuk::clearLegacyIndexedDataForResourceUri( data->resourceUri );
+    Nepomuk::clearIndexedData(data->resourceUri);
 
     // It is important to keep the resource URI between updates (especially for sharing of files)
     // However, when updating data from pre-KDE 4.4 times we want to get rid of old file:/ resource
@@ -563,20 +572,33 @@ void Nepomuk::StrigiIndexWriter::addValue( const AnalysisResult* idx,
 }
 
 
+namespace {
+    Soprano::Node convertToMainResource( const Soprano::Node & n, FileMetaData * md ) {
+        if( n.isResource() && n.uri().toLocalFile() == md->fileUrl.toLocalFile() ) {
+            return md->resourceUri;
+        }
+        return n;
+    }
+}
 void Nepomuk::StrigiIndexWriter::addTriplet( const std::string& s,
                                              const std::string& p,
                                              const std::string& o )
 {
     if ( d->currentResultStack.top()->depth() > 0 ) {
+        kDebug() << "Depth > 0 - " << s.c_str() << " " << p.c_str() << " " << o.c_str();
         return;
     }
-    //FileMetaData* md = fileDataForResult( d->currentResultStack.top() );
+    FileMetaData* md = fileDataForResult( d->currentResultStack.top() );
 
     Soprano::Node subject( createBlankOrResourceNode( s ) );
+    subject = convertToMainResource( subject, md );
+    
     Nepomuk::Types::Property property( QUrl( QString::fromUtf8(p.c_str()) ) ); // Was mapped earlier
     Soprano::Node object;
-    if ( property.range().isValid() )
+    if ( property.range().isValid() ) {
         object = Soprano::Node( createBlankOrResourceNode( o ) );
+        object = convertToMainResource( object, md );
+    }
     else
         object = Soprano::LiteralValue::fromString( QString::fromUtf8( o.c_str() ), property.literalRangeType().dataTypeUri() );
     
@@ -585,7 +607,6 @@ void Nepomuk::StrigiIndexWriter::addTriplet( const std::string& s,
     else {
         kDebug() << QString::fromUtf8( o.c_str() ) << " could not be parsed as a " << property.literalRangeType().dataTypeUri();
     }
-        
 }
 
 
@@ -619,16 +640,18 @@ void Nepomuk::StrigiIndexWriter::finishAnalysis( const AnalysisResult* idx )
                                     Nepomuk::Vocabulary::KExt::unixFileMode(),
                                     LiteralValue( int(statBuf.st_mode) ) );
         }
-        d->feeder->addStatement( md->resourceUri,
-                                Nepomuk::Vocabulary::KExt::unixFileOwner(),
-                                LiteralValue( md->fileInfo.owner() ) );
-        d->feeder->addStatement( md->resourceUri,
-                                Nepomuk::Vocabulary::KExt::unixFileGroup(),
-                                LiteralValue( md->fileInfo.group() ) );
+        if( !md->fileInfo.owner().isEmpty() )
+            d->feeder->addStatement( md->resourceUri,
+                                     Nepomuk::Vocabulary::KExt::unixFileOwner(),
+                                     LiteralValue( md->fileInfo.owner() ) );
+        if( !md->fileInfo.group().isEmpty() )
+            d->feeder->addStatement( md->resourceUri,
+                                     Nepomuk::Vocabulary::KExt::unixFileGroup(),
+                                     LiteralValue( md->fileInfo.group() ) );
 #endif // Q_OS_UNIX
     }
 
-    d->feeder->end( md->fileInfo.isDir() );
+    d->feeder->end();
 
     // cleanup
     delete md;
@@ -690,4 +713,9 @@ QUrl Nepomuk::StrigiIndexWriter::determineFolderResourceUri( const KUrl& fileUrl
         kDebug() << "Could not find resource URI for folder (this is not an error)" << fileUrl;
         return QUrl();
     }
+}
+
+void Nepomuk::StrigiIndexWriter::forceUri(const QUrl& uri)
+{
+    d->resourceUri = uri;
 }

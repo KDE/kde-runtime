@@ -25,6 +25,8 @@
 #include <QtCore/QVariant>
 #include <QtCore/QSet>
 
+#include "removablemediacache.h"
+
 namespace Soprano {
     class Model;
     namespace Client {
@@ -77,15 +79,11 @@ namespace Nepomuk {
         void updateIndexedFoldersWatches();
 
         /**
-         * Connects removable media to slotDeviceAccessibilityChanged().
+         * Connected to each removable media. Adds a watch for the mount point,
+         * cleans up the index with respect to removed files, and optionally
+         * tells the indexer service to run on the mount path.
          */
-        void slotSolidDeviceAdded(const QString& udi);
-
-        /**
-         * Connected to each removable media. Adds a watch for the mount point if
-         * \p accessible is \p true.
-         */
-        void slotDeviceAccessibilityChanged( bool accessible, const QString& udi );
+        void slotDeviceMounted( const Nepomuk::RemovableMediaCache::Entry* );
 
     private:
         /**
@@ -107,6 +105,7 @@ namespace Nepomuk {
 #endif
 
         RegExpCache* m_pathExcludeRegExpCache;
+        RemovableMediaCache* m_removableMediaCache;
     };
 }
 

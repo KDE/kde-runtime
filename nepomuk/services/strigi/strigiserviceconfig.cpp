@@ -17,7 +17,6 @@
 */
 
 #include "strigiserviceconfig.h"
-#include "removablestorageserviceinterface.h"
 #include "fileexcludefilters.h"
 
 #include <QtCore/QStringList>
@@ -255,12 +254,7 @@ void Nepomuk::StrigiServiceConfig::buildFolderCache()
     QMutexLocker lock( &m_folderCacheMutex );
 
     QStringList includeFoldersPlain = m_config.group( "General" ).readPathEntry( "folders", QStringList() << QDir::homePath() );
-    org::kde::nepomuk::RemovableStorage removableStorageService( "org.kde.nepomuk.services.removablestorageservice",
-                                                                 "/removablestorageservice",
-                                                                 QDBusConnection::sessionBus() );
-    if ( removableStorageService.isValid() )
-        includeFoldersPlain << removableStorageService.currentlyMountedAndIndexed();
-    QStringList excludeFoldersPlain = m_config.group( "General" ).readPathEntry( "exclude folders", QStringList() );;
+    QStringList excludeFoldersPlain = m_config.group( "General" ).readPathEntry( "exclude folders", QStringList() );
 
     m_folderCache.clear();
     insertSortFolders( includeFoldersPlain, true, m_folderCache );
