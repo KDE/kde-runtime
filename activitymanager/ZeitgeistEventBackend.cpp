@@ -20,7 +20,9 @@
 #include "config-features.h"
 
 #ifndef HAVE_QZEITGEIST
+#ifdef __GNUC__
     #warning "No QtZeitgeist, disabling desktop events processing"
+#endif
 
 #else // HAVE_QZEITGEIST
 
