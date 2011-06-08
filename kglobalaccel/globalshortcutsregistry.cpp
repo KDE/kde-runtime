@@ -214,15 +214,11 @@ bool GlobalShortcutsRegistry::keyPressed(int keyQt)
     data.append(shortcut->context()->component()->friendlyName());
     data.append(shortcut->friendlyName());
 #ifdef Q_WS_X11
-    // pass X11 timestamp
-    long timestamp = QX11Info::appTime();
     // Make sure kglobalacceld has ungrabbed the keyboard after receiving the
     // keypress, otherwise actions in application that try to grab the
     // keyboard (e.g. in kwin) may fail to do so. There is still a small race
     // condition with this being out-of-process.
     qApp->syncX();
-#else
-    long timestamp = 0;
 #endif
 
     // 1st Invoke the action
