@@ -387,6 +387,8 @@ bool Nepomuk::OntologyManagerModel::removeOntology( const QUrl& ns )
         // now removing the ontology is simple
         removeContext( dataGraphUri );
         removeContext( metadataGraphUri );
+        // be sure we remove any junk from buggy versions
+        removeAllStatements( dataGraphUri, Soprano::Node(), Soprano::Node() );
         return true;
     }
     else {
@@ -404,7 +406,7 @@ QDateTime Nepomuk::OntologyManagerModel::ontoModificationDate( const QUrl& uri )
                              "?onto <%1> ?ns . "
                              "?onto <%3> ?date . "
                              "FILTER(STR(?ns) = \"%2\") . "
-                             "FILTER(DATATYPE(?date) = <%4>) . }" )
+                             "FILTER(DATATYPE(?date) = <%4>) . } LIMIT 1" )
                     .arg( Soprano::Vocabulary::NAO::hasDefaultNamespace().toString() )
                     .arg( uri.toString() )
                     .arg( Soprano::Vocabulary::NAO::lastModified().toString() )
