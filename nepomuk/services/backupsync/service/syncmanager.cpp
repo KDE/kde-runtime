@@ -116,6 +116,7 @@ void Nepomuk::SyncManager::createSyncFile(const QUrl& outputUrl, QSet<QUrl> & ne
 
 void Nepomuk::SyncManager::createFirstSyncFile(const QUrl& outputUrl) const
 {
+    Q_UNUSED(outputUrl);
     //SyncFile sf = Nepomuk::createFirstSyncFile();
     //sf.save( outputUrl );
 }

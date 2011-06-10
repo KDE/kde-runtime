@@ -65,7 +65,8 @@ namespace {
 
 int main( int argc, char** argv )
 {
-    KAboutData aboutData( "nepomukservicestub", "nepomuk",
+    KAboutData aboutData( "nepomukservicestub",
+                          "nepomukservicestub",
                           ki18n("Nepomuk Service Stub"),
                           "0.2",
                           ki18n("Nepomuk Service Stub"),
@@ -102,6 +103,7 @@ int main( int argc, char** argv )
     app.disableSessionManagement();
     installSignalHandler();
     QApplication::setQuitOnLastWindowClosed( false );
+    KGlobal::locale()->insertCatalog( serviceName );
 
 
     // check if NepomukServer is running

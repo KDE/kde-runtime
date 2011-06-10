@@ -1211,6 +1211,9 @@ void Nepomuk::DataManagementModel::removeDataByApplication(RemovalFlags flags, c
 
 void Nepomuk::DataManagementModel::removePropertiesByApplication(const QList<QUrl> &resources, const QList<QUrl> &properties, const QString &app)
 {
+    Q_UNUSED(resources);
+    Q_UNUSED(properties);
+    Q_UNUSED(app);
     setError("Not implemented yet");
 }
 

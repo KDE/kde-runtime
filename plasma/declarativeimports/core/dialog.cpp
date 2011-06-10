@@ -24,15 +24,69 @@
 #include <QGraphicsObject>
 #include <QGraphicsWidget>
 #include <QTimer>
+#include <QLayout>
 
 #include <Plasma/Corona>
 #include <Plasma/Dialog>
 
 
+DialogMargins::DialogMargins(Plasma::Dialog *dialog, QObject *parent)
+    : QObject(parent),
+      m_dialog(dialog)
+{
+    checkMargins();
+}
+
+void DialogMargins::checkMargins()
+{
+    int left, top, right, bottom;
+    m_dialog->getContentsMargins(&left, &top, &right, &bottom);
+
+    if (left != m_left) {
+        m_left = left;
+        emit leftChanged();
+    }
+    if (top != m_top) {
+        m_top = top;
+        emit topChanged();
+    }
+    if (right != m_right) {
+        m_right = right;
+        emit rightChanged();
+    }
+    if (bottom != m_bottom) {
+        m_bottom = bottom;
+        emit bottomChanged();
+    }
+}
+
+int DialogMargins::left() const
+{
+    return m_left;
+}
+
+int DialogMargins::top() const
+{
+    return m_top;
+}
+
+int DialogMargins::right() const
+{
+    return m_right;
+}
+
+int DialogMargins::bottom() const
+{
+    return m_bottom;
+}
+
 DialogProxy::DialogProxy(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      m_declarativeItemContainer(0)
 {
     m_dialog = new Plasma::Dialog();
+    m_margins = new DialogMargins(m_dialog, this);
+    m_dialog->installEventFilter(this);
     m_flags = m_dialog->windowFlags();
 }
 
@@ -44,7 +98,7 @@ DialogProxy::~DialogProxy()
 
 QGraphicsObject *DialogProxy::mainItem() const
 {
-    return m_dialog->graphicsWidget();
+    return m_mainItem.data();
 }
 
 void DialogProxy::setMainItem(QGraphicsObject *mainItem)
@@ -115,17 +169,18 @@ void DialogProxy::setVisible(const bool visible)
         m_dialog->setVisible(visible);
         if (visible) {
             m_dialog->setWindowFlags(m_flags);
+            m_dialog->setVisible(visible);
             m_dialog->raise();
         }
         emit visibleChanged();
     }
 }
 
-QPoint DialogProxy::popupPosition(QGraphicsObject *item) const
+QPoint DialogProxy::popupPosition(QGraphicsObject *item, int alignment) const
 {
     Plasma::Corona *corona = qobject_cast<Plasma::Corona *>(item->scene());
     if (corona) {
-        return corona->popupPosition(item, m_dialog->size());
+        return corona->popupPosition(item, m_dialog->size(), (Qt::AlignmentFlag)alignment);
     } else {
         return QPoint();
     }
@@ -152,6 +207,16 @@ void DialogProxy::setY(int y)
     m_dialog->move(m_dialog->pos().x(), y);
 }
 
+int DialogProxy::width() const
+{
+    return m_dialog->size().width();
+}
+
+int DialogProxy::height() const
+{
+    return m_dialog->size().height();
+}
+
 int DialogProxy::windowFlags() const
 {
     return (int)m_dialog->windowFlags();
@@ -163,10 +228,32 @@ void DialogProxy::setWindowFlags(const int flags)
     m_dialog->setWindowFlags((Qt::WindowFlags)flags);
 }
 
+QObject *DialogProxy::margins() const
+{
+    return m_margins;
+}
+
 bool DialogProxy::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == m_dialog && event->type() == QEvent::Move) {
-        emit positionChanged();
+        QMoveEvent *me = static_cast<QMoveEvent *>(event);
+        if (me->oldPos().x() != me->pos().x()) {
+            emit xChanged();
+        }
+        if (me->oldPos().y() != me->pos().y()) {
+            emit yChanged();
+        }
+        if ((me->oldPos().x() != me->pos().x()) || (me->oldPos().y() != me->pos().y())) {
+            m_margins->checkMargins();
+        }
+    } else if (watched == m_dialog && event->type() == QEvent::Resize) {
+        QResizeEvent *re = static_cast<QResizeEvent *>(event);
+        if (re->oldSize().width() != re->size().width()) {
+            emit widthChanged();
+        }
+        if (re->oldSize().height() != re->size().height()) {
+            emit heightChanged();
+        }
     }
     return false;
 }

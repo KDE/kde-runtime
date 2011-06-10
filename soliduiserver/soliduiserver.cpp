@@ -231,6 +231,7 @@ void SolidUiServer::onPassphraseDialogRejected()
 
 void SolidUiServer::reparentDialog(QWidget *dialog, WId wId, const QString &appId, bool modal)
 {
+    Q_UNUSED(appId);
     // Code borrowed from kwalletd
 
     KWindowSystem::setMainWindow(dialog, wId); // correct, set dialog parent
