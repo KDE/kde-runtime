@@ -145,6 +145,15 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NMM::musicAlbum(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NMM::musicAlbum(), RDFS::range(), NMM::MusicAlbum(), graph );
 
+    // used by testStoreResources_duplicates
+    m_model->addStatement( NFO::hashAlgorithm(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NFO::hashAlgorithm(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NFO::hashValue(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NFO::hashValue(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NFO::hasHash(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NFO::hasHash(), RDFS::range(), NFO::FileHash(), graph );
+    m_model->addStatement( NFO::hasHash(), RDFS::domain(), NFO::FileDataObject(), graph );
+
     // rebuild the internals of the data management model
     m_classAndPropertyTree->rebuildTree(m_dmModel);
 }
@@ -3682,6 +3691,45 @@ void DataManagementModelTest::testStoreResources_additionalMetadataApp()
     //       but what if we want to add some additionalMetadata which references
     //       a node in the SimpleResourceGraph. There needs to be a test for that.
     QVERIFY(m_dmModel->lastError());
+}
+
+void DataManagementModelTest::testStoreResources_duplicates()
+{
+    KTemporaryFile file;
+    file.open();
+    const QUrl fileUrl( file.fileName() );
+
+    SimpleResource res;
+    res.addType( NFO::FileDataObject() );
+    res.addProperty( NIE::url(), fileUrl );
+
+    SimpleResource hash1;
+    hash1.addType( NFO::FileHash() );
+    hash1.addProperty( NFO::hashAlgorithm(), QLatin1String("SHA1") );
+    hash1.addProperty( NFO::hashValue(), QLatin1String("ddaa6b339428b75ee1545f80f1f35fb89c166bf9") );
+
+    SimpleResource hash2;
+    hash2.addType( NFO::FileHash() );
+    hash2.addProperty( NFO::hashAlgorithm(), QLatin1String("SHA1") );
+    hash2.addProperty( NFO::hashValue(), QLatin1String("ddaa6b339428b75ee1545f80f1f35fb89c166bf9") );
+
+    res.addProperty( NFO::hasHash(), hash1.uri() );
+    res.addProperty( NFO::hasHash(), hash2.uri() );
+
+    SimpleResourceGraph graph;
+    graph << res << hash1 << hash2;
+
+    m_dmModel->storeResources( graph, "appA" );
+    QVERIFY(!m_dmModel->lastError());
+
+    // hash1 and hash2 are the same, they should have been merged together
+    int hashCount = m_model->listStatements( Node(), RDF::type(), NFO::FileHash() ).allStatements().size();
+    QCOMPARE( hashCount, 1 );
+
+    // res should have only have one hash1
+    QCOMPARE( m_model->listStatements( Node(), NFO::hasHash(), Node() ).allStatements().size(), 1 );
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testMergeResources()
