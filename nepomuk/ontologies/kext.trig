@@ -7,18 +7,18 @@
 #  * to Remix - to adapt the work
 # Under the following conditions:
 #  * Attribution - You must attribute the work in the manner specified by the author
-#    or licensor (but not in any way that suggests that they endorse you or your use 
+#    or licensor (but not in any way that suggests that they endorse you or your use
 #    of the work).
 #
-# Redistribution and use in source and binary forms, with or without modification, 
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
-#  * Redistributions of source code must retain the above copyright notice, this 
+#  * Redistributions of source code must retain the above copyright notice, this
 #    list of conditions and the following disclaimer.
-#  * Redistributions in binary form must reproduce the above copyright notice, this 
-#    list of conditions and the following disclaimer in the documentation and/or 
+#  * Redistributions in binary form must reproduce the above copyright notice, this
+#    list of conditions and the following disclaimer in the documentation and/or
 #    other materials provided with the distribution.
 #  * Neither the names of the authors nor the names of contributors may
-#    be used to endorse or promote products derived from this ontology without 
+#    be used to endorse or promote products derived from this ontology without
 #    specific prior written permission.
 #
 # THIS ONTOLOGY IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
@@ -89,6 +89,42 @@ kext: {
           rdfs:domain kext:Activity ;
           rdfs:range xsd:string ;
           nao:userVisible false .
+
+    kext:ResourceScoreCache
+          a rdfs:Class ;
+          rdfs:subClassOf rdfs:Resource ;
+          rdfs:label "Resource score cache" ;
+          rdfs:comment "For storing the automatically calculated score based on the usage statistics" ;
+          nao:userVisible false .
+
+    kext:involvedResource
+          a rdf:Property ;
+          rdfs:comment "Resource for which the score is calculated." ;
+          rdfs:domain kext:ResourceScoreCache ;
+          rdfs:label "resource" ;
+          rdfs:range rdfs:Resource .
+
+    kext:involvedAgent
+          a rdf:Property ;
+          rdfs:comment "Relates the score to the agent initiating the events." ;
+          rdfs:domain kext:ResourceScoreCache ;
+          rdfs:label "involved agent" ;
+          rdfs:range nao:Agent .
+
+    kext:involvedActivity
+          a rdf:Property ;
+          rdfs:comment "Relates the score to the activity in which the events happened." ;
+          rdfs:domain kext:ResourceScoreCache ;
+          rdfs:label "involved activity" ;
+          rdfs:range kext:Activity .
+
+    kext:cachedScore
+          a rdf:Property ;
+          rdfs:subPropertyOf nao:score ;
+          rdfs:comment "The automatically calculated score" ;
+          rdfs:domain kext:ResourceScoreCache ;
+          rdfs:label "calculated score" ;
+          rdfs:range xsd:float .
 }
 
 <http://nepomuk.kde.org/ontologies/2010/11/29/kext/metadata> {
