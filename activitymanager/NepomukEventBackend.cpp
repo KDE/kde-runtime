@@ -59,18 +59,18 @@ NepomukEventBackend::NepomukEventBackend()
 
 void NepomukEventBackend::addEvents(const EventList & events)
 {
-    foreach(const Event& event, events) {
-        if(event.type == Event::Accessed) {
+    foreach (const Event& event, events) {
+        if (event.type == Event::Accessed) {
             // one-shot event
             Nepomuk::Resource eventRes = createDesktopEvent(event.uri, event.timestamp, event.application);
             eventRes.addType(NUAO::UsageEvent());
             eventRes.addProperty(NUAO::end(), event.timestamp);
-        }
-        else if(event.type == Event::Opened) {
+
+        } else if (event.type == Event::Opened) {
             // create a new event
             createDesktopEvent(event.uri, event.timestamp, event.application);
-        }
-        else {
+
+        } else {
             // find the corresponding event
             // FIXME: enable this once the range of nao:identifier has been fixed and is no longer assumed to be rdfs:Resource
             // resulting in a wrong query.
@@ -99,27 +99,27 @@ void NepomukEventBackend::addEvents(const EventList & events)
             kDebug() << queryS;
             Soprano::QueryResultIterator it
                     = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(queryS, Soprano::Query::QueryLanguageSparql);
-            if(it.next()) {
+
+            if (it.next()) {
                 Nepomuk::Resource eventRes(it[0].uri());
                 it.close();
 
                 eventRes.addProperty(NUAO::end(), event.timestamp);
-                if(event.type == Event::Modified) {
+                if (event.type == Event::Modified) {
                     eventRes.addType(NUAO::ModificationEvent());
-                }
-                else {
+                } else {
                     eventRes.addType(NUAO::UsageEvent());
                 }
 
                 // In case of a modification event we create a new event which will
                 // be completed by the final Closed event since this one resource
                 // modification is done now. It ended with saving the resource.
-                if(event.type == Event::Modified) {
+                if (event.type == Event::Modified) {
                     // create a new event
                     createDesktopEvent(event.uri, event.timestamp, event.application);
                 }
-            }
-            else {
+
+            } else {
                 kDebug() << "Failed to find matching Open event for resource" << event.uri << "and application" << event.application;
             }
         }
@@ -138,7 +138,7 @@ Nepomuk::Resource NepomukEventBackend::createDesktopEvent(const KUrl& uri, const
     eventRes.addProperty(NUAO::involves(), appRes);
 
     // the activity
-    if(!m_currentActivity.isValid()
+    if (!m_currentActivity.isValid()
             || m_currentActivity.identifiers().isEmpty()
             || m_currentActivity.identifiers().first() != ActivityManager::self()->CurrentActivity()) {
         // update the current activity resource
@@ -148,10 +148,9 @@ Nepomuk::Resource NepomukEventBackend::createDesktopEvent(const KUrl& uri, const
                                                                                        Soprano::Node::resourceToN3(KExt::activityIdentifier()),
                                                                                        Soprano::Node::literalToN3(ActivityManager::self()->CurrentActivity())),
                                                                                   Soprano::Query::QueryLanguageSparql);
-        if(it.next()) {
+        if (it.next()) {
             m_currentActivity = it[0].uri();
-        }
-        else {
+        } else {
             m_currentActivity = Nepomuk::Resource(ActivityManager::self()->CurrentActivity(), Nepomuk::Vocabulary::KExt::Activity());
             m_currentActivity.setProperty(Nepomuk::Vocabulary::KExt::activityIdentifier(), ActivityManager::self()->CurrentActivity());
         }
