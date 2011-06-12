@@ -64,6 +64,7 @@ set(activity_manager_SRCS
 
 set(activity_manager_backends_SRCS
     NepomukEventBackend.cpp
+    NepomukResourceScoreMaintainer.cpp
     ZeitgeistEventBackend.cpp
     SlcEventBackend.cpp
     )
