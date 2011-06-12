@@ -30,7 +30,7 @@ class EventProcessorPrivate;
 /**
  * Thread to process desktop/usage events
  */
-class EventProcessor: public QThread {
+class EventProcessor {
 public:
     static EventProcessor * self();
 
