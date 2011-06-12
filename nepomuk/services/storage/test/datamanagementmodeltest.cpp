@@ -36,6 +36,7 @@
 
 #include <KTemporaryFile>
 #include <KTempDir>
+#include <KTempDir>
 #include <KDebug>
 
 #include <Nepomuk/Vocabulary/NFO>
@@ -144,6 +145,20 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NMM::performer(), RDFS::range(), NCO::Contact(), graph );
     m_model->addStatement( NMM::musicAlbum(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NMM::musicAlbum(), RDFS::range(), NMM::MusicAlbum(), graph );
+
+    // used by testStoreResources_duplicates
+    m_model->addStatement( NFO::hashAlgorithm(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NFO::hashAlgorithm(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NFO::hashValue(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NFO::hashValue(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NFO::hasHash(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NFO::hasHash(), RDFS::range(), NFO::FileHash(), graph );
+    m_model->addStatement( NFO::hasHash(), RDFS::domain(), NFO::FileDataObject(), graph );
+
+    m_model->addStatement( NIE::isPartOf(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NIE::isPartOf(), RDFS::range(), NFO::FileDataObject(), graph );
+    m_model->addStatement( NIE::lastModified(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NIE::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
 
     // rebuild the internals of the data management model
     m_classAndPropertyTree->rebuildTree(m_dmModel);
@@ -2265,6 +2280,86 @@ void DataManagementModelTest::testRemoveDataByApplication_nieUrl()
     QVERIFY( m_model->containsAnyStatement( res1, NIE::url(), fileUrl ) );
 }
 
+namespace {
+    bool createFile( QString dirUrl, Nepomuk::SimpleResource* res ) {
+        static int fileNum = 0;
+
+        QString fileUrl( dirUrl + QString::number(fileNum++) );
+        kDebug() << fileUrl;
+        QFile f1( fileUrl );
+        if( !f1.open( QIODevice::ReadWrite ) )
+            return false;
+
+        res->addType( NFO::FileDataObject() );
+        res->addProperty( NIE::url(), fileUrl );
+        res->addProperty( NIE::lastModified(), QDateTime::currentDateTime() );
+
+        return true;
+    }
+
+    QHash<QString, QDateTime> getChildren( const QString& dir, Soprano::Model* model )
+    {
+        QHash<QString, QDateTime> children;
+        QString query;
+
+        query = QString::fromLatin1( "select distinct ?url ?mtime where { "
+                                    "?r %1 ?parent . ?parent %2 %3 . "
+                                    "?r %4 ?mtime . "
+                                    "?r %2 ?url . "
+                                    "}" )
+                .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ),
+                    Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                    Soprano::Node::resourceToN3( KUrl( dir ) ),
+                    Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::lastModified() ) );
+
+        Soprano::QueryResultIterator result = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+
+        while ( result.next() ) {
+            children.insert( result["url"].uri().toLocalFile(), result["mtime"].literal().toDateTime() );
+        }
+        return children;
+    }
+}
+
+void DataManagementModelTest::testRemoveDataByApplication_folder()
+{
+    SimpleResourceGraph graph;
+
+    KTempDir dir;
+    QVERIFY( dir.exists() );
+    SimpleResource dirRes;
+    dirRes.addType( NFO::Folder() );
+    dirRes.addType( NFO::FileDataObject() );
+    dirRes.addProperty( NIE::url(), dir.name() );
+    graph << dirRes;
+
+    SimpleResource res1;
+    createFile( dir.name(), &res1 );
+    res1.addProperty( NIE::isPartOf(), dirRes.uri() );
+    graph << res1;
+
+    SimpleResource res2;
+    createFile( dir.name(), &res2 );
+    res2.addProperty( NIE::isPartOf(), dirRes.uri() );
+    graph << res2;
+
+    m_dmModel->storeResources( graph, QLatin1String("indexer") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    // Get the directory resource
+    QUrl dirResUri = m_model->listStatements( Node(), NIE::url(), KUrl(dir.name())).iterateSubjects().allNodes().first().uri();
+
+    QHash< QString, QDateTime > child1 = getChildren( dir.name(), m_model );
+
+    m_dmModel->removeDataByApplication( QList<QUrl>() << dirResUri,
+                                        DataManagementModel::RemoveSubResoures,
+                                        QLatin1String("indexer") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QHash< QString, QDateTime > child2 = getChildren( dir.name(), m_model );
+    QCOMPARE( child1, child2 );
+
+}
 
 // test that all is removed, ie. storage is clear afterwards
 void DataManagementModelTest::testRemoveAllDataByApplication1()
@@ -3682,6 +3777,45 @@ void DataManagementModelTest::testStoreResources_additionalMetadataApp()
     //       but what if we want to add some additionalMetadata which references
     //       a node in the SimpleResourceGraph. There needs to be a test for that.
     QVERIFY(m_dmModel->lastError());
+}
+
+void DataManagementModelTest::testStoreResources_duplicates()
+{
+    KTemporaryFile file;
+    file.open();
+    const QUrl fileUrl( file.fileName() );
+
+    SimpleResource res;
+    res.addType( NFO::FileDataObject() );
+    res.addProperty( NIE::url(), fileUrl );
+
+    SimpleResource hash1;
+    hash1.addType( NFO::FileHash() );
+    hash1.addProperty( NFO::hashAlgorithm(), QLatin1String("SHA1") );
+    hash1.addProperty( NFO::hashValue(), QLatin1String("ddaa6b339428b75ee1545f80f1f35fb89c166bf9") );
+
+    SimpleResource hash2;
+    hash2.addType( NFO::FileHash() );
+    hash2.addProperty( NFO::hashAlgorithm(), QLatin1String("SHA1") );
+    hash2.addProperty( NFO::hashValue(), QLatin1String("ddaa6b339428b75ee1545f80f1f35fb89c166bf9") );
+
+    res.addProperty( NFO::hasHash(), hash1.uri() );
+    res.addProperty( NFO::hasHash(), hash2.uri() );
+
+    SimpleResourceGraph graph;
+    graph << res << hash1 << hash2;
+
+    m_dmModel->storeResources( graph, "appA" );
+    QVERIFY(!m_dmModel->lastError());
+
+    // hash1 and hash2 are the same, they should have been merged together
+    int hashCount = m_model->listStatements( Node(), RDF::type(), NFO::FileHash() ).allStatements().size();
+    QCOMPARE( hashCount, 1 );
+
+    // res should have only have one hash1
+    QCOMPARE( m_model->listStatements( Node(), NFO::hasHash(), Node() ).allStatements().size(), 1 );
+
+    QVERIFY(!haveTrailingGraphs());
 }
 
 void DataManagementModelTest::testMergeResources()

@@ -90,6 +90,7 @@ private Q_SLOTS:
     void testRemoveDataByApplication10();
     void testRemoveDataByApplication_realLife();
     void testRemoveDataByApplication_nieUrl();
+    void testRemoveDataByApplication_folder();
 
     void testRemoveAllDataByApplication1();
     void testRemoveAllDataByApplication2();
@@ -117,6 +118,7 @@ private Q_SLOTS:
     void testStoreResources_noTypeMatch2();
     void testStoreResources_faultyMetadata();
     void testStoreResources_additionalMetadataApp();
+    void testStoreResources_duplicates();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();
