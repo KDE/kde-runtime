@@ -26,6 +26,8 @@
 #include <Nepomuk/Types/Property>
 #include <Nepomuk/Resource>
 
+#include <QtDBus/QDBusVariant>
+
 #include "nepomukdatamanagement_export.h"
 
 namespace Nepomuk {
@@ -123,9 +125,9 @@ namespace Nepomuk {
         void slotResourceRemoved(const QString& res, const QStringList& types);
         void slotResourceTypeAdded(const QString& res, const QString& type);
         void slotResourceTypeRemoved(const QString& res, const QString& type);
-        void slotPropertyAdded(const QString& res, const QString& prop, const QVariant& object);
-        void slotPropertyRemoved(const QString&, const QString&, const QVariant&);
-        
+        void slotPropertyAdded(const QString& res, const QString& prop, const QDBusVariant& object);
+        void slotPropertyRemoved(const QString& res, const QString& prop, const QDBusVariant& object);
+
     private:
         class Private;
         Private * d;
