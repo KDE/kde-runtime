@@ -36,7 +36,7 @@ namespace Nepomuk {
      * \class ResourceWatcher resourcewatcher.h
      *
      * A Resource watcher is an object that be used to selectively monitor the nepomuk repository
-     * for changes. Resources may be monitored on the basis of types, properties, and uris. 
+     * for changes. Resources may be monitored on the basis of types, properties, and uris.
      *
      * Changes may be monitored in one of the following ways -
      * 1. By Resource Uri -
@@ -63,7 +63,7 @@ namespace Nepomuk {
      * connect the signals..
      * rw.start();
      * \endcode
-     * 
+     *
      * \author Vishesh Handa <handa.vish@gmail.com>
      */
     class NEPOMUK_DATA_MANAGEMENT_EXPORT ResourceWatcher : public QObject
@@ -81,7 +81,7 @@ namespace Nepomuk {
         void setTypes( const QList<Types::Class> & types_ );
         void setResources( const QList<Nepomuk::Resource> & resources_ );
         void setProperties( const QList<Types::Property> & properties_ );
-        
+
         QList<Types::Class> types() const;
         QList<Nepomuk::Resource> resources() const;
         QList<Types::Property> properties() const;
@@ -97,7 +97,7 @@ namespace Nepomuk {
         void resourceCreated( const Nepomuk::Resource & resource, const QList<QUrl>& types ); //FIXME: Use either Resource or uri, not a mix
 
         /**
-         * This signal is emitted when a resource is deleted. 
+         * This signal is emitted when a resource is deleted.
          */
         void resourceRemoved( const QUrl & uri, const QList<QUrl>& types );
 
@@ -114,10 +114,10 @@ namespace Nepomuk {
          * when any resource whose property is being watched is modified.
          */
         void propertyAdded( const Nepomuk::Resource & resource,
-                            const Types::Property & property,
+                            const Nepomuk::Types::Property & property,
                             const QVariant & value );
         void propertyRemoved( const Nepomuk::Resource & resource,
-                              const Types::Property & property,
+                              const Nepomuk::Types::Property & property,
                               const QVariant & value );
 
     private Q_SLOTS:
