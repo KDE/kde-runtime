@@ -63,7 +63,7 @@ void Nepomuk::Sync::ResourceIdentifier::addStatement(const Soprano::Statement& s
 {
     SyncResource res;
     res.setUri( st.subject() );
-    
+
     QHash<KUrl, SyncResource>::iterator it = d->m_resourceHash.find( res.uri() );
     if( it != d->m_resourceHash.end() ) {
         SyncResource & res = it.value();
@@ -125,7 +125,7 @@ void Nepomuk::Sync::ResourceIdentifier::identifyAll()
 {
     int totalSize = d->m_notIdentified.size();
     kDebug() << totalSize;
-    
+
     return identify( d->m_notIdentified.toList() );
 }
 
@@ -135,17 +135,17 @@ bool Nepomuk::Sync::ResourceIdentifier::identify(const KUrl& uri)
     // If already identified
     if( d->m_hash.contains( uri ) )
         return true;
-    
+
     // Avoid recursive calls
     if( d->m_beingIdentified.contains( uri ) )
         return false;
-    
+
     bool result = runIdentification( uri );
     d->m_beingIdentified.remove( uri );
-    
+
     if( result )
         d->m_notIdentified.remove( uri );
-    
+
     return result;
 }
 
@@ -206,7 +206,7 @@ Nepomuk::Sync::SyncResource Nepomuk::Sync::ResourceIdentifier::simpleResource(co
     if( it != d->m_resourceHash.constEnd() ) {
         return it.value();
     }
-    
+
     return SyncResource();
 }
 
@@ -284,7 +284,7 @@ void Nepomuk::Sync::ResourceIdentifier::setMinScore(float score)
 
 
 namespace {
-    
+
     QString stripFileName( const QString & url ) {
         //kDebug() << url;
         int lastIndex = url.lastIndexOf('/') + 1; // the +1 is because we want to keep the trailing /
@@ -300,30 +300,30 @@ void Nepomuk::Sync::ResourceIdentifier::forceResource(const KUrl& oldUri, const 
 
     if( res.isFile() ) {
         const QUrl nieUrlProp = Nepomuk::Vocabulary::NIE::url();
-        
+
         Sync::SyncResource & simRes = d->m_resourceHash[ oldUri ];
         KUrl oldNieUrl = simRes.nieUrl();
         KUrl newNieUrl = res.property( nieUrlProp ).toUrl();
-        
+
         //
         // Modify resourceUri's nie:url
         //
         simRes.remove( nieUrlProp );
         simRes.insert( nieUrlProp, Soprano::Node( newNieUrl ) );
-        
+
         // Remove from list. Insert later
         d->m_notIdentified.remove( oldUri );
-        
+
         //
         // Modify other non identified resources with similar nie:urls
         //
         QString oldString;
         QString newString;
-        
+
         if( !simRes.isFolder() ) {
             oldString = stripFileName( oldNieUrl.url( KUrl::RemoveTrailingSlash ) );
             newString = stripFileName( newNieUrl.url( KUrl::RemoveTrailingSlash ) );
-            
+
             kDebug() << oldString;
             kDebug() << newString;
         }
@@ -331,18 +331,18 @@ void Nepomuk::Sync::ResourceIdentifier::forceResource(const KUrl& oldUri, const 
             oldString = oldNieUrl.url( KUrl::AddTrailingSlash );
             newString = newNieUrl.url( KUrl::AddTrailingSlash );
         }
-        
+
         foreach( const KUrl & uri, d->m_notIdentified ) {
             // Ignore If already identified
             if( d->m_hash.contains( uri ) )
                 continue;
-            
+
             Sync::SyncResource& simpleRes = d->m_resourceHash[ uri ];
             // Check if it has a nie:url
             QString nieUrl = simpleRes.nieUrl().url();
             if( nieUrl.isEmpty() )
                 return;
-            
+
             // Modify the existing nie:url
             if( nieUrl.startsWith(oldString) ) {
                 nieUrl.replace( oldString, newString );
@@ -351,7 +351,7 @@ void Nepomuk::Sync::ResourceIdentifier::forceResource(const KUrl& oldUri, const 
                 simpleRes.insert( nieUrlProp, Soprano::Node( KUrl(nieUrl) ) );
             }
         }
-        
+
         d->m_notIdentified.insert( oldUri );
     }
 }
@@ -361,7 +361,7 @@ bool Nepomuk::Sync::ResourceIdentifier::ignore(const KUrl& resUri, bool ignoreSu
 {
     kDebug() << resUri;
     kDebug() << "Ignore Sub : " << ignoreSub;
-    
+
     if( d->m_hash.contains( resUri ) ) {
         kDebug() << d->m_hash;
         return false;
@@ -373,7 +373,7 @@ bool Nepomuk::Sync::ResourceIdentifier::ignore(const KUrl& resUri, bool ignoreSu
     d->m_notIdentified.remove( resUri );
 
     kDebug() << "Removed!";
-    
+
     // Remove all the statements that contain the resoruce
     QList<KUrl> allUris = d->m_resourceHash.uniqueKeys();
     foreach( const KUrl & uri, allUris ) {
@@ -391,16 +391,16 @@ bool Nepomuk::Sync::ResourceIdentifier::ignore(const KUrl& resUri, bool ignoreSu
     QList<Soprano::Node> nieUrlNodes = res.values( nieUrlProp );
     if( nieUrlNodes.size() != 1 )
         return false;
-    
+
     KUrl mainNieUrl = nieUrlNodes.first().uri();
-    
+
     foreach( const KUrl & uri, d->m_notIdentified ) {
         Sync::SyncResource res = d->m_resourceHash[ uri ];
-        
+
         // If already identified
         if( d->m_hash.contains(uri) )
             continue;
-        
+
         // Check if it has a nie:url
         QList<Soprano::Node> nieUrls = res.values( nieUrlProp );
         if( nieUrls.empty() )
@@ -423,7 +423,7 @@ KUrl Nepomuk::Sync::ResourceIdentifier::duplicateMatch(const KUrl& uri, const QS
     Q_UNUSED( uri );
     Q_UNUSED( matchedUris );
     Q_UNUSED( score );
-    
+
     // By default - Identification fails
     return KUrl();
 }
@@ -433,13 +433,6 @@ Soprano::Graph Nepomuk::Sync::ResourceIdentifier::createIdentifyingStatements(co
 {
     IdentificationSetGenerator gen( uriList.toSet(), ResourceManager::instance()->mainModel(), QSet<KUrl>() );
     return gen.generate();
-}
-
-KUrl Nepomuk::Sync::ResourceIdentifier::additionalIdentification(const KUrl& uri)
-{
-    Q_UNUSED( uri );
-    // Do nothing - identification fails
-    return KUrl();
 }
 
 void Nepomuk::Sync::ResourceIdentifier::manualIdentification(const KUrl& oldUri, const KUrl& newUri)

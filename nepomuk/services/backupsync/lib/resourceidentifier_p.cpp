@@ -65,20 +65,14 @@ void Nepomuk::Sync::ResourceIdentifier::Private::init( Soprano::Model * model )
 bool Nepomuk::Sync::ResourceIdentifier::Private::identify( const KUrl& oldUri )
 {
     //kDebug() << oldUri;
-    
+
     if( m_hash.contains( oldUri ) )
         return true;
 
     const SyncResource & res = m_resourceHash[ oldUri ];
     KUrl resourceUri = findMatch( res );
-    
-    if( resourceUri.isEmpty() ) {
-        resourceUri = q->additionalIdentification( oldUri );
-        if( resourceUri.isEmpty() )
-            return false;
-    }
     m_hash[ oldUri ] = resourceUri;
-    
+
     kDebug() << oldUri << " ---> " << resourceUri;
     return true;
 }
@@ -105,7 +99,7 @@ KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatchForAll(const Nepomuk::
     if( matchedResources.empty() ) {
         return KUrl();
     }
-    
+
     if( matchedResources.size() > 1 )
         return q->duplicateMatch( simpleRes.uri(), matchedResources, m_minScore );
 
@@ -119,7 +113,7 @@ KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatch(const Nepomuk::Sync::
     if( m_minScore == 1.0 ) {
         return findMatchForAll( simpleRes );
     }
-    
+
     //kDebug() << "SyncResource: " << simpleRes;
     //
     // Vital Properties
@@ -155,11 +149,11 @@ KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatch(const Nepomuk::Sync::
     // No match
     if( resourceCount.isEmpty() )
         return KUrl();
-    
+
 
     //
     // Get all the other properties, and increase resourceCount accordingly.
-    // Ignore vital properties. Don't increment the maxScore when an optional property is not found. 
+    // Ignore vital properties. Don't increment the maxScore when an optional property is not found.
     //
     int numStatementsCompared = 0;
     QList<KUrl> properties = simpleRes.uniqueKeys();
@@ -169,7 +163,7 @@ KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatch(const Nepomuk::Sync::
             continue;
 
         bool isOptionalProp = m_optionalProperties.contains( propUri );
-        
+
         Soprano::Statement statement( Soprano::Node(), propUri, Soprano::Node(), Soprano::Node() );
 
         QList<Soprano::Node> objList = simpleRes.values( propUri );
@@ -205,13 +199,13 @@ KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatch(const Nepomuk::Sync::
                 numStatementsCompared++;
         }
     }
-    
+
     //
     // Find the resources with the max score
     //
     QSet<KUrl> maxResources;
     float maxScore = -1;
-    
+
     foreach( const KUrl & key, resourceCount.keys() ) {
         QPair<int, int> scorePair = resourceCount.value( key );
 
@@ -221,7 +215,7 @@ KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatch(const Nepomuk::Sync::
         float score = 0;
         if( divisor )
             score = scorePair.first / divisor;
-        
+
         if( score > maxScore ) {
             maxScore = score;
             maxResources.clear();
@@ -231,7 +225,7 @@ KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatch(const Nepomuk::Sync::
             maxResources.insert( key );
         }
     }
-    
+
     if( maxScore < m_minScore ) {
         return KUrl();
     }
