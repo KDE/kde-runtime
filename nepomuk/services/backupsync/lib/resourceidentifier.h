@@ -174,7 +174,7 @@ namespace Nepomuk {
             *
             * The default behavior is to return an empty uri, which depicts identification failure
             */
-            virtual KUrl duplicateMatch( const KUrl & uri, const QSet<KUrl> & matchedUris, float score );
+            virtual KUrl duplicateMatch( const KUrl & uri, const QSet<KUrl> & matchedUris );
 
             /**
              * This function returns true if identification was successful, and false if it was not.
