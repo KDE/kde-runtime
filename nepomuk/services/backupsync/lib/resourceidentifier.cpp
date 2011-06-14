@@ -53,9 +53,14 @@ using namespace Soprano::Vocabulary;
 Nepomuk::Sync::ResourceIdentifier::ResourceIdentifier(Soprano::Model * model)
     : d( new Nepomuk::Sync::ResourceIdentifier::Private(this) )
 {
-    d->init( model );
+    d->m_model = model ? model : ResourceManager::instance()->mainModel();
 }
 
+Nepomuk::Sync::ResourceIdentifier::Private::Private( ResourceIdentifier * parent )
+    : q( parent ),
+      m_model(0)
+{
+}
 
 Nepomuk::Sync::ResourceIdentifier::~ResourceIdentifier()
 {
@@ -163,7 +168,116 @@ void Nepomuk::Sync::ResourceIdentifier::identify(const KUrl::List& uriList)
 
 bool Nepomuk::Sync::ResourceIdentifier::runIdentification(const KUrl& uri)
 {
-    return d->identify( uri );
+    const Sync::SyncResource & res = simpleResource( uri );
+
+    // Make sure that the res has some rdf:type statements
+    if( !res.contains( RDF::type() ) ) {
+        kDebug() << "No rdf:type statements - Not identifying";
+        return false;
+    }
+
+    QString query;
+
+    int numIdentifyingProperties = 0;
+    QStringList identifyingProperties;
+
+    QHash< KUrl, Soprano::Node >::const_iterator it = res.constBegin();
+    QHash< KUrl, Soprano::Node >::const_iterator constEnd = res.constEnd();
+    for( ; it != constEnd; it++ ) {
+        const QUrl & prop = it.key();
+
+        // Special handling for rdf:type
+        if( prop == RDF::type() ) {
+            query += QString::fromLatin1(" ?r a %1 . ").arg( it.value().toN3() );
+            continue;
+        }
+
+        if( !isIdentifyingProperty( prop ) ) {
+            continue;
+        }
+
+        identifyingProperties << Soprano::Node::resourceToN3( prop );
+
+        Soprano::Node object = it.value();
+        if( object.isBlank()
+            || ( object.isResource() && object.uri().scheme() == QLatin1String("nepomuk") ) ) {
+
+            QUrl objectUri = object.isResource() ? object.uri() : QString( "_:" + object.identifier() );
+            if( !identify( objectUri ) ) {
+                //kDebug() << "Identification of object " << objectUri << " failed";
+                continue;
+            }
+
+            object = mappedUri( objectUri );
+        }
+
+        // FIXME: What about optional properties?
+        query += QString::fromLatin1(" optional { ?r %1 ?o%3 . } . filter(!bound(?o%3) || ?o%3=%2). ")
+                 .arg( Soprano::Node::resourceToN3( prop ),
+                       object.toN3(),
+                       QString::number( numIdentifyingProperties++ ) );
+    }
+
+    if( identifyingProperties.isEmpty() || numIdentifyingProperties == 0 ) {
+        //kDebug() << "No identification properties found!";
+        return false;
+    }
+
+    // Make sure atleast one of the identification properties has been matched
+    // by adding filter( bound(?o1) || bound(?o2) ... )
+    query += QString::fromLatin1("filter( ");
+    for( int i=0; i<numIdentifyingProperties-1; i++ ) {
+        query += QString::fromLatin1(" bound(?o%1) || ").arg( QString::number( i ) );
+    }
+    query += QString::fromLatin1(" bound(?o%1) ) . }").arg( QString::number( numIdentifyingProperties - 1 ) );
+
+    // Construct the entire query
+    QString queryBegin = QString::fromLatin1("select distinct ?r count(?p) as ?cnt "
+    "where { ?r ?p ?o. filter( ?p in (%1) ).")
+    .arg( identifyingProperties.join(",") );
+
+    query = queryBegin + query + QString::fromLatin1(" order by desc(?cnt)");
+
+    kDebug() << query;
+
+    //
+    // Only store the results which have the maximum score
+    //
+    QSet<KUrl> results;
+    int score = -1;
+    Soprano::QueryResultIterator qit = d->m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    while( qit.next() ) {
+        //kDebug() << "RESULT: " << qit["r"] << " " << qit["cnt"];
+
+        int count = qit["cnt"].literal().toInt();
+        if( score == -1 ) {
+            score = count;
+        }
+        else if( count < score )
+            break;
+
+        results << qit["r"].uri();
+    }
+
+    //kDebug() << "Got " << results.size() << " results";
+    if( results.empty() )
+        return false;
+
+    KUrl newUri;
+    if( results.size() == 1 )
+        newUri = *results.begin();
+    else {
+        kDebug() << "DUPLICATE RESULTS!";
+        newUri = duplicateMatch( res.uri(), results, 1.0 );
+    }
+
+    if( !newUri.isEmpty() ) {
+        kDebug() << uri << " --> " << newUri;
+        manualIdentification( uri, newUri );
+        return true;
+    }
+
+    return false;
 }
 
 
