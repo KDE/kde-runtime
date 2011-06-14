@@ -2129,6 +2129,47 @@ void DataManagementModelTest::testRemoveDataByApplication10()
     QVERIFY(!haveTrailingGraphs());
 }
 
+// make sure that graphs which do not have a maintaining app are handled properly, too
+void DataManagementModelTest::testRemoveDataByApplication11()
+{
+    QTemporaryFile fileA;
+    fileA.open();
+
+    // create our app
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+
+    // create the resource to delete
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    // graph 2 does not have a maintaining app!
+    const QUrl g2 = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName()), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
+
+    // delete the resource
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+
+    // now the nie:url should still be there even though A created it
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName())));
+
+    // creation time should have been created
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::lastModified(), Node()));
+
+    // the foobar value should be gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+
+    // the "hello world" should still be there
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world"))));
+
+    QVERIFY(!haveTrailingGraphs());
+}
+
 // This is some real data that I have in my nepomuk repo
 void DataManagementModelTest::testRemoveDataByApplication_realLife()
 {
@@ -2863,6 +2904,33 @@ void DataManagementModelTest::testStoreResources_invalid_args()
     nonExistingFileRes.setUri(QUrl("nepomuk:/res/A"));
     nonExistingFileRes.addProperty(QUrl("prop:/res"), nonExistingFileUrl);
     m_dmModel->storeResources(SimpleResourceGraph() << nonExistingFileRes, QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // invalid graph metadata 1
+    SimpleResource res2;
+    res.setUri(QUrl("nepomuk:/res/A"));
+    res.addProperty(QUrl("prop:/int"), QVariant(42));
+    QHash<QUrl, QVariant> invalidMetadata;
+    invalidMetadata.insert(QUrl("prop:/int"), QLatin1String("foobar"));
+    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"), invalidMetadata);
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // invalid graph metadata 2
+    invalidMetadata.clear();
+    invalidMetadata.insert(NAO::maintainedBy(), QLatin1String("foobar"));
+    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"), invalidMetadata);
 
     // the call should have failed
     QVERIFY(m_dmModel->lastError());
