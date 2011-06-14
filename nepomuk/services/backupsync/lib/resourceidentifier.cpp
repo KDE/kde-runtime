@@ -536,8 +536,15 @@ bool Nepomuk::Sync::ResourceIdentifier::isIdentifyingProperty(const QUrl& uri)
         || uri == NAO::userVisible() ) {
         return false;
     }
-    else {
-        //TODO: Fixme
-        return true;
-    }
+
+    // TODO: Hanlde nxx:FluxProperty and nxx:resourceRangePropWhichCanIdentified
+    const QString query = QString::fromLatin1("ask { %1 %2 ?range . "
+                                                " %1 a %3 . "
+                                                "{ FILTER( regex(str(?range), '^http://www.w3.org/2001/XMLSchema#') ) . }"
+                                                " UNION { %1 a rdf:Property . } }") // rdf:Property should be nxx:resourceRangePropWhichCanIdentified
+                            .arg( Soprano::Node::resourceToN3( uri ),
+                                Soprano::Node::resourceToN3( RDFS::range() ),
+                                Soprano::Node::resourceToN3( RDF::Property() ) );
+
+    return model()->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
 }
