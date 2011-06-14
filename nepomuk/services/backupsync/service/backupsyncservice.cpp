@@ -22,8 +22,6 @@
 
 #include "backupsyncservice.h"
 #include "diffgenerator.h"
-#include "identifier.h"
-#include "merger.h"
 #include "syncmanager.h"
 #include "backupmanager.h"
 #include "dbusoperators.h"
@@ -44,19 +42,9 @@ Nepomuk::BackupSyncService::BackupSyncService( QObject* parent, const QList< QVa
     kDebug();
 
     m_diffGenerator = new DiffGenerator( this );
-    m_identifier = new Identifier( this );
-    m_merger = new Merger( this );
 
     m_syncManager = new SyncManager( this );
     m_backupManager = new BackupManager( this );
-
-    // IMPORTANT : We've used "Nepomuk::ChangeLog" in the string cause in the slots, signals, and
-    // connect statement we're using Nepomuk::ChangeLog, NOT ChangeLog
-    qRegisterMetaType<Nepomuk::ChangeLog>("Nepomuk::ChangeLog");
-
-    registerMetaTypes();
-    connect( m_identifier, SIGNAL( processed( Nepomuk::ChangeLog ) ),
-             m_merger, SLOT( process( Nepomuk::ChangeLog ) ) );
 }
 
 Nepomuk::BackupSyncService::~BackupSyncService()
@@ -67,7 +55,6 @@ void Nepomuk::BackupSyncService::test()
 {
     //QUrl url("/home/vishesh/syncnew");
 
-    m_identifier->test();
     /*
     LogFile lf;
     lf.load(QUrl("file:///home/vishesh/ident.trig"));

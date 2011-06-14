@@ -25,7 +25,6 @@
 #include "backupwizard.h"
 
 #include "identifierwidget.h"
-#include "identifierinterface.h"
 
 #include <KDebug>
 #include <KLineEdit>
@@ -185,9 +184,7 @@ Nepomuk::RestorePage::RestorePage(QWidget* parent)
     m_backupManager = new BackupManager( QLatin1String("org.kde.nepomuk.services.nepomukbackupsync"),
                                          "/backupmanager",
                                          QDBusConnection::sessionBus(), this);
-    m_identifier = new Identifier( QLatin1String("org.kde.nepomuk.services.nepomukbackupsync"),
-                                   QLatin1String("/identifier"),
-                                   QDBusConnection::sessionBus(), this );
+    m_identifier = Identifier::instance();
 
     connect( m_identifier, SIGNAL(identificationDone(int,int)),
              this, SLOT(slotIdentificationDone(int,int)) );
@@ -199,10 +196,11 @@ void Nepomuk::RestorePage::initializePage()
     QString backupUrl = field("backupToRestorePath").toString();
     kDebug() << "Restoring : " << backupUrl;
 
-    QDBusPendingReply< int > reply;// = m_backupManager->restore( backupUrl );
-    reply.waitForFinished();
-    if( !reply.isError() )
-        m_id = reply.value();
+
+    if( backupUrl.isEmpty() )
+        backupUrl = KStandardDirs::locateLocal( "data", "nepomuk/backupsync/backup" );
+
+    m_id = Identifier::instance()->process( SyncFile(backupUrl) );
 
     if( m_id == -1 ) {
         //FIXME: This isn't implemented in the service. It's just there so that we have a
@@ -229,12 +227,8 @@ int Nepomuk::RestorePage::nextId() const
 
 bool Nepomuk::RestorePage::validatePage()
 {
-    if( m_identifier->isValid() ) {
-        m_identifier->completeIdentification( m_id );
-        return true;
-    }
-
-    return false;
+    m_identifier->completeIdentification( m_id );
+    return true;
 }
 
 void Nepomuk::RestorePage::slotIdentificationDone(int id, int unidentified)
@@ -287,13 +281,8 @@ Nepomuk::RestoreFinalPage::RestoreFinalPage(QWidget* parent): QWizardPage(parent
 {
     setupUi( this );
     setCommitPage( true );
-    m_merger = new Merger( QLatin1String("org.kde.nepomuk.services.nepomukbackupsync"),
-                           QLatin1String("/merger"),
-                           QDBusConnection::sessionBus(), this );
-
-    if( m_merger->isValid() ) {
-        connect( m_merger, SIGNAL(completed(int)), this, SLOT(slotDone(int)) );
-    }
+    m_merger = Merger::instance();
+    connect( m_merger, SIGNAL(completed(int)), this, SLOT(slotDone(int)) );
 
     m_progressBar->setMinimum( 0 );
     m_progressBar->setMaximum( 100 );

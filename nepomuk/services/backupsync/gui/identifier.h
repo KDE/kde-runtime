@@ -39,17 +39,19 @@ namespace Nepomuk {
 
     class SyncFile;
     class ChangeLog;
-    
+
     class Identifier : public QThread
     {
         Q_OBJECT
 
-    public :
         Identifier( QObject* parent = 0 );
         virtual ~Identifier();
 
         void stop();
         void test();
+
+    public :
+        static Identifier* instance();
 
     Q_SIGNALS:
         void identified( int id, const QString & oldUri, const QString & newUri );
@@ -57,7 +59,7 @@ namespace Nepomuk {
 
         void identificationDone( int id, int unidentified );
         void processed( const Nepomuk::ChangeLog & logFile );
-        
+
         void completed( int id, int progress );
     public Q_SLOTS:
         int process( const SyncFile & sf );
