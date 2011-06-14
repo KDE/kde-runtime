@@ -23,7 +23,6 @@
 #include "backupmanager.h"
 #include "backupmanageradaptor.h"
 #include "logstorage.h"
-#include "identifier.h"
 #include "tools.h"
 
 #include "changelog.h"
@@ -45,9 +44,8 @@
 #include <KCalendarSystem>
 
 
-Nepomuk::BackupManager::BackupManager(Nepomuk::Identifier* ident, QObject* parent)
+Nepomuk::BackupManager::BackupManager(QObject* parent)
     : QObject( parent ),
-      m_identifier( ident ),
       m_config( "nepomukbackuprc" )
 {
     new BackupManagerAdaptor( this );
@@ -57,7 +55,7 @@ Nepomuk::BackupManager::BackupManager(Nepomuk::Identifier* ident, QObject* paren
 
     m_backupLocation = KStandardDirs::locateLocal( "data", "nepomuk/backupsync/backups/" );
     m_daysBetweenBackups = 0;
-    
+
     KDirWatch* dirWatch = KDirWatch::self();
     connect( dirWatch, SIGNAL( dirty( const QString& ) ),
              this, SLOT( slotConfigDirty() ) );
@@ -90,17 +88,6 @@ void Nepomuk::BackupManager::backup(const QString& oldUrl)
     emit backupDone();
 }
 
-
-int Nepomuk::BackupManager::restore(const QString& oldUrl)
-{
-    //TODO: Some kind of error checking!
-    QString url = oldUrl;
-    if( url.isEmpty() )
-        url = KStandardDirs::locateLocal( "data", "nepomuk/backupsync/backup" );
-    
-    return m_identifier->process( SyncFile(url) );
-}
-
 void Nepomuk::BackupManager::automatedBackup()
 {
     QDate today = QDate::currentDate();
@@ -114,10 +101,10 @@ void Nepomuk::BackupManager::slotConfigDirty()
 {
     kDebug();
     m_config.reparseConfiguration();
-    
+
     QString freq = m_config.group("Backup").readEntry( "backup frequency", QString("disabled") );
     kDebug() << "Frequency : " << freq;
-    
+
     if( freq == QLatin1String("disabled") ) {
         kDebug() << "Auto Backups Disabled";
         m_timer.stop();
@@ -128,7 +115,7 @@ void Nepomuk::BackupManager::slotConfigDirty()
     m_backupTime = QTime::fromString( timeString, Qt::ISODate );
 
     if( freq == QLatin1String("daily") ) {
-        m_daysBetweenBackups = 0;    
+        m_daysBetweenBackups = 0;
     }
 
     else if( freq == QLatin1String("weekly") ) {
@@ -159,7 +146,7 @@ void Nepomuk::BackupManager::slotConfigDirty()
     else if( freq == QLatin1String("monthly") ) {
         //TODO: Implement me!
     }
-    
+
     m_maxBackups = m_config.group("Backup").readEntry<int>("max backups", 1);
 
     // Remove old timers and start new
@@ -181,7 +168,7 @@ void Nepomuk::BackupManager::resetTimer()
     if( dateTime < current ) {
         dateTime = dateTime.addDays( 1 );
     }
-    
+
     int msecs = current.msecsTo( dateTime );
 
     m_timer.stop();

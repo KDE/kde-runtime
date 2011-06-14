@@ -51,7 +51,7 @@ int Nepomuk::IntroPage::nextId() const
         return BackupWizard::Id_BackupSettingsPage;
     else if( m_restore->isChecked() )
         return BackupWizard::Id_RestoreSelectionPage;
-        
+
     return -1;
 }
 
@@ -198,8 +198,8 @@ void Nepomuk::RestorePage::initializePage()
 {
     QString backupUrl = field("backupToRestorePath").toString();
     kDebug() << "Restoring : " << backupUrl;
-    
-    QDBusPendingReply< int > reply = m_backupManager->restore( backupUrl );
+
+    QDBusPendingReply< int > reply;// = m_backupManager->restore( backupUrl );
     reply.waitForFinished();
     if( !reply.isError() )
         m_id = reply.value();

@@ -4,10 +4,6 @@
     <method name="backup">
         <arg name="url" type="s" direction="in"/>
     </method>
-    <method name="restore">
-        <arg type="i" direction="out"/>
-        <arg name="url" type="s" direction="in"/>
-    </method>
     <signal name="backupDone">
     </signal>
   </interface>
