@@ -53,8 +53,6 @@ namespace {
 
 Nepomuk::ResourceIdentifier::ResourceIdentifier()
 {
-    setMinScore( 1.0 );
-    
     // Resource Metadata
     addOptionalProperty( NAO::created() );
     addOptionalProperty( NAO::lastModified() );
@@ -69,12 +67,12 @@ bool Nepomuk::ResourceIdentifier::exists(const KUrl& uri)
     return model()->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
 }
 
-KUrl Nepomuk::ResourceIdentifier::duplicateMatch(const KUrl& origUri, 
+KUrl Nepomuk::ResourceIdentifier::duplicateMatch(const KUrl& origUri,
                                                  const QSet<KUrl>& matchedUris, float score)
 {
     Q_UNUSED( origUri );
     Q_UNUSED( score );
-    // 
+    //
     // We return the uri that has the oldest nao:created
     // For backwards compatibility we keep in mind that three are resources which do not have nao:created defined.
     //
@@ -92,7 +90,7 @@ KUrl Nepomuk::ResourceIdentifier::duplicateMatch(const KUrl& origUri,
     }
 }
 
-bool Nepomuk::ResourceIdentifier::isIdentfyingProperty(const QUrl& uri)
+bool Nepomuk::ResourceIdentifier::isIdentifyingProperty(const QUrl& uri)
 {
     if( uri == NAO::created()
             || uri == NAO::creator()
@@ -139,107 +137,6 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
         return false;
     }
 
-    // Make sure that the res has some rdf:type statements
-    if( !res.contains( RDF::type() ) ) {
-        kDebug() << "No rdf:type statements - Not identifying";
-        return false;
-    }
-
-    QString query;
-
-    int num = 0;
-    QStringList identifyingProperties;
-    QHash< KUrl, Soprano::Node >::const_iterator it = res.constBegin();
-    for( ; it != res.constEnd(); it ++ ) {
-        const QUrl & prop = it.key();
-
-        // Special handling for rdf:type
-        if( prop == RDF::type() ) {
-            query += QString::fromLatin1(" ?r a %1 . ").arg( it.value().toN3() );
-            continue;
-        }
-
-        if( !isIdentfyingProperty( prop ) ) {
-            continue;
-        }
-
-        identifyingProperties << Soprano::Node::resourceToN3( prop );
-
-        Soprano::Node object = it.value();
-        if( object.isBlank()
-                || ( object.isResource() && object.uri().scheme() == QLatin1String("nepomuk") ) ) {
-            QUrl objectUri = object.isResource() ? object.uri() : QString( "_:" + object.identifier() );
-            if( !identify( objectUri ) ) {
-                //kDebug() << "Identification of object " << objectUri << " failed";
-                continue;
-            }
-
-            object = mappedUri( objectUri );
-        }
-
-        query += QString::fromLatin1(" optional { ?r %1 ?o%3 . } . filter(!bound(?o%3) || ?o%3=%2). ")
-                 .arg( Soprano::Node::resourceToN3( prop ), 
-                       object.toN3(),
-                       QString::number( num++ ) );
-    }
-    
-    if( identifyingProperties.isEmpty() || num == 0 ) {
-        //kDebug() << "No identification properties found!";
-        return false;
-    }
-    
-    // Make sure atleast one of the identification properties has been matched
-    query += QString::fromLatin1("filter( ");
-    for( int i=0; i<num-1; i++ ) {
-        query += QString::fromLatin1(" bound(?o%1) || ").arg( QString::number( i ) );
-    }
-    query += QString::fromLatin1(" bound(?o%1) ) . }").arg( QString::number( num - 1 ) );
-    
-    QString queryBegin = QString::fromLatin1("select distinct ?r count(?p) as ?cnt "
-                                             "where { ?r ?p ?o. filter( ?p in (%1) ).")
-                         .arg( identifyingProperties.join(",") );
-
-    query = queryBegin + query +
-            QString::fromLatin1(" order by desc(?cnt)");
-    
-    kDebug() << query;
-    
-    //
-    // Only store the results which have the maximum score
-    //
-    QSet<KUrl> results;
-    int score = -1;
-    Soprano::QueryResultIterator qit = model()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    while( qit.next() ) {
-        //kDebug() << "RESULT: " << qit["r"] << " " << qit["cnt"];
-        
-        int count = qit["cnt"].literal().toInt();
-        if( score == -1 ) {
-            score = count;
-        }
-        else if( count < score )
-            break;
-        
-        results << qit["r"].uri();
-    }
-    
-    //kDebug() << "Got " << results.size() << " results";
-    if( results.empty() )
-        return false;
-    
-    KUrl newUri;
-    if( results.size() == 1 )
-        newUri = *results.begin();
-    else {
-        kDebug() << "DUPLICATE RESULTS!";
-        newUri = duplicateMatch( uri, results, 1.0 );
-    }
-    
-    if( !newUri.isEmpty() ) {
-        kDebug() << uri << " --> " << newUri;
-        manualIdentification( uri, newUri );
-        return true;
-    }
-    
-    return false;
+    // Run the normal identification procedure
+    return Sync::ResourceIdentifier::runIdentification( uri );
 }

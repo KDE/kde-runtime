@@ -46,31 +46,30 @@
 #include <KDebug>
 #include <KUrl>
 
+using namespace Nepomuk::Vocabulary;
+using namespace Soprano::Vocabulary;
+
 Nepomuk::Sync::ResourceIdentifier::Private::Private( ResourceIdentifier * parent )
     : q( parent ),
-      m_model(0),
-      m_minScore( 0.60 )
-{;}
+      m_model(0)
+{
+}
 
 
 void Nepomuk::Sync::ResourceIdentifier::Private::init( Soprano::Model * model )
 {
     m_model = model ? model : ResourceManager::instance()->mainModel();
-
-    // rdf:type is by default vital
-    m_vitalProperties.append( Soprano::Vocabulary::RDF::type() );
 }
 
 
 bool Nepomuk::Sync::ResourceIdentifier::Private::identify( const KUrl& oldUri )
 {
     //kDebug() << oldUri;
-
-    if( m_hash.contains( oldUri ) )
-        return true;
-
     const SyncResource & res = m_resourceHash[ oldUri ];
     KUrl resourceUri = findMatch( res );
+    if( resourceUri.isEmpty() )
+        return false;
+
     m_hash[ oldUri ] = resourceUri;
 
     kDebug() << oldUri << " ---> " << resourceUri;
@@ -78,169 +77,114 @@ bool Nepomuk::Sync::ResourceIdentifier::Private::identify( const KUrl& oldUri )
 }
 
 
-KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatchForAll(const Nepomuk::Sync::SyncResource& simpleRes)
+KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatch(const Nepomuk::Sync::SyncResource& res)
 {
-    QString query = QString::fromLatin1("select distinct ?r where { ");
-    QHash< KUrl, Soprano::Node >::const_iterator it = simpleRes.constBegin();
-    for( ; it != simpleRes.constEnd(); it ++ ) {
-        if( !m_optionalProperties.contains( it.key() ) ) {
-            query += QString::fromLatin1("?r %1 %2 . ")
-                        .arg( Soprano::Node::resourceToN3( it.key() ), it.value().toN3() );
-        }
-    }
-    query += QLatin1String(" }");
-
-    Soprano::QueryResultIterator iter = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    QSet<KUrl> matchedResources;
-    while( iter.next() ) {
-        matchedResources.insert( iter["r"].uri() );
-    }
-
-    if( matchedResources.empty() ) {
+    // Make sure that the res has some rdf:type statements
+    if( !res.contains( RDF::type() ) ) {
+        kDebug() << "No rdf:type statements - Not identifying";
         return KUrl();
     }
 
-    if( matchedResources.size() > 1 )
-        return q->duplicateMatch( simpleRes.uri(), matchedResources, m_minScore );
+    QString query;
 
-    return *matchedResources.begin();
-}
+    int numIdentifyingProperties = 0;
+    QStringList identifyingProperties;
 
+    QHash< KUrl, Soprano::Node >::const_iterator it = res.constBegin();
+    QHash< KUrl, Soprano::Node >::const_iterator constEnd = res.constEnd();
+    for( ; it != constEnd; it++ ) {
+        const QUrl & prop = it.key();
 
-//TODO: Optimize
-KUrl Nepomuk::Sync::ResourceIdentifier::Private::findMatch(const Nepomuk::Sync::SyncResource& simpleRes)
-{
-    if( m_minScore == 1.0 ) {
-        return findMatchForAll( simpleRes );
-    }
-
-    //kDebug() << "SyncResource: " << simpleRes;
-    //
-    // Vital Properties
-    //
-    int numOfVitalStatements = 0;
-    QString query = QString::fromLatin1("select distinct ?r where {");
-    //kDebug() << m_vitalProperties;
-    foreach( const KUrl & prop, m_vitalProperties ) {
-        QList<Soprano::Node> objects = simpleRes.property( prop );
-        foreach( const Soprano::Node & obj, objects ) {
-            query += QString::fromLatin1(" ?r %1 %2. ")
-                     .arg( Soprano::Node::resourceToN3( prop ),
-                           obj.toN3() );
-            numOfVitalStatements++;
-        }
-    }
-    query += " }";
-
-    //kDebug() << "Number of Vital Statements : " << numOfVitalStatements;
-    kDebug() << query;
-    //
-    // Insert them in resourceCount with count = 0
-    //
-    Soprano::QueryResultIterator it = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-
-    // The first int is the score while the second int is the additional
-    // maxScore ( for optional properties )
-    QHash<KUrl, QPair<int, int> > resourceCount;
-    while( it.next() ) {
-        resourceCount.insert( it[0].uri(), QPair<int, int>(0,0) );
-    }
-
-    // No match
-    if( resourceCount.isEmpty() )
-        return KUrl();
-
-
-    //
-    // Get all the other properties, and increase resourceCount accordingly.
-    // Ignore vital properties. Don't increment the maxScore when an optional property is not found.
-    //
-    int numStatementsCompared = 0;
-    QList<KUrl> properties = simpleRes.uniqueKeys();
-    foreach( const KUrl & propUri, properties ) {
-
-        if( m_vitalProperties.contains( propUri ) )
+        // Special handling for rdf:type
+        if( prop == RDF::type() ) {
+            query += QString::fromLatin1(" ?r a %1 . ").arg( it.value().toN3() );
             continue;
-
-        bool isOptionalProp = m_optionalProperties.contains( propUri );
-
-        Soprano::Statement statement( Soprano::Node(), propUri, Soprano::Node(), Soprano::Node() );
-
-        QList<Soprano::Node> objList = simpleRes.values( propUri );
-        foreach( const Soprano::Node& n, objList ) {
-            if( n.isResource() && n.uri().scheme() == QLatin1String("nepomuk") ) {
-                if( !q->identify( n.uri() ) ) {
-                    continue;
-                }
-            }
-            statement.setObject( n );
-
-            Soprano::NodeIterator iter = m_model->listStatements( statement ).iterateSubjects();
-            while( iter.next() ) {
-                QHash< KUrl, QPair<int,int> >::iterator it = resourceCount.find( iter.current().uri() );
-
-                if( it != resourceCount.end() ) {
-                    if( isOptionalProp ) {
-                        // It is an optional property and it has matched
-                        // -> Increase the score ( first )
-                        // -> and increase the max score ( second )
-                        // ( optional properties don't contribute to the max score unless matched )
-                        it.value().first++;
-                        it.value().second++;
-                    }
-                    else {
-                        if( it != resourceCount.end() ) {
-                            it.value().first++; // only increase the score
-                        }
-                    }
-                }
-            }
-            if( !isOptionalProp )
-                numStatementsCompared++;
         }
+
+        if( !q->isIdentifyingProperty( prop ) ) {
+            continue;
+        }
+
+        identifyingProperties << Soprano::Node::resourceToN3( prop );
+
+        Soprano::Node object = it.value();
+        if( object.isBlank()
+            || ( object.isResource() && object.uri().scheme() == QLatin1String("nepomuk") ) ) {
+
+            QUrl objectUri = object.isResource() ? object.uri() : QString( "_:" + object.identifier() );
+            if( !q->identify( objectUri ) ) {
+                //kDebug() << "Identification of object " << objectUri << " failed";
+                continue;
+            }
+
+            object = q->mappedUri( objectUri );
+        }
+
+        // FIXME: What about optional properties?
+        query += QString::fromLatin1(" optional { ?r %1 ?o%3 . } . filter(!bound(?o%3) || ?o%3=%2). ")
+                 .arg( Soprano::Node::resourceToN3( prop ),
+                       object.toN3(),
+                       QString::number( numIdentifyingProperties++ ) );
     }
 
-    //
-    // Find the resources with the max score
-    //
-    QSet<KUrl> maxResources;
-    float maxScore = -1;
-
-    foreach( const KUrl & key, resourceCount.keys() ) {
-        QPair<int, int> scorePair = resourceCount.value( key );
-
-        // The divisor will be the total number of statements it was compared to
-        // ie optional-properties-matched ( stored in scorePair.second ) + numStatementsCompared
-        float divisor = scorePair.second + numStatementsCompared;
-        float score = 0;
-        if( divisor )
-            score = scorePair.first / divisor;
-
-        if( score > maxScore ) {
-            maxScore = score;
-            maxResources.clear();
-            maxResources.insert( key );
-        }
-        else if( score == maxScore ) {
-            maxResources.insert( key );
-        }
-    }
-
-    if( maxScore < m_minScore ) {
+    if( identifyingProperties.isEmpty() || numIdentifyingProperties == 0 ) {
+        //kDebug() << "No identification properties found!";
         return KUrl();
     }
 
-    if( maxResources.empty() )
-        return KUrl();
+    // Make sure atleast one of the identification properties has been matched
+    // by adding filter( bound(?o1) || bound(?o2) ... )
+    query += QString::fromLatin1("filter( ");
+    for( int i=0; i<numIdentifyingProperties-1; i++ ) {
+        query += QString::fromLatin1(" bound(?o%1) || ").arg( QString::number( i ) );
+    }
+    query += QString::fromLatin1(" bound(?o%1) ) . }").arg( QString::number( numIdentifyingProperties - 1 ) );
 
-    if( maxResources.size() > 1 ) {
-        kDebug() << "WE GOT A PROBLEM!!";
-        kDebug() << "More than one resource with the exact same score found";
-        kDebug() << "NOT IDENTIFYING IT! Do it manually!";
+    // Construct the entire query
+    QString queryBegin = QString::fromLatin1("select distinct ?r count(?p) as ?cnt "
+                                             "where { ?r ?p ?o. filter( ?p in (%1) ).")
+                         .arg( identifyingProperties.join(",") );
 
-        return q->duplicateMatch( simpleRes.uri(), maxResources, maxScore );
+    query = queryBegin + query + QString::fromLatin1(" order by desc(?cnt)");
+
+    kDebug() << query;
+
+    //
+    // Only store the results which have the maximum score
+    //
+    QSet<KUrl> results;
+    int score = -1;
+    Soprano::QueryResultIterator qit = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    while( qit.next() ) {
+        //kDebug() << "RESULT: " << qit["r"] << " " << qit["cnt"];
+
+        int count = qit["cnt"].literal().toInt();
+        if( score == -1 ) {
+            score = count;
+        }
+        else if( count < score )
+            break;
+
+        results << qit["r"].uri();
     }
 
-    return (*maxResources.begin());
+    //kDebug() << "Got " << results.size() << " results";
+    if( results.empty() )
+        return KUrl();
+
+    KUrl newUri;
+    if( results.size() == 1 )
+        newUri = *results.begin();
+    else {
+        kDebug() << "DUPLICATE RESULTS!";
+        newUri = q->duplicateMatch( res.uri(), results, 1.0 );
+    }
+
+    if( !newUri.isEmpty() ) {
+        kDebug() << res.uri() << " --> " << newUri;
+        return newUri;
+    }
+
+    return KUrl();
 }
 

@@ -37,6 +37,7 @@
 
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
+#include <Soprano/Vocabulary/NAO>
 #include <Nepomuk/Vocabulary/NIE>
 
 #include <Nepomuk/Resource>
@@ -45,6 +46,9 @@
 
 #include <KDebug>
 #include <KUrl>
+
+using namespace Nepomuk::Vocabulary;
+using namespace Soprano::Vocabulary;
 
 Nepomuk::Sync::ResourceIdentifier::ResourceIdentifier(Soprano::Model * model)
     : d( new Nepomuk::Sync::ResourceIdentifier::Private(this) )
@@ -252,36 +256,6 @@ KUrl::List Nepomuk::Sync::ResourceIdentifier::optionalProperties() const
     return d->m_optionalProperties;
 }
 
-void Nepomuk::Sync::ResourceIdentifier::addVitalProperty(const QUrl& property)
-{
-    d->m_vitalProperties.append( property );
-}
-
-void Nepomuk::Sync::ResourceIdentifier::clearVitalProperties()
-{
-    d->m_vitalProperties.clear();
-}
-
-KUrl::List Nepomuk::Sync::ResourceIdentifier::vitalProperties() const
-{
-    return d->m_vitalProperties;
-}
-
-
-//
-// Score
-//
-
-float Nepomuk::Sync::ResourceIdentifier::minScore() const
-{
-    return d->m_minScore;
-}
-
-void Nepomuk::Sync::ResourceIdentifier::setMinScore(float score)
-{
-    d->m_minScore = score;
-}
-
 
 namespace {
 
@@ -439,4 +413,18 @@ void Nepomuk::Sync::ResourceIdentifier::manualIdentification(const KUrl& oldUri,
 {
     d->m_hash[ oldUri ] = newUri;
     d->m_notIdentified.remove( oldUri );
+}
+
+bool Nepomuk::Sync::ResourceIdentifier::isIdentifyingProperty(const QUrl& uri)
+{
+    if( uri == NAO::created()
+        || uri == NAO::creator()
+        || uri == NAO::lastModified()
+        || uri == NAO::userVisible() ) {
+        return false;
+    }
+    else {
+        //TODO: Fixme
+        return true;
+    }
 }
