@@ -107,7 +107,7 @@ QList< Soprano::Statement > Nepomuk::SimpleResource::toStatementList() const
     QHashIterator<QUrl, QVariant> it( d->m_properties );
     while( it.hasNext() ) {
         it.next();
-        
+
         Soprano::Node object;
         if( it.value().type() == QVariant::Url )
             object = it.value().toUrl();
@@ -181,6 +181,12 @@ void Nepomuk::SimpleResource::setProperty(const QUrl &property, const QVariant &
     addProperty(property, value);
 }
 
+void Nepomuk::SimpleResource::setProperty(const QUrl& property, const Nepomuk::SimpleResource& res)
+{
+    setProperty(property, res.uri());
+}
+
+
 void Nepomuk::SimpleResource::setProperty(const QUrl &property, const QVariantList &values)
 {
     d->m_properties.remove(property);
@@ -194,6 +200,11 @@ void Nepomuk::SimpleResource::addProperty(const QUrl &property, const QVariant &
     // QMultiHash even stores the same key/value pair multiple times!
     if(!d->m_properties.contains(property, value))
         d->m_properties.insertMulti(property, value);
+}
+
+void Nepomuk::SimpleResource::addProperty(const QUrl& property, const Nepomuk::SimpleResource& res)
+{
+    addProperty(property, res.uri());
 }
 
 void Nepomuk::SimpleResource::addPropertyNode(const QUrl &property, const Soprano::Node &node)

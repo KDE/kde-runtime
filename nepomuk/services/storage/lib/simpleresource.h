@@ -46,10 +46,10 @@ typedef QMultiHash<QUrl, QVariant> PropertyHash;
 class NEPOMUK_DATA_MANAGEMENT_EXPORT SimpleResource
 {
 public:
-    SimpleResource(const QUrl& uri = QUrl());
+    explicit SimpleResource(const QUrl& uri = QUrl());
     SimpleResource(const SimpleResource& other);
     virtual ~SimpleResource();
-    
+
     SimpleResource& operator=(const SimpleResource& other);
 
     bool operator==(const SimpleResource& other) const;
@@ -98,6 +98,13 @@ public:
     /**
      * Set a property overwriting existing values.
      * \param property The property to set
+     * \param set The values of the property.
+     */
+    void setProperty(const QUrl& property, const SimpleResource& res);
+
+    /**
+     * Set a property overwriting existing values.
+     * \param property The property to set
      * \param value The value of the property. Will be converted to a QVariant.
      */
     void setPropertyNode(const QUrl& property, const Soprano::Node& value);
@@ -108,6 +115,13 @@ public:
      * \param value The value of the property.
      */
     void addProperty(const QUrl& property, const QVariant& value);
+
+    /**
+     * Add a property. This allows to add more than one value for a property.
+     * \param property The property to set
+     * \param res The value of the property.
+     */
+    void addProperty(const QUrl& property, const SimpleResource& res);
 
     /**
      * Add a property.
