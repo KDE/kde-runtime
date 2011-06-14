@@ -33,7 +33,7 @@ public:
     ResourceIdentifier();
 
 protected:
-    virtual KUrl duplicateMatch(const KUrl& uri, const QSet< KUrl >& matchedUris, float score);
+    virtual KUrl duplicateMatch(const KUrl& uri, const QSet< KUrl >& matchedUris );
     virtual bool runIdentification(const KUrl& uri);
 
 private:

@@ -268,7 +268,7 @@ bool Nepomuk::Sync::ResourceIdentifier::runIdentification(const KUrl& uri)
         newUri = *results.begin();
     else {
         kDebug() << "DUPLICATE RESULTS!";
-        newUri = duplicateMatch( res.uri(), results, 1.0 );
+        newUri = duplicateMatch( res.uri(), results );
     }
 
     if( !newUri.isEmpty() ) {
@@ -506,11 +506,10 @@ bool Nepomuk::Sync::ResourceIdentifier::ignore(const KUrl& resUri, bool ignoreSu
 }
 
 
-KUrl Nepomuk::Sync::ResourceIdentifier::duplicateMatch(const KUrl& uri, const QSet< KUrl >& matchedUris, float score)
+KUrl Nepomuk::Sync::ResourceIdentifier::duplicateMatch(const KUrl& uri, const QSet< KUrl >& matchedUris)
 {
     Q_UNUSED( uri );
     Q_UNUSED( matchedUris );
-    Q_UNUSED( score );
 
     // By default - Identification fails
     return KUrl();

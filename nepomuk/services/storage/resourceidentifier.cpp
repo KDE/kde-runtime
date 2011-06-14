@@ -68,10 +68,9 @@ bool Nepomuk::ResourceIdentifier::exists(const KUrl& uri)
 }
 
 KUrl Nepomuk::ResourceIdentifier::duplicateMatch(const KUrl& origUri,
-                                                 const QSet<KUrl>& matchedUris, float score)
+                                                 const QSet<KUrl>& matchedUris )
 {
     Q_UNUSED( origUri );
-    Q_UNUSED( score );
     //
     // We return the uri that has the oldest nao:created
     // For backwards compatibility we keep in mind that three are resources which do not have nao:created defined.
