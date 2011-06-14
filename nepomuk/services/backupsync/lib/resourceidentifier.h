@@ -118,19 +118,6 @@ namespace Nepomuk {
 
             SyncResource simpleResource( const KUrl & uri );
             //
-            // Score
-            //
-            /**
-             * Returns the min % of the number of statements that should match during identification
-             * in order for a resource to be successfully identified.
-             *
-             * Returns a value between [0,1]
-             */
-            float minScore() const;
-
-            void setMinScore( float score );
-
-            //
             // Property Settings
             //
             /**
@@ -142,18 +129,6 @@ namespace Nepomuk {
             void clearOptionalProperties();
 
             KUrl::List optionalProperties() const;
-
-            /**
-            * If the property \p prop cannot be matched during identification then the
-            * identification for that resource will fail.
-            *
-            * By default - rdf:type is the only vital property
-            */
-            void addVitalProperty( const QUrl & property );
-
-            void clearVitalProperties();
-
-            KUrl::List vitalProperties() const;
 
             //
             // Manual Identification
@@ -188,6 +163,7 @@ namespace Nepomuk {
             //
             static Soprano::Graph createIdentifyingStatements( const KUrl::List & uriList );
 
+            virtual bool isIdentifyingProperty( const QUrl & uri );
         private:
             class Private;
             Private * d;
