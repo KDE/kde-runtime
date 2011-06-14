@@ -20,7 +20,6 @@
 */
 
 #include "syncmanager.h"
-#include "identifier.h"
 #include "syncfile.h"
 #include "changelog.h"
 #include "diffgenerator.h"
@@ -35,9 +34,8 @@
 #include <Nepomuk/Resource>
 #include <Nepomuk/Variant>
 
-Nepomuk::SyncManager::SyncManager(Nepomuk::Identifier* ident, QObject* parent)
-    : QObject( parent ),
-      m_identifier( ident )
+Nepomuk::SyncManager::SyncManager(QObject* parent)
+    : QObject( parent )
 {
     new SyncManagerAdaptor( this );
     // Register DBus Object
@@ -49,20 +47,6 @@ Nepomuk::SyncManager::SyncManager(Nepomuk::Identifier* ident, QObject* parent)
 Nepomuk::SyncManager::~SyncManager()
 {
 }
-
-
-int Nepomuk::SyncManager::sync(const QString& url)
-{
-    return sync( QUrl( url ) );
-}
-
-
-int Nepomuk::SyncManager::sync(const QUrl& url)
-{
-    SyncFile syncFile( url );
-    return m_identifier->process( syncFile );
-}
-
 
 void Nepomuk::SyncManager::createSyncFile( const QString& url, const QString& startTime )
 {

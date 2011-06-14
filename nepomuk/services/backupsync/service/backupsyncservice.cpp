@@ -47,8 +47,8 @@ Nepomuk::BackupSyncService::BackupSyncService( QObject* parent, const QList< QVa
     m_identifier = new Identifier( this );
     m_merger = new Merger( this );
 
-    m_syncManager = new SyncManager( m_identifier, this );
-    m_backupManager = new BackupManager( m_identifier, this );
+    m_syncManager = new SyncManager( this );
+    m_backupManager = new BackupManager( this );
 
     // IMPORTANT : We've used "Nepomuk::ChangeLog" in the string cause in the slots, signals, and
     // connect statement we're using Nepomuk::ChangeLog, NOT ChangeLog

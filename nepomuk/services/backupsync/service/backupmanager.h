@@ -31,27 +31,22 @@
 
 namespace Nepomuk {
 
-    class Identifier;
-    class Merger;
-
     class BackupManager : public QObject
     {
         Q_OBJECT
         Q_CLASSINFO("D-Bus Interface", "org.kde.nepomuk.services.nepomukbackupsync.BackupManager")
 
     public:
-        BackupManager(Nepomuk::Identifier* ident, QObject* parent = 0);
+        BackupManager(QObject* parent = 0);
         virtual ~BackupManager();
 
     public slots:
         void backup( const QString & url = QString() );
-        int restore( const QString & url = QString() );
 
     signals:
         void backupDone();
-        
+
     private:
-        Identifier * m_identifier;
         QString m_backupLocation;
 
         QTime m_backupTime;
@@ -63,7 +58,7 @@ namespace Nepomuk {
         QTimer m_timer;
         void resetTimer();
         void removeOldBackups();
-        
+
     private slots:
         void slotConfigDirty();
         void automatedBackup();
