@@ -2362,6 +2362,18 @@ namespace {
     }
 }
 
+namespace QTest {
+template<>
+char* toString(const QHash<QString, QDateTime>& hash) {
+    QStringList s;
+    for(QHash<QString, QDateTime>::const_iterator it = hash.constBegin();
+        it != hash.constEnd(); ++it) {
+        s.append(QString::fromLatin1("%1 -> %2").arg(it.key(), Soprano::Node(Soprano::LiteralValue(it.value())).toN3()));
+    }
+    return qstrdup( s.join(QLatin1String(", ")).toLatin1().data() );
+}
+}
+
 void DataManagementModelTest::testRemoveDataByApplication_folder()
 {
     SimpleResourceGraph graph;
@@ -2388,7 +2400,8 @@ void DataManagementModelTest::testRemoveDataByApplication_folder()
     QVERIFY( !m_dmModel->lastError() );
 
     // Get the directory resource
-    QUrl dirResUri = m_model->listStatements( Node(), NIE::url(), KUrl(dir.name())).iterateSubjects().allNodes().first().uri();
+    QVERIFY(!m_model->listStatements( Node(), NIE::url(), KUrl(dir.name())).iterateSubjects().allNodes().isEmpty());
+    const QUrl dirResUri = m_model->listStatements( Node(), NIE::url(), KUrl(dir.name())).iterateSubjects().allNodes().first().uri();
 
     QHash< QString, QDateTime > child1 = getChildren( dir.name(), m_model );
 
