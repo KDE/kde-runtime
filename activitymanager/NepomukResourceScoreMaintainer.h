@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010 Ivan Cukic <ivan.cukic(at)kde.org>
+ *   Copyright (C) 2011 Ivan Cukic <ivan.cukic(at)kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License version 2,
@@ -36,7 +36,7 @@ public:
 
     virtual ~NepomukResourceScoreMaintainer();
 
-    void processResource(const Nepomuk::Resource & resource);
+    void processResource(const KUrl & resource, const QString & application);
 
 private:
     NepomukResourceScoreMaintainer();
