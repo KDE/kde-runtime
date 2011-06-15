@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010  Vishesh Handa <handa.vish@gmail.com>
+   Copyright (C) 2011  Vishesh Handa <handa.vish@gmail.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -18,53 +18,27 @@
    You should have received a copy of the GNU Lesser General Public
    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef BACKUPGENERATOR_H
+#define BACKUPGENERATOR_H
 
-
-#ifndef BACKUPMANAGER_H
-#define BACKUPMANAGER_H
-
-#include <QtCore/QObject>
-#include <QtCore/QDateTime>
-#include <QtCore/QTimer>
-
-#include <KConfig>
 #include <KJob>
+#include <QtCore/QUrl>
 
 namespace Nepomuk {
 
-    class BackupManager : public QObject
+    class BackupGenerationJob : public KJob
     {
         Q_OBJECT
-        Q_CLASSINFO("D-Bus Interface", "org.kde.nepomuk.services.nepomukbackupsync.BackupManager")
-
     public:
-        BackupManager(QObject* parent = 0);
-        virtual ~BackupManager();
-
-    public slots:
-        void backup( const QString & url = QString() );
-
-    signals:
-        void backupDone();
-
-    private:
-        QString m_backupLocation;
-
-        QTime m_backupTime;
-        int m_daysBetweenBackups;
-        int m_maxBackups;
-
-        KConfig m_config;
-
-        QTimer m_timer;
-        void resetTimer();
-        void removeOldBackups();
+        BackupGenerationJob(const QUrl& url, QObject* parent = 0);
+        virtual void start();
 
     private slots:
-        void slotConfigDirty();
-        void automatedBackup();
-        void slotBackupDone(KJob * job);
-    };
+        void doWork();
 
+    private:
+        QUrl m_url;
+    };
 }
-#endif // BACKUPMANAGER_H
+
+#endif // BACKUPGENERATOR_H

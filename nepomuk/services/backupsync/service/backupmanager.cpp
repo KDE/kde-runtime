@@ -28,6 +28,7 @@
 #include "changelog.h"
 #include "syncfile.h"
 #include "identificationset.h"
+#include "backupgenerationjob.h"
 
 #include <QtDBus/QDBusConnection>
 #include <QtCore/QListIterator>
@@ -84,8 +85,10 @@ void Nepomuk::BackupManager::backup(const QString& oldUrl)
 
     QFile::remove( url );
 
-    saveBackupSyncFile( url );
-    emit backupDone();
+    KJob * job = new BackupGenerationJob( url, this );
+
+    connect( job, SIGNAL(finished(KJob*)), this, SLOT(slotBackupDone(KJob*)) );
+    job->start();
 }
 
 void Nepomuk::BackupManager::automatedBackup()
@@ -186,6 +189,13 @@ void Nepomuk::BackupManager::removeOldBackups()
         kDebug() << "Removing : " << backupPath;
         QFile::remove( backupPath );
         infoList.pop_back();
+    }
+}
+
+void Nepomuk::BackupManager::slotBackupDone(KJob* job)
+{
+    if( !job->error() ) {
+        emit backupDone();
     }
 }
 
