@@ -1,6 +1,6 @@
 /* This file is part of the KDE Project
    Copyright (c) 2008-2010 Sebastian Trueg <trueg@kde.org>
-   Copyright (c) 2010 Vishesh Handa <handa.vish@gmail.com>
+   Copyright (c) 2010-11 Vishesh Handa <handa.vish@gmail.com>
 
    Parts of this file are based on code from Strigi
    Copyright (C) 2006-2007 Jos van den Oever <jos@vandenoever.info>
@@ -196,6 +196,9 @@ Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
     m_indexer = new Nepomuk::Indexer( this );
     connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( slotConfigChanged() ) );
+
+    connect( &m_timer, SIGNAL(timeout()),
+             this, SLOT(doIndexing()) );
 }
 
 
@@ -208,6 +211,7 @@ void Nepomuk::IndexScheduler::suspend()
 {
     if ( isRunning() && !m_suspended ) {
         QMutexLocker locker( &m_resumeStopMutex );
+        m_timer.stop();
         m_suspended = true;
         emit indexingSuspended( true );
     }
@@ -219,7 +223,8 @@ void Nepomuk::IndexScheduler::resume()
     if ( isRunning() && m_suspended ) {
         QMutexLocker locker( &m_resumeStopMutex );
         m_suspended = false;
-        m_resumeStopWc.wakeAll();
+
+        restartTimer();
         emit indexingSuspended( false );
     }
 }
@@ -240,8 +245,8 @@ void Nepomuk::IndexScheduler::stop()
         QMutexLocker locker( &m_resumeStopMutex );
         m_stopped = true;
         m_suspended = false;
-        m_dirsToUpdateWc.wakeAll();
-        m_resumeStopWc.wakeAll();
+        m_timer.stop();
+        this->quit();
     }
 }
 
@@ -258,6 +263,7 @@ void Nepomuk::IndexScheduler::setIndexingSpeed( IndexingSpeed speed )
 {
     kDebug() << speed;
     m_speed = speed;
+    restartTimer();
 }
 
 
@@ -311,11 +317,8 @@ void Nepomuk::IndexScheduler::run()
 {
     // set lowest priority for this thread
     setPriority( QThread::IdlePriority );
-    
-    setIndexingStarted( true );
 
-    // initialization
-    queueAllFoldersForUpdate();
+    setIndexingStarted( true );
 
 #ifndef NDEBUG
     QTime timer;
@@ -329,55 +332,56 @@ void Nepomuk::IndexScheduler::run()
     timer.restart();
 #endif
 
-    while ( waitForContinue(true) ) {
-        // wait for more dirs to analyze in case the initial
-        // indexing is done
-        m_dirsToUpdateMutex.lock();
-        if ( m_dirsToUpdate.isEmpty() ) {
-            setIndexingStarted( false );
+    // initialization
+    queueAllFoldersForUpdate();
 
-#ifndef NDEBUG
-            kDebug() << "All folders updated: " << timer.elapsed()/1000.0 << "sec";
-#endif
+    // reset state
+    m_suspended = true;
+    m_stopped = false;
 
-            m_dirsToUpdateWc.wait( &m_dirsToUpdateMutex );
+    // start the timer
+    resume();
 
-#ifndef NDEBUG
-            timer.restart();
-#endif
+    QThread::exec();
+}
 
-            if ( !m_stopped )
-                setIndexingStarted( true );
-        }
-        m_dirsToUpdateMutex.unlock();
+void Nepomuk::IndexScheduler::doIndexing()
+{
+    // get the next file
+    if( !m_filesToUpdate.isEmpty() ) {
+        setIndexingStarted( true );
 
-        // wait for resume or stop (or simply continue)
-        if ( !waitForContinue() ) {
-            break;
-        }
+        QFileInfo file = m_filesToUpdate.dequeue();
 
-        // get the next folder
+        m_currentUrl = file.filePath();
+        emit indexingFile( m_currentUrl.toLocalFile() );
+        m_indexer->indexFile( file );
+        m_currentUrl = KUrl();
+
+        setIndexingStarted( false );
+        return;
+    }
+
+    // get the next folder
+    if( !m_dirsToUpdate.isEmpty() ) {
+        setIndexingStarted( true );
+
         m_dirsToUpdateMutex.lock();
         QPair<QString, UpdateDirFlags> dir = m_dirsToUpdate.dequeue();
         m_dirsToUpdateMutex.unlock();
 
         // update until stopped
-        if ( !analyzeDir( dir.first, dir.second ) ) {
-            break;
-        }
+        analyzeDir( dir.first, dir.second );
         m_currentFolder.clear();
+
+        setIndexingStarted( false );
+        return;
     }
 
-    setIndexingStarted( false );
-
-    // reset state
-    m_suspended = false;
-    m_stopped = false;
-    m_currentFolder.clear();
+    m_timer.stop();
 }
 
-
-bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, UpdateDirFlags flags )
+void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexScheduler::UpdateDirFlags flags )
 {
 //    kDebug() << dir << analyzer << recursive;
 
@@ -465,35 +469,18 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, UpdateDirFlags fl
     deleteEntries( filesToDelete );
 
     // analyze all files that are new or need updating
-    foreach( const QFileInfo& file, filesToIndex ) {
-
-        // wait if we are suspended or return if we are stopped
-        if ( !waitForContinue() )
-            return false;
-
-        m_currentUrl = file.filePath();
-        emit indexingFile( m_currentUrl.toLocalFile() );
-        m_indexer->indexFile( file );
-        m_currentUrl = KUrl();
-    }
-
-    return true;
+    m_filesToUpdate.append( filesToIndex );
 }
 
 
-bool Nepomuk::IndexScheduler::waitForContinue( bool disableDelay )
+void Nepomuk::IndexScheduler::restartTimer()
 {
-    QMutexLocker locker( &m_resumeStopMutex );
-    if ( m_suspended ) {
-        setIndexingStarted( false );
-        m_resumeStopWc.wait( &m_resumeStopMutex );
-        setIndexingStarted( true );
+    m_timer.stop();
+    uint delay = 0;
+    if ( m_speed != FullSpeed ) {
+        delay = (m_speed == ReducedSpeed) ? s_reducedSpeedDelay : s_snailPaceDelay;
     }
-    else if ( !disableDelay && m_speed != FullSpeed ) {
-        msleep( m_speed == ReducedSpeed ? s_reducedSpeedDelay : s_snailPaceDelay );
-    }
-
-    return !m_stopped;
+    m_timer.start( delay );
 }
 
 
@@ -501,14 +488,14 @@ void Nepomuk::IndexScheduler::updateDir( const QString& path, UpdateDirFlags fla
 {
     QMutexLocker lock( &m_dirsToUpdateMutex );
     m_dirsToUpdate.prependDir( path, flags & ~AutoUpdateFolder );
-    m_dirsToUpdateWc.wakeAll();
+    restartTimer();
 }
 
 
 void Nepomuk::IndexScheduler::updateAll( bool forceUpdate )
 {
     queueAllFoldersForUpdate( forceUpdate );
-    m_dirsToUpdateWc.wakeAll();
+    restartTimer();
 }
 
 
@@ -658,7 +645,7 @@ void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
 
         // wait for resume or stop (or simply continue)
         kDebug() << "CHECKING";
-        if ( !waitForContinue() ) {
+        if ( m_stopped ) {
             kDebug() << "RETURNING";
             return;
         }
@@ -774,7 +761,7 @@ bool Nepomuk::IndexScheduler::removeAllGraphsFromQuery( const QString& query )
         Q_FOREACH( const Soprano::Node& graph, graphs ) {
 
             // wait for resume or stop (or simply continue)
-            if ( !waitForContinue() ) {
+            if ( m_stopped ) {
                 return false;
             }
 
