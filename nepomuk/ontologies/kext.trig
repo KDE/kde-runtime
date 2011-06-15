@@ -49,6 +49,7 @@ kext: {
           rdfs:comment "The file mode value as seen on unix file systems." ;
           rdfs:domain nfo:FileDataObject ;
           rdfs:range xsd:integer ;
+          nrl:maxCardinality 1 ;
           nao:userVisible false .
 
     kext:unixFileOwner
@@ -57,6 +58,7 @@ kext: {
           rdfs:comment "The owner of the file as seen on unix file systems. This is intended as the low-level counterpart to nfo:owner." ;
           rdfs:domain nfo:FileDataObject ;
           rdfs:range xsd:string ;
+          nrl:maxCardinality 1 ;
           nao:userVisible false .
 
     kext:unixFileGroup
@@ -65,6 +67,7 @@ kext: {
           rdfs:comment "The group of the file as seen on unix file systems." ;
           rdfs:domain nfo:FileDataObject ;
           rdfs:range xsd:string ;
+          nrl:maxCardinality 1 ;
           nao:userVisible false .
 
     kext:Activity
@@ -79,6 +82,7 @@ kext: {
           rdfs:comment "The activity that was active when resource was created. This is mostly used for graphs or desktop events." ;
           rdfs:domain rdfs:Resource ;
           rdfs:range kext:Activity ;
+          nrl:maxCardinality 1 ;
           nao:userVisible false .
 
     kext:activityIdentifier
@@ -88,6 +92,7 @@ kext: {
           rdfs:comment "The unique ID of the activity as used outside of Nepomuk. Typically this is a UUID." ;
           rdfs:domain kext:Activity ;
           rdfs:range xsd:string ;
+          nrl:cardinality 1 ;
           nao:userVisible false .
 }
 
@@ -102,7 +107,7 @@ kext: {
           nao:prefLabel "KDE Extensions Ontology" ;
           nao:hasDefaultNamespace "http://nepomuk.kde.org/ontologies/2010/11/29/kext#" ;
           nao:hasDefaultNamespaceAbbreviation "kext" ;
-          nao:lastModified "2011-05-10T12:31:43Z" ;
+          nao:lastModified "2011-06-15T18:09:43Z" ;
           nao:serializationLanguage "TriG" ;
           nao:status "Unstable" ;
           nrl:updatable "0" ;
