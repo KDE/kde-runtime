@@ -2338,25 +2338,44 @@ namespace {
         return true;
     }
 
-    QHash<QString, QDateTime> getChildren( const QString& dir, Soprano::Model* model )
+    bool isResourcePresent( const QString & dir, Soprano::Model * model ) {
+        QString query = QString::fromLatin1(" ask where { ?r %1 %2. } ")
+                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                              Soprano::Node::resourceToN3( KUrl(dir) ) );
+
+        return model->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
+    }
+
+    QHash<QUrl, Node> getChildren( const QString& dir, const QUrl& property, Soprano::Model* model )
     {
-        QHash<QString, QDateTime> children;
+        QHash<QUrl, Node> children;
         QString query;
 
-        query = QString::fromLatin1( "select distinct ?url ?mtime where { "
-                                    "?r %1 ?parent . ?parent %2 %3 . "
-                                    "?r %4 ?mtime . "
-                                    "?r %2 ?url . "
-                                    "}" )
-                .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ),
-                    Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                    Soprano::Node::resourceToN3( KUrl( dir ) ),
-                    Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::lastModified() ) );
-
+        if( !isResourcePresent( dir, model ) ) {
+            query = QString::fromLatin1( "select distinct ?url ?mtime where { "
+                                         "?r %1 ?url . "
+                                         "FILTER( regex(str(?url), '^%2([^/]+)$') ) . "
+                                         "?r %3 ?mtime ."
+                                         "}" )
+                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                          KUrl(dir).url( KUrl::AddTrailingSlash ),
+                          Soprano::Node::resourceToN3( property ) );
+        }
+        else {
+            query = QString::fromLatin1( "select distinct ?url ?mtime where { "
+                                        "?r %1 ?parent . ?parent %2 %3 . "
+                                        "?r %4 ?mtime . "
+                                        "?r %2 ?url . "
+                                        "}" )
+                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ),
+                        Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                        Soprano::Node::resourceToN3( KUrl( dir ) ),
+                        Soprano::Node::resourceToN3( property ) );
+        }
         Soprano::QueryResultIterator result = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 
         while ( result.next() ) {
-            children.insert( result["url"].uri().toLocalFile(), result["mtime"].literal().toDateTime() );
+            children.insert( result["url"].uri(), result["mtime"] );
         }
         return children;
     }
@@ -2378,6 +2397,11 @@ void DataManagementModelTest::testRemoveDataByApplication_folder()
 {
     SimpleResourceGraph graph;
 
+    // Create a folder with two files in it.
+    // Each of the files is given an additional nie:lastModified as well.
+    // ( The indexer compares the nie:lastModified and the filesystem modification date to
+    //   determine if the file requires indexing )
+    //
     KTempDir dir;
     QVERIFY( dir.exists() );
     SimpleResource dirRes;
@@ -2403,16 +2427,29 @@ void DataManagementModelTest::testRemoveDataByApplication_folder()
     QVERIFY(!m_model->listStatements( Node(), NIE::url(), KUrl(dir.name())).iterateSubjects().allNodes().isEmpty());
     const QUrl dirResUri = m_model->listStatements( Node(), NIE::url(), KUrl(dir.name())).iterateSubjects().allNodes().first().uri();
 
-    QHash< QString, QDateTime > child1 = getChildren( dir.name(), m_model );
+    // Get a hash with the <nie:url, nie:lastModified> of both the files in the directory
+    QHash<QUrl, Node> nieLastModified = getChildren( dir.name(), NIE::lastModified(), m_model );
+    QHash<QUrl, Node> naoLastModified = getChildren( dir.name(), NAO::lastModified(), m_model );
 
+    // Remove the resource for the directory but NOT for the files in it
     m_dmModel->removeDataByApplication( QList<QUrl>() << dirResUri,
                                         DataManagementModel::RemoveSubResoures,
                                         QLatin1String("indexer") );
     QVERIFY( !m_dmModel->lastError() );
 
-    QHash< QString, QDateTime > child2 = getChildren( dir.name(), m_model );
-    QCOMPARE( child1, child2 );
+    // For each of the files, the nao:lastModified should have changed
+    QHash<QUrl, Node> newNaoLastModified = getChildren( dir.name(), NAO::lastModified(), m_model );
+    foreach( const QUrl& uri, naoLastModified.keys() ) {
+        QVERIFY( newNaoLastModified.contains( uri ) );
+        QVERIFY( naoLastModified.value( uri ) != newNaoLastModified.value( uri ) );
+    }
 
+    //They should no longer have the nie:isPartOf statement
+    QVERIFY( !m_model->containsAnyStatement( Node(), NIE::isPartOf(), Node() ) );
+
+    // Their nie:lastModified however should NOT have changed
+    QHash<QUrl, Node> newNieLastModfieid = getChildren( dir.name(), NIE::lastModified(), m_model );
+    QCOMPARE( nieLastModified, newNieLastModfieid );
 }
 
 // test that all is removed, ie. storage is clear afterwards
