@@ -24,6 +24,7 @@
 #include <QtCore/QWaitCondition>
 #include <QtCore/QQueue>
 #include <QtCore/QDateTime>
+#include <QtCore/QTimer>
 
 #include <vector>
 #include <string>
@@ -173,18 +174,17 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void slotConfigChanged();
+        void doIndexing();
 
     private:
         void run();
-
-        bool waitForContinue( bool disableDelay = false );
 
         /**
          * It first indexes \p dir. Then it indexes all the files in \p dir, and
          * finally recursivly analyzes all the subfolders in \p dir IF \p flags
          * contains the 'UpdateRecursive' flag. It even sets m_currentFolder
          */
-        bool analyzeDir( const QString& dir, UpdateDirFlags flags );
+        void analyzeDir( const QString& dir, UpdateDirFlags flags );
 
         void queueAllFoldersForUpdate( bool forceUpdate = false );
 
@@ -205,13 +205,15 @@ namespace Nepomuk {
         void removeOldAndUnwantedEntries();
         bool removeAllGraphsFromQuery( const QString& query_ );
 
+        void restartTimer();
+
         bool m_suspended;
         bool m_stopped;
         bool m_indexing;
 
         QMutex m_resumeStopMutex;
-        QWaitCondition m_resumeStopWc;
 
+        QTimer m_timer;
         Indexer* m_indexer;
 
         // A specialized queue that gives priority to dirs that do not use the AutoUpdateFolder flag.
@@ -225,8 +227,9 @@ namespace Nepomuk {
         // queue of folders to update (+flags defined in the source file) - changed by updateDir
         UpdateDirQueue m_dirsToUpdate;
 
+        QQueue<QFileInfo> m_filesToUpdate;
+
         QMutex m_dirsToUpdateMutex;
-        QWaitCondition m_dirsToUpdateWc;
 
         QString m_currentFolder;
         KUrl m_currentUrl;
