@@ -3936,6 +3936,54 @@ void DataManagementModelTest::testStoreResources_duplicates()
     QVERIFY(!haveTrailingGraphs());
 }
 
+// make sure that already existing resource types are taken into account for domain checks
+void DataManagementModelTest::testStoreResources_correctDomainInStore()
+{
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    // create the resource
+    const QUrl resA("nepomuk:/res/A");
+    m_model->addStatement(resA, RDF::type(), NMM::MusicPiece(), g1);
+    m_model->addStatement(resA, NAO::lastModified(), Soprano::LiteralValue(QDateTime::currentDateTime()), g1);
+
+    // now store a music piece with a performer.
+    // the performer does not have a type in the simple res but only in store
+    SimpleResource piece(resA);
+    piece.addProperty(NIE::title(), QLatin1String("Hello World"));
+    SimpleResource artist;
+    artist.addType(NCO::Contact());
+    artist.addProperty(NCO::fullname(), QLatin1String("foobar"));
+    piece.addProperty(NMM::performer(), artist);
+
+    m_dmModel->storeResources(SimpleResourceGraph() << piece << artist, QLatin1String("testapp"));
+
+    QVERIFY(!m_dmModel->lastError());
+}
+
+// make sure that already existing resource types are taken into account for range checks
+void DataManagementModelTest::testStoreResources_correctRangeInStore()
+{
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    // create the resource
+    const QUrl resA("nepomuk:/res/A");
+    m_model->addStatement(resA, RDF::type(), NCO::Contact(), g1);
+    m_model->addStatement(resA, NAO::lastModified(), Soprano::LiteralValue(QDateTime::currentDateTime()), g1);
+
+    // now store a music piece with a performer.
+    // the performer does not have a type in the simple res but only in store
+    SimpleResource piece;
+    piece.addType(NMM::MusicPiece());
+    piece.addProperty(NIE::title(), QLatin1String("Hello World"));
+    SimpleResource artist(resA);
+    artist.addProperty(NCO::fullname(), QLatin1String("foobar"));
+    piece.addProperty(NMM::performer(), artist);
+
+    m_dmModel->storeResources(SimpleResourceGraph() << piece << artist, QLatin1String("testapp"));
+
+    QVERIFY(!m_dmModel->lastError());
+}
+
 void DataManagementModelTest::testMergeResources()
 {
     // first we need to create the two resources we want to merge as well as one that should not be touched

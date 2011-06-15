@@ -120,6 +120,8 @@ private Q_SLOTS:
     void testStoreResources_faultyMetadata();
     void testStoreResources_additionalMetadataApp();
     void testStoreResources_duplicates();
+    void testStoreResources_correctDomainInStore();
+    void testStoreResources_correctRangeInStore();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();
