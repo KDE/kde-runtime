@@ -33,6 +33,7 @@ set( BackupSyncService_SRCS
   changelogrecord.cpp
   identificationset.cpp
   syncfile.cpp
+  backupgenerationjob.cpp
 )
 
 #--------- Adaptors ---------#
