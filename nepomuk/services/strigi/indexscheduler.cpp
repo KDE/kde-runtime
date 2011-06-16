@@ -191,8 +191,6 @@ Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
 {
     connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( slotConfigChanged() ) );
-
-    connect( &m_timer, SIGNAL(timeout()), this, SLOT(doIndexing()) );
 }
 
 
@@ -205,7 +203,6 @@ void Nepomuk::IndexScheduler::suspend()
 {
     if ( isRunning() && !m_suspended ) {
         QMutexLocker locker( &m_resumeStopMutex );
-        m_timer.stop();
         m_suspended = true;
         emit indexingSuspended( true );
     }
@@ -218,7 +215,7 @@ void Nepomuk::IndexScheduler::resume()
         QMutexLocker locker( &m_resumeStopMutex );
         m_suspended = false;
 
-        restartTimer();
+        callDoIndexing();
         emit indexingSuspended( false );
     }
 }
@@ -239,7 +236,6 @@ void Nepomuk::IndexScheduler::stop()
         QMutexLocker locker( &m_resumeStopMutex );
         m_stopped = true;
         m_suspended = false;
-        m_timer.stop();
         this->quit();
     }
 }
@@ -257,7 +253,6 @@ void Nepomuk::IndexScheduler::setIndexingSpeed( IndexingSpeed speed )
 {
     kDebug() << speed;
     m_speed = speed;
-    restartTimer();
 }
 
 
@@ -331,58 +326,52 @@ void Nepomuk::IndexScheduler::run()
     queueAllFoldersForUpdate();
 
     // reset state
-    m_suspended = true;
+    m_suspended = false;
     m_stopped = false;
 
-    // start the timer
-    resume();
+    callDoIndexing();
 
     QThread::exec();
 }
 
 void Nepomuk::IndexScheduler::doIndexing()
 {
-    kDebug();
+    setIndexingStarted( true );
 
     // get the next file
     if( !m_filesToUpdate.isEmpty() ) {
         kDebug() << "File";
-        setIndexingStarted( true );
 
         QFileInfo file = m_filesToUpdate.dequeue();
 
         m_currentUrl = file.filePath();
         m_currentFolder = m_currentUrl.directory();
 
-        emit indexingFile( m_currentUrl.toLocalFile() );
         KJob * indexer = new Indexer( file );
         connect( indexer, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
         indexer->start();
 
-        // The timer will be restarted when the indexing is completed
-        m_timer.stop();
+        emit indexingFile( m_currentUrl.toLocalFile() );
         return;
     }
 
     // get the next folder
     if( !m_dirsToUpdate.isEmpty() ) {
         kDebug() << "Directory";
-        setIndexingStarted( true );
 
         m_dirsToUpdateMutex.lock();
         QPair<QString, UpdateDirFlags> dir = m_dirsToUpdate.dequeue();
         m_dirsToUpdateMutex.unlock();
 
-        // If a dir was analyzed, then the timer must be stopped. It will be
-        // restarted in slotIndexingDone
-        if( analyzeDir( dir.first, dir.second ) ) {
-            m_timer.stop();
+        // If a dir was not analyzed, then doIndexing must be called to
+        // process the next file/directory in the queue
+        if( !analyzeDir( dir.first, dir.second ) ) {
+            callDoIndexing();
         }
         return;
     }
 
-    kDebug() << "Stopping timer";
-    m_timer.stop();
+    setIndexingStarted( false );
 }
 
 void Nepomuk::IndexScheduler::slotIndexingDone(KJob* job)
@@ -393,8 +382,7 @@ void Nepomuk::IndexScheduler::slotIndexingDone(KJob* job)
     m_currentFolder.clear();
     m_currentUrl.clear();
 
-    setIndexingStarted( false );
-    restartTimer();
+    callDoIndexing();
 }
 
 bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexScheduler::UpdateDirFlags flags )
@@ -411,6 +399,8 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
     emit indexingFolder( dir );
 
     m_currentFolder = dir;
+    m_currentUrl = KUrl( dir );
+
     const bool recursive = flags&UpdateRecursive;
     const bool forceUpdate = flags&ForceUpdate;
 
@@ -494,14 +484,15 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
 }
 
 
-void Nepomuk::IndexScheduler::restartTimer()
+void Nepomuk::IndexScheduler::callDoIndexing()
 {
-    m_timer.stop();
-    uint delay = 0;
-    if ( m_speed != FullSpeed ) {
-        delay = (m_speed == ReducedSpeed) ? s_reducedSpeedDelay : s_snailPaceDelay;
+    if( !m_suspended && !m_stopped ) {
+        uint delay = 0;
+        if ( m_speed != FullSpeed ) {
+            delay = (m_speed == ReducedSpeed) ? s_reducedSpeedDelay : s_snailPaceDelay;
+        }
+        QTimer::singleShot( delay, this, SLOT(doIndexing()) );
     }
-    m_timer.start( delay );
 }
 
 
@@ -509,14 +500,18 @@ void Nepomuk::IndexScheduler::updateDir( const QString& path, UpdateDirFlags fla
 {
     QMutexLocker lock( &m_dirsToUpdateMutex );
     m_dirsToUpdate.prependDir( path, flags & ~AutoUpdateFolder );
-    restartTimer();
+
+    if( !m_indexing )
+        callDoIndexing();
 }
 
 
 void Nepomuk::IndexScheduler::updateAll( bool forceUpdate )
 {
     queueAllFoldersForUpdate( forceUpdate );
-    restartTimer();
+
+    if( !m_indexing )
+        callDoIndexing();
 }
 
 
@@ -549,7 +544,6 @@ void Nepomuk::IndexScheduler::slotConfigChanged()
 void Nepomuk::IndexScheduler::analyzeFile( const QString& path )
 {
     KJob * indexer = new Indexer( KUrl(path) );
-    connect( indexer, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
     indexer->start();
 }
 
