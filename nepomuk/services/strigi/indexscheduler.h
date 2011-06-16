@@ -174,6 +174,7 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void slotConfigChanged();
+        void slotIndexingDone();
         void doIndexing();
 
     private:

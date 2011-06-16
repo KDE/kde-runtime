@@ -193,8 +193,8 @@ Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
     connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( slotConfigChanged() ) );
 
-    connect( &m_timer, SIGNAL(timeout()),
-             this, SLOT(doIndexing()) );
+    connect( &m_timer, SIGNAL(timeout()), this, SLOT(doIndexing()) );
+    connect( m_indexer, SIGNAL(indexingDone()), this, SLOT(slotIndexingDone()));
 }
 
 
@@ -344,6 +344,8 @@ void Nepomuk::IndexScheduler::run()
 
 void Nepomuk::IndexScheduler::doIndexing()
 {
+    kDebug();
+
     // get the next file
     if( !m_filesToUpdate.isEmpty() ) {
         setIndexingStarted( true );
@@ -351,11 +353,13 @@ void Nepomuk::IndexScheduler::doIndexing()
         QFileInfo file = m_filesToUpdate.dequeue();
 
         m_currentUrl = file.filePath();
+        m_currentFolder = m_currentUrl.directory();
+
         emit indexingFile( m_currentUrl.toLocalFile() );
         m_indexer->indexFile( file );
-        m_currentUrl = KUrl();
 
-        setIndexingStarted( false );
+        // The timer will be restarted when the indexing is completed
+        m_timer.stop();
         return;
     }
 
@@ -369,13 +373,21 @@ void Nepomuk::IndexScheduler::doIndexing()
 
         // update until stopped
         analyzeDir( dir.first, dir.second );
-        m_currentFolder.clear();
 
-        setIndexingStarted( false );
+        m_timer.stop();
         return;
     }
 
     m_timer.stop();
+}
+
+void Nepomuk::IndexScheduler::slotIndexingDone()
+{
+    m_currentFolder.clear();
+    m_currentUrl.clear();
+
+    setIndexingStarted( false );
+    restartTimer();
 }
 
 void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexScheduler::UpdateDirFlags flags )

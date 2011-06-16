@@ -46,15 +46,24 @@ Nepomuk::Indexer::~Indexer()
 void Nepomuk::Indexer::indexFile( const KUrl& url )
 {
     const QString exe = KStandardDirs::findExe(QLatin1String("nepomukindexer"));
-    kDebug() << "Running" << exe << url.toLocalFile();
-    int r = QProcess::execute(exe, QStringList() << url.toLocalFile());
-    kDebug() << "Indexing of" << url.toLocalFile() << "finished with exit code" << r;
-}
+    KProcess * process = new KProcess();
+    process->setProgram( exe, QStringList() << url.toLocalFile() );
 
+    kDebug() << "Running" << exe << url.toLocalFile();
+
+    connect( process, SIGNAL(finished(int)), this, SLOT(slotIndexedFile(int)) );
+    process->start();
+}
 
 void Nepomuk::Indexer::indexFile( const QFileInfo& info )
 {
     indexFile( KUrl(info.absoluteFilePath()) );
+}
+
+void Nepomuk::Indexer::slotIndexedFile(int exitCode )
+{
+    kDebug() << "Indexing finished with exit code" << exitCode;
+    emit indexingDone();
 }
 
 void Nepomuk::Indexer::clearIndexedData( const KUrl& url )
