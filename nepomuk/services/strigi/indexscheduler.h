@@ -198,13 +198,6 @@ namespace Nepomuk {
         // no signal is emitted twice
         void setIndexingStarted( bool started );
 
-        /**
-         * Removes all previously indexed entries that are not in the list of folders
-         * to index anymore.
-         */
-        void removeOldAndUnwantedEntries();
-        bool removeAllGraphsFromQuery( const QString& query_ );
-
         void restartTimer();
 
         bool m_suspended;
