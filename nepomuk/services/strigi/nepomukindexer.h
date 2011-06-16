@@ -95,8 +95,10 @@ namespace Nepomuk {
          * Remove all indexed data for the file identifies by \p info.
          */
         void clearIndexedData( const QFileInfo& info );
-        
+
     Q_SIGNALS:
+        void indexingDone();
+
         /**
          * Emitted once the indexing for a file or resource has finished.
          *
@@ -109,7 +111,8 @@ namespace Nepomuk {
         // TODO: better only have one method for success and failure.
         // TODO: actually emit the indexingDone signal
 
-    private:
+    private slots:
+        void slotIndexedFile(int exitCode);
     };
 }
 
