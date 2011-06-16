@@ -187,7 +187,8 @@ Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
       m_suspended( false ),
       m_stopped( false ),
       m_indexing( false ),
-      m_speed( FullSpeed )
+      m_speed( FullSpeed ),
+      m_cleaner( 0 )
 {
     connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( slotConfigChanged() ) );
@@ -204,6 +205,9 @@ void Nepomuk::IndexScheduler::suspend()
     if ( isRunning() && !m_suspended ) {
         QMutexLocker locker( &m_resumeStopMutex );
         m_suspended = true;
+        if( m_cleaner ) {
+            m_cleaner->suspend();
+        }
         emit indexingSuspended( true );
     }
 }
@@ -215,7 +219,12 @@ void Nepomuk::IndexScheduler::resume()
         QMutexLocker locker( &m_resumeStopMutex );
         m_suspended = false;
 
-        callDoIndexing();
+        if( m_cleaner ) {
+            m_cleaner->resume();
+        }
+        else {
+            callDoIndexing();
+        }
         emit indexingSuspended( false );
     }
 }
@@ -307,31 +316,25 @@ void Nepomuk::IndexScheduler::run()
     // set lowest priority for this thread
     setPriority( QThread::IdlePriority );
 
-    setIndexingStarted( true );
+    m_cleaner = new IndexCleaner();
+    m_cleaner->start();
 
-#ifndef NDEBUG
-    QTime timer;
-    timer.start();
-#endif
+    connect( m_cleaner, SIGNAL(finished(KJob*)), this, SLOT(slotCleaningDone()) );
 
-    IndexCleaner cleaner;
-    cleaner.removeOldAndUnwantedEntries();
+    QThread::exec();
+}
 
-#ifndef NDEBUG
-    kDebug() << "Removed old entries: " << timer.elapsed()/1000.0 << "secs";
-    timer.restart();
-#endif
-
+void Nepomuk::IndexScheduler::slotCleaningDone()
+{
     // initialization
     queueAllFoldersForUpdate();
 
     // reset state
     m_suspended = false;
     m_stopped = false;
+    m_cleaner = 0;
 
     callDoIndexing();
-
-    QThread::exec();
 }
 
 void Nepomuk::IndexScheduler::doIndexing()

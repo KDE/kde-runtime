@@ -24,6 +24,8 @@
 #include "strigiserviceconfig.h"
 #include "util.h"
 
+#include <QtCore/QTimer>
+#include <QtCore/QMutexLocker>
 #include <KDebug>
 
 #include <Nepomuk/Resource>
@@ -48,18 +50,11 @@ using namespace Nepomuk::Vocabulary;
 using namespace Soprano::Vocabulary;
 
 
-Nepomuk::IndexCleaner::IndexCleaner(QObject* parent)
-    : QObject(parent),
-      m_stopped( false )
+Nepomuk::IndexCleaner::IndexCleaner(KJob* parent)
+    : KJob(parent)
 {
-
+    setCapabilities( Suspendable );
 }
-
-Nepomuk::IndexCleaner::~IndexCleaner()
-{
-
-}
-
 
 namespace {
     /**
@@ -121,72 +116,49 @@ namespace {
         while ( index < folders.count() ) {
             subFilters << constructFolderSubFilter( folders, index );
         }
-        return subFilters.join(" && ");
+        QString filters = subFilters.join(" && ");
+        if( !filters.isEmpty() )
+            QString::fromLatin1("FILTER(%1) .").arg(filters);
+
+        return QString();
     }
 }
 
-void Nepomuk::IndexCleaner::removeOldAndUnwantedEntries()
+void Nepomuk::IndexCleaner::start()
 {
-    //
-    // We now query all indexed files that are in folders that should not
-    // be indexed at once.
-    //
-    QString folderFilter = constructFolderFilter();
-    if( !folderFilter.isEmpty() )
-        folderFilter = QString::fromLatin1("FILTER(%1) .").arg(folderFilter);
+    m_state = DMSRemovalState;
+    m_folderFilter = constructFolderFilter();
 
-    //
-    // Query all the resources which are maintained by nepomukindexer
-    // and are not in one of the indexed folders
-    //
-    // vHanda: trying to remove more than 20 resources via removeDataByApp occasionally times out.
-    const int limit = 20;
-    QString query = QString::fromLatin1( "select distinct ?r where { "
-                                         "graph ?g { ?r %1 ?url . } "
-                                         "?g %2 ?app . "
-                                         "?app %3 %4 . "
-                                         " %5 } LIMIT %6" )
+    int limit = 20;
+    m_query = QString::fromLatin1( "select distinct ?r where { "
+                                   "graph ?g { ?r %1 ?url . } "
+                                   "?g %2 ?app . "
+                                   "?app %3 %4 . "
+                                   " %5 } LIMIT %6" )
                     .arg( Soprano::Node::resourceToN3( NIE::url() ),
                           Soprano::Node::resourceToN3( NAO::maintainedBy() ),
                           Soprano::Node::resourceToN3( NAO::identifier() ),
                           Soprano::Node::literalToN3(QLatin1String("nepomukindexer")),
-                          folderFilter,
+                          m_folderFilter,
                           QString::number( limit ) );
 
-    while( true ) {
-        QList<QUrl> resources;
-        Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-        while( it.next() ) {
-            resources << it[0].uri();
-        }
-        Nepomuk::blockingClearIndexedData(resources);
+    QTimer::singleShot( 0, this, SLOT(removeDMSIndexedData()) );
 
-        // wait for resume or stop (or simply continue)
-        kDebug() << "CHECKING";
-        if ( m_stopped ) {
-            kDebug() << "RETURNING";
-            return;
-        }
-
-        if( resources.size() < limit )
-            break;
-    }
-
+}
+void Nepomuk::IndexCleaner::constructGraphRemovalQueries()
+{
     //
     // We query all files that should not be in the store
     // This for example excludes all filex:/ URLs.
     //
-    query = QString::fromLatin1( "select distinct ?g where { "
-                                 "?r %1 ?url . "
-                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
-                                 "FILTER(REGEX(STR(?url),'^file:/')) . "
-                                 "%2 }" )
-                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                          folderFilter );
-    kDebug() << query;
-    if ( !removeAllGraphsFromQuery( query ) )
-        return;
-
+    QString query = QString::fromLatin1( "select distinct ?g where { "
+                                         "?r %1 ?url . "
+                                         "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
+                                         "FILTER(REGEX(STR(?url),'^file:/')) . "
+                                         "%2 }" )
+                    .arg( Soprano::Node::resourceToN3( NIE::url() ),
+                          m_folderFilter );
+    m_graphRemovalQueries << query;
 
     //
     // Build filter query for all exclude filters
@@ -218,10 +190,7 @@ void Nepomuk::IndexCleaner::removeOldAndUnwantedEntries()
             .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
                   Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
                   filters );
-    kDebug() << query;
-    if ( !removeAllGraphsFromQuery( query ) )
-        return;
-
+    m_graphRemovalQueries << query;
 
     //
     // Remove all old data from Xesam-times. While we leave out the data created by libnepomuk
@@ -235,10 +204,7 @@ void Nepomuk::IndexCleaner::removeOldAndUnwantedEntries()
                                  "{ graph ?g { ?r2 %1 ?u2 . } } "
                                  "}" )
             .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::Xesam::url() ) );
-    kDebug() << query;
-    if ( !removeAllGraphsFromQuery( query ) )
-        return;
-
+    m_graphRemovalQueries << query;
 
     //
     // Remove data which is useless but still around from before. This could happen due to some buggy version of
@@ -249,50 +215,119 @@ void Nepomuk::IndexCleaner::removeOldAndUnwantedEntries()
     //
     Query::Query q(
         Strigi::Ontology::indexGraphFor()
-                == ( Soprano::Vocabulary::RDF::type()
-                     == Query::ResourceTerm( Nepomuk::Resource::fromResourceUri(Nepomuk::Vocabulary::NFO::FileDataObject()) ) &&
-                     !( Nepomuk::Vocabulary::NIE::url() == Query::Term() ) &&
-                     !( Nepomuk::Vocabulary::NIE::isPartOf() == Query::Term() ) )
-        );
+        == ( RDF::type()
+             == Query::ResourceTerm( Resource::fromResourceUri(NFO::FileDataObject()) ) &&
+        !( NIE::url() == Query::Term() ) &&
+        !( NIE::isPartOf() == Query::Term() ) )
+    );
     q.setQueryFlags(Query::Query::NoResultRestrictions);
     query = q.toSparqlQuery();
-    kDebug() << query;
-    removeAllGraphsFromQuery( query );
+    m_graphRemovalQueries << query;
 }
 
-
-
-/**
- * Runs the query using a limit until all graphs have been deleted. This is not done
- * in one big loop to avoid the problems with messed up iterators when one of the iterated
- * item is deleted.
- */
-bool Nepomuk::IndexCleaner::removeAllGraphsFromQuery( const QString& query )
+void Nepomuk::IndexCleaner::slotClearIndexedData(KJob* job)
 {
-    while ( 1 ) {
-        // get the next batch of graphs
-        QList<Soprano::Node> graphs
-            = ResourceManager::instance()->mainModel()->executeQuery( query + QLatin1String( " LIMIT 200" ),
-                                                                      Soprano::Query::QueryLanguageSparql ).iterateBindings( 0 ).allNodes();
+    if( job->error() ) {
+        kDebug() << job->errorString();
+    }
 
-        // remove all graphs in the batch
-        Q_FOREACH( const Soprano::Node& graph, graphs ) {
+    if( !suspended() )
+        QTimer::singleShot( 0, this, SLOT(removeDMSIndexedData()) );
+}
 
-            // wait for resume or stop (or simply continue)
-            if ( m_stopped ) {
-                return false;
-            }
+void Nepomuk::IndexCleaner::removeDMSIndexedData()
+{
+    QList<QUrl> resources;
+    Soprano::Model * model = ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator it = model->executeQuery( m_query, Soprano::Query::QueryLanguageSparql );
+    while( it.next() ) {
+        resources << it[0].uri();
+    }
 
-            ResourceManager::instance()->mainModel()->removeContext( graph );
+    if( !resources.isEmpty() ) {
+        KJob* job = Nepomuk::clearIndexedData(resources);
+        job->start();
+        connect( job, SIGNAL(finished(KJob*)), this, SLOT(slotClearIndexedData(KJob*)) );
+        return;
+    }
+
+    kDebug() << m_query;
+
+    // Go next state
+    if( !suspended() ) {
+        QMutexLocker locker(&m_stateMutex);
+        m_state = GraphRemovalState;
+
+        constructGraphRemovalQueries();
+        QTimer::singleShot( 0, this, SLOT(removeGraphsFromQuery()) );
+    }
+}
+
+void Nepomuk::IndexCleaner::removeGraphsFromQuery()
+{
+    QString query = m_graphRemovalQueries.head();
+
+    // get the next batch of graphs
+    QList<Soprano::Node> graphs
+        = ResourceManager::instance()->mainModel()->executeQuery( query + QLatin1String( " LIMIT 200" ),
+                                                                    Soprano::Query::QueryLanguageSparql ).iterateBindings( 0 ).allNodes();
+
+    // remove all graphs in the batch
+    Q_FOREACH( const Soprano::Node& graph, graphs ) {
+
+        if( suspended() ) {
+            return;
         }
+        ResourceManager::instance()->mainModel()->removeContext( graph );
+    }
 
-        // we are done when the last graphs are queried
-        if ( graphs.count() < 200 ) {
-            return true;
+    // we are done when the last graphs are queried
+    if ( graphs.count() < 200 ) {
+        kDebug() << m_graphRemovalQueries.dequeue();
+
+        if( m_graphRemovalQueries.isEmpty() ) {
+            // We're done!
+            emitResult();
+            return;
         }
     }
 
-    // make gcc shut up
+    if( !suspended() ) {
+        QTimer::singleShot( 0, this, SLOT(removeGraphsFromQuery()) );
+    }
+}
+
+bool Nepomuk::IndexCleaner::doSuspend()
+{
+    QMutexLocker locker(&m_stateMutex);
+    m_lastState = m_state;
+    m_state = SuspendedState;
+
     return true;
 }
 
+bool Nepomuk::IndexCleaner::doResume()
+{
+    QMutexLocker locker(&m_stateMutex);
+    m_state = m_lastState;
+
+    switch( m_state ) {
+    case DMSRemovalState:
+        QTimer::singleShot( 0, this, SLOT(removeDMSIndexedData()) );
+        break;
+
+    case GraphRemovalState:
+        QTimer::singleShot( 0, this, SLOT(removeGraphsFromQuery()) );
+        break;
+
+    default:
+        break;
+    }
+
+    return true;
+}
+
+bool Nepomuk::IndexCleaner::suspended() const
+{
+    return m_state == SuspendedState;
+}

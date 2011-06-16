@@ -1,7 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010-11 Sebastian Trueg <trueg@kde.org>
-   Copyright (C) 2010-11 Vishesh Handa <handa.vish@gmail.com>
+   Copyright (C) 2011 Vishesh Handa <handa.vish@gmail.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -24,28 +23,46 @@
 #define INDEXCLEANER_H
 
 #include <QtCore/QString>
-#include <QtCore/QObject>
+#include <QtCore/QQueue>
+#include <QtCore/QMutex>
+
+#include <KJob>
 
 namespace Nepomuk {
-    class IndexCleaner : public QObject
+    class IndexCleaner : public KJob
     {
         Q_OBJECT
     public:
-        IndexCleaner(QObject* parent=0);
-        ~IndexCleaner();
+        IndexCleaner(KJob* parent=0);
 
-    public slots:
-        /**
-         * Removes all previously indexed entries that are not in the list of folders
-         * to index anymore.
-         */
-        void removeOldAndUnwantedEntries();
-        bool removeAllGraphsFromQuery( const QString& query_ );
+        virtual void start();
+        virtual bool doSuspend();
+        virtual bool doResume();
+
+    private slots:
+
+        void removeDMSIndexedData();
+        void slotClearIndexedData(KJob* job);
+        void removeGraphsFromQuery();
 
     private:
+        void constructGraphRemovalQueries();
+        QQueue<QString> m_graphRemovalQueries;
 
-        //FIXME: Use this somehow! Also support pause/resume
-        bool m_stopped;
+        QString m_folderFilter;
+        QString m_query;
+
+        enum State {
+            SuspendedState = 0,
+            DMSRemovalState,
+            GraphRemovalState
+        };
+
+        State m_state;
+        State m_lastState;
+        QMutex m_stateMutex;
+
+        bool suspended() const;
     };
 
 }
