@@ -159,7 +159,7 @@ void Nepomuk::IndexCleaner::removeOldAndUnwantedEntries()
         while( it.next() ) {
             resources << it[0].uri();
         }
-        Nepomuk::clearIndexedData(resources);
+        Nepomuk::blockingClearIndexedData(resources);
 
         // wait for resume or stop (or simply continue)
         kDebug() << "CHECKING";

@@ -393,7 +393,7 @@ void Nepomuk::StrigiIndexWriter::deleteEntries( const std::vector<std::string>& 
     for ( unsigned int i = 0; i < entries.size(); ++i ) {
         QString path = QString::fromUtf8( entries[i].c_str() );
         Nepomuk::clearLegacyIndexedDataForUrl( KUrl( path ) );
-        Nepomuk::clearIndexedData(KUrl(path));
+        Nepomuk::blockingClearIndexedData(KUrl(path));
     }
 }
 
@@ -422,7 +422,7 @@ void Nepomuk::StrigiIndexWriter::startAnalysis( const AnalysisResult* idx )
     // remove previously indexed data
     if( !data->resourceUri.isEmpty() ) {
         Nepomuk::clearLegacyIndexedDataForResourceUri( data->resourceUri );
-        Nepomuk::clearIndexedData(data->resourceUri);
+        Nepomuk::blockingClearIndexedData(data->resourceUri);
     }
 
     // It is important to keep the resource URI between updates (especially for sharing of files)

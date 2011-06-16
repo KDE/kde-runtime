@@ -100,28 +100,16 @@ QUrl Strigi::Ontology::indexGraphFor()
     return QUrl::fromEncoded( "http://www.strigi.org/fields#indexGraphFor", QUrl::StrictMode );
 }
 
-bool Nepomuk::clearIndexedData( const QUrl& url )
+bool Nepomuk::blockingClearIndexedData(const QUrl& url)
 {
-    return clearIndexedData(QList<QUrl>() << url);
+    return blockingClearIndexedData( QList<QUrl>() << url );
 }
 
-bool Nepomuk::clearIndexedData( const QList<QUrl>& urls )
+bool Nepomuk::blockingClearIndexedData(const QList< QUrl >& urls)
 {
-    if ( urls.isEmpty() )
+    QScopedPointer<KJob> job( clearIndexedData(urls) );
+    if( job.isNull() )
         return false;
-
-    kDebug() << urls;
-    
-    //
-    // New way of storing Strigi Data
-    // The Datamanagement API will automatically find the resource corresponding to that url
-    //
-    KComponentData component = KGlobal::mainComponent();
-    if( component.componentName() != QLatin1String("nepomukindexer") ) {
-        component = KComponentData( QByteArray("nepomukindexer"),
-                                    QByteArray(), KComponentData::SkipMainComponentRegistration );
-    }
-    QScopedPointer<KJob> job(Nepomuk::removeDataByApplication( urls, RemoveSubResoures, component ));
 
     // we do not have an event loop in the index scheduler, thus, we need to delete ourselves.
     job->setAutoDelete(false);
@@ -133,6 +121,30 @@ bool Nepomuk::clearIndexedData( const QList<QUrl>& urls )
     }
 
     return job->error() == KJob::NoError;
+}
+
+KJob* Nepomuk::clearIndexedData( const QUrl& url )
+{
+    return clearIndexedData(QList<QUrl>() << url);
+}
+
+KJob* Nepomuk::clearIndexedData( const QList<QUrl>& urls )
+{
+    if ( urls.isEmpty() )
+        return 0;
+
+    kDebug() << urls;
+
+    //
+    // New way of storing Strigi Data
+    // The Datamanagement API will automatically find the resource corresponding to that url
+    //
+    KComponentData component = KGlobal::mainComponent();
+    if( component.componentName() != QLatin1String("nepomukindexer") ) {
+        component = KComponentData( QByteArray("nepomukindexer"),
+                                    QByteArray(), KComponentData::SkipMainComponentRegistration );
+    }
+    return Nepomuk::removeDataByApplication( urls, RemoveSubResoures, component );
 }
 
 bool Nepomuk::clearLegacyIndexedDataForUrl( const KUrl& url )
@@ -169,7 +181,7 @@ bool Nepomuk::clearLegacyIndexedDataForResourceUri( const KUrl& res )
 {
     if ( res.isEmpty() )
         return false;
-    
+
     kDebug() << res;
 
     QString query = QString::fromLatin1( "select ?g where { ?g %1 %2 . }" )

@@ -23,6 +23,7 @@
 #include <string>
 #include <KUrl>
 
+class KJob;
 class QUrl;
 class QString;
 
@@ -49,8 +50,11 @@ namespace Strigi {
 
 namespace Nepomuk {
     /// remove all indexed data for \p url the datamanagement way
-    bool clearIndexedData( const QUrl& url );
-    bool clearIndexedData( const QList<QUrl>& urls );
+    KJob* clearIndexedData( const QUrl& url );
+    KJob* clearIndexedData( const QList<QUrl>& urls );
+
+    bool blockingClearIndexedData( const QUrl& url );
+    bool blockingClearIndexedData( const QList<QUrl>& urls );
 
     /// clears data from pre-datamanagement days
     bool clearLegacyIndexedDataForUrl( const KUrl& url );
