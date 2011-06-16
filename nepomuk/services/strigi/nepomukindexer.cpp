@@ -32,53 +32,55 @@
 #include <QtCore/QFileInfo>
 
 
-Nepomuk::Indexer::Indexer( QObject* parent )
-    : QObject( parent )
+Nepomuk::Indexer::Indexer(const KUrl& localUrl, QObject* parent)
+    : KJob(parent),
+      m_url( localUrl ),
+      m_exitCode( -1 )
 {
 }
 
-
-Nepomuk::Indexer::~Indexer()
+Nepomuk::Indexer::Indexer(const QFileInfo& info, QObject* parent)
+    : KJob(parent),
+      m_url( info.absoluteFilePath() ),
+      m_exitCode( -1 )
 {
 }
 
-
-void Nepomuk::Indexer::indexFile( const KUrl& url )
+void Nepomuk::Indexer::start()
 {
     const QString exe = KStandardDirs::findExe(QLatin1String("nepomukindexer"));
-    KProcess * process = new KProcess();
-    process->setProgram( exe, QStringList() << url.toLocalFile() );
+    m_process = new KProcess( this );
+    m_process->setProgram( exe, QStringList() << m_url.toLocalFile() );
 
-    kDebug() << "Running" << exe << url.toLocalFile();
+    kDebug() << "Running" << exe << m_url.toLocalFile();
 
-    connect( process, SIGNAL(finished(int)), this, SLOT(slotIndexedFile(int)) );
-    process->start();
+    connect( m_process, SIGNAL(finished(int)), this, SLOT(slotIndexedFile(int)) );
+    m_process->start();
 }
 
-void Nepomuk::Indexer::indexFile( const QFileInfo& info )
+
+void Nepomuk::Indexer::slotIndexedFile(int exitCode)
 {
-    indexFile( KUrl(info.absoluteFilePath()) );
+    kDebug() << "Indexing of " << m_url.toLocalFile() << "finished with exit code" << exitCode;
+    m_exitCode = exitCode;
+
+    emitResult();
 }
 
-void Nepomuk::Indexer::slotIndexedFile(int exitCode )
-{
-    kDebug() << "Indexing finished with exit code" << exitCode;
-    emit indexingDone();
-}
-
+// static
 void Nepomuk::Indexer::clearIndexedData( const KUrl& url )
 {
     Nepomuk::clearLegacyIndexedDataForUrl(url);
     Nepomuk::clearIndexedData(url);
 }
 
-
+// static
 void Nepomuk::Indexer::clearIndexedData( const QFileInfo& info )
 {
     clearIndexedData(KUrl(info.filePath()));
 }
 
-
+// static
 void Nepomuk::Indexer::clearIndexedData( const Nepomuk::Resource& res )
 {
     Nepomuk::clearLegacyIndexedDataForResourceUri( res.resourceUri() );

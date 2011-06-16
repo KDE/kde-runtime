@@ -189,12 +189,10 @@ Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
       m_indexing( false ),
       m_speed( FullSpeed )
 {
-    m_indexer = new Nepomuk::Indexer( this );
     connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( slotConfigChanged() ) );
 
     connect( &m_timer, SIGNAL(timeout()), this, SLOT(doIndexing()) );
-    connect( m_indexer, SIGNAL(indexingDone()), this, SLOT(slotIndexingDone()));
 }
 
 
@@ -348,6 +346,7 @@ void Nepomuk::IndexScheduler::doIndexing()
 
     // get the next file
     if( !m_filesToUpdate.isEmpty() ) {
+        kDebug() << "File";
         setIndexingStarted( true );
 
         QFileInfo file = m_filesToUpdate.dequeue();
@@ -356,7 +355,9 @@ void Nepomuk::IndexScheduler::doIndexing()
         m_currentFolder = m_currentUrl.directory();
 
         emit indexingFile( m_currentUrl.toLocalFile() );
-        m_indexer->indexFile( file );
+        KJob * indexer = new Indexer( file );
+        connect( indexer, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
+        indexer->start();
 
         // The timer will be restarted when the indexing is completed
         m_timer.stop();
@@ -365,24 +366,30 @@ void Nepomuk::IndexScheduler::doIndexing()
 
     // get the next folder
     if( !m_dirsToUpdate.isEmpty() ) {
+        kDebug() << "Directory";
         setIndexingStarted( true );
 
         m_dirsToUpdateMutex.lock();
         QPair<QString, UpdateDirFlags> dir = m_dirsToUpdate.dequeue();
         m_dirsToUpdateMutex.unlock();
 
-        // update until stopped
-        analyzeDir( dir.first, dir.second );
-
-        m_timer.stop();
+        // If a dir was analyzed, then the timer must be stopped. It will be
+        // restarted in slotIndexingDone
+        if( analyzeDir( dir.first, dir.second ) ) {
+            m_timer.stop();
+        }
         return;
     }
 
+    kDebug() << "Stopping timer";
     m_timer.stop();
 }
 
-void Nepomuk::IndexScheduler::slotIndexingDone()
+void Nepomuk::IndexScheduler::slotIndexingDone(KJob* job)
 {
+    kDebug() << job;
+    Q_UNUSED( job );
+
     m_currentFolder.clear();
     m_currentUrl.clear();
 
@@ -390,7 +397,7 @@ void Nepomuk::IndexScheduler::slotIndexingDone()
     restartTimer();
 }
 
-void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexScheduler::UpdateDirFlags flags )
+bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexScheduler::UpdateDirFlags flags )
 {
 //    kDebug() << dir << analyzer << recursive;
 
@@ -410,8 +417,11 @@ void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
     // we start by updating the folder itself
     QFileInfo dirInfo( dir );
     KUrl dirUrl( dir );
-    if ( !compareIndexedMTime(dirUrl, dirInfo.lastModified()) ) {
-        m_indexer->indexFile( dirInfo );
+    bool shouldAnalyzerDir = !compareIndexedMTime(dirUrl, dirInfo.lastModified());
+    if ( shouldAnalyzerDir ) {
+        KJob * indexer = new Indexer( dirInfo );
+        connect( indexer, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
+        indexer->start();
     }
 
     // get a map of all indexed files from the dir including their stored mtime
@@ -479,6 +489,8 @@ void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
 
     // analyze all files that are new or need updating
     m_filesToUpdate.append( filesToIndex );
+
+    return shouldAnalyzerDir;
 }
 
 
@@ -536,8 +548,9 @@ void Nepomuk::IndexScheduler::slotConfigChanged()
 
 void Nepomuk::IndexScheduler::analyzeFile( const QString& path )
 {
-    Indexer indexer;
-    indexer.indexFile( QFileInfo( path ) );
+    KJob * indexer = new Indexer( KUrl(path) );
+    connect( indexer, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
+    indexer->start();
 }
 
 
@@ -547,7 +560,7 @@ void Nepomuk::IndexScheduler::deleteEntries( const QStringList& entries )
     // TODO: use a less mem intensive method
     for ( int i = 0; i < entries.count(); ++i ) {
         deleteEntries( getChildren( entries[i] ).keys() );
-        m_indexer->clearIndexedData( KUrl( entries[i] ) );
+        Indexer::clearIndexedData( KUrl( entries[i] ) );
     }
 }
 
