@@ -14,6 +14,7 @@ include_directories(
 set(strigiservice_SRCS
   strigiservice.cpp
   indexscheduler.cpp
+  indexcleaner.cpp
   strigiserviceconfig.cpp
   eventmonitor.cpp
   util.cpp
