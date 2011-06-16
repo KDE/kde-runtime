@@ -966,51 +966,52 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // Other apps might be maintainer, too. In that case only remove the app as a maintainer but keep the data
     QSet<QUrl> graphs;
     const QDateTime now = QDateTime::currentDateTime();
-    QUrl mtimeGraph;
+    QUrl metadataGraph;
     for(QList<Soprano::BindingSet>::const_iterator it = graphRemovalCandidates.constBegin(); it != graphRemovalCandidates.constEnd(); ++it) {
         const QUrl g = it->value("g").uri();
         const int appCnt = it->value("c").literal().toInt();
         const int metadataPropCount = it->value("mc").literal().toInt();
         if(appCnt == 1) {
             foreach(const QUrl& res, resolvedResources) {
-                if(doesResourceExist(res, g)) {
-                    //
-                    // We cannot remove the metadata if the resource is not removed completely
-                    // Thus, we re-add them later on.
-                    // trueg: as soon as we have real inference and do not rely on the crappy inferencer to update types via the
-                    //        Soprano statement manipulation methods we can use powerful queries like this one:
-                    //                    executeQuery(QString::fromLatin1("delete from %1 { %2 ?p ?o . } where { %2 ?p ?o . FILTER(%3) . }")
-                    //                                 .arg(Soprano::Node::resourceToN3(g),
-                    //                                      Soprano::Node::resourceToN3(res),
-                    //                                      createResourceMetadataPropertyFilter(QLatin1String("?p"))),
-                    //                                 Soprano::Query::QueryLanguageSparql);
-                    //
-                    QList<Soprano::BindingSet> metadataProps;
-                    if(metadataPropCount > 0) {
-                        // remember the metadata props
-                        metadataProps = executeQuery(QString::fromLatin1("select ?p ?o where { graph %1 { %2 ?p ?o . FILTER(%3) . } . }")
-                                                     .arg(Soprano::Node::resourceToN3(g),
-                                                          Soprano::Node::resourceToN3(res),
-                                                          createResourceMetadataPropertyFilter(QLatin1String("?p"), false)),
-                                                     Soprano::Query::QueryLanguageSparql).allBindings();
-                    }
-
-                    removeAllStatements(res, Soprano::Node(), Soprano::Node(), g);
-                    removeAllStatements(Soprano::Node(), Soprano::Node(), res, g);
-
-                    foreach(const Soprano::BindingSet& set, metadataProps)  {
-                        addStatement(res, set["p"], set["o"], g);
-                    }
-
-                    // update mtime
-                    if(mtimeGraph.isEmpty()) {
-                        mtimeGraph = createGraph(app);
-                        if(lastError()) {
-                            return;
-                        }
-                    }
-                    updateModificationDate(res, mtimeGraph, now);
+                //
+                // We cannot remove the metadata if the resource is not removed completely
+                // Thus, we re-add them later on.
+                // trueg: as soon as we have real inference and do not rely on the crappy inferencer to update types via the
+                //        Soprano statement manipulation methods we can use powerful queries like this one:
+                //                    executeQuery(QString::fromLatin1("delete from %1 { %2 ?p ?o . } where { %2 ?p ?o . FILTER(%3) . }")
+                //                                 .arg(Soprano::Node::resourceToN3(g),
+                //                                      Soprano::Node::resourceToN3(res),
+                //                                      createResourceMetadataPropertyFilter(QLatin1String("?p"))),
+                //                                 Soprano::Query::QueryLanguageSparql);
+                //
+                QList<Soprano::BindingSet> metadataProps;
+                if(metadataPropCount > 0) {
+                    // remember the metadata props
+                    metadataProps = executeQuery(QString::fromLatin1("select ?p ?o where { graph %1 { %2 ?p ?o . FILTER(%3) . } . }")
+                                                 .arg(Soprano::Node::resourceToN3(g),
+                                                      Soprano::Node::resourceToN3(res),
+                                                      createResourceMetadataPropertyFilter(QLatin1String("?p"), false)),
+                                                 Soprano::Query::QueryLanguageSparql).allBindings();
                 }
+
+                removeAllStatements(res, Soprano::Node(), Soprano::Node(), g);
+                removeAllStatements(Soprano::Node(), Soprano::Node(), res, g);
+
+                //
+                // we put all resource metadata in the one metadata graph which is not maintained by any application
+                // This is to make sure no resource data is maintained by the calling app after this method returns
+                //
+                if(metadataGraph.isEmpty()) {
+                    metadataGraph = createGraph();
+                    if(lastError()) {
+                        return;
+                    }
+                }
+
+                foreach(const Soprano::BindingSet& set, metadataProps)  {
+                    addStatement(res, set["p"], set["o"], metadataGraph);
+                }
+                updateModificationDate(res, metadataGraph, now);
             }
 
             graphs.insert(g);
@@ -1753,7 +1754,7 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString& app, const QMultiH
     if(!graphMetaData.contains(NAO::created())) {
         graphMetaData.insert(NAO::created(), Soprano::LiteralValue(QDateTime::currentDateTime()));
     }
-    if(!graphMetaData.contains(NAO::maintainedBy())) {
+    if(!graphMetaData.contains(NAO::maintainedBy()) && !app.isEmpty()) {
         graphMetaData.insert(NAO::maintainedBy(), findApplicationResource(app));
     }
 

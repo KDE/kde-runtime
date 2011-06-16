@@ -31,10 +31,11 @@ target_link_libraries(nepomukcontroller
   )
 
 install(
-  FILES nepomukcontroller.desktop
+  PROGRAMS nepomukcontroller.desktop
   DESTINATION ${XDG_APPS_INSTALL_DIR})
-
+install(
+  PROGRAMS nepomukcontroller.desktop
+  DESTINATION ${AUTOSTART_INSTALL_DIR})
 install(
   TARGETS nepomukcontroller
   ${INSTALL_TARGETS_DEFAULT_ARGS})
-# -----------------------------

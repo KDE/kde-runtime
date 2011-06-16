@@ -411,8 +411,10 @@ void Nepomuk::StrigiIndexWriter::startAnalysis( const AnalysisResult* idx )
     FileMetaData* data = new FileMetaData( idx, d->resourceUri );
 
     // remove previously indexed data
-    Nepomuk::clearLegacyIndexedDataForResourceUri( data->resourceUri );
-    Nepomuk::clearIndexedData(data->resourceUri);
+    if( !data->resourceUri.isEmpty() ) {
+        Nepomuk::clearLegacyIndexedDataForResourceUri( data->resourceUri );
+        Nepomuk::clearIndexedData(data->resourceUri);
+    }
 
     // It is important to keep the resource URI between updates (especially for sharing of files)
     // However, when updating data from pre-KDE 4.4 times we want to get rid of old file:/ resource
@@ -592,7 +594,7 @@ void Nepomuk::StrigiIndexWriter::addTriplet( const std::string& s,
 
     Soprano::Node subject( createBlankOrResourceNode( s ) );
     subject = convertToMainResource( subject, md );
-    
+
     Nepomuk::Types::Property property( QUrl( QString::fromUtf8(p.c_str()) ) ); // Was mapped earlier
     Soprano::Node object;
     if ( property.range().isValid() ) {
@@ -601,7 +603,7 @@ void Nepomuk::StrigiIndexWriter::addTriplet( const std::string& s,
     }
     else
         object = Soprano::LiteralValue::fromString( QString::fromUtf8( o.c_str() ), property.literalRangeType().dataTypeUri() );
-    
+
     if( object.isValid() )
         d->feeder->addStatement( subject, property.uri(), object );
     else {
