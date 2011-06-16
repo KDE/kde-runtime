@@ -125,6 +125,8 @@ namespace Nepomuk {
     public Q_SLOTS:
         void suspend();
         void resume();
+
+        //vHanda: Are these 2 required?
         void stop();
         void restart();
 
@@ -165,6 +167,7 @@ namespace Nepomuk {
     Q_SIGNALS:
         void indexingStarted();
         void indexingStopped();
+
         /// a combination of the two signals above
         void indexingStateChanged( bool indexing );
         void indexingFolder( const QString& );
@@ -184,7 +187,7 @@ namespace Nepomuk {
          * finally recursivly analyzes all the subfolders in \p dir IF \p flags
          * contains the 'UpdateRecursive' flag. It even sets m_currentFolder
          *
-         * Returns true if the folder was analyzer
+         * Returns true if the folder was analyzed
          */
         bool analyzeDir( const QString& dir, UpdateDirFlags flags );
 
@@ -200,15 +203,13 @@ namespace Nepomuk {
         // no signal is emitted twice
         void setIndexingStarted( bool started );
 
-        void restartTimer();
+        void callDoIndexing();
 
         bool m_suspended;
         bool m_stopped;
         bool m_indexing;
 
         QMutex m_resumeStopMutex;
-
-        QTimer m_timer;
 
         // A specialized queue that gives priority to dirs that do not use the AutoUpdateFolder flag.
         class UpdateDirQueue : public QQueue<QPair<QString, UpdateDirFlags> >
