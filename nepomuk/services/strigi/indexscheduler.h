@@ -37,6 +37,7 @@ class QByteArray;
 
 namespace Nepomuk {
 
+    class IndexCleaner;
     /**
      * The IndexScheduler performs the normal indexing,
      * ie. the initial indexing and the timed updates
@@ -176,6 +177,7 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void slotConfigChanged();
+        void slotCleaningDone();
         void slotIndexingDone( KJob* job );
         void doIndexing();
 
@@ -230,6 +232,7 @@ namespace Nepomuk {
         KUrl m_currentUrl;
 
         IndexingSpeed m_speed;
+        IndexCleaner* m_cleaner;
     };
 
     QDebug operator<<( QDebug dbg, IndexScheduler::IndexingSpeed speed );
