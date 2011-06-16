@@ -22,11 +22,10 @@
 #ifndef _NEPOMUK_INDEXER_H_
 #define _NEPOMUK_INDEXER_H_
 
-#include <QtCore/QObject>
+#include <KJob>
+#include <KUrl>
 
-class KUrl;
-class QDateTime;
-class QDataStream;
+class KProcess;
 class QFileInfo;
 
 namespace Nepomuk {
@@ -48,57 +47,36 @@ namespace Nepomuk {
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */
-    class Indexer : public QObject
+    class Indexer : public KJob
     {
         Q_OBJECT
 
     public:
-        /**
-         * Create a new indexer.
-         */
-        Indexer( QObject* parent = 0 );
+        Indexer( const QFileInfo& info, QObject* parent = 0 );
+        Indexer( const KUrl& localUrl, QObject* parent = 0 );
 
-        /**
-         * Destructor
-         */
-        ~Indexer();
-
-        /**
-         * Index a single local file or folder (files in a folder will
-         * not be indexed recursively).
-         */
-        void indexFile( const KUrl& localUrl );
-
-        /**
-         * Index a single local file or folder (files in a folder will
-         * not be indexed recursively). This method does the exact same
-         * as the above except that it saves an addditional stat of the
-         * file.
-         */
-        void indexFile( const QFileInfo& info );
+        virtual void start();
 
         /**
          * Remove all indexed data for the file/resource identified by \p res.
          */
-        void clearIndexedData( const Nepomuk::Resource& res );
+        static void clearIndexedData( const Nepomuk::Resource& res );
 
         /**
          * \overload
          *
          * Remove all indexed data for the file at local url \p url.
          */
-        void clearIndexedData( const KUrl& url );
+        static void clearIndexedData( const KUrl& url );
 
         /**
          * \overload
          *
          * Remove all indexed data for the file identifies by \p info.
          */
-        void clearIndexedData( const QFileInfo& info );
+        static void clearIndexedData( const QFileInfo& info );
 
     Q_SIGNALS:
-        void indexingDone();
-
         /**
          * Emitted once the indexing for a file or resource has finished.
          *
@@ -113,6 +91,11 @@ namespace Nepomuk {
 
     private slots:
         void slotIndexedFile(int exitCode);
+
+    private:
+        KUrl m_url;
+        KProcess* m_process;
+        int m_exitCode;
     };
 }
 

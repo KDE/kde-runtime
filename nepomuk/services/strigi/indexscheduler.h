@@ -31,12 +31,11 @@
 
 #include <KUrl>
 
+class KJob;
 class QFileInfo;
 class QByteArray;
 
 namespace Nepomuk {
-
-    class Indexer;
 
     /**
      * The IndexScheduler performs the normal indexing,
@@ -174,7 +173,7 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void slotConfigChanged();
-        void slotIndexingDone();
+        void slotIndexingDone( KJob* job );
         void doIndexing();
 
     private:
@@ -184,8 +183,10 @@ namespace Nepomuk {
          * It first indexes \p dir. Then it indexes all the files in \p dir, and
          * finally recursivly analyzes all the subfolders in \p dir IF \p flags
          * contains the 'UpdateRecursive' flag. It even sets m_currentFolder
+         *
+         * Returns true if the folder was analyzer
          */
-        void analyzeDir( const QString& dir, UpdateDirFlags flags );
+        bool analyzeDir( const QString& dir, UpdateDirFlags flags );
 
         void queueAllFoldersForUpdate( bool forceUpdate = false );
 
@@ -208,7 +209,6 @@ namespace Nepomuk {
         QMutex m_resumeStopMutex;
 
         QTimer m_timer;
-        Indexer* m_indexer;
 
         // A specialized queue that gives priority to dirs that do not use the AutoUpdateFolder flag.
         class UpdateDirQueue : public QQueue<QPair<QString, UpdateDirFlags> >
