@@ -183,13 +183,16 @@ void Nepomuk::IndexScheduler::UpdateDirQueue::clearByFlags( UpdateDirFlags mask 
 
 
 Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
-    : QThread( parent ),
+    : QObject( parent ),
       m_suspended( false ),
-      m_stopped( false ),
       m_indexing( false ),
-      m_speed( FullSpeed ),
-      m_cleaner( 0 )
+      m_speed( FullSpeed )
 {
+    m_cleaner = new IndexCleaner();
+    m_cleaner->start();
+
+    connect( m_cleaner, SIGNAL(finished(KJob*)), this, SLOT(slotCleaningDone()) );
+
     connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( slotConfigChanged() ) );
 }
@@ -202,7 +205,7 @@ Nepomuk::IndexScheduler::~IndexScheduler()
 
 void Nepomuk::IndexScheduler::suspend()
 {
-    if ( isRunning() && !m_suspended ) {
+    if ( !m_suspended ) {
         QMutexLocker locker( &m_resumeStopMutex );
         m_suspended = true;
         if( m_cleaner ) {
@@ -215,7 +218,7 @@ void Nepomuk::IndexScheduler::suspend()
 
 void Nepomuk::IndexScheduler::resume()
 {
-    if ( isRunning() && m_suspended ) {
+    if ( m_suspended ) {
         QMutexLocker locker( &m_resumeStopMutex );
         m_suspended = false;
 
@@ -239,25 +242,6 @@ void Nepomuk::IndexScheduler::setSuspended( bool suspended )
 }
 
 
-void Nepomuk::IndexScheduler::stop()
-{
-    if ( isRunning() ) {
-        QMutexLocker locker( &m_resumeStopMutex );
-        m_stopped = true;
-        m_suspended = false;
-        this->quit();
-    }
-}
-
-
-void Nepomuk::IndexScheduler::restart()
-{
-    stop();
-    wait();
-    start();
-}
-
-
 void Nepomuk::IndexScheduler::setIndexingSpeed( IndexingSpeed speed )
 {
     kDebug() << speed;
@@ -276,7 +260,7 @@ void Nepomuk::IndexScheduler::setReducedIndexingSpeed( bool reduced )
 
 bool Nepomuk::IndexScheduler::isSuspended() const
 {
-    return isRunning() && m_suspended;
+    return m_suspended;
 }
 
 
@@ -311,19 +295,6 @@ void Nepomuk::IndexScheduler::setIndexingStarted( bool started )
 }
 
 
-void Nepomuk::IndexScheduler::run()
-{
-    // set lowest priority for this thread
-    setPriority( QThread::IdlePriority );
-
-    m_cleaner = new IndexCleaner();
-    m_cleaner->start();
-
-    connect( m_cleaner, SIGNAL(finished(KJob*)), this, SLOT(slotCleaningDone()) );
-
-    QThread::exec();
-}
-
 void Nepomuk::IndexScheduler::slotCleaningDone()
 {
     // initialization
@@ -331,7 +302,6 @@ void Nepomuk::IndexScheduler::slotCleaningDone()
 
     // reset state
     m_suspended = false;
-    m_stopped = false;
     m_cleaner = 0;
 
     callDoIndexing();
@@ -489,7 +459,7 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
 
 void Nepomuk::IndexScheduler::callDoIndexing()
 {
-    if( !m_suspended && !m_stopped ) {
+    if( !m_suspended ) {
         uint delay = 0;
         if ( m_speed != FullSpeed ) {
             delay = (m_speed == ReducedSpeed) ? s_reducedSpeedDelay : s_snailPaceDelay;
@@ -539,8 +509,14 @@ void Nepomuk::IndexScheduler::queueAllFoldersForUpdate( bool forceUpdate )
 void Nepomuk::IndexScheduler::slotConfigChanged()
 {
     // restart to make sure we update all folders and removeOldAndUnwantedEntries
-    if ( isRunning() )
-        restart();
+    if( m_cleaner ) {
+        m_cleaner->kill();
+        delete m_cleaner;
+    }
+
+    m_cleaner = new IndexCleaner( this );
+    connect( m_cleaner, SIGNAL(finished(KJob*)), this, SLOT(slotCleaningDone()) );
+    m_cleaner->start();
 }
 
 
