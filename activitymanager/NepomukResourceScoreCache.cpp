@@ -113,7 +113,7 @@ void NepomukResourceScoreCache::updateScore()
     kDebug() << "Last modified timestamp is" << lastModified << lastModified.isValid();
 
     const QString query
-        = QString::fromLatin1("select ?r where { "
+        = QString::fromLatin1("select distinct ?r where { "
                                   "?r a %1 . "
                                   "?r %2 ?end . "
                                   "FILTER(?end > %3) ."
