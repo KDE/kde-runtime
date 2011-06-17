@@ -185,6 +185,10 @@ Soprano::Error::ErrorCode Nepomuk::DataManagementModel::updateModificationDate(c
 
 Soprano::Error::ErrorCode Nepomuk::DataManagementModel::updateModificationDate(const QSet<QUrl>& resources, const QUrl & graph, const QDateTime& date, bool includeCreationDate)
 {
+    if(resources.isEmpty()) {
+        return Soprano::Error::ErrorNone;
+    }
+
     QUrl metadataGraph(graph);
     if(metadataGraph.isEmpty()) {
         metadataGraph = createGraph();
@@ -864,19 +868,31 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
         actuallyRemovedResources << it[1].uri();
     }
 
+    // get the resources that we modify by removing relations to one of the deleted ones
+    QSet<QUrl> modifiedResources;
+    it = executeQuery(QString::fromLatin1("select distinct ?g ?o where { graph ?g { ?o ?p ?r . } . FILTER(?r in (%1)) . }")
+                      .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                      Soprano::Query::QueryLanguageSparql);
+    while(it.next()) {
+        graphs << it[0].uri();
+        modifiedResources << it[1].uri();
+    }
+    modifiedResources -= actuallyRemovedResources;
+
+
     // remove the resources
     foreach(const Soprano::Node& res, actuallyRemovedResources) {
         removeAllStatements(res, Soprano::Node(), Soprano::Node());
         removeAllStatements(Soprano::Node(), Soprano::Node(), res);
     }
+    updateModificationDate(modifiedResources);
+    removeTrailingGraphs(graphs);
 
     // inform interested parties
     // TODO: ideally we should also report the types the removed resources had
     foreach(const Soprano::Node& res, actuallyRemovedResources) {
         d->m_watchManager.removeResource(res.uri(), QList<QUrl>());
     }
-
-    removeTrailingGraphs(graphs);
 }
 
 void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &resources, RemovalFlags flags, const QString &app)

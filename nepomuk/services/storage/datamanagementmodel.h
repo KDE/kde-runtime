@@ -226,13 +226,13 @@ private:
      * Updates the modification date of \p resource to \p date.
      * Adds the new statement in \p graph.
      */
-    Soprano::Error::ErrorCode updateModificationDate( const QUrl& resource, const QUrl& graph, const QDateTime& date = QDateTime::currentDateTime(), bool includeCreationDate = false );
+    Soprano::Error::ErrorCode updateModificationDate( const QUrl& resource, const QUrl& graph = QUrl(), const QDateTime& date = QDateTime::currentDateTime(), bool includeCreationDate = false );
 
     /**
      * Updates the modification date of \p resources to \p date.
      * Adds the new statement in \p graph.
      */
-    Soprano::Error::ErrorCode updateModificationDate( const QSet<QUrl>& resources, const QUrl& graph, const QDateTime& date = QDateTime::currentDateTime(), bool includeCreationDate = false );
+    Soprano::Error::ErrorCode updateModificationDate( const QSet<QUrl>& resources, const QUrl& graph = QUrl(), const QDateTime& date = QDateTime::currentDateTime(), bool includeCreationDate = false );
 
     /**
      * Removes all the graphs from \p graphs which do not contain any statements
