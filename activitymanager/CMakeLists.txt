@@ -3,6 +3,7 @@ project(ActivityManager)
 set (ADDITIONAL_LINK_LIBS)
 
 add_subdirectory(kded)
+add_subdirectory(ontologies)
 
 # Checking for Nepomuk
 macro_optional_find_package(Nepomuk)
@@ -84,6 +85,11 @@ if(Nepomuk_FOUND)
     soprano_add_ontology(activity_manager_SRCS
         ${CMAKE_SOURCE_DIR}/nepomuk/ontologies/kext.trig
         "KExt" "Nepomuk::Vocabulary" "trig"
+        )
+
+    soprano_add_ontology(activity_manager_SRCS
+        ${CMAKE_CURRENT_SOURCE_DIR}/ontologies/krso.trig
+        "KRSO" "Nepomuk::Vocabulary" "trig"
         )
 
     soprano_add_ontology(activity_manager_SRCS

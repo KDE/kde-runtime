@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2010-2011 Sebastian Trueg <trueg@kde.org>
+# Copyright (c) 2010-2011 Ivan Cukic <ivan.cukic@kde.org>
 # All rights reserved, licensed under either CC-BY or BSD.
 #
 # You are free:
@@ -39,74 +39,62 @@
 @prefix nie:     <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix kext:    <http://nepomuk.kde.org/ontologies/2010/11/29/kext#> .
+@prefix krso:    <http://nepomuk.kde.org/ontologies/2010/11/29/krso#> .
 @prefix nfo:     <http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#> .
 
-kext: {
-    kext:unixFileMode
-          a      rdf:Property ;
-          rdfs:label "Unix file mode" ;
-          rdfs:comment "The file mode value as seen on unix file systems." ;
-          rdfs:domain nfo:FileDataObject ;
-          rdfs:range xsd:integer ;
-          nao:userVisible false .
-
-    kext:unixFileOwner
-          a      rdf:Property ;
-          rdfs:label "Unix file owner" ;
-          rdfs:comment "The owner of the file as seen on unix file systems. This is intended as the low-level counterpart to nfo:owner." ;
-          rdfs:domain nfo:FileDataObject ;
-          rdfs:range xsd:string ;
-          nao:userVisible false .
-
-    kext:unixFileGroup
-          a      rdf:Property ;
-          rdfs:label "Unix file group" ;
-          rdfs:comment "The group of the file as seen on unix file systems." ;
-          rdfs:domain nfo:FileDataObject ;
-          rdfs:range xsd:string ;
-          nao:userVisible false .
-
-    kext:Activity
+krso: {
+    krso:ResourceScoreCache
           a rdfs:Class ;
           rdfs:subClassOf rdfs:Resource ;
-          rdfs:label "activity" ;
-          rdfs:comment "A Plasma activity." .
-
-    kext:usedActivity
-          a rdf:Property ;
-          rdfs:label "used activity" ;
-          rdfs:comment "The activity that was active when resource was created. This is mostly used for graphs or desktop events." ;
-          rdfs:domain rdfs:Resource ;
-          rdfs:range kext:Activity ;
+          rdfs:label "Resource score cache" ;
+          rdfs:comment "For storing the automatically calculated score based on the usage statistics" ;
           nao:userVisible false .
 
-    kext:activityIdentifier
+    krso:targettedResource
           a rdf:Property ;
-          rdfs:subPropertyOf nao:identifier ;
-          rdfs:label "activity identifier" ;
-          rdfs:comment "The unique ID of the activity as used outside of Nepomuk. Typically this is a UUID." ;
-          rdfs:domain kext:Activity ;
-          rdfs:range xsd:string ;
-          nao:userVisible false .
+          rdfs:comment "Resource for which the score is calculated." ;
+          rdfs:domain krso:ResourceScoreCache ;
+          rdfs:label "resource" ;
+          rdfs:range rdfs:Resource .
 
+    krso:initiatingAgent
+          a rdf:Property ;
+          rdfs:comment "Relates the score to the agent initiating the events." ;
+          rdfs:domain krso:ResourceScoreCache ;
+          rdfs:label "involved agent" ;
+          rdfs:range nao:Agent .
+
+    krso:involvesActivity
+          a rdf:Property ;
+          rdfs:comment "Relates the score to the activity in which the events happened." ;
+          rdfs:domain krso:ResourceScoreCache ;
+          rdfs:label "involved activity" ;
+          rdfs:range krso:Activity .
+
+    krso:cachedScore
+          a rdf:Property ;
+          rdfs:subPropertyOf nao:score ;
+          rdfs:comment "The automatically calculated score" ;
+          rdfs:domain krso:ResourceScoreCache ;
+          rdfs:label "calculated score" ;
+          rdfs:range xsd:float .
 }
 
-<http://nepomuk.kde.org/ontologies/2010/11/29/kext/metadata> {
-    <http://nepomuk.kde.org/ontologies/2010/11/29/kext/metadata>
+<http://nepomuk.kde.org/ontologies/2010/11/29/krso/metadata> {
+    <http://nepomuk.kde.org/ontologies/2010/11/29/krso/metadata>
           a       nrl:GraphMetadata ;
-          nrl:coreGraphMetadataFor kext: .
+          nrl:coreGraphMetadataFor krso: .
 
 
-    kext:
+    krso:
           a       nrl:Ontology , nrl:DocumentGraph ;
-          nao:prefLabel "KDE Extensions Ontology" ;
-          nao:hasDefaultNamespace "http://nepomuk.kde.org/ontologies/2010/11/29/kext#" ;
-          nao:hasDefaultNamespaceAbbreviation "kext" ;
-          nao:lastModified "2011-05-10T12:31:43Z" ;
+          nao:prefLabel "KDE Resource Scoring Ontology" ;
+          nao:hasDefaultNamespace "http://nepomuk.kde.org/ontologies/2011/06/17/krso#" ;
+          nao:hasDefaultNamespaceAbbreviation "krso" ;
+          nao:lastModified "2011-06-17T11:00:43Z" ;
           nao:serializationLanguage "TriG" ;
           nao:status "Unstable" ;
           nrl:updatable "0" ;
-          nao:version "2" .
+          nao:version "1" .
 }
 
