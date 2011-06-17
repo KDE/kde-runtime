@@ -973,10 +973,29 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                                 createResourceMetadataPropertyFilter(QLatin1String("?mp"), false)),
                            Soprano::Query::QueryLanguageSparql).allElements();
 
+
+    // the set of resources that we did modify but not remove entirely
+    QSet<QUrl> modifiedResources;
+
+
+    //
+    // Fetch all resources that are changed, ie. that are related to the deleted resource in some way.
+    // We need to update the mtime of those resources, too.
+    //
+    Soprano::QueryResultIterator relatedResIt = executeQuery(QString::fromLatin1("select distinct ?r where { "
+                                                                                 "?r ?p ?rr . "
+                                                                                 "FILTER(?rr in (%1)) . "
+                                                                                 "FILTER(!(?r in (%1))) . }")
+                                                             .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                                                             Soprano::Query::QueryLanguageSparql);
+    while(relatedResIt.next()) {
+        modifiedResources.insert(relatedResIt[0].uri());
+    }
+
+
     // remove the resources
     // Other apps might be maintainer, too. In that case only remove the app as a maintainer but keep the data
     QSet<QUrl> graphs;
-    QSet<QUrl> modifiedResources;
     const QDateTime now = QDateTime::currentDateTime();
     QUrl metadataGraph;
     for(QList<Soprano::BindingSet>::const_iterator it = graphRemovalCandidates.constBegin(); it != graphRemovalCandidates.constEnd(); ++it) {
