@@ -961,12 +961,12 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
             = executeQuery(QString::fromLatin1("select distinct "
                                                "?g "
                                                "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
-                                               "(select count (*) where { graph ?g { ?r ?mp ?mo . FILTER(%4) . } . }) as ?mc "
-                                               "(select count (*) where { graph ?g { ?r ?sp ?so . } . }) as ?total "
+                                               "(select count (*) where { graph ?g { ?r ?mp ?mo . FILTER(?r in (%3)) . FILTER(%4) . } . }) as ?mc "
+                                               "(select count (*) where { graph ?g { ?r ?sp ?so . FILTER(?r in (%3)) . } . }) as ?total "
                                                "where { "
                                                "graph ?g { ?r ?p ?o . } . "
                                                "?g %1 %2 . "
-                                               "FILTER(?r in (%3)) . }")
+                                               "FILTER(?r in (%3) || ?o in (%3)) . }")
                            .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
                                 Soprano::Node::resourceToN3(appRes),
                                 resourcesToN3(resolvedResources).join(QLatin1String(",")),
@@ -983,10 +983,13 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // We need to update the mtime of those resources, too.
     //
     Soprano::QueryResultIterator relatedResIt = executeQuery(QString::fromLatin1("select distinct ?r where { "
-                                                                                 "?r ?p ?rr . "
-                                                                                 "FILTER(?rr in (%1)) . "
-                                                                                 "FILTER(!(?r in (%1))) . }")
-                                                             .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                                                                                 "graph ?g { ?r ?p ?rr . } . "
+                                                                                 "?g %1 %2 . "
+                                                                                 "FILTER(?rr in (%3)) . "
+                                                                                 "FILTER(!(?r in (%3))) . }")
+                                                             .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                                                  Soprano::Node::resourceToN3(appRes),
+                                                                  resourcesToN3(resolvedResources).join(QLatin1String(","))),
                                                              Soprano::Query::QueryLanguageSparql);
     while(relatedResIt.next()) {
         modifiedResources.insert(relatedResIt[0].uri());
