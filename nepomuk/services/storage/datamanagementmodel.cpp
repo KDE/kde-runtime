@@ -962,7 +962,6 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                                                "?g "
                                                "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
                                                "(select count (*) where { graph ?g { ?r ?mp ?mo . FILTER(?r in (%3)) . FILTER(%4) . } . }) as ?mc "
-                                               "(select count (*) where { graph ?g { ?r ?sp ?so . FILTER(?r in (%3)) . } . }) as ?total "
                                                "where { "
                                                "graph ?g { ?r ?p ?o . } . "
                                                "?g %1 %2 . "
@@ -1005,7 +1004,6 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
         const QUrl g = it->value("g").uri();
         const int appCnt = it->value("c").literal().toInt();
         const int metadataPropCount = it->value("mc").literal().toInt();
-        const int totalCount = it->value("total").literal().toInt() - metadataPropCount;
         if(appCnt == 1) {
             foreach(const QUrl& res, resolvedResources) {
                 //
@@ -1029,6 +1027,15 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                                                  Soprano::Query::QueryLanguageSparql).allBindings();
                 }
 
+                const int totalCount = executeQuery(QString::fromLatin1("select count(*) where { graph %1 { %2 ?p ?o . FILTER(%3) . } . }")
+                                                    .arg(Soprano::Node::resourceToN3(g),
+                                                         Soprano::Node::resourceToN3(res),
+                                                         createResourceMetadataPropertyFilter(QLatin1String("?p"), true)),
+                                                    Soprano::Query::QueryLanguageSparql).allBindings().first()[0].literal().toInt();
+                if(totalCount > 0) {
+                    modifiedResources.insert(res);
+                }
+
                 removeAllStatements(res, Soprano::Node(), Soprano::Node(), g);
                 removeAllStatements(Soprano::Node(), Soprano::Node(), res, g);
 
@@ -1045,10 +1052,6 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
 
                 foreach(const Soprano::BindingSet& set, metadataProps)  {
                     addStatement(res, set["p"], set["o"], metadataGraph);
-                }
-
-                if(totalCount > 0) {
-                    modifiedResources.insert(res);
                 }
             }
 
