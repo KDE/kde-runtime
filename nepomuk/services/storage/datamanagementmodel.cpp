@@ -1027,12 +1027,14 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                                                  Soprano::Query::QueryLanguageSparql).allBindings();
                 }
 
-                const int totalCount = executeQuery(QString::fromLatin1("select count(*) where { graph %1 { %2 ?p ?o . FILTER(%3) . } . }")
+                //
+                // check if we actually remove any properties and only then update the mtime of the resource
+                //
+                if(executeQuery(QString::fromLatin1("ask where { graph %1 { %2 ?p ?o . FILTER(%3) . } . }")
                                                     .arg(Soprano::Node::resourceToN3(g),
                                                          Soprano::Node::resourceToN3(res),
                                                          createResourceMetadataPropertyFilter(QLatin1String("?p"), true)),
-                                                    Soprano::Query::QueryLanguageSparql).allBindings().first()[0].literal().toInt();
-                if(totalCount > 0) {
+                                                    Soprano::Query::QueryLanguageSparql).boolValue()) {
                     modifiedResources.insert(res);
                 }
 
