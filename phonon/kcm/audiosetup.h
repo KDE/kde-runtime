@@ -17,26 +17,26 @@
 
 */
 
-#ifndef PHONON_SPEAKERSETUP_H
-#define PHONON_SPEAKERSETUP_H
+#ifndef PHONON_AUDIOSETUP_H
+#define PHONON_AUDIOSETUP_H
 
 #include <canberra.h>
 #include <pulse/pulseaudio.h>
 
-#include "ui_speakersetup.h"
+#include "ui_audiosetup.h"
 #define KDE3_SUPPORT
 #include <kcmodule.h>
 #undef KDE3_SUPPORT
 #include <kconfig.h>
 
-//class QLabel;
+class QTimer;
 
-class SpeakerSetup : public QWidget, private Ui::SpeakerSetup
+class AudioSetup : public QWidget, private Ui::AudioSetup
 {
     Q_OBJECT
     public:
-        SpeakerSetup(QWidget *parent = 0);
-        ~SpeakerSetup();
+        AudioSetup(QWidget *parent = 0);
+        ~AudioSetup();
 
         void load();
         void save();
@@ -46,14 +46,18 @@ class SpeakerSetup : public QWidget, private Ui::SpeakerSetup
         void removeCard(uint32_t idx);
         void updateSink(const pa_sink_info*);
         void removeSink(uint32_t idx);
+        void updateSource(const pa_source_info*);
+        void removeSource(uint32_t idx);
         void updateFromPulse();
         void updateIndependantDevices();
+        void updateVUMeter(int vol);
 
     public Q_SLOTS:
         void cardChanged();
         void profileChanged();
-        void sinkChanged();
+        void deviceChanged();
         void portChanged();
+        void reallyUpdateVUMeter();
 
     Q_SIGNALS:
         void changed();
@@ -61,10 +65,15 @@ class SpeakerSetup : public QWidget, private Ui::SpeakerSetup
 
     private:
         void _updatePlacementTester();
+        void _createMonitorStreamForSource(uint32_t);
 
         QLabel* m_Icon;
         int m_OutstandingRequests;
         ca_context* m_Canberra;
+        pa_stream* m_VUStream;
+        int m_VURealValue;
+        QTimer* m_VUTimer;
+  
 };
 
-#endif // PHONON_SPEAKERSETUP_H
+#endif // PHONON_AUDIOSETUP_H

@@ -493,7 +493,7 @@ void CrappyInferencer2::updateInferenceIndex()
     int cnt = 0;
     for( QHash<QUrl, QSet<QUrl> >::const_iterator it = d->m_superClasses.constBegin();
          it != d->m_superClasses.constEnd(); ++it ) {
-        kDebug() << it.key() << "->" << it.value();
+        //kDebug() << it.key() << "->" << it.value();
         cnt += it.value().count();
     }
     kDebug() << "Number of classes:           " << d->m_superClasses.count();

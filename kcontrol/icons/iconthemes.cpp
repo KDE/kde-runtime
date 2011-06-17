@@ -32,6 +32,7 @@
 #include <QHBoxLayout>
 #include <QTreeWidget>
 #include <QPainter>
+#include <QSvgRenderer>
 
 #include <kdebug.h>
 #include <kapplication.h>
@@ -39,7 +40,6 @@
 #include <klocale.h>
 #include <kshareddatacache.h>
 #include <kpushbutton.h>
-#include <ksvgrenderer.h>
 #include <kstandarddirs.h>
 #include <kservice.h>
 #include <kconfig.h>
@@ -411,7 +411,7 @@ void IconThemesConfig::updateRemoveButton()
 void loadPreview(QLabel *label, KIconTheme& icontheme, const QStringList& iconnames)
 {
     const int size = qMin(48, icontheme.defaultSize(KIconLoader::Desktop));
-    KSvgRenderer renderer;
+    QSvgRenderer renderer;
     foreach(const QString &name, iconnames) {
         K3Icon icon = icontheme.iconPath(QString("%1.png").arg(name), size, KIconLoader::MatchBest);
         if (icon.isValid()) {

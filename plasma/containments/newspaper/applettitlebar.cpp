@@ -47,6 +47,7 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
     {
+        Q_UNUSED(widget);
         painter->save();
 
         QColor c(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));

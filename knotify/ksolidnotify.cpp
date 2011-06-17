@@ -201,6 +201,7 @@ void KSolidNotify::storageEjectDone(Solid::ErrorType error, QVariant errorData, 
 
 void KSolidNotify::slotServiceOwnerChanged( const QString & serviceName, const QString & oldOwner, const QString & newOwner )
 {
+        Q_UNUSED(serviceName);
 	if (newOwner.isEmpty())
 		m_dbusServiceExists = false;
 	else if (oldOwner.isEmpty())

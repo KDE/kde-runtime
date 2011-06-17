@@ -365,7 +365,13 @@ void NotifyByPopup::getAppCaptionAndIconName(KNotifyConfig *config, QString *app
 {
 	KConfigGroup globalgroup(&(*config->eventsfile), "Global");
 	*appCaption = globalgroup.readEntry("Name", globalgroup.readEntry("Comment", config->appname));
-	*iconName = globalgroup.readEntry("IconName", config->appname);
+
+	KConfigGroup eventGroup(&(*config->eventsfile), QString("Event/%1").arg(config->eventid));
+	if (eventGroup.hasKey("IconName")) {
+		*iconName = eventGroup.readEntry("IconName", config->appname);
+	} else {
+		*iconName = globalgroup.readEntry("IconName", config->appname);
+	}
 }
 
 bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* config_nocheck)

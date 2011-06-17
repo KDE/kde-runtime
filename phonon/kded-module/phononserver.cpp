@@ -239,19 +239,16 @@ void PhononServer::findVirtualDevices()
             cardName = i18nc("%1 is the sound card name, %2 is the description in case it exists", "%1 (%2)", cardName, lines[1]);
         }
 
-        bool available = false;
         bool playbackDevice = false;
         bool captureDevice = false;
         {
             snd_pcm_t *pcm;
             const QByteArray &deviceNameEnc = alsaDeviceName.toUtf8();
             if (0 == snd_pcm_open(&pcm, deviceNameEnc.constData(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK /*open mode: non-blocking, sync */)) {
-                available = true;
                 playbackDevice = true;
                 snd_pcm_close(pcm);
             }
             if (0 == snd_pcm_open(&pcm, deviceNameEnc.constData(), SND_PCM_STREAM_CAPTURE, SND_PCM_NONBLOCK /*open mode: non-blocking, sync */)) {
-                available = true;
                 captureDevice = true;
                 snd_pcm_close(pcm);
             }

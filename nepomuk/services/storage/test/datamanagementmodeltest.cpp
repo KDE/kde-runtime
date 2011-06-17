@@ -36,6 +36,7 @@
 
 #include <KTemporaryFile>
 #include <KTempDir>
+#include <KTempDir>
 #include <KDebug>
 
 #include <Nepomuk/Vocabulary/NFO>
@@ -81,6 +82,12 @@ void DataManagementModelTest::resetModel()
 
     m_model->addStatement( QUrl("prop:/res"), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( QUrl("prop:/res"), RDFS::range(), RDFS::Resource(), graph );
+
+    m_model->addStatement( QUrl("prop:/res2"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/res2"), RDFS::range(), RDFS::Resource(), graph );
+
+    m_model->addStatement( QUrl("prop:/res3"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/res3"), RDFS::range(), RDFS::Resource(), graph );
 
     m_model->addStatement( QUrl("prop:/res_c1"), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( QUrl("prop:/res_c1"), RDFS::range(), RDFS::Resource(), graph );
@@ -144,6 +151,20 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NMM::performer(), RDFS::range(), NCO::Contact(), graph );
     m_model->addStatement( NMM::musicAlbum(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NMM::musicAlbum(), RDFS::range(), NMM::MusicAlbum(), graph );
+
+    // used by testStoreResources_duplicates
+    m_model->addStatement( NFO::hashAlgorithm(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NFO::hashAlgorithm(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NFO::hashValue(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NFO::hashValue(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NFO::hasHash(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NFO::hasHash(), RDFS::range(), NFO::FileHash(), graph );
+    m_model->addStatement( NFO::hasHash(), RDFS::domain(), NFO::FileDataObject(), graph );
+
+    m_model->addStatement( NIE::isPartOf(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NIE::isPartOf(), RDFS::range(), NFO::FileDataObject(), graph );
+    m_model->addStatement( NIE::lastModified(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NIE::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
 
     // rebuild the internals of the data management model
     m_classAndPropertyTree->rebuildTree(m_dmModel);
@@ -1690,6 +1711,56 @@ void DataManagementModelTest::testRemoveResources_protectedTypes()
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
+// make sure the mtime of related resources is updated properly
+void DataManagementModelTest::testRemoveResources_mtimeRelated()
+{
+    // first we create our apps and graphs (just to have some pseudo real data)
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+    m_model->addStatement(QUrl("app:/B"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/B"), NAO::identifier(), LiteralValue(QLatin1String("B")), appG);
+
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+    QUrl mg2;
+    const QUrl g2 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg2);
+    m_model->addStatement(g2, NAO::maintainedBy(), QUrl("app:/B"), mg2);
+
+    const QDateTime date = QDateTime::currentDateTime();
+
+
+    // now we create different resources
+    // A is the resource to be deleted
+    // B is related to A and its mtime needs update
+    // C is unrelated and no mtime change should occur
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(date), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(date), g1);
+
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
+    m_model->addStatement(QUrl("res:/B"), NAO::created(), LiteralValue(date), g1);
+    m_model->addStatement(QUrl("res:/B"), NAO::lastModified(), LiteralValue(date), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/res"), QUrl("res:/A"), g2);
+
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
+    m_model->addStatement(QUrl("res:/C"), NAO::created(), LiteralValue(date), g2);
+    m_model->addStatement(QUrl("res:/C"), NAO::lastModified(), LiteralValue(date), g2);
+
+
+    // now we remove res:/A
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+
+
+    // now only the mtime of B should have changed
+    QCOMPARE(m_model->listStatements(QUrl("res:/B"), NAO::lastModified(), Node()).allElements().count(), 1);
+    QVERIFY(m_model->listStatements(QUrl("res:/B"), NAO::lastModified(), Node()).allElements().first().object().literal().toDateTime() > date);
+
+    QCOMPARE(m_model->listStatements(QUrl("res:/C"), NAO::lastModified(), Node()).allElements().count(), 1);
+    QCOMPARE(m_model->listStatements(QUrl("res:/C"), NAO::lastModified(), Node()).allElements().first().object().literal().toDateTime(), date);
+}
+
 // the isolated test: create one graph with one resource, delete that resource
 void DataManagementModelTest::testRemoveDataByApplication1()
 {
@@ -2114,6 +2185,47 @@ void DataManagementModelTest::testRemoveDataByApplication10()
     QVERIFY(!haveTrailingGraphs());
 }
 
+// make sure that graphs which do not have a maintaining app are handled properly, too
+void DataManagementModelTest::testRemoveDataByApplication11()
+{
+    QTemporaryFile fileA;
+    fileA.open();
+
+    // create our app
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+
+    // create the resource to delete
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    // graph 2 does not have a maintaining app!
+    const QUrl g2 = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName()), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
+
+    // delete the resource
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+
+    // now the nie:url should still be there even though A created it
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName())));
+
+    // creation time should have been created
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::lastModified(), Node()));
+
+    // the foobar value should be gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+
+    // the "hello world" should still be there
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world"))));
+
+    QVERIFY(!haveTrailingGraphs());
+}
+
 // This is some real data that I have in my nepomuk repo
 void DataManagementModelTest::testRemoveDataByApplication_realLife()
 {
@@ -2265,6 +2377,164 @@ void DataManagementModelTest::testRemoveDataByApplication_nieUrl()
     QVERIFY( m_model->containsAnyStatement( res1, NIE::url(), fileUrl ) );
 }
 
+// make sure the mtime is updated properly in different situations
+void DataManagementModelTest::testRemoveDataByApplication_mtime()
+{
+    // first we create our apps and graphs
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+    m_model->addStatement(QUrl("app:/B"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/B"), NAO::identifier(), LiteralValue(QLatin1String("B")), appG);
+
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+    QUrl mg2;
+    const QUrl g2 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg2);
+    m_model->addStatement(g2, NAO::maintainedBy(), QUrl("app:/B"), mg2);
+
+    const QDateTime date = QDateTime::currentDateTime();
+
+
+    // now we create different resources
+    // A has actual data maintained by app:/A
+    // B has only metadata maintained by app:/A
+    // C has nothing maintained by app:/A
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello")), g2);
+    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(date), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(date), g1);
+
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
+    m_model->addStatement(QUrl("res:/B"), NAO::created(), LiteralValue(date), g1);
+    m_model->addStatement(QUrl("res:/B"), NAO::lastModified(), LiteralValue(date), g1);
+
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
+    m_model->addStatement(QUrl("res:/C"), NAO::created(), LiteralValue(date), g2);
+    m_model->addStatement(QUrl("res:/C"), NAO::lastModified(), LiteralValue(date), g2);
+
+
+    // we delete all three
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/B") << QUrl("res:/C"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+
+
+    // now only the mtime of A should have changed
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).allElements().count(), 1);
+    QVERIFY(m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).allElements().first().object().literal().toDateTime() > date);
+
+    QCOMPARE(m_model->listStatements(QUrl("res:/B"), NAO::lastModified(), Node()).allElements().count(), 1);
+    QCOMPARE(m_model->listStatements(QUrl("res:/B"), NAO::lastModified(), Node()).allElements().first().object().literal().toDateTime(), date);
+
+    QCOMPARE(m_model->listStatements(QUrl("res:/C"), NAO::lastModified(), Node()).allElements().count(), 1);
+    QCOMPARE(m_model->listStatements(QUrl("res:/C"), NAO::lastModified(), Node()).allElements().first().object().literal().toDateTime(), date);
+}
+
+// make sure the mtime of resources that are related to deleted ones is updated
+void DataManagementModelTest::testRemoveDataByApplication_mtimeRelated()
+{
+    // first we create our apps
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+    m_model->addStatement(QUrl("app:/B"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/B"), NAO::identifier(), LiteralValue(QLatin1String("B")), appG);
+
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+    QUrl mg2;
+    const QUrl g2 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg2);
+    m_model->addStatement(g2, NAO::maintainedBy(), QUrl("app:/B"), mg2);
+
+    const QDateTime date = QDateTime::currentDateTime();
+
+    // we three two resources - one to delete, and one which is related to the one to be deleted,
+    // one which is also related but will not be changed
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello")), g2);
+    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/res"), QUrl("res:/A"), g1);
+    m_model->addStatement(QUrl("res:/B"), NAO::created(), LiteralValue(date), g1);
+    m_model->addStatement(QUrl("res:/B"), NAO::lastModified(), LiteralValue(date), g1);
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/res"), QUrl("res:/A"), g2);
+    m_model->addStatement(QUrl("res:/C"), NAO::created(), LiteralValue(date), g2);
+    m_model->addStatement(QUrl("res:/C"), NAO::lastModified(), LiteralValue(date), g2);
+
+    // now we remove res:/A
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+
+    // now the mtime of res:/B should have been changed
+    QCOMPARE(m_model->listStatements(QUrl("res:/B"), NAO::lastModified(), Node()).allElements().count(), 1);
+    QVERIFY(m_model->listStatements(QUrl("res:/B"), NAO::lastModified(), Node()).allElements().first().object().literal().toDateTime() > date);
+
+    // the mtime of res:/C should NOT have changed
+    QCOMPARE(m_model->listStatements(QUrl("res:/C"), NAO::lastModified(), Node()).allElements().count(), 1);
+    QCOMPARE(m_model->listStatements(QUrl("res:/C"), NAO::lastModified(), Node()).allElements().first().object().literal().toDateTime(), date);
+}
+
+// make sure relations to removed resources are handled properly
+void DataManagementModelTest::testRemoveDataByApplication_related()
+{
+    // first we create our apps
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+    m_model->addStatement(QUrl("app:/B"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/B"), NAO::identifier(), LiteralValue(QLatin1String("B")), appG);
+
+    // we create 3 graphs, maintained by different apps
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+    QUrl mg2;
+    const QUrl g2 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg2);
+    m_model->addStatement(g2, NAO::maintainedBy(), QUrl("app:/B"), mg2);
+    QUrl mg3;
+    const QUrl g3 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg3);
+    m_model->addStatement(g3, NAO::maintainedBy(), QUrl("app:/A"), mg3);
+
+    const QDateTime date = QDateTime::currentDateTime();
+
+    // create two resources:
+    // A is split across both graphs
+    // B is only in one graph
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("Hello World")), g2);
+    m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(date), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::lastModified(), LiteralValue(date), g1);
+
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+    m_model->addStatement(QUrl("res:/B"), NAO::created(), LiteralValue(date), g1);
+    m_model->addStatement(QUrl("res:/B"), NAO::lastModified(), LiteralValue(date), g1);
+
+    // three relations B -> A, one in each graph
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/res"), QUrl("res:/A"), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/res2"), QUrl("res:/A"), g2);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/res3"), QUrl("res:/A"), g3);
+
+    // a third resource which is deleted entirely but has one relation in another graph
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+    m_model->addStatement(QUrl("res:/C"), NAO::created(), LiteralValue(date), g1);
+    m_model->addStatement(QUrl("res:/C"), NAO::lastModified(), LiteralValue(date), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/res"), QUrl("res:/C"), g2);
+
+
+    // now remove A
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+
+    // now only the relation in the first graph should have been removed
+    QVERIFY(!m_model->containsStatement(QUrl("res:/B"), QUrl("prop:/res"), QUrl("res:/A"), g1));
+    QVERIFY(!m_model->containsStatement(QUrl("res:/B"), QUrl("prop:/res3"), QUrl("res:/A"), g3));
+    QVERIFY(m_model->containsStatement(QUrl("res:/B"), QUrl("prop:/res2"), QUrl("res:/A"), g2));
+    QVERIFY(!m_model->containsStatement(QUrl("res:/B"), QUrl("prop:/res3"), QUrl("res:/C"), g2));
+
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), QUrl("prop:/res"), QUrl("res:/A")));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), QUrl("prop:/res3"), QUrl("res:/A")));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/B"), QUrl("prop:/res2"), QUrl("res:/A")));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), QUrl("prop:/res3"), QUrl("res:/C")));
+}
 
 // test that all is removed, ie. storage is clear afterwards
 void DataManagementModelTest::testRemoveAllDataByApplication1()
@@ -2768,6 +3038,33 @@ void DataManagementModelTest::testStoreResources_invalid_args()
     nonExistingFileRes.setUri(QUrl("nepomuk:/res/A"));
     nonExistingFileRes.addProperty(QUrl("prop:/res"), nonExistingFileUrl);
     m_dmModel->storeResources(SimpleResourceGraph() << nonExistingFileRes, QLatin1String("testapp"));
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // invalid graph metadata 1
+    SimpleResource res2;
+    res.setUri(QUrl("nepomuk:/res/A"));
+    res.addProperty(QUrl("prop:/int"), QVariant(42));
+    QHash<QUrl, QVariant> invalidMetadata;
+    invalidMetadata.insert(QUrl("prop:/int"), QLatin1String("foobar"));
+    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"), invalidMetadata);
+
+    // the call should have failed
+    QVERIFY(m_dmModel->lastError());
+
+    // nothing should have changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // invalid graph metadata 2
+    invalidMetadata.clear();
+    invalidMetadata.insert(NAO::maintainedBy(), QLatin1String("foobar"));
+    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"), invalidMetadata);
 
     // the call should have failed
     QVERIFY(m_dmModel->lastError());
@@ -3682,6 +3979,93 @@ void DataManagementModelTest::testStoreResources_additionalMetadataApp()
     //       but what if we want to add some additionalMetadata which references
     //       a node in the SimpleResourceGraph. There needs to be a test for that.
     QVERIFY(m_dmModel->lastError());
+}
+
+void DataManagementModelTest::testStoreResources_duplicates()
+{
+    KTemporaryFile file;
+    file.open();
+    const QUrl fileUrl( file.fileName() );
+
+    SimpleResource res;
+    res.addType( NFO::FileDataObject() );
+    res.addProperty( NIE::url(), fileUrl );
+
+    SimpleResource hash1;
+    hash1.addType( NFO::FileHash() );
+    hash1.addProperty( NFO::hashAlgorithm(), QLatin1String("SHA1") );
+    hash1.addProperty( NFO::hashValue(), QLatin1String("ddaa6b339428b75ee1545f80f1f35fb89c166bf9") );
+
+    SimpleResource hash2;
+    hash2.addType( NFO::FileHash() );
+    hash2.addProperty( NFO::hashAlgorithm(), QLatin1String("SHA1") );
+    hash2.addProperty( NFO::hashValue(), QLatin1String("ddaa6b339428b75ee1545f80f1f35fb89c166bf9") );
+
+    res.addProperty( NFO::hasHash(), hash1.uri() );
+    res.addProperty( NFO::hasHash(), hash2.uri() );
+
+    SimpleResourceGraph graph;
+    graph << res << hash1 << hash2;
+
+    m_dmModel->storeResources( graph, "appA" );
+    QVERIFY(!m_dmModel->lastError());
+
+    // hash1 and hash2 are the same, they should have been merged together
+    int hashCount = m_model->listStatements( Node(), RDF::type(), NFO::FileHash() ).allStatements().size();
+    QCOMPARE( hashCount, 1 );
+
+    // res should have only have one hash1
+    QCOMPARE( m_model->listStatements( Node(), NFO::hasHash(), Node() ).allStatements().size(), 1 );
+
+    QVERIFY(!haveTrailingGraphs());
+}
+
+// make sure that already existing resource types are taken into account for domain checks
+void DataManagementModelTest::testStoreResources_correctDomainInStore()
+{
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    // create the resource
+    const QUrl resA("nepomuk:/res/A");
+    m_model->addStatement(resA, RDF::type(), NMM::MusicPiece(), g1);
+    m_model->addStatement(resA, NAO::lastModified(), Soprano::LiteralValue(QDateTime::currentDateTime()), g1);
+
+    // now store a music piece with a performer.
+    // the performer does not have a type in the simple res but only in store
+    SimpleResource piece(resA);
+    piece.addProperty(NIE::title(), QLatin1String("Hello World"));
+    SimpleResource artist;
+    artist.addType(NCO::Contact());
+    artist.addProperty(NCO::fullname(), QLatin1String("foobar"));
+    piece.addProperty(NMM::performer(), artist);
+
+    m_dmModel->storeResources(SimpleResourceGraph() << piece << artist, QLatin1String("testapp"));
+
+    QVERIFY(!m_dmModel->lastError());
+}
+
+// make sure that already existing resource types are taken into account for range checks
+void DataManagementModelTest::testStoreResources_correctRangeInStore()
+{
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    // create the resource
+    const QUrl resA("nepomuk:/res/A");
+    m_model->addStatement(resA, RDF::type(), NCO::Contact(), g1);
+    m_model->addStatement(resA, NAO::lastModified(), Soprano::LiteralValue(QDateTime::currentDateTime()), g1);
+
+    // now store a music piece with a performer.
+    // the performer does not have a type in the simple res but only in store
+    SimpleResource piece;
+    piece.addType(NMM::MusicPiece());
+    piece.addProperty(NIE::title(), QLatin1String("Hello World"));
+    SimpleResource artist(resA);
+    artist.addProperty(NCO::fullname(), QLatin1String("foobar"));
+    piece.addProperty(NMM::performer(), artist);
+
+    m_dmModel->storeResources(SimpleResourceGraph() << piece << artist, QLatin1String("testapp"));
+
+    QVERIFY(!m_dmModel->lastError());
 }
 
 void DataManagementModelTest::testMergeResources()

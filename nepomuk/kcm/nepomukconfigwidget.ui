@@ -77,6 +77,9 @@
                     <bold>true</bold>
                    </font>
                   </property>
+                  <property name="text">
+                   <string notr="true">KSqueezedTextLabel</string>
+                  </property>
                  </widget>
                 </item>
                </layout>
@@ -151,6 +154,9 @@
                 <bold>true</bold>
                </font>
               </property>
+              <property name="text">
+               <string notr="true">KSqueezedTextLabel</string>
+              </property>
              </widget>
             </item>
            </layout>
@@ -207,7 +213,7 @@
                </font>
               </property>
               <property name="text">
-               <string>KSqueezedTextLabel</string>
+               <string notr="true">KSqueezedTextLabel</string>
               </property>
              </widget>
             </item>
@@ -360,7 +366,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>KSqueezedTextLabel</string>
+                 <string notr="true">KSqueezedTextLabel</string>
                 </property>
                </widget>
               </item>

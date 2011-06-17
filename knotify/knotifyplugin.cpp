@@ -26,6 +26,7 @@ KNotifyPlugin::KNotifyPlugin(QObject *parent, const QVariantList &args)
     : QObject(parent),
       d(0)
 {
+    Q_UNUSED(args);
 }
 
 
@@ -36,6 +37,8 @@ KNotifyPlugin::~KNotifyPlugin()
 
 void KNotifyPlugin::update(int id, KNotifyConfig * config)
 {
+    Q_UNUSED(id);
+    Q_UNUSED(config);
 }
 
 void KNotifyPlugin::close(int id)

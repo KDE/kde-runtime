@@ -93,7 +93,13 @@ QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::PropertyHash& ph )
         it != ph.constEnd(); ++it) {
         arg.beginMapEntry();
         arg << QString::fromAscii(it.key().toEncoded());
-        arg << QDBusVariant(it.value());
+
+        // a small hack to allow usage of KUrl
+        if(it.value().userType() == qMetaTypeId<KUrl>())
+            arg << QDBusVariant(QUrl(it.value().value<KUrl>()));
+        else
+            arg << QDBusVariant(it.value());
+
         arg.endMapEntry();
     }
     arg.endMap();

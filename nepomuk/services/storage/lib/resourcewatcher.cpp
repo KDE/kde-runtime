@@ -96,10 +96,10 @@ bool Nepomuk::ResourceWatcher::start()
         d->m_connectionInterface = new org::kde::nepomuk::ResourceWatcherConnection( "org.kde.nepomuk.DataManagement",
                                                                                      path.path(),
                                                                                      QDBusConnection::sessionBus() );
-        connect( d->m_connectionInterface, SIGNAL(propertyAdded(QString,QString,QString)),
-                 this, SLOT(slotPropertyAdded(QString,QString,QString)) );
-        connect( d->m_connectionInterface, SIGNAL(propertyRemoved(QString,QString,QString)),
-                 this, SLOT(slotPropertyRemoved(QString,QString,QString)) );
+        connect( d->m_connectionInterface, SIGNAL(propertyAdded(QString,QString,QDBusVariant)),
+                 this, SLOT(slotPropertyAdded(QString,QString,QDBusVariant)) );
+        connect( d->m_connectionInterface, SIGNAL(propertyRemoved(QString,QString,QDBusVariant)),
+                 this, SLOT(slotPropertyRemoved(QString,QString,QDBusVariant)) );
         return true;
     }
     else {
@@ -182,14 +182,14 @@ void Nepomuk::ResourceWatcher::slotResourceTypeRemoved(const QString &res, const
     emit resourceTypeRemoved(KUrl(res), KUrl(type));
 }
 
-void Nepomuk::ResourceWatcher::slotPropertyAdded(const QString& res, const QString& prop, const QVariant& object)
+void Nepomuk::ResourceWatcher::slotPropertyAdded(const QString& res, const QString& prop, const QDBusVariant& object)
 {
-    emit propertyAdded( Resource::fromResourceUri(KUrl(res)), Types::Property( KUrl(prop) ), object );
+    emit propertyAdded( Resource::fromResourceUri(KUrl(res)), Types::Property( KUrl(prop) ), object.variant() );
 }
 
-void Nepomuk::ResourceWatcher::slotPropertyRemoved(const QString& res, const QString& prop, const QVariant& object)
+void Nepomuk::ResourceWatcher::slotPropertyRemoved(const QString& res, const QString& prop, const QDBusVariant& object)
 {
-    emit propertyRemoved( Resource::fromResourceUri(KUrl(res)), Types::Property( KUrl(prop) ), object );
+    emit propertyRemoved( Resource::fromResourceUri(KUrl(res)), Types::Property( KUrl(prop) ), object.variant() );
 }
 
 #include "resourcewatcher.moc"
