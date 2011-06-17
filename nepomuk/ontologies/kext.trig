@@ -97,21 +97,21 @@ kext: {
           rdfs:comment "For storing the automatically calculated score based on the usage statistics" ;
           nao:userVisible false .
 
-    kext:involvedResource
+    kext:targettedResource
           a rdf:Property ;
           rdfs:comment "Resource for which the score is calculated." ;
           rdfs:domain kext:ResourceScoreCache ;
           rdfs:label "resource" ;
           rdfs:range rdfs:Resource .
 
-    kext:involvedAgent
+    kext:initiatingAgent
           a rdf:Property ;
           rdfs:comment "Relates the score to the agent initiating the events." ;
           rdfs:domain kext:ResourceScoreCache ;
           rdfs:label "involved agent" ;
           rdfs:range nao:Agent .
 
-    kext:involvedActivity
+    kext:involvesActivity
           a rdf:Property ;
           rdfs:comment "Relates the score to the activity in which the events happened." ;
           rdfs:domain kext:ResourceScoreCache ;

@@ -26,6 +26,8 @@
 #else // HAVE_NEPOMUK
 
 #include "NepomukEventBackend.h"
+#include "NepomukResourceScoreMaintainer.h"
+
 #include "Event.h"
 #include "ActivityManager.h"
 #include "kext.h"
@@ -49,9 +51,12 @@
 
 #include <kdebug.h>
 
+using namespace Soprano::Vocabulary;
 using namespace Nepomuk::Vocabulary;
 using namespace Nepomuk::Query;
-using namespace Soprano::Vocabulary;
+
+#define NUAO_targettedResource KUrl(NUAO::nuaoNamespace().toString() + QLatin1String("targettedResource"))
+#define NUAO_initiatingAgent   KUrl(NUAO::nuaoNamespace().toString() + QLatin1String("initiatingAgent"))
 
 NepomukEventBackend::NepomukEventBackend()
 {
@@ -87,16 +92,18 @@ void NepomukEventBackend::addEvents(const EventList & events)
             const QString queryS
                     = QString::fromLatin1("select ?r where { "
                                           "?r a nuao:DesktopEvent . "
-                                          "?r nuao:involves %1 . "
-                                          "?r nuao:involves ?a . "
-                                          "?a a nao:Agent . "
-                                          "?a nao:identifier %2 . "
+                                          "?r nuao:targettedResource %1 . "
+                                          "?r nuao:initiatingAgent %2 . "
                                           "OPTIONAL { ?r nuao:end ?d . } . "
                                           "FILTER(!BOUND(?d)) . } "
                                           "LIMIT 1")
-                    .arg(Soprano::Node::resourceToN3(Nepomuk::Resource(KUrl(event.uri)).resourceUri()),
-                         Soprano::Node::literalToN3(event.application));
+                    .arg(
+                            Soprano::Node::resourceToN3(Nepomuk::Resource(KUrl(event.uri)).resourceUri()),
+                            Soprano::Node::resourceToN3(Nepomuk::Resource(event.application, NAO::Agent()).resourceUri())
+                         );
+
             kDebug() << queryS;
+
             Soprano::QueryResultIterator it
                     = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(queryS, Soprano::Query::QueryLanguageSparql);
 
@@ -122,6 +129,10 @@ void NepomukEventBackend::addEvents(const EventList & events)
             } else {
                 kDebug() << "Failed to find matching Open event for resource" << event.uri << "and application" << event.application;
             }
+
+            if (event.type == Event::Closed) {
+                NepomukResourceScoreMaintainer::self()->processResource(event.uri, event.application);
+            }
         }
     }
 }
@@ -130,12 +141,12 @@ Nepomuk::Resource NepomukEventBackend::createDesktopEvent(const KUrl& uri, const
 {
     // one-shot event
     Nepomuk::Resource eventRes(QUrl(), NUAO::DesktopEvent());
-    eventRes.addProperty(NUAO::involves(), Nepomuk::Resource(uri));
+    eventRes.addProperty(NUAO_targettedResource, Nepomuk::Resource(uri));
     eventRes.addProperty(NUAO::start(), startTime);
 
     // the app
     Nepomuk::Resource appRes(app, NAO::Agent());
-    eventRes.addProperty(NUAO::involves(), appRes);
+    eventRes.addProperty(NUAO_initiatingAgent, appRes);
 
     // the activity
     if (!m_currentActivity.isValid()
@@ -151,8 +162,8 @@ Nepomuk::Resource NepomukEventBackend::createDesktopEvent(const KUrl& uri, const
         if (it.next()) {
             m_currentActivity = it[0].uri();
         } else {
-            m_currentActivity = Nepomuk::Resource(ActivityManager::self()->CurrentActivity(), Nepomuk::Vocabulary::KExt::Activity());
-            m_currentActivity.setProperty(Nepomuk::Vocabulary::KExt::activityIdentifier(), ActivityManager::self()->CurrentActivity());
+            m_currentActivity = Nepomuk::Resource(ActivityManager::self()->CurrentActivity(), KExt::Activity());
+            m_currentActivity.setProperty(KExt::activityIdentifier(), ActivityManager::self()->CurrentActivity());
         }
     }
 

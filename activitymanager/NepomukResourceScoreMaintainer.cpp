@@ -26,70 +26,33 @@
 #include <KDebug>
 
 #include <Nepomuk/Resource>
-#include <Nepomuk/ResourceManager>
-#include <Nepomuk/Variant>
-
-#include <Soprano/QueryResultIterator>
-#include <Soprano/Node>
-#include <Soprano/Model>
 
 #include <time.h>
 #include "kext.h"
 
 #include "ActivityManager.h"
+#include "NepomukResourceScoreCache.h"
 
 class NepomukResourceScoreMaintainerPrivate: public QThread {
 public:
     typedef QString ApplicationName;
-    typedef QString ActivityName;
+    typedef QString ActivityID;
     typedef QList < QUrl > ResourceList;
 
     typedef QMap < ApplicationName, ResourceList > Applications;
+    typedef QMap < ActivityID, Applications > ResourceTree;
 
-    QMap < ActivityName, Applications > openResources;
-
-    QList < Nepomuk::Resource > resources;
-    QMutex resources_mutex;
+    ResourceTree openResources;
+    QMutex openResources_mutex;
 
     void run();
+    void processActivity(const ActivityID & activity, const Applications & applications);
 
     static NepomukResourceScoreMaintainer * s_instance;
-
-    Nepomuk::Resource stats(const Nepomuk::Resource & resource) const;
 
 };
 
 NepomukResourceScoreMaintainer * NepomukResourceScoreMaintainerPrivate::s_instance = NULL;
-
-Nepomuk::Resource NepomukResourceScoreMaintainerPrivate::stats(const Nepomuk::Resource & resource) const
-{
-    const QString query
-        = QString::fromLatin1("select ?r where { "
-                                  "?r a %1 . "
-                                  "?r nuao:involvedResource %2 . "
-                                  "LIMIT 1")
-            .arg(
-                Soprano::Node::resourceToN3(Nepomuk::Vocabulary::KExt::ResourceScoreCache()),
-                Soprano::Node::resourceToN3(resource.resourceUri())
-            );
-
-    Soprano::QueryResultIterator it
-        = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(query, Soprano::Query::QueryLanguageSparql);
-
-    if (it.next()) {
-        Nepomuk::Resource result(it[0].uri());
-        it.close();
-
-        return result;
-    }
-
-    Nepomuk::Resource result(QUrl(), Nepomuk::Vocabulary::KExt::ResourceScoreCache());
-
-    result.setProperty(Nepomuk::Vocabulary::KExt::involvedResource(), resource);
-    result.setProperty(Nepomuk::Vocabulary::KExt::cachedScore(), 0);
-
-    return resource;
-}
 
 void NepomukResourceScoreMaintainerPrivate::run()
 {
@@ -97,19 +60,42 @@ void NepomukResourceScoreMaintainerPrivate::run()
         // initial delay before processing the resources
         sleep(5);
 
-        NepomukResourceScoreMaintainerPrivate::resources_mutex.lock();
+        NepomukResourceScoreMaintainerPrivate::openResources_mutex.lock();
+            ResourceTree resources = openResources;
+            openResources.clear();
+        NepomukResourceScoreMaintainerPrivate::openResources_mutex.unlock();
 
-        if (resources.count() == 0) {
-            kDebug() << "No more resources to process, exiting.";
+        const QString & activity = ActivityManager::self()->CurrentActivity();
 
-            NepomukResourceScoreMaintainerPrivate::resources_mutex.unlock();
-            return;
+        // Let us first process the events related to the current
+        // activity so that the stats are available quicker
+
+        if (resources.contains(activity)) {
+            kDebug() << "Processing current activity events";
+
+            processActivity(activity, resources[activity]);
+            resources.remove(activity);
         }
 
-        QList < Nepomuk::Resource > currentResources = resources;
-        resources.clear();
+        foreach (const ActivityID & activity, resources.keys()) {
+            kDebug() << "Processing activity" << activity;
 
-        NepomukResourceScoreMaintainerPrivate::resources_mutex.unlock();
+            processActivity(activity, resources[activity]);
+        }
+    }
+}
+
+void NepomukResourceScoreMaintainerPrivate::processActivity(const ActivityID & activity, const Applications & applications)
+{
+    foreach (const ApplicationName & application, applications.keys()) {
+        // Processing resources for the pair (activity, application)
+        kDebug() << "  Processing application" << application;
+
+        foreach (const QUrl & resource, applications[application]) {
+            kDebug() << "    Updating score for" << activity, application, resource;
+            NepomukResourceScoreCache(activity, application, resource).updateScore();
+
+        }
     }
 }
 
@@ -134,10 +120,12 @@ NepomukResourceScoreMaintainer::~NepomukResourceScoreMaintainer()
 
 void NepomukResourceScoreMaintainer::processResource(const KUrl & resource, const QString & application)
 {
-    d->resources_mutex.lock();
+    d->openResources_mutex.lock();
 
     // Checking whether the item is already scheduled for
     // processing
+
+    kDebug() << "Adding" << resource << application << "to the queue";
 
     const QString & activity = ActivityManager::self()->CurrentActivity();
 
@@ -149,7 +137,7 @@ void NepomukResourceScoreMaintainer::processResource(const KUrl & resource, cons
 
     d->openResources[activity][application] << resource;
 
-    d->resources_mutex.unlock();
+    d->openResources_mutex.unlock();
 
     d->start();
 }
