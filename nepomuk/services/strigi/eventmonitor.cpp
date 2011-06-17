@@ -75,7 +75,7 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
         connect( m_indexScheduler, SIGNAL( indexingStopped() ),
                  this, SLOT( slotIndexingStopped() ),
                  Qt::QueuedConnection );
-                 
+
         connect( m_indexScheduler, SIGNAL( indexingSuspended(bool) ),
                  this, SLOT( slotIndexingSuspended(bool) ) );
     }
@@ -98,7 +98,6 @@ void Nepomuk::EventMonitor::slotPowerManagementStatusChanged( bool conserveResou
             sendEvent( "indexingResumed", i18n("Resuming indexing of files for fast searching."), "battery-charging" );
     }
     else if ( conserveResources &&
-              m_indexScheduler->isRunning() &&
               !m_indexScheduler->isSuspended() ) {
         kDebug() << "Pausing indexer due to power management";
         m_wasIndexingWhenPaused = m_indexScheduler->isIndexing();
@@ -114,8 +113,7 @@ void Nepomuk::EventMonitor::slotCheckAvailableSpace()
     KDiskFreeSpaceInfo info = KDiskFreeSpaceInfo::freeSpaceInfo( KStandardDirs::locateLocal( "data", "nepomuk/repository/", false ) );
     if ( info.isValid() ) {
         if ( info.available() <= StrigiServiceConfig::self()->minDiskSpace() ) {
-            if ( m_indexScheduler->isRunning() &&
-                !m_indexScheduler->isSuspended() ) {
+            if ( !m_indexScheduler->isSuspended() ) {
                 pauseIndexing( PausedDueToAvailSpace );
                 sendEvent( "indexingSuspended",
                            i18n("Disk space is running low (%1 left). Suspending indexing of files.",
@@ -142,7 +140,7 @@ void Nepomuk::EventMonitor::slotIndexingStopped()
     if ( !m_indexScheduler->isSuspended() ) {
         m_totalIndexingSeconds += m_indexingStartTime.secsTo( QDateTime::currentDateTime() );
         const int elapsed = m_totalIndexingSeconds * 1000;
-        
+
         kDebug() << "initial indexing took" << elapsed;
         sendEvent( "initialIndexingFinished",
                    i18nc( "@info %1 is a duration formatted using KLocale::prettyFormatDuration",

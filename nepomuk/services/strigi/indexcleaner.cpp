@@ -50,7 +50,7 @@ using namespace Nepomuk::Vocabulary;
 using namespace Soprano::Vocabulary;
 
 
-Nepomuk::IndexCleaner::IndexCleaner(KJob* parent)
+Nepomuk::IndexCleaner::IndexCleaner(QObject* parent)
     : KJob(parent)
 {
     setCapabilities( Suspendable );

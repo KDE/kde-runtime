@@ -45,12 +45,12 @@ namespace Nepomuk {
      *
      * Events are not handled.
      */
-    class IndexScheduler : public QThread
+    class IndexScheduler : public QObject
     {
         Q_OBJECT
 
     public:
-        IndexScheduler( QObject* parent );
+        IndexScheduler( QObject* parent=0 );
         ~IndexScheduler();
 
         bool isSuspended() const;
@@ -126,10 +126,6 @@ namespace Nepomuk {
     public Q_SLOTS:
         void suspend();
         void resume();
-
-        //vHanda: Are these 2 required?
-        void stop();
-        void restart();
 
         void setIndexingSpeed( IndexingSpeed speed );
 
@@ -208,7 +204,6 @@ namespace Nepomuk {
         void callDoIndexing();
 
         bool m_suspended;
-        bool m_stopped;
         bool m_indexing;
 
         QMutex m_resumeStopMutex;

@@ -33,7 +33,7 @@ namespace Nepomuk {
     {
         Q_OBJECT
     public:
-        IndexCleaner(KJob* parent=0);
+        IndexCleaner(QObject* parent=0);
 
         virtual void start();
         virtual bool doSuspend();
