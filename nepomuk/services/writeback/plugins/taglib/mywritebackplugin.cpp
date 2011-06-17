@@ -15,29 +15,29 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+along with this program.  If not, see <http:www.gnu.org/licenses/>.
 */
 
 
 #include<kpluginfactory.h>
 
-#include<QStringList>
+#include <QStringList>
 #include <QFile>
 #include <QUrl>
-#include <KDebug>
 
-#include<taglib/fileref.h>
-#include<taglib/tag.h>
-#include<taglib/tstring.h>
+#include <taglib/fileref.h>
+#include <taglib/tag.h>
+#include <taglib/tstring.h>
 
-#include<Nepomuk/Resource>
+#include <Nepomuk/Resource>
 #include <Nepomuk/Vocabulary/NIE>
 #include <Nepomuk/Vocabulary/NMM>
 #include <Nepomuk/Vocabulary/NCO>
 
 #include <Nepomuk/Variant>
 
-#include<mywritebackplugin.h>
+#include <mywritebackplugin.h>
+
 using namespace Nepomuk::Vocabulary;
 Nepomuk::MyWritebackPlugin::MyWritebackPlugin(QObject* parent,const QList<QVariant>&): WritebackPlugin(parent)
 
@@ -53,13 +53,12 @@ Nepomuk::MyWritebackPlugin::~MyWritebackPlugin()
 
 void Nepomuk::MyWritebackPlugin::doWriteback(const QUrl& url)
 {
-    Nepomuk::Resource resource(url);
+
+    Nepomuk::Resource resource(url.toLocalFile());
     if(resource.exists())
     {
         // creatin  Nepomuk::Resource resource(KUrl(url));
         TagLib::FileRef f(QFile::encodeName( url.toLocalFile()).data());
-        // just an example
-
         if((resource.property(NIE::title())).isString())
         {
             QString title = (resource.property(NIE::title())).toString();

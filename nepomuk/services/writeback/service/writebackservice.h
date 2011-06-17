@@ -31,15 +31,12 @@ class WriteBackService : public Service
 {
     Q_OBJECT
     
-private:
-    ResourceWatcher* resourcewatcher;
-
 public:
     WriteBackService( QObject * parent = 0, const QList<QVariant>& args = QList<QVariant>() );
     ~WriteBackService();
 
 public Q_SLOTS:
-    void test( const Nepomuk::Resource & resource,const Types::Property & property,const QVariant & value );
+  Q_SCRIPTABLE  void test( const Nepomuk::Resource & resource);
 
 
 };

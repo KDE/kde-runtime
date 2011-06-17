@@ -43,27 +43,28 @@
     Nepomuk::WriteBackService::WriteBackService( QObject* parent, const QList< QVariant >& )
         : Service(parent)
     {
-        kDebug();
+        ResourceWatcher* resourcewatcher;
+        kDebug()<<"this part is executed";
+
         resourcewatcher  = new ResourceWatcher(this);
         resourcewatcher->addProperty(Types::Property(NFO::FileDataObject()));
         resourcewatcher->start();
 
         connect( resourcewatcher, SIGNAL( propertyAdded(Nepomuk::Resource, Types::Property,QVariant) ),
-                 this, SLOT ( test(Nepomuk::Resource, Types::Property, QVariant) ) );
+                 this, SLOT ( test(Nepomuk::Resource) ) );
         connect( resourcewatcher, SIGNAL( propertyRemoved(Nepomuk::Resource, Types::Property, QVariant) ),
-                 this, SLOT ( test(Nepomuk::Resource, Types::Property, QVariant) ) );
+                 this, SLOT ( test(Nepomuk::Resource) ) );
     }
 
     Nepomuk::WriteBackService::~WriteBackService()
     {
-        resourcewatcher->stop();
     }
 
-    void Nepomuk::WriteBackService::test(const Nepomuk::Resource & resource,const Types::Property & property,const QVariant & value)
+    void Nepomuk::WriteBackService::test(const Nepomuk::Resource & resource)
     {
-        Q_UNUSED(property);
-        Q_UNUSED (value);
-     const QStringList mimetypes = resource.property(NIE::mimeType()).toStringList();
+        kDebug()<<"lol";
+
+        const QStringList mimetypes = resource.property(NIE::mimeType()).toStringList();
         if(!mimetypes.isEmpty())
         {
             QString  mimetype = mimetypes.first();

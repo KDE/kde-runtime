@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Exiv2 plugin
+Name[x-test]=xxExiv2 pluginxx
+Comment=Nepomuk Exiv2 Plugin which writeback to the metadata to the file.
+X-KDE-ServiceTypes=Nepomuk/WritebackPlugin
+Type=Service
+X-KDE-Library=nepomuk_writeback_exiv2
+
+# FIXME
+MimeType=image/jpeg;image/tiff;
+
