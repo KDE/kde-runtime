@@ -118,7 +118,7 @@ namespace {
         }
         QString filters = subFilters.join(" && ");
         if( !filters.isEmpty() )
-            QString::fromLatin1("FILTER(%1) .").arg(filters);
+            return QString::fromLatin1("FILTER(%1) .").arg(filters);
 
         return QString();
     }
