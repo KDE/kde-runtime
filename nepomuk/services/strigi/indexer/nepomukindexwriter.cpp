@@ -318,11 +318,20 @@ namespace {
         feeder->addStatement( resourceUri, Nepomuk::Vocabulary::NIE::url(), fileUrl );
 
         if ( fileInfo.exists() ) {
-            // Strigi only indexes files and extractors mostly (if at all) store the nie:DataObject type (i.e. the contents)
-            // Thus, here we go the easy way and mark each indexed file as a nfo:FileDataObject.
+            //
+            // Strigi only indexes files and many extractors are still not perfect with types.
+            // Each file is a nie:DataObject and a nie:InformationElement. Many Strigi plugins
+            // forget at least one of the two.
+            // Thus, here we go the easy way and mark each indexed file as a nfo:FileDataObject
+            // and a nie:InformationElement, thus, at least providing the basic types to Nepomuk's
+            // domain and range checking.
+            //
             feeder->addStatement( resourceUri,
                                   Vocabulary::RDF::type(),
                                   Nepomuk::Vocabulary::NFO::FileDataObject() );
+            feeder->addStatement( resourceUri,
+                                  Vocabulary::RDF::type(),
+                                  Nepomuk::Vocabulary::NIE::InformationElement() );
             if ( fileInfo.isDir() ) {
                 feeder->addStatement( resourceUri,
                                       Vocabulary::RDF::type(),

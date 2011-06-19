@@ -77,6 +77,7 @@ private Q_SLOTS:
     void testRemoveResources_subresources();
     void testRemoveResources_invalid_args();
     void testRemoveResources_protectedTypes();
+    void testRemoveResources_mtimeRelated();
 
     void testRemoveDataByApplication1();
     void testRemoveDataByApplication2();
@@ -91,7 +92,9 @@ private Q_SLOTS:
     void testRemoveDataByApplication11();
     void testRemoveDataByApplication_realLife();
     void testRemoveDataByApplication_nieUrl();
-    void testRemoveDataByApplication_folder();
+    void testRemoveDataByApplication_mtime();
+    void testRemoveDataByApplication_mtimeRelated();
+    void testRemoveDataByApplication_related();
 
     void testRemoveAllDataByApplication1();
     void testRemoveAllDataByApplication2();

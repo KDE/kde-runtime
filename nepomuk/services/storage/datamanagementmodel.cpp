@@ -179,27 +179,41 @@ Nepomuk::DataManagementModel::~DataManagementModel()
 
 Soprano::Error::ErrorCode Nepomuk::DataManagementModel::updateModificationDate(const QUrl& resource, const QUrl & graph, const QDateTime& date, bool includeCreationDate)
 {
-    Q_ASSERT(!graph.isEmpty());
+    return updateModificationDate(QSet<QUrl>() << resource, graph, date, includeCreationDate);
+}
+
+
+Soprano::Error::ErrorCode Nepomuk::DataManagementModel::updateModificationDate(const QSet<QUrl>& resources, const QUrl & graph, const QDateTime& date, bool includeCreationDate)
+{
+    if(resources.isEmpty()) {
+        return Soprano::Error::ErrorNone;
+    }
+
+    QUrl metadataGraph(graph);
+    if(metadataGraph.isEmpty()) {
+        metadataGraph = createGraph();
+    }
 
     QSet<QUrl> mtimeGraphs;
-    Soprano::QueryResultIterator it = executeQuery(QString::fromLatin1("select ?g where { graph ?g { %1 %2 ?d . } . }")
-                                                   .arg(Soprano::Node::resourceToN3(resource),
-                                                        Soprano::Node::resourceToN3(NAO::lastModified())),
+    Soprano::QueryResultIterator it = executeQuery(QString::fromLatin1("select distinct ?g where { graph ?g { ?r %1 ?d . FILTER(?r in (%2)) . } . }")
+                                                   .arg(Soprano::Node::resourceToN3(NAO::lastModified()),
+                                                        resourcesToN3(resources).join(QLatin1String(","))),
                                                    Soprano::Query::QueryLanguageSparql);
     while(it.next()) {
         mtimeGraphs << it[0].uri();
     }
 
-    Soprano::Error::ErrorCode c = removeAllStatements(resource, NAO::lastModified(), Soprano::Node());
-    if (c != Soprano::Error::ErrorNone)
-        return c;
+    foreach(const QUrl& resource, resources) {
+        Soprano::Error::ErrorCode c = removeAllStatements(resource, NAO::lastModified(), Soprano::Node());
+        if (c != Soprano::Error::ErrorNone)
+            return c;
+        addStatement(resource, NAO::lastModified(), Soprano::LiteralValue( date ), metadataGraph);
+        if(includeCreationDate && !containsAnyStatement(resource, NAO::created(), Soprano::Node())) {
+            addStatement(resource, NAO::created(), Soprano::LiteralValue( date ), metadataGraph);
+        }
+    }
 
     removeTrailingGraphs(mtimeGraphs);
-
-    addStatement(resource, NAO::lastModified(), Soprano::LiteralValue( date ), graph);
-    if(includeCreationDate && !containsAnyStatement(resource, NAO::created(), Soprano::Node())) {
-        addStatement(resource, NAO::created(), Soprano::LiteralValue( date ), graph);
-    }
 
     return Soprano::Error::ErrorNone;
 }
@@ -854,19 +868,31 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
         actuallyRemovedResources << it[1].uri();
     }
 
+    // get the resources that we modify by removing relations to one of the deleted ones
+    QSet<QUrl> modifiedResources;
+    it = executeQuery(QString::fromLatin1("select distinct ?g ?o where { graph ?g { ?o ?p ?r . } . FILTER(?r in (%1)) . }")
+                      .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                      Soprano::Query::QueryLanguageSparql);
+    while(it.next()) {
+        graphs << it[0].uri();
+        modifiedResources << it[1].uri();
+    }
+    modifiedResources -= actuallyRemovedResources;
+
+
     // remove the resources
     foreach(const Soprano::Node& res, actuallyRemovedResources) {
         removeAllStatements(res, Soprano::Node(), Soprano::Node());
         removeAllStatements(Soprano::Node(), Soprano::Node(), res);
     }
+    updateModificationDate(modifiedResources);
+    removeTrailingGraphs(graphs);
 
     // inform interested parties
     // TODO: ideally we should also report the types the removed resources had
     foreach(const Soprano::Node& res, actuallyRemovedResources) {
         d->m_watchManager.removeResource(res.uri(), QList<QUrl>());
     }
-
-    removeTrailingGraphs(graphs);
 }
 
 void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &resources, RemovalFlags flags, const QString &app)
@@ -951,16 +977,39 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
             = executeQuery(QString::fromLatin1("select distinct "
                                                "?g "
                                                "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
-                                               "(select count (*) where { graph ?g { ?r ?mp ?mo . FILTER(%4) . } . }) as ?mc "
+                                               "(select count (*) where { graph ?g { ?r ?mp ?mo . FILTER(?r in (%3)) . FILTER(%4) . } . }) as ?mc "
                                                "where { "
                                                "graph ?g { ?r ?p ?o . } . "
                                                "?g %1 %2 . "
-                                               "FILTER(?r in (%3)) . }")
+                                               "FILTER(?r in (%3) || ?o in (%3)) . }")
                            .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
                                 Soprano::Node::resourceToN3(appRes),
                                 resourcesToN3(resolvedResources).join(QLatin1String(",")),
                                 createResourceMetadataPropertyFilter(QLatin1String("?mp"), false)),
                            Soprano::Query::QueryLanguageSparql).allElements();
+
+
+    // the set of resources that we did modify but not remove entirely
+    QSet<QUrl> modifiedResources;
+
+
+    //
+    // Fetch all resources that are changed, ie. that are related to the deleted resource in some way.
+    // We need to update the mtime of those resources, too.
+    //
+    Soprano::QueryResultIterator relatedResIt = executeQuery(QString::fromLatin1("select distinct ?r where { "
+                                                                                 "graph ?g { ?r ?p ?rr . } . "
+                                                                                 "?g %1 %2 . "
+                                                                                 "FILTER(?rr in (%3)) . "
+                                                                                 "FILTER(!(?r in (%3))) . }")
+                                                             .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                                                  Soprano::Node::resourceToN3(appRes),
+                                                                  resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                                                             Soprano::Query::QueryLanguageSparql);
+    while(relatedResIt.next()) {
+        modifiedResources.insert(relatedResIt[0].uri());
+    }
+
 
     // remove the resources
     // Other apps might be maintainer, too. In that case only remove the app as a maintainer but keep the data
@@ -994,6 +1043,17 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                                                  Soprano::Query::QueryLanguageSparql).allBindings();
                 }
 
+                //
+                // check if we actually remove any properties and only then update the mtime of the resource
+                //
+                if(executeQuery(QString::fromLatin1("ask where { graph %1 { %2 ?p ?o . FILTER(%3) . } . }")
+                                                    .arg(Soprano::Node::resourceToN3(g),
+                                                         Soprano::Node::resourceToN3(res),
+                                                         createResourceMetadataPropertyFilter(QLatin1String("?p"), true)),
+                                                    Soprano::Query::QueryLanguageSparql).boolValue()) {
+                    modifiedResources.insert(res);
+                }
+
                 removeAllStatements(res, Soprano::Node(), Soprano::Node(), g);
                 removeAllStatements(Soprano::Node(), Soprano::Node(), res, g);
 
@@ -1011,7 +1071,6 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                 foreach(const Soprano::BindingSet& set, metadataProps)  {
                     addStatement(res, set["p"], set["o"], metadataGraph);
                 }
-                updateModificationDate(res, metadataGraph, now);
             }
 
             graphs.insert(g);
@@ -1062,16 +1121,17 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     }
 
     // make sure we do not leave anything empty trailing around and propery update the mtime
-    QList<QUrl> resourcesToRemoveCompletely;
+    QSet<QUrl> resourcesToRemoveCompletely;
     foreach(const QUrl& res, resolvedResources) {
         if(!doesResourceExist(res)) {
             resourcesToRemoveCompletely << res;
         }
     }
     if(!resourcesToRemoveCompletely.isEmpty()){
-        removeResources(resourcesToRemoveCompletely, flags, app);
+        removeResources(resourcesToRemoveCompletely.toList(), flags, app);
     }
 
+    updateModificationDate(modifiedResources - resourcesToRemoveCompletely, metadataGraph, now);
 
     removeTrailingGraphs(graphs);
 }
