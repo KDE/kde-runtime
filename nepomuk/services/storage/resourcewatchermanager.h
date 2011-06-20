@@ -47,9 +47,9 @@ namespace Nepomuk {
         void removeResource(const QUrl& uri, const QList<QUrl>& types);
 
     public slots:
-        Q_SCRIPTABLE QDBusObjectPath watch( const QList<QString> & resources,
-                                            const QList<QString> & properties,
-                                            const QList<QString> & types );
+        Q_SCRIPTABLE QDBusObjectPath watch( const QStringList& resources,
+                                            const QStringList& properties,
+                                            const QStringList& types );
 
     private:
         /// called by ResourceWatcherConnection destructor

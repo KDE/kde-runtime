@@ -169,7 +169,9 @@ void Nepomuk::ResourceWatcherManager::removeResource(const QUrl &res, const QLis
     }
 }
 
-QDBusObjectPath Nepomuk::ResourceWatcherManager::watch(const QList< QString >& resources, const QList< QString >& properties, const QList< QString >& types)
+QDBusObjectPath Nepomuk::ResourceWatcherManager::watch(const QStringList& resources,
+                                                       const QStringList& properties,
+                                                       const QStringList& types)
 {
     kDebug();
 
