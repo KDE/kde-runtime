@@ -128,6 +128,7 @@ Comment[te]=నెట్వర్‍క్  ఇంటర్‌ఫేసెస్
 Comment[tg]=Отслеживает состояние сетевых интерфейсов и предоставляет уведомления приложениям, использующим сеть.
 Comment[th]=ติดตามสถานะของส่วนติดต่อเครือข่ายและมีการแจ้งเตือนไปยังโปรแกรม โดยใช้เครือข่าย
 Comment[tr]=Ağ arayüzlerini izler ve ağın durumu hakkında uygulamalara bildirimde bulunur.
+Comment[ug]=تور ئېغىزىنىڭ ھالىتىنى ئىزلايدۇ ھەمدە تور ئىشلىتىۋاتقان پروگراممىلارغا ئۇقتۇرۇش تەمىنلەيدۇ.
 Comment[uk]=Слідкує за станом мережних інтерфейсів і надає сповіщення програмам, які використовують мережу.
 Comment[x-test]=xxTracks status of network interfaces and provides notification to applications using the network.xx
 Comment[zh_CN]=跟踪网络接口的状态并且为正在使用网络的应用程序提供通知。

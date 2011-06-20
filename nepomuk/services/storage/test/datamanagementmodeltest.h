@@ -77,6 +77,7 @@ private Q_SLOTS:
     void testRemoveResources_subresources();
     void testRemoveResources_invalid_args();
     void testRemoveResources_protectedTypes();
+    void testRemoveResources_mtimeRelated();
 
     void testRemoveDataByApplication1();
     void testRemoveDataByApplication2();
@@ -88,9 +89,12 @@ private Q_SLOTS:
     void testRemoveDataByApplication8();
     void testRemoveDataByApplication9();
     void testRemoveDataByApplication10();
+    void testRemoveDataByApplication11();
     void testRemoveDataByApplication_realLife();
     void testRemoveDataByApplication_nieUrl();
-    void testRemoveDataByApplication_folder();
+    void testRemoveDataByApplication_mtime();
+    void testRemoveDataByApplication_mtimeRelated();
+    void testRemoveDataByApplication_related();
 
     void testRemoveAllDataByApplication1();
     void testRemoveAllDataByApplication2();
@@ -119,6 +123,8 @@ private Q_SLOTS:
     void testStoreResources_faultyMetadata();
     void testStoreResources_additionalMetadataApp();
     void testStoreResources_duplicates();
+    void testStoreResources_correctDomainInStore();
+    void testStoreResources_correctRangeInStore();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();

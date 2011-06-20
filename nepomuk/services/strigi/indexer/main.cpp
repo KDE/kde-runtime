@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     
     KCmdLineOptions options;
     options.add("uri <uri>", ki18n("The URI provided will be forced on the resource"));
-    options.add("mtime <time>", ki18n("The modification time of the resource"));
+    options.add("mtime <time>", ki18n("The modification time of the resource in time_t format"));
     options.add("+[url]", ki18n("The URL of the file to be indexed"));
     options.add("clear", ki18n("Remove all indexed data of the URL provided"));
     
