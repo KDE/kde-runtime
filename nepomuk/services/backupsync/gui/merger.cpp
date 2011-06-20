@@ -23,7 +23,6 @@
 
 #include "changelog.h"
 #include "syncfile.h"
-#include "mergeradaptor.h"
 
 #include <QtDBus/QDBusConnection>
 
@@ -33,11 +32,17 @@ Nepomuk::Merger::Merger( QObject* parent )
     : QThread( parent )
 {
     //Register DBus interface
-    new MergerAdaptor( this );
-    QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerObject( QLatin1String("/merger"), this );
-    
+    //new MergerAdaptor( this );
+    //QDBusConnection dbus = QDBusConnection::sessionBus();
+    //dbus.registerObject( QLatin1String("/merger"), this );
+
     start();
+}
+
+Nepomuk::Merger* Nepomuk::Merger::instance()
+{
+    static Merger m;
+    return &m;
 }
 
 
@@ -94,7 +99,7 @@ void Nepomuk::Merger::run()
             emit completed( 55 );
             request->mergeChangeLog();
             emit completed( 100 );
-            
+
             /*
             if( !request->done() ) {
                 QMutexLocker lock( &m_processMutex );
@@ -112,7 +117,7 @@ void Nepomuk::Merger::run()
                 emit multipleMerge( st.subject().uri().toString(),
                                     st.predicate().uri().toString() );
             }
-            
+
             m_processes.remove( request->id() );
             delete request;
 

@@ -20,7 +20,7 @@
 */
 
 #include "changelog.h"
-#include "identifieradaptor.h"
+#include "identifier.h"
 
 #include <QtDBus/QDBusConnection>
 
@@ -46,13 +46,18 @@
 Nepomuk::Identifier::Identifier(QObject* parent): QThread(parent)
 {
     //Register DBus interface
-    new IdentifierAdaptor( this );
-    QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerObject( QLatin1String("/identifier"), this );
+    //new IdentifierAdaptor( this );
+    //QDBusConnection dbus = QDBusConnection::sessionBus();
+    //dbus.registerObject( QLatin1String("/identifier"), this );
 
     start();
 }
 
+Nepomuk::Identifier* Nepomuk::Identifier::instance()
+{
+    static Identifier ident;
+    return &ident;
+}
 
 Nepomuk::Identifier::~Identifier()
 {
@@ -105,7 +110,7 @@ void Nepomuk::Identifier::run()
             identifyAllWithCompletedSignals( identifier );
 
             emit identificationDone( identifier->id(), identifier->unidentified().size() );
-            
+
             m_processMutex.lock();
             m_processes[ identifier->id() ] = identifier;
             m_processMutex.unlock();
@@ -140,7 +145,7 @@ bool Nepomuk::Identifier::identify(int id, const QString& oldUriString, const QS
 {
     QUrl oldUri( oldUriString );
     QUrl newUri( newUriString );
-    
+
     kDebug() << newUri;
     // Lock the mutex and all
     QMutexLocker lock ( &m_processMutex );
@@ -187,11 +192,11 @@ bool Nepomuk::Identifier::ignore(int id, const QString& urlString, bool ignoreSu
 void Nepomuk::Identifier::ignoreAll(int id)
 {
     QMutexLocker lock ( &m_processMutex );
-    
+
     QHash<int, SyncFileIdentifier*>::iterator it = m_processes.find( id );
     if( it == m_processes.end() )
         return;
-    
+
     SyncFileIdentifier* identifier = *it;
     foreach( const KUrl & url, identifier->unidentified() ) {
         identifier->ignore( url, true );
@@ -201,12 +206,12 @@ void Nepomuk::Identifier::ignoreAll(int id)
 void Nepomuk::Identifier::emitNotIdentified(int id, const QList< Soprano::Statement >& stList)
 {
     const Soprano::Serializer* serializer = Soprano::PluginManager::instance()->discoverSerializerForSerialization( Soprano::SerializationNQuads );
-    
+
     Soprano::Util::SimpleStatementIterator it( stList );
     QString ser;
     QTextStream stream( &ser );
     serializer->serialize( it, stream, Soprano::SerializationNQuads );
-    
+
     emit notIdentified( id, ser );
 }
 
@@ -218,16 +223,16 @@ void Nepomuk::Identifier::test()
 void Nepomuk::Identifier::completeIdentification(int id)
 {
     kDebug() << id;
-    
+
     QMutexLocker lock ( &m_processMutex );
-    
+
     QHash<int, SyncFileIdentifier*>::iterator it = m_processes.find( id );
     if( it == m_processes.end() )
         return;
-    
+
     SyncFileIdentifier* identifier = *it;
     m_processes.remove( id );
-    
+
     ChangeLog log = identifier->convertedChangeLog();
     kDebug() << "ChangeLog of size " << log.size() << " has been converted";
     if( !log.empty() ) {

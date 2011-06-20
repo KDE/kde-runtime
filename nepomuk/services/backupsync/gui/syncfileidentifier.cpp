@@ -52,18 +52,18 @@ Nepomuk::SyncFileIdentifier::~SyncFileIdentifier()
 }
 
 namespace {
-    
+
     //
     // Removes the old home directory and replaces it with the current one
     // TODO: Make it OS independent
     //
     QUrl translateHomeUri( const QUrl & uri ) {
         QString uriString = uri.toString();
-        
+
         QRegExp regEx("^file://(/home/[^/]*)(/.*)$");
         if( regEx.exactMatch( uriString ) ) {
             QString newUriString = "file://" + QDir::homePath() + regEx.cap(2);
-            
+
             uriString.replace( regEx, newUriString );
             return QUrl( newUriString );
         }
@@ -91,7 +91,7 @@ void Nepomuk::SyncFileIdentifier::load()
 
     //kDebug() << "After translation : ";
     //kDebug() << identList;
-    
+
     addStatements( identList );
 }
 
@@ -100,13 +100,13 @@ Nepomuk::ChangeLog Nepomuk::SyncFileIdentifier::convertedChangeLog()
 {
     QList<ChangeLogRecord> masterLogRecords = m_changeLog.toList();
     kDebug() << "masterLogRecords : " << masterLogRecords.size();
-    
+
     QList<ChangeLogRecord> identifiedRecords;
     QMutableListIterator<ChangeLogRecord> it( masterLogRecords );
-    
+
     while( it.hasNext() ) {
         ChangeLogRecord r = it.next();
-        
+
         // Identify Subject
         KUrl subUri = r.st().subject().uri();
         if( subUri.scheme() == QLatin1String("nepomuk") ) {
@@ -116,7 +116,7 @@ Nepomuk::ChangeLog Nepomuk::SyncFileIdentifier::convertedChangeLog()
 
             r.setSubject( newUri );
         }
-        
+
         // Identify object
         if( r.st().object().isResource() ) {
             KUrl objUri = r.st().object().uri();
@@ -128,16 +128,16 @@ Nepomuk::ChangeLog Nepomuk::SyncFileIdentifier::convertedChangeLog()
                 r.setObject( newUri );
             }
         }
-        
+
         identifiedRecords.push_back( r );
-        
+
         // Remove the statement from the masterchangerecords
         it.remove();
     }
-    
+
     // Update the master change log
     m_changeLog = ChangeLog::fromList( masterLogRecords );
-    
+
     return ChangeLog::fromList( identifiedRecords );
 }
 
@@ -156,7 +156,7 @@ Nepomuk::Resource Nepomuk::SyncFileIdentifier::createNewResource(const Sync::Syn
 {
     kDebug();
     Nepomuk::Resource res;
-    
+
     if( simpleRes.isFileDataObject() ) {
         res = Nepomuk::Resource( simpleRes.nieUrl() );
         if( res.exists() ) {
@@ -167,20 +167,23 @@ Nepomuk::Resource Nepomuk::SyncFileIdentifier::createNewResource(const Sync::Syn
             return Resource();
         }
     }
-    
+
     const QList<KUrl> & keys = simpleRes.uniqueKeys();
     foreach( const KUrl & prop, keys ) {
         //kDebug() << "Prop " << prop;
-        
+
         const QList<Soprano::Node> nodeList = simpleRes.values( prop );
         res.setProperty( prop, Nepomuk::Variant::fromNodeList( nodeList ) );
     }
     return res.resourceUri();
 }
 
-KUrl Nepomuk::SyncFileIdentifier::additionalIdentification(const KUrl& uri)
+bool Nepomuk::SyncFileIdentifier::runIdentification(const KUrl& uri)
 {
-    Sync::SyncResource res = simpleResource( uri );
+    if( Nepomuk::Sync::ResourceIdentifier::runIdentification(uri) )
+        return true;
+
+    const Sync::SyncResource res = simpleResource( uri );
 
     // Add the resource if ( it is NOT a FileDataObject ) or ( if is a FileDataObject and
     // exists in the filesystem at the nie:url )
@@ -192,11 +195,11 @@ KUrl Nepomuk::SyncFileIdentifier::additionalIdentification(const KUrl& uri)
 
     if( shouldAdd ) {
         Nepomuk::Resource newRes = createNewResource( res );
-        if( newRes.isValid() )
+        if( newRes.isValid() ) {
             forceResource( uri, newRes );
-        else
-            return KUrl();
+            return true;
+        }
     }
 
-    return KUrl();
+    return false;
 }

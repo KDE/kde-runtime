@@ -35,7 +35,7 @@ namespace Soprano {
 }
 
 namespace Nepomuk {
-    
+
     class ResourceManager;
     class ChangeLog;
 
@@ -43,11 +43,13 @@ namespace Nepomuk {
     {
         Q_OBJECT
 
-    public :
         Merger( QObject* parent = 0 );
         virtual ~Merger();
 
         void stop();
+
+    public :
+        static Merger* instance();
 
     public Q_SLOTS:
         int process( const Nepomuk::ChangeLog & logFile );

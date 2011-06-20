@@ -1,7 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010  Vishesh Handa <handa.vish@gmail.com>
-   Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2011  Vishesh Handa <handa.vish@gmail.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -20,43 +19,27 @@
    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "backupgenerationjob.h"
+#include "tools.h"
 
-#ifndef BACKUPWIZARD_H
-#define BACKUPWIZARD_H
+#include <QtCore/QTimer>
 
-#include <QtGui/QWizard>
-
-#include "identifier.h"
-#include "merger.h"
-
-namespace Nepomuk {
-
-    class BackupWizard : public QWizard
-    {
-        Q_OBJECT
-
-    public:
-        BackupWizard(QWidget* parent = 0, Qt::WindowFlags flags = 0);
-
-        enum Pages {
-            Id_IntroPage = 0,
-            Id_BackupSettingsPage,
-            Id_BackupPage,
-            Id_RestorePage,
-            Id_RestoreSelectionPage,
-            Id_BackupDone,
-            Id_RestoreFinalPage,
-            Id_ErrorPage
-        };
-
-        void startBackup();
-        void startRestore();
-        void showError(const QString& error);
-
-    public:
-        Identifier* m_identifier;
-        Merger* m_merger;
-    };
-
+Nepomuk::BackupGenerationJob::BackupGenerationJob(const QUrl& url, QObject* parent)
+    : KJob(parent),
+      m_url( url )
+{
 }
-#endif // BACKUPWIZARD_H
+
+void Nepomuk::BackupGenerationJob::start()
+{
+    QTimer::singleShot( 0, this, SLOT(doWork()) );
+}
+
+void Nepomuk::BackupGenerationJob::doWork()
+{
+    Nepomuk::saveBackupSyncFile( m_url );
+    emitResult();
+}
+
+
+

@@ -28,9 +28,8 @@
 #include <QPushButton>
 
 #include "mergeconflictdelegate.h"
+#include "identifier.h"
 #include "ui_mergeconflictwidget.h"
-
-class OrgKdeNepomukServicesNepomukbackupsyncIdentifierInterface;
 
 namespace Nepomuk {
 
@@ -45,18 +44,17 @@ namespace Nepomuk {
     private slots:
         void identify(  );
         void ignore( const QUrl & uri );
-        
+
     private slots:
         void notIdentified( int id, const QString & string );
         void identified( int id, const QString & oldUri, const QString & newUri );
         void completed( int id, int progress );
         void slotDiscardAll();
-        
+
     private :
         IdentifierModel * m_model;
         int m_id;
 
-        typedef OrgKdeNepomukServicesNepomukbackupsyncIdentifierInterface Identifier;
         Identifier * m_identifier;
     };
 

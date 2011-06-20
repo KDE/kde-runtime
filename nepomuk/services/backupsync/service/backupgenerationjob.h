@@ -1,7 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010  Vishesh Handa <handa.vish@gmail.com>
-   Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2011  Vishesh Handa <handa.vish@gmail.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,44 +18,27 @@
    You should have received a copy of the GNU Lesser General Public
    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef BACKUPGENERATOR_H
+#define BACKUPGENERATOR_H
 
-
-#ifndef BACKUPWIZARD_H
-#define BACKUPWIZARD_H
-
-#include <QtGui/QWizard>
-
-#include "identifier.h"
-#include "merger.h"
+#include <KJob>
+#include <QtCore/QUrl>
 
 namespace Nepomuk {
 
-    class BackupWizard : public QWizard
+    class BackupGenerationJob : public KJob
     {
         Q_OBJECT
-
     public:
-        BackupWizard(QWidget* parent = 0, Qt::WindowFlags flags = 0);
+        BackupGenerationJob(const QUrl& url, QObject* parent = 0);
+        virtual void start();
 
-        enum Pages {
-            Id_IntroPage = 0,
-            Id_BackupSettingsPage,
-            Id_BackupPage,
-            Id_RestorePage,
-            Id_RestoreSelectionPage,
-            Id_BackupDone,
-            Id_RestoreFinalPage,
-            Id_ErrorPage
-        };
+    private slots:
+        void doWork();
 
-        void startBackup();
-        void startRestore();
-        void showError(const QString& error);
-
-    public:
-        Identifier* m_identifier;
-        Merger* m_merger;
+    private:
+        QUrl m_url;
     };
-
 }
-#endif // BACKUPWIZARD_H
+
+#endif // BACKUPGENERATOR_H
