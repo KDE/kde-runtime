@@ -46,28 +46,29 @@
       <arg name="flags" type="i" direction="in"/>
       <arg name="app" type="s" direction="in"/>
     </method>
-    <method name="removePropertiesByApplication">
-      <arg name="resources" type="as" direction="in"/>
-      <arg name="properties" type="as" direction="in"/>
-      <arg name="app" type="s" direction="in"/>
-    </method>
     <method name="storeResources">
       <arg name="resources" type="a(sa{sv})" direction="in"/>
       <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QList&lt;Nepomuk::SimpleResource&gt;"/>
+      <arg name="identificationMode" type="i" direction="in"/>
+      <arg name="flags" type="i" direction="in"/>
       <arg name="additionalMetadata" type="a{sv}" direction="in"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="Nepomuk::PropertyHash"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In3" value="Nepomuk::PropertyHash"/>
       <arg name="app" type="s" direction="in"/>
     </method>
     <method name="importResources">
       <arg name="url" type="s" direction="in"/>
       <arg name="serialization" type="s" direction="in"/>
+      <arg name="identificationMode" type="i" direction="in"/>
+      <arg name="flags" type="i" direction="in"/>
       <arg name="additionalMetadata" type="a{sv}" direction="in"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.In2" value="Nepomuk::PropertyHash"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In4" value="Nepomuk::PropertyHash"/>
       <arg name="app" type="s" direction="in"/>
     </method>
     <method name="importResources">
       <arg name="url" type="s" direction="in"/>
       <arg name="serialization" type="s" direction="in"/>
+      <arg name="identificationMode" type="i" direction="in"/>
+      <arg name="flags" type="i" direction="in"/>
       <arg name="app" type="s" direction="in"/>
     </method>
     <method name="mergeResources">

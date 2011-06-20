@@ -45,16 +45,49 @@ namespace Nepomuk {
      */
     enum RemovalFlag {
         /// No flags - default behaviour
-        NoRemovalFlags = 0x0,
+        NoRemovalFlags = 0,
 
         /**
          * Remove sub resources of the resources specified in the parameters.
          * This will remove sub-resources that are not referenced by any resource
          * which will not be deleted.
          */
-        RemoveSubResoures = 0x1
+        RemoveSubResoures = 1
     };
     Q_DECLARE_FLAGS(RemovalFlags, RemovalFlag)
+
+    /**
+     * The identification mode used by storeResources().
+     * This states which given resources should be merged
+     * with existing ones that match.
+     */
+    enum StoreIdentificationMode {
+        /// This is the default mode. Only new resources without a resource URI are identified. All others
+        /// are just saved with their given URI
+        IdentifyNew = 0,
+
+        /// Try to identify all resources, even if they have a resource URI. This only differs
+        /// from IdentifyNew for resources that have a resource URI that does NOT exists yet.
+        IdentifyAll = 1,
+
+        /// All resources are treated as new ones. The only exception are those with a defined
+        /// resource URI.
+        IdentifyNone = 2
+    };
+
+    /**
+     * Flags to influence the behaviour of storeResources()
+     */
+    enum StoreResourcesFlag {
+        /// No flags - default behaviour
+        NoStoreResourcesFlags = 0,
+
+        /// By default storeResources() will only append data and fail if properties with
+        /// cardinality 1 already have a value. This flag changes the behaviour to force the
+        /// new values instead.
+        OverwriteProperties = 1
+    };
+    Q_DECLARE_FLAGS(StoreResourcesFlags, StoreResourcesFlag)
 
     /**
      * \name Basic API
@@ -147,14 +180,6 @@ namespace Nepomuk {
                                                                  const KComponentData& component = KGlobal::mainComponent());
 
     /**
-     * Remove all statements involving any proerty from \p properties from
-     * all resources in \p resources if it was created by application \p app.
-     */
-    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* removePropertiesByApplication(const QList<QUrl>& resources,
-                                                                       const QList<QUrl>& properties,
-                                                                       const KComponentData& component = KGlobal::mainComponent());
-
-    /**
      * Merges two resources into one. Properties from \p resource1
      * take precedence over that from \p resource2 (for properties with cardinality 1).
      */
@@ -165,14 +190,22 @@ namespace Nepomuk {
     /**
      * \param resources The resources to be merged. Blank nodes will be converted into new
      * URIs (unless the corresponding resource already exists).
-     * \param app The calling application
+     * \param identificationMode This method can try hard to avoid duplicate resources by looking
+     * for already existing duplicates based on nrl:IdentifyingProperty. By default it only looks
+     * for duplicates of resources that do not have a resource URI (SimpleResource::uri()) defined.
+     * This behaviour can be changed with this parameter.
+     * \param flags Additional flags to change the behaviour of the method.
      * \param additionalMetadata Additional metadata for the added resources. This can include
      * such details as the creator of the data or details on the method of data recovery.
      * One typical usecase is that the file indexer uses (rdf:type, nrl:DiscardableInstanceBase)
      * to state that the provided information can be recreated at any time. Only built-in types
      * such as int, string, or url are supported.
+     * \param component The component representing the calling service/application. Normally there
+     * is no need to change this from the default.
      */
     NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* storeResources(const SimpleResourceGraph& resources,
+                                                        StoreIdentificationMode identificationMode = IdentifyNew,
+                                                        StoreResourcesFlags flags = NoStoreResourcesFlags,
                                                         const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>(),
                                                         const KComponentData& component = KGlobal::mainComponent());
 
@@ -183,15 +216,24 @@ namespace Nepomuk {
      * detection based on file extension is used.
      * \param userSerialization If \p serialization is Soprano::SerializationUser this value is used. See Soprano::Parser
      * for details.
+     * \param identificationMode This method can try hard to avoid duplicate resources by looking
+     * for already existing duplicates based on nrl:IdentifyingProperty. By default it only looks
+     * for duplicates of resources that do not have a resource URI (SimpleResource::uri()) defined.
+     * This behaviour can be changed with this parameter.
+     * \param flags Additional flags to change the behaviour of the method.
      * \param additionalMetadata Additional metadata for the added resources. This can include
      * such details as the creator of the data or details on the method of data recovery.
      * One typical usecase is that the file indexer uses (rdf:type, nrl:DiscardableInstanceBase)
      * to state that the provided information can be recreated at any time. Only built-in types
      * such as int, string, or url are supported.
+     * \param component The component representing the calling service/application. Normally there
+     * is no need to change this from the default.
      */
     NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* importResources(const KUrl& url,
                                                          Soprano::RdfSerialization serialization,
                                                          const QString& userSerialization = QString(),
+                                                         StoreIdentificationMode identificationMode = IdentifyNew,
+                                                         StoreResourcesFlags flags = NoStoreResourcesFlags,
                                                          const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>(),
                                                          const KComponentData& component = KGlobal::mainComponent());
 
@@ -206,5 +248,6 @@ namespace Nepomuk {
 }
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Nepomuk::RemovalFlags)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Nepomuk::StoreResourcesFlags)
 
 #endif

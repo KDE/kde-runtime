@@ -1262,16 +1262,13 @@ void Nepomuk::DataManagementModel::removeDataByApplication(RemovalFlags flags, c
     removeTrailingGraphs(graphs);
 }
 
-void Nepomuk::DataManagementModel::removePropertiesByApplication(const QList<QUrl> &resources, const QList<QUrl> &properties, const QString &app)
-{
-    Q_UNUSED(resources);
-    Q_UNUSED(properties);
-    Q_UNUSED(app);
-    setError("Not implemented yet");
-}
 
 //// TODO: do not allow to create properties or classes this way
-void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceGraph &resources, const QString &app, const QHash<QUrl, QVariant> &additionalMetadata)
+void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceGraph &resources,
+                                                  const QString &app,
+                                                  Nepomuk::StoreIdentificationMode identificationMode,
+                                                  Nepomuk::StoreResourcesFlags flags,
+                                                  const QHash<QUrl, QVariant> &additionalMetadata)
 {
     if(app.isEmpty()) {
         setError(QLatin1String("storeResources: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
@@ -1507,6 +1504,8 @@ void Nepomuk::DataManagementModel::importResources(const QUrl &url,
                                                    const QString &app,
                                                    Soprano::RdfSerialization serialization,
                                                    const QString &userSerialization,
+                                                   Nepomuk::StoreIdentificationMode identificationMode,
+                                                   Nepomuk::StoreResourcesFlags flags,
                                                    const QHash<QUrl, QVariant>& additionalMetadata)
 {
     // download the file
@@ -1544,7 +1543,7 @@ void Nepomuk::DataManagementModel::importResources(const QUrl &url,
             setError(it.lastError());
         }
         else {
-            storeResources(graph, app, additionalMetadata);
+            storeResources(graph, app, identificationMode, flags, additionalMetadata);
         }
     }
 

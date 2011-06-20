@@ -116,7 +116,7 @@ void Nepomuk::IndexFeeder::handleRequest( Request& request )
 
     
     // we do not have an event loop - thus, we need to delete the job ourselves
-    QScopedPointer<KJob> job( Nepomuk::storeResources( request.graph, additionalMetadata ) );
+    QScopedPointer<KJob> job( Nepomuk::storeResources( request.graph, Nepomuk::IdentifyNew, Nepomuk::NoStoreResourcesFlags, additionalMetadata ) );
     job->setAutoDelete(false);
     job->exec();
     if( job->error() ) {
