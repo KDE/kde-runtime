@@ -40,7 +40,6 @@ namespace Strigi {
         QUrl fieldUri( const std::string& s );
         QUrl fileUrl( const std::string& filename );
         std::string fieldName( const QUrl& uri );
-        QUrl uniqueUri( const QString& ns, ::Soprano::Model* model );
     }
 
     namespace Ontology {
@@ -57,7 +56,7 @@ namespace Nepomuk {
     bool blockingClearIndexedData( const QList<QUrl>& urls );
 
     /// clears data from pre-datamanagement days
-    bool clearLegacyIndexedDataForUrl( const KUrl& url );
+    bool clearLegacyIndexedDataForUrls( const KUrl::List& urls );
 
     /// clears data from pre-datamanagement days
     bool clearLegacyIndexedDataForResourceUri( const KUrl& res );
