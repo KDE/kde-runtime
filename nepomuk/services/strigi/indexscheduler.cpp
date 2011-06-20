@@ -531,12 +531,18 @@ void Nepomuk::IndexScheduler::deleteEntries( const QStringList& entries )
 {
     // recurse into subdirs
     // TODO: use a less mem intensive method
+    // FIXME: There are 2 lists, one for KUrl and the other for QUrl. They should be automatically
+    //        converted. Fix this in 4.8
+    QList<QUrl> urls;
+    KUrl::List kurls;
     for ( int i = 0; i < entries.count(); ++i ) {
+        KUrl url( entries[i] );
+        urls << url;
+        kurls << url;
         deleteEntries( getChildren( entries[i] ).keys() );
     }
-    const KUrl::List urls(entries);
     Nepomuk::clearIndexedData(urls);
-    Nepomuk::clearLegacyIndexedDataForUrls(urls);
+    Nepomuk::clearLegacyIndexedDataForUrls(kurls);
 }
 
 
