@@ -39,8 +39,13 @@
 int Nepomuk::saveBackupChangeLog(const QUrl& url, QSet<QUrl> & uniqueUris )
 {
     const int step = 1000;
-    const QString query = QString::fromLatin1("select ?r ?p ?o ?g where { graph ?g { ?r ?p ?o. } ?g a nrl:InstanceBase . FILTER(!bif:exists( ( select (1) where { ?g a nrl:DiscardableInstanceBase . } ) )) . }");
-    
+    const QString query = QString::fromLatin1("select ?r ?p ?o ?g where { "
+                                              "graph ?g { ?r ?p ?o. } "
+                                              "?g a nrl:InstanceBase . "
+                                              "FILTER(!bif:exists( ( select (1) where { ?g a nrl:DiscardableInstanceBase . } ) )) ."
+                                              "FILTER(regex(str(?r), '^nepomuk:/res/')). "
+                                              "}");
+
     Soprano::Model * model = Nepomuk::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator iter= model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 
@@ -53,11 +58,10 @@ int Nepomuk::saveBackupChangeLog(const QUrl& url, QSet<QUrl> & uniqueUris )
         changeLog += ChangeLogRecord( st );
         totalNumRecords++;
 
-        //FIXME: Maybe we should only add those which have a "nepomuk" scheme?
         uniqueUris.insert( st.subject().uri() );
-        if( st.object().isResource() )
+        if( st.object().isResource() && st.object().uri().scheme() == QLatin1String("nepomuk") )
             uniqueUris.insert( st.object().uri() );
-        
+
         if( ++i >= step ) {
             kDebug() << "Saving .. " << changeLog.size();
             changeLog.save( url );
@@ -83,7 +87,7 @@ bool Nepomuk::saveBackupSyncFile(const QUrl& url)
     KTemporaryFile identificationFile;
     identificationFile.open();
     const QUrl identUrl( identificationFile.fileName() );
-    
+
     IdentificationSet::createIdentificationSet( uniqueUris, identUrl );
     return SyncFile::createSyncFile( logFile.fileName(), identUrl, url );
 }
