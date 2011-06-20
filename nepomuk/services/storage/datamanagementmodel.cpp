@@ -31,6 +31,7 @@
 #include "syncresource.h"
 #include "resourceidentifier.h"
 #include "resourcemerger.h"
+#include "nepomuktools.h"
 
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/NAO>
@@ -71,18 +72,9 @@ using namespace Soprano::Vocabulary;
 //// 1. Somehow handle nie:hasPart (at least in describeResources - compare text annotations where we only want to annotate part of a text)
 
 namespace {
-    /// used to handle sets and lists of QUrls
-    template<typename T> QStringList resourcesToN3(const T& urls) {
-        QStringList n3;
-        Q_FOREACH(const QUrl& url, urls) {
-            n3 << Soprano::Node::resourceToN3(url);
-        }
-        return n3;
-    }
-
     /// convert a hash of URL->URI mappings to N3, omitting empty URIs.
     /// This is a helper for the return type of DataManagementModel::resolveUrls
-    QStringList resourcesToN3(const QHash<QUrl, QUrl>& urls) {
+    QStringList resourceHashToN3(const QHash<QUrl, QUrl>& urls) {
         QStringList n3;
         QHash<QUrl, QUrl>::const_iterator end = urls.constEnd();
         for(QHash<QUrl, QUrl>::const_iterator it = urls.constBegin(); it != end; ++it) {
@@ -101,7 +93,7 @@ namespace {
     }
 
     template<typename T> QString createResourceFilter(const T& resources, const QString& var, bool exclude = true) {
-        QString filter = QString::fromLatin1("%1 in (%2)").arg(var, resourcesToN3(resources).join(QLatin1String(",")));
+        QString filter = QString::fromLatin1("%1 in (%2)").arg(var, Nepomuk::resourcesToN3(resources).join(QLatin1String(",")));
         if(exclude) {
             filter = QString::fromLatin1("!(%1)").arg(filter);
         }
@@ -485,7 +477,7 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     QList<Soprano::BindingSet> existing
             = executeQuery(QString::fromLatin1("select ?r ?v ?g where { graph ?g { ?r %1 ?v . FILTER(?r in (%2)) . } . }")
                            .arg(Soprano::Node::resourceToN3(property),
-                                resourcesToN3(uriHash).join(QLatin1String(","))),
+                                resourceHashToN3(uriHash).join(QLatin1String(","))),
                            Soprano::Query::QueryLanguageSparql).allBindings();
     Q_FOREACH(const Soprano::BindingSet& binding, existing) {
         if(!existingValues.contains(binding["v"])) {

@@ -19,6 +19,7 @@
 
 #include "util.h"
 #include "datamanagement.h"
+#include "nepomuktools.h"
 
 #include <QtCore/QUrl>
 #include <QtCore/QFile>
@@ -46,83 +47,10 @@
 
 #define STRIGI_NS "http://www.strigi.org/data#"
 
-namespace {
-/// used to handle sets and lists of QUrls
-template<typename T> QStringList resourcesToN3(const T& urls) {
-    QStringList n3;
-    Q_FOREACH(const QUrl& url, urls) {
-        n3 << Soprano::Node::resourceToN3(url);
-    }
-    return n3;
-}
-}
-
-QUrl Strigi::Util::fieldUri( const std::string& s )
-{
-    QString qKey = QString::fromUtf8( s.c_str() );
-    QUrl url;
-
-    // very naive test for proper URI
-    if ( qKey.contains( ":/" ) ) {
-        url = qKey;
-    }
-    else {
-        url = STRIGI_NS + qKey;
-    }
-
-    // just to be sure
-    if ( url.isRelative() ) {
-        url.setScheme( "http" );
-    }
-
-    return url;
-}
-
-
-QUrl Strigi::Util::fileUrl( const std::string& filename )
-{
-    QUrl url = QUrl::fromLocalFile( QFileInfo( QString::fromUtf8( filename.c_str() ) ).absoluteFilePath() );
-    url.setScheme( "file" );
-    return url;
-}
-
-
-std::string Strigi::Util::fieldName( const QUrl& uri )
-{
-    QString s = uri.toString();
-    if ( s.startsWith( STRIGI_NS ) ) {
-        s = s.mid( strlen( STRIGI_NS ) );
-    }
-    return s.toUtf8().data();
-}
-
 
 QUrl Strigi::Ontology::indexGraphFor()
 {
     return QUrl::fromEncoded( "http://www.strigi.org/fields#indexGraphFor", QUrl::StrictMode );
-}
-
-bool Nepomuk::blockingClearIndexedData(const QUrl& url)
-{
-    return blockingClearIndexedData( QList<QUrl>() << url );
-}
-
-bool Nepomuk::blockingClearIndexedData(const QList< QUrl >& urls)
-{
-    QScopedPointer<KJob> job( clearIndexedData(urls) );
-    if( job.isNull() )
-        return false;
-
-    // we do not have an event loop in the index scheduler, thus, we need to delete ourselves.
-    job->setAutoDelete(false);
-
-    // run the job with a local event loop
-    job->exec();
-    if( job->error() ) {
-        kDebug() << job->errorString();
-    }
-
-    return job->error() == KJob::NoError;
 }
 
 KJob* Nepomuk::clearIndexedData( const QUrl& url )
@@ -151,33 +79,44 @@ KJob* Nepomuk::clearIndexedData( const QList<QUrl>& urls )
 
 bool Nepomuk::clearLegacyIndexedDataForUrls( const KUrl::List& urls )
 {
-    if ( urls.isEmpty() )
-        return false;
+    if ( !urls.isEmpty() )
+        return true;
 
-    kDebug() << urls;
+    if(urls.count() > Nepomuk::MAX_SPLIT_LIST_ITEMS) {
+        foreach(const QList<KUrl>& u, Nepomuk::splitList(urls)) {
+            if(!clearLegacyIndexedDataForUrls(u)) {
+                return false;
+            }
+        }
+    }
+    else {
+        kDebug() << urls;
 
-    const QString query
-            = QString::fromLatin1( "select ?g where { "
-                                   "{ "
-                                   "?r %2 ?u . "
-                                   "FILTER(?u in (%1)) . "
-                                   "?g %3 ?r . } "
-                                   "UNION "
-                                   "{ ?g %3 ?u . "
-                                   "FILTER(?u in (%1)) . } . "
-                                   "}")
-            .arg( resourcesToN3( urls ).join(QLatin1String(",")),
-                  Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                  Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ) );
+        const QString query
+                = QString::fromLatin1( "select ?g where { "
+                                       "{ "
+                                       "?r %2 ?u . "
+                                       "FILTER(?u in (%1)) . "
+                                       "?g %3 ?r . } "
+                                       "UNION "
+                                       "{ ?g %3 ?u . "
+                                       "FILTER(?u in (%1)) . } . "
+                                       "}")
+                .arg( Nepomuk::resourcesToN3( urls ).join(QLatin1String(",")),
+                      Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                      Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ) );
 
-    const QList<Soprano::Node> graphs =
-            Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql )
-            .iterateBindings(0).allNodes();
+        const QList<Soprano::Node> graphs =
+                Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql )
+                .iterateBindings(0).allNodes();
 
-    foreach(const Soprano::Node& graph, graphs) {
-        // delete the indexed data (The Soprano::NRLModel in the storage service will take care of
-        // the metadata graph)
-        Nepomuk::ResourceManager::instance()->mainModel()->removeContext( graph );
+        foreach(const Soprano::Node& graph, graphs) {
+            // delete the indexed data (The Soprano::NRLModel in the storage service will take care of
+            // the metadata graph)
+            if(Nepomuk::ResourceManager::instance()->mainModel()->removeContext( graph ) != Soprano::Error::ErrorNone) {
+                return false;
+            }
+        }
     }
 
     return true;
@@ -194,11 +133,14 @@ bool Nepomuk::clearLegacyIndexedDataForResourceUri( const KUrl& res )
                     .arg( Soprano::Node::resourceToN3( Strigi::Ontology::indexGraphFor() ),
                           Soprano::Node::resourceToN3( res ) );
 
-    Soprano::QueryResultIterator result = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    while ( result.next() ) {
+    const QList<Soprano::Node> graphs =
+            Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql )
+            .iterateBindings(0).allNodes();
+
+    foreach(const Soprano::Node& graph, graphs) {
         // delete the indexed data (The Soprano::NRLModel in the storage service will take care of
         // the metadata graph)
-        Nepomuk::ResourceManager::instance()->mainModel()->removeContext( result.binding( "g" ) );
+        Nepomuk::ResourceManager::instance()->mainModel()->removeContext( graph );
     }
 
     return true;

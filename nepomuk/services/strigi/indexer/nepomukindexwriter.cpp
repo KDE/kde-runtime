@@ -22,6 +22,7 @@
 #include "nepomukindexfeeder.h"
 #include "../util.h"
 #include "kext.h"
+#include "datamanagement.h"
 
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/LiteralValue>
@@ -43,6 +44,7 @@
 #include <KDebug>
 #include <KMimeType>
 #include <kde_file.h>
+#include <KJob>
 
 #include <sys/stat.h>
 #include <stdlib.h>
@@ -384,17 +386,16 @@ Nepomuk::StrigiIndexWriter::~StrigiIndexWriter()
 void Nepomuk::StrigiIndexWriter::commit()
 {
     // do nothing
+    Q_ASSERT(false);
 }
 
 
-// delete all indexed data for the files listed in entries
+// unused
 void Nepomuk::StrigiIndexWriter::deleteEntries( const std::vector<std::string>& entries )
 {
-    for ( unsigned int i = 0; i < entries.size(); ++i ) {
-        QString path = QString::fromUtf8( entries[i].c_str() );
-        Nepomuk::clearLegacyIndexedDataForUrls( KUrl( path ) );
-        Nepomuk::blockingClearIndexedData(KUrl(path));
-    }
+    // do nothing
+    Q_UNUSED(entries);
+    Q_ASSERT(false);
 }
 
 
@@ -402,6 +403,7 @@ void Nepomuk::StrigiIndexWriter::deleteEntries( const std::vector<std::string>& 
 void Nepomuk::StrigiIndexWriter::deleteAllEntries()
 {
     // do nothing
+    Q_ASSERT(false);
 }
 
 
@@ -422,7 +424,7 @@ void Nepomuk::StrigiIndexWriter::startAnalysis( const AnalysisResult* idx )
     // remove previously indexed data
     if( !data->resourceUri.isEmpty() ) {
         Nepomuk::clearLegacyIndexedDataForResourceUri( data->resourceUri );
-        Nepomuk::blockingClearIndexedData(data->resourceUri);
+        Nepomuk::clearIndexedData(data->resourceUri)->exec();
     }
 
     // It is important to keep the resource URI between updates (especially for sharing of files)
@@ -684,7 +686,7 @@ void Nepomuk::StrigiIndexWriter::initWriterData( const Strigi::FieldRegister& f 
     std::map<std::string, RegisteredField*>::const_iterator i;
     std::map<std::string, RegisteredField*>::const_iterator end = f.fields().end();
     for (i = f.fields().begin(); i != end; ++i) {
-        Nepomuk::Types::Property prop = Strigi::Util::fieldUri( i->second->key() );
+        Nepomuk::Types::Property prop = QUrl::fromEncoded( i->second->key().c_str() );
 
         QVariant::Type type( QVariant::Invalid );
 
