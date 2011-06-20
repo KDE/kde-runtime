@@ -67,24 +67,4 @@ void Nepomuk::Indexer::slotIndexedFile(int exitCode)
     emitResult();
 }
 
-// static
-void Nepomuk::Indexer::clearIndexedData( const KUrl& url )
-{
-    Nepomuk::clearLegacyIndexedDataForUrl(url);
-    Nepomuk::clearIndexedData(url);
-}
-
-// static
-void Nepomuk::Indexer::clearIndexedData( const QFileInfo& info )
-{
-    clearIndexedData(KUrl(info.filePath()));
-}
-
-// static
-void Nepomuk::Indexer::clearIndexedData( const Nepomuk::Resource& res )
-{
-    Nepomuk::clearLegacyIndexedDataForResourceUri( res.resourceUri() );
-    Nepomuk::clearIndexedData(res.resourceUri());
-}
-
 #include "nepomukindexer.moc"

@@ -325,11 +325,10 @@ void Nepomuk::IndexScheduler::doIndexing()
         indexer->start();
 
         emit indexingFile( m_currentUrl.toLocalFile() );
-        return;
     }
 
     // get the next folder
-    if( !m_dirsToUpdate.isEmpty() ) {
+    else if( !m_dirsToUpdate.isEmpty() ) {
         kDebug() << "Directory";
 
         m_dirsToUpdateMutex.lock();
@@ -341,10 +340,11 @@ void Nepomuk::IndexScheduler::doIndexing()
         if( !analyzeDir( dir.first, dir.second ) ) {
             callDoIndexing();
         }
-        return;
     }
 
-    setIndexingStarted( false );
+    else {
+        setIndexingStarted( false );
+    }
 }
 
 void Nepomuk::IndexScheduler::slotIndexingDone(KJob* job)
@@ -533,8 +533,10 @@ void Nepomuk::IndexScheduler::deleteEntries( const QStringList& entries )
     // TODO: use a less mem intensive method
     for ( int i = 0; i < entries.count(); ++i ) {
         deleteEntries( getChildren( entries[i] ).keys() );
-        Indexer::clearIndexedData( KUrl( entries[i] ) );
     }
+    const KUrl::List urls(entries);
+    Nepomuk::clearIndexedData(urls);
+    Nepomuk::clearLegacyIndexedDataForUrls(urls);
 }
 
 

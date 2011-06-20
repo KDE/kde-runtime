@@ -392,7 +392,7 @@ void Nepomuk::StrigiIndexWriter::deleteEntries( const std::vector<std::string>& 
 {
     for ( unsigned int i = 0; i < entries.size(); ++i ) {
         QString path = QString::fromUtf8( entries[i].c_str() );
-        Nepomuk::clearLegacyIndexedDataForUrl( KUrl( path ) );
+        Nepomuk::clearLegacyIndexedDataForUrls( KUrl( path ) );
         Nepomuk::blockingClearIndexedData(KUrl(path));
     }
 }

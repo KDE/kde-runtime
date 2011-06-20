@@ -57,25 +57,6 @@ namespace Nepomuk {
 
         virtual void start();
 
-        /**
-         * Remove all indexed data for the file/resource identified by \p res.
-         */
-        static void clearIndexedData( const Nepomuk::Resource& res );
-
-        /**
-         * \overload
-         *
-         * Remove all indexed data for the file at local url \p url.
-         */
-        static void clearIndexedData( const KUrl& url );
-
-        /**
-         * \overload
-         *
-         * Remove all indexed data for the file identifies by \p info.
-         */
-        static void clearIndexedData( const QFileInfo& info );
-
     Q_SIGNALS:
         /**
          * Emitted once the indexing for a file or resource has finished.
