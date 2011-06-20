@@ -248,13 +248,9 @@ void Nepomuk::IndexCleaner::removeDMSIndexedData()
         KJob* job = Nepomuk::clearIndexedData(resources);
         job->start();
         connect( job, SIGNAL(finished(KJob*)), this, SLOT(slotClearIndexedData(KJob*)) );
-        return;
     }
 
-    kDebug() << m_query;
-
-    // Go next state
-    if( !suspended() ) {
+    else if( !suspended() ) {
         QMutexLocker locker(&m_stateMutex);
         m_state = GraphRemovalState;
 
@@ -331,3 +327,5 @@ bool Nepomuk::IndexCleaner::suspended() const
 {
     return m_state == SuspendedState;
 }
+
+#include "indexcleaner.moc"
