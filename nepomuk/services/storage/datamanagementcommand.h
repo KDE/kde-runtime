@@ -26,10 +26,11 @@
 #include <QtCore/QVariant>
 #include <QtDBus/QDBusMessage>
 
-#include "dbustypes.h"
+#include "lib/dbustypes.h"
+#include "lib/simpleresource.h"
+#include "lib/simpleresourcegraph.h"
+#include "lib/datamanagement.h"
 #include "datamanagementmodel.h"
-#include "simpleresource.h"
-#include "simpleresourcegraph.h"
 
 
 namespace Nepomuk {
@@ -147,22 +148,28 @@ class StoreResourcesCommand : public DataManagementCommand
 public:
     StoreResourcesCommand(const SimpleResourceGraph& resources,
                           const QString& app,
+                          int identificationMode,
+                          int flags,
                           const QHash<QUrl, QVariant>& additionalMetadata,
                           Nepomuk::DataManagementModel* model,
                           const QDBusMessage& msg)
         : DataManagementCommand(model, msg),
           m_resources(resources),
           m_app(app),
+          m_identificationMode(Nepomuk::StoreIdentificationMode(identificationMode)),
+          m_flags(flags),
           m_additionalMetadata(additionalMetadata) {}
 
 private:
     QVariant runCommand() {
-        model()->storeResources(m_resources, m_app, m_additionalMetadata);
+        model()->storeResources(m_resources, m_app, m_identificationMode, m_flags, m_additionalMetadata);
         return QVariant();
     }
 
     SimpleResourceGraph m_resources;
     QString m_app;
+    Nepomuk::StoreIdentificationMode m_identificationMode;
+    Nepomuk::StoreResourcesFlags m_flags;
     QHash<QUrl, QVariant> m_additionalMetadata;
 };
 
@@ -211,7 +218,7 @@ private:
 
     QList<QUrl> m_resources;
     QString m_app;
-    DataManagementModel::RemovalFlags m_flags;
+    Nepomuk::RemovalFlags m_flags;
 };
 
 class RemoveDataByApplicationCommand : public DataManagementCommand
@@ -232,7 +239,7 @@ private:
     }
 
     QString m_app;
-    DataManagementModel::RemovalFlags m_flags;
+    Nepomuk::RemovalFlags m_flags;
 };
 
 class RemovePropertiesCommand : public DataManagementCommand
@@ -251,30 +258,6 @@ public:
 private:
     QVariant runCommand() {
         model()->removeProperties(m_resources, m_properties, m_app);
-        return QVariant();
-    }
-
-    QList<QUrl> m_resources;
-    QList<QUrl> m_properties;
-    QString m_app;
-};
-
-class RemovePropertiesByApplicationCommand : public DataManagementCommand
-{
-public:
-    RemovePropertiesByApplicationCommand(const QList<QUrl>& res,
-                                         const QList<QUrl>& properties,
-                                         const QString& app,
-                                         Nepomuk::DataManagementModel* model,
-                                         const QDBusMessage& msg)
-        : DataManagementCommand(model, msg),
-          m_resources(res),
-          m_properties(properties),
-          m_app(app) {}
-
-private:
-    QVariant runCommand() {
-        model()->removePropertiesByApplication(m_resources, m_properties, m_app);
         return QVariant();
     }
 
@@ -331,7 +314,7 @@ private:
 
     QList<QUrl> m_resources;
     QString m_app;
-    DataManagementModel::RemovalFlags m_flags;
+    Nepomuk::RemovalFlags m_flags;
 };
 
 class DescribeResourcesCommand : public DataManagementCommand
@@ -360,6 +343,8 @@ public:
     ImportResourcesCommand(const QUrl& url,
                            Soprano::RdfSerialization serialization,
                            const QString& userSerialization,
+                           int identificationMode,
+                           int flags,
                            const PropertyHash& additionalProps,
                            const QString& app,
                            Nepomuk::DataManagementModel* model,
@@ -368,18 +353,22 @@ public:
           m_url(url),
           m_serialization(serialization),
           m_userSerialization(userSerialization),
+          m_identificationMode(Nepomuk::StoreIdentificationMode(identificationMode)),
+          m_flags(flags),
           m_additionalProperties(additionalProps),
           m_app(app) {}
 
 private:
     QVariant runCommand() {
-        model()->importResources(m_url, m_app, m_serialization, m_userSerialization, m_additionalProperties);
+        model()->importResources(m_url, m_app, m_serialization, m_userSerialization, m_identificationMode, m_flags, m_additionalProperties);
         return QVariant();
     }
 
     QUrl m_url;
     Soprano::RdfSerialization m_serialization;
     QString m_userSerialization;
+    Nepomuk::StoreIdentificationMode m_identificationMode;
+    Nepomuk::StoreResourcesFlags m_flags;
     PropertyHash m_additionalProperties;
     QString m_app;
 };

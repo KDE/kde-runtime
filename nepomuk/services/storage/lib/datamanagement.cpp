@@ -120,17 +120,6 @@ KJob* Nepomuk::removeDataByApplication(RemovalFlags flags,
 }
 
 
-KJob* Nepomuk::removePropertiesByApplication(const QList<QUrl>& resources,
-                                             const QList<QUrl>& properties,
-                                             const KComponentData& component)
-{
-    return new GenericDataManagementJob("removePropertiesByApplication",
-                                        Q_ARG(QStringList, Nepomuk::DBus::convertUriList(resources)),
-                                        Q_ARG(QStringList, Nepomuk::DBus::convertUriList(properties)),
-                                        Q_ARG(QString, component.componentName()));
-}
-
-
 KJob* Nepomuk::mergeResources(const QUrl& resource1,
                               const QUrl& resource2,
                               const KComponentData& component)
@@ -142,11 +131,15 @@ KJob* Nepomuk::mergeResources(const QUrl& resource1,
 }
 
 KJob* Nepomuk::storeResources(const SimpleResourceGraph& resources,
+                              StoreIdentificationMode identificationMode,
+                              StoreResourcesFlags flags,
                               const QHash<QUrl, QVariant>& additionalMetadata,
                               const KComponentData& component)
 {
     return new GenericDataManagementJob("storeResources",
                                         Q_ARG(QList<Nepomuk::SimpleResource>, resources.toList()),
+                                        Q_ARG(int, int(identificationMode)),
+                                        Q_ARG(int, int(flags)),
                                         Q_ARG(Nepomuk::PropertyHash, additionalMetadata),
                                         Q_ARG(QString, component.componentName()));
 }
@@ -154,12 +147,16 @@ KJob* Nepomuk::storeResources(const SimpleResourceGraph& resources,
 KJob* Nepomuk::importResources(const KUrl& url,
                                Soprano::RdfSerialization serialization,
                                const QString& userSerialization,
+                               StoreIdentificationMode identificationMode,
+                               StoreResourcesFlags flags,
                                const QHash<QUrl, QVariant>& additionalMetadata,
                                const KComponentData& component)
 {
     return new GenericDataManagementJob("importResources",
                                         Q_ARG(QString, Nepomuk::DBus::convertUri(url)),
                                         Q_ARG(QString, Soprano::serializationMimeType(serialization, userSerialization)),
+                                        Q_ARG(int, int(identificationMode)),
+                                        Q_ARG(int, int(flags)),
                                         Q_ARG(Nepomuk::PropertyHash, additionalMetadata),
                                         Q_ARG(QString, component.componentName()));
 }

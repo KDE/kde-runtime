@@ -1523,7 +1523,7 @@ void DataManagementModelTest::testRemoveResources()
     m_model->addStatement(QUrl("res:/B"), NIE::url(), QUrl::fromLocalFile(fileB.fileName()), g2);
 
 
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     // verify that the resource is gone
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -1533,7 +1533,7 @@ void DataManagementModelTest::testRemoveResources()
     QCOMPARE(m_model->listStatements(QUrl("res:/C"), Node(), Node()).allStatements().count(), 2);
 
     // verify that removing resources by file URL works
-    m_dmModel->removeResources(QList<QUrl>() << QUrl::fromLocalFile(fileB.fileName()), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl::fromLocalFile(fileB.fileName()), Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
 
@@ -1597,7 +1597,7 @@ void DataManagementModelTest::testRemoveResources_subresources()
     m_model->addStatement(QUrl("res:/F"), QUrl("prop:/int"), LiteralValue(42), g2);
 
     // delete the resource
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::RemoveSubResoures, QLatin1String("A"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), Nepomuk::RemoveSubResoures, QLatin1String("A"));
 
     // this should have removed A, B and C
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -1634,7 +1634,7 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
 
 
     // empty resource list
-    m_dmModel->removeResources(QList<QUrl>(), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>(), Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1644,7 +1644,7 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
 
 
     // resource list with empty URL
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A") << QUrl(), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A") << QUrl(), Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1654,7 +1654,7 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
 
 
     // empty app
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QString());
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QString());
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1665,7 +1665,7 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
 
     // non-existing file
     const QUrl nonExistingFileUrl("file:///a/file/that/is/very/unlikely/to/exist");
-    m_dmModel->removeResources(QList<QUrl>() << nonExistingFileUrl, DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << nonExistingFileUrl, Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     // the call should have failed
     QVERIFY(m_dmModel->lastError());
@@ -1682,7 +1682,7 @@ void DataManagementModelTest::testRemoveResources_protectedTypes()
 
 
     // property
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("prop:/res"), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("prop:/res"), Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1692,7 +1692,7 @@ void DataManagementModelTest::testRemoveResources_protectedTypes()
 
 
     // class
-    m_dmModel->removeResources(QList<QUrl>() << NRL::Graph(), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << NRL::Graph(), Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1702,7 +1702,7 @@ void DataManagementModelTest::testRemoveResources_protectedTypes()
 
 
     // graph
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("graph:/onto"), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("graph:/onto"), Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1750,7 +1750,7 @@ void DataManagementModelTest::testRemoveResources_mtimeRelated()
 
 
     // now we remove res:/A
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
 
     // now only the mtime of B should have changed
@@ -1779,7 +1779,7 @@ void DataManagementModelTest::testRemoveDataByApplication1()
     m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // verify that nothing is left, not even the graph
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -1814,7 +1814,7 @@ void DataManagementModelTest::testRemoveDataByApplication2()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // verify that graph1 is gone completely
     QVERIFY(!m_model->containsAnyStatement(Node(), Node(), Node(), g1));
@@ -1851,7 +1851,7 @@ void DataManagementModelTest::testRemoveDataByApplication3()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // the resource should still be there, without any changes, not even a changed mtime
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), Node(), Node()).allStatements().count(), 2);
@@ -1889,7 +1889,7 @@ void DataManagementModelTest::testRemoveDataByApplication4()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // now the nie:url should still be there even though A created it
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName())));
@@ -1926,7 +1926,7 @@ void DataManagementModelTest::testRemoveDataByApplication5()
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::RemoveSubResoures, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::RemoveSubResoures, QLatin1String("A"));
 
     // this should have removed both A and B
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -1996,7 +1996,7 @@ void DataManagementModelTest::testRemoveDataByApplication6()
     m_model->addStatement(QUrl("res:/G"), NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g2);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::RemoveSubResoures, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::RemoveSubResoures, QLatin1String("A"));
 
     // this should have removed A, B and C
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -2037,7 +2037,7 @@ void DataManagementModelTest::testRemoveDataByApplication7()
     m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // verify that the creation date is still there
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::created(), Soprano::Node()));
@@ -2067,7 +2067,7 @@ void DataManagementModelTest::testRemoveDataByApplication8()
     m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // verify that all has gone
     // verify that nothing is left, not even the graph
@@ -2105,7 +2105,7 @@ void DataManagementModelTest::testRemoveDataByApplication9()
     m_model->addStatement(QUrl("res:/B"), NAO::created(), LiteralValue(dt), g1);
 
     // now remove res:/A by app A
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // now there should be 2 graphs - once for res:/A which is only maintained by B, and one for res:/B which is still
     // maintained by A and B
@@ -2164,7 +2164,7 @@ void DataManagementModelTest::testRemoveDataByApplication10()
     // Remove the data
     //
 
-    m_dmModel->removeDataByApplication( uris, DataManagementModel::RemoveSubResoures,
+    m_dmModel->removeDataByApplication( uris, Nepomuk::RemoveSubResoures,
                                         QLatin1String("AppA") );
     QVERIFY( !m_dmModel->lastError() );
 
@@ -2209,7 +2209,7 @@ void DataManagementModelTest::testRemoveDataByApplication11()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // now the nie:url should still be there even though A created it
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName())));
@@ -2309,7 +2309,7 @@ void DataManagementModelTest::testRemoveDataByApplication_realLife()
     QCOMPARE( appUri, QUrl("nepomuk:/res/e2eb2efb-14ee-4038-ac24-698f916289b0") );
 
     m_dmModel->removeDataByApplication( QList<QUrl>() << resUri,
-                                        Nepomuk::DataManagementModel::RemoveSubResoures,
+                                        Nepomuk::RemoveSubResoures,
                                         QLatin1String("nepomukindexer") );
 
     QString query2 = QString::fromLatin1("ask where { graph ?g { ?r %1 %2 .} "
@@ -2354,7 +2354,7 @@ void DataManagementModelTest::testRemoveDataByApplication_nieUrl()
     QVERIFY( !m_dmModel->lastError() );
 
     // Remove strigi indexed content
-    m_dmModel->removeDataByApplication( QList<QUrl>() << res1, DataManagementModel::RemoveSubResoures,
+    m_dmModel->removeDataByApplication( QList<QUrl>() << res1, Nepomuk::RemoveSubResoures,
                                         QLatin1String("nepomukindexer") );
 
     // The tag should still be there
@@ -2416,7 +2416,7 @@ void DataManagementModelTest::testRemoveDataByApplication_mtime()
 
 
     // we delete all three
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/B") << QUrl("res:/C"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/B") << QUrl("res:/C"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
 
     // now only the mtime of A should have changed
@@ -2463,7 +2463,7 @@ void DataManagementModelTest::testRemoveDataByApplication_mtimeRelated()
     m_model->addStatement(QUrl("res:/C"), NAO::lastModified(), LiteralValue(date), g2);
 
     // now we remove res:/A
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // now the mtime of res:/B should have been changed
     QCOMPARE(m_model->listStatements(QUrl("res:/B"), NAO::lastModified(), Node()).allElements().count(), 1);
@@ -2522,7 +2522,7 @@ void DataManagementModelTest::testRemoveDataByApplication_related()
 
 
     // now remove A
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // now only the relation in the first graph should have been removed
     QVERIFY(!m_model->containsStatement(QUrl("res:/B"), QUrl("prop:/res"), QUrl("res:/A"), g1));
@@ -2562,7 +2562,7 @@ void DataManagementModelTest::testRemoveAllDataByApplication1()
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world 2")), g2);
     m_model->addStatement(QUrl("res:/B"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
 
-    m_dmModel->removeDataByApplication(DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // make sure nothing is there anymore
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -2601,7 +2601,7 @@ void DataManagementModelTest::testRemoveAllDataByApplication2()
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world 2")), g2);
     m_model->addStatement(QUrl("res:/B"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g2);
 
-    m_dmModel->removeDataByApplication(DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
     QCOMPARE(m_model->listStatements(QUrl("res:/B"), Node(), Node()).allStatements().count(), 3);
@@ -2634,7 +2634,7 @@ void DataManagementModelTest::testRemoveAllDataByApplication3()
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world 2")), g1);
     m_model->addStatement(QUrl("res:/B"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
 
-    m_dmModel->removeDataByApplication(DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), Node(), Node()).allStatements().count(), 3);
     QCOMPARE(m_model->listStatements(QUrl("res:/B"), Node(), Node()).allStatements().count(), 3);
@@ -2667,7 +2667,7 @@ void DataManagementModelTest::testRemoveAllDataByApplication4()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
     m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
 
-    m_dmModel->removeDataByApplication(DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), Node(), Node()).allStatements().count(), 3);
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::created(), Soprano::Node()));
@@ -2811,7 +2811,7 @@ void DataManagementModelTest::testStoreResources_graphRules()
 
         QHash<QUrl, QVariant> additionalMetadata;
         additionalMetadata.insert( RDF::type(), NRL::InstanceBase() );
-        m_dmModel->storeResources( resGraph, "TestApp", additionalMetadata );
+        m_dmModel->storeResources( resGraph, "TestApp", Nepomuk::IdentifyNew, Nepomuk::NoStoreResourcesFlags, additionalMetadata );
         QVERIFY( !m_dmModel->lastError() );
 
         QList<Soprano::Statement> stList = m_model->listStatements( Soprano::Node(), NCO::fullname(),
@@ -2843,7 +2843,7 @@ void DataManagementModelTest::testStoreResources_graphRules()
 
         QHash<QUrl, QVariant> additionalMetadata;
         additionalMetadata.insert( RDF::type(), NRL::InstanceBase() );
-        m_dmModel->storeResources( resGraph, "TestApp", additionalMetadata );
+        m_dmModel->storeResources( resGraph, "TestApp", Nepomuk::IdentifyNew, Nepomuk::NoStoreResourcesFlags, additionalMetadata );
         QVERIFY( !m_dmModel->lastError() );
 
         QList<Soprano::Statement> stList = m_model->listStatements( Soprano::Node(), NCO::fullname(),
@@ -3052,7 +3052,7 @@ void DataManagementModelTest::testStoreResources_invalid_args()
     res.addProperty(QUrl("prop:/int"), QVariant(42));
     QHash<QUrl, QVariant> invalidMetadata;
     invalidMetadata.insert(QUrl("prop:/int"), QLatin1String("foobar"));
-    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"), invalidMetadata);
+    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"), Nepomuk::IdentifyNew, Nepomuk::NoStoreResourcesFlags, invalidMetadata);
 
     // the call should have failed
     QVERIFY(m_dmModel->lastError());
@@ -3064,7 +3064,7 @@ void DataManagementModelTest::testStoreResources_invalid_args()
     // invalid graph metadata 2
     invalidMetadata.clear();
     invalidMetadata.insert(NAO::maintainedBy(), QLatin1String("foobar"));
-    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"), invalidMetadata);
+    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"), Nepomuk::IdentifyNew, Nepomuk::NoStoreResourcesFlags, invalidMetadata);
 
     // the call should have failed
     QVERIFY(m_dmModel->lastError());
@@ -3973,7 +3973,7 @@ void DataManagementModelTest::testStoreResources_additionalMetadataApp()
     QHash<QUrl, QVariant> additionalMetadata;
     additionalMetadata.insert( NAO::maintainedBy(), app.uri() );
 
-    m_dmModel->storeResources( g, QLatin1String("appA"), additionalMetadata );
+    m_dmModel->storeResources( g, QLatin1String("appA"), Nepomuk::IdentifyNew, Nepomuk::NoStoreResourcesFlags, additionalMetadata );
 
     //FIXME: for now this should fail as nao:maintainedBy is protected,
     //       but what if we want to add some additionalMetadata which references

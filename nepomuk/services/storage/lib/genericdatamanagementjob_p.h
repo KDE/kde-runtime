@@ -41,7 +41,8 @@ public:
                              QGenericArgument val1 = QGenericArgument(),
                              QGenericArgument val2 = QGenericArgument(),
                              QGenericArgument val3 = QGenericArgument(),
-                             QGenericArgument val4 = QGenericArgument());
+                             QGenericArgument val4 = QGenericArgument(),
+                             QGenericArgument val5 = QGenericArgument());
     ~GenericDataManagementJob();
 
     /// does nothing, we do all in the constructor - it simply needs to be implemented
