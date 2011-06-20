@@ -22,11 +22,10 @@
 #ifndef _NEPOMUK_INDEXER_H_
 #define _NEPOMUK_INDEXER_H_
 
-#include <QtCore/QObject>
+#include <KJob>
+#include <KUrl>
 
-class KUrl;
-class QDateTime;
-class QDataStream;
+class KProcess;
 class QFileInfo;
 
 namespace Nepomuk {
@@ -48,54 +47,16 @@ namespace Nepomuk {
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */
-    class Indexer : public QObject
+    class Indexer : public KJob
     {
         Q_OBJECT
 
     public:
-        /**
-         * Create a new indexer.
-         */
-        Indexer( QObject* parent = 0 );
+        Indexer( const QFileInfo& info, QObject* parent = 0 );
+        Indexer( const KUrl& localUrl, QObject* parent = 0 );
 
-        /**
-         * Destructor
-         */
-        ~Indexer();
+        virtual void start();
 
-        /**
-         * Index a single local file or folder (files in a folder will
-         * not be indexed recursively).
-         */
-        void indexFile( const KUrl& localUrl );
-
-        /**
-         * Index a single local file or folder (files in a folder will
-         * not be indexed recursively). This method does the exact same
-         * as the above except that it saves an addditional stat of the
-         * file.
-         */
-        void indexFile( const QFileInfo& info );
-
-        /**
-         * Remove all indexed data for the file/resource identified by \p res.
-         */
-        void clearIndexedData( const Nepomuk::Resource& res );
-
-        /**
-         * \overload
-         *
-         * Remove all indexed data for the file at local url \p url.
-         */
-        void clearIndexedData( const KUrl& url );
-
-        /**
-         * \overload
-         *
-         * Remove all indexed data for the file identifies by \p info.
-         */
-        void clearIndexedData( const QFileInfo& info );
-        
     Q_SIGNALS:
         /**
          * Emitted once the indexing for a file or resource has finished.
@@ -109,7 +70,13 @@ namespace Nepomuk {
         // TODO: better only have one method for success and failure.
         // TODO: actually emit the indexingDone signal
 
+    private slots:
+        void slotIndexedFile(int exitCode);
+
     private:
+        KUrl m_url;
+        KProcess* m_process;
+        int m_exitCode;
     };
 }
 

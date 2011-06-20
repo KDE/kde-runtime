@@ -22,7 +22,7 @@
 
 #include <Nepomuk/Service>
 #include <QtCore/QTimer>
-
+#include <QtCore/QThread>
 
 namespace Strigi {
     class IndexManager;
@@ -43,9 +43,6 @@ namespace Nepomuk {
     public:
         StrigiService( QObject* parent = 0, const QList<QVariant>& args = QList<QVariant>() );
         ~StrigiService();
-
-        //vHanda: Is this really required? I've removed all the code that uses it.
-        IndexScheduler* indexScheduler() const { return m_indexScheduler; }
 
     Q_SIGNALS:
         void statusStringChanged();
@@ -106,6 +103,7 @@ namespace Nepomuk {
         QString userStatusString( bool simple ) const;
 
         IndexScheduler* m_indexScheduler;
+        QThread* m_schedulingThread;
     };
 }
 

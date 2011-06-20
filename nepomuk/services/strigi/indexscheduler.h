@@ -24,19 +24,20 @@
 #include <QtCore/QWaitCondition>
 #include <QtCore/QQueue>
 #include <QtCore/QDateTime>
+#include <QtCore/QTimer>
 
 #include <vector>
 #include <string>
 
 #include <KUrl>
 
+class KJob;
 class QFileInfo;
 class QByteArray;
 
 namespace Nepomuk {
 
-    class Indexer;
-
+    class IndexCleaner;
     /**
      * The IndexScheduler performs the normal indexing,
      * ie. the initial indexing and the timed updates
@@ -44,12 +45,12 @@ namespace Nepomuk {
      *
      * Events are not handled.
      */
-    class IndexScheduler : public QThread
+    class IndexScheduler : public QObject
     {
         Q_OBJECT
 
     public:
-        IndexScheduler( QObject* parent );
+        IndexScheduler( QObject* parent=0 );
         ~IndexScheduler();
 
         bool isSuspended() const;
@@ -125,8 +126,6 @@ namespace Nepomuk {
     public Q_SLOTS:
         void suspend();
         void resume();
-        void stop();
-        void restart();
 
         void setIndexingSpeed( IndexingSpeed speed );
 
@@ -165,6 +164,7 @@ namespace Nepomuk {
     Q_SIGNALS:
         void indexingStarted();
         void indexingStopped();
+
         /// a combination of the two signals above
         void indexingStateChanged( bool indexing );
         void indexingFolder( const QString& );
@@ -173,16 +173,19 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void slotConfigChanged();
+        void slotCleaningDone();
+        void slotIndexingDone( KJob* job );
+        void doIndexing();
 
     private:
         void run();
-
-        bool waitForContinue( bool disableDelay = false );
 
         /**
          * It first indexes \p dir. Then it indexes all the files in \p dir, and
          * finally recursivly analyzes all the subfolders in \p dir IF \p flags
          * contains the 'UpdateRecursive' flag. It even sets m_currentFolder
+         *
+         * Returns true if the folder was analyzed
          */
         bool analyzeDir( const QString& dir, UpdateDirFlags flags );
 
@@ -198,21 +201,12 @@ namespace Nepomuk {
         // no signal is emitted twice
         void setIndexingStarted( bool started );
 
-        /**
-         * Removes all previously indexed entries that are not in the list of folders
-         * to index anymore.
-         */
-        void removeOldAndUnwantedEntries();
-        bool removeAllGraphsFromQuery( const QString& query_ );
+        void callDoIndexing();
 
         bool m_suspended;
-        bool m_stopped;
         bool m_indexing;
 
         QMutex m_resumeStopMutex;
-        QWaitCondition m_resumeStopWc;
-
-        Indexer* m_indexer;
 
         // A specialized queue that gives priority to dirs that do not use the AutoUpdateFolder flag.
         class UpdateDirQueue : public QQueue<QPair<QString, UpdateDirFlags> >
@@ -225,13 +219,15 @@ namespace Nepomuk {
         // queue of folders to update (+flags defined in the source file) - changed by updateDir
         UpdateDirQueue m_dirsToUpdate;
 
+        QQueue<QFileInfo> m_filesToUpdate;
+
         QMutex m_dirsToUpdateMutex;
-        QWaitCondition m_dirsToUpdateWc;
 
         QString m_currentFolder;
         KUrl m_currentUrl;
 
         IndexingSpeed m_speed;
+        IndexCleaner* m_cleaner;
     };
 
     QDebug operator<<( QDebug dbg, IndexScheduler::IndexingSpeed speed );

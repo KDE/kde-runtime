@@ -23,37 +23,22 @@
 #include <string>
 #include <KUrl>
 
-class QUrl;
-class QString;
-
-namespace Soprano {
-    class Model;
-    class Node;
-}
+class KJob;
 
 namespace Strigi {
-
-    class Variant;
-
-    namespace Util {
-        QUrl fieldUri( const std::string& s );
-        QUrl fileUrl( const std::string& filename );
-        std::string fieldName( const QUrl& uri );
-        QUrl uniqueUri( const QString& ns, ::Soprano::Model* model );
-    }
-
     namespace Ontology {
+        /// The URI identifying strigi index graphs used in legacy data
         QUrl indexGraphFor();
     }
 }
 
 namespace Nepomuk {
     /// remove all indexed data for \p url the datamanagement way
-    bool clearIndexedData( const QUrl& url );
-    bool clearIndexedData( const QList<QUrl>& urls );
+    KJob* clearIndexedData( const QUrl& url );
+    KJob* clearIndexedData( const QList<QUrl>& urls );
 
     /// clears data from pre-datamanagement days
-    bool clearLegacyIndexedDataForUrl( const KUrl& url );
+    bool clearLegacyIndexedDataForUrls( const KUrl::List& urls );
 
     /// clears data from pre-datamanagement days
     bool clearLegacyIndexedDataForResourceUri( const KUrl& res );

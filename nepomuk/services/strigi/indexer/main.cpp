@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
         return 0;
     }
     else if( args->isSet("clear") ) {
-        Nepomuk::clearLegacyIndexedDataForUrl( args->url(0) );
+        Nepomuk::clearLegacyIndexedDataForUrls( args->url(0) );
         Nepomuk::clearIndexedData( args->url(0) );
         kDebug() << "Removed indexed data for" << args->url(0);
         return 0;
