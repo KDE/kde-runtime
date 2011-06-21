@@ -90,6 +90,41 @@ kext: {
           rdfs:range xsd:string ;
           nao:userVisible false .
 
+    kext:ResourceScoreCache
+          a rdfs:Class ;
+          rdfs:subClassOf rdfs:Resource ;
+          rdfs:label "Resource score cache" ;
+          rdfs:comment "For storing the automatically calculated score based on the usage statistics" ;
+          nao:userVisible false .
+
+    kext:targettedResource
+          a rdf:Property ;
+          rdfs:comment "Resource for which the score is calculated." ;
+          rdfs:domain kext:ResourceScoreCache ;
+          rdfs:label "resource" ;
+          rdfs:range rdfs:Resource .
+
+    kext:initiatingAgent
+          a rdf:Property ;
+          rdfs:comment "Relates the score to the agent initiating the events." ;
+          rdfs:domain kext:ResourceScoreCache ;
+          rdfs:label "involved agent" ;
+          rdfs:range nao:Agent .
+
+    kext:involvesActivity
+          a rdf:Property ;
+          rdfs:comment "Relates the score to the activity in which the events happened." ;
+          rdfs:domain kext:ResourceScoreCache ;
+          rdfs:label "involved activity" ;
+          rdfs:range kext:Activity .
+
+    kext:cachedScore
+          a rdf:Property ;
+          rdfs:subPropertyOf nao:score ;
+          rdfs:comment "The automatically calculated score" ;
+          rdfs:domain kext:ResourceScoreCache ;
+          rdfs:label "calculated score" ;
+          rdfs:range xsd:float .
 }
 
 <http://nepomuk.kde.org/ontologies/2010/11/29/kext/metadata> {
