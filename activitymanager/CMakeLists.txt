@@ -87,10 +87,10 @@ if(Nepomuk_FOUND)
         "KExt" "Nepomuk::Vocabulary" "trig"
         )
 
-    soprano_add_ontology(activity_manager_SRCS
-        ${CMAKE_CURRENT_SOURCE_DIR}/ontologies/krso.trig
-        "KRSO" "Nepomuk::Vocabulary" "trig"
-        )
+    # soprano_add_ontology(activity_manager_SRCS
+    #     ${CMAKE_CURRENT_SOURCE_DIR}/ontologies/kamdrso.trig
+    #     "RSO" "Nepomuk::Vocabulary" "trig"
+    #     )
 
     soprano_add_ontology(activity_manager_SRCS
         ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nepomuk/nao.trig

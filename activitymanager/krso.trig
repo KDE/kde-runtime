@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2010-2011 Ivan Cukic <ivan.cukic@kde.org>
+# Copyright (c) 2011 Ivan Cukic <ivan.cukic@kde.org>
 # All rights reserved, licensed under either CC-BY or BSD.
 #
 # You are free:
@@ -39,7 +39,7 @@
 @prefix nie:     <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix krso:    <http://nepomuk.kde.org/ontologies/2010/11/29/krso#> .
+@prefix krso:    <http://nepomuk.kde.org/ontologies/2011/06/17/krso#> .
 @prefix nfo:     <http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#> .
 
 krso: {
@@ -80,8 +80,8 @@ krso: {
           rdfs:range xsd:float .
 }
 
-<http://nepomuk.kde.org/ontologies/2010/11/29/krso/metadata> {
-    <http://nepomuk.kde.org/ontologies/2010/11/29/krso/metadata>
+<http://nepomuk.kde.org/ontologies/2011/06/17/krso/metadata> {
+    <http://nepomuk.kde.org/ontologies/2011/06/17/krso/metadata>
           a       nrl:GraphMetadata ;
           nrl:coreGraphMetadataFor krso: .
 
@@ -95,6 +95,6 @@ krso: {
           nao:serializationLanguage "TriG" ;
           nao:status "Unstable" ;
           nrl:updatable "0" ;
-          nao:version "1" .
+          nao:version "2" .
 }
 

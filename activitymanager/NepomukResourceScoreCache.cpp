@@ -29,7 +29,6 @@
 #include <KDebug>
 
 #include "kext.h"
-#include "krso.h"
 #include "nao.h"
 #include "nuao.h"
 
@@ -57,7 +56,7 @@ NepomukResourceScoreCache::NepomukResourceScoreCache(const QString & activity, c
                                   "?r kext:involvesResource %4 . "
                                   "} LIMIT 1"
             ).arg(
-                /* %1 */ Soprano::Node::resourceToN3(KRSO::ResourceScoreCache()),
+                /* %1 */ Soprano::Node::resourceToN3(KExt::ResourceScoreCache()),
                 /* %2 */ Soprano::Node::literalToN3(activity),
                 /* %3 */ Soprano::Node::literalToN3(application),
                 /* %4 */ Soprano::Node::resourceToN3(Nepomuk::Resource(KUrl(resource)).resourceUri())
@@ -77,21 +76,21 @@ NepomukResourceScoreCache::NepomukResourceScoreCache(const QString & activity, c
         kDebug() << "Found an old cache" << d->self.resourceUri() << d->self.resourceType();
 
     } else {
-        Nepomuk::Resource result(QUrl(), KRSO::ResourceScoreCache());
+        Nepomuk::Resource result(QUrl(), KExt::ResourceScoreCache());
 
         result.setProperty(
-                KRSO::targettedResource(),
+                KExt::targettedResource(),
                 Nepomuk::Resource(resource)
             );
         result.setProperty(
-                KRSO::initiatingAgent(),
+                KExt::initiatingAgent(),
                 Nepomuk::Resource(application, NAO::Agent())
             );
         result.setProperty(
-                KRSO::involvesActivity(),
+                KExt::involvesActivity(),
                 Nepomuk::Resource(ActivityManager::self()->CurrentActivity(), KExt::Activity())
             );
-        result.setProperty(KRSO::cachedScore(), 0);
+        result.setProperty(KExt::cachedScore(), 0);
 
         d->self = resource;
 

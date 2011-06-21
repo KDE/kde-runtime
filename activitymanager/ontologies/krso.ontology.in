@@ -1,8 +1,0 @@
-[Ontology]
-Version=1.0
-Name=KDE Resource Scoring Ontology
-Comment=The KDE Resource Scoring Ontology contains classes related to KAMD's scoring mechanisms
-Namespace=http://nepomuk.kde.org/ontologies/2011/06/17/krso#" ;
-Path=${CMAKE_INSTALL_PREFIX}/share/ontology/kde/krso.trig
-MimeType=application/x-trig
-Type=Data
