@@ -141,7 +141,7 @@ class Nepomuk::DataManagementModel::Private
 {
 public:
     ClassAndPropertyTree* m_classAndPropertyTree;
-    ResourceWatcherManager m_watchManager;
+    ResourceWatcherManager* m_watchManager;
     
     /// a set of properties that are maintained by the service and cannot be changed by clients
     QSet<QUrl> m_protectedProperties;
@@ -152,6 +152,8 @@ Nepomuk::DataManagementModel::DataManagementModel(Nepomuk::ClassAndPropertyTree*
       d(new Private())
 {
     d->m_classAndPropertyTree = tree;
+    d->m_watchManager = new ResourceWatcherManager(this);
+
     setParent(parent);
 
     // meta data properties are protected. This means they cannot be removed. But they
@@ -487,7 +489,7 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
         if(!existingValues.contains(binding["v"])) {
             removeAllStatements(binding["r"], property, binding["v"]);
             graphs.insert(binding["g"].uri());
-            d->m_watchManager.removeProperty(binding["r"], property, binding["v"]);
+            d->m_watchManager->removeProperty(binding["r"], property, binding["v"]);
         }
     }
     removeTrailingGraphs(graphs);
@@ -589,7 +591,7 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
         foreach(const Soprano::BindingSet& binding, valueGraphs) {
             graphs.insert( binding["g"].uri() );
             removeAllStatements( res, property, binding["v"] );
-            d->m_watchManager.removeProperty( res, property, binding["v"]);
+            d->m_watchManager->removeProperty( res, property, binding["v"]);
         }
 
         // we only update the mtime in case we actually remove anything
@@ -698,7 +700,7 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
         // inform interested parties
         for(QList<QPair<Soprano::Node, Soprano::Node> >::const_iterator it = propertyValues.constBegin();
             it != propertyValues.constEnd(); ++it) {
-            d->m_watchManager.removeProperty(res, it->first.uri(), it->second);
+            d->m_watchManager->removeProperty(res, it->first.uri(), it->second);
         }
 
         // we only update the mtime in case we actually remove anything
@@ -764,7 +766,7 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
     addStatement(resUri, NAO::lastModified(), Soprano::LiteralValue(now), graph);
 
     // inform interested parties
-    d->m_watchManager.createResource(resUri, types);
+    d->m_watchManager->createResource(resUri, types);
 
     return resUri;
 }
@@ -883,7 +885,7 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
     // inform interested parties
     // TODO: ideally we should also report the types the removed resources had
     foreach(const Soprano::Node& res, actuallyRemovedResources) {
-        d->m_watchManager.removeResource(res.uri(), QList<QUrl>());
+        d->m_watchManager->removeResource(res.uri(), QList<QUrl>());
     }
 }
 
@@ -2075,7 +2077,7 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
         for(QSet<QPair<QUrl, Soprano::Node> >::const_iterator it = finalProperties.constBegin(); it != finalProperties.constEnd(); ++it) {
             addStatement(it->first, property, it->second, graph);
             finalResources.insert(it->first);
-            d->m_watchManager.addProperty( it->first, property, it->second);
+            d->m_watchManager->addProperty( it->first, property, it->second);
         }
 
         // update modification date
@@ -2353,6 +2355,11 @@ bool Nepomuk::DataManagementModel::containsResourceWithProtectedType(const QSet<
     else {
         return false;
     }
+}
+
+Nepomuk::ResourceWatcherManager* Nepomuk::DataManagementModel::resourceWatcherManager() const
+{
+    return d->m_watchManager;
 }
 
 #include "datamanagementmodel.moc"
