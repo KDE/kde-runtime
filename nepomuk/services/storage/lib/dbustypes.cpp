@@ -59,6 +59,56 @@ QVariantList Nepomuk::DBus::normalizeVariantList(const QVariantList& l)
     return newL;
 }
 
+QVariant Nepomuk::DBus::resolveDBusArguments(const QVariant& v)
+{
+    //
+    // trueg: QDBus does not automatically convert non-basic types but gives us a QDBusArgument in a QVariant.
+    // Thus, we need to handle QUrl, QTime, QDate, and QDateTime as a special cases here. They is the only complex types we support.
+    //
+    if(v.userType() == qMetaTypeId<QDBusArgument>()) {
+        const QDBusArgument arg = v.value<QDBusArgument>();
+
+        QVariant v;
+        if(arg.currentSignature() == QLatin1String("(s)")) {
+            QUrl url;
+            arg >> url;
+            return url;
+        }
+        else if(arg.currentSignature() == QLatin1String("(iii)")) {
+            QDate date;
+            arg >> date;
+            return date;
+        }
+        else if(arg.currentSignature() == QLatin1String("(iiii)")) {
+            QTime time;
+            arg >> time;
+            return time;
+        }
+        else if(arg.currentSignature() == QLatin1String("((iii)(iiii)i)")) {
+            QDateTime dt;
+            arg >> dt;
+            return dt;
+        }
+        else {
+            kDebug() << "Unknown type signature in property hash value:" << arg.currentSignature();
+            return QVariant();
+        }
+    }
+    else {
+        return v;
+    }
+}
+
+QVariantList Nepomuk::DBus::resolveDBusArguments(const QVariantList& l)
+{
+    QVariantList newL;
+    QListIterator<QVariant> it(l);
+    while(it.hasNext()) {
+        newL.append(resolveDBusArguments(it.next()));
+    }
+    return newL;
+}
+
 void Nepomuk::DBus::registerDBusTypes()
 {
     // we need QUrl to be able to pass it in a QVariant
@@ -125,45 +175,10 @@ const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::PropertyHash
         arg >> key >> value;
 
         const QUrl p = QUrl::fromEncoded(key.toAscii());
-        const QVariant v = value.variant();
+        const QVariant v = Nepomuk::DBus::resolveDBusArguments(value.variant());
 
-        //
-        // trueg: QDBus does not automatically convert non-basic types but gives us a QDBusArgument in a QVariant.
-        // Thus, we need to handle QUrl, QTime, QDate, and QDateTime as a special cases here. They is the only complex types we support.
-        //
-        if(v.userType() == qMetaTypeId<QDBusArgument>()) {
-            const QDBusArgument arg = v.value<QDBusArgument>();
+        ph.insertMulti(p, v);
 
-            QVariant v;
-            if(arg.currentSignature() == QLatin1String("(s)")) {
-                QUrl url;
-                arg >> url;
-                v.setValue(url);
-            }
-            else if(arg.currentSignature() == QLatin1String("(iii)")) {
-                QDate date;
-                arg >> date;
-                v.setValue(date);
-            }
-            else if(arg.currentSignature() == QLatin1String("(iiii)")) {
-                QTime time;
-                arg >> time;
-                v.setValue(time);
-            }
-            else if(arg.currentSignature() == QLatin1String("((iii)(iiii)i)")) {
-                QDateTime dt;
-                arg >> dt;
-                v.setValue(dt);
-            }
-            else {
-                kDebug() << "Unknown type signature in property hash value:" << arg.currentSignature();
-            }
-
-            ph.insertMulti(p, v);
-        }
-        else {
-            ph.insertMulti(p, v);
-        }
         arg.endMapEntry();
     }
     arg.endMap();

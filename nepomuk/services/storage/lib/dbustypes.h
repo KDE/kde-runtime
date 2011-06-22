@@ -41,6 +41,10 @@ namespace Nepomuk {
         QString convertUri(const QUrl& uri);
         QStringList convertUriList(const QList<QUrl>& uris);
 
+        /// Convert QDBusArguments variants into QUrl, QDate, QTime, and QDateTime variants
+        NEPOMUK_DATA_MANAGEMENT_EXPORT QVariant resolveDBusArguments(const QVariant& v);
+        NEPOMUK_DATA_MANAGEMENT_EXPORT QVariantList resolveDBusArguments(const QVariantList& l);
+
         /// Replaces KUrl with QUrl for DBus marshalling.
         QVariantList normalizeVariantList(const QVariantList& l);
 
