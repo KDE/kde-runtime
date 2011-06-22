@@ -169,7 +169,7 @@ void ResourceWatcherTest::testAddedResourceSignal()
     Nepomuk::ResourceWatcherConnection* con = m_dmModel->resourceWatcherManager()->createConnection(QList<QUrl>() << resA, QList<QUrl>(), QList<QUrl>());
 
     // spy for the propertyAdded signal
-    QSignalSpy spy(con, SIGNAL(propertyAdded(Nepomuk::Resource, Types::Property, QVariant)));
+    QSignalSpy spy(con, SIGNAL(propertyAdded(QString, QString, QVariant)));
 
     // change the resource
     m_dmModel->setProperty(QList<QUrl>() << resA, NAO::prefLabel(), QVariantList() << QLatin1String("foobar"), QLatin1String("A"));
@@ -187,7 +187,7 @@ void ResourceWatcherTest::testAddedResourceSignal()
     QCOMPARE(args[1].toString(), NAO::prefLabel().toString());
 
     // 3 param: the value
-    QCOMPARE(args[1], QVariant(QString(QLatin1String("foobar"))));
+    QCOMPARE(args[2].value<QVariant>(), QVariant(QString(QLatin1String("foobar"))));
 
     // cleanup
     con->deleteLater();
