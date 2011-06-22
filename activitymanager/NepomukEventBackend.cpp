@@ -51,12 +51,11 @@
 
 #include <kdebug.h>
 
+#include "NepomukCommon.h"
+
 using namespace Soprano::Vocabulary;
 using namespace Nepomuk::Vocabulary;
 using namespace Nepomuk::Query;
-
-#define NUAO_targettedResource KUrl(NUAO::nuaoNamespace().toString() + QLatin1String("targettedResource"))
-#define NUAO_initiatingAgent   KUrl(NUAO::nuaoNamespace().toString() + QLatin1String("initiatingAgent"))
 
 NepomukEventBackend::NepomukEventBackend()
 {
@@ -67,9 +66,12 @@ void NepomukEventBackend::addEvents(const EventList & events)
     foreach (const Event& event, events) {
         if (event.type == Event::Accessed) {
             // one-shot event
+
             Nepomuk::Resource eventRes = createDesktopEvent(event.uri, event.timestamp, event.application);
             eventRes.addType(NUAO::UsageEvent());
             eventRes.addProperty(NUAO::end(), event.timestamp);
+
+            kDebug() << "one-shot Accessed event" << eventRes;
 
         } else if (event.type == Event::Opened) {
             // create a new event
@@ -88,24 +90,29 @@ void NepomukEventBackend::addEvents(const EventList & events)
 //                        && !ComparisonTerm(NUAO::end(), Term()));
 //            query.setLimit(1);
 //            query.setQueryFlags(Query::NoResultRestrictions);
-//            const QString queryS = query.toSparqlQuery();
-            const QString queryS
+//            const QString query = query.toSparqlQuery();
+
+            // TODO: Something strange is going on here - this should check for
+            // the activity as well
+            const QString query
                     = QString::fromLatin1("select ?r where { "
                                           "?r a nuao:DesktopEvent . "
-                                          "?r nuao:targettedResource %1 . "
-                                          "?r nuao:initiatingAgent %2 . "
+                                          "?r %1 %2 . "
+                                          "?r %3 %4 . "
                                           "OPTIONAL { ?r nuao:end ?d . } . "
                                           "FILTER(!BOUND(?d)) . } "
                                           "LIMIT 1")
                     .arg(
-                            Soprano::Node::resourceToN3(Nepomuk::Resource(KUrl(event.uri)).resourceUri()),
-                            Soprano::Node::resourceToN3(Nepomuk::Resource(event.application, NAO::Agent()).resourceUri())
-                         );
+                        /* %1 */ resN3(NUAO_targettedResource),
+                        /* %2 */ resN3(anyResource(KUrl(event.uri))),
+                        /* %3 */ resN3(NUAO_initiatingAgent),
+                        /* %4 */ resN3(agentResource(event.application))
+                    );
 
-            kDebug() << queryS;
+            kDebug() << query;
 
             Soprano::QueryResultIterator it
-                    = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(queryS, Soprano::Query::QueryLanguageSparql);
+                    = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(query, Soprano::Query::QueryLanguageSparql);
 
             if (it.next()) {
                 Nepomuk::Resource eventRes(it[0].uri());

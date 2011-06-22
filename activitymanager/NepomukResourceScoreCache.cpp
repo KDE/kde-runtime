@@ -19,6 +19,8 @@
 
 #include "NepomukResourceScoreCache.h"
 
+#include <cmath>
+
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
 
@@ -36,12 +38,25 @@
 
 using namespace Nepomuk::Vocabulary;
 
+#include "NepomukCommon.h"
+
 /**
  *
  */
 class NepomukResourceScoreCachePrivate {
 public:
     Nepomuk::Resource self;
+
+    qreal timeFactor(int days) const
+    {
+        // Exp is falling rather quickly, we are slowing it 32 times
+        return ::exp(- days / 32.0);
+    }
+
+    qreal timeFactor(QDateTime fromTime, QDateTime toTime = QDateTime::currentDateTime()) const
+    {
+        return timeFactor(fromTime.daysTo(toTime));
+    }
 
 };
 
@@ -52,14 +67,14 @@ NepomukResourceScoreCache::NepomukResourceScoreCache(const QString & activity, c
         = QString::fromLatin1("select ?r where { "
                                   "?r a %1 . "
                                   "?r kext:involvesActivity %2 . "
-                                  "?r kext:involvesAgent %3 . "
-                                  "?r kext:involvesResource %4 . "
+                                  "?r kext:initiatingAgent %3 . "
+                                  "?r kext:targettedResource %4 . "
                                   "} LIMIT 1"
             ).arg(
-                /* %1 */ Soprano::Node::resourceToN3(KExt::ResourceScoreCache()),
-                /* %2 */ Soprano::Node::literalToN3(activity),
-                /* %3 */ Soprano::Node::literalToN3(application),
-                /* %4 */ Soprano::Node::resourceToN3(Nepomuk::Resource(KUrl(resource)).resourceUri())
+                /* %1 */ resN3(KExt::ResourceScoreCache()),
+                /* %2 */ resN3(currentActivityRes),
+                /* %3 */ resN3(agentResource(application)),
+                /* %4 */ resN3(anyResource(resource))
             );
 
     kDebug() << query;
@@ -107,20 +122,45 @@ NepomukResourceScoreCache::~NepomukResourceScoreCache()
 void NepomukResourceScoreCache::updateScore()
 {
     kDebug() << "Last modified as string" << d->self.property(NAO::lastModified());
+
+    QUrl involvesActivity  = d->self.property(NUAO_involvesActivity).toUrl();
+    QUrl targettedResource = d->self.property(NUAO_targettedResource).toUrl();
+    QUrl initiatingAgent   = d->self.property(NUAO_initiatingAgent).toUrl();
+
     QDateTime lastModified = d->self.property(NAO::lastModified()).toDateTime();
+
+    qreal score = d->self.property(KExt::cachedScore()).toDouble();
+
+    if (lastModified.isValid()) {
+        // Adjusting the score depending on the time that passed since the
+        // last update
+
+        kDebug() << "Previous score:" << score;
+        score *= d->timeFactor(lastModified);
+        kDebug() << "Adjusted score:" << score;
+
+    } else {
+        // If we haven't had previous calculation, set the score to 0
+        score = 0;
+
+    }
 
     kDebug() << "Last modified timestamp is" << lastModified << lastModified.isValid();
 
     const QString query
         = QString::fromLatin1("select distinct ?r where { "
-                                  "?r a %1 . "
-                                  "?r %2 ?end . "
-                                  "FILTER(?end > %3) ."
+                                  "?r a nuao:DesktopEvent . "
+                                  "?r nuao:involvesActivity %1 . "
+                                  "?r nuao:targettedResource %2 . "
+                                  "?r nuao:initiatingAgent %3 . "
+                                  "?r nuao:end ?end . "
+                                  "FILTER(?end > %4) ."
                                   " } "
             ).arg(
-                /* %1 */ Soprano::Node::resourceToN3(NUAO::DesktopEvent()),
-                /* %2 */ Soprano::Node::resourceToN3(NUAO::end()),
-                /* %3 */ Soprano::Node::literalToN3(lastModified)
+                /* %1 */ resN3(involvesActivity),
+                /* %2 */ resN3(targettedResource),
+                /* %2 */ resN3(initiatingAgent),
+                /* %4 */ litN3(lastModified.isValid() ? lastModified : QDateTime::fromMSecsSinceEpoch(0))
             );
 
     kDebug() << query;
@@ -128,9 +168,38 @@ void NepomukResourceScoreCache::updateScore()
     Soprano::QueryResultIterator it
         = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(query, Soprano::Query::QueryLanguageSparql);
 
+    d->self.setProperty(NAO::lastModified(), QDateTime::currentDateTime());
+
     while (it.next()) {
         Nepomuk::Resource result(it[0].uri());
+        QDateTime eventStart = result.property(NUAO::start()).toDateTime();
+        QDateTime eventEnd = result.property(NUAO::end()).toDateTime();
 
-        kDebug() << result.resourceUri();
+        if (!eventStart.isValid()) continue;
+
+        if (!eventEnd.isValid()) {
+            // If the end was not saved, we are treating it as a simple
+            // Accessed event
+            eventEnd = eventStart;
+        }
+
+        int intervalLength = eventStart.secsTo(eventEnd);
+
+        if (intervalLength == 0) {
+            // We have an Accessed event - otherwise, this wouldn't be 0
+
+            score += 5.0 * d->timeFactor(eventEnd);
+
+        } else if (intervalLength < 4) {
+            // Ignoring stuff that was open for less than 4 seconds
+
+            score += d->timeFactor(eventEnd) * intervalLength / 60;
+        }
+
+        kDebug() << result.resourceUri() << eventStart << eventEnd << intervalLength;
+
     }
+
+    kDebug() << "New calculated score:" << score;
+    d->self.setProperty(KExt::cachedScore(), score);
 }
