@@ -27,6 +27,7 @@
 #include "simpleresourcegraph.h"
 
 #include <QtCore/QStringList>
+#include <QtCore/QMutableListIterator>
 
 #include <KUrl>
 
@@ -39,7 +40,7 @@ KJob* Nepomuk::addProperty(const QList<QUrl>& resources,
     return new GenericDataManagementJob("addProperty",
                                         Q_ARG(QStringList, Nepomuk::DBus::convertUriList(resources)),
                                         Q_ARG(QString, DBus::convertUri(property)),
-                                        Q_ARG(QVariantList, values),
+                                        Q_ARG(QVariantList, Nepomuk::DBus::normalizeVariantList(values)),
                                         Q_ARG(QString, component.componentName()));
 }
 
@@ -51,7 +52,7 @@ KJob* Nepomuk::setProperty(const QList<QUrl>& resources,
     return new GenericDataManagementJob("setProperty",
                                         Q_ARG(QStringList, Nepomuk::DBus::convertUriList(resources)),
                                         Q_ARG(QString, DBus::convertUri(property)),
-                                        Q_ARG(QVariantList, values),
+                                        Q_ARG(QVariantList, Nepomuk::DBus::normalizeVariantList(values)),
                                         Q_ARG(QString, component.componentName()));
 }
 
@@ -64,7 +65,7 @@ KJob* Nepomuk::removeProperty(const QList<QUrl>& resources,
     return new GenericDataManagementJob("removeProperty",
                                         Q_ARG(QStringList, Nepomuk::DBus::convertUriList(resources)),
                                         Q_ARG(QString, DBus::convertUri(property)),
-                                        Q_ARG(QVariantList, values),
+                                        Q_ARG(QVariantList, Nepomuk::DBus::normalizeVariantList(values)),
                                         Q_ARG(QString, component.componentName()));
 }
 

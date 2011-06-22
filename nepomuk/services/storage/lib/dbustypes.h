@@ -40,7 +40,10 @@ namespace Nepomuk {
     namespace DBus {
         QString convertUri(const QUrl& uri);
         QStringList convertUriList(const QList<QUrl>& uris);
-        QList<QDBusVariant> convertVariantList(const QVariantList& vl);
+
+        /// Replaces KUrl with QUrl for DBus marshalling.
+        QVariantList normalizeVariantList(const QVariantList& l);
+
         NEPOMUK_DATA_MANAGEMENT_EXPORT void registerDBusTypes();
     }
 }
