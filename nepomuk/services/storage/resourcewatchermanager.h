@@ -39,7 +39,8 @@ namespace Nepomuk {
         Q_CLASSINFO( "D-Bus Interface", "org.kde.nepomuk.ResourceWatcher" )
         
     public:
-        ResourceWatcherManager( QObject* parent=0 );
+        ResourceWatcherManager( QObject* parent = 0 );
+        ~ResourceWatcherManager();
 
         void addProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value);
         void removeProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value);
