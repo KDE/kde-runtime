@@ -47,6 +47,16 @@ namespace Nepomuk {
         void removeResource(const QUrl& uri, const QList<QUrl>& types);
 
     public slots:
+        /**
+         * Used internally by watch() and by the unit tests to create watcher connections.
+         */
+        ResourceWatcherConnection* createConnection(const QList<QUrl>& resources,
+                                                    const QList<QUrl>& properties,
+                                                    const QList<QUrl>& types );
+
+        /**
+         * The main DBus methods exposed by the ResourceWatcher
+         */
         Q_SCRIPTABLE QDBusObjectPath watch( const QStringList& resources,
                                             const QStringList& properties,
                                             const QStringList& types );

@@ -53,6 +53,13 @@ QStringList convertUris(const QList<QUrl>& uris) {
         sl << KUrl(uri).url();
     return sl;
 }
+
+QList<QUrl> convertUris(const QStringList& uris) {
+    QList<QUrl> sl;
+    foreach(const QString& uri, uris)
+        sl << KUrl(uri);
+    return sl;
+}
 }
 
 Nepomuk::ResourceWatcherManager::ResourceWatcherManager(QObject* parent)
@@ -169,29 +176,44 @@ void Nepomuk::ResourceWatcherManager::removeResource(const QUrl &res, const QLis
     }
 }
 
+Nepomuk::ResourceWatcherConnection* Nepomuk::ResourceWatcherManager::createConnection(const QList<QUrl> &resources,
+                                                                                      const QList<QUrl> &properties,
+                                                                                      const QList<QUrl> &types)
+{
+    kDebug() << resources << properties << types;
+
+    if( resources.isEmpty() && properties.isEmpty() && types.isEmpty() ) {
+        return 0;
+    }
+
+    ResourceWatcherConnection* con = new ResourceWatcherConnection( this, !properties.isEmpty() );
+    foreach( const QUrl& res, resources ) {
+        m_resHash.insert(res, con);
+    }
+
+    foreach( const QUrl& prop, properties ) {
+        m_propHash.insert(prop, con);
+    }
+
+    foreach( const QUrl& type, properties ) {
+        m_typeHash.insert(type, con);
+    }
+
+    return con;
+}
+
 QDBusObjectPath Nepomuk::ResourceWatcherManager::watch(const QStringList& resources,
                                                        const QStringList& properties,
                                                        const QStringList& types)
 {
-    kDebug();
+    kDebug() << resources << properties << types;
 
-    if( resources.isEmpty() && properties.isEmpty() && types.isEmpty() )
+    if(ResourceWatcherConnection* con = createConnection(convertUris(resources), convertUris(properties), convertUris(types))) {
+        return con->registerDBusObject(message().service(), ++m_connectionCount);
+    }
+    else {
         return QDBusObjectPath();
-
-    ResourceWatcherConnection * con = new ResourceWatcherConnection( this, !properties.isEmpty() );
-    foreach( const QString & res, resources ) {
-        m_resHash.insert( QUrl(res), con );
     }
-
-    foreach( const QString & prop, properties ) {
-        m_propHash.insert( QUrl(prop), con );
-    }
-
-    foreach( const QString & type, properties ) {
-        m_typeHash.insert( QUrl(type), con );
-    }
-    
-    return con->registerDBusObject(message().service(), ++m_connectionCount);
 }
 
 namespace {

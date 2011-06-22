@@ -33,6 +33,7 @@ namespace Nepomuk {
 class ClassAndPropertyTree;
 class ResourceMerger;
 class SimpleResourceGraph;
+class ResourceWatcherManager;
 
 class DataManagementModel : public Soprano::FilterModel
 {
@@ -41,6 +42,9 @@ class DataManagementModel : public Soprano::FilterModel
 public:
     DataManagementModel(ClassAndPropertyTree* tree, Soprano::Model* model, QObject *parent = 0);
     ~DataManagementModel();
+
+    /// used by the unit tests
+    ResourceWatcherManager* resourceWatcherManager() const;
 
 public Q_SLOTS:
     /**
