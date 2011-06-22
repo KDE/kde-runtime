@@ -43,12 +43,20 @@ QStringList Nepomuk::DBus::convertUriList(const QList<QUrl>& uris)
     return uriStrings;
 }
 
-QList<QDBusVariant> Nepomuk::DBus::convertVariantList(const QVariantList& vl)
+QVariantList Nepomuk::DBus::normalizeVariantList(const QVariantList& l)
 {
-    QList<QDBusVariant> dbusVl;
-    foreach(const QVariant& v, vl)
-        dbusVl << QDBusVariant(v);
-    return dbusVl;
+    QVariantList newL;
+    QListIterator<QVariant> it(l);
+    while(it.hasNext()) {
+        QVariant v = it.next();
+        if(v.userType() == qMetaTypeId<KUrl>()) {
+            newL.append(QVariant(QUrl(v.value<KUrl>())));
+        }
+        else {
+            newL.append(v);
+        }
+    }
+    return newL;
 }
 
 void Nepomuk::DBus::registerDBusTypes()
