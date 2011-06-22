@@ -150,17 +150,20 @@ void NepomukResourceScoreCache::updateScore()
     const QString query
         = QString::fromLatin1("select distinct ?r where { "
                                   "?r a nuao:DesktopEvent . "
-                                  "?r nuao:involvesActivity %1 . "
-                                  "?r nuao:targettedResource %2 . "
-                                  "?r nuao:initiatingAgent %3 . "
+                                  "?r %1 %2 . "
+                                  "?r %3 %4 . "
+                                  "?r %5 %6 . "
                                   "?r nuao:end ?end . "
-                                  "FILTER(?end > %4) ."
+                                  "FILTER(?end > %7) ."
                                   " } "
             ).arg(
-                /* %1 */ resN3(involvesActivity),
-                /* %2 */ resN3(targettedResource),
-                /* %2 */ resN3(initiatingAgent),
-                /* %4 */ litN3(lastModified.isValid() ? lastModified : QDateTime::fromMSecsSinceEpoch(0))
+                /* %1 */ resN3(NUAO_involvesActivity),
+                /* %2 */ resN3(involvesActivity),
+                /* %3 */ resN3(NUAO_targettedResource),
+                /* %4 */ resN3(targettedResource),
+                /* %5 */ resN3(NUAO_initiatingAgent),
+                /* %6 */ resN3(initiatingAgent),
+                /* %7 */ litN3(lastModified.isValid() ? lastModified : QDateTime::fromMSecsSinceEpoch(0))
             );
 
     kDebug() << query;
