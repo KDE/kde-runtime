@@ -10,8 +10,8 @@ if(WINCE)
 endif(WINCE)
 
 #search packages used by KDE
-set(KDE_MIN_VERSION "4.6.80")  # for the < 4.2 macro
-find_package(KDE4 4.6.80 REQUIRED)
+set(KDE_MIN_VERSION "4.6.90")  # for the < 4.2 macro
+find_package(KDE4 4.6.90 REQUIRED)
 if (WIN32)
     find_package(Strigi)
 else ()
