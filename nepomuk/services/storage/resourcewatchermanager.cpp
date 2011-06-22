@@ -69,6 +69,16 @@ Nepomuk::ResourceWatcherManager::ResourceWatcherManager(QObject* parent)
     QDBusConnection::sessionBus().registerObject("/resourcewatcher", this, QDBusConnection::ExportScriptableSlots);
 }
 
+Nepomuk::ResourceWatcherManager::~ResourceWatcherManager()
+{
+    // the connections call removeConnection() from their descrutors. Thus,
+    // we need to clean them up before we are deleted ourselves
+    QSet<ResourceWatcherConnection*> allConnections
+            = QSet<ResourceWatcherConnection*>::fromList(m_resHash.values())
+            + QSet<ResourceWatcherConnection*>::fromList(m_propHash.values())
+            + QSet<ResourceWatcherConnection*>::fromList(m_typeHash.values());
+    qDeleteAll(allConnections);
+}
 
 void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value)
 {
