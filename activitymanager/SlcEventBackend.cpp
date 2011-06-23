@@ -44,7 +44,7 @@ void SlcEventBackend::addEvents(const EventList & events)
         switch (event.type) {
             case Event::FocussedIn:
             case Event::Opened:
-                kDebug() << "Event::FocussedIn" << focussedWindow << event.wid << event.uri;
+                // kDebug() << "Event::FocussedIn" << focussedWindow << event.wid << event.uri;
 
                 lastFocussedResource[event.wid] = event.uri;
 
@@ -56,7 +56,7 @@ void SlcEventBackend::addEvents(const EventList & events)
 
             case Event::FocussedOut:
             case Event::Closed:
-                kDebug() << "Event::FocussedOut" << focussedWindow << event.wid << event.uri;
+                // kDebug() << "Event::FocussedOut" << focussedWindow << event.wid << event.uri;
 
                 if (lastFocussedResource[event.wid] == event.uri) {
                     lastFocussedResource[event.wid] = KUrl();
@@ -113,14 +113,14 @@ void SlcEventBackend::activeWindowChanged(WId wid)
 
 void SlcEventBackend::updateFocus(WId wid)
 {
-    kDebug() << "Updating focus for " << wid;
+    // kDebug() << "Updating focus for " << wid;
 
     if (wid == 0 || !SharedInfo::self()->windows().contains(wid)) {
-        kDebug() << "Clearing focus";
+        // kDebug() << "Clearing focus";
         emit focusChanged(QString(), QString());
 
     } else if (wid == focussedWindow) {
-        kDebug() << "It is the currently focussed window";
+        // kDebug() << "It is the currently focussed window";
         emit focusChanged(focussedResourceURI(), SharedInfo::self()->resources()[_focussedResourceURI()].mimetype);
 
     }

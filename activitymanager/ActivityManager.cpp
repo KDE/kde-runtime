@@ -133,8 +133,8 @@ ActivityManagerPrivate::~ActivityManagerPrivate()
 
 void ActivityManagerPrivate::windowClosed(WId windowId)
 {
-    kDebug() << "Window closed..." << windowId
-             << "one of ours?" << windows.contains(windowId);
+    // kDebug() << "Window closed..." << windowId
+    //          << "one of ours?" << windows.contains(windowId);
 
     if (!windows.contains(windowId)) {
         return;
@@ -148,8 +148,8 @@ void ActivityManagerPrivate::windowClosed(WId windowId)
 
 void ActivityManagerPrivate::activeWindowChanged(WId windowId)
 {
-    kDebug() << "Window focussed..." << windowId
-             << "one of ours?" << windows.contains(windowId);
+    // kDebug() << "Window focussed..." << windowId
+    //          << "one of ours?" << windows.contains(windowId);
 
 }
 
