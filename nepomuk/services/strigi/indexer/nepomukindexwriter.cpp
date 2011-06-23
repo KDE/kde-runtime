@@ -168,8 +168,6 @@ namespace {
         Soprano::Node createObject( const std::string& value );
 
     private:
-        Soprano::LiteralValue createLiteralValue( const std::string& value );
-
         /// The actual property URI
         Nepomuk::Types::Property m_property;
 
@@ -244,58 +242,7 @@ namespace {
         // fallback to literals
         //
         else {
-            return createLiteralValue( value );
-        }
-    }
-
-
-    Soprano::LiteralValue RegisteredFieldData::createLiteralValue( const std::string& value )
-    {
-        QString s = QString::fromUtf8( ( const char* )value.c_str(), value.length() ).trimmed();
-        if( s.isEmpty() )
-            return Soprano::LiteralValue();
-
-        // This is a workaround for a Strigi bug which sometimes stores datatime values as strings
-        // but the format is not supported by Soprano::LiteralValue
-        if ( m_dataType == QVariant::DateTime ) {
-            // dateTime is stored as integer (time_t) in strigi
-            bool ok = false;
-            uint t = s.toUInt( &ok );
-            if ( ok ) {
-                // workaround for id3 tags which might only have a year encoded
-                if ( t >= 1900 && t <= 9999 )
-                    return LiteralValue( QDateTime( QDate(t, 1, 1), QTime(0, 0), Qt::UTC ) );
-                else
-                    return LiteralValue( QDateTime::fromTime_t( t ) );
-            }
-
-            // workaround for at least nie:contentCreated which is encoded like this: "2005:06:03 17:13:33"
-            QDateTime dt = QDateTime::fromString( s, QLatin1String( "yyyy:MM:dd hh:mm:ss" ) );
-            if ( dt.isValid() )
-                return LiteralValue( dt );
-        }
-
-        // this is a workaround for EXIF values stored as "1/10" and the like which need to
-        // be converted to double values.
-        else if ( m_dataType == QVariant::Double ) {
-            bool ok = false;
-            double d = s.toDouble( &ok );
-            if ( ok )
-                return LiteralValue( d );
-
-            int x = 0;
-            int y = 0;
-            if ( sscanf( s.toLatin1().data(), "%d/%d", &x, &y ) == 2 ) {
-                return LiteralValue( double( x )/double( y ) );
-            }
-        }
-
-        if ( m_dataType != QVariant::Invalid ) {
-            return LiteralValue::fromString( s, m_dataType );
-        }
-        else {
-            // we default to string
-            return LiteralValue( s );
+            return Soprano::LiteralValue( QString::fromUtf8( ( const char* )value.c_str(), value.length() ).trimmed() );
         }
     }
 
@@ -439,6 +386,7 @@ void Nepomuk::StrigiIndexWriter::startAnalysis( const AnalysisResult* idx )
     }
 
     // create a new resource URI for non-existing file resources
+    // TODO: let the DMS handle that
     if ( data->resourceUri.isEmpty() )
         data->resourceUri = Nepomuk::ResourceManager::instance()->generateUniqueUri( QString() );
 
@@ -598,7 +546,7 @@ void Nepomuk::StrigiIndexWriter::addTriplet( const std::string& s,
                                              const std::string& o )
 {
     if ( d->currentResultStack.top()->depth() > 0 ) {
-        kDebug() << "Depth > 0 - " << s.c_str() << " " << p.c_str() << " " << o.c_str();
+        kDebug() << "Depth > 0 -" << s.c_str() << p.c_str() << o.c_str();
         return;
     }
     FileMetaData* md = fileDataForResult( d->currentResultStack.top() );
