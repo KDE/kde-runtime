@@ -74,9 +74,12 @@ void NepomukEventBackend::addEvents(const EventList & events)
 
                 Nepomuk::Resource eventRes = createDesktopEvent(event.uri, event.timestamp, event.application);
                 eventRes.addType(NUAO::UsageEvent());
-                eventRes.addProperty(NUAO::end(), event.timestamp);
+                eventRes.setProperty(NUAO::start(), event.timestamp);
+                eventRes.setProperty(NUAO::end(), event.timestamp);
 
                 kDebug() << "Created one-shot Accessed event" << eventRes;
+
+                NepomukResourceScoreMaintainer::self()->processResource(event.uri, event.application);
 
                 break;
             }

@@ -159,7 +159,7 @@ void NepomukResourceScoreCache::updateScore()
                                   "?r %3 %4 . "
                                   "?r %5 %6 . "
                                   "?r nuao:end ?end . "
-                                  "FILTER(?end > %7) ."
+                                  "FILTER(?end >= %7) ."
                                   " } "
             ).arg(
                 /* %1 */ resN3(KExt::usedActivity()),
