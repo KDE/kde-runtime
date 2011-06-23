@@ -46,6 +46,9 @@ using namespace Nepomuk::Vocabulary;
 class NepomukResourceScoreCachePrivate {
 public:
     Nepomuk::Resource self;
+    QString activity;
+    QString application;
+    QUrl resource;
 
     qreal timeFactor(int days) const
     {
@@ -63,10 +66,16 @@ public:
 NepomukResourceScoreCache::NepomukResourceScoreCache(const QString & activity, const QString & application, const QUrl & resource)
     : d(new NepomukResourceScoreCachePrivate())
 {
+    kDebug() << "Cache for" << activity << application << resource << anyResource(resource).resourceUri();
+
+    d->activity = activity;
+    d->application = application;
+    d->resource = resource;
+
     const QString query
         = QString::fromLatin1("select ?r where { "
                                   "?r a %1 . "
-                                  "?r kext:involvesActivity %2 . "
+                                  "?r kext:usedActivity %2 . "
                                   "?r kext:initiatingAgent %3 . "
                                   "?r kext:targettedResource %4 . "
                                   "} LIMIT 1"
@@ -88,7 +97,8 @@ NepomukResourceScoreCache::NepomukResourceScoreCache(const QString & activity, c
 
         d->self = result;
 
-        kDebug() << "Found an old cache" << d->self.resourceUri() << d->self.resourceType();
+        kDebug() << "Found an old cache" << d->self.resourceUri() << d->self.resourceType()
+                 << "With a score of" << d->self.property(KExt::cachedScore()) << d->self.property(NAO::score());
 
     } else {
         Nepomuk::Resource result(QUrl(), KExt::ResourceScoreCache());
@@ -98,16 +108,14 @@ NepomukResourceScoreCache::NepomukResourceScoreCache(const QString & activity, c
                 Nepomuk::Resource(resource)
             );
         result.setProperty(
-                KExt::initiatingAgent(),
-                Nepomuk::Resource(application, NAO::Agent())
+                KExt::initiatingAgent(), agentResource(application)
             );
         result.setProperty(
-                KExt::involvesActivity(),
-                Nepomuk::Resource(ActivityManager::self()->CurrentActivity(), KExt::Activity())
+                KExt::usedActivity(), activityResource(activity)
             );
         result.setProperty(KExt::cachedScore(), 0);
 
-        d->self = resource;
+        d->self = result;
 
         kDebug() << "Created a new cache resource" << d->self.resourceUri() << d->self.resourceType();
 
@@ -121,11 +129,8 @@ NepomukResourceScoreCache::~NepomukResourceScoreCache()
 
 void NepomukResourceScoreCache::updateScore()
 {
+    kDebug() << "Updating the score for " << d->resource;
     kDebug() << "Last modified as string" << d->self.property(NAO::lastModified());
-
-    QUrl involvesActivity  = d->self.property(NUAO_involvesActivity).toUrl();
-    QUrl targettedResource = d->self.property(NUAO_targettedResource).toUrl();
-    QUrl initiatingAgent   = d->self.property(NUAO_initiatingAgent).toUrl();
 
     QDateTime lastModified = d->self.property(NAO::lastModified()).toDateTime();
 
@@ -157,12 +162,12 @@ void NepomukResourceScoreCache::updateScore()
                                   "FILTER(?end > %7) ."
                                   " } "
             ).arg(
-                /* %1 */ resN3(NUAO_involvesActivity),
-                /* %2 */ resN3(involvesActivity),
+                /* %1 */ resN3(KExt::usedActivity()),
+                /* %2 */ resN3(activityResource(d->activity)),
                 /* %3 */ resN3(NUAO_targettedResource),
-                /* %4 */ resN3(targettedResource),
+                /* %4 */ resN3(anyResource(d->resource)),
                 /* %5 */ resN3(NUAO_initiatingAgent),
-                /* %6 */ resN3(initiatingAgent),
+                /* %6 */ resN3(agentResource(d->application)),
                 /* %7 */ litN3(lastModified.isValid() ? lastModified : QDateTime::fromMSecsSinceEpoch(0))
             );
 
@@ -191,18 +196,19 @@ void NepomukResourceScoreCache::updateScore()
         if (intervalLength == 0) {
             // We have an Accessed event - otherwise, this wouldn't be 0
 
-            score += 5.0 * d->timeFactor(eventEnd);
+            score += d->timeFactor(eventEnd); // like it is open for 1 minute
 
-        } else if (intervalLength < 4) {
+        } else if (intervalLength >= 4) {
             // Ignoring stuff that was open for less than 4 seconds
 
-            score += d->timeFactor(eventEnd) * intervalLength / 60;
+            score += d->timeFactor(eventEnd) * intervalLength / 60.0;
         }
 
         kDebug() << result.resourceUri() << eventStart << eventEnd << intervalLength;
 
     }
 
-    kDebug() << "New calculated score:" << score;
+    kDebug() << "New calculated score:" << score << d->self.isValid();
     d->self.setProperty(KExt::cachedScore(), score);
+    d->self.setProperty(NAO::score(), score);
 }

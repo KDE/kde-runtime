@@ -20,14 +20,33 @@
 #ifndef NEPOMUK_COMMON_H_
 #define NEPOMUK_COMMON_H_
 
+#include "nie.h"
+
 #define NUAO_targettedResource KUrl(NUAO::nuaoNamespace().toString() + QLatin1String("targettedResource"))
 #define NUAO_initiatingAgent   KUrl(NUAO::nuaoNamespace().toString() + QLatin1String("initiatingAgent"))
-#define NUAO_involvesActivity  KUrl(NUAO::nuaoNamespace().toString() + QLatin1String("involvesActivity"))
+// #define NUAO_involvesActivity  KUrl(NUAO::nuaoNamespace().toString() + QLatin1String("involvesActivity"))
 
 #define activityResource(ID) Nepomuk::Resource(ID, KExt::Activity())
 #define agentResource(ID)    Nepomuk::Resource(ID, NAO::Agent())
 #define currentActivityRes   activityResource(ActivityManager::self()->CurrentActivity())
-#define anyResource(ID) Nepomuk::Resource(KUrl(ID))
+
+// #define anyResource(ID) Nepomuk::Resource(KUrl(ID))
+
+inline Nepomuk::Resource anyResource(const QUrl & uri)
+{
+    Nepomuk::Resource result(uri);
+
+    kDebug() << "setting the URI" << result.isFile() << result.isValid();
+    result.setProperty(Nepomuk::Vocabulary::NIE::url(), uri);
+    kDebug() << "set the URI" << result.isFile() << result.isValid();
+
+    return result;
+}
+
+inline Nepomuk::Resource anyResource(const QString & uri)
+{
+    return anyResource(KUrl(uri));
+}
 
 #define litN3(A) Soprano::Node::literalToN3(A)
 

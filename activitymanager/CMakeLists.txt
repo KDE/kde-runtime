@@ -93,6 +93,11 @@ if(Nepomuk_FOUND)
     #     )
 
     soprano_add_ontology(activity_manager_SRCS
+        ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
+        "NIE" "Nepomuk::Vocabulary" "trig"
+        )
+
+    soprano_add_ontology(activity_manager_SRCS
         ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nepomuk/nao.trig
         "NAO" "Nepomuk::Vocabulary" "trig"
         )

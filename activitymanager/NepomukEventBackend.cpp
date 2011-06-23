@@ -125,6 +125,7 @@ void NepomukEventBackend::addEvents(const EventList & events)
 
                     eventRes.addProperty(NUAO::end(), event.timestamp);
 
+                    NepomukResourceScoreMaintainer::self()->processResource(event.uri, event.application);
                 }
 
                 break;
@@ -211,7 +212,7 @@ Nepomuk::Resource NepomukEventBackend::createDesktopEvent(const KUrl& uri, const
 
     // one-shot event
     Nepomuk::Resource eventRes(QUrl(), NUAO::DesktopEvent());
-    eventRes.addProperty(NUAO_targettedResource, Nepomuk::Resource(uri));
+    eventRes.addProperty(NUAO_targettedResource, anyResource(uri));
     eventRes.addProperty(NUAO::start(), startTime);
 
     kDebug() << "Created event" << eventRes.resourceUri()
@@ -245,7 +246,7 @@ Nepomuk::Resource NepomukEventBackend::createDesktopEvent(const KUrl& uri, const
         if (it.next()) {
             m_currentActivity = it[0].uri();
         } else {
-            m_currentActivity = Nepomuk::Resource(ActivityManager::self()->CurrentActivity(), KExt::Activity());
+            m_currentActivity = currentActivityRes;
             m_currentActivity.setProperty(KExt::activityIdentifier(), ActivityManager::self()->CurrentActivity());
         }
     }
