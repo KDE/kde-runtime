@@ -10,6 +10,7 @@ include_directories(
   ${SOPRANO_INCLUDE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/../strigi
+  ${CMAKE_CURRENT_SOURCE_DIR}/../storage/lib/
   )
 
 set(SRCS
@@ -35,6 +36,7 @@ kde4_add_plugin(nepomukfilewatch ${SRCS})
 
 target_link_libraries(nepomukfilewatch
   nepomukcommon
+  nepomukdatamanagement
   ${SOPRANO_CLIENT_LIBRARIES}
   ${SOPRANO_LIBRARIES}
   ${KDE4_KDEUI_LIBS}
