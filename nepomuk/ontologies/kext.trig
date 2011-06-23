@@ -111,13 +111,6 @@ kext: {
           rdfs:label "involved agent" ;
           rdfs:range nao:Agent .
 
-    kext:involvesActivity
-          a rdf:Property ;
-          rdfs:comment "Relates the score to the activity in which the events happened." ;
-          rdfs:domain kext:ResourceScoreCache ;
-          rdfs:label "involved activity" ;
-          rdfs:range kext:Activity .
-
     kext:cachedScore
           a rdf:Property ;
           rdfs:subPropertyOf nao:score ;
