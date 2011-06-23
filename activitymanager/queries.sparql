@@ -1,0 +1,20 @@
+// Getting the highest scored caches
+
+select distinct ?resource, ?uri, ?cache,
+   (
+       (
+           ?lastScore * bif:exp(-
+               bif:datediff('day', ?lastUpdate, ##CURRENT_DATETIME##)
+           )
+       )
+   as ?score) where {
+     ?cache kext:targettedResource ?resource .
+     ?cache a kext:ResourceScoreCache .
+     ?cache nao:lastModified ?lastUpdate .
+     ?cache kext:cachedScore ?lastScore .
+     ?cache kext:usedActivity ##ACTIVITY## .
+     ?cache kext:initiatingAgent ##AGENT## .
+     OPTIONAL { ?resource nie:url ?uri . } .
+}
+ORDER BY DESC (?score)
+LIMIT 10
