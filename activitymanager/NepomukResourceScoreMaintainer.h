@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010 Ivan Cukic <ivan.cukic(at)kde.org>
+ *   Copyright (C) 2011 Ivan Cukic <ivan.cukic(at)kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License version 2,
@@ -17,32 +17,31 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef EVENT_PROCESSOR_H
-#define EVENT_PROCESSOR_H
+#ifndef NEPOMUK_RESOURCE_SCORE_MAINTAINER_H_
+#define NEPOMUK_RESOURCE_SCORE_MAINTAINER_H_
 
 #include <QThread>
+#include <Nepomuk/Resource>
 
 #include "Event.h"
 
-class EventBackend;
-class EventProcessorPrivate;
+class NepomukResourceScoreMaintainerPrivate;
 
 /**
  * Thread to process desktop/usage events
  */
-class EventProcessor {
+class NepomukResourceScoreMaintainer {
 public:
-    static EventProcessor * self();
+    static NepomukResourceScoreMaintainer * self();
 
-    virtual ~EventProcessor();
+    virtual ~NepomukResourceScoreMaintainer();
 
-    void addEvent(const QString & application, WId wid, const QString & uri,
-            Event::Type type = Event::Accessed, Event::Reason reason = Event::User);
+    void processResource(const KUrl & resource, const QString & application);
 
 private:
-    EventProcessor();
+    NepomukResourceScoreMaintainer();
 
-    class EventProcessorPrivate * const d;
+    class NepomukResourceScoreMaintainerPrivate * const d;
 };
 
-#endif // EVENT_PROCESSOR_H
+#endif // NEPOMUK_RESOURCE_SCORE_MAINTAINER_H_

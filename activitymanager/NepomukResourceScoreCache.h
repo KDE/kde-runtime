@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010 Ivan Cukic <ivan.cukic(at)kde.org>
+ *   Copyright (C) 2011 Ivan Cukic <ivan.cukic(at)kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License version 2,
@@ -17,32 +17,26 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef EVENT_PROCESSOR_H
-#define EVENT_PROCESSOR_H
+#ifndef NEPOMUK_RESOURCE_SCORE_CACHE_H_
+#define NEPOMUK_RESOURCE_SCORE_CACHE_H_
 
-#include <QThread>
+#include <QString>
+#include <QUrl>
 
-#include "Event.h"
-
-class EventBackend;
-class EventProcessorPrivate;
+class NepomukResourceScoreCachePrivate;
 
 /**
- * Thread to process desktop/usage events
+ *
  */
-class EventProcessor {
+class NepomukResourceScoreCache {
 public:
-    static EventProcessor * self();
+    NepomukResourceScoreCache(const QString & activity, const QString & application, const QUrl & resource);
+    virtual ~NepomukResourceScoreCache();
 
-    virtual ~EventProcessor();
-
-    void addEvent(const QString & application, WId wid, const QString & uri,
-            Event::Type type = Event::Accessed, Event::Reason reason = Event::User);
+    void updateScore();
 
 private:
-    EventProcessor();
-
-    class EventProcessorPrivate * const d;
+    class NepomukResourceScoreCachePrivate * const d;
 };
 
-#endif // EVENT_PROCESSOR_H
+#endif // NEPOMUK_RESOURCE_SCORE_CACHE_H_
