@@ -1495,9 +1495,11 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     }
     else {
         kDebug() << " MERGING FAILED! ";
+        kDebug() << "Last Error: " << merger.lastError();
     }
 
     if( merger.lastError() != Soprano::Error::ErrorNone ) {
+        kDebug() << "Setting error!" << merger.lastError();
         setError( merger.lastError() );
     }
 }
