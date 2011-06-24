@@ -77,7 +77,15 @@ namespace Nepomuk {
 
         bool mergeGraphs( const QUrl & oldGraph );
 
+        QList<QUrl> existingTypes( const QUrl& uri ) const;
+
+        /**
+         * Checks if \p node is of rdf:type \p type.
+         *
+         * \param newTypes contains additional types that should be considered as belonging to \p node
+         */
         bool isOfType( const Soprano::Node& node, const QUrl& type, const QList<QUrl>& newTypes = QList<QUrl>() ) const;
+
         QMultiHash<QUrl, Soprano::Node> getPropertyHashForGraph( const QUrl & graph ) const;
 
         bool checkGraphMetadata( const QMultiHash<QUrl, Soprano::Node> & hash );
