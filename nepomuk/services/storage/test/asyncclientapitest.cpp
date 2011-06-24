@@ -62,7 +62,7 @@ void AsyncClientApiTest::initTestCase()
     kDebug() << "Starting fake DMS:" << FAKEDMS_BIN;
 
     // setup the service watcher so we know when the fake DMS is up
-    QDBusServiceWatcher watcher(QLatin1String("org.kde.nepomuk.DataManagement"),
+    QDBusServiceWatcher watcher(QLatin1String("org.kde.nepomuk.FakeDataManagement"),
                                 QDBusConnection::sessionBus(),
                                 QDBusServiceWatcher::WatchForRegistration);
 
@@ -75,13 +75,15 @@ void AsyncClientApiTest::initTestCase()
     QTest::kWaitForSignal(&watcher, SIGNAL(serviceRegistered(QString)));
 
     // get us access to the fake DMS's model
-    m_model = new Soprano::Client::DBusModel(QLatin1String("org.kde.nepomuk.DataManagement"), QLatin1String("/model"));
+    m_model = new Soprano::Client::DBusModel(QLatin1String("org.kde.nepomuk.FakeDataManagement"), QLatin1String("/model"));
+
+    qputenv("NEPOMUK_FAKE_DMS_DBUS_SERVICE", "org.kde.nepomuk.FakeDataManagement");
 }
 
 void AsyncClientApiTest::cleanupTestCase()
 {
     kDebug() << "Shutting down fake DMS...";
-    QDBusInterface(QLatin1String("org.kde.nepomuk.DataManagement"),
+    QDBusInterface(QLatin1String("org.kde.nepomuk.FakeDataManagement"),
                    QLatin1String("/MainApplication"),
                    QLatin1String("org.kde.KApplication"),
                    QDBusConnection::sessionBus()).call(QLatin1String("quit"));
@@ -136,18 +138,39 @@ void AsyncClientApiTest::resetModel()
     m_model->addStatement( QUrl("class:/A"), RDF::type(), RDFS::Class(), graph );
     m_model->addStatement( QUrl("class:/B"), RDF::type(), RDFS::Class(), graph );
 
+    // properties used all the time
+    m_model->addStatement( NAO::identifier(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( RDF::type(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( RDF::type(), RDFS::range(), RDFS::Class(), graph );
+    m_model->addStatement( NIE::url(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NIE::url(), RDFS::range(), RDFS::Resource(), graph );
+
     // some ontology things the ResourceMerger depends on
     m_model->addStatement( RDFS::Class(), RDF::type(), RDFS::Class(), graph );
     m_model->addStatement( RDFS::Class(), RDFS::subClassOf(), RDFS::Resource(), graph );
     m_model->addStatement( NRL::Graph(), RDF::type(), RDFS::Class(), graph );
     m_model->addStatement( NRL::InstanceBase(), RDF::type(), RDFS::Class(), graph );
     m_model->addStatement( NRL::InstanceBase(), RDFS::subClassOf(), NRL::Graph(), graph );
+    m_model->addStatement( NAO::prefLabel(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NAO::prefLabel(), RDFS::range(), RDFS::Literal(), graph );
+    m_model->addStatement( NFO::fileName(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NFO::fileName(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NCO::fullname(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NCO::fullname(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NIE::title(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NIE::title(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NAO::created(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NAO::created(), RDFS::range(), XMLSchema::dateTime(), graph );
+    m_model->addStatement( NAO::created(), NRL::maxCardinality(), LiteralValue(1), graph );
+    m_model->addStatement( NAO::lastModified(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NAO::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
+    m_model->addStatement( NAO::lastModified(), NRL::maxCardinality(), LiteralValue(1), graph );
 
     // rebuild the internals of the data management model
-    QDBusInterface(QLatin1String("org.kde.nepomuk.DataManagement"),
+    QDBusInterface(QLatin1String("org.kde.nepomuk.FakeDataManagement"),
                    QLatin1String("/fakedms"),
-                   QLatin1String("org.kde.fakedms.Nepomuk.DataManagementModel"),
-                   QDBusConnection::sessionBus()).call(QLatin1String("updateTypeCachesAndSoOn"));
+                   QLatin1String("org.kde.nepomuk.FakeDataManagement"),
+                   QDBusConnection::sessionBus()).call(QLatin1String("updateClassAndPropertyTree"));
 }
 
 void AsyncClientApiTest::init()
