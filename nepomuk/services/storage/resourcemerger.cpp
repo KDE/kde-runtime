@@ -21,6 +21,7 @@
 #include "resourcemerger.h"
 #include "datamanagementmodel.h"
 #include "classandpropertytree.h"
+#include "nepomuktools.h"
 
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/RDF>
@@ -40,14 +41,6 @@
 
 using namespace Soprano::Vocabulary;
 
-namespace {
-    QStringList urlListToN3List( const QList<QUrl> & urls ) {
-        QStringList list;
-        foreach( const QUrl& url, urls )
-            list << Soprano::Node::resourceToN3( url );
-        return list;
-    }
-}
 
 Nepomuk::ResourceMerger::ResourceMerger(Nepomuk::DataManagementModel* model, const QString& app,
                                         const QHash< QUrl, QVariant >& additionalMetadata,
@@ -573,7 +566,7 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
                             .arg( Soprano::Node::resourceToN3( propUri ),
                                   Soprano::Node::resourceToN3( domain ),
                                   Soprano::Node::resourceToN3( subUri ),
-                                  urlListToN3List( allTypes ).join(", ") );
+                                  Nepomuk::resourcesToN3( allTypes ).join(", ") );
             setError( error, Soprano::Error::ErrorInvalidArgument);
             return false;
         }
@@ -594,7 +587,7 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
                                     .arg( Soprano::Node::resourceToN3( propUri ),
                                           Soprano::Node::resourceToN3( range ),
                                           Soprano::Node::resourceToN3( objUri ),
-                                          urlListToN3List( allTypes ).join(", ") );
+                                          resourcesToN3( allTypes ).join(", ") );
                     setError( error, Soprano::Error::ErrorInvalidArgument );
                     return false;
                 }
