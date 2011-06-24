@@ -3994,6 +3994,37 @@ void DataManagementModelTest::testStoreResources_additionalMetadataApp()
     QVERIFY(m_dmModel->lastError());
 }
 
+void DataManagementModelTest::testStoreResources_itemUris()
+{
+    SimpleResourceGraph g;
+
+    for (int i = 0; i < 10; i++) {
+        QUrl uri( "testuri:?item="+QString::number(i) );
+        SimpleResource r(uri);
+        r.addType( NIE::DataObject() );
+        r.addType( NIE::InformationElement() );
+
+        QString label = QLatin1String("label") + QString::number(i);
+        r.setProperty( NAO::prefLabel(), label );
+        g.insert(r);
+    }
+
+    m_dmModel->storeResources( g, "app" );
+    QVERIFY(!m_dmModel->lastError());
+
+    for( int i=0; i<10; i++ ) {
+        QUrl nieUrl( "testuri:?item="+QString::number(i) );
+        QList<Soprano::Statement> l = m_model->listStatements( Node(), NIE::url(), nieUrl ).allStatements();
+        QCOMPARE( l.size(), 1 );
+
+        const QUrl resUri = l.first().subject().uri();
+
+        Soprano::LiteralValue label( "label"+ QString::number(i) );
+        l = m_model->listStatements( resUri, NAO::prefLabel(), label ).allStatements();
+        QCOMPARE( l.size(), 1 );
+    }
+}
+
 void DataManagementModelTest::testStoreResources_duplicates()
 {
     KTemporaryFile file;

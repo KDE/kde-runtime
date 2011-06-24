@@ -122,6 +122,7 @@ private Q_SLOTS:
     void testStoreResources_noTypeMatch2();
     void testStoreResources_faultyMetadata();
     void testStoreResources_additionalMetadataApp();
+    void testStoreResources_itemUris();
     void testStoreResources_duplicates();
     void testStoreResources_overwriteProperties();
     void testStoreResources_correctDomainInStore();
