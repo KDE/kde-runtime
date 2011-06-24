@@ -27,6 +27,7 @@
 #include <QtCore/QSet>
 
 #include "../backupsync/lib/resourcemerger.h"
+#include "datamanagement.h"
 
 namespace Soprano {
     class Node;
@@ -40,7 +41,8 @@ namespace Nepomuk {
     {
     public:
         ResourceMerger( Nepomuk::DataManagementModel * model, const QString & app,
-                        const QHash<QUrl, QVariant> & additionalMetadata );
+                        const QHash<QUrl, QVariant>& additionalMetadata,
+                        const StoreResourcesFlags& flags );
         virtual ~ResourceMerger();
 
         virtual bool merge(const Soprano::Graph& graph);
@@ -52,8 +54,8 @@ namespace Nepomuk {
         virtual bool resolveDuplicate(const Soprano::Statement& newSt);
         virtual KUrl resolveUnidentifiedResource(const KUrl& uri);
         virtual Soprano::Error::ErrorCode addStatement( const Soprano::Statement & st );
-        virtual Soprano::Error::ErrorCode addResMetadataStatement( const Soprano::Statement & st );  
-        
+        virtual Soprano::Error::ErrorCode addResMetadataStatement( const Soprano::Statement & st );
+
     private:
         /**
          * Each statement that is being merged and already exists, belongs to a graph. This hash
@@ -70,25 +72,26 @@ namespace Nepomuk {
         QUrl m_appUri;
         QUrl m_graph;
 
+        StoreResourcesFlags m_flags;
         Nepomuk::DataManagementModel * m_model;
 
         bool mergeGraphs( const QUrl & oldGraph );
-        
+
         bool isOfType( const Soprano::Node& node, const QUrl& type, const QList<QUrl>& newTypes = QList<QUrl>() ) const;
         QMultiHash<QUrl, Soprano::Node> getPropertyHashForGraph( const QUrl & graph ) const;
 
         bool checkGraphMetadata( const QMultiHash<QUrl, Soprano::Node> & hash );
         bool areEqual( const QMultiHash<QUrl, Soprano::Node>& oldPropHash,
                        const QMultiHash<QUrl, Soprano::Node>& newPropHash );
-        
+
         /**
          * Returns true if all the types in \p types are present in \p masterTypes
          */
         bool containsAllTypes( const QSet<QUrl>& types, const QSet<QUrl>& masterTypes );
-        
+
         /// Refers to the properties which are considered as resource metadata
         QSet<QUrl> metadataProperties;
-        
+
         QSet<QUrl> m_modifiedResources;
     };
 
