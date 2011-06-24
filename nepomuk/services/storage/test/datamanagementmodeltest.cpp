@@ -157,14 +157,27 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NFO::hashAlgorithm(), RDFS::range(), XMLSchema::string(), graph );
     m_model->addStatement( NFO::hashValue(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NFO::hashValue(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NFO::hashValue(), NRL::maxCardinality(), LiteralValue(1), graph );
     m_model->addStatement( NFO::hasHash(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NFO::hasHash(), RDFS::range(), NFO::FileHash(), graph );
     m_model->addStatement( NFO::hasHash(), RDFS::domain(), NFO::FileDataObject(), graph );
+    m_model->addStatement( NFO::FileHash(), RDF::type(), RDFS::Resource(), graph );
+    m_model->addStatement( NFO::FileHash(), RDF::type(), RDFS::Class(), graph );
+
 
     m_model->addStatement( NIE::isPartOf(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NIE::isPartOf(), RDFS::range(), NFO::FileDataObject(), graph );
     m_model->addStatement( NIE::lastModified(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NIE::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
+
+    m_model->addStatement( NCO::fullname(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NCO::fullname(), RDFS::range(), XMLSchema::string(), graph );
+    m_model->addStatement( NCO::fullname(), RDFS::domain(), NCO::Contact(), graph );
+    m_model->addStatement( NCO::fullname(), NRL::maxCardinality(), LiteralValue(1), graph );
+    m_model->addStatement( NCO::Contact(), RDF::type(), RDFS::Resource(), graph );
+    m_model->addStatement( NCO::Contact(), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( NCO::Contact(), RDFS::subClassOf(), NCO::Role(), graph );
+    m_model->addStatement( NCO::Contact(), RDFS::subClassOf(), NAO::Party(), graph );
 
     // rebuild the internals of the data management model
     m_classAndPropertyTree->rebuildTree(m_dmModel);
@@ -4018,6 +4031,38 @@ void DataManagementModelTest::testStoreResources_duplicates()
     QCOMPARE( m_model->listStatements( Node(), NFO::hasHash(), Node() ).allStatements().size(), 1 );
 
     QVERIFY(!haveTrailingGraphs());
+}
+
+void DataManagementModelTest::testStoreResources_overwriteProperties()
+{
+    SimpleResource contact;
+    contact.addType( NCO::Contact() );
+    contact.addProperty( NCO::fullname(), QLatin1String("Spiderman") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << contact, QLatin1String("app") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList< Statement > stList = m_model->listStatements( Node(), RDF::type(), NCO::Contact() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl resUri = stList.first().subject().uri();
+
+    SimpleResource contact2( resUri );
+    contact2.addType( NCO::Contact() );
+    contact2.addProperty( NCO::fullname(), QLatin1String("Peter Parker") );
+
+    //m_dmModel->storeResources( SimpleResourceGraph() << contact2, QLatin1String("app") );
+    //QVERIFY( m_dmModel->lastError() ); // should fail without the merge flags
+
+    // Now everyone will know who Spiderman really is
+    m_dmModel->storeResources( SimpleResourceGraph() << contact2, QLatin1String("app"), IdentifyNew, OverwriteProperties );
+    QVERIFY( !m_dmModel->lastError() );
+
+    stList = m_model->listStatements( resUri, NCO::fullname(), Node() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    QString newName = stList.first().object().literal().toString();
+    QCOMPARE( newName, QLatin1String("Peter Parker") );
 }
 
 // make sure that already existing resource types are taken into account for domain checks
