@@ -38,8 +38,6 @@
 #include <KCmdLineArgs>
 #include <KCmdLineOptions>
 
-#include <Nepomuk/ResourceManager>
-
 #include <QtDBus>
 
 #include <signal.h>
@@ -93,18 +91,15 @@ FakeDataManagementService::FakeDataManagementService(QObject *parent)
     QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagement"), m_dmAdaptor, QDBusConnection::ExportScriptableContents);
 
     // register the dm model itself - simply to let the test case have access to the updateTypeCachesAndSoOn() method
-    QDBusConnection::sessionBus().registerObject(QLatin1String("/fakedms"), m_dmModel, QDBusConnection::ExportAllSlots);
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/fakedms"), this, QDBusConnection::ExportAllSlots);
 
-    // register under the service name used by the Nepomuk service stub
-    QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.nepomuk.DataManagement"));
+    // register the service itself
+    QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.nepomuk.FakeDataManagement"));
 
     // register our base model via dbus so the test case can access it
     Soprano::Server::DBusExportModel* dbusModel = new Soprano::Server::DBusExportModel(m_model);
     dbusModel->setParent(this);
     dbusModel->registerModel(QLatin1String("/model"));
-
-    // the resourcemerger still depends on the ResourceManager - this is very bad!
-    ResourceManager::instance()->setOverrideMainModel( m_nrlModel );
 }
 
 FakeDataManagementService::~FakeDataManagementService()
@@ -114,6 +109,12 @@ FakeDataManagementService::~FakeDataManagementService()
     delete m_nrlModel;
     delete m_model;
     delete m_storageDir;
+}
+
+
+void FakeDataManagementService::updateClassAndPropertyTree()
+{
+    m_classAndPropertyTree->rebuildTree(m_model);
 }
 
 

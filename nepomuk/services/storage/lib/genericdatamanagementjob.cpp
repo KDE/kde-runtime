@@ -44,7 +44,7 @@ Nepomuk::GenericDataManagementJob::GenericDataManagementJob(const char *methodNa
     // DBus types necessary for storeResources
     DBus::registerDBusTypes();
 
-    org::kde::nepomuk::DataManagement dms(QLatin1String("org.kde.nepomuk.DataManagement"),
+    org::kde::nepomuk::DataManagement dms(QLatin1String(DMS_DBUS_SERVICE),
                                           QLatin1String("/datamanagement"),
                                           QDBusConnection::sessionBus());
     QDBusPendingReply<> reply;

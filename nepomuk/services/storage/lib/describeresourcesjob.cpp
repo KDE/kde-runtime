@@ -23,6 +23,7 @@
 #include "datamanagementinterface.h"
 #include "simpleresourcegraph.h"
 #include "dbustypes.h"
+#include "genericdatamanagementjob_p.h"
 
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusPendingReply>
@@ -48,7 +49,7 @@ Nepomuk::DescribeResourcesJob::DescribeResourcesJob(const QList<QUrl>& resources
 {
     DBus::registerDBusTypes();
 
-    org::kde::nepomuk::DataManagement dms(QLatin1String("org.kde.nepomuk.DataManagement"),
+    org::kde::nepomuk::DataManagement dms(QLatin1String(DMS_DBUS_SERVICE),
                                           QLatin1String("/datamanagement"),
                                           QDBusConnection::sessionBus());
     QDBusPendingCallWatcher* dbusCallWatcher
