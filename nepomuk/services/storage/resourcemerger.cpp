@@ -40,6 +40,15 @@
 
 using namespace Soprano::Vocabulary;
 
+namespace {
+    QStringList urlListToN3List( const QList<QUrl> & urls ) {
+        QStringList list;
+        foreach( const QUrl& url, urls )
+            list << Soprano::Node::resourceToN3( url );
+        return list;
+    }
+}
+
 Nepomuk::ResourceMerger::ResourceMerger(Nepomuk::DataManagementModel* model, const QString& app,
                                         const QHash< QUrl, QVariant >& additionalMetadata,
                                         const StoreResourcesFlags& flags )
@@ -400,20 +409,28 @@ QUrl Nepomuk::ResourceMerger::createGraphUri()
     return m_model->createUri( DataManagementModel::GraphUri );
 }
 
-bool Nepomuk::ResourceMerger::isOfType(const Soprano::Node & node, const QUrl& type, const QList<QUrl> & newTypes) const
+QList< QUrl > Nepomuk::ResourceMerger::existingTypes(const QUrl& uri) const
 {
-    //kDebug() << "Checking " << node << " for type " << type;
-
-    ClassAndPropertyTree * tree = m_model->classAndPropertyTree();
     QList<QUrl> types;
+    QList<Soprano::Node> existingTypes = m_model->listStatements( uri, RDF::type(), Soprano::Node() )
+                                                  .iterateObjects().allNodes();
+    foreach( const Soprano::Node & n, existingTypes ) {
+        types << n.uri();
+    }
     // all resources have rdfs:Resource type by default
     types << RDFS::Resource();
 
+    return types;
+}
+
+bool Nepomuk::ResourceMerger::isOfType(const Soprano::Node & node, const QUrl& type, const QList<QUrl> & newTypes) const
+{
+    //kDebug() << "Checking " << node << " for type " << type;
+    ClassAndPropertyTree * tree = m_model->classAndPropertyTree();
+
+    QList<QUrl> types( newTypes );
     if( !node.isBlank() ) {
-        QList< Soprano::Node > oldTypes = m_model->listStatements( node, RDF::type(), Soprano::Node() ).iterateObjects().allNodes();
-        foreach( const Soprano::Node & n, oldTypes ) {
-            types << n.uri();
-        }
+        types << existingTypes( node.uri() );
     }
     types += newTypes;
 
@@ -548,10 +565,16 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
 
         // domain
         if( !domain.isEmpty() && !isOfType( subUri, domain, subjectNewTypes ) ) {
-            kDebug() << "invalid domain range";
-            setError( QString::fromLatin1("%1 has a rdfs:domain of %2")
-                               .arg( propUri.toString(), domain.toString() ),
-                               Soprano::Error::ErrorInvalidArgument);
+            // Error
+            QList<QUrl> allTypes = ( subjectNewTypes + existingTypes(subUri) );
+
+            QString error = QString::fromLatin1("%1 has a rdfs:domain of %2. "
+                                                "%3 only has the following types %4" )
+                            .arg( Soprano::Node::resourceToN3( propUri ),
+                                  Soprano::Node::resourceToN3( domain ),
+                                  Soprano::Node::resourceToN3( subUri ),
+                                  urlListToN3List( allTypes ).join(", ") );
+            setError( error, Soprano::Error::ErrorInvalidArgument);
             return false;
         }
 
@@ -563,11 +586,16 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
                 QList<QUrl> objectNewTypes= types.values( objUri );
 
                 if( !isOfType( objUri, range, objectNewTypes ) ) {
+                    // Error
+                    QList<QUrl> allTypes = ( objectNewTypes + existingTypes(objUri) );
 
-                    kDebug() << "Invalid resource range." << objUri << "has types" << objectNewTypes;
-                    setError( QString::fromLatin1("%1 has a rdfs:range of %2.")
-                                       .arg( propUri.toString(), range.toString() ),
-                                       Soprano::Error::ErrorInvalidArgument);
+                    QString error = QString::fromLatin1("%1 has a rdfs:range of %2. "
+                                                "%3 only has the following types %4" )
+                                    .arg( Soprano::Node::resourceToN3( propUri ),
+                                          Soprano::Node::resourceToN3( range ),
+                                          Soprano::Node::resourceToN3( objUri ),
+                                          urlListToN3List( allTypes ).join(", ") );
+                    setError( error, Soprano::Error::ErrorInvalidArgument );
                     return false;
                 }
             }
@@ -579,10 +607,13 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
                 }
                 if( (!lv.isPlain() && lv.dataTypeUri() != range) ||
                         (lv.isPlain() && range != RDFS::Literal()) ) {
-                    kDebug() << "Invalid literal range" << Soprano::Node::literalToN3(lv);
-                    setError( QString::fromLatin1("%1 has a rdfs:range of %2")
-                                       .arg( propUri.toString(), range.toString() ),
-                                       Soprano::Error::ErrorInvalidArgument);
+                    // Error
+                    QString error = QString::fromLatin1("%1 has a rdfs:range of %2. "
+                                                        "Provided %3")
+                                    .arg( Soprano::Node::resourceToN3( propUri ),
+                                          Soprano::Node::resourceToN3( range ),
+                                          Soprano::Node::literalToN3(lv) );
+                    setError( error, Soprano::Error::ErrorInvalidArgument);
                     return false;
                 }
             }
