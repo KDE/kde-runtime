@@ -41,14 +41,16 @@
 using namespace Soprano::Vocabulary;
 
 Nepomuk::ResourceMerger::ResourceMerger(Nepomuk::DataManagementModel* model, const QString& app,
-                                        const QHash< QUrl, QVariant >& additionalMetadata)
+                                        const QHash< QUrl, QVariant >& additionalMetadata,
+                                        const StoreResourcesFlags& flags )
 {
     m_app = app;
     m_additionalMetadata = additionalMetadata;
     m_model = model;
-    
+    m_flags = flags;
+
     setModel( m_model );
-    
+
     // Resource Metadata
     metadataProperties.reserve( 4 );
     metadataProperties.insert( NAO::lastModified() );
@@ -91,21 +93,21 @@ bool Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
             //kDebug() << "Is valid!  " << newGraph;
             //kDebug() << "Removing " << newSt;
             model()->removeAllStatements( newSt.subject(), newSt.predicate(), newSt.object() );
-            
+
             Soprano::Statement st( newSt );
             st.setContext( newGraph );
-            
+
             if( m_model->addStatement( st ) != Soprano::Error::ErrorNone )
                 return false;
-            
+
             return true;
         }
-        
+
         // The graph is not valid. This happens in the case when both the old graph
         // and the new graph are same, and therefore nothing needs to be done
         return true;
     }
-    
+
     return false;
 }
 
@@ -127,7 +129,7 @@ QMultiHash< QUrl, Soprano::Node > Nepomuk::ResourceMerger::getPropertyHashForGra
 }
 
 
-bool Nepomuk::ResourceMerger::areEqual(const QMultiHash<QUrl, Soprano::Node>& oldPropHash, 
+bool Nepomuk::ResourceMerger::areEqual(const QMultiHash<QUrl, Soprano::Node>& oldPropHash,
                                        const QMultiHash<QUrl, Soprano::Node>& newPropHash)
 {
     //
@@ -136,53 +138,53 @@ bool Nepomuk::ResourceMerger::areEqual(const QMultiHash<QUrl, Soprano::Node>& ol
     // 1. The nao:created might not be the same
     // 2. One graph may contain more rdf:types than the other, but still be the same
     // 3. The newPropHash does not contain the nao:maintainedBy statement
-       
+
     QSet<QUrl> oldTypes;
     QSet<QUrl> newTypes;
-    
+
     QHash< QUrl, Soprano::Node >::const_iterator it = oldPropHash.constBegin();
     for( ; it != oldPropHash.constEnd(); it++ ) {
         const QUrl & propUri = it.key();
         if( propUri == NAO::maintainedBy() || propUri == NAO::created() )
             continue;
-        
+
         if( propUri == RDF::type() ) {
             oldTypes << it.value().uri();
             continue;
         }
-        
+
         //kDebug() << " --> " << it.key() << " " << it.value();
         if( !newPropHash.contains( it.key(), it.value() ) ) {
             //kDebug() << "False value : " << newPropHash.value( it.key() );
             return false;
         }
     }
-        
+
     it = newPropHash.constBegin();
     for( ; it != newPropHash.constEnd(); it++ ) {
         const QUrl & propUri = it.key();
         if( propUri == NAO::maintainedBy() || propUri == NAO::created() )
             continue;
-        
+
         if( propUri == RDF::type() ) {
             newTypes << it.value().uri();
             continue;
         }
-        
+
         //kDebug() << " --> " << it.key() << " " << it.value();
         if( !oldPropHash.contains( it.key(), it.value() ) ) {
             //kDebug() << "False value : " << oldPropHash.value( it.key() );
             return false;
         }
     }
-    
+
     //
     // Check the types
     //
     newTypes << NRL::InstanceBase();
     if( !containsAllTypes( oldTypes, newTypes ) || !containsAllTypes( newTypes, oldTypes ) )
         return false;
-    
+
     // Check nao:maintainedBy
     it = oldPropHash.find( NAO::maintainedBy() );
     if( it == oldPropHash.constEnd() )
@@ -190,7 +192,7 @@ bool Nepomuk::ResourceMerger::areEqual(const QMultiHash<QUrl, Soprano::Node>& ol
 
     if( it.value().uri() != m_model->findApplicationResource(m_app, false) )
         return false;
-    
+
     return true;
 }
 
@@ -206,7 +208,7 @@ bool Nepomuk::ResourceMerger::containsAllTypes(const QSet< QUrl >& types, const 
             }
         }
     }
-    
+
     return true;
 }
 
@@ -234,9 +236,9 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
         //kDebug() << "Already merged once, just returning";
         return true;
     }
-    
+
     QMultiHash<QUrl, Soprano::Node> oldPropHash = getPropertyHashForGraph( oldGraph );
-    
+
     QMultiHash<QUrl, Soprano::Node> newPropHash;
     QHash< QUrl, QVariant >::const_iterator it = m_additionalMetadata.constBegin();
     for( ; it != m_additionalMetadata.constEnd(); ++it ) {
@@ -247,7 +249,7 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
         }
         newPropHash.insert( it.key(), n );
     }
-    
+
     // Compare the old and new property hash
     // If both have the same properties then there is no point in creating a new graph.
     // vHanda: This check is very expensive. Is it worth it?
@@ -257,7 +259,7 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
         m_graphHash.insert( oldGraph, QUrl() );
         return true;
     }
-        
+
     QMultiHash<QUrl, Soprano::Node> finalPropHash;
     //
     // Graph type nrl:DiscardableInstanceBase is a special case.
@@ -284,7 +286,7 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
         m_appUri = m_model->findApplicationResource( m_app );
     if( !finalPropHash.contains( NAO::maintainedBy(), m_appUri ) )
         finalPropHash.insert( NAO::maintainedBy(), m_appUri );
-    
+
     //kDebug() << "Creating : " << finalPropHash;
     QUrl graph = m_model->createGraph( m_app, finalPropHash );
 
@@ -295,10 +297,10 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
 bool Nepomuk::ResourceMerger::checkGraphMetadata(const QMultiHash< QUrl, Soprano::Node >& hash)
 {
     ClassAndPropertyTree* tree = m_model->classAndPropertyTree();
-    
+
     QList<QUrl> types;
     QHash<QUrl, int> propCardinality;
-    
+
     QHash< QUrl, Soprano::Node >::const_iterator it = hash.constBegin();
     for( ; it != hash.constEnd(); it++ ) {
         const QUrl& propUri = it.key();
@@ -353,7 +355,7 @@ bool Nepomuk::ResourceMerger::checkGraphMetadata(const QMultiHash< QUrl, Soprano
             setError( QString::fromLatin1("%1 has a rdfs:domain of %2").arg( propUri.toString(), domain.toString() ), Soprano::Error::ErrorInvalidArgument);
             return false;
         }
-        
+
         // range
         if( !range.isEmpty() ) {
             const Soprano::Node& object = it.value();
@@ -401,7 +403,7 @@ QUrl Nepomuk::ResourceMerger::createGraphUri()
 bool Nepomuk::ResourceMerger::isOfType(const Soprano::Node & node, const QUrl& type, const QList<QUrl> & newTypes) const
 {
     //kDebug() << "Checking " << node << " for type " << type;
-    
+
     ClassAndPropertyTree * tree = m_model->classAndPropertyTree();
     QList<QUrl> types;
     // all resources have rdfs:Resource type by default
@@ -414,7 +416,7 @@ bool Nepomuk::ResourceMerger::isOfType(const Soprano::Node & node, const QUrl& t
         }
     }
     types += newTypes;
-    
+
     if( types.isEmpty() ) {
         kDebug() << node << " does not have a type!!";
         return false;
@@ -425,7 +427,7 @@ bool Nepomuk::ResourceMerger::isOfType(const Soprano::Node & node, const QUrl& t
             return true;
         }
     }
-    
+
     return false;
 }
 
@@ -463,13 +465,13 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
     foreach( const Soprano::Statement & st, stGraph.toList() ) {
         const QUrl subUri = getBlankOrResourceUri( st.subject() );
         const QUrl objUri = getBlankOrResourceUri( st.object() );
-        
+
         const QUrl prop = st.predicate().uri();
         if( prop == RDF::type() ) {
             typeStatements << st;
             types.insert( subUri, objUri );
             continue;
-        }        
+        }
         // we ignore the metadata properties as they will get special
         // treatment duing the merging
         else if( metadataProperties.contains( prop ) ) {
@@ -490,12 +492,12 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
         else
             cardinality.insert( subPredPair, 1 );
     }
-    
+
     //
     // Check the cardinality + domain/range of remaining statements
     //
     ClassAndPropertyTree * tree = m_model->classAndPropertyTree();
-    
+
     foreach( const Soprano::Statement & st, remainingStatements ) {
         const QUrl subUri = getBlankOrResourceUri( st.subject() );
         const QUrl & propUri = st.predicate().uri();
@@ -516,10 +518,15 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
                     .allNodes().first().literal().toInt();
             }
             const int stCardinality = cardinality.value( subPredPair );
-            if( stCardinality + existingCardinality > maxCardinality) {
-//                kDebug() << "Max Cardinality : " << maxCardinality;
-//                kDebug() << "Existing Cardinality: " << existingCardinality;
-//                kDebug() << "St Cardinality: " << stCardinality;
+            const int newCardinality = stCardinality + existingCardinality;
+
+            if( newCardinality > maxCardinality) {
+                // Properties with max cardinality == 1, in OverwriteProperties mode are okay
+                if( maxCardinality == 1 && (newCardinality-maxCardinality) == 1
+                    &&  m_flags == OverwriteProperties ) {
+                    continue;
+                }
+
                 setError( QString::fromLatin1("%1 has a max cardinality of %2")
                                 .arg( st.predicate().toString()).arg( maxCardinality ),
                                 Soprano::Error::ErrorInvalidStatement);
@@ -530,10 +537,10 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
         //
         // Check for rdfs:domain and rdfs:range
         //
-        
+
         QUrl domain = tree->propertyDomain( propUri );
         QUrl range = tree->propertyRange( propUri );
-        
+
 //        kDebug() << "Domain : " << domain;
 //        kDebug() << "Range : " << range;
 
@@ -547,14 +554,14 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
                                Soprano::Error::ErrorInvalidArgument);
             return false;
         }
-        
+
         // range
         if( !range.isEmpty() ) {
             if( st.object().isResource() || st.object().isBlank() ) {
-                
+
                 const QUrl objUri = getBlankOrResourceUri( st.object() );
                 QList<QUrl> objectNewTypes= types.values( objUri );
-                
+
                 if( !isOfType( objUri, range, objectNewTypes ) ) {
 
                     kDebug() << "Invalid resource range." << objUri << "has types" << objectNewTypes;
@@ -580,20 +587,28 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
                 }
             }
         } // range
-        
+
     } // foreach
 
     // The graph is error free. Merge its statements except for the resource metadata statements
     const QList<Soprano::Statement> statements = remainingStatements + typeStatements;
     foreach( const Soprano::Statement & st, statements ) {
-        //kDebug() << "Trying to merge : " << st;
+
+        // In OverwriteProperties mode, when maxCardinality == 1, we must
+        // remove the old property before adding the new one.
+        if( m_flags == OverwriteProperties
+                && tree->maxCardinality( st.predicate().uri() ) == 1 ) {
+
+            // FIXME: This may create some empty graphs
+            m_model->removeAllStatements( st.subject(), st.predicate(), Soprano::Node() );
+        }
+
         if(!mergeStatement( st )) {
             kDebug() << "Merge statement error: " << lastError();
-            //m_model->setError(QLatin1String("Failed to merge one statement. FIXME: add more useful error info."));
             return false;
         }
     }
-    
+
     //
     // Handle Resource metadata
     //
@@ -626,7 +641,7 @@ Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::S
 Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addResMetadataStatement(const Soprano::Statement& st)
 {
     const QUrl & predicate = st.predicate().uri();
-    
+
     // Special handling for nao:lastModified and nao:userVisible: only the latest value is correct
     if( predicate == NAO::lastModified() ||
             predicate == NAO::userVisible() ) {
@@ -645,6 +660,6 @@ Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addResMetadataStatement(const
     else if( predicate == NAO::creator() ) {
         // FIXME: handle nao:creator somehow
     }
-    
+
     return model()->addStatement( st );
 }

@@ -1,7 +1,7 @@
 /*
    This file is part of the Nepomuk KDE project.
    Copyright (C) 2010-2011 Sebastian Trueg <trueg@kde.org>
-   Copyright (C) 2011 Vishesh Handa <handa.vish@gmail.com>   
+   Copyright (C) 2011 Vishesh Handa <handa.vish@gmail.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -142,7 +142,7 @@ class Nepomuk::DataManagementModel::Private
 public:
     ClassAndPropertyTree* m_classAndPropertyTree;
     ResourceWatcherManager* m_watchManager;
-    
+
     /// a set of properties that are maintained by the service and cannot be changed by clients
     QSet<QUrl> m_protectedProperties;
 };
@@ -1293,12 +1293,12 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     QMutableListIterator<SimpleResource> iter( resGraphList );
     while( iter.hasNext() ) {
         SimpleResource & res = iter.next();
-        
+
         if( !res.isValid() ) {
             setError(QLatin1String("storeResources: One of the resources is Invalid."), Soprano::Error::ErrorInvalidArgument);
             return;
         }
-        
+
         // Handle file uris
         const LocalFileState localFileState = isLocalFileUrl(res.uri());
         if(localFileState == NonExistingLocalFile) {
@@ -1313,7 +1313,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                 // HACK: improveme
                 SimpleResource tmpRes;
                 newResUri = tmpRes.uri();
-                
+
                 res.addProperty( NIE::url(), fileUrl );
                 res.addProperty( RDF::type(), NFO::FileDataObject() );
                 if( QFileInfo( fileUrl.toString() ).isDir() )
@@ -1343,7 +1343,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     QList<Soprano::Statement> allStatements;
     QList<Sync::SyncResource> extraResources;
 
-    
+
     //
     // Resolve file URLs in property values and prepare resource identifier
     //
@@ -1370,14 +1370,14 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                     }
                     else {
                         Sync::SyncResource newRes;
-                        
+
                         // It doesn't exist, create it
                         QUrl resolvedUri = resolveUrl( fileUrl );
                         if( resolvedUri.isEmpty() ) {
                             // HACK: improveme
                             SimpleResource tmpRes;
                             resolvedUri = tmpRes.uri();
-                            
+
                             newRes.insert( RDF::type(), NFO::FileDataObject() );
                             newRes.insert( NIE::url(), fileUrl );
                             if( QFileInfo( fileUrl.toString() ).isDir() )
@@ -1399,7 +1399,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                 resolvedRes.addProperty(it.key(), it.value());
             }
         }
-        
+
         QList< Soprano::Statement > stList = d->m_classAndPropertyTree->simpleResourceToStatementList(resolvedRes);
         allStatements << stList;
 
@@ -1415,7 +1415,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         }
         resIdent.addSyncResource( simpleRes );
     }
-    
+
 
     //
     // Check the created statements
@@ -1427,31 +1427,31 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             return;
         }
     }
-    
+
     //
     // For better identification add rdf:type and nie:url to resolvedNodes
     //
     QHashIterator<QUrl, QUrl> it( resolvedNodes );
     while( it.hasNext() ) {
         it.next();
-        
+
         const QUrl fileUrl = it.key();
         const QUrl uri = it.value();
-        
+
         const Sync::SyncResource existingRes = resIdent.simpleResource( uri );
-        
+
         Sync::SyncResource res;
         res.setUri( uri );
-        
+
         if( !existingRes.contains( RDF::type(), NFO::FileDataObject() ) )
             res.insert( RDF::type(), NFO::FileDataObject() );
-        
+
         if( !existingRes.contains( NIE::url(), fileUrl ) )
             res.insert( NIE::url(), fileUrl );
-        
+
         if( QFileInfo( fileUrl.toString() ).isDir() && !existingRes.contains( RDF::type(), NFO::Folder() ) )
             res.insert( RDF::type(), NFO::Folder() );
-        
+
         resIdent.addSyncResource( res );
     }
 
@@ -1475,7 +1475,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     //
     foreach( const KUrl & uri, resIdent.unidentified() ) {
         Soprano::Node dateTime( Soprano::LiteralValue( QDateTime::currentDateTime() ) );
-        
+
         Sync::SyncResource simpleRes = resIdent.simpleResource( uri );
         if( !simpleRes.contains( NAO::created() ) )
             allStatements << Soprano::Statement( uri, NAO::created(), dateTime );
@@ -1486,9 +1486,9 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     foreach( const Sync::SyncResource & res, extraResources ) {
         allStatements << res.toStatementList();
     }
-    
+
     TransactionModel trModel(this);
-    ResourceMerger merger( this, app, additionalMetadata );
+    ResourceMerger merger( this, app, additionalMetadata, flags );
     merger.setMappings( resIdent.mappings() );
     if(merger.merge( Soprano::Graph(allStatements) )) {
         trModel.commit();
@@ -1496,7 +1496,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     else {
         kDebug() << " MERGING FAILED! ";
     }
-    
+
     if( merger.lastError() != Soprano::Error::ErrorNone ) {
         setError( merger.lastError() );
     }
@@ -1813,16 +1813,16 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString& app, const QMultiH
 
     const QUrl graph = createUri(GraphUri);
     const QUrl metadatagraph = createUri(GraphUri);
-    
+
     // add metadata graph itself
     addStatement(metadatagraph, NRL::coreGraphMetadataFor(), graph, metadatagraph);
     addStatement(metadatagraph, RDF::type(), NRL::GraphMetadata(), metadatagraph);
-    
+
     for(QHash<QUrl, Soprano::Node>::const_iterator it = graphMetaData.constBegin();
         it != graphMetaData.constEnd(); ++it) {
         addStatement(graph, it.key(), it.value(), metadatagraph);
     }
-        
+
     return graph;
 }
 
