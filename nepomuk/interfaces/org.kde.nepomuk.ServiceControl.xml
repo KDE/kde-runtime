@@ -9,5 +9,11 @@
     <signal name="serviceInitialized">
       <arg name="success" type="b" direction="out" />
     </signal>
+    <method name="description">
+      <arg type="s" direction="out"/>
+    </method>
+    <method name="name">
+      <arg type="s" direction="out"/>
+    </method>
   </interface>
 </node>
