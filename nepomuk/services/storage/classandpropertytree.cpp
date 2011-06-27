@@ -525,6 +525,11 @@ const Nepomuk::ClassAndPropertyTree::ClassOrProperty * Nepomuk::ClassAndProperty
         return it.value();
 }
 
+bool Nepomuk::ClassAndPropertyTree::contains(const QUrl& uri) const
+{
+    return m_tree.contains(uri);
+}
+
 
 /**
  * Set the value of nao:userVisible.

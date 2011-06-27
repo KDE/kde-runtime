@@ -138,7 +138,7 @@ namespace {
         if(uri.scheme() == QLatin1String("nepomuk")) {
             return NepomukUri;
         }
-        else if( uri.scheme() == QLatin1String("http") ) { //HACK: Use the class and property tree
+        else if(Nepomuk::ClassAndPropertyTree::self()->contains(uri)) {
             return OntologyUri;
         }
         else if(uri.toString().startsWith("_:") ) {

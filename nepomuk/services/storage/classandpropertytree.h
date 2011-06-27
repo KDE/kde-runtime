@@ -50,6 +50,9 @@ public:
     QSet<QUrl> allParents(const QUrl& uri) const;
     bool isChildOf(const QUrl& type, const QUrl& superClass) const;
 
+    /// Returns true if the uri is a Class or a Property
+    bool contains(const QUrl& uri) const;
+
     /**
      * Returns true if any one of the uris in \p types is a child of \p superClass
      */
