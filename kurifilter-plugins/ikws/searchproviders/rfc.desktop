@@ -145,7 +145,6 @@ Query[nn]=http://www.ietf.org/rfc/rfc\\{@}.txt
 Query[oc]=http://www.ietf.org/rfc/rfc\\{@}.txt
 Query[or]=http://www.ietf.org/rfc/rfc\\{@}.txt
 Query[pa]=http://www.ietf.org/rfc/rfc\\{@}.txt
-Query[pl]=http://www.ietf.org/rfc/rfc\\{@}.txt
 Query[pt]=http://www.ietf.org/rfc/rfc\\{@}.txt
 Query[pt_BR]=http://www.ietf.org/rfc/rfc\\{@}.txt
 Query[ro]=http://www.ietf.org/rfc/rfc\\{@}.txt
