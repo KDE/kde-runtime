@@ -154,6 +154,7 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NMM::MusicAlbum(), RDF::type(), RDFS::Class(), graph );
     m_model->addStatement( NMM::TVShow(), RDF::type(), RDFS::Class(), graph );
     m_model->addStatement( NMM::TVSeries(), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( NMM::MusicPiece(), RDF::type(), RDFS::Class(), graph );
 
     // used by testStoreResources_duplicates
     m_model->addStatement( NFO::hashAlgorithm(), RDF::type(), RDF::Property(), graph );
@@ -4040,6 +4041,24 @@ void DataManagementModelTest::testStoreResources_itemUris()
     // Should give an error 'testuri' is an unknown protocol
     QVERIFY(m_dmModel->lastError());
 }
+
+void DataManagementModelTest::testStoreResources_akonadi()
+{
+    SimpleResource res(QUrl("akonadi:item=5"));
+    res.addType( NFO::FileDataObject() );
+    res.addType( NMM::MusicPiece() );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app") );
+    QVERIFY(!m_dmModel->lastError());
+
+    QVERIFY( m_model->containsAnyStatement( Node(), NIE::url(), QUrl("akonadi:item=5") ) );
+
+    const QUrl resUri = m_model->listStatements( Node(), NIE::url(), QUrl("akonadi:item=5") ).allStatements().first().subject().uri();
+
+    QVERIFY( m_model->containsAnyStatement( resUri, RDF::type(), NFO::FileDataObject() ) );
+    QVERIFY( m_model->containsAnyStatement( resUri, RDF::type(), NMM::MusicPiece() ) );
+}
+
 
 void DataManagementModelTest::testStoreResources_duplicates()
 {
