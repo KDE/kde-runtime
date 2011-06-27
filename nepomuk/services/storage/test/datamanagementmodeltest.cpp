@@ -4036,19 +4036,9 @@ void DataManagementModelTest::testStoreResources_itemUris()
     }
 
     m_dmModel->storeResources( g, "app" );
-    QVERIFY(!m_dmModel->lastError());
 
-    for( int i=0; i<10; i++ ) {
-        QUrl nieUrl( "testuri:?item="+QString::number(i) );
-        QList<Soprano::Statement> l = m_model->listStatements( Node(), NIE::url(), nieUrl ).allStatements();
-        QCOMPARE( l.size(), 1 );
-
-        const QUrl resUri = l.first().subject().uri();
-
-        Soprano::LiteralValue label( "label"+ QString::number(i) );
-        l = m_model->listStatements( resUri, NAO::prefLabel(), label ).allStatements();
-        QCOMPARE( l.size(), 1 );
-    }
+    // Should give an error 'testuri' is an unknown protocol
+    QVERIFY(m_dmModel->lastError());
 }
 
 void DataManagementModelTest::testStoreResources_duplicates()
