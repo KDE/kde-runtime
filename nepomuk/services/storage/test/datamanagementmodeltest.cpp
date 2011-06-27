@@ -151,6 +151,9 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NMM::performer(), RDFS::range(), NCO::Contact(), graph );
     m_model->addStatement( NMM::musicAlbum(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NMM::musicAlbum(), RDFS::range(), NMM::MusicAlbum(), graph );
+    m_model->addStatement( NMM::MusicAlbum(), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( NMM::TVShow(), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( NMM::TVSeries(), RDF::type(), RDFS::Class(), graph );
 
     // used by testStoreResources_duplicates
     m_model->addStatement( NFO::hashAlgorithm(), RDF::type(), RDF::Property(), graph );
@@ -178,6 +181,12 @@ void DataManagementModelTest::resetModel()
     m_model->addStatement( NCO::Contact(), RDF::type(), RDFS::Class(), graph );
     m_model->addStatement( NCO::Contact(), RDFS::subClassOf(), NCO::Role(), graph );
     m_model->addStatement( NCO::Contact(), RDFS::subClassOf(), NAO::Party(), graph );
+
+    m_model->addStatement( NAO::Tag(), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( NFO::FileDataObject(), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( NFO::Folder(), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( NFO::Video(), RDF::type(), RDFS::Class(), graph );
+    m_model->addStatement( NIE::InformationElement(), RDF::type(), RDFS::Class(), graph );
 
     // rebuild the internals of the data management model
     m_classAndPropertyTree->rebuildTree(m_dmModel);
@@ -433,6 +442,9 @@ void DataManagementModelTest::testAddProperty_invalidFile()
     //f1Url.setScheme("file");
 
     m_dmModel->addProperty( QList<QUrl>() << f1Url, RDF::type(), QVariantList() << NAO::Tag(), QLatin1String("testapp") );
+
+    // There should be some error that '' protocol doesn't exist
+    QVERIFY(m_dmModel->lastError());
 
     // The support for plain file paths is in the DBus adaptor through the usage of KUrl. If
     // local path support is neccesary on the level of the model, simply use KUrl which
