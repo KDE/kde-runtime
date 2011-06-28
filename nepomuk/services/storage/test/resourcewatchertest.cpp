@@ -160,19 +160,24 @@ void ResourceWatcherTest::init()
     resetModel();
 }
 
-void ResourceWatcherTest::testAddedResourceSignal()
+void ResourceWatcherTest::testPropertyAddedSignal()
 {
     // create a dummy resource which we will use
-    const QUrl resA = m_dmModel->createResource(QList<QUrl>() << NAO::Tag(), QString(), QString(), QLatin1String("A"));
+    const QUrl resA = m_dmModel->createResource(QList<QUrl>() << QUrl("class:/typeA"), QString(), QString(), QLatin1String("A"));
+
+    // no error should be generated after the above method is executed.
+    QVERIFY(!m_dmModel->lastError());
 
     // create a connection which listens to changes in res:/A
     Nepomuk::ResourceWatcherConnection* con = m_dmModel->resourceWatcherManager()->createConnection(QList<QUrl>() << resA, QList<QUrl>(), QList<QUrl>());
+    QVERIFY(!m_dmModel->lastError());
 
     // spy for the propertyAdded signal
     QSignalSpy spy(con, SIGNAL(propertyAdded(QString, QString, QVariant)));
 
     // change the resource
     m_dmModel->setProperty(QList<QUrl>() << resA, NAO::prefLabel(), QVariantList() << QLatin1String("foobar"), QLatin1String("A"));
+    QVERIFY(!m_dmModel->lastError());
 
     // check that we actually got one signal
     QCOMPARE( spy.count(), 1 );
@@ -190,6 +195,51 @@ void ResourceWatcherTest::testAddedResourceSignal()
     QCOMPARE(args[2].value<QVariant>(), QVariant(QString(QLatin1String("foobar"))));
 
     // cleanup
+    con->deleteLater();
+}
+
+void ResourceWatcherTest::testPropertyRemovedSignal()
+{
+    const QUrl resA = m_dmModel->createResource(QList<QUrl>() << QUrl("class:/typeA"), QLatin1String("foobar"), QString(), QLatin1String("A"));
+    QVERIFY(!m_dmModel->lastError());
+
+    Nepomuk::ResourceWatcherConnection* con = m_dmModel->resourceWatcherManager()->createConnection(QList<QUrl>() << resA, QList<QUrl>(), QList<QUrl>());
+
+    QSignalSpy spy(con, SIGNAL(propertyRemoved(QString, QString, QVariant)));
+
+    m_dmModel->removeProperty(QList<QUrl>() << resA, NAO::prefLabel(), QVariantList() << QLatin1String("foobar"), QLatin1String("A"));
+    QVERIFY(!m_dmModel->lastError());
+
+    QCOMPARE( spy.count(), 1 );
+
+    QList<QVariant> args = spy.takeFirst();
+
+    QCOMPARE(args[0].toString(), resA.toString());
+    QCOMPARE(args[1].toString(), NAO::prefLabel().toString());
+    QCOMPARE(args[2].value<QVariant>(), QVariant(QString(QLatin1String("foobar"))));
+
+    con->deleteLater();
+}
+
+void ResourceWatcherTest::testResourceRemovedSignal()
+{
+    const QUrl resA = m_dmModel->createResource(QList<QUrl>() << QUrl("class:/typeA"), QString(), QString(), QLatin1String("A"));
+    QVERIFY(!m_dmModel->lastError());
+
+    Nepomuk::ResourceWatcherConnection* con = m_dmModel->resourceWatcherManager()->createConnection(QList<QUrl>() << resA, QList<QUrl>(), QList<QUrl>());
+    QVERIFY(!m_dmModel->lastError());
+
+    QSignalSpy spy(con, SIGNAL(resourceRemoved(QString, QStringList)));
+
+    m_dmModel->removeResources(QList<QUrl>() << resA, Nepomuk::RemovalFlags() , QLatin1String("A"));
+    QVERIFY(!m_dmModel->lastError());
+
+    QCOMPARE( spy.count(), 1 );
+
+    QList<QVariant> args = spy.takeFirst();
+
+    QCOMPARE(args[0].toString(), resA.toString());
+
     con->deleteLater();
 }
 
