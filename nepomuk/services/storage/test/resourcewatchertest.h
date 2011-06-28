@@ -43,8 +43,9 @@ private Q_SLOTS:
     void cleanupTestCase();
     void init();
 
-
-    void testAddedResourceSignal();
+    void testPropertyAddedSignal();
+    void testPropertyRemovedSignal();
+    void testResourceRemovedSignal();
 
 private:
     KTempDir* createNieUrlTestData();
