@@ -1805,8 +1805,8 @@ void DataManagementModelTest::testCreateResource()
     // check if the resource was created properly
     QVERIFY(m_model->containsAnyStatement(resUri, RDF::type(), QUrl("class:/typeA")));
     QVERIFY(m_model->containsAnyStatement(resUri, RDF::type(), QUrl("class:/typeB")));
-    QVERIFY(m_model->containsAnyStatement(resUri, NAO::prefLabel(), LiteralValue(QLatin1String("the label"))));
-    QVERIFY(m_model->containsAnyStatement(resUri, NAO::description(), LiteralValue(QLatin1String("the desc"))));
+    QVERIFY(m_model->containsAnyStatement(resUri, NAO::prefLabel(), LiteralValue::createPlainLiteral(QLatin1String("the label"))));
+    QVERIFY(m_model->containsAnyStatement(resUri, NAO::description(), LiteralValue::createPlainLiteral(QLatin1String("the desc"))));
 }
 
 void DataManagementModelTest::testCreateResource_invalid_args()

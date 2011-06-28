@@ -790,10 +790,10 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
         addStatement(resUri, RDF::type(), type, graph);
     }
     if(!label.isEmpty()) {
-        addStatement(resUri, NAO::prefLabel(), Soprano::LiteralValue(label), graph);
+        addStatement(resUri, NAO::prefLabel(), Soprano::LiteralValue::createPlainLiteral(label), graph);
     }
     if(!description.isEmpty()) {
-        addStatement(resUri, NAO::description(), Soprano::LiteralValue(description), graph);
+        addStatement(resUri, NAO::description(), Soprano::LiteralValue::createPlainLiteral(description), graph);
     }
 
     // add basic metadata to the new resource
