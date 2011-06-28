@@ -736,10 +736,20 @@ QUrl Nepomuk::DataManagementModel::createResource(const QList<QUrl> &types, cons
         setError(QLatin1String("createResource: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
         return QUrl();
     }
-    foreach(const QUrl& type, types) {
-        if(type.isEmpty()) {
-            setError(QLatin1String("createResource: Encountered empty type URI."), Soprano::Error::ErrorInvalidArgument);
-            return QUrl();
+    else if(types.isEmpty()) {
+        setError(QLatin1String("createResource: No type specified. Cannot create resources without a type."), Soprano::Error::ErrorInvalidArgument);
+        return QUrl();
+    }
+    else {
+        foreach(const QUrl& type, types) {
+            if(type.isEmpty()) {
+                setError(QLatin1String("createResource: Encountered empty type URI."), Soprano::Error::ErrorInvalidArgument);
+                return QUrl();
+            }
+            else if(!d->m_classAndPropertyTree->isKnownClass(type)) {
+                setError(QLatin1String("createResource: Encountered invalid type URI."), Soprano::Error::ErrorInvalidArgument);
+                return QUrl();
+            }
         }
     }
 
