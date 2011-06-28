@@ -47,6 +47,9 @@ public:
     ClassAndPropertyTree(QObject *parent = 0);
     ~ClassAndPropertyTree();
 
+    /// \return \p true if \p uri is a class
+    bool isKnownClass(const QUrl& uri) const;
+
     QSet<QUrl> allParents(const QUrl& uri) const;
     bool isChildOf(const QUrl& type, const QUrl& superClass) const;
 
