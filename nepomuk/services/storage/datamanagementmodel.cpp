@@ -1000,21 +1000,29 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // query all graphs the app maintains which contain any information about one of the resources
     // count the number of apps maintaining those graphs (later we will only remove the app as maintainer but keep the graph)
     // count the number of metadata properties defined in those graphs (we will keep that information in case the resource is not fully removed)
-    // count the number of resources that we do not want to delete in the graph
+    //
+    // We combine the results of 2 queries since Virtuoso can optimize FILTER(?r in (...)) but cannot optimize FILTER(?r in (...) || ?o in (...))
     //
     QList<Soprano::BindingSet> graphRemovalCandidates
             = executeQuery(QString::fromLatin1("select distinct "
                                                "?g "
                                                "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
-                                               "(select count (*) where { graph ?g { ?r ?mp ?mo . FILTER(?r in (%3)) . FILTER(%4) . } . }) as ?mc "
                                                "where { "
-                                               "graph ?g { ?r ?p ?o . } . "
-                                               "?g %1 %2 . "
-                                               "FILTER(?r in (%3) || ?o in (%3)) . }")
+                                               "graph ?g { ?r ?p ?o . FILTER(?r in (%3)) . } . "
+                                               "?g %1 %2 . }")
                            .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
                                 Soprano::Node::resourceToN3(appRes),
-                                resourcesToN3(resolvedResources).join(QLatin1String(",")),
-                                createResourceMetadataPropertyFilter(QLatin1String("?mp"), false)),
+                                resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                           Soprano::Query::QueryLanguageSparql).allElements()
+            + executeQuery(QString::fromLatin1("select distinct "
+                                               "?g "
+                                               "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
+                                               "where { "
+                                               "graph ?g { ?r ?p ?o . FILTER(?o in (%3)) . } . "
+                                               "?g %1 %2 . }")
+                           .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                Soprano::Node::resourceToN3(appRes),
+                                resourcesToN3(resolvedResources).join(QLatin1String(","))),
                            Soprano::Query::QueryLanguageSparql).allElements();
 
 
@@ -1048,7 +1056,6 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     for(QList<Soprano::BindingSet>::const_iterator it = graphRemovalCandidates.constBegin(); it != graphRemovalCandidates.constEnd(); ++it) {
         const QUrl g = it->value("g").uri();
         const int appCnt = it->value("c").literal().toInt();
-        const int metadataPropCount = it->value("mc").literal().toInt();
         if(appCnt == 1) {
             foreach(const QUrl& res, resolvedResources) {
                 //
@@ -1062,15 +1069,12 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                 //                                      createResourceMetadataPropertyFilter(QLatin1String("?p"))),
                 //                                 Soprano::Query::QueryLanguageSparql);
                 //
-                QList<Soprano::BindingSet> metadataProps;
-                if(metadataPropCount > 0) {
-                    // remember the metadata props
-                    metadataProps = executeQuery(QString::fromLatin1("select ?p ?o where { graph %1 { %2 ?p ?o . FILTER(%3) . } . }")
-                                                 .arg(Soprano::Node::resourceToN3(g),
-                                                      Soprano::Node::resourceToN3(res),
-                                                      createResourceMetadataPropertyFilter(QLatin1String("?p"), false)),
-                                                 Soprano::Query::QueryLanguageSparql).allBindings();
-                }
+                QList<Soprano::BindingSet> metadataProps
+                        = executeQuery(QString::fromLatin1("select ?p ?o where { graph %1 { %2 ?p ?o . FILTER(%3) . } . }")
+                                       .arg(Soprano::Node::resourceToN3(g),
+                                            Soprano::Node::resourceToN3(res),
+                                            createResourceMetadataPropertyFilter(QLatin1String("?p"), false)),
+                                       Soprano::Query::QueryLanguageSparql).allBindings();
 
                 //
                 // check if we actually remove any properties and only then update the mtime of the resource
