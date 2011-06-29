@@ -47,6 +47,7 @@ class NEPOMUK_DATA_MANAGEMENT_EXPORT SimpleResource
 {
 public:
     explicit SimpleResource(const QUrl& uri = QUrl());
+    SimpleResource(const PropertyHash& properties);
     SimpleResource(const SimpleResource& other);
     virtual ~SimpleResource();
 

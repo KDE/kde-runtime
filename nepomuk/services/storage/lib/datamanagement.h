@@ -345,7 +345,11 @@ namespace Nepomuk {
         /// By default storeResources() will only append data and fail if properties with
         /// cardinality 1 already have a value. This flag changes the behaviour to force the
         /// new values instead.
-        OverwriteProperties = 1
+        OverwriteProperties = 1,
+
+        /// When lazy cardinalities are enabled any value that would violate a cardinality restriction
+        /// is simply dropped without throwing an error.
+        LazyCardinalities = 2
     };
     Q_DECLARE_FLAGS(StoreResourcesFlags, StoreResourcesFlag)
 

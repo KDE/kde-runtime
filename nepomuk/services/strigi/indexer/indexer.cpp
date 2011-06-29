@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2010-2011 Sebastian Trueg <trueg@kde.org>
    Copyright (C) 2011 Vishesh Handa <handa.vish@gmail.com>
 
    This library is free software; you can redistribute it and/or
@@ -22,11 +22,7 @@
 
 #include "indexer.h"
 #include "nepomukindexwriter.h"
-#include "nepomukindexfeeder.h"
 
-#include <Nepomuk/ResourceManager>
-#include <Nepomuk/Resource>
-#include <Nepomuk/Variant>
 #include <Nepomuk/Vocabulary/NIE>
 
 #include <KDebug>
@@ -43,7 +39,7 @@
 #include <strigi/analyzerconfiguration.h>
 
 #include <iostream>
-#include <Soprano/Model>
+
 
 namespace {
     class StoppableConfiguration : public Strigi::AnalyzerConfiguration
@@ -80,7 +76,6 @@ class Nepomuk::Indexer::Private
 {
 public:
     StoppableConfiguration m_analyzerConfig;
-    IndexFeeder* m_indexFeeder;
     StrigiIndexWriter* m_indexWriter;
     Strigi::StreamAnalyzer* m_streamAnalyzer;
 };
@@ -90,8 +85,7 @@ Nepomuk::Indexer::Indexer( QObject* parent )
     : QObject( parent ),
       d( new Private() )
 {
-    d->m_indexFeeder = new IndexFeeder( this );
-    d->m_indexWriter = new StrigiIndexWriter( d->m_indexFeeder );
+    d->m_indexWriter = new StrigiIndexWriter();
     d->m_streamAnalyzer = new Strigi::StreamAnalyzer( d->m_analyzerConfig );
     d->m_streamAnalyzer->setIndexWriter( *d->m_indexWriter );
 }
@@ -101,7 +95,6 @@ Nepomuk::Indexer::~Indexer()
 {
     delete d->m_streamAnalyzer;
     delete d->m_indexWriter;
-    delete d->m_indexFeeder;
     delete d;
 }
 
@@ -122,38 +115,31 @@ void Nepomuk::Indexer::indexFile( const QFileInfo& info, const KUrl resUri, uint
     d->m_analyzerConfig.setStop( false );
     d->m_indexWriter->forceUri( resUri );
     
-    KUrl url( info.filePath() );
-    kDebug() << "Using " << info.filePath();
-    
     // strigi asserts if the file path has a trailing slash
-    QString filePath = url.toLocalFile( KUrl::RemoveTrailingSlash );
-    QString dir = url.directory( KUrl::IgnoreTrailingSlash );
+    const KUrl url( info.filePath() );
+    const QString filePath = url.toLocalFile( KUrl::RemoveTrailingSlash );
+    const QString dir = url.directory( KUrl::IgnoreTrailingSlash );
 
-    kDebug() << "Starting to index ..";
-    // A new block so as to force destruction of the analysisresult
-    {
-        Strigi::AnalysisResult analysisresult( QFile::encodeName( filePath ).data(),
-                                            mtime ? mtime : info.lastModified().toTime_t(),
-                                            *d->m_indexWriter,
-                                            *d->m_streamAnalyzer,
-                                            QFile::encodeName( dir ).data() );
-        if ( info.isFile() && !info.isSymLink() ) {
-            #ifdef STRIGI_HAS_FILEINPUTSTREAM_OPEN
-                Strigi::InputStream* stream = Strigi::FileInputStream::open( QFile::encodeName( info.filePath() ) );
-                analysisresult.index( stream );
-                delete stream;
-            #else
-                Strigi::FileInputStream stream( QFile::encodeName( info.filePath() ) );
-                analysisresult.index( &stream );
-            #endif
-        }
-        else {
-            analysisresult.index(0);
-        }
+    kDebug() << "Starting to analyze" << info.filePath();
+
+    Strigi::AnalysisResult analysisresult( QFile::encodeName( filePath ).data(),
+                                           mtime ? mtime : info.lastModified().toTime_t(),
+                                           *d->m_indexWriter,
+                                           *d->m_streamAnalyzer,
+                                           QFile::encodeName( dir ).data() );
+    if ( info.isFile() && !info.isSymLink() ) {
+#ifdef STRIGI_HAS_FILEINPUTSTREAM_OPEN
+        Strigi::InputStream* stream = Strigi::FileInputStream::open( QFile::encodeName( info.filePath() ) );
+        analysisresult.index( stream );
+        delete stream;
+#else
+        Strigi::FileInputStream stream( QFile::encodeName( info.filePath() ) );
+        analysisresult.index( &stream );
+#endif
     }
-    
-    QTextStream out(stdout);
-    out << d->m_indexFeeder->lastRequestUri().toString();
+    else {
+        analysisresult.index(0);
+    }
 }
 
 void Nepomuk::Indexer::indexStdin(const KUrl resUri, uint mtime)
@@ -161,25 +147,12 @@ void Nepomuk::Indexer::indexStdin(const KUrl resUri, uint mtime)
     d->m_analyzerConfig.setStop( false );
     d->m_indexWriter->forceUri( resUri );
 
-    QString filename;
-
-    // A new block so as to force destruction of the analysisresult
-    {
-        Strigi::AnalysisResult analysisresult( QFile::encodeName( filename ).data(),
-                                            mtime ? mtime : QDateTime::currentDateTime().toTime_t(),
-                                            *d->m_indexWriter,
-                                            *d->m_streamAnalyzer );
-        Strigi::FileInputStream stream( stdin, QFile::encodeName( filename ).data() );
-        analysisresult.index( &stream );
-    }
-    
-    // Remove the false nie:url
-    QUrl uri = d->m_indexFeeder->lastRequestUri();
-    Soprano::Model* model = Nepomuk::ResourceManager::instance()->mainModel();
-    model->removeAllStatements( uri, Nepomuk::Vocabulary::NIE::url(), Soprano::Node() );
-    
-    QTextStream out(stdout);
-    out << d->m_indexFeeder->lastRequestUri().toString();
+    Strigi::AnalysisResult analysisresult( QFile::encodeName(resUri.fileName()).data(),
+                                           mtime ? mtime : QDateTime::currentDateTime().toTime_t(),
+                                           *d->m_indexWriter,
+                                           *d->m_streamAnalyzer );
+    Strigi::FileInputStream stream( stdin, QFile::encodeName(resUri.toLocalFile()).data() );
+    analysisresult.index( &stream );
 }
 
 

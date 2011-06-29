@@ -64,6 +64,13 @@ Nepomuk::SimpleResource::SimpleResource(const QUrl& uri)
     setUri(uri);
 }
 
+Nepomuk::SimpleResource::SimpleResource(const PropertyHash& properties)
+{
+    d = new Private();
+    setUri(QUrl());
+    setProperties(properties);
+}
+
 Nepomuk::SimpleResource::SimpleResource(const SimpleResource& other)
     : d(other.d)
 {
