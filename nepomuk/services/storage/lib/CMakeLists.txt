@@ -50,3 +50,15 @@ install(FILES
   resourcewatcher.h
   nepomukdatamanagement_export.h
   DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk)
+
+
+# API docs
+find_package(Doxygen)
+
+if(DOXYGEN_EXECUTABLE)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.cmake ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+
+  add_custom_target(
+    dms-apidox
+    COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile)
+endif(DOXYGEN_EXECUTABLE)

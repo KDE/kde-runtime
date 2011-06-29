@@ -1774,6 +1774,61 @@ void DataManagementModelTest::testRemoveResources_mtimeRelated()
     QCOMPARE(m_model->listStatements(QUrl("res:/C"), NAO::lastModified(), Node()).allElements().first().object().literal().toDateTime(), date);
 }
 
+void DataManagementModelTest::testCreateResource()
+{
+    // the simple test: we just create a resource using all params
+    const QUrl resUri = m_dmModel->createResource(QList<QUrl>() << QUrl("class:/typeA") << QUrl("class:/typeB"), QLatin1String("the label"), QLatin1String("the desc"), QLatin1String("A"));
+
+    // this call should succeed
+    QVERIFY(!m_dmModel->lastError());
+
+    // check if the returned uri is valid
+    QVERIFY(!resUri.isEmpty());
+    QCOMPARE(resUri.scheme(), QString(QLatin1String("nepomuk")));
+
+    // check if the resource was created properly
+    QVERIFY(m_model->containsAnyStatement(resUri, RDF::type(), QUrl("class:/typeA")));
+    QVERIFY(m_model->containsAnyStatement(resUri, RDF::type(), QUrl("class:/typeB")));
+    QVERIFY(m_model->containsAnyStatement(resUri, NAO::prefLabel(), LiteralValue::createPlainLiteral(QLatin1String("the label"))));
+    QVERIFY(m_model->containsAnyStatement(resUri, NAO::description(), LiteralValue::createPlainLiteral(QLatin1String("the desc"))));
+}
+
+void DataManagementModelTest::testCreateResource_invalid_args()
+{
+    // remember current state to compare later on
+    Soprano::Graph existingStatements = m_model->listStatements().allStatements();
+
+
+    // try to create a resource without any types
+    m_dmModel->createResource(QList<QUrl>(), QString(), QString(), QLatin1String("A"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // use an invalid type
+    m_dmModel->createResource(QList<QUrl>() << QUrl("class:/non-existing-type"), QString(), QString(), QLatin1String("A"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // use a property as type
+    m_dmModel->createResource(QList<QUrl>() << NAO::prefLabel(), QString(), QString(), QLatin1String("A"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+}
+
 // the isolated test: create one graph with one resource, delete that resource
 void DataManagementModelTest::testRemoveDataByApplication1()
 {

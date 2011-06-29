@@ -79,6 +79,9 @@ private Q_SLOTS:
     void testRemoveResources_protectedTypes();
     void testRemoveResources_mtimeRelated();
 
+    void testCreateResource();
+    void testCreateResource_invalid_args();
+
     void testRemoveDataByApplication1();
     void testRemoveDataByApplication2();
     void testRemoveDataByApplication3();
