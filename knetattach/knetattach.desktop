@@ -185,3 +185,4 @@ Terminal=false
 X-KDE-StartupNotify=true
 Categories=Qt;KDE;Network;RemoteAccess;
 X-DocPath=knetattach/index.html
+OnlyShowIn=KDE;

@@ -31,6 +31,8 @@ Nepomuk::ServiceControl::ServiceControl( const QString& serviceName, const KServ
       m_service( service ),
       m_initialized( false )
 {
+    m_description = service->comment();
+    m_readableName = service->name();
 }
 
 
@@ -51,6 +53,15 @@ bool Nepomuk::ServiceControl::isInitialized() const
     return m_initialized;
 }
 
+QString Nepomuk::ServiceControl::description() const
+{
+    return m_description;
+}
+
+QString Nepomuk::ServiceControl::name() const
+{
+    return m_readableName;
+}
 
 void Nepomuk::ServiceControl::start()
 {

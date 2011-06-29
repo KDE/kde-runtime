@@ -95,6 +95,15 @@ Nepomuk::ClassAndPropertyTree::~ClassAndPropertyTree()
     s_self = 0;
 }
 
+bool Nepomuk::ClassAndPropertyTree::isKnownClass(const QUrl &uri) const
+{
+    QMutexLocker lock(&m_mutex);
+    if(const ClassOrProperty* cop = findClassOrProperty(uri))
+        return !cop->isProperty;
+    else
+        return false;
+}
+
 QSet<QUrl> Nepomuk::ClassAndPropertyTree::allParents(const QUrl &uri) const
 {
     QMutexLocker lock(&m_mutex);
