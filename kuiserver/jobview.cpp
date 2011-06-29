@@ -28,6 +28,7 @@
 #include <kdebug.h>
 
 #include <QtDBus/QDBusPendingReply>
+#include <qdbusabstractinterface.h>
 
 JobView::JobView(uint jobId, QObject *parent)
     : QObject(parent),
@@ -49,7 +50,6 @@ JobView::~JobView()
 void JobView::terminate(const QString &errorMessage)
 {
     QDBusConnection::sessionBus().unregisterObject(m_objectPath.path(), QDBusConnection::UnregisterTree);
-
 
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
@@ -316,6 +316,17 @@ void JobView::addJobContact(const QString& objectPath, const QString& address)
     connect(client, SIGNAL(cancelRequested()), this, SIGNAL(cancelRequested()));
     Q_ASSERT(!m_objectPaths.contains(address));
     m_objectPaths.insert(address, pair);
+}
+
+QStringList JobView::jobContacts()
+{
+    QStringList output;
+    QHash<QString, QPair<QString, QDBusAbstractInterface*> >::const_iterator it = m_objectPaths.constBegin();
+    for (; it != m_objectPaths.constEnd(); ++it) {
+        //for debug purposes only
+        output.append("service name of the interface: " + it.key() + "; objectPath for the interface: " + it.value().first);
+    }
+    return output;
 }
 
 void JobView::pendingCallStarted()

@@ -121,7 +121,7 @@ public:
      *  The below methods force an emission of the respective signal.
      *  Only use case is kuiserver's delegate, where we need to control
      *  the state of a job, but can't emit them because they are signals
-     * 
+     *
      *  Note: it isn't used for job's propagating their children jobs
      *  all the way up to KJob, use the other signals in here for that.
      *  (although it does the same thing).
@@ -139,6 +139,15 @@ public:
      * due to some signal magic from the model.
      */
     void addJobContact(const QString& objectPath, const QString& address);
+
+    /**
+     * Return the list of job contacts (jobs we are currently forwarding information
+     * to over the wire). They *should* be valid. If they are not, something is probably
+     * fishy.
+     * This method is only for D-BUS debug purposes, for his pleasure.
+     * So betting on this method and trying to parse it would not be the best of ideas.
+     */
+    QStringList jobContacts();
 
     void pendingCallStarted();
 
