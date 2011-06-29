@@ -32,7 +32,6 @@ set(indexer_SRCS
   main.cpp
   indexer.cpp
   nepomukindexwriter.cpp
-  nepomukindexfeeder.cpp
   ../util.cpp
   ../../../servicestub/priority.cpp
   )

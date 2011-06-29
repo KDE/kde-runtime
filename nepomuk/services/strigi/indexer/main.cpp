@@ -47,6 +47,7 @@ int main(int argc, char *argv[])
                          KAboutData::License_LGPL_V2,
                          ki18n("(C) 2011, Vishesh Handa"));
     aboutData.addAuthor(ki18n("Vishesh Handa"), ki18n("Current maintainer"), "handa.vish@gmail.com");
+    aboutData.addCredit(ki18n("Sebastian Trüg"), ki18n("Developer"), "trueg@kde.org");
     
     KCmdLineArgs::init(argc, argv, &aboutData);
     

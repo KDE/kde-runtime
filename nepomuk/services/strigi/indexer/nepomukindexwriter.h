@@ -30,12 +30,11 @@ class QUrl;
 namespace Nepomuk {
 
     class Resource;
-    class IndexFeeder;
 
     class StrigiIndexWriter : public Strigi::IndexWriter
     {
     public:
-        StrigiIndexWriter( IndexFeeder* );
+        StrigiIndexWriter();
         ~StrigiIndexWriter();
 
         void commit();
@@ -74,9 +73,8 @@ namespace Nepomuk {
         void finishAnalysis( const Strigi::AnalysisResult* );
 
         void forceUri( const QUrl & uri );
-    private:
-        QUrl determineFolderResourceUri( const KUrl& fileUrl );
 
+    private:
         class Private;
         Private* d;
     };
