@@ -4199,6 +4199,30 @@ void DataManagementModelTest::testStoreResources_correctRangeInStore()
     QVERIFY(!m_dmModel->lastError());
 }
 
+// make sure that the same values are simply merged even if encoded differently
+void DataManagementModelTest::testStoreResources_duplicateValuesAsString()
+{
+    SimpleResource res;
+
+    // add the same type twice
+    res.addType(QUrl("class:/typeA"));
+    res.addProperty(RDF::type(), QLatin1String("class:/typeA"));
+
+    // add the same value twice
+    res.addProperty(QUrl("prop:/int"), 42);
+    res.addProperty(QUrl("prop:/int"), QLatin1String("42"));
+
+    // now add the resource
+    m_dmModel->storeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
+
+    // this should succeed
+    QVERIFY(!m_dmModel->lastError());
+
+    // make sure all is well
+    QCOMPARE(m_model->listStatements(Soprano::Node(), RDF::type(), QUrl("class:/typeA")).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(Soprano::Node(), QUrl("prop:/int"), LiteralValue(42)).allStatements().count(), 1);
+}
+
 void DataManagementModelTest::testMergeResources()
 {
     // first we need to create the two resources we want to merge as well as one that should not be touched

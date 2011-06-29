@@ -130,6 +130,7 @@ private Q_SLOTS:
     void testStoreResources_overwriteProperties();
     void testStoreResources_correctDomainInStore();
     void testStoreResources_correctRangeInStore();
+    void testStoreResources_duplicateValuesAsString();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();
