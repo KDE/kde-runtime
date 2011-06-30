@@ -134,7 +134,7 @@ namespace {
     };
 
     /// Check if a URL points to a local file. This should be the only place where the local file is stat'ed
-    inline UriState uriState(const QUrl& uri) {
+    inline UriState uriState(const QUrl& uri, bool statLocalFiles = true) {
         if(uri.scheme() == QLatin1String("nepomuk")) {
             return NepomukUri;
         }
@@ -145,7 +145,8 @@ namespace {
             return BlankUri;
         }
         else if(uri.scheme() == QLatin1String("file")) {
-            if(QFile::exists(uri.toLocalFile())) {
+            if(!statLocalFiles ||
+                    QFile::exists(uri.toLocalFile())) {
                 return ExistingFileUrl;
             }
             else {
@@ -1348,7 +1349,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(res.uri().toLocalFile()), Soprano::Error::ErrorInvalidArgument);
             return;
         }
-        else if(state == ExistingFileUrl || state==SupportedUrl) {
+        else if(state == ExistingFileUrl || state == SupportedUrl) {
             const QUrl nieUrl = res.uri();
             QUrl newResUri = resolveUrl( nieUrl );
             if( newResUri.isEmpty() ) {
@@ -2193,8 +2194,7 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::resolveUrls(const QList<QUrl> &u
 
 QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFiles) const
 {
-    //FIXME: Handle statLocalFiles
-    UriState state = uriState( url );
+    const UriState state = uriState( url, statLocalFiles );
 
     if( state == NepomukUri || state == OntologyUri ) {
         // nothing to resolve over here
