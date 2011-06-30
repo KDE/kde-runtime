@@ -36,7 +36,7 @@
 
 #include <KTemporaryFile>
 #include <KTempDir>
-#include <KTempDir>
+#include <KProtocolInfo>
 #include <KDebug>
 
 #include <Nepomuk/Vocabulary/NFO>
@@ -4086,21 +4086,28 @@ void DataManagementModelTest::testStoreResources_itemUris()
     QVERIFY(m_dmModel->lastError());
 }
 
-void DataManagementModelTest::testStoreResources_akonadi()
+void DataManagementModelTest::testStoreResources_kioProtocols()
 {
-    SimpleResource res(QUrl("akonadi:item=5"));
-    res.addType( NFO::FileDataObject() );
-    res.addType( NMM::MusicPiece() );
+    QStringList protocolList = KProtocolInfo::protocols();
+    protocolList.removeAll( QLatin1String("nepomuk") );
+    protocolList.removeAll( QLatin1String("file") );
 
-    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app") );
-    QVERIFY(!m_dmModel->lastError());
+    kDebug() << "List: " << protocolList;
+    foreach( const QString& protocol, protocolList ) {
+        SimpleResource res( QUrl(protocol + ":/item") );
+        res.addType( NFO::FileDataObject() );
+        res.addType( NMM::MusicPiece() );
 
-    QVERIFY( m_model->containsAnyStatement( Node(), NIE::url(), QUrl("akonadi:item=5") ) );
+        m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app") );
+        QVERIFY(!m_dmModel->lastError());
 
-    const QUrl resUri = m_model->listStatements( Node(), NIE::url(), QUrl("akonadi:item=5") ).allStatements().first().subject().uri();
+        QVERIFY( m_model->containsAnyStatement( Node(), NIE::url(), res.uri() ) );
 
-    QVERIFY( m_model->containsAnyStatement( resUri, RDF::type(), NFO::FileDataObject() ) );
-    QVERIFY( m_model->containsAnyStatement( resUri, RDF::type(), NMM::MusicPiece() ) );
+        const QUrl resUri = m_model->listStatements( Node(), NIE::url(), res.uri() ).allStatements().first().subject().uri();
+
+        QVERIFY( m_model->containsAnyStatement( resUri, RDF::type(), NFO::FileDataObject() ) );
+        QVERIFY( m_model->containsAnyStatement( resUri, RDF::type(), NMM::MusicPiece() ) );
+    }
 }
 
 
