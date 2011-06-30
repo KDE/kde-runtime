@@ -123,7 +123,7 @@ private Q_SLOTS:
     void testStoreResources_faultyMetadata();
     void testStoreResources_additionalMetadataApp();
     void testStoreResources_itemUris();
-    void testStoreResources_akonadi();
+    void testStoreResources_kioProtocols();
     void testStoreResources_duplicates();
     void testStoreResources_overwriteProperties();
     void testStoreResources_correctDomainInStore();
