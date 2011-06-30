@@ -70,14 +70,14 @@ namespace Nepomuk {
      * \section nepomuk_dms_resource_uris Resource URIs
      *
      * Most methods take a single or a list of resource URIs. Normally all resources in Nepomuk have a unique URI of the form
-     * \a nepomuk:/res/UUID where \a UUID is a randomly generated universal identifer. However, the data management service
+     * \c nepomuk:/res/UUID where \a UUID is a randomly generated universal identifer. However, the data management service
      * methods can handle a bit more than that. Any local file URL can be used where a resource URI is required. It will
      * automatically be converted to the appropriate resource URI. The same is true for any URL with a protocol supported
-     * by KIO. These URLs will not be used as resource URIs but as values of the \a nie:url property.
+     * by KIO. These URLs will not be used as resource URIs but as values of the \c nie:url property.
      *
-     * Thus, when setting a property on a local file URL like \a %file:///home/user/file.txt the property will actually be set
+     * Thus, when setting a property on a local file URL like <tt>file:///home/user/file.txt</tt> the property will actually be set
      * on the resource corresponding to the local file. This resources has a resource URI of the form detailed above. Its
-     * \a nie:url property, however, will be set to \a %file:///home/user/file.txt.
+     * \c nie:url property, however, will be set to <tt>file:///home/user/file.txt</tt>.
      *
      * In addition to the above URL conversion local file paths are also supported. They will be converted to local file URLs
      * and then treated the same way as explained above.
@@ -103,8 +103,8 @@ namespace Nepomuk {
      *        [...] .
      * \endcode
      *
-     * While in theory a \a nco:PostalAddress resource could live on its own it does not make much sense without the contact.
-     * Thus, it is marked as being the sub-resource of the \a nco:Contact.
+     * While in theory a \c nco:PostalAddress resource could live on its own it does not make much sense without the contact.
+     * Thus, it is marked as being the sub-resource of the \c nco:Contact.
      *
      * Less obvious examples are contacts that are just created for indexing email senders or for indexing music files. These
      * are contacts the user most likely does not have need for without the original data - the email or the music file. Thus,
@@ -121,10 +121,10 @@ namespace Nepomuk {
      * reads file meta-data to store it in Nepomuk also creates just data.) However, Nepomuk also maintains its own meta-data.
      * For each resource the following properties are kept as meta-data:
      *
-     * \li nao:created - The creation date of the resource.
-     * \li nao:lastModified - The last time the resource was modified. This includes the addition, removal, the change of
+     * - \c nao:created - The creation date of the resource.
+     * - \c nao:lastModified - The last time the resource was modified. This includes the addition, removal, the change of
      * properties, both with the resource as subject and as object.
-     * \li nao:userVisible - A boolean property stating whether the resource should be shown to the user or not. This mostly
+     * - \c nao:userVisible - A boolean property stating whether the resource should be shown to the user or not. This mostly
      * applies to graphical user interfaces and is used automatically in the Nepomuk Query API.
      *
      * This information is updated automatically and cannot be changed through the API (except for special cases used for
@@ -143,19 +143,19 @@ namespace Nepomuk {
      * and to store meta-data about them.
      *
      * Nepomuk makes the distincion between four basic types of graphs:
-     * \li nrl:Ontology - An ontology graph contains class and property definitions which are read by the ontology loader. Typically
+     * - \c nrl:Ontology - An ontology graph contains class and property definitions which are read by the ontology loader. Typically
      * these ontologies come from the <a href="http://oscaf.sf.net/">Shared-Desktop-Ontologies</a> package installed on the system.
-     * \li nrl:InstanceBase - The instance base is the "normal" graph type. All information added to Nepomuk by clients is stored in
+     * - \c nrl:InstanceBase - The instance base is the "normal" graph type. All information added to Nepomuk by clients is stored in
      * instance base graphs.
-     * \li nrl:DiscardableInstanceBase - Being a sub-class of nrl:InstanceBase the discardable instance base also contains "normal"
+     * - \c nrl:DiscardableInstanceBase - Being a sub-class of \c nrl:InstanceBase the discardable instance base also contains "normal"
      * information. The only difference is that this information can be recreated at any time. Thus, it is seen as \a discardable and
      * is, for example not taken into account in backups. Typical discardable information includes file meta-data created by the file indexer.
-     * \li nrl:GraphMetadata - The graph meta-data graphs only contains meta-data about graphs. This includes the type of a graph, its
+     * - \c nrl:GraphMetadata - The graph meta-data graphs only contains meta-data about graphs. This includes the type of a graph, its
      * creation date, and so on.
      *
      * In addition to its type the following information is stored about each graph, and thus, about each triple in the graph:
-     * \li nao:created - The creation date of the graph (and the triples within)
-     * \li nao:maintainedBy - The application which triggered the creation of the graph. This is important for methods like removeDataByApplication().
+     * - \c nao:created - The creation date of the graph (and the triples within)
+     * - \c nao:maintainedBy - The application which triggered the creation of the graph. This is important for methods like removeDataByApplication().
      *
      * Typically the information about one resource is scatterned over several graphs over time since every change to a resource leads
      * to the creation of a new graph to save the creation date and the creating application.
@@ -192,8 +192,8 @@ namespace Nepomuk {
      * }
      * \endcode
      *
-     * Here one important thing is to be noted: the example contains two different last modification dates: \a nao:lastModified and \a nie:lastModified.
-     * \a nie:lastModified refers to the file on disk while \a nao:lastModified refers to the Nepomuk resource in the database.
+     * Here one important thing is to be noted: the example contains two different last modification dates: \c nao:lastModified and \c nie:lastModified.
+     * \c nie:lastModified refers to the file on disk while \c nao:lastModified refers to the Nepomuk resource in the database.
      *
      * \author Sebastian Trueg <trueg@kde.org>, Vishesh Handa <handa.vish@gmail.com>
      */
@@ -307,7 +307,7 @@ namespace Nepomuk {
      * \param component The calling component. Typically this is left to the default.
      */
     NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* removeResources(const QList<QUrl>& resources,
-                                                         RemovalFlags flags = NoRemovalFlags,
+                                                         Nepomuk::RemovalFlags flags = Nepomuk::NoRemovalFlags,
                                                          const KComponentData& component = KGlobal::mainComponent());
     //@}
 
@@ -366,7 +366,7 @@ namespace Nepomuk {
      * removed.
      */
     NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* removeDataByApplication(const QList<QUrl>& resources,
-                                                                 RemovalFlags flags = NoRemovalFlags,
+                                                                 Nepomuk::RemovalFlags flags = Nepomuk::NoRemovalFlags,
                                                                  const KComponentData& component = KGlobal::mainComponent());
 
     /**
@@ -379,7 +379,7 @@ namespace Nepomuk {
      * is left untouched. Essential properties like \a nie:url are only removed if the entire resource is
      * removed.
      */
-    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* removeDataByApplication(RemovalFlags flags = NoRemovalFlags,
+    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* removeDataByApplication(Nepomuk::RemovalFlags flags = Nepomuk::NoRemovalFlags,
                                                                  const KComponentData& component = KGlobal::mainComponent());
 
     /**
@@ -415,9 +415,9 @@ namespace Nepomuk {
      * such as int, string, or url are supported.
      * \param component The calling component. Typically this is left to the default.
      */
-    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* storeResources(const SimpleResourceGraph& resources,
-                                                        StoreIdentificationMode identificationMode = IdentifyNew,
-                                                        StoreResourcesFlags flags = NoStoreResourcesFlags,
+    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* storeResources(const Nepomuk::SimpleResourceGraph& resources,
+                                                        Nepomuk::StoreIdentificationMode identificationMode = Nepomuk::IdentifyNew,
+                                                        Nepomuk::StoreResourcesFlags flags = Nepomuk::NoStoreResourcesFlags,
                                                         const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>(),
                                                         const KComponentData& component = KGlobal::mainComponent());
 
