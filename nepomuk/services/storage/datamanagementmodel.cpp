@@ -2192,6 +2192,11 @@ QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFil
     //FIXME: Handle statLocalFiles
     UriState state = uriState( url );
 
+    if( state == NepomukUri || state == OntologyUri ) {
+        // nothing to resolve over here
+        return url;
+    }
+
     //
     // we resolve all URLs except nepomuk:/ URIs. While the DMS does only use nie:url
     // on local files libnepomuk used to use it for everything but nepomuk:/ URIs.
@@ -2216,16 +2221,24 @@ QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFil
                 setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(url.toLocalFile()),
                          Soprano::Error::ErrorInvalidArgument);
             }
+
             return QUrl();
         }
     }
-    else if( state == NepomukUri || state == OntologyUri ) {
-        // else we simply return the original URL/URI since we are fine with using it as resource URI
-        return url;
-    }
+
     else if( state == OtherUri ) {
-        setError(QString::fromLatin1("We donot handle unknown protocols. '%1' protocol does not exist").arg(url.scheme()),
-                 Soprano::Error::ErrorInvalidArgument);
+        bool exists =  executeQuery(QString::fromLatin1("ask where { %1 ?p ?o . }")
+                                    .arg(Soprano::Node::resourceToN3(url)),
+                                    Soprano::Query::QueryLanguageSparql).boolValue();
+        if( exists ) {
+            return url;
+        }
+        // we only throw an error if the uri does not exist in the repository
+        else {
+            setError(QString::fromLatin1("We donot handle unknown protocols. '%1' protocol does not exist").arg(url.scheme()),
+                     Soprano::Error::ErrorInvalidArgument);
+            return QUrl();
+        }
     }
 
     // fallback
