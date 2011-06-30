@@ -34,6 +34,7 @@ set(indexer_SRCS
   nepomukindexwriter.cpp
   nepomukindexfeeder.cpp
   ../util.cpp
+  ../../../servicestub/priority.cpp
   )
 
 soprano_add_ontology(indexer_SRCS ${nepomuk_ontologies_SOURCE_DIR}/kext.trig "KExt" "Nepomuk::Vocabulary" "trig")
