@@ -1693,9 +1693,9 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
 
 
     //
-    // Split into file and non-file URIs so we can get all data in one query
+    // Split into nie:urls and URIs so we can get all data in one query
     //
-    QSet<QUrl> fileUrls;
+    QSet<QUrl> nieUrls;
     QSet<QUrl> resUris;
     foreach( const QUrl & res, resources ) {
         const UriState state = uriState(res);
@@ -1704,13 +1704,17 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
                      Soprano::Error::ErrorInvalidArgument);
             return SimpleResourceGraph();
         }
-        else if(state == ExistingFileUrl) {
-            fileUrls.insert(res);
+        else if(state == ExistingFileUrl || state == SupportedUrl) {
+            nieUrls.insert(res);
         }
-        else if(state == NepomukUri){
+        else if(state == NepomukUri || state == OtherUri){
             resUris.insert(res);
         }
-        //FIXME: Handle the other states
+        else if(state == BlankUri) {
+            setError(QString::fromLatin1("Cannot give information about blank uris. '%1' does not exist").arg(res.toString()),
+                     Soprano::Error::ErrorInvalidArgument);
+            return SimpleResourceGraph();
+        }
     }
 
 
@@ -1718,15 +1722,15 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
     // Build the query
     //
     QStringList terms;
-    if(!fileUrls.isEmpty()) {
+    if(!nieUrls.isEmpty()) {
         terms << QString::fromLatin1("?s ?p ?o . ?s %1 ?u . FILTER(?u in (%2)) . ")
                  .arg(Soprano::Node::resourceToN3(Vocabulary::NIE::url()),
-                      resourcesToN3(fileUrls).join(QLatin1String(",")));
+                      resourcesToN3(nieUrls).join(QLatin1String(",")));
         if(includeSubResources) {
             terms << QString::fromLatin1("?s ?p ?o . ?r %1 ?s . ?r %2 ?u . FILTER(?u in (%3)) . ")
                      .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
                           Soprano::Node::resourceToN3(Vocabulary::NIE::url()),
-                          resourcesToN3(fileUrls).join(QLatin1String(",")));
+                          resourcesToN3(nieUrls).join(QLatin1String(",")));
         }
     }
     if(!resUris.isEmpty()) {
