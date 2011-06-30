@@ -10,8 +10,8 @@ if(WINCE)
 endif(WINCE)
 
 #search packages used by KDE
-set(KDE_MIN_VERSION "4.6.4")  # for the < 4.2 macro
-find_package(KDE4 4.6.4 REQUIRED)
+set(KDE_MIN_VERSION "4.6.5")  # for the < 4.2 macro
+find_package(KDE4 4.6.5 REQUIRED)
 find_package(Strigi REQUIRED)
 
 include(KDE4Defaults)
