@@ -79,7 +79,7 @@ KJob* Nepomuk::clearIndexedData( const QList<QUrl>& urls )
 
 bool Nepomuk::clearLegacyIndexedDataForUrls( const KUrl::List& urls )
 {
-    if ( !urls.isEmpty() )
+    if ( urls.isEmpty() )
         return true;
 
     if(urls.count() > Nepomuk::MAX_SPLIT_LIST_ITEMS) {
