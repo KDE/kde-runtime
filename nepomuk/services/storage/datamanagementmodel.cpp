@@ -61,6 +61,7 @@
 #include <KDebug>
 #include <KService>
 #include <KServiceTypeTrader>
+#include <KProtocolInfo>
 
 #include <KIO/NetAccess>
 
@@ -115,24 +116,49 @@ namespace {
                                     exclude);
     }
 
-    enum LocalFileState {
-        ExistingLocalFile = 1,
-        NonExistingLocalFile = 2,
-        OtherResource = 3
+    enum UriState {
+        /// the URI is a URL which points to an existing local file
+        ExistingFileUrl,
+        /// the URI is a file URL which points to a non-existing local file
+        NonExistingFileUrl,
+        /// the URI is a URL which uses on of the protocols supported by KIO
+        SupportedUrl,
+        /// the URI is a nepomuk:/ URI
+        NepomukUri,
+        /// A uri of the form "_:id"
+        BlankUri,
+        /// A uri in the ontology
+        OntologyUri,
+        /// the URI is some other non-supported URI
+        OtherUri
     };
 
     /// Check if a URL points to a local file. This should be the only place where the local file is stat'ed
-    inline LocalFileState isLocalFileUrl(const QUrl& url) {
-        if(url.scheme() == QLatin1String("file")) {
-            if(QFile::exists(url.toLocalFile())) {
-                return ExistingLocalFile;
+    inline UriState uriState(const QUrl& uri, bool statLocalFiles = true) {
+        if(uri.scheme() == QLatin1String("nepomuk")) {
+            return NepomukUri;
+        }
+        else if(Nepomuk::ClassAndPropertyTree::self()->contains(uri)) {
+            return OntologyUri;
+        }
+        else if(uri.toString().startsWith("_:") ) {
+            return BlankUri;
+        }
+        else if(uri.scheme() == QLatin1String("file")) {
+            if(!statLocalFiles ||
+                    QFile::exists(uri.toLocalFile())) {
+                return ExistingFileUrl;
             }
             else {
-                return NonExistingLocalFile;
+                return NonExistingFileUrl;
             }
         }
+        // if supported by kio
+        else if( KProtocolInfo::isKnownProtocol(uri) ) {
+            return SupportedUrl;
+        }
         else {
-            return OtherResource;
+            return OtherUri;
         }
     }
 }
@@ -1299,7 +1325,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     QHash<QUrl, QUrl> resolvedNodes;
 
     //
-    // Resolve file URLs in resource URIs
+    // Resolve the nie URLs which are present as resource uris
     //
     QSet<QUrl> allNonFileResources;
     SimpleResourceGraph resGraph( resources );
@@ -1313,32 +1339,45 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             return;
         }
 
-        // Handle file uris
-        const LocalFileState localFileState = isLocalFileUrl(res.uri());
-        if(localFileState == NonExistingLocalFile) {
+        const UriState state = uriState(res.uri());
+        if(state == NepomukUri || state == BlankUri) {
+            allNonFileResources << res.uri();
+        }
+        // Handle nie urls
+        else if(state == NonExistingFileUrl) {
             setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(res.uri().toLocalFile()), Soprano::Error::ErrorInvalidArgument);
             return;
         }
-        else if(localFileState == ExistingLocalFile) {
-            const QUrl fileUrl = res.uri();
-            QUrl newResUri = resolveUrl( fileUrl );
-            if( newResUri.isEmpty() ) {
-                // Resolution of one file failed. Assign it a random blank uri
-                // HACK: improveme
-                SimpleResource tmpRes;
-                newResUri = tmpRes.uri();
+        else if(state == ExistingFileUrl || state == SupportedUrl) {
+            const QUrl nieUrl = res.uri();
+            QUrl newResUri = resolveUrl( nieUrl );
+            if( lastError() )
+                return;
 
-                res.addProperty( NIE::url(), fileUrl );
+            if( newResUri.isEmpty() ) {
+                // Resolution of one url failed. Assign it a random blank uri
+                newResUri = SimpleResource().uri(); // HACK: improveme
+
+                res.addProperty( NIE::url(), nieUrl );
                 res.addProperty( RDF::type(), NFO::FileDataObject() );
-                if( QFileInfo( fileUrl.toString() ).isDir() )
+                if( QFileInfo( nieUrl.toString() ).isDir() )
                     res.addProperty( RDF::type(), NFO::Folder() );
             }
-            resolvedNodes.insert( fileUrl, newResUri );
+            resolvedNodes.insert( nieUrl, newResUri );
 
             res.setUri( newResUri );
         }
-        else {
-            allNonFileResources << res.uri();
+        else if( state == OtherUri ) {
+            // Legacy support - Sucks but we need it
+            const QUrl legacyUri = resolveUrl( res.uri() );
+            if( lastError() )
+                return;
+
+            allNonFileResources << legacyUri;
+        }
+        else if( state == OntologyUri ) {
+            setError(QLatin1String("It is not allowed to add classes or properties through this API."), Soprano::Error::ErrorInvalidArgument);
+            return;
         }
     }
     resGraph = resGraphList;
@@ -1359,7 +1398,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 
 
     //
-    // Resolve file URLs in property values and prepare resource identifier
+    // Resolve URLs in property values and prepare the resource identifier
     //
     foreach( const SimpleResource& res, resGraph.toList() ) {
         SimpleResource resolvedRes(res.uri());
@@ -1369,16 +1408,19 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 
             const QVariant value(it.value());
             if( value.type() == QVariant::Url && it.key() != NIE::url() ) {
-                const LocalFileState localFileState = isLocalFileUrl(value.toUrl());
-                if(localFileState == NonExistingLocalFile) {
+                const UriState state = uriState(value.toUrl());
+                if(state==NepomukUri || state==BlankUri || state == OntologyUri) {
+                    resolvedRes.addProperty(it.key(), it.value());
+                }
+                else if(state == NonExistingFileUrl) {
                     setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(value.toUrl().toLocalFile()),
                              Soprano::Error::ErrorInvalidArgument);
                     return;
                 }
-                else if(localFileState == ExistingLocalFile) {
-                    const QUrl fileUrl = value.toUrl();
+                else if(state == ExistingFileUrl || state==SupportedUrl) {
+                    const QUrl nieUrl = value.toUrl();
                     // Need to resolve it
-                    QHash< QUrl, QUrl >::const_iterator findIter = resolvedNodes.constFind( fileUrl );
+                    QHash< QUrl, QUrl >::const_iterator findIter = resolvedNodes.constFind( nieUrl );
                     if( findIter != resolvedNodes.constEnd() ) {
                         resolvedRes.addProperty(it.key(), findIter.value());
                     }
@@ -1386,27 +1428,32 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                         Sync::SyncResource newRes;
 
                         // It doesn't exist, create it
-                        QUrl resolvedUri = resolveUrl( fileUrl );
+                        QUrl resolvedUri = resolveUrl( nieUrl );
                         if( resolvedUri.isEmpty() ) {
-                            // HACK: improveme
-                            SimpleResource tmpRes;
-                            resolvedUri = tmpRes.uri();
+                            resolvedUri = SimpleResource().uri(); // HACK: improveme
 
                             newRes.insert( RDF::type(), NFO::FileDataObject() );
-                            newRes.insert( NIE::url(), fileUrl );
-                            if( QFileInfo( fileUrl.toString() ).isDir() )
+                            newRes.insert( NIE::url(), nieUrl );
+                            if( QFileInfo( nieUrl.toString() ).isDir() )
                                 newRes.insert( RDF::type(), NFO::Folder() );
                         }
 
                         newRes.setUri( resolvedUri );
                         extraResources.append( newRes );
 
-                        resolvedNodes.insert( fileUrl, resolvedUri );
+                        resolvedNodes.insert( nieUrl, resolvedUri );
                         resolvedRes.addProperty(it.key(), resolvedUri);
                     }
                 }
-                else {
-                    resolvedRes.addProperty(it.key(), it.value());
+                else if(state == OtherUri) {
+                    // We use resolveUrl to check if the otherUri exists. If it doesn't exist,
+                    // then resolveUrl which set the last error
+                    const QUrl legacyUri = resolveUrl( value.toUrl() );
+                    if( lastError() )
+                        return;
+
+                    // It apparently exists, so we must support it
+                    resolvedRes.addProperty( it.key(), it.value() );
                 }
             }
             else {
@@ -1414,6 +1461,8 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             }
         }
 
+        // The resource is now ready.
+        // Push it into the Resource Identifier
         QList< Soprano::Statement > stList = d->m_classAndPropertyTree->simpleResourceToStatementList(resolvedRes);
         allStatements << stList;
 
@@ -1480,8 +1529,6 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 
     if( resIdent.mappings().empty() ) {
         kDebug() << "Nothing was mapped merging everything as it is.";
-        //vHanda: This means that everything should be pushed, right?
-        //return;
     }
 
     //
@@ -1671,22 +1718,27 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
 
 
     //
-    // Split into file and non-file URIs so we can get all data in one query
+    // Split into nie:urls and URIs so we can get all data in one query
     //
-    QSet<QUrl> fileUrls;
+    QSet<QUrl> nieUrls;
     QSet<QUrl> resUris;
     foreach( const QUrl & res, resources ) {
-        const LocalFileState localFileState = isLocalFileUrl(res);
-        if(localFileState == NonExistingLocalFile) {
+        const UriState state = uriState(res);
+        if(state == NonExistingFileUrl) {
             setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(res.toLocalFile()),
                      Soprano::Error::ErrorInvalidArgument);
             return SimpleResourceGraph();
         }
-        else if(localFileState == ExistingLocalFile) {
-            fileUrls.insert(res);
+        else if(state == ExistingFileUrl || state == SupportedUrl) {
+            nieUrls.insert(res);
         }
-        else {
+        else if(state == NepomukUri || state == OtherUri){
             resUris.insert(res);
+        }
+        else if(state == BlankUri) {
+            setError(QString::fromLatin1("Cannot give information about blank uris. '%1' does not exist").arg(res.toString()),
+                     Soprano::Error::ErrorInvalidArgument);
+            return SimpleResourceGraph();
         }
     }
 
@@ -1695,15 +1747,15 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
     // Build the query
     //
     QStringList terms;
-    if(!fileUrls.isEmpty()) {
+    if(!nieUrls.isEmpty()) {
         terms << QString::fromLatin1("?s ?p ?o . ?s %1 ?u . FILTER(?u in (%2)) . ")
                  .arg(Soprano::Node::resourceToN3(Vocabulary::NIE::url()),
-                      resourcesToN3(fileUrls).join(QLatin1String(",")));
+                      resourcesToN3(nieUrls).join(QLatin1String(",")));
         if(includeSubResources) {
             terms << QString::fromLatin1("?s ?p ?o . ?r %1 ?s . ?r %2 ?u . FILTER(?u in (%3)) . ")
                      .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
                           Soprano::Node::resourceToN3(Vocabulary::NIE::url()),
-                          resourcesToN3(fileUrls).join(QLatin1String(",")));
+                          resourcesToN3(nieUrls).join(QLatin1String(",")));
         }
     }
     if(!resUris.isEmpty()) {
@@ -2152,12 +2204,11 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::resolveUrls(const QList<QUrl> &u
 
 QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFiles) const
 {
-    LocalFileState localFileState = OtherResource;
-    if(statLocalFiles) {
-        localFileState = isLocalFileUrl(url);
-    }
-    else if(url.scheme() == QLatin1String("file")) {
-        localFileState = ExistingLocalFile;
+    const UriState state = uriState( url, statLocalFiles );
+
+    if( state == NepomukUri || state == OntologyUri ) {
+        // nothing to resolve over here
+        return url;
     }
 
     //
@@ -2165,7 +2216,7 @@ QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFil
     // on local files libnepomuk used to use it for everything but nepomuk:/ URIs.
     // Thus, we need to handle that legacy data by checking if url does exist as nie:url
     //
-    if(localFileState != OtherResource || url.scheme() != QLatin1String("nepomuk")) {
+    if( state == NonExistingFileUrl || state == ExistingFileUrl || state == SupportedUrl ) {
         Soprano::QueryResultIterator it
                 = executeQuery(QString::fromLatin1("select ?r where { ?r %1 %2 . } limit 1")
                                .arg(Soprano::Node::resourceToN3(NIE::url()),
@@ -2178,16 +2229,30 @@ QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFil
         }
 
         // if there is no existing URI return an empty match for local files (since we do always want to use nie:url here)
-        else if(localFileState != OtherResource) {
+        else {
             // we only throw an error if the file:/ URL points to a non-existing file AND it does not exist in the database.
-            if(localFileState == NonExistingLocalFile) {
+            if(state == NonExistingFileUrl) {
                 setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(url.toLocalFile()),
                          Soprano::Error::ErrorInvalidArgument);
             }
+
             return QUrl();
         }
+    }
 
-        // else we simply return the original URL/URI since we are fine with using it as resource URI
+    else if( state == OtherUri ) {
+        bool exists =  executeQuery(QString::fromLatin1("ask where { %1 ?p ?o . }")
+                                    .arg(Soprano::Node::resourceToN3(url)),
+                                    Soprano::Query::QueryLanguageSparql).boolValue();
+        if( exists ) {
+            return url;
+        }
+        // we only throw an error if the uri does not exist in the repository
+        else {
+            setError(QString::fromLatin1("We donot handle unknown protocols. '%1' protocol does not exist").arg(url.scheme()),
+                     Soprano::Error::ErrorInvalidArgument);
+            return QUrl();
+        }
     }
 
     // fallback
