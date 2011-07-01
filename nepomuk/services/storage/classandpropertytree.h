@@ -38,7 +38,10 @@ class Statement;
 
 
 namespace Nepomuk {
+
 class SimpleResource;
+class SimpleResourceGraph;
+
 class ClassAndPropertyTree : public QObject, public Soprano::Error::ErrorCache
 {
     Q_OBJECT
@@ -80,6 +83,7 @@ public:
     QSet<Soprano::Node> variantListToNodeSet(const QVariantList& vl, const QUrl& property) const;
 
     QList<Soprano::Statement> simpleResourceToStatementList(const Nepomuk::SimpleResource& res) const;
+    QList<Soprano::Statement> simpleResourceGraphToStatementList(const Nepomuk::SimpleResourceGraph& graph) const;
 
     static ClassAndPropertyTree* self();
 

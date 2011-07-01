@@ -223,6 +223,16 @@ void Nepomuk::SimpleResource::addPropertyNode(const QUrl &property, const Sopran
     // else do nothing
 }
 
+void Nepomuk::SimpleResource::removeProperty(const QUrl &property, const QVariant &value)
+{
+    d->m_properties.remove(property, value);
+}
+
+void Nepomuk::SimpleResource::removeProperty(const QUrl &property)
+{
+    d->m_properties.remove(property);
+}
+
 void Nepomuk::SimpleResource::addType(const QUrl &type)
 {
     addProperty(Soprano::Vocabulary::RDF::type(), type);

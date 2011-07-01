@@ -1027,6 +1027,23 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                            Soprano::Query::QueryLanguageSparql).allElements();
 
 
+    //
+    // Split the list of graph removal candidates into those we actually remove and those we only stop maintaining
+    //
+    QSet<QUrl> graphsToRemove;
+    QSet<QUrl> graphsToStopMaintaining;
+    for(QList<Soprano::BindingSet>::const_iterator it = graphRemovalCandidates.constBegin(); it != graphRemovalCandidates.constEnd(); ++it) {
+        if(it->value("c").literal().toInt() <= 1) {
+            graphsToRemove << it->value("g").uri();
+        }
+        else {
+            graphsToStopMaintaining << it->value("g").uri();
+        }
+    }
+    // free some mem
+    graphRemovalCandidates.clear();
+
+
     // the set of resources that we did modify but not remove entirely
     QSet<QUrl> modifiedResources;
 
@@ -1049,125 +1066,159 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     }
 
 
+    //
     // remove the resources
     // Other apps might be maintainer, too. In that case only remove the app as a maintainer but keep the data
-    QSet<QUrl> graphs;
-    const QDateTime now = QDateTime::currentDateTime();
-    QUrl metadataGraph;
-    for(QList<Soprano::BindingSet>::const_iterator it = graphRemovalCandidates.constBegin(); it != graphRemovalCandidates.constEnd(); ++it) {
-        const QUrl g = it->value("g").uri();
-        const int appCnt = it->value("c").literal().toInt();
-        if(appCnt == 1) {
-            foreach(const QUrl& res, resolvedResources) {
-                //
-                // We cannot remove the metadata if the resource is not removed completely
-                // Thus, we re-add them later on.
-                // trueg: as soon as we have real inference and do not rely on the crappy inferencer to update types via the
-                //        Soprano statement manipulation methods we can use powerful queries like this one:
-                //                    executeQuery(QString::fromLatin1("delete from %1 { %2 ?p ?o . } where { %2 ?p ?o . FILTER(%3) . }")
-                //                                 .arg(Soprano::Node::resourceToN3(g),
-                //                                      Soprano::Node::resourceToN3(res),
-                //                                      createResourceMetadataPropertyFilter(QLatin1String("?p"))),
-                //                                 Soprano::Query::QueryLanguageSparql);
-                //
-                QList<Soprano::BindingSet> metadataProps
-                        = executeQuery(QString::fromLatin1("select ?p ?o where { graph %1 { %2 ?p ?o . FILTER(%3) . } . }")
-                                       .arg(Soprano::Node::resourceToN3(g),
-                                            Soprano::Node::resourceToN3(res),
-                                            createResourceMetadataPropertyFilter(QLatin1String("?p"), false)),
-                                       Soprano::Query::QueryLanguageSparql).allBindings();
+    //
 
-                //
-                // check if we actually remove any properties and only then update the mtime of the resource
-                //
-                if(executeQuery(QString::fromLatin1("ask where { graph %1 { %2 ?p ?o . FILTER(%3) . } . }")
-                                                    .arg(Soprano::Node::resourceToN3(g),
-                                                         Soprano::Node::resourceToN3(res),
-                                                         createResourceMetadataPropertyFilter(QLatin1String("?p"), true)),
-                                                    Soprano::Query::QueryLanguageSparql).boolValue()) {
-                    modifiedResources.insert(res);
-                }
+    //
+    // We cannot remove the metadata if the resource is not removed completely.
+    // Thus, we cache it and deal with it later. But we only need to cache the metadata from graphs
+    // we will actually delete.
+    //
+    Nepomuk::SimpleResourceGraph metadata;
+    Soprano::QueryResultIterator mdIt
+            = executeQuery(QString::fromLatin1("select ?r ?p ?o where { graph ?g { ?r ?p ?o . FILTER(?r in (%1)) . FILTER(%2) . } . FILTER(?g in (%3)) . }")
+                           .arg(resourcesToN3(resolvedResources).join(QLatin1String(",")),
+                                createResourceMetadataPropertyFilter(QLatin1String("?p"), false),
+                                resourcesToN3(graphsToRemove).join(QLatin1String(","))),
+                           Soprano::Query::QueryLanguageSparql);
+    while(mdIt.next()) {
+        metadata.addStatement(mdIt["r"], mdIt["p"], mdIt["o"]);
+    }
 
-                removeAllStatements(res, Soprano::Node(), Soprano::Node(), g);
-                removeAllStatements(Soprano::Node(), Soprano::Node(), res, g);
 
-                //
-                // we put all resource metadata in the one metadata graph which is not maintained by any application
-                // This is to make sure no resource data is maintained by the calling app after this method returns
-                //
-                if(metadataGraph.isEmpty()) {
-                    metadataGraph = createGraph();
-                    if(lastError()) {
-                        return;
-                    }
-                }
+    //
+    // Gather the resources that we actually change, ie. those which have non-metadata props in the removed graphs
+    //
+    Soprano::QueryResultIterator mResIt
+            = executeQuery(QString::fromLatin1("select ?r where { graph ?g { ?r ?p ?o . FILTER(?r in (%1)) . FILTER(%2) . } . FILTER(?g in (%3)) . }")
+                                        .arg(resourcesToN3(resolvedResources).join(QLatin1String(",")),
+                                             createResourceMetadataPropertyFilter(QLatin1String("?p"), true),
+                                             resourcesToN3(graphsToRemove).join(QLatin1String(","))),
+                                        Soprano::Query::QueryLanguageSparql);
+    while(mResIt.next()) {
+        modifiedResources.insert(mResIt[0].uri());
+    }
 
-                foreach(const Soprano::BindingSet& set, metadataProps)  {
-                    addStatement(res, set["p"], set["o"], metadataGraph);
-                }
-            }
 
-            graphs.insert(g);
+    //
+    // Remove the actual data. This has to be done using removeAllStatements. Otherwise the crappy inferencer cannot follow the changes.
+    //
+    foreach(const QUrl& g, graphsToRemove) {
+        foreach(const QUrl& res, resolvedResources) {
+            removeAllStatements(res, Soprano::Node(), Soprano::Node(), g);
+            removeAllStatements(Soprano::Node(), Soprano::Node(), res, g);
+        }
+    }
+
+
+    //
+    // Remove the app as mainainer from the rest of the graphs
+    //
+    foreach(const QUrl& g, graphsToStopMaintaining) {
+        const int otherCnt = executeQuery(QString::fromLatin1("select count (distinct ?other) where { "
+                                                              "graph %1 { ?other ?op ?oo . "
+                                                              "FILTER(!(?other in (%2)) && !(?oo in (%2))) . "
+                                                              "} . }")
+                                          .arg(Soprano::Node::resourceToN3(g),
+                                               resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                                          Soprano::Query::QueryLanguageSparql).iterateBindings(0).allElements().first().literal().toInt();
+        if(otherCnt > 0) {
+            //
+            // if the graph contains anything else besides the data we want to delete
+            // we need to keep the app as maintainer of that data. That is only possible
+            // by splitting the graph.
+            //
+            const QUrl newGraph = splitGraph(g, QUrl(), QUrl());
+            Q_ASSERT(!newGraph.isEmpty());
+
+            //
+            // we now have two graphs the the same metadata: g and newGraph.
+            // we now move the resources we delete into the new graph and only
+            // remove the app as maintainer from that graph.
+            // (we can use fancy queries since we do not actually change data. Thus
+            // the crappy inferencer and other models which act on statement commands
+            // are not really interested)
+            //
+            executeQuery(QString::fromLatin1("insert into %1 { ?r ?p ?o . } where { graph %2 { ?r ?p ?o . FILTER(?r in (%3) || ?o in (%3)) . } . }")
+                         .arg(Soprano::Node::resourceToN3(newGraph),
+                              Soprano::Node::resourceToN3(g),
+                              resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                         Soprano::Query::QueryLanguageSparql);
+            executeQuery(QString::fromLatin1("delete from %1 { ?r ?p ?o . } where { ?r ?p ?o . FILTER(?r in (%2) || ?o in (%2)) . }")
+                         .arg(Soprano::Node::resourceToN3(g),
+                              resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                         Soprano::Query::QueryLanguageSparql);
+
+            // and finally remove the app as maintainer of the new graph
+            removeAllStatements(newGraph, NAO::maintainedBy(), appRes);
         }
         else {
-            const int otherCnt = executeQuery(QString::fromLatin1("select count (distinct ?other) where { "
-                                                                  "graph %1 { ?other ?op ?oo . "
-                                                                  "FILTER(!(?other in (%2)) && !(?oo in (%2))) . "
-                                                                  "} . }")
-                                              .arg(Soprano::Node::resourceToN3(g),
-                                                   resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                                              Soprano::Query::QueryLanguageSparql).iterateBindings(0).allElements().first().literal().toInt();
-            if(otherCnt > 0) {
-                //
-                // if the graph contains anything else besides the data we want to delete
-                // we need to keep the app as maintainer of that data. That is only possible
-                // by splitting the graph.
-                //
-                const QUrl newGraph = splitGraph(g, QUrl(), QUrl());
-                Q_ASSERT(!newGraph.isEmpty());
-
-                //
-                // we now have two graphs the the same metadata: g and newGraph.
-                // we now move the resources we delete into the new graph and only
-                // remove the app as maintainer from that graph.
-                // (we can use fancy queries since we do not actually change data. Thus
-                // the crappy inferencer and other models which act on statement commands
-                // are not really interested)
-                //
-                executeQuery(QString::fromLatin1("insert into %1 { ?r ?p ?o . } where { graph %2 { ?r ?p ?o . FILTER(?r in (%3) || ?o in (%3)) . } . }")
-                             .arg(Soprano::Node::resourceToN3(newGraph),
-                                  Soprano::Node::resourceToN3(g),
-                                  resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                             Soprano::Query::QueryLanguageSparql);
-                executeQuery(QString::fromLatin1("delete from %1 { ?r ?p ?o . } where { ?r ?p ?o . FILTER(?r in (%2) || ?o in (%2)) . }")
-                             .arg(Soprano::Node::resourceToN3(g),
-                                  resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                             Soprano::Query::QueryLanguageSparql);
-
-                // and finally remove the app as maintainer of the new graph
-                removeAllStatements(newGraph, NAO::maintainedBy(), appRes);
-            }
-            else {
-                // we simply remove the app as maintainer of this graph
-                removeAllStatements(g, NAO::maintainedBy(), appRes);
-            }
+            // we simply remove the app as maintainer of this graph
+            removeAllStatements(g, NAO::maintainedBy(), appRes);
         }
     }
 
-    // make sure we do not leave anything empty trailing around and propery update the mtime
-    QSet<QUrl> resourcesToRemoveCompletely;
-    foreach(const QUrl& res, resolvedResources) {
-        if(!doesResourceExist(res)) {
-            resourcesToRemoveCompletely << res;
+
+    //
+    // Determine the resources we did not remove completely.
+    //
+    QSet<QUrl> resourcesToRemoveCompletely(resolvedResources);
+    Soprano::QueryResultIterator resComplIt
+            = executeQuery(QString::fromLatin1("select ?r where { ?r ?p ?o . FILTER(?r in (%1)) . FILTER(%2) . }")
+                           .arg(resourcesToN3(resolvedResources).join(QLatin1String(",")),
+                                createResourceMetadataPropertyFilter(QLatin1String("?p"))),
+                           Soprano::Query::QueryLanguageSparql);
+    while(resComplIt.next()) {
+        resourcesToRemoveCompletely.remove(resComplIt[0].uri());
+    }
+
+    // no need to update metadata on resource we remove completely
+    modifiedResources -= resourcesToRemoveCompletely;
+
+
+    //
+    // Re-add the metadata for the resources that we did not remove entirely
+    //
+    // 1. use the same time for all mtime changes
+    const QDateTime now = QDateTime::currentDateTime();
+    // 2. Remove the metadata for the resources we remove completely
+    foreach(const QUrl& res, resourcesToRemoveCompletely) {
+        metadata.remove(res);
+    }
+    // 3. Update the mtime for modifiedResources as those are the only ones we did touch
+    foreach(const QUrl& res, modifiedResources) {
+        if(metadata.containsAny(res, NAO::lastModified())) {
+            metadata.set(res, NAO::lastModified(), now);
+            modifiedResources.remove(res);
         }
     }
+    // 4. add all the updated metadata into a new metadata graph
+    if(!metadata.isEmpty() || !modifiedResources.isEmpty()) {
+        const QUrl metadataGraph = createGraph();
+        if(lastError()) {
+            return;
+        }
+
+        foreach(const Soprano::Statement& s, d->m_classAndPropertyTree->simpleResourceGraphToStatementList(metadata)) {
+            addStatement(s.subject(), s.predicate(), s.object(), metadataGraph);
+        }
+
+        // update mtime of all resources we did touch and not handle above yet
+        updateModificationDate(modifiedResources, metadataGraph, now);
+    }
+
+
+    //
+    // Remove the resources that are gone completely
+    //
     if(!resourcesToRemoveCompletely.isEmpty()){
         removeResources(resourcesToRemoveCompletely.toList(), flags, app);
     }
 
-    updateModificationDate(modifiedResources - resourcesToRemoveCompletely, metadataGraph, now);
-
-    removeTrailingGraphs(graphs);
+    // make sure we do not leave trailing graphs behind
+    removeTrailingGraphs(graphsToRemove);
 }
 
 namespace {
