@@ -973,29 +973,31 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // It then filters out the sub-resources that are related from other resources that are not the ones being deleted.
     //
     if(flags & RemoveSubResoures && !appRes.isEmpty()) {
-        QList<QUrl> subResources;
-        Soprano::QueryResultIterator it
-                = executeQuery(QString::fromLatin1("select ?r where { graph ?g { ?r ?p ?o . } . "
-                                                   "?parent %1 ?r . "
-                                                   "FILTER(?parent in (%2)) . "
-                                                   "?g %3 %4 . "
-                                                   "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r ?p2 ?o2 . } . ?g2 %3 ?a2 . FILTER(?a2!=%4) . FILTER(%6) . }))) . "
-                                                   "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r2 ?p3 ?r . FILTER(%5) . } . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
-                                                   "}")
-                               .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
-                                    resourcesToN3(resolvedResources).join(QLatin1String(",")),
-                                    Soprano::Node::resourceToN3(NAO::maintainedBy()),
-                                    Soprano::Node::resourceToN3(appRes),
-                                    createResourceFilter(resolvedResources, QLatin1String("?r2")),
-                                    createResourceMetadataPropertyFilter(QLatin1String("?p2"))),
-                               Soprano::Query::QueryLanguageSparql);
-        while(it.next()) {
-            subResources << it[0].uri();
-        }
-
-        if(!subResources.isEmpty()) {
-            removeDataByApplication(subResources, flags, app);
-        }
+        QSet<QUrl> subResources = resolvedResources;
+        int resCount = 0;
+        do {
+            resCount = resolvedResources.count();
+            Soprano::QueryResultIterator it
+                    = executeQuery(QString::fromLatin1("select ?r where { graph ?g { ?r ?p ?o . } . "
+                                                       "?parent %1 ?r . "
+                                                       "FILTER(?parent in (%2)) . "
+                                                       "?g %3 %4 . "
+                                                       "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r ?p2 ?o2 . } . ?g2 %3 ?a2 . FILTER(?a2!=%4) . FILTER(%6) . }))) . "
+                                                       "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r2 ?p3 ?r . FILTER(%5) . } . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
+                                                       "}")
+                                   .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
+                                        resourcesToN3(subResources).join(QLatin1String(",")),
+                                        Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                        Soprano::Node::resourceToN3(appRes),
+                                        createResourceFilter(subResources, QLatin1String("?r2")),
+                                        createResourceMetadataPropertyFilter(QLatin1String("?p2"))),
+                                   Soprano::Query::QueryLanguageSparql);
+            subResources.clear();
+            while(it.next()) {
+                subResources << it[0].uri();
+            }
+            resolvedResources += subResources;
+        } while(resCount < resolvedResources.count());
     }
 
     QList<Soprano::BindingSet> graphRemovalCandidates;
