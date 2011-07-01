@@ -1096,15 +1096,20 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // Thus, we cache it and deal with it later. But we only need to cache the metadata from graphs
     // we will actually delete.
     //
-    Nepomuk::SimpleResourceGraph metadata;
-    Soprano::QueryResultIterator mdIt
-            = executeQuery(QString::fromLatin1("select ?r ?p ?o where { graph ?g { ?r ?p ?o . FILTER(?r in (%1)) . FILTER(%2) . } . FILTER(?g in (%3)) . }")
-                           .arg(resourcesToN3(resolvedResources).join(QLatin1String(",")),
-                                createResourceMetadataPropertyFilter(QLatin1String("?p"), false),
-                                resourcesToN3(graphsToRemove).join(QLatin1String(","))),
-                           Soprano::Query::QueryLanguageSparql);
-    while(mdIt.next()) {
-        metadata.addStatement(mdIt["r"], mdIt["p"], mdIt["o"]);
+    // Tests showed that one query per graph is faster than one query for all graphs!
+    //
+    Soprano::Graph metadata;
+    foreach(const QUrl& g, graphsToRemove) {
+        Soprano::QueryResultIterator mdIt
+                = executeQuery(QString::fromLatin1("select ?r ?p ?o where { graph %3 { ?r ?p ?o . FILTER(?r in (%1)) . FILTER(%2) . } . }")
+                               .arg(resourcesToN3(resolvedResources).join(QLatin1String(",")),
+                                    createResourceMetadataPropertyFilter(QLatin1String("?p"), false),
+                                    Soprano::Node::resourceToN3(g)),
+                               Soprano::Query::QueryLanguageSparql);
+
+        while(mdIt.next()) {
+            metadata.addStatement(mdIt["r"], mdIt["p"], mdIt["o"]);
+        }
     }
 
 
@@ -1205,12 +1210,13 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     const QDateTime now = QDateTime::currentDateTime();
     // 2. Remove the metadata for the resources we remove completely
     foreach(const QUrl& res, resourcesToRemoveCompletely) {
-        metadata.remove(res);
+        metadata.removeAllStatements(res, Soprano::Node(), Soprano::Node());
     }
     // 3. Update the mtime for modifiedResources as those are the only ones we did touch
     foreach(const QUrl& res, modifiedResources) {
-        if(metadata.containsAny(res, NAO::lastModified())) {
-            metadata.set(res, NAO::lastModified(), now);
+        if(metadata.containsAnyStatement(res, NAO::lastModified(), Soprano::Node())) {
+            metadata.removeAllStatements(res, NAO::lastModified(), Soprano::Node());
+            metadata.addStatement(res, NAO::lastModified(), Soprano::LiteralValue(now));
             modifiedResources.remove(res);
         }
     }
@@ -1221,7 +1227,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
             return;
         }
 
-        foreach(const Soprano::Statement& s, d->m_classAndPropertyTree->simpleResourceGraphToStatementList(metadata)) {
+        foreach(const Soprano::Statement& s, metadata.toList()) {
             addStatement(s.subject(), s.predicate(), s.object(), metadataGraph);
         }
 
