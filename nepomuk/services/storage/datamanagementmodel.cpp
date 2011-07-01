@@ -945,8 +945,9 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     clearError();
 
 
+    // we handle one special case below: legacy data from the file indexer
     const QUrl appRes = findApplicationResource(app, false);
-    if(appRes.isEmpty()) {
+    if(appRes.isEmpty() && app != QLatin1String("nepomukindexer")) {
         return;
     }
 
@@ -971,7 +972,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // It then filters out the sub-resources that have properties defined by other apps which are not metadata.
     // It then filters out the sub-resources that are related from other resources that are not the ones being deleted.
     //
-    if(flags & RemoveSubResoures) {
+    if(flags & RemoveSubResoures && !appRes.isEmpty()) {
         QList<QUrl> subResources;
         Soprano::QueryResultIterator it
                 = executeQuery(QString::fromLatin1("select ?r where { graph ?g { ?r ?p ?o . } . "
@@ -991,41 +992,56 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
         while(it.next()) {
             subResources << it[0].uri();
         }
+
         if(!subResources.isEmpty()) {
             removeDataByApplication(subResources, flags, app);
         }
     }
 
-    //
-    // Get the graphs we need to check with removeTrailingGraphs later on.
-    // query all graphs the app maintains which contain any information about one of the resources
-    // count the number of apps maintaining those graphs (later we will only remove the app as maintainer but keep the graph)
-    // count the number of metadata properties defined in those graphs (we will keep that information in case the resource is not fully removed)
-    //
-    // We combine the results of 2 queries since Virtuoso can optimize FILTER(?r in (...)) but cannot optimize FILTER(?r in (...) || ?o in (...))
-    //
-    QList<Soprano::BindingSet> graphRemovalCandidates
-            = executeQuery(QString::fromLatin1("select distinct "
-                                               "?g "
-                                               "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
-                                               "where { "
-                                               "graph ?g { ?r ?p ?o . FILTER(?r in (%3)) . } . "
-                                               "?g %1 %2 . }")
-                           .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
-                                Soprano::Node::resourceToN3(appRes),
-                                resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                           Soprano::Query::QueryLanguageSparql).allElements()
-            + executeQuery(QString::fromLatin1("select distinct "
-                                               "?g "
-                                               "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
-                                               "where { "
-                                               "graph ?g { ?r ?p ?o . FILTER(?o in (%3)) . } . "
-                                               "?g %1 %2 . }")
-                           .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
-                                Soprano::Node::resourceToN3(appRes),
-                                resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                           Soprano::Query::QueryLanguageSparql).allElements();
+    QList<Soprano::BindingSet> graphRemovalCandidates;
 
+    if(!appRes.isEmpty()) {
+        //
+        // Get the graphs we need to check with removeTrailingGraphs later on.
+        // query all graphs the app maintains which contain any information about one of the resources
+        // count the number of apps maintaining those graphs (later we will only remove the app as maintainer but keep the graph)
+        // count the number of metadata properties defined in those graphs (we will keep that information in case the resource is not fully removed)
+        //
+        // We combine the results of 2 queries since Virtuoso can optimize FILTER(?r in (...)) but cannot optimize FILTER(?r in (...) || ?o in (...))
+        //
+        graphRemovalCandidates += executeQuery(QString::fromLatin1("select distinct "
+                                                                   "?g "
+                                                                   "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
+                                                                   "where { "
+                                                                   "graph ?g { ?r ?p ?o . FILTER(?r in (%3)) . } . "
+                                                                   "?g %1 %2 . }")
+                                               .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                                    Soprano::Node::resourceToN3(appRes),
+                                                    resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                                               Soprano::Query::QueryLanguageSparql).allElements();
+        graphRemovalCandidates += executeQuery(QString::fromLatin1("select distinct "
+                                                                   "?g "
+                                                                   "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
+                                                                   "where { "
+                                                                   "graph ?g { ?r ?p ?o . FILTER(?o in (%3)) . } . "
+                                                                   "?g %1 %2 . }")
+                                               .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                                    Soprano::Node::resourceToN3(appRes),
+                                                    resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                                               Soprano::Query::QueryLanguageSparql).allElements();
+    }
+
+
+    //
+    // Handle legacy file indexer data which was stored in graphs marked via a special property
+    //
+    if(app == QLatin1String("nepomukindexer")) {
+        graphRemovalCandidates += executeQuery(QString::fromLatin1("select distinct ?g (0) as ?c where { "
+                                                                   "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
+                                                                   "FILTER(?r in (%1)) . }")
+                                               .arg(Nepomuk::resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                                               Soprano::Query::QueryLanguageSparql).allElements();
+    }
 
     //
     // Split the list of graph removal candidates into those we actually remove and those we only stop maintaining
@@ -1052,17 +1068,19 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // Fetch all resources that are changed, ie. that are related to the deleted resource in some way.
     // We need to update the mtime of those resources, too.
     //
-    Soprano::QueryResultIterator relatedResIt = executeQuery(QString::fromLatin1("select distinct ?r where { "
-                                                                                 "graph ?g { ?r ?p ?rr . } . "
-                                                                                 "?g %1 %2 . "
-                                                                                 "FILTER(?rr in (%3)) . "
-                                                                                 "FILTER(!(?r in (%3))) . }")
-                                                             .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
-                                                                  Soprano::Node::resourceToN3(appRes),
-                                                                  resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                                                             Soprano::Query::QueryLanguageSparql);
-    while(relatedResIt.next()) {
-        modifiedResources.insert(relatedResIt[0].uri());
+    if(!appRes.isEmpty()) {
+        Soprano::QueryResultIterator relatedResIt = executeQuery(QString::fromLatin1("select distinct ?r where { "
+                                                                                     "graph ?g { ?r ?p ?rr . } . "
+                                                                                     "?g %1 %2 . "
+                                                                                     "FILTER(?rr in (%3)) . "
+                                                                                     "FILTER(!(?r in (%3))) . }")
+                                                                 .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                                                      Soprano::Node::resourceToN3(appRes),
+                                                                      resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                                                                 Soprano::Query::QueryLanguageSparql);
+        while(relatedResIt.next()) {
+            modifiedResources.insert(relatedResIt[0].uri());
+        }
     }
 
 

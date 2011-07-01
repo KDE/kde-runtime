@@ -2620,6 +2620,43 @@ void DataManagementModelTest::testRemoveDataByApplication_related()
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), QUrl("prop:/res3"), QUrl("res:/C")));
 }
 
+// make sure legacy indexer data (the graphs marked with indexGraphFor) is removed properly
+void DataManagementModelTest::testRemoveDataByApplication_legacyIndexerData()
+{
+    // create our file
+    QTemporaryFile fileA;
+    fileA.open();
+    const QUrl fileAUrl = QUrl::fromLocalFile(fileA.fileName());
+    const QUrl fileARes("res:/A");
+
+    // create the graph containing the legacy data
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::DiscardableInstanceBase(), &mg1);
+
+    // mark the graph as being the legacy index graph
+    m_model->addStatement(g1, QUrl("http://www.strigi.org/fields#indexGraphFor"), fileARes, mg1);
+
+    // create the index data
+    m_model->addStatement(fileARes, NIE::url(), fileAUrl, g1);
+    m_model->addStatement(fileARes, RDF::type(), NFO::FileDataObject(), g1);
+    m_model->addStatement(fileARes, RDF::type(), NIE::InformationElement(), g1);
+    m_model->addStatement(fileARes, NIE::title(), LiteralValue(QLatin1String("foobar")), g1);
+
+
+    // remove the information claiming to be the indexer
+    QBENCHMARK_ONCE
+    m_dmModel->removeDataByApplication(QList<QUrl>() << fileAUrl, NoRemovalFlags, QLatin1String("nepomukindexer"));
+
+    // the call should succeed
+    QVERIFY(!m_dmModel->lastError());
+
+    // now make sure that everything is gone
+    QVERIFY(!m_model->containsAnyStatement(fileARes, Node(), Node(), Node()));
+
+    QVERIFY(!m_model->containsAnyStatement(Node(), Node(), Node(), g1));
+    QVERIFY(!m_model->containsAnyStatement(Node(), Node(), Node(), mg1));
+}
+
 // test that all is removed, ie. storage is clear afterwards
 void DataManagementModelTest::testRemoveAllDataByApplication1()
 {

@@ -98,6 +98,7 @@ private Q_SLOTS:
     void testRemoveDataByApplication_mtime();
     void testRemoveDataByApplication_mtimeRelated();
     void testRemoveDataByApplication_related();
+    void testRemoveDataByApplication_legacyIndexerData();
 
     void testRemoveAllDataByApplication1();
     void testRemoveAllDataByApplication2();
