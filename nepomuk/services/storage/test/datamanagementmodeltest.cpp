@@ -4279,6 +4279,35 @@ void DataManagementModelTest::testStoreResources_ontology()
     QVERIFY( m_dmModel->lastError() );
 }
 
+void DataManagementModelTest::testStoreResources_legacyUris()
+{
+    const QUrl uri("res:/A");
+
+    const QUrl graphUri = m_nrlModel->createGraph( NRL::InstanceBase() );
+    m_model->addStatement( uri, RDF::type(), NFO::FileDataObject(), graphUri );
+    m_model->addStatement( uri, RDF::type(), NFO::Folder(), graphUri );
+    m_model->addStatement( uri, NAO::numericRating(), LiteralValue(5), graphUri );
+
+    SimpleResource res( uri );
+    res.addType( NFO::Folder() );
+    res.addType( NFO::FileDataObject() );
+    res.addProperty( NAO::numericRating(), QLatin1String("5") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app"), IdentifyAll, OverwriteProperties );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QVERIFY( m_model->containsAnyStatement( uri, NAO::numericRating(), LiteralValue(5) ) );
+
+    SimpleResource res2;
+    res2.addType( NFO::FileDataObject() );
+    res2.addProperty( NIE::isPartOf(), uri );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res2, QLatin1String("app") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QVERIFY( m_model->containsAnyStatement( Node(), NIE::isPartOf(), uri ) );
+}
+
 void DataManagementModelTest::testMergeResources()
 {
     // first we need to create the two resources we want to merge as well as one that should not be touched
