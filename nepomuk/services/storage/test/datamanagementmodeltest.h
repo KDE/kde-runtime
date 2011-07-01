@@ -110,6 +110,7 @@ private Q_SLOTS:
     void testStoreResources_file2();
     void testStoreResources_file3();
     void testStoreResources_file4();
+    void testStoreResources_fileExists();
     void testStoreResources_sameNieUrl();
     void testStoreResources_metadata();
     void testStoreResources_protectedTypes();
@@ -128,6 +129,7 @@ private Q_SLOTS:
     void testStoreResources_overwriteProperties();
     void testStoreResources_correctDomainInStore();
     void testStoreResources_correctRangeInStore();
+    void testStoreResources_ontology();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();
