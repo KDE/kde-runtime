@@ -130,6 +130,7 @@ private Q_SLOTS:
     void testStoreResources_correctDomainInStore();
     void testStoreResources_correctRangeInStore();
     void testStoreResources_ontology();
+    void testStoreResources_legacyUris();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();
