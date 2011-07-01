@@ -3427,6 +3427,20 @@ void DataManagementModelTest::testStoreResources_file4()
     QCOMPARE( fileResUri, fileResUri2 );
 }
 
+
+void DataManagementModelTest::testStoreResources_fileExists()
+{
+    SimpleResource res(QUrl("file:///a/b/v/c/c"));
+    res.addType( NMM::MusicPiece() );
+    res.addProperty( NAO::numericRating(), 10 );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app") );
+
+    // Should give an error - The file does not exist ( probably )
+    QVERIFY( m_dmModel->lastError() );
+}
+
+
 void DataManagementModelTest::testStoreResources_sameNieUrl()
 {
     QTemporaryFile fileA;
@@ -4252,6 +4266,17 @@ void DataManagementModelTest::testStoreResources_duplicateValuesAsString()
     // make sure all is well
     QCOMPARE(m_model->listStatements(Soprano::Node(), RDF::type(), QUrl("class:/typeA")).allStatements().count(), 1);
     QCOMPARE(m_model->listStatements(Soprano::Node(), QUrl("prop:/int"), LiteralValue(42)).allStatements().count(), 1);
+}
+
+void DataManagementModelTest::testStoreResources_ontology()
+{
+    SimpleResource res( NFO::FileDataObject() );
+    res.addType( NCO::Contact() );
+
+    m_dmModel->storeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
+
+    // There should be some error, we're trying to set an ontology
+    QVERIFY( m_dmModel->lastError() );
 }
 
 void DataManagementModelTest::testMergeResources()
