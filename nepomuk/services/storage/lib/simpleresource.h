@@ -131,6 +131,9 @@ public:
      */
     void addPropertyNode(const QUrl& property, const Soprano::Node& value);
 
+    void removeProperty(const QUrl& property, const QVariant& value);
+    void removeProperty(const QUrl& property);
+
     /**
      * A convenience method which adds a property of type rdf:type.
      * \param type The type to add to the resource. Must be the URI of an RDF class.
