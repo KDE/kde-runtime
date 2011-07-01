@@ -1325,7 +1325,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     QHash<QUrl, QUrl> resolvedNodes;
 
     //
-    // Resolve nie URLs in resource URIs
+    // Resolve the nie URLs which are present as resource uris
     //
     QSet<QUrl> allNonFileResources;
     SimpleResourceGraph resGraph( resources );
@@ -1340,11 +1340,10 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         }
 
         const UriState state = uriState(res.uri());
-        // FIXME: Handle uris properly
-        if(state == NepomukUri || state == BlankUri || state == OntologyUri) {
+        if(state == NepomukUri || state == BlankUri) {
             allNonFileResources << res.uri();
         }
-        // Handle file uris
+        // Handle nie urls
         else if(state == NonExistingFileUrl) {
             setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(res.uri().toLocalFile()), Soprano::Error::ErrorInvalidArgument);
             return;
@@ -1352,11 +1351,12 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         else if(state == ExistingFileUrl || state == SupportedUrl) {
             const QUrl nieUrl = res.uri();
             QUrl newResUri = resolveUrl( nieUrl );
+            if( lastError() )
+                return;
+
             if( newResUri.isEmpty() ) {
-                // Resolution of one file failed. Assign it a random blank uri
-                // HACK: improveme
-                SimpleResource tmpRes;
-                newResUri = tmpRes.uri();
+                // Resolution of one url failed. Assign it a random blank uri
+                newResUri = SimpleResource().uri(); // HACK: improveme
 
                 res.addProperty( NIE::url(), nieUrl );
                 res.addProperty( RDF::type(), NFO::FileDataObject() );
@@ -1367,9 +1367,16 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 
             res.setUri( newResUri );
         }
-        else {
-            setError(QString::fromLatin1("We donot handle unknown protocols. '%1' protocol does not exist").arg(res.uri().scheme()),
-                     Soprano::Error::ErrorInvalidArgument);
+        else if( state == OtherUri ) {
+            // Legacy support - Sucks but we need it
+            const QUrl legacyUri = resolveUrl( res.uri() );
+            if( lastError() )
+                return;
+
+            allNonFileResources << legacyUri;
+        }
+        else if( state == OntologyUri ) {
+            setError(QLatin1String("It is not allowed to add classes or properties through this API."), Soprano::Error::ErrorInvalidArgument);
             return;
         }
     }
@@ -1391,7 +1398,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 
 
     //
-    // Resolve file URLs in property values and prepare resource identifier
+    // Resolve URLs in property values and prepare the resource identifier
     //
     foreach( const SimpleResource& res, resGraph.toList() ) {
         SimpleResource resolvedRes(res.uri());
@@ -1423,9 +1430,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                         // It doesn't exist, create it
                         QUrl resolvedUri = resolveUrl( nieUrl );
                         if( resolvedUri.isEmpty() ) {
-                            // HACK: improveme
-                            SimpleResource tmpRes;
-                            resolvedUri = tmpRes.uri();
+                            resolvedUri = SimpleResource().uri(); // HACK: improveme
 
                             newRes.insert( RDF::type(), NFO::FileDataObject() );
                             newRes.insert( NIE::url(), nieUrl );
@@ -1441,9 +1446,14 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                     }
                 }
                 else if(state == OtherUri) {
-                    setError(QString::fromLatin1("We donot handle unknown protocols. '%1' protocol does not exist").arg(value.toUrl().scheme()),
-                             Soprano::Error::ErrorInvalidArgument);
-                    return;
+                    // We use resolveUrl to check if the otherUri exists. If it doesn't exist,
+                    // then resolveUrl which set the last error
+                    const QUrl legacyUri = resolveUrl( value.toUrl() );
+                    if( lastError() )
+                        return;
+
+                    // It apparently exists, so we must support it
+                    resolvedRes.addProperty( it.key(), it.value() );
                 }
             }
             else {
@@ -1451,6 +1461,8 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             }
         }
 
+        // The resource is now ready.
+        // Push it into the Resource Identifier
         QList< Soprano::Statement > stList = d->m_classAndPropertyTree->simpleResourceToStatementList(resolvedRes);
         allStatements << stList;
 
@@ -1517,8 +1529,6 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 
     if( resIdent.mappings().empty() ) {
         kDebug() << "Nothing was mapped merging everything as it is.";
-        //vHanda: This means that everything should be pushed, right?
-        //return;
     }
 
     //
