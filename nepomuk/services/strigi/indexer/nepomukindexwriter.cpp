@@ -296,11 +296,9 @@ void Nepomuk::StrigiIndexWriter::startAnalysis( const AnalysisResult* idx )
 
     // remove previously indexed data
     if( !data->resourceUri.isEmpty() ) {
-        Nepomuk::clearLegacyIndexedDataForResourceUri( data->resourceUri );
         Nepomuk::clearIndexedData(data->resourceUri)->exec();
     }
     else {
-        Nepomuk::clearLegacyIndexedDataForUrls(KUrl::List() << data->fileUrl);
         Nepomuk::clearIndexedData(data->fileUrl)->exec();
     }
 
