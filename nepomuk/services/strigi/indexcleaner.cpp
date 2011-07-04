@@ -131,19 +131,32 @@ void Nepomuk::IndexCleaner::start()
     //
 
     //
+    // Query the nepomukindexer app resource in order to speed up the queries.
+    //
+    QUrl appRes;
+    Soprano::QueryResultIterator appIt
+            = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(QString::fromLatin1("select ?app where { ?app %1 %2 . } LIMIT 1")
+                                                                              .arg(Soprano::Node::resourceToN3( NAO::identifier() ),
+                                                                                   Soprano::Node::literalToN3(QLatin1String("nepomukindexer"))),
+                                                                              Soprano::Query::QueryLanguageSparql);
+    if(appIt.next()) {
+        appRes = appIt[0].uri();
+    }
+
+    //
     // 1. Data that has been created in KDE >= 4.7 using the DMS
     //
-    m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
-                                             "graph ?g { ?r %1 ?url . } "
-                                             "?g %2 ?app . "
-                                             "?app %3 %4 . "
-                                             " %5 } LIMIT %6" )
-                        .arg( Soprano::Node::resourceToN3( NIE::url() ),
-                              Soprano::Node::resourceToN3( NAO::maintainedBy() ),
-                              Soprano::Node::resourceToN3( NAO::identifier() ),
-                              Soprano::Node::literalToN3(QLatin1String("nepomukindexer")),
-                              folderFilter,
-                              QString::number( limit ) );
+    if(!appRes.isEmpty()) {
+        m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
+                                                 "graph ?g { ?r %1 ?url . } . "
+                                                 "?g %2 %3 . "
+                                                 " %4 } LIMIT %5" )
+                            .arg( Soprano::Node::resourceToN3( NIE::url() ),
+                                  Soprano::Node::resourceToN3( NAO::maintainedBy() ),
+                                  Soprano::Node::resourceToN3( appRes ),
+                                  folderFilter,
+                                  QString::number( limit ) );
+    }
 
 
     //
@@ -182,21 +195,20 @@ void Nepomuk::IndexCleaner::start()
         filters = QString::fromLatin1("FILTER(%1) .").arg( includeExcludeFilters );
 
     // 3.1. Data for files which are excluded through filters
-    m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
-                                             "graph ?g { ?r ?p ?o . } . "
-                                             "?r %1 ?url . "
-                                             "?r %2 ?fn . "
-                                             "?g %3 ?app . "
-                                             "?app %4 %5 . "
-                                             "FILTER(REGEX(STR(?url),\"^file:/\")) . "
-                                             "%6 } LIMIT %7" )
-                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                              Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
-                              Soprano::Node::resourceToN3( NAO::maintainedBy() ),
-                              Soprano::Node::resourceToN3( NAO::identifier() ),
-                              Soprano::Node::literalToN3(QLatin1String("nepomukindexer")),
-                              filters )
-                        .arg(limit);
+    if(!appRes.isEmpty()) {
+        m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
+                                                 "graph ?g { ?r %1 ?url . } . "
+                                                 "?r %2 ?fn . "
+                                                 "?g %3 %4 . "
+                                                 "FILTER(REGEX(STR(?url),\"^file:/\")) . "
+                                                 "%6 } LIMIT %7" )
+                            .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                                  Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
+                                  Soprano::Node::resourceToN3( NAO::maintainedBy() ),
+                                  Soprano::Node::resourceToN3( appRes ),
+                                  filters )
+                            .arg(limit);
+    }
 
     // 3.2. (legacy data) Data for files which are excluded through filters
     m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
@@ -228,14 +240,15 @@ void Nepomuk::IndexCleaner::start()
     //
     // 5. (legacy data) Remove data which is useless but still around from before. This could happen due to some buggy version of
     // the indexer or the filewatch service or even some application messing up the data.
-    // We look for indexed files that do not have a nie:url defined and thus, will never be cached by any of the
+    // We look for indexed files that do not have a nie:url defined and thus, will never be caught by any of the
     // other queries. In addition we check for an isPartOf relation since strigi produces EmbeddedFileDataObjects
     // for video and audio streams.
     //
     m_removalQueries << QString::fromLatin1("select ?r where { "
                                             "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
-                                            "!bif:exists((select (1) where { ?r %1 ?u . }))) . "
-                                            "!bif:exists((select (1) where { ?r %2 ?p . }))) . } LIMIT %3")
+                                            "FILTER(!bif:exists((select (1) where { ?r %1 ?u . }))) . "
+                                            "FILTER(!bif:exists((select (1) where { ?r %2 ?p . }))) . "
+                                            "} LIMIT %3")
                         .arg(Soprano::Node::resourceToN3(NIE::url()),
                              Soprano::Node::resourceToN3(NIE::isPartOf()))
                         .arg(limit);
