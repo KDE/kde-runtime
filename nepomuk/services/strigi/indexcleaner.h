@@ -1,6 +1,7 @@
 /*
    This file is part of the Nepomuk KDE project.
    Copyright (C) 2011 Vishesh Handa <handa.vish@gmail.com>
+   Copyright (C) 2011 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -32,6 +33,7 @@ namespace Nepomuk {
     class IndexCleaner : public KJob
     {
         Q_OBJECT
+
     public:
         IndexCleaner(QObject* parent=0);
 
@@ -40,31 +42,17 @@ namespace Nepomuk {
         virtual bool doResume();
 
     private slots:
-
-        void removeDMSIndexedData();
-        void slotClearIndexedData(KJob* job);
-        void removeGraphsFromQuery();
+        void clearNextBatch();
+        void slotRemoveResourcesDone(KJob* job);
 
     private:
-        void constructGraphRemovalQueries();
-        QQueue<QString> m_graphRemovalQueries;
+        QQueue<QString> m_removalQueries;
 
-        QString m_folderFilter;
         QString m_query;
 
-        enum State {
-            SuspendedState = 0,
-            DMSRemovalState,
-            GraphRemovalState
-        };
-
-        State m_state;
-        State m_lastState;
         QMutex m_stateMutex;
-
-        bool suspended() const;
+        bool m_suspended;
     };
-
 }
 
 #endif // INDEXCLEANER_H

@@ -155,5 +155,4 @@ void Nepomuk::Indexer::indexStdin(const KUrl resUri, uint mtime)
     analysisresult.index( &stream );
 }
 
-
 #include "indexer.moc"
