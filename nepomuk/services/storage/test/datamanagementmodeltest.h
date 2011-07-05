@@ -93,11 +93,13 @@ private Q_SLOTS:
     void testRemoveDataByApplication9();
     void testRemoveDataByApplication10();
     void testRemoveDataByApplication11();
+    void testRemoveDataByApplication_subResourcesOfSubResources();
     void testRemoveDataByApplication_realLife();
     void testRemoveDataByApplication_nieUrl();
     void testRemoveDataByApplication_mtime();
     void testRemoveDataByApplication_mtimeRelated();
     void testRemoveDataByApplication_related();
+    void testRemoveDataByApplication_legacyIndexerData();
 
     void testRemoveAllDataByApplication1();
     void testRemoveAllDataByApplication2();
@@ -113,6 +115,7 @@ private Q_SLOTS:
     void testStoreResources_file2();
     void testStoreResources_file3();
     void testStoreResources_file4();
+    void testStoreResources_fileExists();
     void testStoreResources_sameNieUrl();
     void testStoreResources_metadata();
     void testStoreResources_protectedTypes();
@@ -126,10 +129,14 @@ private Q_SLOTS:
     void testStoreResources_faultyMetadata();
     void testStoreResources_additionalMetadataApp();
     void testStoreResources_itemUris();
+    void testStoreResources_kioProtocols();
     void testStoreResources_duplicates();
     void testStoreResources_overwriteProperties();
     void testStoreResources_correctDomainInStore();
     void testStoreResources_correctRangeInStore();
+    void testStoreResources_duplicateValuesAsString();
+    void testStoreResources_ontology();
+    void testStoreResources_legacyUris();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();

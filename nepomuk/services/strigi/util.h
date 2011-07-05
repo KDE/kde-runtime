@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2007-2011 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -20,27 +20,13 @@
 #ifndef _STRIGI_NEPOMUK_UTIL_H_
 #define _STRIGI_NEPOMUK_UTIL_H_
 
-#include <string>
 #include <KUrl>
 
 class KJob;
-
-namespace Strigi {
-    namespace Ontology {
-        /// The URI identifying strigi index graphs used in legacy data
-        QUrl indexGraphFor();
-    }
-}
 
 namespace Nepomuk {
     /// remove all indexed data for \p url the datamanagement way
     KJob* clearIndexedData( const QUrl& url );
     KJob* clearIndexedData( const QList<QUrl>& urls );
-
-    /// clears data from pre-datamanagement days
-    bool clearLegacyIndexedDataForUrls( const KUrl::List& urls );
-
-    /// clears data from pre-datamanagement days
-    bool clearLegacyIndexedDataForResourceUri( const KUrl& res );
 }
 #endif

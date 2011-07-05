@@ -564,7 +564,6 @@ void Nepomuk::IndexScheduler::deleteEntries( const QStringList& entries )
         deleteEntries( getChildren( entries[i] ).keys() );
     }
     Nepomuk::clearIndexedData(urls);
-    Nepomuk::clearLegacyIndexedDataForUrls(kurls);
 }
 
 

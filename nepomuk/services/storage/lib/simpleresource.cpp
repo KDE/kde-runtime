@@ -64,6 +64,13 @@ Nepomuk::SimpleResource::SimpleResource(const QUrl& uri)
     setUri(uri);
 }
 
+Nepomuk::SimpleResource::SimpleResource(const PropertyHash& properties)
+{
+    d = new Private();
+    setUri(QUrl());
+    setProperties(properties);
+}
+
 Nepomuk::SimpleResource::SimpleResource(const SimpleResource& other)
     : d(other.d)
 {
@@ -214,6 +221,16 @@ void Nepomuk::SimpleResource::addPropertyNode(const QUrl &property, const Sopran
     else if(node.isLiteral())
         addProperty(property, node.literal().variant());
     // else do nothing
+}
+
+void Nepomuk::SimpleResource::removeProperty(const QUrl &property, const QVariant &value)
+{
+    d->m_properties.remove(property, value);
+}
+
+void Nepomuk::SimpleResource::removeProperty(const QUrl &property)
+{
+    d->m_properties.remove(property);
 }
 
 void Nepomuk::SimpleResource::addType(const QUrl &type)

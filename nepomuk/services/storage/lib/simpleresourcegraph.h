@@ -62,6 +62,12 @@ public:
     void remove(const QUrl& uri);
     void remove(const SimpleResource& res);
 
+    void add(const QUrl& uri, const QUrl& property, const QVariant& value);
+    void set(const QUrl& uri, const QUrl& property, const QVariant& value);
+
+    void remove(const QUrl& uri, const QUrl& property, const QVariant& value);
+    void removeAll(const QUrl& uri, const QUrl& property);
+
     void clear();
 
     int count() const;
@@ -69,6 +75,7 @@ public:
 
     bool contains(const SimpleResource& res) const;
     bool contains(const QUrl& res) const;
+    bool containsAny(const QUrl& res, const QUrl& property) const;
 
     SimpleResource operator[](const QUrl& uri) const;
 

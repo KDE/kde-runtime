@@ -1,7 +1,7 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010-11 Sebastian Trueg <trueg@kde.org>
-   Copyright (C) 2010-11 Vishesh Handa <handa.vish@gmail.com>
+   Copyright (C) 2010-2011 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2010-2011 Vishesh Handa <handa.vish@gmail.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -30,10 +30,6 @@
 
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
-#include <Nepomuk/Variant>
-#include <Nepomuk/Query/Query>
-#include <Nepomuk/Query/ComparisonTerm>
-#include <Nepomuk/Query/ResourceTerm>
 
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
@@ -126,42 +122,59 @@ namespace {
 
 void Nepomuk::IndexCleaner::start()
 {
-    m_state = DMSRemovalState;
-    m_folderFilter = constructFolderFilter();
+    const QString folderFilter = constructFolderFilter();
 
-    int limit = 20;
-    m_query = QString::fromLatin1( "select distinct ?r where { "
-                                   "graph ?g { ?r %1 ?url . } "
-                                   "?g %2 ?app . "
-                                   "?app %3 %4 . "
-                                   " %5 } LIMIT %6" )
-                    .arg( Soprano::Node::resourceToN3( NIE::url() ),
-                          Soprano::Node::resourceToN3( NAO::maintainedBy() ),
-                          Soprano::Node::resourceToN3( NAO::identifier() ),
-                          Soprano::Node::literalToN3(QLatin1String("nepomukindexer")),
-                          m_folderFilter,
-                          QString::number( limit ) );
+    const int limit = 20;
 
-    QTimer::singleShot( 0, this, SLOT(removeDMSIndexedData()) );
-
-}
-void Nepomuk::IndexCleaner::constructGraphRemovalQueries()
-{
     //
-    // We query all files that should not be in the store
+    // Create all queries that return indexed data which should not be there anymore.
+    //
+
+    //
+    // Query the nepomukindexer app resource in order to speed up the queries.
+    //
+    QUrl appRes;
+    Soprano::QueryResultIterator appIt
+            = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(QString::fromLatin1("select ?app where { ?app %1 %2 . } LIMIT 1")
+                                                                              .arg(Soprano::Node::resourceToN3( NAO::identifier() ),
+                                                                                   Soprano::Node::literalToN3(QLatin1String("nepomukindexer"))),
+                                                                              Soprano::Query::QueryLanguageSparql);
+    if(appIt.next()) {
+        appRes = appIt[0].uri();
+    }
+
+    //
+    // 1. Data that has been created in KDE >= 4.7 using the DMS
+    //
+    if(!appRes.isEmpty()) {
+        m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
+                                                 "graph ?g { ?r %1 ?url . } . "
+                                                 "?g %2 %3 . "
+                                                 " %4 } LIMIT %5" )
+                            .arg( Soprano::Node::resourceToN3( NIE::url() ),
+                                  Soprano::Node::resourceToN3( NAO::maintainedBy() ),
+                                  Soprano::Node::resourceToN3( appRes ),
+                                  folderFilter,
+                                  QString::number( limit ) );
+    }
+
+
+    //
+    // 2. (legacy data) We query all files that should not be in the store.
     // This for example excludes all filex:/ URLs.
     //
-    QString query = QString::fromLatin1( "select distinct ?g where { "
-                                         "?r %1 ?url . "
-                                         "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
-                                         "FILTER(REGEX(STR(?url),'^file:/')) . "
-                                         "%2 }" )
-                    .arg( Soprano::Node::resourceToN3( NIE::url() ),
-                          m_folderFilter );
-    m_graphRemovalQueries << query;
+    m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
+                                             "?r %1 ?url . "
+                                             "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
+                                             "FILTER(REGEX(STR(?url),'^file:/')) . "
+                                             "%2 } LIMIT %3" )
+                        .arg( Soprano::Node::resourceToN3( NIE::url() ),
+                              folderFilter )
+                        .arg(limit);
+
 
     //
-    // Build filter query for all exclude filters
+    // 3. Build filter query for all exclude filters
     //
     QStringList fileFilters;
     foreach( const QString& filter, Nepomuk::StrigiServiceConfig::self()->excludeFilters() ) {
@@ -181,65 +194,89 @@ void Nepomuk::IndexCleaner::constructGraphRemovalQueries()
     else if( !includeExcludeFilters.isEmpty() )
         filters = QString::fromLatin1("FILTER(%1) .").arg( includeExcludeFilters );
 
-    query = QString::fromLatin1( "select distinct ?g where { "
-                                 "?r %1 ?url . "
-                                 "?r %2 ?fn . "
-                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
-                                 "FILTER(REGEX(STR(?url),\"^file:/\")) . "
-                                 "%3 }" )
-            .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                  Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
-                  filters );
-    m_graphRemovalQueries << query;
+    // 3.1. Data for files which are excluded through filters
+    if(!appRes.isEmpty()) {
+        m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
+                                                 "graph ?g { ?r %1 ?url . } . "
+                                                 "?r %2 ?fn . "
+                                                 "?g %3 %4 . "
+                                                 "FILTER(REGEX(STR(?url),\"^file:/\")) . "
+                                                 "%6 } LIMIT %7" )
+                            .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                                  Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
+                                  Soprano::Node::resourceToN3( NAO::maintainedBy() ),
+                                  Soprano::Node::resourceToN3( appRes ),
+                                  filters )
+                            .arg(limit);
+    }
+
+    // 3.2. (legacy data) Data for files which are excluded through filters
+    m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
+                                             "?r %1 ?url . "
+                                             "?r %2 ?fn . "
+                                             "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
+                                             "FILTER(REGEX(STR(?url),\"^file:/\")) . "
+                                             "%3 } LIMIT %4" )
+                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                              Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
+                              filters )
+                        .arg(limit);
+
 
     //
-    // Remove all old data from Xesam-times. While we leave out the data created by libnepomuk
+    // 4. (legacy data) Remove all old data from Xesam-times. While we leave out the data created by libnepomuk
     // there is no problem since libnepomuk still uses backwards compatible queries and we use
     // libnepomuk to determine URIs in the strigi backend.
     //
-    query = QString::fromLatin1( "select distinct ?g where { "
-                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?x . "
-                                 "{ graph ?g { ?r1 <http://strigi.sf.net/ontologies/0.9#parentUrl> ?p1 . } } "
-                                 "UNION "
-                                 "{ graph ?g { ?r2 %1 ?u2 . } } "
-                                 "}" )
-            .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::Xesam::url() ) );
-    m_graphRemovalQueries << query;
+    m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
+                                             "?r <http://strigi.sf.net/ontologies/0.9#parentUrl> ?p1 . } LIMIT %1" )
+                        .arg(limit);
+    m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
+                                             "?r %1 ?u2 . } LIMIT %2" )
+                        .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::Xesam::url() ) )
+                        .arg(limit);
+
 
     //
-    // Remove data which is useless but still around from before. This could happen due to some buggy version of
+    // 5. (legacy data) Remove data which is useless but still around from before. This could happen due to some buggy version of
     // the indexer or the filewatch service or even some application messing up the data.
-    // We look for indexed files that do not have a nie:url defined and thus, will never be cached by any of the
+    // We look for indexed files that do not have a nie:url defined and thus, will never be caught by any of the
     // other queries. In addition we check for an isPartOf relation since strigi produces EmbeddedFileDataObjects
     // for video and audio streams.
     //
-    Query::Query q(
-        Strigi::Ontology::indexGraphFor()
-        == ( RDF::type()
-             == Query::ResourceTerm( Resource::fromResourceUri(NFO::FileDataObject()) ) &&
-        !( NIE::url() == Query::Term() ) &&
-        !( NIE::isPartOf() == Query::Term() ) )
-    );
-    q.setQueryFlags(Query::Query::NoResultRestrictions);
-    query = q.toSparqlQuery();
-    m_graphRemovalQueries << query;
+    m_removalQueries << QString::fromLatin1("select ?r where { "
+                                            "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
+                                            "FILTER(!bif:exists((select (1) where { ?r %1 ?u . }))) . "
+                                            "FILTER(!bif:exists((select (1) where { ?r %2 ?p . }))) . "
+                                            "} LIMIT %3")
+                        .arg(Soprano::Node::resourceToN3(NIE::url()),
+                             Soprano::Node::resourceToN3(NIE::isPartOf()))
+                        .arg(limit);
+
+    //
+    // Start the removal
+    //
+    m_query = m_removalQueries.dequeue();
+    clearNextBatch();
 }
 
-void Nepomuk::IndexCleaner::slotClearIndexedData(KJob* job)
+void Nepomuk::IndexCleaner::slotRemoveResourcesDone(KJob* job)
 {
     if( job->error() ) {
         kDebug() << job->errorString();
     }
 
-    if( !suspended() )
-        QTimer::singleShot( 0, this, SLOT(removeDMSIndexedData()) );
+    QMutexLocker lock(&m_stateMutex);
+    if( !m_suspended ) {
+        clearNextBatch();
+    }
 }
 
-void Nepomuk::IndexCleaner::removeDMSIndexedData()
+void Nepomuk::IndexCleaner::clearNextBatch()
 {
     QList<QUrl> resources;
-    Soprano::Model * model = ResourceManager::instance()->mainModel();
-    Soprano::QueryResultIterator it = model->executeQuery( m_query, Soprano::Query::QueryLanguageSparql );
+    Soprano::QueryResultIterator it
+            = ResourceManager::instance()->mainModel()->executeQuery( m_query, Soprano::Query::QueryLanguageSparql );
     while( it.next() ) {
         resources << it[0].uri();
     }
@@ -247,85 +284,34 @@ void Nepomuk::IndexCleaner::removeDMSIndexedData()
     if( !resources.isEmpty() ) {
         KJob* job = Nepomuk::clearIndexedData(resources);
         job->start();
-        connect( job, SIGNAL(finished(KJob*)), this, SLOT(slotClearIndexedData(KJob*)) );
+        connect( job, SIGNAL(finished(KJob*)), this, SLOT(slotRemoveResourcesDone(KJob*)) );
     }
 
-    else if( !suspended() ) {
-        QMutexLocker locker(&m_stateMutex);
-        m_state = GraphRemovalState;
-
-        constructGraphRemovalQueries();
-        QTimer::singleShot( 0, this, SLOT(removeGraphsFromQuery()) );
-    }
-}
-
-void Nepomuk::IndexCleaner::removeGraphsFromQuery()
-{
-    QString query = m_graphRemovalQueries.head();
-
-    // get the next batch of graphs
-    QList<Soprano::Node> graphs
-        = ResourceManager::instance()->mainModel()->executeQuery( query + QLatin1String( " LIMIT 200" ),
-                                                                    Soprano::Query::QueryLanguageSparql ).iterateBindings( 0 ).allNodes();
-
-    // remove all graphs in the batch
-    Q_FOREACH( const Soprano::Node& graph, graphs ) {
-
-        if( suspended() ) {
-            return;
-        }
-        ResourceManager::instance()->mainModel()->removeContext( graph );
+    else if( !m_removalQueries.isEmpty() ) {
+        m_query = m_removalQueries.dequeue();
+        clearNextBatch();
     }
 
-    // we are done when the last graphs are queried
-    if ( graphs.count() < 200 ) {
-        kDebug() << m_graphRemovalQueries.dequeue();
-
-        if( m_graphRemovalQueries.isEmpty() ) {
-            // We're done!
-            emitResult();
-            return;
-        }
-    }
-
-    if( !suspended() ) {
-        QTimer::singleShot( 0, this, SLOT(removeGraphsFromQuery()) );
+    else {
+        emitResult();
     }
 }
 
 bool Nepomuk::IndexCleaner::doSuspend()
 {
     QMutexLocker locker(&m_stateMutex);
-    m_lastState = m_state;
-    m_state = SuspendedState;
-
+    m_suspended = true;
     return true;
 }
 
 bool Nepomuk::IndexCleaner::doResume()
 {
     QMutexLocker locker(&m_stateMutex);
-    m_state = m_lastState;
-
-    switch( m_state ) {
-    case DMSRemovalState:
-        QTimer::singleShot( 0, this, SLOT(removeDMSIndexedData()) );
-        break;
-
-    case GraphRemovalState:
-        QTimer::singleShot( 0, this, SLOT(removeGraphsFromQuery()) );
-        break;
-
-    default:
-        break;
+    if(m_suspended) {
+        m_suspended = false;
+        QTimer::singleShot( 0, this, SLOT(clearNextBatch()) );
     }
-
     return true;
-}
-
-bool Nepomuk::IndexCleaner::suspended() const
-{
-    return m_state == SuspendedState;
 }
 
 #include "indexcleaner.moc"

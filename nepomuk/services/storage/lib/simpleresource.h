@@ -47,6 +47,7 @@ class NEPOMUK_DATA_MANAGEMENT_EXPORT SimpleResource
 {
 public:
     explicit SimpleResource(const QUrl& uri = QUrl());
+    SimpleResource(const PropertyHash& properties);
     SimpleResource(const SimpleResource& other);
     virtual ~SimpleResource();
 
@@ -129,6 +130,9 @@ public:
      * \param value The value of the property. Will be converted to a QVariant.
      */
     void addPropertyNode(const QUrl& property, const Soprano::Node& value);
+
+    void removeProperty(const QUrl& property, const QVariant& value);
+    void removeProperty(const QUrl& property);
 
     /**
      * A convenience method which adds a property of type rdf:type.

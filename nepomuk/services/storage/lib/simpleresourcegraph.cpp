@@ -101,9 +101,48 @@ void Nepomuk::SimpleResourceGraph::remove(const SimpleResource &res)
         remove( res.uri() );
 }
 
+void Nepomuk::SimpleResourceGraph::add(const QUrl &uri, const QUrl &property, const QVariant &value)
+{
+    if(!uri.isEmpty()) {
+        d->resources[uri].setUri(uri);
+        d->resources[uri].addProperty(property, value);
+    }
+}
+
+void Nepomuk::SimpleResourceGraph::set(const QUrl &uri, const QUrl &property, const QVariant &value)
+{
+    removeAll(uri, property);
+    add(uri, property, value);
+}
+
+void Nepomuk::SimpleResourceGraph::remove(const QUrl &uri, const QUrl &property, const QVariant &value)
+{
+    QHash< QUrl, SimpleResource >::iterator it = d->resources.find( uri );
+    if( it != d->resources.end() ) {
+        it.value().removeProperty(property, value);
+    }
+}
+
+void Nepomuk::SimpleResourceGraph::removeAll(const QUrl &uri, const QUrl &property)
+{
+    QHash< QUrl, SimpleResource >::iterator it = d->resources.find( uri );
+    if( it != d->resources.end() ) {
+        it.value().removeProperty(property);
+    }
+}
+
 bool Nepomuk::SimpleResourceGraph::contains(const QUrl &uri) const
 {
     return d->resources.contains(uri);
+}
+
+bool Nepomuk::SimpleResourceGraph::containsAny(const QUrl &res, const QUrl &property) const
+{
+    QHash< QUrl, SimpleResource >::const_iterator it = d->resources.constFind( res );
+    if( it == d->resources.constEnd() )
+        return false;
+
+    return it.value().contains(property);
 }
 
 bool Nepomuk::SimpleResourceGraph::contains(const SimpleResource &res) const
