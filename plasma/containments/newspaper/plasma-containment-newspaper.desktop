@@ -48,6 +48,7 @@ Name[tr]=Gazete Yerleşimi
 Name[ug]=گېزىت ئۇسلۇبى
 Name[uk]=Газетне компонування
 Name[x-test]=xxNewspaper Layoutxx
+Name[zh_CN]=报纸布局
 Name[zh_TW]=報紙佈局
 
 Comment=A layout that puts widgets into columns
@@ -98,6 +99,7 @@ Comment[ug]=ئىستونغا جايلاشتۇرىدىغان ۋىجېت ئۇسل�
 Comment[uk]=Компонування з віджетами, розподіленими за стовпчиками
 Comment[wa]=Èn adjinçmint ki mete les ahesses e colones
 Comment[x-test]=xxA layout that puts widgets into columnsxx
+Comment[zh_CN]=分栏显示组件的布局
 Comment[zh_TW]=將元件放到欄位內的佈局
 
 
