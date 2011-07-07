@@ -47,7 +47,8 @@ using namespace Soprano::Vocabulary;
 
 
 Nepomuk::IndexCleaner::IndexCleaner(QObject* parent)
-    : KJob(parent)
+    : KJob(parent),
+      m_delay(0)
 {
     setCapabilities( Suspendable );
 }
@@ -268,7 +269,7 @@ void Nepomuk::IndexCleaner::slotRemoveResourcesDone(KJob* job)
 
     QMutexLocker lock(&m_stateMutex);
     if( !m_suspended ) {
-        clearNextBatch();
+        QTimer::singleShot(m_delay, this, SLOT(clearNextBatch()));
     }
 }
 
@@ -311,6 +312,11 @@ bool Nepomuk::IndexCleaner::doResume()
         QTimer::singleShot( 0, this, SLOT(clearNextBatch()) );
     }
     return true;
+}
+
+void Nepomuk::IndexCleaner::setDelay(int msecs)
+{
+    m_delay = msecs;
 }
 
 #include "indexcleaner.moc"
