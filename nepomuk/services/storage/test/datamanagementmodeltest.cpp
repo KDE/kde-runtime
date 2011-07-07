@@ -4472,21 +4472,6 @@ void DataManagementModelTest::testStoreResources_lazyCardinalities()
     bool isSuperMan = ( name == QLatin1String("Superman") );
 
     QVERIFY( isClark || isSuperMan );
-
-    QUrl resUri = stList.first().subject().uri();
-
-    // Lets try this again
-    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp"),
-                               Nepomuk::IdentifyAll, Nepomuk::LazyCardinalities );
-
-    stList = m_model->listStatements( Node(), NCO::fullname(), Node() ).allStatements();
-    QCOMPARE( stList.size(), 1 );
-
-    name = stList.first().object().literal().toString();
-    isClark = ( name == QLatin1String("Clark Kent") );
-    isSuperMan = ( name == QLatin1String("Superman") );
-
-    QVERIFY( isClark || isSuperMan );
 }
 
 void DataManagementModelTest::testStoreResources_graphMetadataFail()
