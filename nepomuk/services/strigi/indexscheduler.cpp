@@ -208,7 +208,7 @@ Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
     : QObject( parent ),
       m_suspended( false ),
       m_indexing( false ),
-      m_speed( FullSpeed )
+      m_indexingDelay( 0 )
 {
     m_cleaner = new IndexCleaner();
     m_cleaner->start();
@@ -267,7 +267,13 @@ void Nepomuk::IndexScheduler::setSuspended( bool suspended )
 void Nepomuk::IndexScheduler::setIndexingSpeed( IndexingSpeed speed )
 {
     kDebug() << speed;
-    m_speed = speed;
+    m_indexingDelay = 0;
+    if ( speed != FullSpeed ) {
+        m_indexingDelay = (speed == ReducedSpeed) ? s_reducedSpeedDelay : s_snailPaceDelay;
+    }
+    if( m_cleaner ) {
+        m_cleaner->setDelay(m_indexingDelay);
+    }
 }
 
 
@@ -482,11 +488,7 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
 void Nepomuk::IndexScheduler::callDoIndexing()
 {
     if( !m_suspended ) {
-        uint delay = 0;
-        if ( m_speed != FullSpeed ) {
-            delay = (m_speed == ReducedSpeed) ? s_reducedSpeedDelay : s_snailPaceDelay;
-        }
-        QTimer::singleShot( delay, this, SLOT(doIndexing()) );
+        QTimer::singleShot( m_indexingDelay, this, SLOT(doIndexing()) );
     }
 }
 

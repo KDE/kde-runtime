@@ -121,8 +121,6 @@ namespace Nepomuk {
             SnailPace
         };
 
-        IndexingSpeed currentSpeed() const { return m_speed; }
-
     public Q_SLOTS:
         void suspend();
         void resume();
@@ -226,7 +224,7 @@ namespace Nepomuk {
         QString m_currentFolder;
         KUrl m_currentUrl;
 
-        IndexingSpeed m_speed;
+        int m_indexingDelay;
         IndexCleaner* m_cleaner;
     };
 
