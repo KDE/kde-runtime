@@ -4394,6 +4394,44 @@ void DataManagementModelTest::testStoreResources_legacyUris()
     QVERIFY( m_model->containsAnyStatement( Node(), NIE::isPartOf(), uri ) );
 }
 
+void DataManagementModelTest::testStoreResources_lazyCardinalities()
+{
+    SimpleResource res;
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("Superman") );
+    res.addProperty( NCO::fullname(), QLatin1String("Clark Kent") ); // Don't tell Lex!
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp"),
+                               Nepomuk::IdentifyAll, Nepomuk::LazyCardinalities );
+
+    // There shouldn't be any error, even though nco:fullname has maxCardinality = 1
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList< Statement > stList = m_model->listStatements( Node(), NCO::fullname(), Node() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    QString name = stList.first().object().literal().toString();
+    bool isClark = ( name == QLatin1String("Clark Kent") );
+    bool isSuperMan = ( name == QLatin1String("Superman") );
+
+    QVERIFY( isClark || isSuperMan );
+
+    QUrl resUri = stList.first().subject().uri();
+
+    // Lets try this again
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp"),
+                               Nepomuk::IdentifyAll, Nepomuk::LazyCardinalities );
+
+    stList = m_model->listStatements( Node(), NCO::fullname(), Node() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    name = stList.first().object().literal().toString();
+    isClark = ( name == QLatin1String("Clark Kent") );
+    isSuperMan = ( name == QLatin1String("Superman") );
+
+    QVERIFY( isClark || isSuperMan );
+}
+
 void DataManagementModelTest::testMergeResources()
 {
     // first we need to create the two resources we want to merge as well as one that should not be touched

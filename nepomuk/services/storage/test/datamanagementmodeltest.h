@@ -137,6 +137,7 @@ private Q_SLOTS:
     void testStoreResources_duplicateValuesAsString();
     void testStoreResources_ontology();
     void testStoreResources_legacyUris();
+    void testStoreResources_lazyCardinalities();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();
