@@ -284,7 +284,6 @@ void Nepomuk::IndexCleaner::clearNextBatch()
 
     if( !resources.isEmpty() ) {
         KJob* job = Nepomuk::clearIndexedData(resources);
-        job->start();
         connect( job, SIGNAL(finished(KJob*)), this, SLOT(slotRemoveResourcesDone(KJob*)) );
     }
 

@@ -210,10 +210,9 @@ Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
       m_indexing( false ),
       m_indexingDelay( 0 )
 {
-    m_cleaner = new IndexCleaner();
-    m_cleaner->start();
-
+    m_cleaner = new IndexCleaner(this);
     connect( m_cleaner, SIGNAL(finished(KJob*)), this, SLOT(slotCleaningDone()) );
+    m_cleaner->start();
 
     connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( slotConfigChanged() ) );
@@ -348,11 +347,11 @@ void Nepomuk::IndexScheduler::doIndexing()
         m_currentUrl = file.filePath();
         m_currentFolder = m_currentUrl.directory();
 
+        emit indexingFile( m_currentUrl.toLocalFile() );
+
         KJob * indexer = new Indexer( file );
         connect( indexer, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
         indexer->start();
-
-        emit indexingFile( m_currentUrl.toLocalFile() );
     }
 
     // get the next folder
