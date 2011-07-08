@@ -214,14 +214,6 @@ bool Nepomuk::ResourceMerger::containsAllTypes(const QSet< QUrl >& types, const 
     return true;
 }
 
-namespace {
-Soprano::Node variantToNode(const QVariant& v) {
-    if(v.type() == QVariant::Url)
-        return v.toUrl();
-    else
-        return Soprano::LiteralValue(v);
-}
-}
 
 // Graph Merge rules
 // 1. If old graph is of type discardable and new is non-discardable
@@ -240,17 +232,9 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     }
 
     QMultiHash<QUrl, Soprano::Node> oldPropHash = getPropertyHashForGraph( oldGraph );
-
-    QMultiHash<QUrl, Soprano::Node> newPropHash;
-    QHash< QUrl, QVariant >::const_iterator it = m_additionalMetadata.constBegin();
-    for( ; it != m_additionalMetadata.constEnd(); ++it ) {
-        Soprano::Node n = variantToNode( it.value() );
-        if( !n.isValid() ) {
-            //TODO: Set a proper error over here?
-            return false;
-        }
-        newPropHash.insert( it.key(), n );
-    }
+    QMultiHash<QUrl, Soprano::Node> newPropHash = toNodeHash( m_additionalMetadata );
+    if( lastError() )
+        return false;
 
     // Compare the old and new property hash
     // If both have the same properties then there is no point in creating a new graph.
@@ -294,6 +278,26 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
 
     m_graphHash.insert( oldGraph, graph );
     return true;
+}
+
+QMultiHash< QUrl, Soprano::Node > Nepomuk::ResourceMerger::toNodeHash(const QHash< QUrl, QVariant >& hash)
+{
+    QMultiHash<QUrl, Soprano::Node> propHash;
+    ClassAndPropertyTree *tree = ClassAndPropertyTree::self();
+
+    QHash< QUrl, QVariant >::const_iterator it = hash.constBegin();
+    QHash< QUrl, QVariant >::const_iterator constEnd = hash.constEnd();
+    for( ; it != constEnd; ++it ) {
+        Soprano::Node n = tree->variantToNode( it.value(), it.key() );
+        if( tree->lastError() ) {
+            setError( tree->lastError().message() ,tree->lastError().code() );
+            return QMultiHash< QUrl, Soprano::Node >();
+        }
+
+        propHash.insert( it.key(), n );
+    }
+
+    return propHash;
 }
 
 bool Nepomuk::ResourceMerger::checkGraphMetadata(const QMultiHash< QUrl, Soprano::Node >& hash)
