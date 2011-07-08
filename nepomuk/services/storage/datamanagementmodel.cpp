@@ -2482,8 +2482,10 @@ Nepomuk::ResourceWatcherManager* Nepomuk::DataManagementModel::resourceWatcherMa
     return d->m_watchManager;
 }
 
-void Nepomuk::DataManagementModel::removeAllResources(const QSet<QUrl> &resolvedResources, RemovalFlags flags)
+void Nepomuk::DataManagementModel::removeAllResources(const QSet<QUrl> &resources, RemovalFlags flags)
 {
+    QSet<QUrl> resolvedResources(resources);
+
     //
     // Handle the sub-resources:
     // this has to be done before deleting the resouces in resolvedResources. Otherwise the nao:hasSubResource relationships are already gone!
@@ -2493,23 +2495,26 @@ void Nepomuk::DataManagementModel::removeAllResources(const QSet<QUrl> &resolved
     // It then filters out the sub-resources that are related from other resources that are not the ones being deleted.
     //
     if(flags & RemoveSubResoures) {
-        QSet<QUrl> subResources;
-        Soprano::QueryResultIterator it
-                = executeQuery(QString::fromLatin1("select ?r where { ?r ?p ?o . "
-                                                   "?parent %1 ?r . "
-                                                   "FILTER(?parent in (%2)) . "
-                                                   "FILTER(!bif:exists((select (1) where { ?r2 ?p3 ?r . FILTER(%3) . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
-                                                   "}")
-                               .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
-                                    resourcesToN3(resolvedResources).join(QLatin1String(",")),
-                                    createResourceFilter(resolvedResources, QLatin1String("?r2"))),
-                               Soprano::Query::QueryLanguageSparql);
-        while(it.next()) {
-            subResources << it[0].uri();
-        }
-        if(!subResources.isEmpty()) {
-            removeAllResources(subResources, flags);
-        }
+        QSet<QUrl> subResources = resolvedResources;
+        int resCount = 0;
+        do {
+            resCount = resolvedResources.count();
+            Soprano::QueryResultIterator it
+                    = executeQuery(QString::fromLatin1("select ?r where { ?r ?p ?o . "
+                                                       "?parent %1 ?r . "
+                                                       "FILTER(?parent in (%2)) . "
+                                                       "FILTER(!bif:exists((select (1) where { ?r2 ?p3 ?r . FILTER(%3) . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
+                                                       "}")
+                                   .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
+                                        resourcesToN3(subResources).join(QLatin1String(",")),
+                                        createResourceFilter(resolvedResources, QLatin1String("?r2"))),
+                                   Soprano::Query::QueryLanguageSparql);
+            subResources.clear();
+            while(it.next()) {
+                subResources << it[0].uri();
+            }
+            resolvedResources += subResources;
+        } while(resCount < resolvedResources.count());
     }
 
 
