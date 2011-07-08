@@ -69,6 +69,7 @@ namespace Nepomuk {
          * \sa mergeGraphs
          */
         QHash<QUrl, QUrl> m_graphHash;
+        QHash<QUrl, Soprano::Node> m_additionalMetadataHash;
         QHash<QUrl, QVariant> m_additionalMetadata;
 
         QString m_app;
