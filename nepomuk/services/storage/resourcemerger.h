@@ -55,7 +55,6 @@ namespace Nepomuk {
         QHash<KUrl, KUrl> mappings() const;
 
         bool merge(const Soprano::Graph& graph);
-        bool mergeStatement( const Soprano::Statement & st );
 
         void setAdditionalGraphMetadata( const QHash<QUrl, QVariant>& additionalMetadata );
         QHash<QUrl, QVariant> additionalMetadata() const;
@@ -65,7 +64,6 @@ namespace Nepomuk {
         virtual QUrl createResourceUri();
         virtual QUrl createGraphUri();
         virtual bool resolveDuplicate(const Soprano::Statement& newSt);
-        virtual QUrl resolveUnidentifiedResource(const QUrl& uri);
         virtual Soprano::Error::ErrorCode addStatement( const Soprano::Statement & st );
         virtual Soprano::Error::ErrorCode addResMetadataStatement( const Soprano::Statement & st );
 
@@ -75,13 +73,17 @@ namespace Nepomuk {
         Soprano::Error::ErrorCode addStatement( const Soprano::Node& subject, const Soprano::Node& property,
                                                 const Soprano::Node& object, const Soprano::Node& graph );
 
-        bool resolveStatement( Soprano::Statement& st );
 
     private:
+        Soprano::Statement resolveStatement( const Soprano::Statement& st );
+        Soprano::Node resolveMappedNode( const Soprano::Node& node );
+        Soprano::Node resolveUnmappedNode( const Soprano::Node& node );
+
+        /// This modifies the list
+        void resolveBlankNodesInList( QList<Soprano::Statement> *stList );
+
         // From Sync::ResourceMerger
         QHash<KUrl, KUrl> m_mappings;
-
-        QUrl resolve(const Soprano::Node& n);
 
         /// Can set the error
         QMultiHash<QUrl, Soprano::Node> toNodeHash( const QHash<QUrl, QVariant> &hash );
