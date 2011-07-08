@@ -51,7 +51,7 @@ Nepomuk::ResourceMerger::ResourceMerger(Nepomuk::DataManagementModel* model, con
     m_model = model;
     m_flags = flags;
 
-    setModel( m_model );
+    //setModel( m_model );
 
     // Resource Metadata
     metadataProperties.reserve( 4 );
@@ -61,8 +61,134 @@ Nepomuk::ResourceMerger::ResourceMerger(Nepomuk::DataManagementModel* model, con
     metadataProperties.insert( NAO::creator() );
 }
 
+
 Nepomuk::ResourceMerger::~ResourceMerger()
 {
+}
+
+// void Nepomuk::ResourceMerger::setModel(Soprano::Model* model)
+// {
+//     Q_ASSERT( model != 0 );
+//     m_model = model;
+// }
+
+Soprano::Model* Nepomuk::ResourceMerger::model() const
+{
+    return m_model;
+}
+
+void Nepomuk::ResourceMerger::setMappings(const QHash< KUrl, KUrl >& mappings)
+{
+    m_mappings = mappings;
+}
+
+QHash< KUrl, KUrl > Nepomuk::ResourceMerger::mappings() const
+{
+    return m_mappings;
+}
+
+void Nepomuk::ResourceMerger::setAdditionalGraphMetadata(const QHash<QUrl, QVariant>& additionalMetadata)
+{
+    m_additionalMetadata = additionalMetadata;
+}
+
+QHash< QUrl, QVariant > Nepomuk::ResourceMerger::additionalMetadata() const
+{
+    return m_additionalMetadata;
+}
+
+bool Nepomuk::ResourceMerger::resolveStatement(Soprano::Statement& st)
+{
+    if( !st.isValid() ) {
+        QString error = QString::fromLatin1("Invalid statement encountered");
+        return false;
+    }
+
+    KUrl resolvedSubject = resolve( st.subject() );
+    if( !resolvedSubject.isValid() ) {
+        QString error = QString::fromLatin1("Subject - %1 resolution failed")
+        .arg( st.subject().toN3() );
+        kDebug() << error;
+        setError( error );
+        return false;
+    }
+
+    st.setSubject( resolvedSubject );
+    Soprano::Node object = st.object();
+    if( (object.isResource() && object.uri().scheme() == QLatin1String("nepomuk") )
+        || object.isBlank() ) {
+        KUrl resolvedObject = resolve( object );
+    if( resolvedObject.isEmpty() ) {
+        QString error = QString::fromLatin1("Object - %1 resolution failed")
+        .arg( object.toN3() );
+        kDebug() << error;
+        setError( error );
+        return false;
+    }
+    st.setObject( resolvedObject );
+        }
+
+        return true;
+}
+
+
+bool Nepomuk::ResourceMerger::mergeStatement(const Soprano::Statement& statement)
+{
+    Soprano::Statement st( statement );
+    if( !resolveStatement( st ) )
+        return false;
+
+    return push( st );
+}
+
+
+KUrl Nepomuk::ResourceMerger::graph()
+{
+    if( !m_graph.isValid() ) {
+        m_graph = createGraph();
+        if( !m_graph.isValid() ) {
+            setError( QString::fromLatin1("Graph creation failed. A valid graph was not returned %1")
+            .arg( m_graph.toString() ), Soprano::Error::ErrorInvalidArgument );
+        }
+    }
+    return m_graph;
+}
+
+
+bool Nepomuk::ResourceMerger::push(const Soprano::Statement& st)
+{
+    Soprano::Statement statement( st );
+    if( m_model->containsAnyStatement( st.subject(), st.predicate(), st.object() ) ) {
+        return resolveDuplicate( statement );
+    }
+
+    if( !m_graph.isValid() ) {
+        m_graph = createGraph();
+        if( !m_graph.isValid() )
+            return false;
+    }
+    statement.setContext( m_graph );
+    //kDebug() << "Pushing - " << statement;
+    return addStatement( statement ) == Soprano::Error::ErrorNone;
+}
+
+
+KUrl Nepomuk::ResourceMerger::resolve(const Soprano::Node& n)
+{
+    const QUrl oldUri = n.isResource() ? n.uri() : QUrl( n.toN3() );
+
+    // Find in mappings
+    QHash< KUrl, KUrl >::const_iterator it = m_mappings.constFind( oldUri );
+    if( it != m_mappings.constEnd() ) {
+        return it.value();
+    } else {
+        return resolveUnidentifiedResource( oldUri );
+    }
+}
+
+Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::Node& subject, const Soprano::Node& property, const Soprano::Node& object, const Soprano::Node& graph)
+{
+    return addStatement( Soprano::Statement(subject, property, object, graph) );
 }
 
 KUrl Nepomuk::ResourceMerger::createGraph()
@@ -389,8 +515,13 @@ KUrl Nepomuk::ResourceMerger::resolveUnidentifiedResource(const KUrl& uri)
     // If it is a nepomuk:/ uri, just add it as it is.
     if( uri.scheme() == QLatin1String("nepomuk") )
         return uri;
-    else if( uri.url().startsWith("_:") ) // Blank node
-        return Nepomuk::Sync::ResourceMerger::resolveUnidentifiedResource( uri );
+    else if( uri.url().startsWith("_:") )  { // Blank node
+        //TODO: The resource should also get its metadata -> nao:created, nao:lastModified
+        KUrl newUri = createResourceUri();
+        m_mappings.insert( uri, newUri );
+        return newUri;
+    }
+
     return KUrl();
 }
 
