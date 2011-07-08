@@ -25,8 +25,10 @@
 
 #include <QtCore/QSharedData>
 #include <QtCore/QHash>
+#include <QtCore/QString>
 #include <QtCore/QUrl>
 #include <QtCore/QDebug>
+#include <QtCore/QDataStream>
 
 #include <KRandom>
 
@@ -195,6 +197,39 @@ QVariant nodeToVariant(const Soprano::Node& node) {
 }
 }
 
+Nepomuk::SimpleResourceGraph &
+Nepomuk::SimpleResourceGraph::operator+=( const SimpleResourceGraph & graph )
+{
+    if ( this == &graph )
+        return *this;
+
+    if ( d->resources.size() == 0 ) {
+        d->resources = graph.d->resources;
+    }
+    else {
+        QHash<QUrl, SimpleResource>::const_iterator it;
+        QHash<QUrl, SimpleResource>::iterator fit;
+        for (it = graph.d->resources.begin();
+              it!= graph.d->resources.end();
+            ++it
+            )
+        {
+            fit = d->resources.find(it.key());
+            if ( fit == d->resources.end() ) {
+                // Not found
+                d->resources[it.key()] = it.value();
+            }
+            else {
+                // Found. Should merge
+                fit.value().addProperties(it.value().properties());
+            }
+        }
+    }
+
+    return *this;
+}
+
+
 void Nepomuk::SimpleResourceGraph::addStatement(const Soprano::Statement &s)
 {
     const QUrl uri = nodeToVariant(s.subject()).toUrl();
@@ -217,4 +252,30 @@ KJob* Nepomuk::SimpleResourceGraph::save(const KComponentData& component) const
 QDebug Nepomuk::operator<<(QDebug dbg, const Nepomuk::SimpleResourceGraph& graph)
 {
     return dbg << graph.toList();
+}
+
+QDataStream & Nepomuk::operator<<(QDataStream & stream, const Nepomuk::SimpleResourceGraph& graph)
+{
+    stream << graph.toList();
+    return stream;
+}
+
+QDataStream & Nepomuk::operator>>(QDataStream & stream, Nepomuk::SimpleResourceGraph& graph)
+{
+    QList<SimpleResource> l;
+    stream >> l;
+    graph = SimpleResourceGraph(l);
+    return stream;
+}
+
+
+bool Nepomuk::SimpleResourceGraph::operator!=( const SimpleResourceGraph & rhs) const
+{
+    return !(*this == rhs);
+}
+
+
+bool Nepomuk::SimpleResourceGraph::operator==( const SimpleResourceGraph & rhs) const
+{
+    return (d->resources == rhs.d->resources);
 }

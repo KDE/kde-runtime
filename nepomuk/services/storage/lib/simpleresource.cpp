@@ -25,6 +25,7 @@
 #include <QtCore/QSharedData>
 #include <QtCore/QVariant>
 #include <QtCore/QDebug>
+#include <QtCore/QDataStream>
 
 #include <Soprano/Node>
 #include <Soprano/LiteralValue>
@@ -275,4 +276,16 @@ uint Nepomuk::qHash(const SimpleResource& res)
 QDebug Nepomuk::operator<<(QDebug dbg, const Nepomuk::SimpleResource& res)
 {
     return dbg << res.uri() << res.properties();
+}
+
+QDataStream & Nepomuk::operator<<(QDataStream & stream, const Nepomuk::SimpleResource& resource)
+{
+    stream << resource.d->m_uri << resource.d->m_properties;
+    return stream;
+}
+
+QDataStream & Nepomuk::operator>>(QDataStream & stream, Nepomuk::SimpleResource& resource)
+{
+    stream >> resource.d->m_uri >> resource.d->m_properties;
+    return stream;
 }

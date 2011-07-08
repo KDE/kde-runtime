@@ -32,6 +32,8 @@
 
 #include "nepomukdatamanagement_export.h"
 
+class QDataStream;
+
 class KJob;
 namespace Soprano {
 class Statement;
@@ -71,6 +73,7 @@ public:
     void clear();
 
     int count() const;
+    int size() const { return count(); }
     bool isEmpty() const;
 
     bool contains(const SimpleResource& res) const;
@@ -85,6 +88,9 @@ public:
     void addStatement(const Soprano::Statement& statement);
     void addStatement( const Soprano::Node & subject, const Soprano::Node & predicate,
                        const Soprano::Node & object );
+
+    SimpleResourceGraph& operator+=( const SimpleResourceGraph & graph );
+
     /**
      * Save the graph to the Nepomuk database.
      * \return A job that will perform the saving
@@ -98,12 +104,20 @@ public:
      */
     KJob* save(const KComponentData& component = KGlobal::mainComponent()) const;
 
+    bool operator==( const SimpleResourceGraph & rhs) const;
+    bool operator!=( const SimpleResourceGraph & rhs) const;
+
 private:
     class Private;
     QSharedDataPointer<Private> d;
 };
 
+
+NEPOMUK_DATA_MANAGEMENT_EXPORT QDataStream & operator<<(QDataStream &, const Nepomuk::SimpleResourceGraph& graph);
+NEPOMUK_DATA_MANAGEMENT_EXPORT QDataStream & operator>>(QDataStream &, Nepomuk::SimpleResourceGraph& graph);
 NEPOMUK_DATA_MANAGEMENT_EXPORT QDebug operator<<(QDebug dbg, const Nepomuk::SimpleResourceGraph& graph);
+NEPOMUK_DATA_MANAGEMENT_EXPORT QDataStream & operator<<(QDataStream &, const Nepomuk::SimpleResourceGraph& graph);
+NEPOMUK_DATA_MANAGEMENT_EXPORT QDataStream & operator>>(QDataStream &, Nepomuk::SimpleResourceGraph& graph);
 }
 
 #endif
