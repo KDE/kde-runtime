@@ -249,6 +249,13 @@ private:
     void addProperty(const QHash<QUrl, QUrl>& resources, const QUrl& property, const QHash<Soprano::Node, Soprano::Node>& nodes, const QString& app);
 
     /**
+     * Removes the given resources without any additional checks. The provided list needs to contain already resolved valid resource URIs.
+     *
+     * Used by removeResources() and removeDataByApplication()
+     */
+    void removeAllResources(const QSet<QUrl>& resourceUris, RemovalFlags flags);
+
+    /**
      * Checks if resource \p res actually exists. A resource exists if any information other than the standard metadata
      * (nao:created, nao:creator, nao:lastModified, nao:userVisible) or the nie:url is defined.
      */

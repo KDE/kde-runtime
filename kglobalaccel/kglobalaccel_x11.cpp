@@ -23,8 +23,7 @@
 
 #include "kaction.h"
 #include "globalshortcutsregistry.h"
-#include "kkeyserver_x11.h"
-#include "kkeysequencewidget.h"
+#include "kkeyserver.h"
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -108,7 +107,7 @@ bool KGlobalAccelImpl::grabKey( int keyQt, bool grab )
 	// Check if shift needs to be added to the grab since KKeySequenceWidget
 	// can remove shift for some keys. (all the %&* and such)
 	if( !(keyQt & Qt::SHIFT) &&
-	    !KKeySequenceWidget::isShiftAsModifierAllowed( keyQt ) &&
+	    !KKeyServer::isShiftAsModifierAllowed( keyQt ) &&
 	    keySymX != XKeycodeToKeysym( QX11Info::display(), keyCodeX, 0 ) &&
 	    keySymX == XKeycodeToKeysym( QX11Info::display(), keyCodeX, 1 ) )
 	{
@@ -249,7 +248,7 @@ bool KGlobalAccelImpl::x11KeyPress( const XEvent *pEvent )
 	KKeyServer::symXToKeyQt(keySymX, &keyCodeQt);
 	KKeyServer::modXToQt(keyModX, &keyModQt);
 
-	if( keyModQt & Qt::SHIFT && !KKeySequenceWidget::isShiftAsModifierAllowed( keyCodeQt ) ) {
+	if( keyModQt & Qt::SHIFT && !KKeyServer::isShiftAsModifierAllowed( keyCodeQt ) ) {
 		kDebug() << "removing shift modifier";
 		keyModQt &= ~Qt::SHIFT;
 	}

@@ -21,6 +21,7 @@
 
 #include "classandpropertytree.h"
 #include "simpleresource.h"
+#include "simpleresourcegraph.h"
 
 #include <QtCore/QSet>
 #include <QtCore/QDir>
@@ -534,6 +535,11 @@ const Nepomuk::ClassAndPropertyTree::ClassOrProperty * Nepomuk::ClassAndProperty
         return it.value();
 }
 
+bool Nepomuk::ClassAndPropertyTree::contains(const QUrl& uri) const
+{
+    return m_tree.contains(uri);
+}
+
 
 /**
  * Set the value of nao:userVisible.
@@ -640,6 +646,15 @@ QList<Soprano::Statement> Nepomuk::ClassAndPropertyTree::simpleResourceToStateme
         list << Soprano::Statement(subject,
                                    it.key(),
                                    convertIfBlankNode(object));
+    }
+    return list;
+}
+
+QList<Soprano::Statement> Nepomuk::ClassAndPropertyTree::simpleResourceGraphToStatementList(const Nepomuk::SimpleResourceGraph &graph) const
+{
+    QList<Soprano::Statement> list;
+    foreach(const SimpleResource& res, graph.toList()) {
+        list += simpleResourceToStatementList(res);
     }
     return list;
 }

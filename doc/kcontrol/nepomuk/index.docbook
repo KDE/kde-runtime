@@ -102,8 +102,9 @@ You have two possibilities: automatic backups and manual ones.</para>
 <sect3 id="automatic">
 <title>Automatic Backups</title>
 <para>First choose the <guilabel>Backup Frequency</guilabel>: this is set to <guilabel>Disable Automatic Backups</guilabel> but you 
-can choose <guilabel>Daily Backups</guilabel>, <guilabel>Weekly Backups</guilabel> or <guilabel>Monthly Backups</guilabel>.
-Then set the <guilabel>Backup Time:</guilabel> to anything convenient for you using the spinbox: you can set the hour and minutes.
+can choose <guilabel>Daily Backup</guilabel> or <guilabel>Weekly Backup</guilabel>.
+Then set the <guilabel>Backup Time:</guilabel> to anything convenient for you using the spinbox: you can set the hour and minutes 
+and the day of the week for weekly backups.
 Finally you can set a limit for the number of backup files using <guilabel>Max Number of Backups:</guilabel>.
 This will ensure you do not waste disk space with the backup files and only the N last files will be kept, N being 
 the number you set there, 10 as default.</para>

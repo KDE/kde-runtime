@@ -61,6 +61,7 @@
 #include <KDebug>
 #include <KService>
 #include <KServiceTypeTrader>
+#include <KProtocolInfo>
 
 #include <KIO/NetAccess>
 
@@ -115,24 +116,49 @@ namespace {
                                     exclude);
     }
 
-    enum LocalFileState {
-        ExistingLocalFile = 1,
-        NonExistingLocalFile = 2,
-        OtherResource = 3
+    enum UriState {
+        /// the URI is a URL which points to an existing local file
+        ExistingFileUrl,
+        /// the URI is a file URL which points to a non-existing local file
+        NonExistingFileUrl,
+        /// the URI is a URL which uses on of the protocols supported by KIO
+        SupportedUrl,
+        /// the URI is a nepomuk:/ URI
+        NepomukUri,
+        /// A uri of the form "_:id"
+        BlankUri,
+        /// A uri in the ontology
+        OntologyUri,
+        /// the URI is some other non-supported URI
+        OtherUri
     };
 
     /// Check if a URL points to a local file. This should be the only place where the local file is stat'ed
-    inline LocalFileState isLocalFileUrl(const QUrl& url) {
-        if(url.scheme() == QLatin1String("file")) {
-            if(QFile::exists(url.toLocalFile())) {
-                return ExistingLocalFile;
+    inline UriState uriState(const QUrl& uri, bool statLocalFiles = true) {
+        if(uri.scheme() == QLatin1String("nepomuk")) {
+            return NepomukUri;
+        }
+        else if(Nepomuk::ClassAndPropertyTree::self()->contains(uri)) {
+            return OntologyUri;
+        }
+        else if(uri.toString().startsWith("_:") ) {
+            return BlankUri;
+        }
+        else if(uri.scheme() == QLatin1String("file")) {
+            if(!statLocalFiles ||
+                    QFile::exists(uri.toLocalFile())) {
+                return ExistingFileUrl;
             }
             else {
-                return NonExistingLocalFile;
+                return NonExistingFileUrl;
             }
         }
+        // if supported by kio
+        else if( KProtocolInfo::isKnownProtocol(uri) ) {
+            return SupportedUrl;
+        }
         else {
-            return OtherResource;
+            return OtherUri;
         }
     }
 }
@@ -815,7 +841,7 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
     //
     QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources).values());
     resolvedResources.remove(QUrl());
-    if(resolvedResources.isEmpty()) {
+    if(resolvedResources.isEmpty() || lastError()) {
         return;
     }
 
@@ -832,71 +858,9 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
 
 
     //
-    // Handle the sub-resources:
-    // this has to be done before deleting the resouces in resolvedResources. Otherwise the nao:hasSubResource relationships are already gone!
+    // Actually remove the data
     //
-    // Explanation of the query:
-    // The query selects all subresources of the resources in resolvedResources.
-    // It then filters out the sub-resources that are related from other resources that are not the ones being deleted.
-    //
-    if(flags & RemoveSubResoures) {
-        QList<QUrl> subResources;
-        Soprano::QueryResultIterator it
-                = executeQuery(QString::fromLatin1("select ?r where { ?r ?p ?o . "
-                                                   "?parent %1 ?r . "
-                                                   "FILTER(?parent in (%2)) . "
-                                                   "FILTER(!bif:exists((select (1) where { ?r2 ?p3 ?r . FILTER(%3) . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
-                                                   "}")
-                               .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
-                                    resourcesToN3(resolvedResources).join(QLatin1String(",")),
-                                    createResourceFilter(resolvedResources, QLatin1String("?r2"))),
-                               Soprano::Query::QueryLanguageSparql);
-        while(it.next()) {
-            subResources << it[0].uri();
-        }
-        if(!subResources.isEmpty()) {
-            removeResources(subResources, flags, app);
-        }
-    }
-
-
-    // get the graphs we need to check with removeTrailingGraphs later on
-    QSet<QUrl> graphs;
-    QSet<QUrl> actuallyRemovedResources;
-    Soprano::QueryResultIterator it
-            = executeQuery(QString::fromLatin1("select distinct ?g ?r where { graph ?g { ?r ?p ?o . } . FILTER(?r in (%1)) . }")
-                           .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                           Soprano::Query::QueryLanguageSparql);
-    while(it.next()) {
-        graphs << it[0].uri();
-        actuallyRemovedResources << it[1].uri();
-    }
-
-    // get the resources that we modify by removing relations to one of the deleted ones
-    QSet<QUrl> modifiedResources;
-    it = executeQuery(QString::fromLatin1("select distinct ?g ?o where { graph ?g { ?o ?p ?r . } . FILTER(?r in (%1)) . }")
-                      .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                      Soprano::Query::QueryLanguageSparql);
-    while(it.next()) {
-        graphs << it[0].uri();
-        modifiedResources << it[1].uri();
-    }
-    modifiedResources -= actuallyRemovedResources;
-
-
-    // remove the resources
-    foreach(const Soprano::Node& res, actuallyRemovedResources) {
-        removeAllStatements(res, Soprano::Node(), Soprano::Node());
-        removeAllStatements(Soprano::Node(), Soprano::Node(), res);
-    }
-    updateModificationDate(modifiedResources);
-    removeTrailingGraphs(graphs);
-
-    // inform interested parties
-    // TODO: ideally we should also report the types the removed resources had
-    foreach(const Soprano::Node& res, actuallyRemovedResources) {
-        d->m_watchManager->removeResource(res.uri(), QList<QUrl>());
-    }
+    removeAllResources(resolvedResources, flags);
 }
 
 void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &resources, RemovalFlags flags, const QString &app)
@@ -919,8 +883,9 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     clearError();
 
 
+    // we handle one special case below: legacy data from the file indexer
     const QUrl appRes = findApplicationResource(app, false);
-    if(appRes.isEmpty()) {
+    if(appRes.isEmpty() && app != QLatin1String("nepomukindexer")) {
         return;
     }
 
@@ -930,7 +895,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     //
     QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources).values());
     resolvedResources.remove(QUrl());
-    if(resolvedResources.isEmpty()) {
+    if(resolvedResources.isEmpty() || lastError()) {
         return;
     }
 
@@ -945,60 +910,94 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // It then filters out the sub-resources that have properties defined by other apps which are not metadata.
     // It then filters out the sub-resources that are related from other resources that are not the ones being deleted.
     //
-    if(flags & RemoveSubResoures) {
-        QList<QUrl> subResources;
-        Soprano::QueryResultIterator it
-                = executeQuery(QString::fromLatin1("select ?r where { graph ?g { ?r ?p ?o . } . "
-                                                   "?parent %1 ?r . "
-                                                   "FILTER(?parent in (%2)) . "
-                                                   "?g %3 %4 . "
-                                                   "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r ?p2 ?o2 . } . ?g2 %3 ?a2 . FILTER(?a2!=%4) . FILTER(%6) . }))) . "
-                                                   "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r2 ?p3 ?r . FILTER(%5) . } . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
-                                                   "}")
-                               .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
-                                    resourcesToN3(resolvedResources).join(QLatin1String(",")),
-                                    Soprano::Node::resourceToN3(NAO::maintainedBy()),
-                                    Soprano::Node::resourceToN3(appRes),
-                                    createResourceFilter(resolvedResources, QLatin1String("?r2")),
-                                    createResourceMetadataPropertyFilter(QLatin1String("?p2"))),
-                               Soprano::Query::QueryLanguageSparql);
-        while(it.next()) {
-            subResources << it[0].uri();
-        }
-        if(!subResources.isEmpty()) {
-            removeDataByApplication(subResources, flags, app);
-        }
+    if(flags & RemoveSubResoures && !appRes.isEmpty()) {
+        QSet<QUrl> subResources = resolvedResources;
+        int resCount = 0;
+        do {
+            resCount = resolvedResources.count();
+            Soprano::QueryResultIterator it
+                    = executeQuery(QString::fromLatin1("select ?r where { graph ?g { ?r ?p ?o . } . "
+                                                       "?parent %1 ?r . "
+                                                       "FILTER(?parent in (%2)) . "
+                                                       "?g %3 %4 . "
+                                                       "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r ?p2 ?o2 . } . ?g2 %3 ?a2 . FILTER(?a2!=%4) . FILTER(%6) . }))) . "
+                                                       "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r2 ?p3 ?r . FILTER(%5) . } . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
+                                                       "}")
+                                   .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
+                                        resourcesToN3(subResources).join(QLatin1String(",")),
+                                        Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                        Soprano::Node::resourceToN3(appRes),
+                                        createResourceFilter(subResources, QLatin1String("?r2")),
+                                        createResourceMetadataPropertyFilter(QLatin1String("?p2"))),
+                                   Soprano::Query::QueryLanguageSparql);
+            subResources.clear();
+            while(it.next()) {
+                subResources << it[0].uri();
+            }
+            resolvedResources += subResources;
+        } while(resCount < resolvedResources.count());
+    }
+
+    QList<Soprano::BindingSet> graphRemovalCandidates;
+
+    if(!appRes.isEmpty()) {
+        //
+        // Get the graphs we need to check with removeTrailingGraphs later on.
+        // query all graphs the app maintains which contain any information about one of the resources
+        // count the number of apps maintaining those graphs (later we will only remove the app as maintainer but keep the graph)
+        // count the number of metadata properties defined in those graphs (we will keep that information in case the resource is not fully removed)
+        //
+        // We combine the results of 2 queries since Virtuoso can optimize FILTER(?r in (...)) but cannot optimize FILTER(?r in (...) || ?o in (...))
+        //
+        graphRemovalCandidates += executeQuery(QString::fromLatin1("select distinct "
+                                                                   "?g "
+                                                                   "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
+                                                                   "where { "
+                                                                   "graph ?g { ?r ?p ?o . FILTER(?r in (%3)) . } . "
+                                                                   "?g %1 %2 . }")
+                                               .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                                    Soprano::Node::resourceToN3(appRes),
+                                                    resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                                               Soprano::Query::QueryLanguageSparql).allElements();
+        graphRemovalCandidates += executeQuery(QString::fromLatin1("select distinct "
+                                                                   "?g "
+                                                                   "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
+                                                                   "where { "
+                                                                   "graph ?g { ?r ?p ?o . FILTER(?o in (%3)) . } . "
+                                                                   "?g %1 %2 . }")
+                                               .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                                    Soprano::Node::resourceToN3(appRes),
+                                                    resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                                               Soprano::Query::QueryLanguageSparql).allElements();
+    }
+
+
+    //
+    // Handle legacy file indexer data which was stored in graphs marked via a special property
+    //
+    if(app == QLatin1String("nepomukindexer")) {
+        graphRemovalCandidates += executeQuery(QString::fromLatin1("select distinct ?g (0) as ?c where { "
+                                                                   "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
+                                                                   "FILTER(?r in (%1)) . }")
+                                               .arg(Nepomuk::resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                                               Soprano::Query::QueryLanguageSparql).allElements();
     }
 
     //
-    // Get the graphs we need to check with removeTrailingGraphs later on.
-    // query all graphs the app maintains which contain any information about one of the resources
-    // count the number of apps maintaining those graphs (later we will only remove the app as maintainer but keep the graph)
-    // count the number of metadata properties defined in those graphs (we will keep that information in case the resource is not fully removed)
+    // Split the list of graph removal candidates into those we actually remove and those we only stop maintaining
     //
-    // We combine the results of 2 queries since Virtuoso can optimize FILTER(?r in (...)) but cannot optimize FILTER(?r in (...) || ?o in (...))
-    //
-    QList<Soprano::BindingSet> graphRemovalCandidates
-            = executeQuery(QString::fromLatin1("select distinct "
-                                               "?g "
-                                               "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
-                                               "where { "
-                                               "graph ?g { ?r ?p ?o . FILTER(?r in (%3)) . } . "
-                                               "?g %1 %2 . }")
-                           .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
-                                Soprano::Node::resourceToN3(appRes),
-                                resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                           Soprano::Query::QueryLanguageSparql).allElements()
-            + executeQuery(QString::fromLatin1("select distinct "
-                                               "?g "
-                                               "(select count(distinct ?app) where { ?g %1 ?app . }) as ?c "
-                                               "where { "
-                                               "graph ?g { ?r ?p ?o . FILTER(?o in (%3)) . } . "
-                                               "?g %1 %2 . }")
-                           .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
-                                Soprano::Node::resourceToN3(appRes),
-                                resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                           Soprano::Query::QueryLanguageSparql).allElements();
+    QSet<QUrl> graphsToRemove;
+    QSet<QUrl> graphsToStopMaintaining;
+    for(QList<Soprano::BindingSet>::const_iterator it = graphRemovalCandidates.constBegin(); it != graphRemovalCandidates.constEnd(); ++it) {
+        if(it->value("c").literal().toInt() <= 1) {
+            graphsToRemove << it->value("g").uri();
+        }
+        else {
+            graphsToStopMaintaining << it->value("g").uri();
+        }
+    }
+    // free some mem
+    graphRemovalCandidates.clear();
 
 
     // the set of resources that we did modify but not remove entirely
@@ -1009,139 +1008,181 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // Fetch all resources that are changed, ie. that are related to the deleted resource in some way.
     // We need to update the mtime of those resources, too.
     //
-    Soprano::QueryResultIterator relatedResIt = executeQuery(QString::fromLatin1("select distinct ?r where { "
-                                                                                 "graph ?g { ?r ?p ?rr . } . "
-                                                                                 "?g %1 %2 . "
-                                                                                 "FILTER(?rr in (%3)) . "
-                                                                                 "FILTER(!(?r in (%3))) . }")
-                                                             .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
-                                                                  Soprano::Node::resourceToN3(appRes),
-                                                                  resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                                                             Soprano::Query::QueryLanguageSparql);
-    while(relatedResIt.next()) {
-        modifiedResources.insert(relatedResIt[0].uri());
+    if(!appRes.isEmpty()) {
+        Soprano::QueryResultIterator relatedResIt = executeQuery(QString::fromLatin1("select distinct ?r where { "
+                                                                                     "graph ?g { ?r ?p ?rr . } . "
+                                                                                     "?g %1 %2 . "
+                                                                                     "FILTER(?rr in (%3)) . "
+                                                                                     "FILTER(!(?r in (%3))) . }")
+                                                                 .arg(Soprano::Node::resourceToN3(NAO::maintainedBy()),
+                                                                      Soprano::Node::resourceToN3(appRes),
+                                                                      resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                                                                 Soprano::Query::QueryLanguageSparql);
+        while(relatedResIt.next()) {
+            modifiedResources.insert(relatedResIt[0].uri());
+        }
     }
 
 
+    //
     // remove the resources
     // Other apps might be maintainer, too. In that case only remove the app as a maintainer but keep the data
-    QSet<QUrl> graphs;
-    const QDateTime now = QDateTime::currentDateTime();
-    QUrl metadataGraph;
-    for(QList<Soprano::BindingSet>::const_iterator it = graphRemovalCandidates.constBegin(); it != graphRemovalCandidates.constEnd(); ++it) {
-        const QUrl g = it->value("g").uri();
-        const int appCnt = it->value("c").literal().toInt();
-        if(appCnt == 1) {
-            foreach(const QUrl& res, resolvedResources) {
-                //
-                // We cannot remove the metadata if the resource is not removed completely
-                // Thus, we re-add them later on.
-                // trueg: as soon as we have real inference and do not rely on the crappy inferencer to update types via the
-                //        Soprano statement manipulation methods we can use powerful queries like this one:
-                //                    executeQuery(QString::fromLatin1("delete from %1 { %2 ?p ?o . } where { %2 ?p ?o . FILTER(%3) . }")
-                //                                 .arg(Soprano::Node::resourceToN3(g),
-                //                                      Soprano::Node::resourceToN3(res),
-                //                                      createResourceMetadataPropertyFilter(QLatin1String("?p"))),
-                //                                 Soprano::Query::QueryLanguageSparql);
-                //
-                QList<Soprano::BindingSet> metadataProps
-                        = executeQuery(QString::fromLatin1("select ?p ?o where { graph %1 { %2 ?p ?o . FILTER(%3) . } . }")
-                                       .arg(Soprano::Node::resourceToN3(g),
-                                            Soprano::Node::resourceToN3(res),
-                                            createResourceMetadataPropertyFilter(QLatin1String("?p"), false)),
-                                       Soprano::Query::QueryLanguageSparql).allBindings();
+    //
 
-                //
-                // check if we actually remove any properties and only then update the mtime of the resource
-                //
-                if(executeQuery(QString::fromLatin1("ask where { graph %1 { %2 ?p ?o . FILTER(%3) . } . }")
-                                                    .arg(Soprano::Node::resourceToN3(g),
-                                                         Soprano::Node::resourceToN3(res),
-                                                         createResourceMetadataPropertyFilter(QLatin1String("?p"), true)),
-                                                    Soprano::Query::QueryLanguageSparql).boolValue()) {
-                    modifiedResources.insert(res);
-                }
+    //
+    // We cannot remove the metadata if the resource is not removed completely.
+    // Thus, we cache it and deal with it later. But we only need to cache the metadata from graphs
+    // we will actually delete.
+    //
+    // Tests showed that one query per graph is faster than one query for all graphs!
+    //
+    Soprano::Graph metadata;
+    foreach(const QUrl& g, graphsToRemove) {
+        Soprano::QueryResultIterator mdIt
+                = executeQuery(QString::fromLatin1("select ?r ?p ?o where { graph %3 { ?r ?p ?o . FILTER(?r in (%1)) . FILTER(%2) . } . }")
+                               .arg(resourcesToN3(resolvedResources).join(QLatin1String(",")),
+                                    createResourceMetadataPropertyFilter(QLatin1String("?p"), false),
+                                    Soprano::Node::resourceToN3(g)),
+                               Soprano::Query::QueryLanguageSparql);
 
-                removeAllStatements(res, Soprano::Node(), Soprano::Node(), g);
-                removeAllStatements(Soprano::Node(), Soprano::Node(), res, g);
+        while(mdIt.next()) {
+            metadata.addStatement(mdIt["r"], mdIt["p"], mdIt["o"]);
+        }
+    }
 
-                //
-                // we put all resource metadata in the one metadata graph which is not maintained by any application
-                // This is to make sure no resource data is maintained by the calling app after this method returns
-                //
-                if(metadataGraph.isEmpty()) {
-                    metadataGraph = createGraph();
-                    if(lastError()) {
-                        return;
-                    }
-                }
 
-                foreach(const Soprano::BindingSet& set, metadataProps)  {
-                    addStatement(res, set["p"], set["o"], metadataGraph);
-                }
-            }
+    //
+    // Gather the resources that we actually change, ie. those which have non-metadata props in the removed graphs
+    //
+    Soprano::QueryResultIterator mResIt
+            = executeQuery(QString::fromLatin1("select ?r where { graph ?g { ?r ?p ?o . FILTER(?r in (%1)) . FILTER(%2) . } . FILTER(?g in (%3)) . }")
+                                        .arg(resourcesToN3(resolvedResources).join(QLatin1String(",")),
+                                             createResourceMetadataPropertyFilter(QLatin1String("?p"), true),
+                                             resourcesToN3(graphsToRemove).join(QLatin1String(","))),
+                                        Soprano::Query::QueryLanguageSparql);
+    while(mResIt.next()) {
+        modifiedResources.insert(mResIt[0].uri());
+    }
 
-            graphs.insert(g);
+
+    //
+    // Remove the actual data. This has to be done using removeAllStatements. Otherwise the crappy inferencer cannot follow the changes.
+    //
+    foreach(const QUrl& g, graphsToRemove) {
+        foreach(const QUrl& res, resolvedResources) {
+            removeAllStatements(res, Soprano::Node(), Soprano::Node(), g);
+            removeAllStatements(Soprano::Node(), Soprano::Node(), res, g);
+        }
+    }
+
+
+    //
+    // Remove the app as mainainer from the rest of the graphs
+    //
+    foreach(const QUrl& g, graphsToStopMaintaining) {
+        const int otherCnt = executeQuery(QString::fromLatin1("select count (distinct ?other) where { "
+                                                              "graph %1 { ?other ?op ?oo . "
+                                                              "FILTER(!(?other in (%2)) && !(?oo in (%2))) . "
+                                                              "} . }")
+                                          .arg(Soprano::Node::resourceToN3(g),
+                                               resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                                          Soprano::Query::QueryLanguageSparql).iterateBindings(0).allElements().first().literal().toInt();
+        if(otherCnt > 0) {
+            //
+            // if the graph contains anything else besides the data we want to delete
+            // we need to keep the app as maintainer of that data. That is only possible
+            // by splitting the graph.
+            //
+            const QUrl newGraph = splitGraph(g, QUrl(), QUrl());
+            Q_ASSERT(!newGraph.isEmpty());
+
+            //
+            // we now have two graphs the the same metadata: g and newGraph.
+            // we now move the resources we delete into the new graph and only
+            // remove the app as maintainer from that graph.
+            // (we can use fancy queries since we do not actually change data. Thus
+            // the crappy inferencer and other models which act on statement commands
+            // are not really interested)
+            //
+            executeQuery(QString::fromLatin1("insert into %1 { ?r ?p ?o . } where { graph %2 { ?r ?p ?o . FILTER(?r in (%3) || ?o in (%3)) . } . }")
+                         .arg(Soprano::Node::resourceToN3(newGraph),
+                              Soprano::Node::resourceToN3(g),
+                              resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                         Soprano::Query::QueryLanguageSparql);
+            executeQuery(QString::fromLatin1("delete from %1 { ?r ?p ?o . } where { ?r ?p ?o . FILTER(?r in (%2) || ?o in (%2)) . }")
+                         .arg(Soprano::Node::resourceToN3(g),
+                              resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                         Soprano::Query::QueryLanguageSparql);
+
+            // and finally remove the app as maintainer of the new graph
+            removeAllStatements(newGraph, NAO::maintainedBy(), appRes);
         }
         else {
-            const int otherCnt = executeQuery(QString::fromLatin1("select count (distinct ?other) where { "
-                                                                  "graph %1 { ?other ?op ?oo . "
-                                                                  "FILTER(!(?other in (%2)) && !(?oo in (%2))) . "
-                                                                  "} . }")
-                                              .arg(Soprano::Node::resourceToN3(g),
-                                                   resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                                              Soprano::Query::QueryLanguageSparql).iterateBindings(0).allElements().first().literal().toInt();
-            if(otherCnt > 0) {
-                //
-                // if the graph contains anything else besides the data we want to delete
-                // we need to keep the app as maintainer of that data. That is only possible
-                // by splitting the graph.
-                //
-                const QUrl newGraph = splitGraph(g, QUrl(), QUrl());
-                Q_ASSERT(!newGraph.isEmpty());
-
-                //
-                // we now have two graphs the the same metadata: g and newGraph.
-                // we now move the resources we delete into the new graph and only
-                // remove the app as maintainer from that graph.
-                // (we can use fancy queries since we do not actually change data. Thus
-                // the crappy inferencer and other models which act on statement commands
-                // are not really interested)
-                //
-                executeQuery(QString::fromLatin1("insert into %1 { ?r ?p ?o . } where { graph %2 { ?r ?p ?o . FILTER(?r in (%3) || ?o in (%3)) . } . }")
-                             .arg(Soprano::Node::resourceToN3(newGraph),
-                                  Soprano::Node::resourceToN3(g),
-                                  resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                             Soprano::Query::QueryLanguageSparql);
-                executeQuery(QString::fromLatin1("delete from %1 { ?r ?p ?o . } where { ?r ?p ?o . FILTER(?r in (%2) || ?o in (%2)) . }")
-                             .arg(Soprano::Node::resourceToN3(g),
-                                  resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                             Soprano::Query::QueryLanguageSparql);
-
-                // and finally remove the app as maintainer of the new graph
-                removeAllStatements(newGraph, NAO::maintainedBy(), appRes);
-            }
-            else {
-                // we simply remove the app as maintainer of this graph
-                removeAllStatements(g, NAO::maintainedBy(), appRes);
-            }
+            // we simply remove the app as maintainer of this graph
+            removeAllStatements(g, NAO::maintainedBy(), appRes);
         }
     }
 
-    // make sure we do not leave anything empty trailing around and propery update the mtime
-    QSet<QUrl> resourcesToRemoveCompletely;
-    foreach(const QUrl& res, resolvedResources) {
-        if(!doesResourceExist(res)) {
-            resourcesToRemoveCompletely << res;
+
+    //
+    // Determine the resources we did not remove completely.
+    //
+    QSet<QUrl> resourcesToRemoveCompletely(resolvedResources);
+    Soprano::QueryResultIterator resComplIt
+            = executeQuery(QString::fromLatin1("select ?r where { ?r ?p ?o . FILTER(?r in (%1)) . FILTER(%2) . }")
+                           .arg(resourcesToN3(resolvedResources).join(QLatin1String(",")),
+                                createResourceMetadataPropertyFilter(QLatin1String("?p"))),
+                           Soprano::Query::QueryLanguageSparql);
+    while(resComplIt.next()) {
+        resourcesToRemoveCompletely.remove(resComplIt[0].uri());
+    }
+
+    // no need to update metadata on resource we remove completely
+    modifiedResources -= resourcesToRemoveCompletely;
+
+
+    //
+    // Re-add the metadata for the resources that we did not remove entirely
+    //
+    // 1. use the same time for all mtime changes
+    const QDateTime now = QDateTime::currentDateTime();
+    // 2. Remove the metadata for the resources we remove completely
+    foreach(const QUrl& res, resourcesToRemoveCompletely) {
+        metadata.removeAllStatements(res, Soprano::Node(), Soprano::Node());
+    }
+    // 3. Update the mtime for modifiedResources as those are the only ones we did touch
+    foreach(const QUrl& res, modifiedResources) {
+        if(metadata.containsAnyStatement(res, NAO::lastModified(), Soprano::Node())) {
+            metadata.removeAllStatements(res, NAO::lastModified(), Soprano::Node());
+            metadata.addStatement(res, NAO::lastModified(), Soprano::LiteralValue(now));
+            modifiedResources.remove(res);
         }
     }
+    // 4. add all the updated metadata into a new metadata graph
+    if(!metadata.isEmpty() || !modifiedResources.isEmpty()) {
+        const QUrl metadataGraph = createGraph();
+        if(lastError()) {
+            return;
+        }
+
+        foreach(const Soprano::Statement& s, metadata.toList()) {
+            addStatement(s.subject(), s.predicate(), s.object(), metadataGraph);
+        }
+
+        // update mtime of all resources we did touch and not handle above yet
+        updateModificationDate(modifiedResources, metadataGraph, now);
+    }
+
+
+    //
+    // Remove the resources that are gone completely
+    //
     if(!resourcesToRemoveCompletely.isEmpty()){
-        removeResources(resourcesToRemoveCompletely.toList(), flags, app);
+        removeAllResources(resourcesToRemoveCompletely, flags);
     }
 
-    updateModificationDate(modifiedResources - resourcesToRemoveCompletely, metadataGraph, now);
-
-    removeTrailingGraphs(graphs);
+    // make sure we do not leave trailing graphs behind
+    removeTrailingGraphs(graphsToRemove);
 }
 
 namespace {
@@ -1299,7 +1340,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     QHash<QUrl, QUrl> resolvedNodes;
 
     //
-    // Resolve file URLs in resource URIs
+    // Resolve the nie URLs which are present as resource uris
     //
     QSet<QUrl> allNonFileResources;
     SimpleResourceGraph resGraph( resources );
@@ -1313,32 +1354,45 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             return;
         }
 
-        // Handle file uris
-        const LocalFileState localFileState = isLocalFileUrl(res.uri());
-        if(localFileState == NonExistingLocalFile) {
+        const UriState state = uriState(res.uri());
+        if(state == NepomukUri || state == BlankUri) {
+            allNonFileResources << res.uri();
+        }
+        // Handle nie urls
+        else if(state == NonExistingFileUrl) {
             setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(res.uri().toLocalFile()), Soprano::Error::ErrorInvalidArgument);
             return;
         }
-        else if(localFileState == ExistingLocalFile) {
-            const QUrl fileUrl = res.uri();
-            QUrl newResUri = resolveUrl( fileUrl );
-            if( newResUri.isEmpty() ) {
-                // Resolution of one file failed. Assign it a random blank uri
-                // HACK: improveme
-                SimpleResource tmpRes;
-                newResUri = tmpRes.uri();
+        else if(state == ExistingFileUrl || state == SupportedUrl) {
+            const QUrl nieUrl = res.uri();
+            QUrl newResUri = resolveUrl( nieUrl );
+            if( lastError() )
+                return;
 
-                res.addProperty( NIE::url(), fileUrl );
+            if( newResUri.isEmpty() ) {
+                // Resolution of one url failed. Assign it a random blank uri
+                newResUri = SimpleResource().uri(); // HACK: improveme
+
+                res.addProperty( NIE::url(), nieUrl );
                 res.addProperty( RDF::type(), NFO::FileDataObject() );
-                if( QFileInfo( fileUrl.toString() ).isDir() )
+                if( QFileInfo( nieUrl.toString() ).isDir() )
                     res.addProperty( RDF::type(), NFO::Folder() );
             }
-            resolvedNodes.insert( fileUrl, newResUri );
+            resolvedNodes.insert( nieUrl, newResUri );
 
             res.setUri( newResUri );
         }
-        else {
-            allNonFileResources << res.uri();
+        else if( state == OtherUri ) {
+            // Legacy support - Sucks but we need it
+            const QUrl legacyUri = resolveUrl( res.uri() );
+            if( lastError() )
+                return;
+
+            allNonFileResources << legacyUri;
+        }
+        else if( state == OntologyUri ) {
+            setError(QLatin1String("It is not allowed to add classes or properties through this API."), Soprano::Error::ErrorInvalidArgument);
+            return;
         }
     }
     resGraph = resGraphList;
@@ -1359,7 +1413,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 
 
     //
-    // Resolve file URLs in property values and prepare resource identifier
+    // Resolve URLs in property values and prepare the resource identifier
     //
     foreach( const SimpleResource& res, resGraph.toList() ) {
         SimpleResource resolvedRes(res.uri());
@@ -1369,16 +1423,19 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 
             const QVariant value(it.value());
             if( value.type() == QVariant::Url && it.key() != NIE::url() ) {
-                const LocalFileState localFileState = isLocalFileUrl(value.toUrl());
-                if(localFileState == NonExistingLocalFile) {
+                const UriState state = uriState(value.toUrl());
+                if(state==NepomukUri || state==BlankUri || state == OntologyUri) {
+                    resolvedRes.addProperty(it.key(), it.value());
+                }
+                else if(state == NonExistingFileUrl) {
                     setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(value.toUrl().toLocalFile()),
                              Soprano::Error::ErrorInvalidArgument);
                     return;
                 }
-                else if(localFileState == ExistingLocalFile) {
-                    const QUrl fileUrl = value.toUrl();
+                else if(state == ExistingFileUrl || state==SupportedUrl) {
+                    const QUrl nieUrl = value.toUrl();
                     // Need to resolve it
-                    QHash< QUrl, QUrl >::const_iterator findIter = resolvedNodes.constFind( fileUrl );
+                    QHash< QUrl, QUrl >::const_iterator findIter = resolvedNodes.constFind( nieUrl );
                     if( findIter != resolvedNodes.constEnd() ) {
                         resolvedRes.addProperty(it.key(), findIter.value());
                     }
@@ -1386,27 +1443,32 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                         Sync::SyncResource newRes;
 
                         // It doesn't exist, create it
-                        QUrl resolvedUri = resolveUrl( fileUrl );
+                        QUrl resolvedUri = resolveUrl( nieUrl );
                         if( resolvedUri.isEmpty() ) {
-                            // HACK: improveme
-                            SimpleResource tmpRes;
-                            resolvedUri = tmpRes.uri();
+                            resolvedUri = SimpleResource().uri(); // HACK: improveme
 
                             newRes.insert( RDF::type(), NFO::FileDataObject() );
-                            newRes.insert( NIE::url(), fileUrl );
-                            if( QFileInfo( fileUrl.toString() ).isDir() )
+                            newRes.insert( NIE::url(), nieUrl );
+                            if( QFileInfo( nieUrl.toString() ).isDir() )
                                 newRes.insert( RDF::type(), NFO::Folder() );
                         }
 
                         newRes.setUri( resolvedUri );
                         extraResources.append( newRes );
 
-                        resolvedNodes.insert( fileUrl, resolvedUri );
+                        resolvedNodes.insert( nieUrl, resolvedUri );
                         resolvedRes.addProperty(it.key(), resolvedUri);
                     }
                 }
-                else {
-                    resolvedRes.addProperty(it.key(), it.value());
+                else if(state == OtherUri) {
+                    // We use resolveUrl to check if the otherUri exists. If it doesn't exist,
+                    // then resolveUrl which set the last error
+                    const QUrl legacyUri = resolveUrl( value.toUrl() );
+                    if( lastError() )
+                        return;
+
+                    // It apparently exists, so we must support it
+                    resolvedRes.addProperty( it.key(), it.value() );
                 }
             }
             else {
@@ -1414,6 +1476,8 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             }
         }
 
+        // The resource is now ready.
+        // Push it into the Resource Identifier
         QList< Soprano::Statement > stList = d->m_classAndPropertyTree->simpleResourceToStatementList(resolvedRes);
         allStatements << stList;
 
@@ -1480,8 +1544,6 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 
     if( resIdent.mappings().empty() ) {
         kDebug() << "Nothing was mapped merging everything as it is.";
-        //vHanda: This means that everything should be pushed, right?
-        //return;
     }
 
     //
@@ -1671,22 +1733,27 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
 
 
     //
-    // Split into file and non-file URIs so we can get all data in one query
+    // Split into nie:urls and URIs so we can get all data in one query
     //
-    QSet<QUrl> fileUrls;
+    QSet<QUrl> nieUrls;
     QSet<QUrl> resUris;
     foreach( const QUrl & res, resources ) {
-        const LocalFileState localFileState = isLocalFileUrl(res);
-        if(localFileState == NonExistingLocalFile) {
+        const UriState state = uriState(res);
+        if(state == NonExistingFileUrl) {
             setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(res.toLocalFile()),
                      Soprano::Error::ErrorInvalidArgument);
             return SimpleResourceGraph();
         }
-        else if(localFileState == ExistingLocalFile) {
-            fileUrls.insert(res);
+        else if(state == ExistingFileUrl || state == SupportedUrl) {
+            nieUrls.insert(res);
         }
-        else {
+        else if(state == NepomukUri || state == OtherUri){
             resUris.insert(res);
+        }
+        else if(state == BlankUri) {
+            setError(QString::fromLatin1("Cannot give information about blank uris. '%1' does not exist").arg(res.toString()),
+                     Soprano::Error::ErrorInvalidArgument);
+            return SimpleResourceGraph();
         }
     }
 
@@ -1695,15 +1762,15 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
     // Build the query
     //
     QStringList terms;
-    if(!fileUrls.isEmpty()) {
+    if(!nieUrls.isEmpty()) {
         terms << QString::fromLatin1("?s ?p ?o . ?s %1 ?u . FILTER(?u in (%2)) . ")
                  .arg(Soprano::Node::resourceToN3(Vocabulary::NIE::url()),
-                      resourcesToN3(fileUrls).join(QLatin1String(",")));
+                      resourcesToN3(nieUrls).join(QLatin1String(",")));
         if(includeSubResources) {
             terms << QString::fromLatin1("?s ?p ?o . ?r %1 ?s . ?r %2 ?u . FILTER(?u in (%3)) . ")
                      .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
                           Soprano::Node::resourceToN3(Vocabulary::NIE::url()),
-                          resourcesToN3(fileUrls).join(QLatin1String(",")));
+                          resourcesToN3(nieUrls).join(QLatin1String(",")));
         }
     }
     if(!resUris.isEmpty()) {
@@ -2145,19 +2212,22 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::resolveUrls(const QList<QUrl> &u
 {
     QHash<QUrl, QUrl> uriHash;
     Q_FOREACH(const QUrl& url, urls) {
-        uriHash.insert(url, resolveUrl(url, true));
+        const QUrl resolved = resolveUrl(url, true);
+        if(url.isEmpty() && lastError()) {
+            break;
+        }
+        uriHash.insert(url, resolved);
     }
     return uriHash;
 }
 
 QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFiles) const
 {
-    LocalFileState localFileState = OtherResource;
-    if(statLocalFiles) {
-        localFileState = isLocalFileUrl(url);
-    }
-    else if(url.scheme() == QLatin1String("file")) {
-        localFileState = ExistingLocalFile;
+    const UriState state = uriState( url, statLocalFiles );
+
+    if( state == NepomukUri || state == OntologyUri ) {
+        // nothing to resolve over here
+        return url;
     }
 
     //
@@ -2165,7 +2235,7 @@ QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFil
     // on local files libnepomuk used to use it for everything but nepomuk:/ URIs.
     // Thus, we need to handle that legacy data by checking if url does exist as nie:url
     //
-    if(localFileState != OtherResource || url.scheme() != QLatin1String("nepomuk")) {
+    if( state == NonExistingFileUrl || state == ExistingFileUrl || state == SupportedUrl ) {
         Soprano::QueryResultIterator it
                 = executeQuery(QString::fromLatin1("select ?r where { ?r %1 %2 . } limit 1")
                                .arg(Soprano::Node::resourceToN3(NIE::url()),
@@ -2178,16 +2248,29 @@ QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFil
         }
 
         // if there is no existing URI return an empty match for local files (since we do always want to use nie:url here)
-        else if(localFileState != OtherResource) {
+        else {
             // we only throw an error if the file:/ URL points to a non-existing file AND it does not exist in the database.
-            if(localFileState == NonExistingLocalFile) {
+            if(state == NonExistingFileUrl) {
                 setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(url.toLocalFile()),
                          Soprano::Error::ErrorInvalidArgument);
             }
+
             return QUrl();
         }
+    }
 
-        // else we simply return the original URL/URI since we are fine with using it as resource URI
+    else if( state == OtherUri ) {
+        if( executeQuery(QString::fromLatin1("ask where { %1 ?p ?o . }")
+                         .arg(Soprano::Node::resourceToN3(url)),
+                         Soprano::Query::QueryLanguageSparql).boolValue() ) {
+            return url;
+        }
+        // we only throw an error if the uri does not exist in the repository
+        else {
+            setError(QString::fromLatin1("Unknown protocol '%1' encountered.").arg(url.scheme()),
+                     Soprano::Error::ErrorInvalidArgument);
+            return QUrl();
+        }
     }
 
     // fallback
@@ -2397,6 +2480,81 @@ bool Nepomuk::DataManagementModel::containsResourceWithProtectedType(const QSet<
 Nepomuk::ResourceWatcherManager* Nepomuk::DataManagementModel::resourceWatcherManager() const
 {
     return d->m_watchManager;
+}
+
+void Nepomuk::DataManagementModel::removeAllResources(const QSet<QUrl> &resources, RemovalFlags flags)
+{
+    QSet<QUrl> resolvedResources(resources);
+
+    //
+    // Handle the sub-resources:
+    // this has to be done before deleting the resouces in resolvedResources. Otherwise the nao:hasSubResource relationships are already gone!
+    //
+    // Explanation of the query:
+    // The query selects all subresources of the resources in resolvedResources.
+    // It then filters out the sub-resources that are related from other resources that are not the ones being deleted.
+    //
+    if(flags & RemoveSubResoures) {
+        QSet<QUrl> subResources = resolvedResources;
+        int resCount = 0;
+        do {
+            resCount = resolvedResources.count();
+            Soprano::QueryResultIterator it
+                    = executeQuery(QString::fromLatin1("select ?r where { ?r ?p ?o . "
+                                                       "?parent %1 ?r . "
+                                                       "FILTER(?parent in (%2)) . "
+                                                       "FILTER(!bif:exists((select (1) where { ?r2 ?p3 ?r . FILTER(%3) . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
+                                                       "}")
+                                   .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
+                                        resourcesToN3(subResources).join(QLatin1String(",")),
+                                        createResourceFilter(resolvedResources, QLatin1String("?r2"))),
+                                   Soprano::Query::QueryLanguageSparql);
+            subResources.clear();
+            while(it.next()) {
+                subResources << it[0].uri();
+            }
+            resolvedResources += subResources;
+        } while(resCount < resolvedResources.count());
+    }
+
+
+    // get the graphs we need to check with removeTrailingGraphs later on
+    QSet<QUrl> graphs;
+    QSet<QUrl> actuallyRemovedResources;
+    Soprano::QueryResultIterator it
+            = executeQuery(QString::fromLatin1("select distinct ?g ?r where { graph ?g { ?r ?p ?o . } . FILTER(?r in (%1)) . }")
+                           .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                           Soprano::Query::QueryLanguageSparql);
+    while(it.next()) {
+        graphs << it[0].uri();
+        actuallyRemovedResources << it[1].uri();
+    }
+
+    // get the resources that we modify by removing relations to one of the deleted ones
+    QSet<QUrl> modifiedResources;
+    it = executeQuery(QString::fromLatin1("select distinct ?g ?o where { graph ?g { ?o ?p ?r . } . FILTER(?r in (%1)) . }")
+                      .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                      Soprano::Query::QueryLanguageSparql);
+    while(it.next()) {
+        graphs << it[0].uri();
+        modifiedResources << it[1].uri();
+    }
+    modifiedResources -= actuallyRemovedResources;
+
+
+    // remove the resources
+    foreach(const Soprano::Node& res, actuallyRemovedResources) {
+        removeAllStatements(res, Soprano::Node(), Soprano::Node());
+        removeAllStatements(Soprano::Node(), Soprano::Node(), res);
+    }
+    updateModificationDate(modifiedResources);
+    removeTrailingGraphs(graphs);
+
+    // inform interested parties
+    // TODO: ideally we should also report the types the removed resources had
+    foreach(const Soprano::Node& res, actuallyRemovedResources) {
+        d->m_watchManager->removeResource(res.uri(), QList<QUrl>());
+    }
 }
 
 #include "datamanagementmodel.moc"

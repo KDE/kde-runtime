@@ -508,6 +508,7 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
     //
     ClassAndPropertyTree * tree = m_model->classAndPropertyTree();
 
+    // FIXME: This is really inefficent
     foreach( const Soprano::Statement & st, remainingStatements ) {
         const QUrl subUri = getBlankOrResourceUri( st.subject() );
         const QUrl & propUri = st.predicate().uri();
@@ -531,9 +532,17 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
             const int newCardinality = stCardinality + existingCardinality;
 
             if( newCardinality > maxCardinality) {
-                // Properties with max cardinality == 1, in OverwriteProperties mode are okay
-                if( maxCardinality == 1 && (newCardinality-maxCardinality) == 1
-                    &&  m_flags == OverwriteProperties ) {
+                // Special handling for max Cardinality == 1
+                if( maxCardinality == 1 ) {
+                    // If the difference is 1, then that is okay, as the OverwriteProperties flag
+                    // has been set
+                    if( (m_flags & OverwriteProperties) && (newCardinality-maxCardinality) == 1 ) {
+                        continue;
+                    }
+                }
+
+                // The LazyCardinalities flag has been set, we don't care about cardinalities any more
+                if( (m_flags & LazyCardinalities) ) {
                     continue;
                 }
 
@@ -574,7 +583,6 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
         // range
         if( !range.isEmpty() ) {
             if( st.object().isResource() || st.object().isBlank() ) {
-
                 const QUrl objUri = getBlankOrResourceUri( st.object() );
                 QList<QUrl> objectNewTypes= types.values( objUri );
 
@@ -620,11 +628,25 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
 
         // In OverwriteProperties mode, when maxCardinality == 1, we must
         // remove the old property before adding the new one.
-        if( m_flags == OverwriteProperties
-                && tree->maxCardinality( st.predicate().uri() ) == 1 ) {
+        // In LazyCardinalities mode, we just don't care.
+        if( tree->maxCardinality(  st.predicate().uri() ) == 1 ) {
+            const bool lazy = ( m_flags & LazyCardinalities );
+            kDebug() << "LAZY : " << lazy;
+            kDebug() << st;
+            const bool overwrite = (m_flags & OverwriteProperties) &&
+                             tree->maxCardinality( st.predicate().uri() ) == 1;
 
-            // FIXME: This may create some empty graphs
-            m_model->removeAllStatements( st.subject(), st.predicate(), Soprano::Node() );
+            if( lazy || overwrite ) {
+                // FIXME: This may create some empty graphs
+                Soprano::Statement statement( st );
+                if( resolveStatement(statement) ) {
+                    m_model->removeAllStatements( statement.subject(), statement.predicate(), Soprano::Node() );
+                }
+                else {
+                    // Resolution failed. resolveStatement would have set the error
+                    return false;
+                }
+            }
         }
 
         if(!mergeStatement( st )) {
