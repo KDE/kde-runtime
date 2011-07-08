@@ -17,24 +17,26 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "EventBackend.h"
+#ifndef NEPOMUK_RESOURCE_SCORE_CACHE_H_
+#define NEPOMUK_RESOURCE_SCORE_CACHE_H_
 
-EventBackend::EventBackend()
-{
-}
+#include <QString>
+#include <QUrl>
 
-EventBackend::~EventBackend()
-{
-}
+class NepomukResourceScoreCachePrivate;
 
-void EventBackend::addEvents(const EventList & events)
-{
-    Q_UNUSED(events)
-}
+/**
+ *
+ */
+class NepomukResourceScoreCache {
+public:
+    NepomukResourceScoreCache(const QString & activity, const QString & application, const QUrl & resource);
+    virtual ~NepomukResourceScoreCache();
 
-void EventBackend::setResourceMimeType(const QString & uri, const QString & mimetype)
-{
-    Q_UNUSED(uri)
-    Q_UNUSED(mimetype)
-}
+    void updateScore();
 
+private:
+    class NepomukResourceScoreCachePrivate * const d;
+};
+
+#endif // NEPOMUK_RESOURCE_SCORE_CACHE_H_
