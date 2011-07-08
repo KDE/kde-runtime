@@ -30,7 +30,7 @@ namespace Nepomuk {
 class ResourceIdentifier : public Sync::ResourceIdentifier
 {
 public:
-    ResourceIdentifier();
+    ResourceIdentifier(Soprano::Model *model);
 
 protected:
     virtual KUrl duplicateMatch(const KUrl& uri, const QSet< KUrl >& matchedUris );

@@ -28,8 +28,6 @@
 #include "simpleresource.h"
 #include "resourcewatchermanager.h"
 #include "syncresource.h"
-#include "resourceidentifier.h"
-#include "resourcemerger.h"
 #include "nepomuktools.h"
 
 #include <Soprano/Vocabulary/NRL>
@@ -1409,7 +1407,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     }
 
 
-    ResourceIdentifier resIdent;
+    ResourceIdentifier resIdent( this );
     QList<Soprano::Statement> allStatements;
     QList<Sync::SyncResource> extraResources;
 
@@ -1541,7 +1539,6 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     //
     // Perform the actual identification
     //
-    resIdent.setModel( this );
     resIdent.identifyAll();
 
     if( resIdent.mappings().empty() ) {
