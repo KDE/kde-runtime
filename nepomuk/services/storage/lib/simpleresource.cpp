@@ -280,12 +280,16 @@ QDebug Nepomuk::operator<<(QDebug dbg, const Nepomuk::SimpleResource& res)
 
 QDataStream & Nepomuk::operator<<(QDataStream & stream, const Nepomuk::SimpleResource& resource)
 {
-    stream << resource.d->m_uri << resource.d->m_properties;
+    stream << resource.uri() << resource.properties();
     return stream;
 }
 
 QDataStream & Nepomuk::operator>>(QDataStream & stream, Nepomuk::SimpleResource& resource)
 {
-    stream >> resource.d->m_uri >> resource.d->m_properties;
+    QUrl uri;
+    PropertyHash properties;
+    stream >> uri >> properties;
+    resource.setUri(uri);
+    resource.setProperties(properties);
     return stream;
 }

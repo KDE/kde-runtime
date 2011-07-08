@@ -168,8 +168,6 @@ public:
      */
     bool isValid() const;
 
-    friend QDataStream & operator<<(QDataStream &, const Nepomuk::SimpleResource& );
-    friend QDataStream & operator>>(QDataStream &, Nepomuk::SimpleResource& );
 
 private:
     class Private;
@@ -177,6 +175,8 @@ private:
 };
 
 
+NEPOMUK_DATA_MANAGEMENT_EXPORT QDataStream & operator<<(QDataStream &, const Nepomuk::SimpleResource& );
+NEPOMUK_DATA_MANAGEMENT_EXPORT QDataStream & operator>>(QDataStream &, Nepomuk::SimpleResource& );
 NEPOMUK_DATA_MANAGEMENT_EXPORT QDebug operator<<(QDebug dbg, const Nepomuk::SimpleResource& res);
 NEPOMUK_DATA_MANAGEMENT_EXPORT QDataStream & operator<<(QDataStream &, const Nepomuk::SimpleResource& );
 NEPOMUK_DATA_MANAGEMENT_EXPORT QDataStream & operator>>(QDataStream &, Nepomuk::SimpleResource& );
