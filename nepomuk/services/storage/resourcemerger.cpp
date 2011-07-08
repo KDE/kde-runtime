@@ -232,9 +232,7 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     }
 
     QMultiHash<QUrl, Soprano::Node> oldPropHash = getPropertyHashForGraph( oldGraph );
-    QMultiHash<QUrl, Soprano::Node> newPropHash = toNodeHash( m_additionalMetadata );
-    if( lastError() )
-        return false;
+    QMultiHash<QUrl, Soprano::Node> newPropHash = m_additionalMetadataHash;
 
     // Compare the old and new property hash
     // If both have the same properties then there is no point in creating a new graph.
@@ -465,6 +463,20 @@ namespace {
 
 bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
 {
+    //
+    // Check if the additional metadata is valid
+    //
+    QMultiHash<QUrl, Soprano::Node> additionalMetadata = toNodeHash(m_additionalMetadata);
+    if( lastError() )
+        return false;
+
+    if( !checkGraphMetadata( additionalMetadata ) ) {
+        return false;
+    }
+
+    //
+    // Check the statement metadata
+    //
     QMultiHash<QUrl, QUrl> types;
     QHash<QPair<QUrl,QUrl>, int> cardinality;
 
