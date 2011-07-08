@@ -26,18 +26,21 @@
 #include <QtCore/QUrl>
 #include <QtCore/QSet>
 
-#include "../backupsync/lib/resourcemerger.h"
+#include <KUrl>
+#include <Soprano/Error/ErrorCache>
+
 #include "datamanagement.h"
 
 namespace Soprano {
     class Node;
     class Statement;
+    class Graph;
 }
 
 namespace Nepomuk {
     class DataManagementModel;
 
-    class ResourceMerger : public Sync::ResourceMerger
+    class ResourceMerger : public Soprano::Error::ErrorCache
     {
     public:
         ResourceMerger( Nepomuk::DataManagementModel * model, const QString & app,
@@ -45,7 +48,17 @@ namespace Nepomuk {
                         const StoreResourcesFlags& flags );
         virtual ~ResourceMerger();
 
-        virtual bool merge(const Soprano::Graph& graph);
+        //void setModel( Soprano::Model * model );
+        Soprano::Model * model() const;
+
+        void setMappings( const QHash<KUrl, KUrl> & mappings );
+        QHash<KUrl, KUrl> mappings() const;
+
+        bool merge(const Soprano::Graph& graph);
+        bool mergeStatement( const Soprano::Statement & st );
+
+        void setAdditionalGraphMetadata( const QHash<QUrl, QVariant>& additionalMetadata );
+        QHash<QUrl, QVariant> additionalMetadata() const;
 
     protected:
         virtual KUrl createGraph();
@@ -56,7 +69,20 @@ namespace Nepomuk {
         virtual Soprano::Error::ErrorCode addStatement( const Soprano::Statement & st );
         virtual Soprano::Error::ErrorCode addResMetadataStatement( const Soprano::Statement & st );
 
+        bool push( const Soprano::Statement & st );
+        KUrl graph();
+
+        Soprano::Error::ErrorCode addStatement( const Soprano::Node& subject, const Soprano::Node& property,
+                                                const Soprano::Node& object, const Soprano::Node& graph );
+
+        bool resolveStatement( Soprano::Statement& st );
+
     private:
+        // From Sync::ResourceMerger
+        QHash<KUrl, KUrl> m_mappings;
+
+        KUrl resolve(const Soprano::Node& n);
+
         /// Can set the error
         QMultiHash<QUrl, Soprano::Node> toNodeHash( const QHash<QUrl, QVariant> &hash );
 
