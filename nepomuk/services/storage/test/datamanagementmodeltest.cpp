@@ -4502,6 +4502,28 @@ void DataManagementModelTest::testStoreResources_lazyCardinalities()
     QVERIFY( isClark || isSuperMan );
 }
 
+void DataManagementModelTest::testStoreResources_graphMetadataFail()
+{
+    QList<Soprano::Statement> stList = m_model->listStatements().allStatements();
+
+    QHash<QUrl, QVariant> additionalMetadata;
+    additionalMetadata.insert( NCO::fullname(), QLatin1String("graphs can't have names") );
+
+    SimpleResource res;
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("Harry Potter") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp"),
+                               IdentifyAll, NoStoreResourcesFlags, additionalMetadata );
+
+    // There should be an error as graphs cannot have NFO::FileDataObject
+    QVERIFY( m_dmModel->lastError() );
+
+    // Nothing should have changed
+    QList<Soprano::Statement> newStList = m_model->listStatements().allStatements();
+    QCOMPARE( stList, newStList );
+}
+
 void DataManagementModelTest::testMergeResources()
 {
     // first we need to create the two resources we want to merge as well as one that should not be touched

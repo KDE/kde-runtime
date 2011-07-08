@@ -140,6 +140,7 @@ private Q_SLOTS:
     void testStoreResources_ontology();
     void testStoreResources_legacyUris();
     void testStoreResources_lazyCardinalities();
+    void testStoreResources_graphMetadataFail();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();
