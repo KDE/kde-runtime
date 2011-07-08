@@ -4524,6 +4524,20 @@ void DataManagementModelTest::testStoreResources_graphMetadataFail()
     QCOMPARE( stList, newStList );
 }
 
+void DataManagementModelTest::testStoreResources_randomNepomukUri()
+{
+    SimpleResource res(QUrl("nepomuk:/res/random-uri"));
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("Mickey Mouse") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp") );
+
+    // There should be an error - We do not allow creation of arbitrary uris
+    // All uris must be created by the DataManagementModel
+    QVERIFY( m_dmModel->lastError() );
+}
+
+
 void DataManagementModelTest::testMergeResources()
 {
     // first we need to create the two resources we want to merge as well as one that should not be touched
