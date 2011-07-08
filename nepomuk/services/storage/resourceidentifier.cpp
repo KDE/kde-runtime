@@ -51,7 +51,8 @@ namespace {
     }
 }
 
-Nepomuk::ResourceIdentifier::ResourceIdentifier()
+Nepomuk::ResourceIdentifier::ResourceIdentifier(Soprano::Model *model)
+    : Nepomuk::Sync::ResourceIdentifier( model )
 {
     // Resource Metadata
     addOptionalProperty( NAO::created() );
