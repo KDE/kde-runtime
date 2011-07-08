@@ -30,13 +30,13 @@ class EventProcessorPrivate;
 /**
  * Thread to process desktop/usage events
  */
-class EventProcessor: public QThread {
+class EventProcessor {
 public:
     static EventProcessor * self();
 
     virtual ~EventProcessor();
 
-    void addEvent(const QString & application, const QString & uri,
+    void addEvent(const QString & application, WId wid, const QString & uri,
             Event::Type type = Event::Accessed, Event::Reason reason = Event::User);
 
 private:
