@@ -1790,6 +1790,44 @@ void DataManagementModelTest::testRemoveResources_mtimeRelated()
     QCOMPARE(m_model->listStatements(QUrl("res:/C"), NAO::lastModified(), Node()).allElements().first().object().literal().toDateTime(), date);
 }
 
+// make sure we can remove data from non-existing files
+void DataManagementModelTest::testRemoveResources_deletedFile()
+{
+    QTemporaryFile fileA;
+    fileA.open();
+
+    const KUrl fileUrl(fileA.fileName());
+
+    // create our app
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+
+    // create the data graph
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    // create the resource
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), fileUrl, g1);
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), NFO::FileDataObject(), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+    // now remove the file
+    fileA.close();
+    QFile::remove(fileUrl.toLocalFile());
+
+    // now try removing the data
+    m_dmModel->removeResources(QList<QUrl>() << fileUrl, NoRemovalFlags, QLatin1String("A"));
+
+    // the call should succeed
+    QVERIFY(!m_dmModel->lastError());
+
+    // the resource should be gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(Node(), Node(), fileUrl));
+}
+
 void DataManagementModelTest::testCreateResource()
 {
     // the simple test: we just create a resource using all params
@@ -2701,6 +2739,42 @@ void DataManagementModelTest::testRemoveDataByApplication_legacyIndexerData()
 
     QVERIFY(!m_model->containsAnyStatement(Node(), Node(), Node(), g1));
     QVERIFY(!m_model->containsAnyStatement(Node(), Node(), Node(), mg1));
+}
+
+// make sure we can remove data from non-existing files
+void DataManagementModelTest::testRemoveDataByApplication_deletedFile()
+{
+    QTemporaryFile* fileA = new QTemporaryFile();
+    fileA->open();
+    const KUrl fileUrl(fileA->fileName());
+    delete fileA;
+    QVERIFY(!QFile::exists(fileUrl.toLocalFile()));
+
+    // create our app
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+
+    // create the data graph
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    // create the resource
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), fileUrl, g1);
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), NFO::FileDataObject(), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+
+    // now try removing the data
+    m_dmModel->removeDataByApplication(QList<QUrl>() << fileUrl, NoRemovalFlags, QLatin1String("A"));
+
+    // the call should succeed
+    QVERIFY(!m_dmModel->lastError());
+
+    // the resource should be gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(Node(), Node(), fileUrl));
 }
 
 // test that all is removed, ie. storage is clear afterwards

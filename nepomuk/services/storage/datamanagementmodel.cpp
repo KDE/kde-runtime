@@ -841,7 +841,7 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
     //
     QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources).values());
     resolvedResources.remove(QUrl());
-    if(resolvedResources.isEmpty()) {
+    if(resolvedResources.isEmpty() || lastError()) {
         return;
     }
 
@@ -858,71 +858,9 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
 
 
     //
-    // Handle the sub-resources:
-    // this has to be done before deleting the resouces in resolvedResources. Otherwise the nao:hasSubResource relationships are already gone!
+    // Actually remove the data
     //
-    // Explanation of the query:
-    // The query selects all subresources of the resources in resolvedResources.
-    // It then filters out the sub-resources that are related from other resources that are not the ones being deleted.
-    //
-    if(flags & RemoveSubResoures) {
-        QList<QUrl> subResources;
-        Soprano::QueryResultIterator it
-                = executeQuery(QString::fromLatin1("select ?r where { ?r ?p ?o . "
-                                                   "?parent %1 ?r . "
-                                                   "FILTER(?parent in (%2)) . "
-                                                   "FILTER(!bif:exists((select (1) where { ?r2 ?p3 ?r . FILTER(%3) . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
-                                                   "}")
-                               .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
-                                    resourcesToN3(resolvedResources).join(QLatin1String(",")),
-                                    createResourceFilter(resolvedResources, QLatin1String("?r2"))),
-                               Soprano::Query::QueryLanguageSparql);
-        while(it.next()) {
-            subResources << it[0].uri();
-        }
-        if(!subResources.isEmpty()) {
-            removeResources(subResources, flags, app);
-        }
-    }
-
-
-    // get the graphs we need to check with removeTrailingGraphs later on
-    QSet<QUrl> graphs;
-    QSet<QUrl> actuallyRemovedResources;
-    Soprano::QueryResultIterator it
-            = executeQuery(QString::fromLatin1("select distinct ?g ?r where { graph ?g { ?r ?p ?o . } . FILTER(?r in (%1)) . }")
-                           .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                           Soprano::Query::QueryLanguageSparql);
-    while(it.next()) {
-        graphs << it[0].uri();
-        actuallyRemovedResources << it[1].uri();
-    }
-
-    // get the resources that we modify by removing relations to one of the deleted ones
-    QSet<QUrl> modifiedResources;
-    it = executeQuery(QString::fromLatin1("select distinct ?g ?o where { graph ?g { ?o ?p ?r . } . FILTER(?r in (%1)) . }")
-                      .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
-                      Soprano::Query::QueryLanguageSparql);
-    while(it.next()) {
-        graphs << it[0].uri();
-        modifiedResources << it[1].uri();
-    }
-    modifiedResources -= actuallyRemovedResources;
-
-
-    // remove the resources
-    foreach(const Soprano::Node& res, actuallyRemovedResources) {
-        removeAllStatements(res, Soprano::Node(), Soprano::Node());
-        removeAllStatements(Soprano::Node(), Soprano::Node(), res);
-    }
-    updateModificationDate(modifiedResources);
-    removeTrailingGraphs(graphs);
-
-    // inform interested parties
-    // TODO: ideally we should also report the types the removed resources had
-    foreach(const Soprano::Node& res, actuallyRemovedResources) {
-        d->m_watchManager->removeResource(res.uri(), QList<QUrl>());
-    }
+    removeAllResources(resolvedResources, flags);
 }
 
 void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &resources, RemovalFlags flags, const QString &app)
@@ -957,7 +895,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     //
     QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources).values());
     resolvedResources.remove(QUrl());
-    if(resolvedResources.isEmpty()) {
+    if(resolvedResources.isEmpty() || lastError()) {
         return;
     }
 
@@ -1240,7 +1178,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // Remove the resources that are gone completely
     //
     if(!resourcesToRemoveCompletely.isEmpty()){
-        removeResources(resourcesToRemoveCompletely.toList(), flags, app);
+        removeAllResources(resourcesToRemoveCompletely, flags);
     }
 
     // make sure we do not leave trailing graphs behind
@@ -2274,7 +2212,11 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::resolveUrls(const QList<QUrl> &u
 {
     QHash<QUrl, QUrl> uriHash;
     Q_FOREACH(const QUrl& url, urls) {
-        uriHash.insert(url, resolveUrl(url, true));
+        const QUrl resolved = resolveUrl(url, true);
+        if(url.isEmpty() && lastError()) {
+            break;
+        }
+        uriHash.insert(url, resolved);
     }
     return uriHash;
 }
@@ -2318,15 +2260,14 @@ QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFil
     }
 
     else if( state == OtherUri ) {
-        bool exists =  executeQuery(QString::fromLatin1("ask where { %1 ?p ?o . }")
-                                    .arg(Soprano::Node::resourceToN3(url)),
-                                    Soprano::Query::QueryLanguageSparql).boolValue();
-        if( exists ) {
+        if( executeQuery(QString::fromLatin1("ask where { %1 ?p ?o . }")
+                         .arg(Soprano::Node::resourceToN3(url)),
+                         Soprano::Query::QueryLanguageSparql).boolValue() ) {
             return url;
         }
         // we only throw an error if the uri does not exist in the repository
         else {
-            setError(QString::fromLatin1("We donot handle unknown protocols. '%1' protocol does not exist").arg(url.scheme()),
+            setError(QString::fromLatin1("Unknown protocol '%1' encountered.").arg(url.scheme()),
                      Soprano::Error::ErrorInvalidArgument);
             return QUrl();
         }
@@ -2539,6 +2480,76 @@ bool Nepomuk::DataManagementModel::containsResourceWithProtectedType(const QSet<
 Nepomuk::ResourceWatcherManager* Nepomuk::DataManagementModel::resourceWatcherManager() const
 {
     return d->m_watchManager;
+}
+
+void Nepomuk::DataManagementModel::removeAllResources(const QSet<QUrl> &resolvedResources, RemovalFlags flags)
+{
+    //
+    // Handle the sub-resources:
+    // this has to be done before deleting the resouces in resolvedResources. Otherwise the nao:hasSubResource relationships are already gone!
+    //
+    // Explanation of the query:
+    // The query selects all subresources of the resources in resolvedResources.
+    // It then filters out the sub-resources that are related from other resources that are not the ones being deleted.
+    //
+    if(flags & RemoveSubResoures) {
+        QSet<QUrl> subResources;
+        Soprano::QueryResultIterator it
+                = executeQuery(QString::fromLatin1("select ?r where { ?r ?p ?o . "
+                                                   "?parent %1 ?r . "
+                                                   "FILTER(?parent in (%2)) . "
+                                                   "FILTER(!bif:exists((select (1) where { ?r2 ?p3 ?r . FILTER(%3) . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
+                                                   "}")
+                               .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
+                                    resourcesToN3(resolvedResources).join(QLatin1String(",")),
+                                    createResourceFilter(resolvedResources, QLatin1String("?r2"))),
+                               Soprano::Query::QueryLanguageSparql);
+        while(it.next()) {
+            subResources << it[0].uri();
+        }
+        if(!subResources.isEmpty()) {
+            removeAllResources(subResources, flags);
+        }
+    }
+
+
+    // get the graphs we need to check with removeTrailingGraphs later on
+    QSet<QUrl> graphs;
+    QSet<QUrl> actuallyRemovedResources;
+    Soprano::QueryResultIterator it
+            = executeQuery(QString::fromLatin1("select distinct ?g ?r where { graph ?g { ?r ?p ?o . } . FILTER(?r in (%1)) . }")
+                           .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                           Soprano::Query::QueryLanguageSparql);
+    while(it.next()) {
+        graphs << it[0].uri();
+        actuallyRemovedResources << it[1].uri();
+    }
+
+    // get the resources that we modify by removing relations to one of the deleted ones
+    QSet<QUrl> modifiedResources;
+    it = executeQuery(QString::fromLatin1("select distinct ?g ?o where { graph ?g { ?o ?p ?r . } . FILTER(?r in (%1)) . }")
+                      .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                      Soprano::Query::QueryLanguageSparql);
+    while(it.next()) {
+        graphs << it[0].uri();
+        modifiedResources << it[1].uri();
+    }
+    modifiedResources -= actuallyRemovedResources;
+
+
+    // remove the resources
+    foreach(const Soprano::Node& res, actuallyRemovedResources) {
+        removeAllStatements(res, Soprano::Node(), Soprano::Node());
+        removeAllStatements(Soprano::Node(), Soprano::Node(), res);
+    }
+    updateModificationDate(modifiedResources);
+    removeTrailingGraphs(graphs);
+
+    // inform interested parties
+    // TODO: ideally we should also report the types the removed resources had
+    foreach(const Soprano::Node& res, actuallyRemovedResources) {
+        d->m_watchManager->removeResource(res.uri(), QList<QUrl>());
+    }
 }
 
 #include "datamanagementmodel.moc"
