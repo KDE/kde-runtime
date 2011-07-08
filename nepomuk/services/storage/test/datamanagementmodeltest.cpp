@@ -148,6 +148,7 @@ void DataManagementModelTest::resetModel()
 
     // some ontology things we need in testStoreResources_strigiCase
     m_model->addStatement( NMM::performer(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NMM::performer(), RDFS::domain(), NMM::MusicPiece(), graph );
     m_model->addStatement( NMM::performer(), RDFS::range(), NCO::Contact(), graph );
     m_model->addStatement( NMM::musicAlbum(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NMM::musicAlbum(), RDFS::range(), NMM::MusicAlbum(), graph );
@@ -4303,6 +4304,48 @@ void DataManagementModelTest::testStoreResources_correctDomainInStore()
     QVERIFY(!m_dmModel->lastError());
 }
 
+void DataManagementModelTest::testStoreResources_correctDomainInStore2()
+{
+    SimpleResource res;
+    res.addType( NMM::MusicPiece() );
+    res.addType( NFO::FileDataObject() );
+    res.addProperty( NIE::title(), QLatin1String("Music") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), RDF::type(), NFO::FileDataObject() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl resUri = stList.first().subject().uri();
+
+    SimpleResource musicPiece;
+    musicPiece.addType( NFO::FileDataObject() );
+    // We're not giving it a nmm:MusicPiece type
+    musicPiece.addProperty( NIE::title(), QLatin1String("Music") );
+
+    SimpleResource artist;
+    artist.addType( NCO::Contact() );
+    artist.addProperty( NCO::fullname(), QLatin1String("Snow Patrol") );
+
+    // nmm:performer has a domain of nmm:MusicPiece which is already present in the store
+    musicPiece.addProperty( NMM::performer(), artist );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << musicPiece << artist,
+                               QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    // musicPiece should have gotten identified as res
+    stList = m_model->listStatements( Node(), RDF::type(), NFO::FileDataObject() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl musicPieceUri = stList.first().subject().uri();
+    QCOMPARE( musicPieceUri, resUri );
+
+    // It should have the artist
+    QVERIFY( m_model->containsAnyStatement( musicPieceUri, NMM::performer(), Node() ) );
+}
+
 // make sure that already existing resource types are taken into account for range checks
 void DataManagementModelTest::testStoreResources_correctRangeInStore()
 {
@@ -4327,6 +4370,48 @@ void DataManagementModelTest::testStoreResources_correctRangeInStore()
     QVERIFY(!m_dmModel->lastError());
 }
 
+void DataManagementModelTest::testStoreResources_correctRangeInStore2()
+{
+    SimpleResource res;
+    res.addType( NCO::Contact() );
+    res.addType( NFO::FileDataObject() );
+    res.addProperty( NCO::fullname(), QLatin1String("Jack Black") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), RDF::type(), NFO::FileDataObject() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl resUri = stList.first().subject().uri();
+
+    SimpleResource musicPiece;
+    musicPiece.addType( NFO::FileDataObject() );
+    musicPiece.addType( NMM::MusicPiece() );
+    musicPiece.addProperty( NIE::title(), QLatin1String("Music") );
+
+    SimpleResource artist;
+    artist.addType( NFO::FileDataObject() );
+    // We're not giving it the type NCO::Contact - should be inferred from the store
+    artist.addProperty( NCO::fullname(), QLatin1String("Jack Black") );
+
+    // nmm:performer has a range of nco:Contact which is already present in the store
+    musicPiece.addProperty( NMM::performer(), artist );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << musicPiece << artist,
+                               QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    // artist should have gotten identified as res
+    stList = m_model->listStatements( Node(), RDF::type(), NCO::Contact() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl artistUri = stList.first().subject().uri();
+    QCOMPARE( artistUri, resUri );
+
+    // It should have the artist
+    QVERIFY( m_model->containsAnyStatement( Node(), NMM::performer(), artistUri ) );
+}
 
 // make sure that the same values are simply merged even if encoded differently
 void DataManagementModelTest::testStoreResources_duplicateValuesAsString()
