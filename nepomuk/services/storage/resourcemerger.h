@@ -57,6 +57,9 @@ namespace Nepomuk {
         virtual Soprano::Error::ErrorCode addResMetadataStatement( const Soprano::Statement & st );
 
     private:
+        /// Can set the error
+        QMultiHash<QUrl, Soprano::Node> toNodeHash( const QHash<QUrl, QVariant> &hash );
+
         /**
          * Each statement that is being merged and already exists, belongs to a graph. This hash
          * maps that oldGraph -> newGraph.
