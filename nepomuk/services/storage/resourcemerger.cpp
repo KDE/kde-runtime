@@ -97,48 +97,30 @@ QHash< QUrl, QVariant > Nepomuk::ResourceMerger::additionalMetadata() const
     return m_additionalMetadata;
 }
 
-bool Nepomuk::ResourceMerger::resolveStatement(Soprano::Statement& st)
+Soprano::Statement Nepomuk::ResourceMerger::resolveStatement(const Soprano::Statement& st)
 {
     if( !st.isValid() ) {
         QString error = QString::fromLatin1("Invalid statement encountered");
-        return false;
+        setError( error, Soprano::Error::ErrorInvalidStatement );
+        return Soprano::Statement();
     }
 
-    QUrl resolvedSubject = resolve( st.subject() );
-    if( !resolvedSubject.isValid() ) {
-        QString error = QString::fromLatin1("Subject - %1 resolution failed")
-        .arg( st.subject().toN3() );
-        kDebug() << error;
-        setError( error );
-        return false;
-    }
+    Soprano::Node resolvedSubject = resolveMappedNode( st.subject() );
+    if( lastError() )
+        return Soprano::Statement();
 
-    st.setSubject( resolvedSubject );
+    Soprano::Statement newSt( st );
+    newSt.setSubject( resolvedSubject );
+
     Soprano::Node object = st.object();
-    if( (object.isResource() && object.uri().scheme() == QLatin1String("nepomuk") )
-        || object.isBlank() ) {
-        QUrl resolvedObject = resolve( object );
-        if( resolvedObject.isEmpty() ) {
-            QString error = QString::fromLatin1("Object - %1 resolution failed")
-                            .arg( object.toN3() );
-            kDebug() << error;
-            setError( error );
-            return false;
-        }
-        st.setObject( resolvedObject );
+    if( ( object.isResource() && object.uri().scheme() == QLatin1String("nepomuk") ) || object.isBlank() ) {
+        Soprano::Node resolvedObject = resolveMappedNode( object );
+        if( lastError() )
+            return Soprano::Statement();
+        newSt.setObject( resolvedObject );
     }
 
-    return true;
-}
-
-
-bool Nepomuk::ResourceMerger::mergeStatement(const Soprano::Statement& statement)
-{
-    Soprano::Statement st( statement );
-    if( !resolveStatement( st ) )
-        return false;
-
-    return push( st );
+    return newSt;
 }
 
 
@@ -170,20 +152,6 @@ bool Nepomuk::ResourceMerger::push(const Soprano::Statement& st)
     statement.setContext( m_graph );
     //kDebug() << "Pushing - " << statement;
     return addStatement( statement ) == Soprano::Error::ErrorNone;
-}
-
-
-QUrl Nepomuk::ResourceMerger::resolve(const Soprano::Node& n)
-{
-    const QUrl oldUri = n.isResource() ? n.uri() : QUrl( n.toN3() );
-
-    // Find in mappings
-    QHash< KUrl, KUrl >::const_iterator it = m_mappings.constFind( oldUri );
-    if( it != m_mappings.constEnd() ) {
-        return it.value();
-    } else {
-        return resolveUnidentifiedResource( oldUri );
-    }
 }
 
 Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::Node& subject, const Soprano::Node& property, const Soprano::Node& object, const Soprano::Node& graph)
@@ -509,25 +477,6 @@ bool Nepomuk::ResourceMerger::checkGraphMetadata(const QMultiHash< QUrl, Soprano
     return true;
 }
 
-
-QUrl Nepomuk::ResourceMerger::resolveUnidentifiedResource(const QUrl& uri)
-{
-    // If it is a nepomuk:/ uri, just add it as it is.
-    // FIXME: What if this uri doesn't exist?
-    if( uri.scheme() == QLatin1String("nepomuk") )
-        return uri;
-    else if( uri.toString().startsWith("_:") )  { // Blank node
-        //TODO: Make sure the resource gets its metadata -> nao:created, nao:lastModified
-        // This is currently done by adding extra nao:create and nao:lastModified statements
-        // in storeResources, before calling merge
-        QUrl newUri = createResourceUri();
-        m_mappings.insert( uri, newUri );
-        return newUri;
-    }
-
-    return QUrl();
-}
-
 QUrl Nepomuk::ResourceMerger::createResourceUri()
 {
     return m_model->createUri( DataManagementModel::ResourceUri );
@@ -577,6 +526,63 @@ bool Nepomuk::ResourceMerger::isOfType(const Soprano::Node & node, const QUrl& t
     return false;
 }
 
+Soprano::Node Nepomuk::ResourceMerger::resolveMappedNode(const Soprano::Node& node)
+{
+    // Find in mappings
+    const QUrl uri = node.isBlank() ? node.toN3() : node.uri();
+    QHash< KUrl, KUrl >::const_iterator it = m_mappings.constFind( uri );
+    if( it != m_mappings.constEnd() ) {
+        return it.value();
+    }
+
+    // Do not resolve the blank nodes which need to be created
+    if( node.isBlank() )
+        return node;
+
+    // If it is a nepomuk:/ uri, just add it as it is.
+    // FIXME: What if this uri doesn't exist?
+    if( uri.scheme() == QLatin1String("nepomuk") ) {
+        return node;
+    }
+
+    return node;
+
+    //This should never happen
+    //QString error = QString::fromLatin1("Could not resolve ").arg( node.toN3() );
+    //setError( error, Soprano::Error::ErrorInvalidStatement );
+    //return Soprano::Node();
+}
+
+Soprano::Node Nepomuk::ResourceMerger::resolveUnmappedNode(const Soprano::Node& node)
+{
+    if( !node.isBlank() )
+        return node;
+
+    QHash< KUrl, KUrl >::const_iterator it = m_mappings.constFind( QUrl(node.toN3()) );
+    if( it != m_mappings.constEnd() ) {
+        return it.value();
+    }
+
+    //TODO: Make sure the resource gets its metadata -> nao:created, nao:lastModified
+    // This is currently done by adding extra nao:create and nao:lastModified statements
+    // in storeResources, before calling merge
+    QUrl newUri = createResourceUri();
+    m_mappings.insert( QUrl(node.toN3()), newUri );
+    return newUri;
+}
+
+void Nepomuk::ResourceMerger::resolveBlankNodesInList(QList<Soprano::Statement> *stList)
+{
+    QMutableListIterator<Soprano::Statement> iter( *stList );
+    while( iter.hasNext() ) {
+        Soprano::Statement &st = iter.next();
+
+        st.setSubject( resolveUnmappedNode(st.subject()) );
+        st.setObject( resolveUnmappedNode(st.object()) );
+    }
+}
+
+
 namespace {
     QUrl getBlankOrResourceUri( const Soprano::Node & n ) {
         if( n.isResource() ) {
@@ -595,7 +601,8 @@ namespace {
     }
 }
 
-bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
+
+bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
 {
     //
     // Check if the additional metadata is valid
@@ -606,6 +613,20 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
 
     if( !checkGraphMetadata( additionalMetadata ) ) {
         return false;
+    }
+
+    //
+    // Resolve all the mapped statements
+    //
+    // FIXME: Use toSet() once 4.7 has released. toSet() is faster, but it requires a newer version
+    //        of Soprano
+    QList<Soprano::Statement> statements = stGraph.toList();
+    QMutableListIterator<Soprano::Statement> it( statements );
+    while( it.hasNext() ) {
+        Soprano::Statement &st = it.next();
+        st = resolveStatement( st );
+        if( lastError() )
+            return false;
     }
 
     //
@@ -622,7 +643,7 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
     QList<Soprano::Statement> typeStatements;
     QList<Soprano::Statement> metadataStatements;
 
-    foreach( const Soprano::Statement & st, stGraph.toList() ) {
+    foreach( const Soprano::Statement & st, statements ) {
         const QUrl subUri = getBlankOrResourceUri( st.subject() );
         const QUrl objUri = getBlankOrResourceUri( st.object() );
 
@@ -772,34 +793,34 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
 
     } // foreach
 
-    // The graph is error free. Merge its statements except for the resource metadata statements
-    const QList<Soprano::Statement> statements = remainingStatements + typeStatements;
-    foreach( const Soprano::Statement & st, statements ) {
+    // The graph is error free.
+
+    // Create all the blank nodes
+    resolveBlankNodesInList( &remainingStatements );
+    resolveBlankNodesInList( &typeStatements );
+    resolveBlankNodesInList( &metadataStatements );
+
+
+    //Merge its statements except for the resource metadata statements
+    const QList<Soprano::Statement> mergeStatements = remainingStatements + typeStatements;
+    foreach( const Soprano::Statement & st, mergeStatements ) {
 
         // In OverwriteProperties mode, when maxCardinality == 1, we must
         // remove the old property before adding the new one.
         // In LazyCardinalities mode, we just don't care.
         if( tree->maxCardinality(  st.predicate().uri() ) == 1 ) {
             const bool lazy = ( m_flags & LazyCardinalities );
-            kDebug() << "LAZY : " << lazy;
-            kDebug() << st;
             const bool overwrite = (m_flags & OverwriteProperties) &&
                              tree->maxCardinality( st.predicate().uri() ) == 1;
 
             if( lazy || overwrite ) {
                 // FIXME: This may create some empty graphs
-                Soprano::Statement statement( st );
-                if( resolveStatement(statement) ) {
-                    m_model->removeAllStatements( statement.subject(), statement.predicate(), Soprano::Node() );
-                }
-                else {
-                    // Resolution failed. resolveStatement would have set the error
-                    return false;
-                }
+                // Store them somewhere and remove them if they are now empty
+                m_model->removeAllStatements( st.subject(), st.predicate(), Soprano::Node() );
             }
         }
 
-        if(!mergeStatement( st )) {
+        if(!push( st )) {
             kDebug() << "Merge statement error: " << lastError();
             return false;
         }
@@ -818,9 +839,7 @@ bool Nepomuk::ResourceMerger::merge(const Soprano::Graph& stGraph )
 
     // then push the individual metadata statements
     foreach( Soprano::Statement st, metadataStatements ) {
-        if( resolveStatement( st ) ) {
-            addResMetadataStatement( st );
-        }
+        addResMetadataStatement( st );
     }
 
     return true;
