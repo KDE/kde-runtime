@@ -2415,7 +2415,7 @@ void KCMLocale::initWeekNumberSystem()
                               "occurrence of the <i>First day of the week</i>, and lasts for "
                               "seven days. The first week may not contain seven days.</li>"
                               "<li><b>Simple Week</b> The first week starts on the first day of the "
-                              "year and lasts seven days, will all new weeks starting on the same "
+                              "year and lasts seven days, with all new weeks starting on the same "
                               "weekday as the first day of the year.</li>"
                               "</ul>"
                             ).toString( m_kcmLocale );
