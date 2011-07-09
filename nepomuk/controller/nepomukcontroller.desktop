@@ -2,6 +2,7 @@
 Name=Nepomuk File Indexing Controller
 Name[bs]=Nepomuk kontrolor indeksiranja datoteka
 Name[ca]=Controlador de l'indexador de fitxers Nepomuk
+Name[ca@valencia]=Controlador de l'indexador de fitxers Nepomuk
 Name[cs]=Správce indexování souborů Nepomuku
 Name[da]=Kontrol af Nepomuk filindeksering
 Name[de]=Steuerung der Nepomuk-Datei-Indizierung
@@ -37,6 +38,7 @@ Name[zh_TW]=Nepomuk 檔案索引控制器
 Comment=System tray icon to control the behaviour of the Nepomuk file indexer
 Comment[bs]=Ikona u sistemskom uglu za kontrolu ponapanja Nepomuk indeksiranja datoteka
 Comment[ca]=Icona de la safata del sistema per controlar el comportament de l'indexador de fitxers Nepomuk
+Comment[ca@valencia]=Icona de la safata del sistema per controlar el comportament de l'indexador de fitxers Nepomuk
 Comment[cs]=Ikona v systémové části panelu pro ovládání chování indexeru souborů Nepomuk
 Comment[da]=Statusikon til at kontrollere opførsel af Nepomuk filindeksering
 Comment[de]=Symbol im Systemabschnitt der Kontrollleiste, um das Verhalten der Nepomuk-Datei-Indizierung zu steuern
