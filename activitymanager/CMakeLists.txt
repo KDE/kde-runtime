@@ -63,10 +63,15 @@ set(activity_manager_SRCS
     main.cpp
     )
 
+if(Nepomuk_FOUND)
+  set(activity_manager_backends_SRCS
+      NepomukEventBackend.cpp
+      NepomukResourceScoreMaintainer.cpp
+      NepomukResourceScoreCache.cpp
+      )
+endif()
+
 set(activity_manager_backends_SRCS
-    NepomukEventBackend.cpp
-    NepomukResourceScoreMaintainer.cpp
-    NepomukResourceScoreCache.cpp
     ZeitgeistEventBackend.cpp
     SlcEventBackend.cpp
     )
