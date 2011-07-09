@@ -72,6 +72,7 @@ if(Nepomuk_FOUND)
 endif()
 
 set(activity_manager_backends_SRCS
+    ${activity_manager_backends_SRCS}
     ZeitgeistEventBackend.cpp
     SlcEventBackend.cpp
     )
