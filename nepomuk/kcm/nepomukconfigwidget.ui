@@ -250,7 +250,7 @@
                <string comment="@info:tooltip">Indexing of files on removable media</string>
               </property>
               <property name="whatsThis">
-               <string comment="@info:whatsthis">&lt;para&gt;Nepomuk can index files on removable device like USB keys or external hard-disks for fast desktop searches.&lt;/para&gt;
+               <string comment="@info:whatsthis">&lt;para&gt;Nepomuk can index files on removable devices like USB keys or external hard-disks for fast desktop searches.&lt;/para&gt;
 &lt;para&gt;By default no files are indexed. Here this behaviour can be changed to one of two options:&lt;/para&gt;
 &lt;para&gt;&lt;list&gt;&lt;item&gt;&lt;interface&gt;Index files on all removable devices&lt;/interface&gt; - Files on removable media are indexed as soon as the medium is mounted. Caution: this does not include media which have been rejected via the second option.&lt;/item&gt;
 &lt;item&gt;&lt;interface&gt;Ask individually when newly mounted&lt;/interface&gt; - The user will be asked to decide if files on the newly mounted medium should be indexed or not. Once decided Nepomuk will not ask again.&lt;/item&gt;&lt;/list&gt;&lt;/para&gt;</string>
