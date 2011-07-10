@@ -76,7 +76,7 @@ endif()
 set(activity_manager_backends_SRCS
     ${activity_manager_backends_SRCS}
     ZeitgeistEventBackend.cpp
-    SlcEventBackend.cpp
+    # SlcEventBackend.cpp
     )
 
 qt4_add_dbus_adaptor(
@@ -84,10 +84,10 @@ qt4_add_dbus_adaptor(
     ActivityManager.h ActivityManager
     )
 
-qt4_add_dbus_adaptor(
-    activity_manager_SRCS org.kde.ActivityManager.SLC.xml
-    SlcEventBackend.h SlcEventBackend
-    )
+# qt4_add_dbus_adaptor(
+#     activity_manager_SRCS org.kde.ActivityManager.SLC.xml
+#     SlcEventBackend.h SlcEventBackend
+#     )
 
 if(Nepomuk_FOUND)
     soprano_add_ontology(activity_manager_SRCS
