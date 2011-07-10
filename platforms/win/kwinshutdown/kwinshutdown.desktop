@@ -1,10 +1,12 @@
 [Desktop Entry]
 Name=KDE Shutdown
+Name[bg]=Изключване на KDE
 Name[bs]=Gašenje KDE‑a
 Name[ca]=Aturada del KDE
 Name[ca@valencia]=Aturada del KDE
 Name[cs]=Vypínání KDE
 Name[da]=Nedlukning af KDE 
+Name[de]=KDE beenden
 Name[es]=Apagado de KDE
 Name[et]=KDE seiskamine
 Name[fi]=KDE:n sammutus
@@ -39,10 +41,12 @@ Name[th]=ปิดระบบ KDE
 Name[tr]=KDE Kapat
 Name[ug]=KDE تاقا
 Name[uk]=Завершення роботи KDE
+Name[wa]=Aresse di KDE
 Name[x-test]=xxKDE Shutdownxx
 Name[zh_CN]=KDE 关闭
 Name[zh_TW]=關閉 KDE
 Comment=kill running KDE applications and processes
+Comment[bg]=убиване на работещите програми и процеси на KDE
 Comment[bs]=Ugasite sve KDE programe i procese u pogonu
 Comment[ca]=Mata totes les aplicacions i processos en execució del KDE
 Comment[ca@valencia]=Mata totes les aplicacions i processos en execució del KDE
