@@ -60,7 +60,6 @@ set(activity_manager_SRCS
     ActivityManager.cpp
     EventProcessor.cpp
     EventBackend.cpp
-    EventBackendLoader.cpp
     Event.cpp
     SharedInfo.cpp
     main.cpp

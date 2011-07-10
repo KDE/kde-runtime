@@ -38,7 +38,6 @@
 
 #include "activitymanageradaptor.h"
 #include "EventProcessor.h"
-#include "EventBackendLoader.h"
 
 #include "config-features.h"
 
@@ -124,8 +123,6 @@ ActivityManagerPrivate::ActivityManagerPrivate(ActivityManager * parent,
         ksmserverInterface->deleteLater();
         ksmserverInterface = 0;
     }
-
-    EventBackendLoader(this).loadPlugins();
 }
 
 ActivityManagerPrivate::~ActivityManagerPrivate()

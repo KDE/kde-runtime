@@ -32,12 +32,16 @@
 #endif
 
 #include "SlcEventBackend.h"
+#include "EventBackend.h"
+
+#include <KDebug>
 
 #include <QDateTime>
 #include <QList>
 #include <QMutex>
 
 #include <KDebug>
+#include <KServiceTypeTrader>
 
 #include <time.h>
 
@@ -104,6 +108,43 @@ EventProcessor::EventProcessor()
     d->lazyBackends.append(new NepomukEventBackend());
 #endif
     d->syncBackends.append(new SlcEventBackend());
+
+    // Plugin loading
+
+    kDebug() << "Loading plugins...";
+
+    KService::List offers = KServiceTypeTrader::self()->query("ActivityManager/Plugin");
+
+    foreach(const KService::Ptr & service, offers) {
+        kDebug() << "Loading plugin:"
+            << service->name()
+            << service->property("X-ActivityManager-PluginType", QVariant::String);
+
+        KPluginFactory * factory = KPluginLoader(service->library()).factory();
+
+        if (!factory) {
+            kDebug() << "Failed to load plugin:" << service->name();
+            continue;
+        }
+
+        EventBackend * plugin = factory->create < EventBackend > (this);
+
+        if (plugin) {
+            const QString & type = service->property("X-ActivityManager-PluginType", QVariant::String).toString();
+
+            if (type == "lazyeventhandler") {
+                d->lazyBackends << plugin;
+
+            } else if (type == "synceventhandler"){
+                d->syncBackends << plugin;
+
+            }
+
+        } else {
+            kDebug() << "Failed to load plugin:" << service->name();
+        }
+
+    }
 }
 
 EventProcessor::~EventProcessor()

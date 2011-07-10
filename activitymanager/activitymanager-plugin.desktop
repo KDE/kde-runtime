@@ -4,6 +4,9 @@ X-KDE-ServiceType=ActivityManager/Plugin
 
 Comment=Activity manager plugin
 
-[PropertyDef::X-PluginType]
+[PropertyDef::X-ActivityManager-PluginType]
+Type=QString
+
+[PropertyDef::X-ActivityManager-PluginOverrides]
 Type=QString
 

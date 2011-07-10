@@ -18,6 +18,7 @@
 #include "dummy.h"
 
 #include <KDebug>
+#include "ActivityManager.h"
 
 DummyPlugin::DummyPlugin(QObject * parent, const QVariantList & args)
     : EventBackend(parent)
