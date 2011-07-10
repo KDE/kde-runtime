@@ -57,7 +57,8 @@ using namespace Soprano::Vocabulary;
 using namespace Nepomuk::Vocabulary;
 using namespace Nepomuk::Query;
 
-NepomukEventBackend::NepomukEventBackend()
+NepomukEventBackend::NepomukEventBackend(QObject * parent)
+    : EventBackend(parent)
 {
 }
 

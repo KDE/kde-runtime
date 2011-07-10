@@ -1,9 +1,11 @@
 project(ActivityManager)
 
-set (ADDITIONAL_LINK_LIBS)
+set(ADDITIONAL_LINK_LIBS)
 
 add_subdirectory(kded)
-add_subdirectory(ontologies)
+# add_subdirectory(ontologies)
+
+add_subdirectory(plugins)
 
 # Checking for Nepomuk
 macro_optional_find_package(Nepomuk)
@@ -58,6 +60,7 @@ set(activity_manager_SRCS
     ActivityManager.cpp
     EventProcessor.cpp
     EventBackend.cpp
+    EventBackendLoader.cpp
     Event.cpp
     SharedInfo.cpp
     main.cpp
@@ -134,4 +137,10 @@ install(
 install(
     TARGETS activity-manager ${INSTALL_TARGETS_DEFAULT_ARGS}
     )
+
+install(FILES
+    activitymanager-plugin.desktop
+    DESTINATION ${SERVICETYPES_INSTALL_DIR}
+    )
+
 

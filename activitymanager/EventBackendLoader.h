@@ -1,6 +1,5 @@
 /*
  *   Copyright (C) 2011 Ivan Cukic <ivan.cukic(at)kde.org>
- *   Copyright (c) 2011 Sebastian Trueg <trueg@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License version 2,
@@ -18,30 +17,21 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef NEPOMUK_EVENT_BACKEND_H_
-#define NEPOMUK_EVENT_BACKEND_H_
+#include <QObject>
 
 #include "EventBackend.h"
 
-#include <Nepomuk/Resource>
-
-class KUrl;
-class QDateTime;
-
 /**
- *
+ * TODO: Move to EventProcessor
+ * Developed separately for testing purposes
  */
-class NepomukEventBackend: public EventBackend {
+class EventBackendLoader: public QObject {
 public:
-    NepomukEventBackend(QObject * parent = 0);
+    EventBackendLoader(QObject * parent);
+    virtual ~EventBackendLoader();
 
-    virtual void addEvents(const EventList & events);
+    void loadPlugins();
 
-private:
-    Nepomuk::Resource createDesktopEvent(const KUrl& uri, const QDateTime& startTime, const QString& app);
-
-    Nepomuk::Resource m_currentActivity;
+Q_SIGNALS:
+    void pluginLoaded();
 };
-
-#endif // NEPOMUK_EVENT_BACKEND_H_
-

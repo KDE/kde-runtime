@@ -28,12 +28,12 @@
 /**
  *
  */
-class SlcEventBackend: public QObject, public EventBackend {
+class SlcEventBackend: public EventBackend {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.kde.ActivityManager.SLC")
 
 public:
-    SlcEventBackend();
+    SlcEventBackend(QObject * parent = 0);
 
     virtual void addEvents(const EventList & events);
 

@@ -27,8 +27,8 @@
 
 #include "SharedInfo.h"
 
-SlcEventBackend::SlcEventBackend()
-    : focussedWindow(0)
+SlcEventBackend::SlcEventBackend(QObject * parent)
+    : EventBackend(parent), focussedWindow(0)
 {
     QDBusConnection dbus = QDBusConnection::sessionBus();
     new SLCAdaptor(this);

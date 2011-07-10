@@ -23,17 +23,31 @@
 #include <EventProcessor.h>
 #include "Event.h"
 
+#include <kdemacros.h>
+#include <KPluginFactory>
+#include <KPluginLoader>
+
+#define KAMD_EXPORT_PLUGIN(ClassName, AboutData)                       \
+    K_PLUGIN_FACTORY(ClassName##Factory, registerPlugin<ClassName>();) \
+    K_EXPORT_PLUGIN(ClassName##Factory("AboutData"))
+
+
 /**
  *
  */
-class EventBackend {
+class KDE_EXPORT EventBackend: public QObject {
+    Q_OBJECT
+
 public:
-    EventBackend();
+    EventBackend(QObject * parent);
     virtual ~EventBackend();
 
     virtual void addEvents(const EventList & events);
     virtual void setResourceMimeType(const QString & uri, const QString & mimetype);
 
+private:
+    class Private;
+    Private * const d;
 };
 
 #endif // EVENT_BACKEND_H_

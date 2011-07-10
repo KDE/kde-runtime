@@ -19,12 +19,17 @@
 
 #include "EventBackend.h"
 
-EventBackend::EventBackend()
+class EventBackend::Private {
+};
+
+EventBackend::EventBackend(QObject * parent)
+    : QObject(parent), d(new Private())
 {
 }
 
 EventBackend::~EventBackend()
 {
+    delete d;
 }
 
 void EventBackend::addEvents(const EventList & events)
