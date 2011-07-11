@@ -2992,7 +2992,6 @@ void DataManagementModelTest::testStoreResources_strigiCase()
     album.addProperty( NIE::title(), "X&Y" );
 
     Nepomuk::SimpleResource res1;
-    res1.setUri( QUrl("nepomuk:/res/m/Res1") );
     res1.addProperty( RDF::type(), NFO::FileDataObject() );
     res1.addProperty( RDF::type(), NMM::MusicPiece() );
     res1.addProperty( NFO::fileName(), "Yellow.mp3" );
@@ -3008,34 +3007,39 @@ void DataManagementModelTest::testStoreResources_strigiCase()
     m_dmModel->storeResources( resGraph, "TestApp" );
     QVERIFY( !m_dmModel->lastError() );
 
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), Soprano::Node(),
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), RDF::type(), NMM::MusicPiece() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl res1Uri = stList.first().subject().uri();
+
+    QVERIFY( m_model->containsAnyStatement( res1Uri, Soprano::Node(),
                                             Soprano::Node() ) );
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), NFO::fileName(),
+    QVERIFY( m_model->containsAnyStatement( res1Uri, NFO::fileName(),
                                             Soprano::LiteralValue("Yellow.mp3") ) );
     // Make sure we have the nao:created and nao:lastModified
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), NAO::lastModified(),
+    QVERIFY( m_model->containsAnyStatement( res1Uri, NAO::lastModified(),
                                             Soprano::Node() ) );
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), NAO::created(),
+    QVERIFY( m_model->containsAnyStatement( res1Uri, NAO::created(),
                                             Soprano::Node() ) );
-    kDebug() << m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements();
+    kDebug() << m_model->listStatements( res1Uri, Soprano::Node(), Soprano::Node() ).allStatements();
     // The +2 is because nao:created and nao:lastModified would have also been added
-    QCOMPARE( m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements().size(),
+    QCOMPARE( m_model->listStatements( res1Uri, Soprano::Node(), Soprano::Node() ).allStatements().size(),
                 res1.properties().size() + 2 );
 
-    QList< Node > objects = m_model->listStatements( res1.uri(), NMM::performer(), Soprano::Node() ).iterateObjects().allNodes();
+    QList< Node > objects = m_model->listStatements( res1Uri, NMM::performer(), Soprano::Node() ).iterateObjects().allNodes();
 
     QVERIFY( objects.size() == 1 );
     QVERIFY( objects.first().isResource() );
 
     QUrl coldplayUri = objects.first().uri();
     QCOMPARE( coldplayUri, QUrl("nepomuk:/res/coldplay") );
-    QList< Soprano::Statement > stList = coldplay.toStatementList();
+    stList = coldplay.toStatementList();
     foreach( Soprano::Statement st, stList ) {
         st.setSubject( coldplayUri );
         QVERIFY( m_model->containsAnyStatement( st ) );
     }
 
-    objects = m_model->listStatements( res1.uri(), NMM::musicAlbum(), Soprano::Node() ).iterateObjects().allNodes();
+    objects = m_model->listStatements( res1Uri, NMM::musicAlbum(), Soprano::Node() ).iterateObjects().allNodes();
 
     QVERIFY( objects.size() == 1 );
     QVERIFY( objects.first().isResource() );
@@ -3222,13 +3226,13 @@ void DataManagementModelTest::testStoreResources_createResource()
 
 
     // create a resource by specifying the URI
-    SimpleResource res2;
-    res2.setUri(QUrl("nepomuk:/res/A"));
-    res2.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("foobar")));
-    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"));
-    QVERIFY( !m_dmModel->lastError() );
-
-    QVERIFY(m_model->containsAnyStatement( res2.uri(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+//     SimpleResource res2;
+//     res2.setUri(QUrl("nepomuk:/res/A"));
+//     res2.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("foobar")));
+//     m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"));
+//     QVERIFY( !m_dmModel->lastError() );
+//
+//     QVERIFY(m_model->containsAnyStatement( res2.uri(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
 
     QVERIFY(!haveTrailingGraphs());
 }
@@ -3473,26 +3477,31 @@ void DataManagementModelTest::testStoreResources_file2()
     const QUrl fileUrl = QUrl::fromLocalFile(fileA.fileName());
 
     SimpleResource r1;
-    r1.setUri(QUrl("nepomuk:/res/A"));
     r1.addProperty(QUrl("prop:/res"), fileUrl);
 
     m_dmModel->storeResources(SimpleResourceGraph() << r1, QLatin1String("testapp"));
     QVERIFY( !m_dmModel->lastError() );
 
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), QUrl("prop:/res"), Node() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl r1Uri = stList.first().subject().uri();
+
     // the property should have been created
-    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), Node()));
+    QVERIFY(m_model->containsAnyStatement(r1Uri, QUrl("prop:/res"), Node()));
 
     // but it should not be related to the file URL
-    QVERIFY(!m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), fileUrl));
+    QVERIFY(!m_model->containsAnyStatement(r1Uri, QUrl("prop:/res"), fileUrl));
 
     // there should be a nie:url for the file URL
     QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), fileUrl));
 
     // make sure file URL and res URI are properly related including the properties
-    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { <nepomuk:/res/A> <prop:/res> ?r . "
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { %3 <prop:/res> ?r . "
                                                       "?r %1 %2 . }")
                                   .arg(Node::resourceToN3(NIE::url()),
-                                       Node::resourceToN3(fileUrl)),
+                                       Node::resourceToN3(fileUrl),
+                                       Node::resourceToN3(r1Uri)),
                                   Query::QueryLanguageSparql).boolValue());
 
     QVERIFY(!haveTrailingGraphs());
