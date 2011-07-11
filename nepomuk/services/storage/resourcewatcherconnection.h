@@ -47,17 +47,17 @@ namespace Nepomuk {
         Q_SCRIPTABLE void resourceTypeRemoved( const QString & resUri, const QString & type );
         Q_SCRIPTABLE void propertyAdded( const QString & resource,
                                          const QString & property,
-                                         const QVariant & value );
+                                         const QDBusVariant & value );
         Q_SCRIPTABLE void propertyRemoved( const QString & resource,
                                            const QString & property,
-                                           const QVariant & value );
+                                           const QDBusVariant & value );
 
     public Q_SLOTS:
         Q_SCRIPTABLE void close();
 
     public:
         bool hasProperties() const;
-        
+
         QDBusObjectPath registerDBusObject(const QString &dbusClient, int id);
 
     private:
