@@ -527,11 +527,17 @@ namespace {
         }
         return QUrl();
     }
-}
 
-namespace {
     QUrl xsdDuration() {
         return QUrl( Soprano::Vocabulary::XMLSchema::xsdNamespace().toString() + QLatin1String("duration") );
+    }
+
+    QStringList nodesToN3( const QList<Soprano::Node> &nodes ) {
+        QStringList list;
+        foreach( const Soprano::Node& node, nodes ) {
+            list << node.toN3();
+        }
+        return list;
     }
 }
 
@@ -566,9 +572,14 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
     //
     // Check the statement metadata
     //
-    QMultiHash<QUrl, QUrl> types;
-    QHash<QPair<QUrl,QUrl>, int> cardinality;
 
+    /// Maps a resource to all its types
+    QMultiHash<QUrl, QUrl> types;
+
+    /// Maps <sub,pred> pair to all its values
+    QMultiHash<QPair<QUrl,QUrl>, Soprano::Node> cardinality;
+
+    ClassAndPropertyTree * tree = m_model->classAndPropertyTree();
     //
     // First separate all the statements predicate rdf:type.
     // and collect info required to check the types and cardinality
@@ -598,45 +609,53 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
         }
 
         // Get the cardinality
-        QPair<QUrl,QUrl> subPredPair( subUri, st.predicate().uri() );
-
-        QHash< QPair< QUrl, QUrl >, int >::iterator it = cardinality.find( subPredPair );
-        if( it != cardinality.end() ) {
-            it.value()++;
+        if( tree->maxCardinality( prop ) > 0 ) {
+            QPair<QUrl,QUrl> subPredPair( subUri, st.predicate().uri() );
+            cardinality.insert( subPredPair, st.object() );
         }
-        else
-            cardinality.insert( subPredPair, 1 );
     }
 
-    //
-    // Check the cardinality + domain/range of remaining statements
-    //
-    ClassAndPropertyTree * tree = m_model->classAndPropertyTree();
 
-    // FIXME: This is really inefficent
-    foreach( const Soprano::Statement & st, remainingStatements ) {
-        const QUrl subUri = getBlankOrResourceUri( st.subject() );
-        const QUrl & propUri = st.predicate().uri();
-        //
-        // Check for Cardinality
-        //
-        QPair<QUrl,QUrl> subPredPair( subUri, propUri );
+    //
+    // Check the cardinality
+    //
+    QMultiHash<QPair<QUrl,QUrl>, Soprano::Node>::const_iterator cIter = cardinality.constBegin();
+    QMultiHash<QPair<QUrl,QUrl>, Soprano::Node>::const_iterator cIterEnd = cardinality.constEnd();
+    for( ; cIter != cIterEnd; ) {
+        const QPair<QUrl,QUrl> subPredPair = cIter.key();
+        QList<Soprano::Node> objectValues;
+        for( ; cIter != cIterEnd && cIter.key() == subPredPair ; cIter++ ) {
+            objectValues << cIter.value();
+        }
+
+        const QUrl subUri = subPredPair.first;
+        const QUrl propUri = subPredPair.second;
 
         int maxCardinality = tree->maxCardinality( propUri );
 
         if( maxCardinality > 0 ) {
-            int existingCardinality = 0;
-            if(!st.subject().isBlank()) {
-                existingCardinality = m_model->executeQuery(QString::fromLatin1("select count(distinct ?v) where { %1 %2 ?v . FILTER(?v!=%3) . }")
-                                                            .arg(st.subject().toN3(), st.predicate().toN3(), st.object().toN3()),
-                                                            Soprano::Query::QueryLanguageSparql)
-                    .iterateBindings(0)
-                    .allNodes().first().literal().toInt();
-            }
-            const int stCardinality = cardinality.value( subPredPair );
-            const int newCardinality = stCardinality + existingCardinality;
 
-            if( newCardinality > maxCardinality) {
+            QStringList filterStringList;
+            QStringList objectN3 = nodesToN3( objectValues );
+            foreach( const QString &n3, objectN3 )
+                filterStringList << QString::fromLatin1("?v!=%1").arg( n3 );
+
+            const QString query = QString::fromLatin1("select count(distinct ?v) where {"
+                                                        " %1 %2 ?v ."
+                                                        "FILTER( %3 ) . }")
+                                    .arg( Soprano::Node::resourceToN3( subUri ),
+                                        Soprano::Node::resourceToN3( propUri ),
+                                        filterStringList.join( QLatin1String(" && ") ) );
+
+            int existingCardinality = m_model->executeQuery( query,
+                                                            Soprano::Query::QueryLanguageSparql )
+                                      .iterateBindings(0)
+                                      .allNodes().first().literal().toInt();
+
+            const int newCardinality = objectValues.size() + existingCardinality;
+
+            // TODO: This can be made faster by not calculating all these values when flags are set
+            if( newCardinality > maxCardinality ) {
                 // Special handling for max Cardinality == 1
                 if( maxCardinality == 1 ) {
                     // If the difference is 1, then that is okay, as the OverwriteProperties flag
@@ -651,12 +670,22 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
                     continue;
                 }
 
-                setError( QString::fromLatin1("%1 has a max cardinality of %2")
-                                .arg( st.predicate().toString()).arg( maxCardinality ),
-                                Soprano::Error::ErrorInvalidStatement);
+                // TODO: Maybe list the existing values as well?
+                QString error = QString::fromLatin1("%1 has a max cardinality of %2. Provided "
+                                                    "%3 values - %4")
+                                .arg( propUri.toString(),
+                                      QString::number(maxCardinality),
+                                      QString::number(objectN3.size()),
+                                      objectN3.join(QLatin1String(", ")) );
+                setError( error, Soprano::Error::ErrorInvalidStatement );
                 return false;
             }
         }
+    }
+
+    foreach( const Soprano::Statement & st, remainingStatements ) {
+        const QUrl subUri = getBlankOrResourceUri( st.subject() );
+        const QUrl &propUri = st.predicate().uri();
 
         //
         // Check for rdfs:domain and rdfs:range
