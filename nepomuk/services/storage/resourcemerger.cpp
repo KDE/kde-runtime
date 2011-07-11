@@ -139,18 +139,24 @@ QUrl Nepomuk::ResourceMerger::graph()
 
 bool Nepomuk::ResourceMerger::push(const Soprano::Statement& st)
 {
-    Soprano::Statement statement( st );
-    if( m_model->containsAnyStatement( st.subject(), st.predicate(), st.object() ) ) {
-        return resolveDuplicate( statement );
+    ClassAndPropertyTree *tree = ClassAndPropertyTree::self();
+    if( tree->maxCardinality(  st.predicate().uri() ) == 1 ) {
+        const bool lazy = ( m_flags & LazyCardinalities );
+        const bool overwrite = (m_flags & OverwriteProperties) &&
+        tree->maxCardinality( st.predicate().uri() ) == 1;
+
+        if( lazy || overwrite ) {
+            // FIXME: This may create some empty graphs
+            // Store them somewhere and remove them if they are now empty
+            m_model->removeAllStatements( st.subject(), st.predicate(), Soprano::Node() );
+        }
     }
 
-    if( !m_graph.isValid() ) {
-        m_graph = createGraph();
-        if( !m_graph.isValid() )
-            return false;
-    }
-    statement.setContext( m_graph );
-    //kDebug() << "Pushing - " << statement;
+    Soprano::Statement statement( st );
+    if( statement.context().isEmpty() )
+        statement.setContext( m_graph );
+
+    // FIXME: Use the model directly?
     return addStatement( statement ) == Soprano::Error::ErrorNone;
 }
 
@@ -162,49 +168,6 @@ Soprano::Error::ErrorCode Nepomuk::ResourceMerger::addStatement(const Soprano::N
 QUrl Nepomuk::ResourceMerger::createGraph()
 {
     return m_model->createGraph( m_app, m_additionalMetadata );
-}
-
-bool Nepomuk::ResourceMerger::resolveDuplicate(const Soprano::Statement& newSt)
-{
-    //kDebug() << newSt;
-
-    QUrl oldGraph;
-    Soprano::QueryResultIterator it = model()->executeQuery(QString::fromLatin1("select ?g where { graph ?g { %1 %2 %3 . } . } LIMIT 1")
-                                                            .arg(newSt.subject().toN3(),
-                                                                 newSt.predicate().toN3(),
-                                                                 newSt.object().toN3()),
-                                                            Soprano::Query::QueryLanguageSparql);
-    if(it.next()) {
-        oldGraph = it[0].uri();
-        it.close();
-    }
-    else {
-        return false;
-    }
-
-    //kDebug() << m_model->statementCount();
-    if( mergeGraphs( oldGraph ) ) {
-        const QUrl newGraph = m_graphHash[oldGraph];
-        if( newGraph.isValid() ) {
-            //kDebug() << "Is valid!  " << newGraph;
-            //kDebug() << "Removing " << newSt;
-            model()->removeAllStatements( newSt.subject(), newSt.predicate(), newSt.object() );
-
-            Soprano::Statement st( newSt );
-            st.setContext( newGraph );
-
-            if( m_model->addStatement( st ) != Soprano::Error::ErrorNone )
-                return false;
-
-            return true;
-        }
-
-        // The graph is not valid. This happens in the case when both the old graph
-        // and the new graph are same, and therefore nothing needs to be done
-        return true;
-    }
-
-    return false;
 }
 
 QMultiHash< QUrl, Soprano::Node > Nepomuk::ResourceMerger::getPropertyHashForGraph(const QUrl& graph) const
@@ -621,9 +584,9 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
     // FIXME: Use toSet() once 4.7 has released. toSet() is faster, but it requires a newer version
     //        of Soprano
     QList<Soprano::Statement> statements = stGraph.toList();
-    QMutableListIterator<Soprano::Statement> it( statements );
-    while( it.hasNext() ) {
-        Soprano::Statement &st = it.next();
+    QMutableListIterator<Soprano::Statement> sit( statements );
+    while( sit.hasNext() ) {
+        Soprano::Statement &st = sit.next();
         st = resolveStatement( st );
         if( lastError() )
             return false;
@@ -795,6 +758,7 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
 
     // The graph is error free.
 
+    // FIXME: Do this later
     // Create all the blank nodes
     resolveBlankNodesInList( &remainingStatements );
     resolveBlankNodesInList( &typeStatements );
@@ -802,28 +766,82 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
 
 
     //Merge its statements except for the resource metadata statements
-    const QList<Soprano::Statement> mergeStatements = remainingStatements + typeStatements;
-    foreach( const Soprano::Statement & st, mergeStatements ) {
+    QList<Soprano::Statement> mergeStatements = remainingStatements + typeStatements;
 
-        // In OverwriteProperties mode, when maxCardinality == 1, we must
-        // remove the old property before adding the new one.
-        // In LazyCardinalities mode, we just don't care.
-        if( tree->maxCardinality(  st.predicate().uri() ) == 1 ) {
-            const bool lazy = ( m_flags & LazyCardinalities );
-            const bool overwrite = (m_flags & OverwriteProperties) &&
-                             tree->maxCardinality( st.predicate().uri() ) == 1;
+    //
+    // Graph Handling
+    //
+    QMultiHash<QUrl, Soprano::Statement> duplicateStatements;
 
-            if( lazy || overwrite ) {
-                // FIXME: This may create some empty graphs
-                // Store them somewhere and remove them if they are now empty
-                m_model->removeAllStatements( st.subject(), st.predicate(), Soprano::Node() );
+    QMutableListIterator<Soprano::Statement> it( mergeStatements );
+    while( it.hasNext() ) {
+        const Soprano::Statement &st = it.next();
+
+        const QString query = QString::fromLatin1("select ?g where { graph ?g { %1 %2 %3 . } . } LIMIT 1")
+                              .arg(st.subject().toN3(),
+                                   st.predicate().toN3(),
+                                   st.object().toN3());
+
+        Soprano::QueryResultIterator qit = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql);
+        if(qit.next()) {
+            const QUrl oldGraph = qit[0].uri();
+            qit.close();
+
+            duplicateStatements.insert( oldGraph, st );
+            it.remove();
+        }
+    }
+
+    //
+    // Create all the graphs
+    //
+    QMutableHashIterator<QUrl, Soprano::Statement> hit( duplicateStatements );
+    while( hit.hasNext() ) {
+        hit.next();
+        const QUrl& oldGraph = hit.key();
+
+        if( mergeGraphs( oldGraph ) ) {
+            const QUrl newGraph = m_graphHash[oldGraph];
+            if( newGraph.isValid() ) {
+                //kDebug() << "Is valid!  " << newGraph;
+                //kDebug() << "Removing " << newSt;
+                //model()->removeAllStatements( newSt.subject(), newSt.predicate(), newSt.object() );
+            }
+            else {
+                // both the oldGraph, and newGraph are the same
+                // Ignore this statement
+                hit.remove();
             }
         }
-
-        if(!push( st )) {
-            kDebug() << "Merge statement error: " << lastError();
+        else
             return false;
-        }
+    }
+
+    // Create the main graph, if they are any statements to merge
+    if( !mergeStatements.isEmpty() ) {
+        m_graph = createGraph();
+    }
+
+    // Get a list of all the modified resources
+    // ?
+
+    // Push all these statements
+    foreach( const Soprano::Statement & st, mergeStatements ) {
+        push( st );
+    }
+
+    // Push all the duplicateStatements
+    QHashIterator<QUrl, Soprano::Statement> hashIter( duplicateStatements );
+    while( hashIter.hasNext() ) {
+        hashIter.next();
+        Soprano::Statement st = hashIter.value();
+
+        m_model->removeAllStatements( st.subject(), st.predicate(), st.object(), hashIter.key() );
+        const QUrl newGraph( m_graphHash[hashIter.key()] );
+        st.setContext( newGraph );
+
+        // Shouldn't we apply m_flag tests over here?
+        m_model->addStatement( st );
     }
 
     //

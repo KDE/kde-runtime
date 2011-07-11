@@ -63,7 +63,6 @@ namespace Nepomuk {
         virtual QUrl createGraph();
         virtual QUrl createResourceUri();
         virtual QUrl createGraphUri();
-        virtual bool resolveDuplicate(const Soprano::Statement& newSt);
         virtual Soprano::Error::ErrorCode addStatement( const Soprano::Statement & st );
         virtual Soprano::Error::ErrorCode addResMetadataStatement( const Soprano::Statement & st );
 
