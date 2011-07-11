@@ -33,7 +33,6 @@ set( DMTEST
   ../datamanagementcommand.cpp
   ../resourcemerger.cpp
   ../resourceidentifier.cpp
-  ../transactionmodel.cpp
 )
 
 kde4_add_library( datamanagementtestlib STATIC ${DMTEST} )
