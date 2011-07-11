@@ -497,11 +497,13 @@ Soprano::Node Nepomuk::ResourceMerger::resolveUnmappedNode(const Soprano::Node& 
         return it.value();
     }
 
-    //TODO: Make sure the resource gets its metadata -> nao:created, nao:lastModified
-    // This is currently done by adding extra nao:create and nao:lastModified statements
-    // in storeResources, before calling merge
     QUrl newUri = createResourceUri();
     m_mappings.insert( QUrl(node.toN3()), newUri );
+
+    Soprano::Node dateTime( Soprano::LiteralValue( QDateTime::currentDateTime() ) );
+    m_model->addStatement( newUri, NAO::created(), dateTime, m_graph );
+    m_model->addStatement( newUri, NAO::lastModified(), dateTime, m_graph );
+
     return newUri;
 }
 
@@ -758,13 +760,6 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
 
     // The graph is error free.
 
-    // FIXME: Do this later
-    // Create all the blank nodes
-    resolveBlankNodesInList( &remainingStatements );
-    resolveBlankNodesInList( &typeStatements );
-    resolveBlankNodesInList( &metadataStatements );
-
-
     //Merge its statements except for the resource metadata statements
     QList<Soprano::Statement> mergeStatements = remainingStatements + typeStatements;
 
@@ -776,6 +771,8 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
     QMutableListIterator<Soprano::Statement> it( mergeStatements );
     while( it.hasNext() ) {
         const Soprano::Statement &st = it.next();
+        if( st.subject().isBlank() || st.object().isBlank() )
+            continue;
 
         const QString query = QString::fromLatin1("select ?g where { graph ?g { %1 %2 %3 . } . } LIMIT 1")
                               .arg(st.subject().toN3(),
@@ -815,11 +812,23 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
         m_graph = createGraph();
     }
 
+    //
+    // Push all the statements
+    //
 
-    // Push all these statements and get the list of all the modified resource
+    // Count all the modified resources
     QSet<QUrl> modifiedResources;
     foreach( const Soprano::Statement & st, mergeStatements ) {
-        modifiedResources.insert( st.subject().uri() );
+        if( !st.subject().isBlank() )
+            modifiedResources.insert( st.subject().uri() );
+    }
+
+    // Create all the blank nodes
+    resolveBlankNodesInList( &mergeStatements );
+    resolveBlankNodesInList( &metadataStatements );
+
+    // Push all these statements and get the list of all the modified resource
+    foreach( const Soprano::Statement &st, mergeStatements ) {
         push( st );
     }
 

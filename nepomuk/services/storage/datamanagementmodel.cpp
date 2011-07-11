@@ -1549,24 +1549,6 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         kDebug() << "Nothing was mapped merging everything as it is.";
     }
 
-    //
-    // Add extra metadata for new resources - nao:created & nao:lastModified
-    //
-    foreach( const KUrl & uri, resIdent.unidentified() ) {
-        Soprano::Node subject;
-        if( uri.url().startsWith(QLatin1String("_:") ) )
-            subject = Soprano::Node( uri.url().mid(2) );
-        else
-            subject = uri;
-
-        Soprano::Node dateTime( Soprano::LiteralValue( QDateTime::currentDateTime() ) );
-        Sync::SyncResource simpleRes = resIdent.simpleResource( uri );
-        if( !simpleRes.contains( NAO::created() ) )
-            allStatements << Soprano::Statement( subject, NAO::created(), dateTime );
-        if( !simpleRes.contains( NAO::lastModified() ) )
-            allStatements << Soprano::Statement( subject, NAO::lastModified(), dateTime );
-    }
-
     foreach( const Sync::SyncResource & res, extraResources ) {
         allStatements << res.toStatementList();
     }
