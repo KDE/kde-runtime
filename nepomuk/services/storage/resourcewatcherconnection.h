@@ -30,7 +30,7 @@ class QDBusServiceWatcher;
 namespace Nepomuk {
 
     class ResourceWatcherManager;
-    
+
     class ResourceWatcherConnection : public QObject
     {
         Q_OBJECT

@@ -95,7 +95,7 @@ void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const
         if( !con->hasProperties() ) {
             emit con->propertyAdded( KUrl(res.uri()).url(),
                                      property.toString(),
-                                     nodeToVariant(value) );
+                                     QDBusVariant(nodeToVariant(value)) );
         }
         else {
             resConnections << con;
@@ -111,7 +111,7 @@ void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const
         if( it != resConnections.constEnd() ) {
             emit con->propertyAdded( KUrl(res.uri()).url(),
                                      property.toString(),
-                                     nodeToVariant(value) );
+                                     QDBusVariant(nodeToVariant(value)) );
         }
     }
 
@@ -124,7 +124,7 @@ void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const
 void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value)
 {
     typedef ResourceWatcherConnection RWC;
-    
+
     //
     // Emit signals for all the connections that are only watching specific resources
     //
@@ -134,13 +134,13 @@ void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, co
         if( !con->hasProperties() ) {
             emit con->propertyRemoved( KUrl(res.uri()).url(),
                                        property.toString(),
-                                       nodeToVariant(value) );
+                                       QDBusVariant(nodeToVariant(value)) );
         }
         else {
             resConnections << con;
         }
     }
-    
+
     //
     // Emit signals for the conn2ections that are watching specific resources and properties
     //
@@ -150,7 +150,7 @@ void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, co
         if( it != resConnections.constEnd() ) {
             emit con->propertyRemoved( KUrl(res.uri()).url(),
                                        property.toString(),
-                                       nodeToVariant(value) );
+                                       QDBusVariant(nodeToVariant(value)) );
         }
     }
 }

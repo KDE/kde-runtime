@@ -32,12 +32,12 @@
 namespace Nepomuk {
 
     class ResourceWatcherConnection;
-    
+
     class ResourceWatcherManager : public QObject, protected QDBusContext
     {
         Q_OBJECT
         Q_CLASSINFO( "D-Bus Interface", "org.kde.nepomuk.ResourceWatcher" )
-        
+
     public:
         ResourceWatcherManager( QObject* parent = 0 );
         ~ResourceWatcherManager();
@@ -72,7 +72,7 @@ namespace Nepomuk {
 
         // only used to generate unique dbus paths
         int m_connectionCount;
-        
+
         friend class ResourceWatcherConnection;
     };
 
