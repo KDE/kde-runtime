@@ -536,18 +536,54 @@ namespace {
     }
 }
 
+/*
+ Rough algorithm -
 
+ - - Validity checks --
+ 1. Check the graph's additional metadata for validity
+ 2. Resolve all the identified uris - Do not create new nodes
+ 3. Check statement validity -
+    a. Max cardinality checks
+    - Take OverwriteProperties and LazyCardinalities into account
+    b. Domain/Range checks
+
+ -- Graph Handling --
+ 4. Get all the statements which already exist in the model, but in a different graph.
+ 5. Create new graphs which are the result of the merging the present graph and the new one
+    a.) In case the old and new graph are the same then forget about those statements
+ 6. Create the main graph
+ 7. Iterate through all the remaining statements and make a list of the resources that
+    we will be modifying
+
+ -- Actual Statement pushing --
+ 8. Create new resources for all the unidentified blank uris
+    - Notify the RWM
+ 9. Push all the statements
+    a.) Push <nao:lastModified, currentDateTime()> for all the resources that will be modified
+    b.) Push all the type statements
+        - Inform the RWM about these new types
+    c.) Push other statements
+        - Inform the RWM
+        - Remove existing statements if OverwriteProperties or LazyCardinalities
+    d.) Update nao:lastModified for all modified resources
+    e.) Push extra metadata statements, so that the specified nao:lastModified, nao:created
+        are taken into considerations
+ 10. You're done!
+
+ */
 bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
 {
     //
     // Check if the additional metadata is valid
     //
-    QMultiHash<QUrl, Soprano::Node> additionalMetadata = toNodeHash(m_additionalMetadata);
-    if( lastError() )
-        return false;
+    if( !additionalMetadata().isEmpty() ) {
+        QMultiHash<QUrl, Soprano::Node> additionalMetadata = toNodeHash(m_additionalMetadata);
+        if( lastError() )
+            return false;
 
-    if( !checkGraphMetadata( additionalMetadata ) ) {
-        return false;
+        if( !checkGraphMetadata( additionalMetadata ) ) {
+            return false;
+        }
     }
 
     //
@@ -801,16 +837,17 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
         m_graph = createGraph();
     }
 
-    //
-    // Push all the statements
-    //
-
     // Count all the modified resources
     QSet<QUrl> modifiedResources;
     foreach( const Soprano::Statement & st, mergeStatements ) {
         if( !st.subject().isBlank() )
             modifiedResources.insert( st.subject().uri() );
     }
+
+
+    //
+    // Actual statement pushing
+    //
 
     // Create all the blank nodes
     resolveBlankNodesInList( &mergeStatements );
