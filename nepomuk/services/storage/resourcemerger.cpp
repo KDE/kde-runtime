@@ -249,14 +249,15 @@ bool Nepomuk::ResourceMerger::containsAllTypes(const QSet< QUrl >& types, const 
 // 2. Otherwsie
 //    -> Keep the old graph
 
-bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
+QUrl Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
 {
     //
     // Check if mergeGraphs has already been called for oldGraph
     //
-    if(m_graphHash.contains(oldGraph)) {
+    QHash< QUrl, QUrl >::const_iterator fit = m_graphHash.constFind( oldGraph );
+    if( fit != m_graphHash.constEnd() ) {
         //kDebug() << "Already merged once, just returning";
-        return true;
+        return fit.value();
     }
 
     QMultiHash<QUrl, Soprano::Node> oldPropHash = getPropertyHashForGraph( oldGraph );
@@ -269,7 +270,7 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
         //kDebug() << "SAME!!";
         // They are the same - Don't do anything
         m_graphHash.insert( oldGraph, QUrl() );
-        return true;
+        return QUrl();
     }
 
     QMultiHash<QUrl, Soprano::Node> finalPropHash;
@@ -288,11 +289,6 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     finalPropHash.unite( oldPropHash );
     finalPropHash.unite( newPropHash );
 
-    if( !checkGraphMetadata( finalPropHash ) ) {
-        kDebug() << "Graph metadata check FAILED!";
-        return false;
-    }
-
     // Add app uri
     if( m_appUri.isEmpty() )
         m_appUri = m_model->findApplicationResource( m_app );
@@ -303,7 +299,7 @@ bool Nepomuk::ResourceMerger::mergeGraphs(const QUrl& oldGraph)
     QUrl graph = m_model->createGraph( m_app, finalPropHash );
 
     m_graphHash.insert( oldGraph, graph );
-    return true;
+    return graph;
 }
 
 QMultiHash< QUrl, Soprano::Node > Nepomuk::ResourceMerger::toNodeHash(const QHash< QUrl, QVariant >& hash)
@@ -794,14 +790,10 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
         hit.next();
         const QUrl& oldGraph = hit.key();
 
-        if( mergeGraphs( oldGraph ) ) {
-            const QUrl newGraph = m_graphHash[oldGraph];
-            if( !newGraph.isValid() ) {
-                hit.remove();
-            }
+        const QUrl newGraph = mergeGraphs( oldGraph );
+        if( !newGraph.isValid() ) {
+            hit.remove();
         }
-        else
-            return false;
     }
 
     // Create the main graph, if they are any statements to merge

@@ -99,7 +99,7 @@ namespace Nepomuk {
         StoreResourcesFlags m_flags;
         Nepomuk::DataManagementModel * m_model;
 
-        bool mergeGraphs( const QUrl & oldGraph );
+        QUrl mergeGraphs( const QUrl& oldGraph );
 
         QList<QUrl> existingTypes( const QUrl& uri ) const;
 
