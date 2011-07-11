@@ -38,12 +38,12 @@
 using namespace Soprano::Vocabulary;
 
 namespace {
-QVariant nodeToVariant(const Soprano::Node& node) {
+QDBusVariant nodeToVariant(const Soprano::Node& node) {
     if(node.isResource()) {
-        return node.uri();
+        return QDBusVariant(node.uri());
     }
     else {
-        return node.literal().variant();
+        return QDBusVariant(node.literal().variant());
     }
 }
 
