@@ -70,7 +70,6 @@ DeclarativeAppletScript::DeclarativeAppletScript(QObject *parent, const QVariant
       m_env(0),
       m_auth(this)
 {
-    KGlobal::locale()->insertCatalog(description().pluginName());
     Q_UNUSED(args);
 }
 
