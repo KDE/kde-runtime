@@ -26,7 +26,6 @@
 #include "resourceidentifier.h"
 #include "simpleresourcegraph.h"
 #include "simpleresource.h"
-#include "transactionmodel.h"
 #include "resourcewatchermanager.h"
 #include "syncresource.h"
 #include "resourceidentifier.h"
@@ -1553,18 +1552,10 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         allStatements << res.toStatementList();
     }
 
-    TransactionModel trModel(this);
     ResourceMerger merger( this, app, additionalMetadata, flags );
     merger.setMappings( resIdent.mappings() );
-    if(merger.merge( Soprano::Graph(allStatements) )) {
-        trModel.commit();
-    }
-    else {
+    if( !merger.merge( Soprano::Graph(allStatements) ) ) {
         kDebug() << " MERGING FAILED! ";
-        kDebug() << "Last Error: " << merger.lastError();
-    }
-
-    if( merger.lastError() != Soprano::Error::ErrorNone ) {
         kDebug() << "Setting error!" << merger.lastError();
         setError( merger.lastError() );
     }
