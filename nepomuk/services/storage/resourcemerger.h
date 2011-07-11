@@ -48,9 +48,6 @@ namespace Nepomuk {
                         const StoreResourcesFlags& flags );
         virtual ~ResourceMerger();
 
-        //void setModel( Soprano::Model * model );
-        Soprano::Model * model() const;
-
         void setMappings( const QHash<KUrl, KUrl> & mappings );
         QHash<KUrl, KUrl> mappings() const;
 
@@ -59,21 +56,18 @@ namespace Nepomuk {
         void setAdditionalGraphMetadata( const QHash<QUrl, QVariant>& additionalMetadata );
         QHash<QUrl, QVariant> additionalMetadata() const;
 
-    protected:
+    private:
         virtual QUrl createGraph();
         virtual QUrl createResourceUri();
         virtual QUrl createGraphUri();
-        virtual Soprano::Error::ErrorCode addStatement( const Soprano::Statement & st );
+
         virtual Soprano::Error::ErrorCode addResMetadataStatement( const Soprano::Statement & st );
 
         bool push( const Soprano::Statement & st );
-        QUrl graph();
 
-        Soprano::Error::ErrorCode addStatement( const Soprano::Node& subject, const Soprano::Node& property,
-                                                const Soprano::Node& object, const Soprano::Node& graph );
-
-
-    private:
+        //
+        // Resolution
+        //
         Soprano::Statement resolveStatement( const Soprano::Statement& st );
         Soprano::Node resolveMappedNode( const Soprano::Node& node );
         Soprano::Node resolveUnmappedNode( const Soprano::Node& node );
@@ -81,7 +75,6 @@ namespace Nepomuk {
         /// This modifies the list
         void resolveBlankNodesInList( QList<Soprano::Statement> *stList );
 
-        // From Sync::ResourceMerger
         QHash<KUrl, KUrl> m_mappings;
 
         /// Can set the error
@@ -130,8 +123,6 @@ namespace Nepomuk {
 
         /// Refers to the properties which are considered as resource metadata
         QSet<QUrl> metadataProperties;
-
-        QSet<QUrl> m_modifiedResources;
     };
 
 }
