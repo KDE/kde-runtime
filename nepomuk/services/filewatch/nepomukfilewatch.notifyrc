@@ -1,6 +1,7 @@
 [Global]
 IconName=nepomuk
 Comment=Nepomuk file watch service
+Comment[bg]=Услуга на Nepomuk за следене на файлове
 Comment[bs]=Servis Nepomuka
 Comment[ca]=Servei de control de fitxers del Nepomuk
 Comment[ca@valencia]=Servei de control de fitxers del Nepomuk
@@ -40,6 +41,7 @@ Comment[zh_TW]=Nepomuk 檔案監控服務
 
 [Event/nepomuk_new_removable_device]
 Name=New Removable Device
+Name[bg]=Ново преносимо устройство
 Name[bs]=Uklonjivi uređaji
 Name[ca]=Dispositiu extraïble nou
 Name[ca@valencia]=Dispositiu extraïble nou
@@ -78,6 +80,7 @@ Name[x-test]=xxNew Removable Devicexx
 Name[zh_CN]=新移动设备
 Name[zh_TW]=新的可移除裝置
 Comment=A new unknown removable device has been mounted
+Comment[bg]=Монтирано е ново непознато преносимо устройство
 Comment[bs]=Novi nepoznati uklonjivi uređaj je montiran
 Comment[ca]=S'ha muntat un dispositiu extraïble desconegut nou
 Comment[ca@valencia]=S'ha muntat un dispositiu extraïble desconegut nou
