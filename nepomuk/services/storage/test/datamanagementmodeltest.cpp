@@ -148,6 +148,7 @@ void DataManagementModelTest::resetModel()
 
     // some ontology things we need in testStoreResources_strigiCase
     m_model->addStatement( NMM::performer(), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( NMM::performer(), RDFS::domain(), NMM::MusicPiece(), graph );
     m_model->addStatement( NMM::performer(), RDFS::range(), NCO::Contact(), graph );
     m_model->addStatement( NMM::musicAlbum(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( NMM::musicAlbum(), RDFS::range(), NMM::MusicAlbum(), graph );
@@ -2971,7 +2972,6 @@ void DataManagementModelTest::testStoreResources_strigiCase()
     album.addProperty( NIE::title(), "X&Y" );
 
     Nepomuk::SimpleResource res1;
-    res1.setUri( QUrl("nepomuk:/res/m/Res1") );
     res1.addProperty( RDF::type(), NFO::FileDataObject() );
     res1.addProperty( RDF::type(), NMM::MusicPiece() );
     res1.addProperty( NFO::fileName(), "Yellow.mp3" );
@@ -2987,34 +2987,39 @@ void DataManagementModelTest::testStoreResources_strigiCase()
     m_dmModel->storeResources( resGraph, "TestApp" );
     QVERIFY( !m_dmModel->lastError() );
 
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), Soprano::Node(),
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), RDF::type(), NMM::MusicPiece() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl res1Uri = stList.first().subject().uri();
+
+    QVERIFY( m_model->containsAnyStatement( res1Uri, Soprano::Node(),
                                             Soprano::Node() ) );
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), NFO::fileName(),
+    QVERIFY( m_model->containsAnyStatement( res1Uri, NFO::fileName(),
                                             Soprano::LiteralValue("Yellow.mp3") ) );
     // Make sure we have the nao:created and nao:lastModified
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), NAO::lastModified(),
+    QVERIFY( m_model->containsAnyStatement( res1Uri, NAO::lastModified(),
                                             Soprano::Node() ) );
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), NAO::created(),
+    QVERIFY( m_model->containsAnyStatement( res1Uri, NAO::created(),
                                             Soprano::Node() ) );
-    kDebug() << m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements();
+    kDebug() << m_model->listStatements( res1Uri, Soprano::Node(), Soprano::Node() ).allStatements();
     // The +2 is because nao:created and nao:lastModified would have also been added
-    QCOMPARE( m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements().size(),
+    QCOMPARE( m_model->listStatements( res1Uri, Soprano::Node(), Soprano::Node() ).allStatements().size(),
                 res1.properties().size() + 2 );
 
-    QList< Node > objects = m_model->listStatements( res1.uri(), NMM::performer(), Soprano::Node() ).iterateObjects().allNodes();
+    QList< Node > objects = m_model->listStatements( res1Uri, NMM::performer(), Soprano::Node() ).iterateObjects().allNodes();
 
     QVERIFY( objects.size() == 1 );
     QVERIFY( objects.first().isResource() );
 
     QUrl coldplayUri = objects.first().uri();
     QCOMPARE( coldplayUri, QUrl("nepomuk:/res/coldplay") );
-    QList< Soprano::Statement > stList = coldplay.toStatementList();
+    stList = coldplay.toStatementList();
     foreach( Soprano::Statement st, stList ) {
         st.setSubject( coldplayUri );
         QVERIFY( m_model->containsAnyStatement( st ) );
     }
 
-    objects = m_model->listStatements( res1.uri(), NMM::musicAlbum(), Soprano::Node() ).iterateObjects().allNodes();
+    objects = m_model->listStatements( res1Uri, NMM::musicAlbum(), Soprano::Node() ).iterateObjects().allNodes();
 
     QVERIFY( objects.size() == 1 );
     QVERIFY( objects.first().isResource() );
@@ -3201,13 +3206,13 @@ void DataManagementModelTest::testStoreResources_createResource()
 
 
     // create a resource by specifying the URI
-    SimpleResource res2;
-    res2.setUri(QUrl("nepomuk:/res/A"));
-    res2.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("foobar")));
-    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"));
-    QVERIFY( !m_dmModel->lastError() );
-
-    QVERIFY(m_model->containsAnyStatement( res2.uri(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+//     SimpleResource res2;
+//     res2.setUri(QUrl("nepomuk:/res/A"));
+//     res2.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("foobar")));
+//     m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"));
+//     QVERIFY( !m_dmModel->lastError() );
+//
+//     QVERIFY(m_model->containsAnyStatement( res2.uri(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
 
     QVERIFY(!haveTrailingGraphs());
 }
@@ -3452,26 +3457,31 @@ void DataManagementModelTest::testStoreResources_file2()
     const QUrl fileUrl = QUrl::fromLocalFile(fileA.fileName());
 
     SimpleResource r1;
-    r1.setUri(QUrl("nepomuk:/res/A"));
     r1.addProperty(QUrl("prop:/res"), fileUrl);
 
     m_dmModel->storeResources(SimpleResourceGraph() << r1, QLatin1String("testapp"));
     QVERIFY( !m_dmModel->lastError() );
 
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), QUrl("prop:/res"), Node() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl r1Uri = stList.first().subject().uri();
+
     // the property should have been created
-    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), Node()));
+    QVERIFY(m_model->containsAnyStatement(r1Uri, QUrl("prop:/res"), Node()));
 
     // but it should not be related to the file URL
-    QVERIFY(!m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), fileUrl));
+    QVERIFY(!m_model->containsAnyStatement(r1Uri, QUrl("prop:/res"), fileUrl));
 
     // there should be a nie:url for the file URL
     QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), fileUrl));
 
     // make sure file URL and res URI are properly related including the properties
-    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { <nepomuk:/res/A> <prop:/res> ?r . "
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { %3 <prop:/res> ?r . "
                                                       "?r %1 %2 . }")
                                   .arg(Node::resourceToN3(NIE::url()),
-                                       Node::resourceToN3(fileUrl)),
+                                       Node::resourceToN3(fileUrl),
+                                       Node::resourceToN3(r1Uri)),
                                   Query::QueryLanguageSparql).boolValue());
 
     QVERIFY(!haveTrailingGraphs());
@@ -4377,6 +4387,48 @@ void DataManagementModelTest::testStoreResources_correctDomainInStore()
     QVERIFY(!m_dmModel->lastError());
 }
 
+void DataManagementModelTest::testStoreResources_correctDomainInStore2()
+{
+    SimpleResource res;
+    res.addType( NMM::MusicPiece() );
+    res.addType( NFO::FileDataObject() );
+    res.addProperty( NIE::title(), QLatin1String("Music") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), RDF::type(), NFO::FileDataObject() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl resUri = stList.first().subject().uri();
+
+    SimpleResource musicPiece;
+    musicPiece.addType( NFO::FileDataObject() );
+    // We're not giving it a nmm:MusicPiece type
+    musicPiece.addProperty( NIE::title(), QLatin1String("Music") );
+
+    SimpleResource artist;
+    artist.addType( NCO::Contact() );
+    artist.addProperty( NCO::fullname(), QLatin1String("Snow Patrol") );
+
+    // nmm:performer has a domain of nmm:MusicPiece which is already present in the store
+    musicPiece.addProperty( NMM::performer(), artist );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << musicPiece << artist,
+                               QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    // musicPiece should have gotten identified as res
+    stList = m_model->listStatements( Node(), RDF::type(), NFO::FileDataObject() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl musicPieceUri = stList.first().subject().uri();
+    QCOMPARE( musicPieceUri, resUri );
+
+    // It should have the artist
+    QVERIFY( m_model->containsAnyStatement( musicPieceUri, NMM::performer(), Node() ) );
+}
+
 // make sure that already existing resource types are taken into account for range checks
 void DataManagementModelTest::testStoreResources_correctRangeInStore()
 {
@@ -4401,6 +4453,48 @@ void DataManagementModelTest::testStoreResources_correctRangeInStore()
     QVERIFY(!m_dmModel->lastError());
 }
 
+void DataManagementModelTest::testStoreResources_correctRangeInStore2()
+{
+    SimpleResource res;
+    res.addType( NCO::Contact() );
+    res.addType( NFO::FileDataObject() );
+    res.addProperty( NCO::fullname(), QLatin1String("Jack Black") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), RDF::type(), NFO::FileDataObject() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl resUri = stList.first().subject().uri();
+
+    SimpleResource musicPiece;
+    musicPiece.addType( NFO::FileDataObject() );
+    musicPiece.addType( NMM::MusicPiece() );
+    musicPiece.addProperty( NIE::title(), QLatin1String("Music") );
+
+    SimpleResource artist;
+    artist.addType( NFO::FileDataObject() );
+    // We're not giving it the type NCO::Contact - should be inferred from the store
+    artist.addProperty( NCO::fullname(), QLatin1String("Jack Black") );
+
+    // nmm:performer has a range of nco:Contact which is already present in the store
+    musicPiece.addProperty( NMM::performer(), artist );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << musicPiece << artist,
+                               QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    // artist should have gotten identified as res
+    stList = m_model->listStatements( Node(), RDF::type(), NCO::Contact() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl artistUri = stList.first().subject().uri();
+    QCOMPARE( artistUri, resUri );
+
+    // It should have the artist
+    QVERIFY( m_model->containsAnyStatement( Node(), NMM::performer(), artistUri ) );
+}
 
 // make sure that the same values are simply merged even if encoded differently
 void DataManagementModelTest::testStoreResources_duplicateValuesAsString()
@@ -4490,6 +4584,42 @@ void DataManagementModelTest::testStoreResources_lazyCardinalities()
 
     QVERIFY( isClark || isSuperMan );
 }
+
+void DataManagementModelTest::testStoreResources_graphMetadataFail()
+{
+    QList<Soprano::Statement> stList = m_model->listStatements().allStatements();
+
+    QHash<QUrl, QVariant> additionalMetadata;
+    additionalMetadata.insert( NCO::fullname(), QLatin1String("graphs can't have names") );
+
+    SimpleResource res;
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("Harry Potter") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp"),
+                               IdentifyAll, NoStoreResourcesFlags, additionalMetadata );
+
+    // There should be an error as graphs cannot have NFO::FileDataObject
+    QVERIFY( m_dmModel->lastError() );
+
+    // Nothing should have changed
+    QList<Soprano::Statement> newStList = m_model->listStatements().allStatements();
+    QCOMPARE( stList, newStList );
+}
+
+void DataManagementModelTest::testStoreResources_randomNepomukUri()
+{
+    SimpleResource res(QUrl("nepomuk:/res/random-uri"));
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("Mickey Mouse") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp") );
+
+    // There should be an error - We do not allow creation of arbitrary uris
+    // All uris must be created by the DataManagementModel
+    QVERIFY( m_dmModel->lastError() );
+}
+
 
 void DataManagementModelTest::testMergeResources()
 {

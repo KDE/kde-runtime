@@ -46,7 +46,7 @@ namespace Nepomuk {
     namespace Types {
         class Class;
     }
-    
+
     namespace Sync {
 
         /**
@@ -58,7 +58,7 @@ namespace Nepomuk {
          *
          * By default, it pushes all the statements with a nrl:InstanceBase graph. If a
          * statement already exists in the repository then it is NOT overwritten.
-         * 
+         *
          * \author Vishesh Handa <handa.vish@gmail.com>
          */
         class NEPOMUKSYNC_EXPORT ResourceMerger : public Soprano::Error::ErrorCache
@@ -72,13 +72,13 @@ namespace Nepomuk {
 
             void setMappings( const QHash<KUrl, KUrl> & mappings );
             QHash<KUrl, KUrl> mappings() const;
-            
+
             /**
              * Merges all the statements in \p graph into the model, by calling
              * mergeStatement
              *
              * It stops merging if any of the statements in \p graph fail to merge
-             * 
+             *
              * \sa mergeStatement
              * \return \c true if merging was successful
              */
@@ -92,41 +92,41 @@ namespace Nepomuk {
              * createGraph() is called which returns a new graph.
              *
              * lastError() is set, if merging fails.
-             * 
+             *
              * \sa createGraph
-             * \return \c true if the merging was sucessful. 
+             * \return \c true if the merging was sucessful.
              *         \c false if merging failed
              */
             virtual bool mergeStatement( const Soprano::Statement & st );
-            
+
             /**
              * Sets the graph metadata which will be used to create a graph.
-             * 
+             *
              * \sa createGraph
              */
             void setAdditionalGraphMetadata( const QMultiHash<QUrl, Soprano::Node>& additionalMetadata );
-            
+
             QMultiHash<QUrl, Soprano::Node> additionalMetadata() const;
-            
+
         protected:
             /**
              * Called when trying to merge a statement which contains a Resource that
              * has not been identified.
-             * 
-             * The default implementation of this creates the resource in the model. 
+             *
+             * The default implementation of this creates the resource in the model.
              * The resourceUri is generated using createResourceUri.
-             * 
+             *
              * If the resolution is supposed to fail, this function returns KUrl().
              * The reason why resolution failed should also be set with setError()
-             * 
+             *
              * \sa createResourceUri
              */
             virtual KUrl resolveUnidentifiedResource( const KUrl & uri );
 
             /**
-             * Creates a new graph with the additional metadata. 
+             * Creates a new graph with the additional metadata.
              * All graphs that are created should be a subtype of nrl:Graph
-             * 
+             *
              * \sa additionalMetadata
              */
             virtual KUrl createGraph();
@@ -144,10 +144,10 @@ namespace Nepomuk {
             /**
              * If the statement being pushed already exists this method is called.
              * By default it does nothing which means keeping the old statement
-             * 
+             *
              * \return \c true if resolution was successful
              *         \c false if resolution failed, and merging and should fail
-             */ 
+             */
             virtual bool resolveDuplicate( const Soprano::Statement & newSt );
 
             /**
@@ -173,13 +173,13 @@ namespace Nepomuk {
             /**
              * Add the statement in the model. By default it just calls
              * Soprano::Model::addStatement()
-             * 
+             *
              * \return \c Soprano::Error::ErrorNone if added to model
              */
             virtual Soprano::Error::ErrorCode addStatement( const Soprano::Statement & st );
             Soprano::Error::ErrorCode addStatement( const Soprano::Node& subject, const Soprano::Node& property,
                                                     const Soprano::Node& object, const Soprano::Node& graph );
-            
+
             /**
              * Resolves the subject and object and gets the object ready for pushing
              */

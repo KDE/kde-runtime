@@ -135,11 +135,15 @@ private Q_SLOTS:
     void testStoreResources_duplicates();
     void testStoreResources_overwriteProperties();
     void testStoreResources_correctDomainInStore();
+    void testStoreResources_correctDomainInStore2();
     void testStoreResources_correctRangeInStore();
+    void testStoreResources_correctRangeInStore2();
     void testStoreResources_duplicateValuesAsString();
     void testStoreResources_ontology();
     void testStoreResources_legacyUris();
     void testStoreResources_lazyCardinalities();
+    void testStoreResources_graphMetadataFail();
+    void testStoreResources_randomNepomukUri();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();

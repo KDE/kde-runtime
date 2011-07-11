@@ -26,7 +26,6 @@
 #include "resourceidentifier.h"
 #include "simpleresourcegraph.h"
 #include "simpleresource.h"
-#include "transactionmodel.h"
 #include "resourcewatchermanager.h"
 #include "syncresource.h"
 #include "nepomuktools.h"
@@ -1543,35 +1542,14 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         kDebug() << "Nothing was mapped merging everything as it is.";
     }
 
-    //
-    // Add extra metadata for new resources - nao:created & nao:lastModified
-    //
-    foreach( const KUrl & uri, resIdent.unidentified() ) {
-        Soprano::Node dateTime( Soprano::LiteralValue( QDateTime::currentDateTime() ) );
-
-        Sync::SyncResource simpleRes = resIdent.simpleResource( uri );
-        if( !simpleRes.contains( NAO::created() ) )
-            allStatements << Soprano::Statement( uri, NAO::created(), dateTime );
-        if( !simpleRes.contains( NAO::lastModified() ) )
-            allStatements << Soprano::Statement( uri, NAO::lastModified(), dateTime );
-    }
-
     foreach( const Sync::SyncResource & res, extraResources ) {
         allStatements << res.toStatementList();
     }
 
-    TransactionModel trModel(this);
     ResourceMerger merger( this, app, additionalMetadata, flags );
     merger.setMappings( resIdent.mappings() );
-    if(merger.merge( Soprano::Graph(allStatements) )) {
-        trModel.commit();
-    }
-    else {
+    if( !merger.merge( Soprano::Graph(allStatements) ) ) {
         kDebug() << " MERGING FAILED! ";
-        kDebug() << "Last Error: " << merger.lastError();
-    }
-
-    if( merger.lastError() != Soprano::Error::ErrorNone ) {
         kDebug() << "Setting error!" << merger.lastError();
         setError( merger.lastError() );
     }
