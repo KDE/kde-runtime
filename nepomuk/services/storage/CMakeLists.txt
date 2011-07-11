@@ -36,6 +36,11 @@ qt4_add_dbus_adaptor(storage_SRCS
   ontologyloader.h
   Nepomuk::OntologyLoader)
 
+qt4_add_dbus_adaptor(storage_SRCS
+  ../../interfaces/org.kde.nepomuk.ResourceWatcherConnection.xml
+  resourcewatcherconnection.h
+  Nepomuk::ResourceWatcherConnection)
+
 set(HAVE_SOPRANO_INDEX ${SopranoIndex_FOUND})
 
 kde4_add_plugin(nepomukstorage ${storage_SRCS})
