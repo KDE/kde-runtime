@@ -95,7 +95,7 @@ void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const
         if( !con->hasProperties() ) {
             emit con->propertyAdded( KUrl(res.uri()).url(),
                                      property.toString(),
-                                     QDBusVariant(nodeToVariant(value)) );
+                                     nodeToVariant(value) );
         }
         else {
             resConnections << con;
@@ -111,7 +111,7 @@ void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const
         if( it != resConnections.constEnd() ) {
             emit con->propertyAdded( KUrl(res.uri()).url(),
                                      property.toString(),
-                                     QDBusVariant(nodeToVariant(value)) );
+                                     nodeToVariant(value) );
         }
     }
 
@@ -134,7 +134,7 @@ void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, co
         if( !con->hasProperties() ) {
             emit con->propertyRemoved( KUrl(res.uri()).url(),
                                        property.toString(),
-                                       QDBusVariant(nodeToVariant(value)) );
+                                       nodeToVariant(value) );
         }
         else {
             resConnections << con;
@@ -150,7 +150,7 @@ void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, co
         if( it != resConnections.constEnd() ) {
             emit con->propertyRemoved( KUrl(res.uri()).url(),
                                        property.toString(),
-                                       QDBusVariant(nodeToVariant(value)) );
+                                       nodeToVariant(value) );
         }
     }
 }
