@@ -78,7 +78,7 @@ QList< Soprano::Statement > Nepomuk::Sync::SyncResource::toStatementList() const
     const QList<KUrl> & keys = uniqueKeys();
     foreach( const KUrl & key, keys ) {
         Soprano::Statement st;
-        Soprano::Node sub = d->uri.url().startsWith("_:") ? Soprano::Node(d->uri.url().mid(2)) : d->uri; 
+        Soprano::Node sub = d->uri.url().startsWith("_:") ? Soprano::Node(d->uri.url().mid(2)) : d->uri;
         st.setSubject( sub );
         st.setPredicate( Soprano::Node( key ) );
 
@@ -120,7 +120,7 @@ void Nepomuk::Sync::SyncResource::setUri(const Soprano::Node& node)
         d->uri = node.uri();
     }
     else if( node.isBlank() ) {
-        d->uri = KUrl( node.identifier() );
+        d->uri = KUrl( node.toN3() );
     }
 }
 
@@ -139,7 +139,7 @@ void Nepomuk::Sync::SyncResource::removeObject(const KUrl& uri)
     QMutableHashIterator<KUrl, Soprano::Node> iter( *this );
     while( iter.hasNext() ) {
         iter.next();
-        
+
         if( iter.value().isResource() && iter.value().uri() == uri )
             iter.remove();
     }
@@ -159,22 +159,22 @@ Nepomuk::Sync::SyncResource Nepomuk::Sync::SyncResource::fromStatementList(const
 {
     if( list.isEmpty() )
         return SyncResource();
-    
+
     SyncResource res;
     Soprano::Node subject = list.first().subject();
     res.setUri( getUri(subject) );
-    
+
     foreach( const Soprano::Statement & st, list ) {
         if( st.subject() != subject )
             continue;
-        
+
         KUrl pred = st.predicate().uri();
         Soprano::Node obj = st.object();
-        
+
         if( !res.contains( pred, obj ) )
             res.insert( pred, obj );
     }
-    
+
     return res;
 }
 
@@ -200,20 +200,20 @@ Nepomuk::Sync::ResourceHash Nepomuk::Sync::ResourceHash::fromStatementList(const
         KUrl uri = getUri( st.subject() );
         stHash.insert( uri, st );
     }
-    
+
     //
     // Convert them into a better format --> SyncResource
     //
     const QList<KUrl> & uniqueUris = stHash.uniqueKeys();
-    
+
     ResourceHash resources;
     resources.reserve( uniqueUris.size() );
-    
+
     foreach( const KUrl & resUri, uniqueUris ) {
         SyncResource res = SyncResource::fromStatementList( stHash.values( resUri ) );
         resources.insert( res.uri(), res );
     }
-    
+
     return resources;
 }
 

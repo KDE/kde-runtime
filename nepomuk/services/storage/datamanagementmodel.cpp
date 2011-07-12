@@ -158,6 +158,13 @@ namespace {
             return OtherUri;
         }
     }
+
+    inline Soprano::Node convertIfBlankUri(const QUrl &uri) {
+        if( uri.toString().startsWith(QLatin1String("_:")) )
+            return Soprano::Node( uri.toString().mid(2) );
+        else
+            return Soprano::Node( uri );
+    }
 }
 
 class Nepomuk::DataManagementModel::Private
@@ -1375,7 +1382,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 
                 res.addProperty( NIE::url(), nieUrl );
                 res.addProperty( RDF::type(), NFO::FileDataObject() );
-                if( QFileInfo( nieUrl.toString() ).isDir() )
+                if( QFileInfo( nieUrl.toLocalFile() ).isDir() )
                     res.addProperty( RDF::type(), NFO::Folder() );
             }
             resolvedNodes.insert( nieUrl, newResUri );
@@ -1416,28 +1423,49 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     // Resolve URLs in property values and prepare the resource identifier
     //
     foreach( const SimpleResource& res, resGraph.toList() ) {
-        SimpleResource resolvedRes(res.uri());
-        QHashIterator<QUrl, QVariant> it( res.properties() );
+        // Convert to a Sync::SyncResource
+        //
+        Sync::SyncResource syncRes( res.uri() ); //vHanda: Will this set the uri properly?
+        QHashIterator<QUrl, QVariant> hit( res.properties() );
+        while( hit.hasNext() ) {
+            hit.next();
+
+            Soprano::Node n = d->m_classAndPropertyTree->variantToNode( hit.value(), hit.key() );
+            // The ClassAndPropertyTree returns blank nodes as URIs. It does not understand the
+            // concept of blank nodes, and since only storeResources requires blank nodes,
+            // it's easier to keep the blank node logic outside.
+            if( n.isResource() )
+                n = convertIfBlankUri( n.uri() );
+
+            const Soprano::Error::Error error = d->m_classAndPropertyTree->lastError();
+            if( error ) {
+                setError( error.message(), error.code() );
+                return;
+            }
+            syncRes.insert( hit.key(), n );
+        }
+
+        QMutableHashIterator<KUrl, Soprano::Node> it( syncRes );
         while( it.hasNext() ) {
             it.next();
 
-            const QVariant value(it.value());
-            if( value.type() == QVariant::Url && it.key() != NIE::url() ) {
-                const UriState state = uriState(value.toUrl());
+            const Soprano::Node object = it.value();
+            if( object.isResource() && it.key() != NIE::url() ) {
+                const UriState state = uriState(object.uri());
                 if(state==NepomukUri || state==BlankUri || state == OntologyUri) {
-                    resolvedRes.addProperty(it.key(), it.value());
+                    continue;
                 }
                 else if(state == NonExistingFileUrl) {
-                    setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(value.toUrl().toLocalFile()),
+                    setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(object.uri().toLocalFile()),
                              Soprano::Error::ErrorInvalidArgument);
                     return;
                 }
                 else if(state == ExistingFileUrl || state==SupportedUrl) {
-                    const QUrl nieUrl = value.toUrl();
+                    const QUrl nieUrl = object.uri();
                     // Need to resolve it
                     QHash< QUrl, QUrl >::const_iterator findIter = resolvedNodes.constFind( nieUrl );
                     if( findIter != resolvedNodes.constEnd() ) {
-                        resolvedRes.addProperty(it.key(), findIter.value());
+                        it.setValue( convertIfBlankUri(findIter.value()) );
                     }
                     else {
                         Sync::SyncResource newRes;
@@ -1449,7 +1477,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 
                             newRes.insert( RDF::type(), NFO::FileDataObject() );
                             newRes.insert( NIE::url(), nieUrl );
-                            if( QFileInfo( nieUrl.toString() ).isDir() )
+                            if( QFileInfo( nieUrl.toLocalFile() ).isDir() )
                                 newRes.insert( RDF::type(), NFO::Folder() );
                         }
 
@@ -1457,28 +1485,24 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                         extraResources.append( newRes );
 
                         resolvedNodes.insert( nieUrl, resolvedUri );
-                        resolvedRes.addProperty(it.key(), resolvedUri);
+                        it.setValue( convertIfBlankUri(resolvedUri) );
                     }
                 }
                 else if(state == OtherUri) {
                     // We use resolveUrl to check if the otherUri exists. If it doesn't exist,
                     // then resolveUrl which set the last error
-                    const QUrl legacyUri = resolveUrl( value.toUrl() );
+                    const QUrl legacyUri = resolveUrl( object.uri() );
                     if( lastError() )
                         return;
 
                     // It apparently exists, so we must support it
-                    resolvedRes.addProperty( it.key(), it.value() );
                 }
             }
-            else {
-                resolvedRes.addProperty(it.key(), it.value());
-            }
-        }
+        } // while( it.hasNext() )
 
         // The resource is now ready.
         // Push it into the Resource Identifier
-        QList< Soprano::Statement > stList = d->m_classAndPropertyTree->simpleResourceToStatementList(resolvedRes);
+        QList< Soprano::Statement > stList = syncRes.toStatementList();
         allStatements << stList;
 
         if(stList.isEmpty()) {
@@ -1486,12 +1510,11 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             return;
         }
 
-        Sync::SyncResource simpleRes = Sync::SyncResource::fromStatementList( stList );
-        if( !simpleRes.isValid() ) {
+        if( !syncRes.isValid() ) {
             setError(QLatin1String("storeResources: Contains invalid resources."), Soprano::Error::ErrorParsingFailed);
             return;
         }
-        resIdent.addSyncResource( simpleRes );
+        resIdent.addSyncResource( syncRes );
     }
 
 
