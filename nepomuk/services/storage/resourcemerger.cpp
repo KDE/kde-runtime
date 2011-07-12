@@ -38,6 +38,7 @@
 
 #include <KDebug>
 #include <Soprano/Graph>
+#include "resourcewatchermanager.h"
 
 using namespace Soprano::Vocabulary;
 
@@ -50,6 +51,7 @@ Nepomuk::ResourceMerger::ResourceMerger(Nepomuk::DataManagementModel* model, con
     m_additionalMetadata = additionalMetadata;
     m_model = model;
     m_flags = flags;
+    m_rvm = model->resourceWatcherManager();
 
     //setModel( m_model );
 
@@ -131,6 +133,7 @@ bool Nepomuk::ResourceMerger::push(const Soprano::Statement& st)
     Soprano::Statement statement( st );
     if( statement.context().isEmpty() )
         statement.setContext( m_graph );
+
 
     return m_model->addStatement( statement );
 }
@@ -511,6 +514,29 @@ void Nepomuk::ResourceMerger::resolveBlankNodesInList(QList<Soprano::Statement> 
     }
 }
 
+void Nepomuk::ResourceMerger::removeDuplicatesInList(QList<Soprano::Statement> *stList)
+{
+    QMutableListIterator<Soprano::Statement> it( *stList );
+    while( it.hasNext() ) {
+        const Soprano::Statement &st = it.next();
+        if( st.subject().isBlank() || st.object().isBlank() )
+            continue;
+
+        const QString query = QString::fromLatin1("select ?g where { graph ?g { %1 %2 %3 . } . } LIMIT 1")
+        .arg(st.subject().toN3(),
+             st.predicate().toN3(),
+             st.object().toN3());
+
+        Soprano::QueryResultIterator qit = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql);
+        if(qit.next()) {
+            const QUrl oldGraph = qit[0].uri();
+            qit.close();
+
+            m_duplicateStatements.insert( oldGraph, st );
+            it.remove();
+        }
+    }
+}
 
 namespace {
     QUrl getBlankOrResourceUri( const Soprano::Node & n ) {
@@ -790,76 +816,92 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
     // The graph is error free.
 
     //Merge its statements except for the resource metadata statements
-    QList<Soprano::Statement> mergeStatements = remainingStatements + typeStatements;
+    //QList<Soprano::Statement> mergeStatements = remainingStatements + typeStatements;
 
     //
     // Graph Handling
     //
-    QMultiHash<QUrl, Soprano::Statement> duplicateStatements;
+    removeDuplicatesInList( &remainingStatements );
 
-    QMutableListIterator<Soprano::Statement> it( mergeStatements );
-    while( it.hasNext() ) {
-        const Soprano::Statement &st = it.next();
-        if( st.subject().isBlank() || st.object().isBlank() )
-            continue;
+    // If the resource exists then all the type statements provided must match
+    // Therefore after this typeStatements, will only contain the types for the new types
+    removeDuplicatesInList( &typeStatements );
 
-        const QString query = QString::fromLatin1("select ?g where { graph ?g { %1 %2 %3 . } . } LIMIT 1")
-                              .arg(st.subject().toN3(),
-                                   st.predicate().toN3(),
-                                   st.object().toN3());
-
-        Soprano::QueryResultIterator qit = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql);
-        if(qit.next()) {
-            const QUrl oldGraph = qit[0].uri();
-            qit.close();
-
-            duplicateStatements.insert( oldGraph, st );
-            it.remove();
-        }
-    }
 
     //
     // Create all the graphs
     //
-    QMutableHashIterator<QUrl, Soprano::Statement> hit( duplicateStatements );
+    QMutableHashIterator<QUrl, Soprano::Statement> hit( m_duplicateStatements );
     while( hit.hasNext() ) {
         hit.next();
         const QUrl& oldGraph = hit.key();
 
         const QUrl newGraph = mergeGraphs( oldGraph );
+
+        // The newGraph is invalid when the oldGraph and the newGraph are the same
+        // In that case those statements can just be ignored.
         if( !newGraph.isValid() ) {
             hit.remove();
         }
     }
 
     // Create the main graph, if they are any statements to merge
-    if( !mergeStatements.isEmpty() ) {
+    if( !remainingStatements.isEmpty() || !typeStatements.isEmpty() ) {
         m_graph = createGraph();
     }
 
     // Count all the modified resources
     QSet<QUrl> modifiedResources;
-    foreach( const Soprano::Statement & st, mergeStatements ) {
+    foreach( const Soprano::Statement & st, remainingStatements ) {
         if( !st.subject().isBlank() )
             modifiedResources.insert( st.subject().uri() );
+        //FIXME: Inform RWM about typeAdded()
     }
-
 
     //
     // Actual statement pushing
     //
 
+    // Count all the blank nodes
+    /// Maps a blank node with all its types
+    QMultiHash<QUrl, QUrl> typeHash;
+    foreach( const Soprano::Statement& st, typeStatements ) {
+        if( st.subject().isBlank() )
+            typeHash.insert( st.subject().toN3(), st.object().uri() );
+    }
+
     // Create all the blank nodes
-    resolveBlankNodesInList( &mergeStatements );
+    resolveBlankNodesInList( &typeStatements );
+    resolveBlankNodesInList( &remainingStatements );
     resolveBlankNodesInList( &metadataStatements );
 
     // Push all these statements and get the list of all the modified resource
-    foreach( const Soprano::Statement &st, mergeStatements ) {
+    foreach( Soprano::Statement st, typeStatements ) {
+        st.setContext( m_graph );
+        m_model->addStatement( st );
+    }
+
+    foreach( const Soprano::Statement &st, remainingStatements ) {
         push( st );
+        m_rvm->addStatement( st );
+    }
+
+    // Inform the ResourceWatcherManager of these new types
+    QHash<QUrl, QUrl>::const_iterator typeIt = typeHash.constBegin();
+    QHash<QUrl, QUrl>::const_iterator typeItEnd = typeHash.constEnd();
+    for( ; typeIt != typeItEnd; ) {
+        const QUrl blankUri = typeIt.key();
+        QList<QUrl> types;
+        for( ; typeIt != typeItEnd && typeIt.key() == blankUri ; typeIt++)
+            types << typeIt.value();
+
+        // Get its resource uri
+        const QUrl resUri = m_mappings.value( blankUri );
+        m_rvm->createResource( resUri, types );
     }
 
     // Push all the duplicateStatements
-    QHashIterator<QUrl, Soprano::Statement> hashIter( duplicateStatements );
+    QHashIterator<QUrl, Soprano::Statement> hashIter( m_duplicateStatements );
     while( hashIter.hasNext() ) {
         hashIter.next();
         Soprano::Statement st = hashIter.value();
@@ -868,7 +910,7 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
         const QUrl newGraph( m_graphHash[hashIter.key()] );
         st.setContext( newGraph );
 
-        // Shouldn't we apply m_flag tests over here?
+        // No need to inform the RVM, we're just changing the graph.
         m_model->addStatement( st );
     }
 
@@ -876,6 +918,7 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
     // Handle Resource metadata
     //
 
+    // TODO: Maybe inform the RVM about these metadata changes?
     // First update the mtime of all the modified resources
     Soprano::Node currentDateTime = Soprano::LiteralValue( QDateTime::currentDateTime() );
     foreach( const QUrl & resUri, modifiedResources ) {
