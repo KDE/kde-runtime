@@ -100,6 +100,14 @@ bool Nepomuk::ResourceWatcher::start()
                  this, SLOT(slotPropertyAdded(QString,QString,QDBusVariant)) );
         connect( d->m_connectionInterface, SIGNAL(propertyRemoved(QString,QString,QDBusVariant)),
                  this, SLOT(slotPropertyRemoved(QString,QString,QDBusVariant)) );
+        connect( d->m_connectionInterface, SIGNAL(resourceCreated(QString,QStringList)),
+                 this, SLOT(slotResourceCreated(QString,QStringList)) );
+        connect( d->m_connectionInterface, SIGNAL(resourceRemoved(QString,QStringList)),
+                 this, SLOT(slotResourceRemoved(QString,QStringList)) );
+        connect( d->m_connectionInterface, SIGNAL(resourceTypeAdded(QString,QString)),
+                 this, SLOT(slotResourceTypeAdded(QString,QString)) );
+        connect( d->m_connectionInterface, SIGNAL(resourceTypeRemoved(QString,QString)),
+                 this, SLOT(slotResourceTypeRemoved(QString,QString)) );
         return true;
     }
     else {
