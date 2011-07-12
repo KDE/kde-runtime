@@ -151,6 +151,7 @@ Name[zh_TW]=應用程式
 [Event/AudioDeviceFallback]
 Name=Audio Output Device Changed
 Name[ast]=Cambeos en preseos de salida d'audiu
+Name[bg]=Изходното звуково устройство беше променено
 Name[bs]=Promijenjen uređaj audio izlaza
 Name[ca]=Ha canviat el dispositiu de sortida de l'àudio
 Name[ca@valencia]=Ha canviat el dispositiu d'eixida de l'àudio
@@ -201,6 +202,7 @@ Name[zh_CN]=音频输出设备已更改
 Name[zh_TW]=音效輸出裝置已變更
 Comment=Notification when audio output device has automatically changed
 Comment[ast]=Notificación de cambeos automáticos nos preseos de salida d'audio
+Comment[bg]=Уведомяване при автоматична промяна на изходното звуково устройство
 Comment[bs]=Obavještenje o automatskoj promijeni uređaja za audio izlaz
 Comment[ca]=Notificació quan canviï automàticament el dispositiu de sortida de l'àudio
 Comment[ca@valencia]=Notificació quan canvie automàticament el dispositiu d'eixida de l'àudio
