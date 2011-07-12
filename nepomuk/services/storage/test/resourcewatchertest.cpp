@@ -30,6 +30,7 @@
 
 #include <QtTest>
 #include "qtest_kde.h"
+#include "qtest_dms.h"
 #include <QStringList>
 #include <Soprano/Soprano>
 #include <Soprano/Graph>
@@ -60,72 +61,7 @@ void ResourceWatcherTest::resetModel()
 
     // add some classes and properties
     QUrl graph("graph:/onto");
-    m_model->addStatement( graph, RDF::type(), NRL::Ontology(), graph );
-    // removeResources depends on type inference
-    m_model->addStatement( graph, RDF::type(), NRL::Graph(), graph );
-
-    m_model->addStatement( QUrl("prop:/int"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int2"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int2"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int3"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int3"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int_c1"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int_c1"), RDFS::range(), XMLSchema::xsdInt(), graph );
-    m_model->addStatement( QUrl("prop:/int_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    m_model->addStatement( QUrl("prop:/string"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/string"), RDFS::range(), XMLSchema::string(), graph );
-
-    m_model->addStatement( QUrl("prop:/res"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res"), RDFS::range(), RDFS::Resource(), graph );
-
-    m_model->addStatement( QUrl("prop:/res2"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res2"), RDFS::range(), RDFS::Resource(), graph );
-
-    m_model->addStatement( QUrl("prop:/res3"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res3"), RDFS::range(), RDFS::Resource(), graph );
-
-    m_model->addStatement( QUrl("prop:/res_c1"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), RDFS::range(), RDFS::Resource(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    m_model->addStatement( QUrl("class:/typeA"), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( QUrl("class:/typeB"), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( QUrl("class:/typeB"), RDFS::subClassOf(), QUrl("class:/typeA"), graph );
-
-    // properties used all the time
-    m_model->addStatement( NAO::identifier(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( RDF::type(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( RDF::type(), RDFS::range(), RDFS::Class(), graph );
-    m_model->addStatement( NIE::url(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::url(), RDFS::range(), RDFS::Resource(), graph );
-
-
-    // some ontology things the ResourceMerger depends on
-    m_model->addStatement( RDFS::Class(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( RDFS::Class(), RDFS::subClassOf(), RDFS::Resource(), graph );
-    m_model->addStatement( NRL::Graph(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NRL::InstanceBase(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NRL::InstanceBase(), RDFS::subClassOf(), NRL::Graph(), graph );
-    m_model->addStatement( NAO::prefLabel(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::prefLabel(), RDFS::range(), RDFS::Literal(), graph );
-    m_model->addStatement( NFO::fileName(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NFO::fileName(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NCO::fullname(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NCO::fullname(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NIE::title(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::title(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NAO::created(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::created(), RDFS::range(), XMLSchema::dateTime(), graph );
-    m_model->addStatement( NAO::created(), NRL::maxCardinality(), LiteralValue(1), graph );
-    m_model->addStatement( NAO::lastModified(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
-    m_model->addStatement( NAO::lastModified(), NRL::maxCardinality(), LiteralValue(1), graph );
-
+    Nepomuk::insertOntologies( m_model, graph );
 
     // rebuild the internals of the data management model
     m_classAndPropertyTree->rebuildTree(m_dmModel);
