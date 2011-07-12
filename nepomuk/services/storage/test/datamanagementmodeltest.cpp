@@ -3595,6 +3595,34 @@ void DataManagementModelTest::testStoreResources_file4()
 }
 
 
+void DataManagementModelTest::testStoreResources_folder()
+{
+    QTemporaryFile file;
+    QVERIFY( file.open() );
+    KUrl fileUrl = KUrl::fromLocalFile( file.fileName() );
+    QUrl folderUrl = QUrl::fromLocalFile( fileUrl.directory() );
+
+    SimpleResource res( fileUrl );
+    res.addProperty( RDF::type(), NMM::MusicPiece() );
+    res.addProperty( NAO::prefLabel(), QLatin1String("Label") );
+    res.addProperty( NIE::isPartOf(), fileUrl.directory() );
+
+    SimpleResourceGraph graph;
+    graph << res;
+
+    m_dmModel->storeResources( graph, QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList<Statement> stList = m_model->listStatements( Node(), NIE::isPartOf(), Node() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl folderResUri = stList.first().object().uri();
+    QVERIFY( m_dmModel->containsAnyStatement( folderResUri, RDF::type(), NFO::FileDataObject() ) );
+    QVERIFY( m_dmModel->containsAnyStatement( folderResUri, RDF::type(), NFO::Folder() ) );
+    QVERIFY( m_dmModel->containsAnyStatement( folderResUri, NIE::url(), folderUrl ) );
+}
+
+
 void DataManagementModelTest::testStoreResources_fileExists()
 {
     SimpleResource res(QUrl("file:///a/b/v/c/c"));
