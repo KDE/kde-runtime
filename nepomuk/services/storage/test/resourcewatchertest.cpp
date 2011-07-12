@@ -1,6 +1,7 @@
 /*
    This file is part of the Nepomuk KDE project.
    Copyright (C) 2011 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2011 Vishesh Handa <handa.vish@gmail.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -178,6 +179,37 @@ void ResourceWatcherTest::testResourceRemovedSignal()
 
     con->deleteLater();
 }
+
+void ResourceWatcherTest::testStoreResources_createResources()
+{
+    ResourceWatcherManager *rvm = m_dmModel->resourceWatcherManager();
+    ResourceWatcherConnection* con = rvm->createConnection( QList<QUrl>(), QList<QUrl>(),
+                                                            QList<QUrl>() << NCO::Contact() );
+    QVERIFY(!m_dmModel->lastError());
+
+    SimpleResource res;
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("Haruki Murakami") );
+
+    QSignalSpy spy(con, SIGNAL(resourceCreated(QString, QStringList)));
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp") );
+    QVERIFY(!m_dmModel->lastError());
+
+    QCOMPARE( spy.count(), 1 );
+
+    QList<QVariant> args = spy.takeFirst();
+
+    QList< Statement > stList = m_model->listStatements( Node(), RDF::type(), NCO::Contact() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl resUri = stList.first().subject().uri();
+    QCOMPARE(args[0].toString(), resUri.toString());
+    QCOMPARE(args[1].toStringList(), QStringList() << NCO::Contact().toString() );
+
+    con->deleteLater();
+}
+
 
 QTEST_KDEMAIN_CORE(ResourceWatcherTest)
 
