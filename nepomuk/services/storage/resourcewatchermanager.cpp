@@ -80,6 +80,12 @@ Nepomuk::ResourceWatcherManager::~ResourceWatcherManager()
     qDeleteAll(allConnections);
 }
 
+
+void Nepomuk::ResourceWatcherManager::addStatement(const Soprano::Statement& st)
+{
+    addProperty( st.subject(), st.predicate().uri(), st.object() );
+}
+
 void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value)
 {
     typedef ResourceWatcherConnection RWC;

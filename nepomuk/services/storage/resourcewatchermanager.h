@@ -42,6 +42,7 @@ namespace Nepomuk {
         ResourceWatcherManager( QObject* parent = 0 );
         ~ResourceWatcherManager();
 
+        void addStatement(const Soprano::Statement &st);
         void addProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value);
         void removeProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value);
         void createResource(const QUrl& uri, const QList<QUrl>& types);

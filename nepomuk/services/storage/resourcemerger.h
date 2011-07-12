@@ -39,6 +39,7 @@ namespace Soprano {
 
 namespace Nepomuk {
     class DataManagementModel;
+    class ResourceWatcherManager;
 
     class ResourceMerger : public Soprano::Error::ErrorCache
     {
@@ -74,6 +75,13 @@ namespace Nepomuk {
 
         /// This modifies the list
         void resolveBlankNodesInList( QList<Soprano::Statement> *stList );
+
+        /**
+         * Removes all the statements that already exist in the model
+         * and adds them to m_duplicateStatements
+         */
+        void removeDuplicatesInList( QList<Soprano::Statement> *stList );
+        QMultiHash<QUrl, Soprano::Statement> m_duplicateStatements;
 
         QHash<KUrl, KUrl> m_mappings;
 
@@ -123,6 +131,8 @@ namespace Nepomuk {
 
         /// Refers to the properties which are considered as resource metadata
         QSet<QUrl> metadataProperties;
+
+        ResourceWatcherManager *m_rvm;
     };
 
 }
