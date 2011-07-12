@@ -171,7 +171,7 @@ void Nepomuk::ResourceWatcherManager::createResource(const QUrl &uri, const QLis
     }
 
     foreach(ResourceWatcherConnection* con, connections) {
-        con->resourceCreated(KUrl(uri).url(), convertUris(types));
+        emit con->resourceCreated(KUrl(uri).url(), convertUris(types));
     }
 }
 
@@ -188,7 +188,7 @@ void Nepomuk::ResourceWatcherManager::removeResource(const QUrl &res, const QLis
     }
 
     foreach(ResourceWatcherConnection* con, connections) {
-        con->resourceRemoved(KUrl(res).url(), convertUris(types));
+        emit con->resourceRemoved(KUrl(res).url(), convertUris(types));
     }
 }
 
@@ -211,7 +211,7 @@ Nepomuk::ResourceWatcherConnection* Nepomuk::ResourceWatcherManager::createConne
         m_propHash.insert(prop, con);
     }
 
-    foreach( const QUrl& type, properties ) {
+    foreach( const QUrl& type, types ) {
         m_typeHash.insert(type, con);
     }
 
