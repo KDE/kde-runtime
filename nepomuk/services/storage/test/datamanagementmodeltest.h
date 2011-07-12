@@ -118,6 +118,7 @@ private Q_SLOTS:
     void testStoreResources_file2();
     void testStoreResources_file3();
     void testStoreResources_file4();
+    void testStoreResources_folder();
     void testStoreResources_fileExists();
     void testStoreResources_sameNieUrl();
     void testStoreResources_metadata();
