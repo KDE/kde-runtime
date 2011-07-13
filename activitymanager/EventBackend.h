@@ -21,11 +21,13 @@
 #define EVENT_BACKEND_H_
 
 #include <EventProcessor.h>
-#include "Event.h"
 
 #include <kdemacros.h>
 #include <KPluginFactory>
 #include <KPluginLoader>
+
+#include "Event.h"
+#include "SharedInfo.h"
 
 #define KAMD_EXPORT_PLUGIN(ClassName, AboutData)                       \
     K_PLUGIN_FACTORY(ClassName##Factory, registerPlugin<ClassName>();) \
@@ -44,6 +46,9 @@ public:
 
     virtual void addEvents(const EventList & events);
     virtual void setResourceMimeType(const QString & uri, const QString & mimetype);
+
+    virtual void setSharedInfo(SharedInfo * sharedInfo);
+    SharedInfo * sharedInfo() const;
 
 private:
     class Private;

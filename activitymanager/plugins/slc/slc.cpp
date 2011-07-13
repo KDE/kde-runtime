@@ -23,8 +23,6 @@
 #include <KWindowSystem>
 #include <KUrl>
 
-#include "../../SharedInfo.h"
-
 SlcPlugin::SlcPlugin(QObject * parent, const QVariantList & args)
     : EventBackend(parent), focussedWindow(0)
 {
@@ -87,7 +85,7 @@ KUrl SlcPlugin::_focussedResourceURI()
     if (lastFocussedResource.contains(focussedWindow)) {
         kuri = lastFocussedResource[focussedWindow];
     } else {
-        foreach (const KUrl & uri, SharedInfo::self()->windows()[focussedWindow].resources) {
+        foreach (const KUrl & uri, sharedInfo()->windows()[focussedWindow].resources) {
             kuri = uri;
             break;
         }
@@ -103,8 +101,8 @@ QString SlcPlugin::focussedResourceURI()
 
 QString SlcPlugin::focussedResourceMimetype()
 {
-    return SharedInfo::self()->resources().contains(_focussedResourceURI()) ?
-        SharedInfo::self()->resources()[_focussedResourceURI()].mimetype : QString();
+    return sharedInfo()->resources().contains(_focussedResourceURI()) ?
+        sharedInfo()->resources()[_focussedResourceURI()].mimetype : QString();
 }
 
 void SlcPlugin::activeWindowChanged(WId wid)
@@ -118,15 +116,15 @@ void SlcPlugin::activeWindowChanged(WId wid)
 
 void SlcPlugin::updateFocus(WId wid)
 {
-    // kDebug() << "Updating focus for " << wid;
+    kDebug() << "SHARED INFO" << (void*) sharedInfo();
 
-    if (wid == 0 || !SharedInfo::self()->windows().contains(wid)) {
-        // kDebug() << "Clearing focus";
+    if (wid == 0 || !sharedInfo()->windows().contains(wid)) {
+        kDebug() << "Clearing focus" << wid;
         emit focusChanged(QString(), QString());
 
     } else if (wid == focussedWindow) {
-        // kDebug() << "It is the currently focussed window";
-        emit focusChanged(focussedResourceURI(), SharedInfo::self()->resources()[_focussedResourceURI()].mimetype);
+        kDebug() << "It is the currently focussed window" << wid;
+        emit focusChanged(focussedResourceURI(), sharedInfo()->resources()[_focussedResourceURI()].mimetype);
 
     }
 }

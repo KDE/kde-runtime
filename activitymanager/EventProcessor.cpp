@@ -128,6 +128,7 @@ EventProcessor::EventProcessor()
         }
 
         EventBackend * plugin = factory->create < EventBackend > (this);
+        plugin->setSharedInfo(SharedInfo::self());
 
         if (plugin) {
             const QString & type = service->property("X-ActivityManager-PluginType", QVariant::String).toString();

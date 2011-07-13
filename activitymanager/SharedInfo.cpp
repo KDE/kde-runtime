@@ -19,12 +19,16 @@
 
 #include "SharedInfo.h"
 
+#include <KDebug>
+
 SharedInfo * SharedInfo::s_instance = NULL;
 
 SharedInfo * SharedInfo::self()
 {
     if (!s_instance) {
         s_instance = new SharedInfo();
+
+        kDebug() << "SHARED INFO" << (void*) s_instance;
     }
 
     return s_instance;

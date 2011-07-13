@@ -20,6 +20,8 @@
 #include "EventBackend.h"
 
 class EventBackend::Private {
+public:
+    SharedInfo * sharedInfo;
 };
 
 EventBackend::EventBackend(QObject * parent)
@@ -43,3 +45,12 @@ void EventBackend::setResourceMimeType(const QString & uri, const QString & mime
     Q_UNUSED(mimetype)
 }
 
+void EventBackend::setSharedInfo(SharedInfo * sharedInfo)
+{
+    d->sharedInfo = sharedInfo;
+}
+
+SharedInfo * EventBackend::sharedInfo() const
+{
+    return d->sharedInfo;
+}
