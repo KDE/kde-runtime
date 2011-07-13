@@ -41,6 +41,16 @@ namespace Nepomuk {
         virtual bool doSuspend();
         virtual bool doResume();
 
+    public slots:
+        /**
+         * Set the delay between the cleanup queries.
+         * Used for throtteling the cleaner to not grab too
+         * many resources. Default is 0.
+         *
+         * \sa IndexScheduler::setIndexingSpeed()
+         */
+        void setDelay(int msecs);
+
     private slots:
         void clearNextBatch();
         void slotRemoveResourcesDone(KJob* job);
@@ -52,6 +62,7 @@ namespace Nepomuk {
 
         QMutex m_stateMutex;
         bool m_suspended;
+        int m_delay;
     };
 }
 

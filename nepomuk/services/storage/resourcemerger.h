@@ -26,18 +26,22 @@
 #include <QtCore/QUrl>
 #include <QtCore/QSet>
 
-#include "../backupsync/lib/resourcemerger.h"
+#include <KUrl>
+#include <Soprano/Error/ErrorCache>
+
 #include "datamanagement.h"
 
 namespace Soprano {
     class Node;
     class Statement;
+    class Graph;
 }
 
 namespace Nepomuk {
     class DataManagementModel;
+    class ResourceWatcherManager;
 
-    class ResourceMerger : public Sync::ResourceMerger
+    class ResourceMerger : public Soprano::Error::ErrorCache
     {
     public:
         ResourceMerger( Nepomuk::DataManagementModel * model, const QString & app,
@@ -45,18 +49,45 @@ namespace Nepomuk {
                         const StoreResourcesFlags& flags );
         virtual ~ResourceMerger();
 
-        virtual bool merge(const Soprano::Graph& graph);
+        void setMappings( const QHash<KUrl, KUrl> & mappings );
+        QHash<KUrl, KUrl> mappings() const;
 
-    protected:
-        virtual KUrl createGraph();
-        virtual QUrl createResourceUri();
-        virtual QUrl createGraphUri();
-        virtual bool resolveDuplicate(const Soprano::Statement& newSt);
-        virtual KUrl resolveUnidentifiedResource(const KUrl& uri);
-        virtual Soprano::Error::ErrorCode addStatement( const Soprano::Statement & st );
-        virtual Soprano::Error::ErrorCode addResMetadataStatement( const Soprano::Statement & st );
+        bool merge(const Soprano::Graph& graph);
+
+        void setAdditionalGraphMetadata( const QHash<QUrl, QVariant>& additionalMetadata );
+        QHash<QUrl, QVariant> additionalMetadata() const;
 
     private:
+        virtual QUrl createGraph();
+        virtual QUrl createResourceUri();
+        virtual QUrl createGraphUri();
+
+        virtual Soprano::Error::ErrorCode addResMetadataStatement( const Soprano::Statement & st );
+
+        bool push( const Soprano::Statement & st );
+
+        //
+        // Resolution
+        //
+        Soprano::Statement resolveStatement( const Soprano::Statement& st );
+        Soprano::Node resolveMappedNode( const Soprano::Node& node );
+        Soprano::Node resolveUnmappedNode( const Soprano::Node& node );
+
+        /// This modifies the list
+        void resolveBlankNodesInList( QList<Soprano::Statement> *stList );
+
+        /**
+         * Removes all the statements that already exist in the model
+         * and adds them to m_duplicateStatements
+         */
+        void removeDuplicatesInList( QList<Soprano::Statement> *stList );
+        QMultiHash<QUrl, Soprano::Statement> m_duplicateStatements;
+
+        QHash<KUrl, KUrl> m_mappings;
+
+        /// Can set the error
+        QMultiHash<QUrl, Soprano::Node> toNodeHash( const QHash<QUrl, QVariant> &hash );
+
         /**
          * Each statement that is being merged and already exists, belongs to a graph. This hash
          * maps that oldGraph -> newGraph.
@@ -66,6 +97,7 @@ namespace Nepomuk {
          * \sa mergeGraphs
          */
         QHash<QUrl, QUrl> m_graphHash;
+        QHash<QUrl, Soprano::Node> m_additionalMetadataHash;
         QHash<QUrl, QVariant> m_additionalMetadata;
 
         QString m_app;
@@ -75,7 +107,7 @@ namespace Nepomuk {
         StoreResourcesFlags m_flags;
         Nepomuk::DataManagementModel * m_model;
 
-        bool mergeGraphs( const QUrl & oldGraph );
+        QUrl mergeGraphs( const QUrl& oldGraph );
 
         QList<QUrl> existingTypes( const QUrl& uri ) const;
 
@@ -100,7 +132,7 @@ namespace Nepomuk {
         /// Refers to the properties which are considered as resource metadata
         QSet<QUrl> metadataProperties;
 
-        QSet<QUrl> m_modifiedResources;
+        ResourceWatcherManager *m_rvm;
     };
 
 }

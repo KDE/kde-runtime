@@ -28,6 +28,7 @@
 
 #include <QtTest>
 #include "qtest_kde.h"
+#include "qtest_dms.h"
 
 #include <Soprano/Soprano>
 #include <Soprano/Graph>
@@ -60,137 +61,7 @@ void DataManagementModelTest::resetModel()
 
     // add some classes and properties
     QUrl graph("graph:/onto");
-    m_model->addStatement( graph, RDF::type(), NRL::Ontology(), graph );
-    // removeResources depends on type inference
-    m_model->addStatement( graph, RDF::type(), NRL::Graph(), graph );
-
-    m_model->addStatement( QUrl("prop:/int"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int2"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int2"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int3"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int3"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int_c1"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int_c1"), RDFS::range(), XMLSchema::xsdInt(), graph );
-    m_model->addStatement( QUrl("prop:/int_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    m_model->addStatement( QUrl("prop:/string"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/string"), RDFS::range(), XMLSchema::string(), graph );
-
-    m_model->addStatement( QUrl("prop:/res"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res"), RDFS::range(), RDFS::Resource(), graph );
-
-    m_model->addStatement( QUrl("prop:/res2"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res2"), RDFS::range(), RDFS::Resource(), graph );
-
-    m_model->addStatement( QUrl("prop:/res3"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res3"), RDFS::range(), RDFS::Resource(), graph );
-
-    m_model->addStatement( QUrl("prop:/res_c1"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), RDFS::range(), RDFS::Resource(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    m_model->addStatement( QUrl("class:/typeA"), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( QUrl("class:/typeB"), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( QUrl("class:/typeB"), RDFS::subClassOf(), QUrl("class:/typeA"), graph );
-
-    // properties used all the time
-    m_model->addStatement( NAO::identifier(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( RDF::type(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( RDF::type(), RDFS::range(), RDFS::Class(), graph );
-    m_model->addStatement( NIE::url(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::url(), RDFS::range(), RDFS::Resource(), graph );
-
-
-    // some ontology things the ResourceMerger depends on
-    m_model->addStatement( RDFS::Class(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( RDFS::Class(), RDFS::subClassOf(), RDFS::Resource(), graph );
-    m_model->addStatement( NRL::Graph(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NRL::InstanceBase(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NRL::InstanceBase(), RDFS::subClassOf(), NRL::Graph(), graph );
-    m_model->addStatement( NAO::prefLabel(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::prefLabel(), RDFS::range(), RDFS::Literal(), graph );
-    m_model->addStatement( NFO::fileName(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NFO::fileName(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NCO::fullname(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NCO::fullname(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NIE::title(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::title(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NAO::created(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::created(), RDFS::range(), XMLSchema::dateTime(), graph );
-    m_model->addStatement( NAO::created(), NRL::maxCardinality(), LiteralValue(1), graph );
-    m_model->addStatement( NAO::lastModified(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
-    m_model->addStatement( NAO::lastModified(), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    // used in testStoreResources_sameNieUrl
-    m_model->addStatement( NAO::numericRating(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::numericRating(), RDFS::range(), XMLSchema::xsdInt(), graph );
-    m_model->addStatement( NAO::numericRating(), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    // some ontology things we need in testStoreResources_realLife
-    m_model->addStatement( NMM::season(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::season(), RDFS::range(), XMLSchema::xsdInt(), graph );
-    m_model->addStatement( NMM::episodeNumber(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::episodeNumber(), RDFS::range(), XMLSchema::xsdInt(), graph );
-    m_model->addStatement( NMM::hasEpisode(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::hasEpisode(), RDFS::range(), NMM::TVShow(), graph );
-    m_model->addStatement( NIE::description(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::description(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NMM::synopsis(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::synopsis(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NMM::series(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::series(), RDFS::range(), NMM::TVSeries(), graph );
-    m_model->addStatement( NIE::title(), RDFS::subClassOf(), QUrl("http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifyingProperty"), graph );
-
-    // some ontology things we need in testStoreResources_strigiCase
-    m_model->addStatement( NMM::performer(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::performer(), RDFS::range(), NCO::Contact(), graph );
-    m_model->addStatement( NMM::musicAlbum(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::musicAlbum(), RDFS::range(), NMM::MusicAlbum(), graph );
-    m_model->addStatement( NMM::MusicAlbum(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NMM::TVShow(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NMM::TVSeries(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NMM::MusicPiece(), RDF::type(), RDFS::Class(), graph );
-
-    // used by testStoreResources_duplicates
-    m_model->addStatement( NFO::hashAlgorithm(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NFO::hashAlgorithm(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NFO::hashValue(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NFO::hashValue(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NFO::hashValue(), NRL::maxCardinality(), LiteralValue(1), graph );
-    m_model->addStatement( NFO::hasHash(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NFO::hasHash(), RDFS::range(), NFO::FileHash(), graph );
-    m_model->addStatement( NFO::hasHash(), RDFS::domain(), NFO::FileDataObject(), graph );
-    m_model->addStatement( NFO::FileHash(), RDF::type(), RDFS::Resource(), graph );
-    m_model->addStatement( NFO::FileHash(), RDF::type(), RDFS::Class(), graph );
-
-
-    m_model->addStatement( NIE::isPartOf(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::isPartOf(), RDFS::range(), NFO::FileDataObject(), graph );
-    m_model->addStatement( NIE::lastModified(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
-
-    m_model->addStatement( NCO::fullname(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NCO::fullname(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NCO::fullname(), RDFS::domain(), NCO::Contact(), graph );
-    m_model->addStatement( NCO::fullname(), NRL::maxCardinality(), LiteralValue(1), graph );
-    m_model->addStatement( NCO::Contact(), RDF::type(), RDFS::Resource(), graph );
-    m_model->addStatement( NCO::Contact(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NCO::Contact(), RDFS::subClassOf(), NCO::Role(), graph );
-    m_model->addStatement( NCO::Contact(), RDFS::subClassOf(), NAO::Party(), graph );
-
-    m_model->addStatement( NAO::Tag(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NFO::FileDataObject(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NFO::Folder(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NFO::Video(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NIE::InformationElement(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( QUrl("class:/typeA"), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( QUrl("class:/typeB"), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( QUrl("class:/typeC"), RDF::type(), RDFS::Class(), graph );
+    Nepomuk::insertOntologies( m_model, graph );
 
     // rebuild the internals of the data management model
     m_classAndPropertyTree->rebuildTree(m_dmModel);
@@ -1790,6 +1661,44 @@ void DataManagementModelTest::testRemoveResources_mtimeRelated()
     QCOMPARE(m_model->listStatements(QUrl("res:/C"), NAO::lastModified(), Node()).allElements().first().object().literal().toDateTime(), date);
 }
 
+// make sure we can remove data from non-existing files
+void DataManagementModelTest::testRemoveResources_deletedFile()
+{
+    QTemporaryFile fileA;
+    fileA.open();
+
+    const KUrl fileUrl(fileA.fileName());
+
+    // create our app
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+
+    // create the data graph
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    // create the resource
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), fileUrl, g1);
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), NFO::FileDataObject(), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+    // now remove the file
+    fileA.close();
+    QFile::remove(fileUrl.toLocalFile());
+
+    // now try removing the data
+    m_dmModel->removeResources(QList<QUrl>() << fileUrl, NoRemovalFlags, QLatin1String("A"));
+
+    // the call should succeed
+    QVERIFY(!m_dmModel->lastError());
+
+    // the resource should be gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(Node(), Node(), fileUrl));
+}
+
 void DataManagementModelTest::testCreateResource()
 {
     // the simple test: we just create a resource using all params
@@ -2703,6 +2612,42 @@ void DataManagementModelTest::testRemoveDataByApplication_legacyIndexerData()
     QVERIFY(!m_model->containsAnyStatement(Node(), Node(), Node(), mg1));
 }
 
+// make sure we can remove data from non-existing files
+void DataManagementModelTest::testRemoveDataByApplication_deletedFile()
+{
+    QTemporaryFile* fileA = new QTemporaryFile();
+    fileA->open();
+    const KUrl fileUrl(fileA->fileName());
+    delete fileA;
+    QVERIFY(!QFile::exists(fileUrl.toLocalFile()));
+
+    // create our app
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+
+    // create the data graph
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    // create the resource
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), fileUrl, g1);
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), NFO::FileDataObject(), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+
+    // now try removing the data
+    m_dmModel->removeDataByApplication(QList<QUrl>() << fileUrl, NoRemovalFlags, QLatin1String("A"));
+
+    // the call should succeed
+    QVERIFY(!m_dmModel->lastError());
+
+    // the resource should be gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(Node(), Node(), fileUrl));
+}
+
 // test that all is removed, ie. storage is clear afterwards
 void DataManagementModelTest::testRemoveAllDataByApplication1()
 {
@@ -2897,7 +2842,6 @@ void DataManagementModelTest::testStoreResources_strigiCase()
     album.addProperty( NIE::title(), "X&Y" );
 
     Nepomuk::SimpleResource res1;
-    res1.setUri( QUrl("nepomuk:/res/m/Res1") );
     res1.addProperty( RDF::type(), NFO::FileDataObject() );
     res1.addProperty( RDF::type(), NMM::MusicPiece() );
     res1.addProperty( NFO::fileName(), "Yellow.mp3" );
@@ -2913,34 +2857,39 @@ void DataManagementModelTest::testStoreResources_strigiCase()
     m_dmModel->storeResources( resGraph, "TestApp" );
     QVERIFY( !m_dmModel->lastError() );
 
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), Soprano::Node(),
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), RDF::type(), NMM::MusicPiece() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl res1Uri = stList.first().subject().uri();
+
+    QVERIFY( m_model->containsAnyStatement( res1Uri, Soprano::Node(),
                                             Soprano::Node() ) );
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), NFO::fileName(),
+    QVERIFY( m_model->containsAnyStatement( res1Uri, NFO::fileName(),
                                             Soprano::LiteralValue("Yellow.mp3") ) );
     // Make sure we have the nao:created and nao:lastModified
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), NAO::lastModified(),
+    QVERIFY( m_model->containsAnyStatement( res1Uri, NAO::lastModified(),
                                             Soprano::Node() ) );
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), NAO::created(),
+    QVERIFY( m_model->containsAnyStatement( res1Uri, NAO::created(),
                                             Soprano::Node() ) );
-    kDebug() << m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements();
+    kDebug() << m_model->listStatements( res1Uri, Soprano::Node(), Soprano::Node() ).allStatements();
     // The +2 is because nao:created and nao:lastModified would have also been added
-    QCOMPARE( m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements().size(),
+    QCOMPARE( m_model->listStatements( res1Uri, Soprano::Node(), Soprano::Node() ).allStatements().size(),
                 res1.properties().size() + 2 );
 
-    QList< Node > objects = m_model->listStatements( res1.uri(), NMM::performer(), Soprano::Node() ).iterateObjects().allNodes();
+    QList< Node > objects = m_model->listStatements( res1Uri, NMM::performer(), Soprano::Node() ).iterateObjects().allNodes();
 
     QVERIFY( objects.size() == 1 );
     QVERIFY( objects.first().isResource() );
 
     QUrl coldplayUri = objects.first().uri();
     QCOMPARE( coldplayUri, QUrl("nepomuk:/res/coldplay") );
-    QList< Soprano::Statement > stList = coldplay.toStatementList();
+    stList = coldplay.toStatementList();
     foreach( Soprano::Statement st, stList ) {
         st.setSubject( coldplayUri );
         QVERIFY( m_model->containsAnyStatement( st ) );
     }
 
-    objects = m_model->listStatements( res1.uri(), NMM::musicAlbum(), Soprano::Node() ).iterateObjects().allNodes();
+    objects = m_model->listStatements( res1Uri, NMM::musicAlbum(), Soprano::Node() ).iterateObjects().allNodes();
 
     QVERIFY( objects.size() == 1 );
     QVERIFY( objects.first().isResource() );
@@ -3127,13 +3076,13 @@ void DataManagementModelTest::testStoreResources_createResource()
 
 
     // create a resource by specifying the URI
-    SimpleResource res2;
-    res2.setUri(QUrl("nepomuk:/res/A"));
-    res2.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("foobar")));
-    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"));
-    QVERIFY( !m_dmModel->lastError() );
-
-    QVERIFY(m_model->containsAnyStatement( res2.uri(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+//     SimpleResource res2;
+//     res2.setUri(QUrl("nepomuk:/res/A"));
+//     res2.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("foobar")));
+//     m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"));
+//     QVERIFY( !m_dmModel->lastError() );
+//
+//     QVERIFY(m_model->containsAnyStatement( res2.uri(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
 
     QVERIFY(!haveTrailingGraphs());
 }
@@ -3378,26 +3327,31 @@ void DataManagementModelTest::testStoreResources_file2()
     const QUrl fileUrl = QUrl::fromLocalFile(fileA.fileName());
 
     SimpleResource r1;
-    r1.setUri(QUrl("nepomuk:/res/A"));
     r1.addProperty(QUrl("prop:/res"), fileUrl);
 
     m_dmModel->storeResources(SimpleResourceGraph() << r1, QLatin1String("testapp"));
     QVERIFY( !m_dmModel->lastError() );
 
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), QUrl("prop:/res"), Node() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl r1Uri = stList.first().subject().uri();
+
     // the property should have been created
-    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), Node()));
+    QVERIFY(m_model->containsAnyStatement(r1Uri, QUrl("prop:/res"), Node()));
 
     // but it should not be related to the file URL
-    QVERIFY(!m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), fileUrl));
+    QVERIFY(!m_model->containsAnyStatement(r1Uri, QUrl("prop:/res"), fileUrl));
 
     // there should be a nie:url for the file URL
     QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), fileUrl));
 
     // make sure file URL and res URI are properly related including the properties
-    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { <nepomuk:/res/A> <prop:/res> ?r . "
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { %3 <prop:/res> ?r . "
                                                       "?r %1 %2 . }")
                                   .arg(Node::resourceToN3(NIE::url()),
-                                       Node::resourceToN3(fileUrl)),
+                                       Node::resourceToN3(fileUrl),
+                                       Node::resourceToN3(r1Uri)),
                                   Query::QueryLanguageSparql).boolValue());
 
     QVERIFY(!haveTrailingGraphs());
@@ -3508,6 +3462,34 @@ void DataManagementModelTest::testStoreResources_file4()
 
     QUrl fileResUri2 = stList.first().object().uri();
     QCOMPARE( fileResUri, fileResUri2 );
+}
+
+
+void DataManagementModelTest::testStoreResources_folder()
+{
+    QTemporaryFile file;
+    QVERIFY( file.open() );
+    KUrl fileUrl = KUrl::fromLocalFile( file.fileName() );
+    QUrl folderUrl = QUrl::fromLocalFile( fileUrl.directory() );
+
+    SimpleResource res( fileUrl );
+    res.addProperty( RDF::type(), NMM::MusicPiece() );
+    res.addProperty( NAO::prefLabel(), QLatin1String("Label") );
+    res.addProperty( NIE::isPartOf(), fileUrl.directory() );
+
+    SimpleResourceGraph graph;
+    graph << res;
+
+    m_dmModel->storeResources( graph, QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList<Statement> stList = m_model->listStatements( Node(), NIE::isPartOf(), Node() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl folderResUri = stList.first().object().uri();
+    QVERIFY( m_dmModel->containsAnyStatement( folderResUri, RDF::type(), NFO::FileDataObject() ) );
+    QVERIFY( m_dmModel->containsAnyStatement( folderResUri, RDF::type(), NFO::Folder() ) );
+    QVERIFY( m_dmModel->containsAnyStatement( folderResUri, NIE::url(), folderUrl ) );
 }
 
 
@@ -4303,6 +4285,48 @@ void DataManagementModelTest::testStoreResources_correctDomainInStore()
     QVERIFY(!m_dmModel->lastError());
 }
 
+void DataManagementModelTest::testStoreResources_correctDomainInStore2()
+{
+    SimpleResource res;
+    res.addType( NMM::MusicPiece() );
+    res.addType( NFO::FileDataObject() );
+    res.addProperty( NIE::title(), QLatin1String("Music") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), RDF::type(), NFO::FileDataObject() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl resUri = stList.first().subject().uri();
+
+    SimpleResource musicPiece;
+    musicPiece.addType( NFO::FileDataObject() );
+    // We're not giving it a nmm:MusicPiece type
+    musicPiece.addProperty( NIE::title(), QLatin1String("Music") );
+
+    SimpleResource artist;
+    artist.addType( NCO::Contact() );
+    artist.addProperty( NCO::fullname(), QLatin1String("Snow Patrol") );
+
+    // nmm:performer has a domain of nmm:MusicPiece which is already present in the store
+    musicPiece.addProperty( NMM::performer(), artist );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << musicPiece << artist,
+                               QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    // musicPiece should have gotten identified as res
+    stList = m_model->listStatements( Node(), RDF::type(), NFO::FileDataObject() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl musicPieceUri = stList.first().subject().uri();
+    QCOMPARE( musicPieceUri, resUri );
+
+    // It should have the artist
+    QVERIFY( m_model->containsAnyStatement( musicPieceUri, NMM::performer(), Node() ) );
+}
+
 // make sure that already existing resource types are taken into account for range checks
 void DataManagementModelTest::testStoreResources_correctRangeInStore()
 {
@@ -4327,6 +4351,48 @@ void DataManagementModelTest::testStoreResources_correctRangeInStore()
     QVERIFY(!m_dmModel->lastError());
 }
 
+void DataManagementModelTest::testStoreResources_correctRangeInStore2()
+{
+    SimpleResource res;
+    res.addType( NCO::Contact() );
+    res.addType( NFO::FileDataObject() );
+    res.addProperty( NCO::fullname(), QLatin1String("Jack Black") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), RDF::type(), NFO::FileDataObject() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl resUri = stList.first().subject().uri();
+
+    SimpleResource musicPiece;
+    musicPiece.addType( NFO::FileDataObject() );
+    musicPiece.addType( NMM::MusicPiece() );
+    musicPiece.addProperty( NIE::title(), QLatin1String("Music") );
+
+    SimpleResource artist;
+    artist.addType( NFO::FileDataObject() );
+    // We're not giving it the type NCO::Contact - should be inferred from the store
+    artist.addProperty( NCO::fullname(), QLatin1String("Jack Black") );
+
+    // nmm:performer has a range of nco:Contact which is already present in the store
+    musicPiece.addProperty( NMM::performer(), artist );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << musicPiece << artist,
+                               QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    // artist should have gotten identified as res
+    stList = m_model->listStatements( Node(), RDF::type(), NCO::Contact() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl artistUri = stList.first().subject().uri();
+    QCOMPARE( artistUri, resUri );
+
+    // It should have the artist
+    QVERIFY( m_model->containsAnyStatement( Node(), NMM::performer(), artistUri ) );
+}
 
 // make sure that the same values are simply merged even if encoded differently
 void DataManagementModelTest::testStoreResources_duplicateValuesAsString()
@@ -4379,7 +4445,7 @@ void DataManagementModelTest::testStoreResources_legacyUris()
     res.addType( NFO::FileDataObject() );
     res.addProperty( NAO::numericRating(), QLatin1String("5") );
 
-    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app"), IdentifyAll, OverwriteProperties );
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app"), IdentifyNew, OverwriteProperties );
     QVERIFY( !m_dmModel->lastError() );
 
     QVERIFY( m_model->containsAnyStatement( uri, NAO::numericRating(), LiteralValue(5) ) );
@@ -4393,6 +4459,65 @@ void DataManagementModelTest::testStoreResources_legacyUris()
 
     QVERIFY( m_model->containsAnyStatement( Node(), NIE::isPartOf(), uri ) );
 }
+
+void DataManagementModelTest::testStoreResources_lazyCardinalities()
+{
+    SimpleResource res;
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("Superman") );
+    res.addProperty( NCO::fullname(), QLatin1String("Clark Kent") ); // Don't tell Lex!
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp"),
+                               Nepomuk::IdentifyNew, Nepomuk::LazyCardinalities );
+
+    // There shouldn't be any error, even though nco:fullname has maxCardinality = 1
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList< Statement > stList = m_model->listStatements( Node(), NCO::fullname(), Node() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    QString name = stList.first().object().literal().toString();
+    bool isClark = ( name == QLatin1String("Clark Kent") );
+    bool isSuperMan = ( name == QLatin1String("Superman") );
+
+    QVERIFY( isClark || isSuperMan );
+}
+
+void DataManagementModelTest::testStoreResources_graphMetadataFail()
+{
+    QList<Soprano::Statement> stList = m_model->listStatements().allStatements();
+
+    QHash<QUrl, QVariant> additionalMetadata;
+    additionalMetadata.insert( NCO::fullname(), QLatin1String("graphs can't have names") );
+
+    SimpleResource res;
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("Harry Potter") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp"),
+                               IdentifyNew, NoStoreResourcesFlags, additionalMetadata );
+
+    // There should be an error as graphs cannot have NFO::FileDataObject
+    QVERIFY( m_dmModel->lastError() );
+
+    // Nothing should have changed
+    QList<Soprano::Statement> newStList = m_model->listStatements().allStatements();
+    QCOMPARE( stList, newStList );
+}
+
+void DataManagementModelTest::testStoreResources_randomNepomukUri()
+{
+    SimpleResource res(QUrl("nepomuk:/res/random-uri"));
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("Mickey Mouse") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp") );
+
+    // There should be an error - We do not allow creation of arbitrary uris
+    // All uris must be created by the DataManagementModel
+    QVERIFY( m_dmModel->lastError() );
+}
+
 
 void DataManagementModelTest::testMergeResources()
 {

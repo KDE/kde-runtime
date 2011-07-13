@@ -421,15 +421,21 @@ void Nepomuk::StrigiIndexWriter::addTriplet( const std::string& s,
     const QUrl property(QString::fromUtf8(p.c_str()));
     const QString value(QString::fromUtf8( o.c_str()));
 
-    // Find the corresponding sub-resource
-    QHash<QString, Nepomuk::SimpleResource>::iterator it = md->subResources.find(subResId);
-    if(it == md->subResources.end()) {
-        Nepomuk::SimpleResource subRes;
-        subRes.addProperty(property, value);
-        md->subResources.insert(subResId, subRes);
+    // the subject might be the indexed file itself
+    if(KUrl(subResId) == md->fileUrl) {
+        md->data.addProperty(property, value);
     }
     else {
-        it->addProperty(property, value);
+        // Find the corresponding sub-resource
+        QHash<QString, Nepomuk::SimpleResource>::iterator it = md->subResources.find(subResId);
+        if(it == md->subResources.end()) {
+            Nepomuk::SimpleResource subRes;
+            subRes.addProperty(property, value);
+            md->subResources.insert(subResId, subRes);
+        }
+        else {
+            it->addProperty(property, value);
+        }
     }
 }
 

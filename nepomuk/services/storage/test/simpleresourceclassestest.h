@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2011 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2011 Serebriyskiy Artem <v.for.vandal@gmail.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,31 +19,26 @@
    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef QTEST_DMS_H
-#define QTEST_DMS_H
 
-#include <QtTest>
-#include <Soprano/Statement>
-#include <Soprano/Node>
-#include <Soprano/Model>
+#ifndef SIMPLE_SUBSYSTEM_TEST
+#define SIMPLE_SUBSYSTEM_TEST
 
-namespace QTest {
-template<>
-inline char* toString(const Soprano::Node& node) {
-    return qstrdup( node.toN3().toLatin1().data() );
-}
+#include <QObject>
+#include "../lib/simpleresource.h"
+#include "../lib/simpleresourcegraph.h"
 
-template<>
-inline char* toString(const Soprano::Statement& s) {
-    return qstrdup( (s.subject().toN3() + QLatin1String(" ") +
-                     s.predicate().toN3() + QLatin1String(" ") +
-                     s.object().toN3() + QLatin1String(" . ")).toLatin1().data() );
-}
+class SimpleResourceSubsystemTest : public QObject
+{
+    Q_OBJECT;
+    private Q_SLOTS:
+       void testSimpleResourceStream();
+       void testSimpleResourceGraphStream();
+       void testSimpleResourceGraphAdd();
+       void initTestCase();
+    private:
+       Nepomuk::SimpleResource resource1,resource2;
 
-}
+};
 
-namespace Nepomuk {
-    void insertOntologies( Soprano::Model *model, const QUrl &ontologyGraph );
-}
 
-#endif // QTEST_DMS_H
+#endif

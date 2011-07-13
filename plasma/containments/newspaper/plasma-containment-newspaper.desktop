@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Newspaper Layout
 Name[ast]=Disposición de periódicu
+Name[bg]=Вестникарски изглед
 Name[bs]=Novinski raspored
 Name[ca]=Disposició dels diaris
 Name[ca@valencia]=Disposició dels diaris
@@ -30,6 +31,7 @@ Name[lt]=Laikraščio išdėstymas
 Name[nb]=Avisutforming
 Name[nds]=Blattstriepen-Anornen
 Name[nl]=Opmaak van krant
+Name[nn]=Avisutforming
 Name[pa]=ਨਿਊਜ਼ਪੇਪਰ ਲੇਆਉਟ
 Name[pl]=Dwie kolumny (gazeta)
 Name[pt]=Disposição do Jornal
@@ -48,10 +50,12 @@ Name[tr]=Gazete Yerleşimi
 Name[ug]=گېزىت ئۇسلۇبى
 Name[uk]=Газетне компонування
 Name[x-test]=xxNewspaper Layoutxx
+Name[zh_CN]=报纸布局
 Name[zh_TW]=報紙佈局
 
 Comment=A layout that puts widgets into columns
 Comment[ast]=Una disposición qu'alluga los elementos gráficos en columnes
+Comment[bg]=Подребда на джаджите в колони
 Comment[bs]=Raspored koji ređa grafičke kontrole u kolone
 Comment[ca]=Una disposició que posa els estris en columnes
 Comment[ca@valencia]=Una disposició que posa els estris en columnes
@@ -79,6 +83,7 @@ Comment[lt]=Išdėliojimas, kuriame valdikliai išdėstyti stulpeliais
 Comment[nb]=En utforming som legger skjermelementer i to spalter
 Comment[nds]=En Anornen de Elementen op Striepen verdeelt
 Comment[nl]=Een indeling die widgets in kolommen zet
+Comment[nn]=Ei utforming som legg skjermelement i kolonnar
 Comment[pa]=ਲੇਆਉਟ, ਜੋ ਵਿਦਜੈੱਟ ਨੂੰ ਕਾਲਮਾਂ 'ਚ ਰੱਖਦਾ ਹੈ
 Comment[pl]=Układ, które umieszcza elementy interfejsu w dwóch kolumnach
 Comment[pt]=Uma disposição que coloca os elementos em colunas
@@ -98,6 +103,7 @@ Comment[ug]=ئىستونغا جايلاشتۇرىدىغان ۋىجېت ئۇسل�
 Comment[uk]=Компонування з віджетами, розподіленими за стовпчиками
 Comment[wa]=Èn adjinçmint ki mete les ahesses e colones
 Comment[x-test]=xxA layout that puts widgets into columnsxx
+Comment[zh_CN]=分栏显示组件的布局
 Comment[zh_TW]=將元件放到欄位內的佈局
 
 

@@ -19,12 +19,12 @@
 
 
 #include "resourcewatcherconnection.h"
+#include "resourcewatcherconnectionadaptor.h"
 #include "resourcewatchermanager.h"
 
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusObjectPath>
 #include <QtDBus/QDBusServiceWatcher>
-
 
 Nepomuk::ResourceWatcherConnection::ResourceWatcherConnection( ResourceWatcherManager* parent, bool hasProperties )
     : QObject( parent ),
@@ -46,8 +46,9 @@ bool Nepomuk::ResourceWatcherConnection::hasProperties() const
 QDBusObjectPath Nepomuk::ResourceWatcherConnection::registerDBusObject( const QString& dbusClient, int id )
 {
     // build the dbus object path from the id and register the connection as a Query dbus object
-    const QString dbusObjectPath = QString( "/resourcewatcher/watch%1" ).arg( id );
-    QDBusConnection::sessionBus().registerObject( dbusObjectPath, this, QDBusConnection::ExportScriptableSignals );
+    new ResourceWatcherConnectionAdaptor( this );
+    const QString dbusObjectPath = QString::fromLatin1( "/resourcewatcher/watch%1" ).arg( id );
+    QDBusConnection::sessionBus().registerObject( dbusObjectPath, this );
 
     // watch the dbus client for unregistration for auto-cleanup
     m_serviceWatcher = new QDBusServiceWatcher( dbusClient,

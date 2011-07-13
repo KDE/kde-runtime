@@ -323,12 +323,8 @@ namespace Nepomuk {
      */
     enum StoreIdentificationMode {
         /// This is the default mode. Only new resources without a resource URI are identified. All others
-        /// are just saved with their given URI
+        /// are just saved with their given URI, provided the URI already exists.
         IdentifyNew = 0,
-
-        /// Try to identify all resources, even if they have a resource URI. This only differs
-        /// from IdentifyNew for resources that have a resource URI that does NOT exists yet.
-        IdentifyAll = 1,
 
         /// All resources are treated as new ones. The only exception are those with a defined
         /// resource URI.
