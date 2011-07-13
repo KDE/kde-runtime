@@ -23,10 +23,6 @@
 
 #include "config-features.h"
 
-#ifdef HAVE_QZEITGEIST
-#include "ZeitgeistEventBackend.h"
-#endif
-
 #include "EventBackend.h"
 
 #include <KDebug>
@@ -96,10 +92,6 @@ EventProcessor * EventProcessor::self()
 EventProcessor::EventProcessor()
     : d(new EventProcessorPrivate())
 {
-#ifdef HAVE_QZEITGEIST
-    d->lazyBackends.append(new ZeitgeistEventBackend());
-#endif
-
     // Plugin loading
 
     kDebug() << "Loading plugins...";

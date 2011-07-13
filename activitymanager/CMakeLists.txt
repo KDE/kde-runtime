@@ -24,26 +24,6 @@ if(Nepomuk_FOUND)
     )
 endif(Nepomuk_FOUND)
 
-# Checking for QtZeitgeist
-macro_optional_find_package(QZeitgeist)
-
-if (QZEITGEIST_INCLUDE_DIR)
-    set(QZeitgeist_FOUND TRUE)
-endif(QZEITGEIST_INCLUDE_DIR)
-
-macro_log_feature(
-        QZeitgeist_FOUND
-        "QtZeitgeist" "Qt bindings for Zeitgeist" "http://gitorious.org/kde-zeitgeist/libqzeitgeist/" FALSE ""
-        "RECOMMENDED: Zeitgeist and QtZeitgeist is needed for resource tracking")
-if (QZeitgeist_FOUND)
-    set(HAVE_QZEITGEIST 1)
-    include_directories(${QZEITGEIST_INCLUDE_DIR})
-    set(ADDITIONAL_LINK_LIBS
-        ${ADDITIONAL_LINK_LIBS}
-        ${QZEITGEIST_LIBRARY}
-    )
-endif(QZeitgeist_FOUND)
-
 # config file
 configure_file(config-features.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-features.h )
 
@@ -65,12 +45,6 @@ set(activity_manager_SRCS
     main.cpp
     )
 
-set(activity_manager_backends_SRCS
-    ${activity_manager_backends_SRCS}
-    ZeitgeistEventBackend.cpp
-    # SlcEventBackend.cpp
-    )
-
 qt4_add_dbus_adaptor(
     activity_manager_SRCS org.kde.ActivityManager.xml
     ActivityManager.h ActivityManager
@@ -81,7 +55,7 @@ qt4_add_dbus_adaptor(
 #     SlcEventBackend.h SlcEventBackend
 #     )
 
-kde4_add_executable(activity-manager ${activity_manager_SRCS} ${activity_manager_backends_SRCS})
+kde4_add_executable(activity-manager ${activity_manager_SRCS})
 
 target_link_libraries(
     activity-manager
