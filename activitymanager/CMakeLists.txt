@@ -65,14 +65,6 @@ set(activity_manager_SRCS
     main.cpp
     )
 
-if(Nepomuk_FOUND)
-  set(activity_manager_backends_SRCS
-      NepomukEventBackend.cpp
-      NepomukResourceScoreMaintainer.cpp
-      NepomukResourceScoreCache.cpp
-      )
-endif()
-
 set(activity_manager_backends_SRCS
     ${activity_manager_backends_SRCS}
     ZeitgeistEventBackend.cpp
@@ -88,33 +80,6 @@ qt4_add_dbus_adaptor(
 #     activity_manager_SRCS org.kde.ActivityManager.SLC.xml
 #     SlcEventBackend.h SlcEventBackend
 #     )
-
-if(Nepomuk_FOUND)
-    soprano_add_ontology(activity_manager_SRCS
-        ${CMAKE_SOURCE_DIR}/nepomuk/ontologies/kext.trig
-        "KExt" "Nepomuk::Vocabulary" "trig"
-        )
-
-    # soprano_add_ontology(activity_manager_SRCS
-    #     ${CMAKE_CURRENT_SOURCE_DIR}/ontologies/kamdrso.trig
-    #     "RSO" "Nepomuk::Vocabulary" "trig"
-    #     )
-
-    soprano_add_ontology(activity_manager_SRCS
-        ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
-        "NIE" "Nepomuk::Vocabulary" "trig"
-        )
-
-    soprano_add_ontology(activity_manager_SRCS
-        ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nepomuk/nao.trig
-        "NAO" "Nepomuk::Vocabulary" "trig"
-        )
-
-    soprano_add_ontology(activity_manager_SRCS
-        ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nepomuk/nuao.trig
-        "NUAO" "Nepomuk::Vocabulary" "trig"
-        )
-endif()
 
 kde4_add_executable(activity-manager ${activity_manager_SRCS} ${activity_manager_backends_SRCS})
 

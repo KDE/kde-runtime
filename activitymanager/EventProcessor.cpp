@@ -27,10 +27,6 @@
 #include "ZeitgeistEventBackend.h"
 #endif
 
-#ifdef HAVE_NEPOMUK
-#include "NepomukEventBackend.h"
-#endif
-
 #include "EventBackend.h"
 
 #include <KDebug>
@@ -102,9 +98,6 @@ EventProcessor::EventProcessor()
 {
 #ifdef HAVE_QZEITGEIST
     d->lazyBackends.append(new ZeitgeistEventBackend());
-#endif
-#ifdef HAVE_NEPOMUK
-    d->lazyBackends.append(new NepomukEventBackend());
 #endif
 
     // Plugin loading
