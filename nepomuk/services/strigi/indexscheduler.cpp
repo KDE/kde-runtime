@@ -1,6 +1,6 @@
 /* This file is part of the KDE Project
    Copyright (c) 2008-2010 Sebastian Trueg <trueg@kde.org>
-   Copyright (c) 2010 Vishesh Handa <handa.vish@gmail.com>
+   Copyright (c) 2010-11 Vishesh Handa <handa.vish@gmail.com>
 
    Parts of this file are based on code from Strigi
    Copyright (C) 2006-2007 Jos van den Oever <jos@vandenoever.info>
@@ -42,8 +42,6 @@
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Variant>
-#include <Nepomuk/Query/Query>
-#include <Nepomuk/Query/ComparisonTerm>
 #include <Nepomuk/Query/ResourceTerm>
 
 #include <Soprano/Model>
@@ -52,13 +50,11 @@
 #include <Soprano/Node>
 
 #include <Soprano/Vocabulary/RDF>
-#include <Soprano/Vocabulary/Xesam>
-#include <Soprano/Vocabulary/NAO>
-#include <Nepomuk/Vocabulary/NFO>
 #include <Nepomuk/Vocabulary/NIE>
 
 #include <map>
 #include <vector>
+#include "indexcleaner.h"
 
 using namespace Soprano::Vocabulary;
 using namespace Nepomuk::Vocabulary;
@@ -68,10 +64,32 @@ namespace {
     const int s_snailPaceDelay = 3000;   // ms
 
 
+    /* vHanda:
+     * FIXME: Fix this properly by using MergeFlags in storeResources. 
+     *
+     * A long explaination of why this is required -
+     * You have a folder, called "coldplay", with a number of files in it. You then decide
+     * to rename it from "coldplay" to "Coldplay" ( capital C ), then you restart the
+     * strigi service or the filewatch services notifies you of the change.
+     * This is what will happen -
+     * - removeDataByApp( folder-called-Coldplay )
+     *   It will remove the nie:isPartOf statement for all the files in that folder
+     *
+     * without the additional "?r nie:isPartOf ?o", below, isResourcePresent will return true
+     * which will cause getChildren to use a query which depends on nie:isPartOf, which no longer
+     * exists. The getChildren function will therefore return an empty QHash< nie:url, nao:lastModified >
+     * The indexer will compare each filesystem modification date of the file with the
+     * nao:lastModified provided by the hash. Except that the hash is empty.
+     *
+     * So, it will cooly consider all these files to be "NEW" files, and re-index them. If the
+     * folder "Coldplay" had an directories in it, those will also be re-indexed, and the
+     * nie:isPartOf will be removed from its sub-folders also. Triggering a recursive reindexing.
+     */
     bool isResourcePresent( const QString & dir ) {
-        QString query = QString::fromLatin1(" ask { ?r %1 %2. } ")
-                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                              Soprano::Node::resourceToN3( KUrl( dir ) ) );
+        QString query = QString::fromLatin1(" ask { ?r %1 %2. ?r %4 ?o. } ")
+                        .arg( Soprano::Node::resourceToN3( NIE::url() ),
+                              Soprano::Node::resourceToN3( KUrl( dir ) ),
+                              Soprano::Node::resourceToN3( NIE::isPartOf() ) );
         return Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
     }
 
@@ -187,13 +205,15 @@ void Nepomuk::IndexScheduler::UpdateDirQueue::clearByFlags( UpdateDirFlags mask 
 
 
 Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
-    : QThread( parent ),
+    : QObject( parent ),
       m_suspended( false ),
-      m_stopped( false ),
       m_indexing( false ),
-      m_speed( FullSpeed )
+      m_indexingDelay( 0 )
 {
-    m_indexer = new Nepomuk::Indexer( this );
+    m_cleaner = new IndexCleaner(this);
+    connect( m_cleaner, SIGNAL(finished(KJob*)), this, SLOT(slotCleaningDone()) );
+    m_cleaner->start();
+
     connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( slotConfigChanged() ) );
 }
@@ -206,9 +226,12 @@ Nepomuk::IndexScheduler::~IndexScheduler()
 
 void Nepomuk::IndexScheduler::suspend()
 {
-    if ( isRunning() && !m_suspended ) {
+    if ( !m_suspended ) {
         QMutexLocker locker( &m_resumeStopMutex );
         m_suspended = true;
+        if( m_cleaner ) {
+            m_cleaner->suspend();
+        }
         emit indexingSuspended( true );
     }
 }
@@ -216,10 +239,16 @@ void Nepomuk::IndexScheduler::suspend()
 
 void Nepomuk::IndexScheduler::resume()
 {
-    if ( isRunning() && m_suspended ) {
+    if ( m_suspended ) {
         QMutexLocker locker( &m_resumeStopMutex );
         m_suspended = false;
-        m_resumeStopWc.wakeAll();
+
+        if( m_cleaner ) {
+            m_cleaner->resume();
+        }
+        else {
+            callDoIndexing();
+        }
         emit indexingSuspended( false );
     }
 }
@@ -234,30 +263,16 @@ void Nepomuk::IndexScheduler::setSuspended( bool suspended )
 }
 
 
-void Nepomuk::IndexScheduler::stop()
-{
-    if ( isRunning() ) {
-        QMutexLocker locker( &m_resumeStopMutex );
-        m_stopped = true;
-        m_suspended = false;
-        m_dirsToUpdateWc.wakeAll();
-        m_resumeStopWc.wakeAll();
-    }
-}
-
-
-void Nepomuk::IndexScheduler::restart()
-{
-    stop();
-    wait();
-    start();
-}
-
-
 void Nepomuk::IndexScheduler::setIndexingSpeed( IndexingSpeed speed )
 {
     kDebug() << speed;
-    m_speed = speed;
+    m_indexingDelay = 0;
+    if ( speed != FullSpeed ) {
+        m_indexingDelay = (speed == ReducedSpeed) ? s_reducedSpeedDelay : s_snailPaceDelay;
+    }
+    if( m_cleaner ) {
+        m_cleaner->setDelay(m_indexingDelay);
+    }
 }
 
 
@@ -272,7 +287,7 @@ void Nepomuk::IndexScheduler::setReducedIndexingSpeed( bool reduced )
 
 bool Nepomuk::IndexScheduler::isSuspended() const
 {
-    return isRunning() && m_suspended;
+    return m_suspended;
 }
 
 
@@ -307,77 +322,70 @@ void Nepomuk::IndexScheduler::setIndexingStarted( bool started )
 }
 
 
-void Nepomuk::IndexScheduler::run()
+void Nepomuk::IndexScheduler::slotCleaningDone()
 {
-    // set lowest priority for this thread
-    setPriority( QThread::IdlePriority );
-    
-    setIndexingStarted( true );
-
     // initialization
     queueAllFoldersForUpdate();
 
-#ifndef NDEBUG
-    QTime timer;
-    timer.start();
-#endif
+    // reset state
+    m_suspended = false;
+    m_cleaner = 0;
 
-    removeOldAndUnwantedEntries();
+    callDoIndexing();
+}
 
-#ifndef NDEBUG
-    kDebug() << "Removed old entries: " << timer.elapsed()/1000.0 << "secs";
-    timer.restart();
-#endif
+void Nepomuk::IndexScheduler::doIndexing()
+{
+    setIndexingStarted( true );
 
-    while ( waitForContinue(true) ) {
-        // wait for more dirs to analyze in case the initial
-        // indexing is done
-        m_dirsToUpdateMutex.lock();
-        if ( m_dirsToUpdate.isEmpty() ) {
-            setIndexingStarted( false );
+    // get the next file
+    if( !m_filesToUpdate.isEmpty() ) {
+        kDebug() << "File";
 
-#ifndef NDEBUG
-            kDebug() << "All folders updated: " << timer.elapsed()/1000.0 << "sec";
-#endif
+        QFileInfo file = m_filesToUpdate.dequeue();
 
-            m_dirsToUpdateWc.wait( &m_dirsToUpdateMutex );
+        m_currentUrl = file.filePath();
+        m_currentFolder = m_currentUrl.directory();
 
-#ifndef NDEBUG
-            timer.restart();
-#endif
+        emit indexingFile( m_currentUrl.toLocalFile() );
 
-            if ( !m_stopped )
-                setIndexingStarted( true );
-        }
-        m_dirsToUpdateMutex.unlock();
+        KJob * indexer = new Indexer( file );
+        connect( indexer, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
+        indexer->start();
+    }
 
-        // wait for resume or stop (or simply continue)
-        if ( !waitForContinue() ) {
-            break;
-        }
+    // get the next folder
+    else if( !m_dirsToUpdate.isEmpty() ) {
+        kDebug() << "Directory";
 
-        // get the next folder
         m_dirsToUpdateMutex.lock();
         QPair<QString, UpdateDirFlags> dir = m_dirsToUpdate.dequeue();
         m_dirsToUpdateMutex.unlock();
 
-        // update until stopped
-        if ( !analyzeDir( dir.first, dir.second ) ) {
-            break;
+        // If a dir was not analyzed, then doIndexing must be called to
+        // process the next file/directory in the queue
+        if( !analyzeDir( dir.first, dir.second ) ) {
+            callDoIndexing();
         }
-        m_currentFolder.clear();
     }
 
-    setIndexingStarted( false );
-
-    // reset state
-    m_suspended = false;
-    m_stopped = false;
-    m_currentFolder.clear();
+    else {
+        setIndexingStarted( false );
+    }
 }
 
+void Nepomuk::IndexScheduler::slotIndexingDone(KJob* job)
+{
+    kDebug() << job;
+    Q_UNUSED( job );
 
-bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, UpdateDirFlags flags )
+    m_currentFolder.clear();
+    m_currentUrl.clear();
+
+    callDoIndexing();
+}
+
+bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexScheduler::UpdateDirFlags flags )
 {
 //    kDebug() << dir << analyzer << recursive;
 
@@ -391,14 +399,19 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, UpdateDirFlags fl
     emit indexingFolder( dir );
 
     m_currentFolder = dir;
+    m_currentUrl = KUrl( dir );
+
     const bool recursive = flags&UpdateRecursive;
     const bool forceUpdate = flags&ForceUpdate;
 
     // we start by updating the folder itself
     QFileInfo dirInfo( dir );
     KUrl dirUrl( dir );
-    if ( !compareIndexedMTime(dirUrl, dirInfo.lastModified()) ) {
-        m_indexer->indexFile( dirInfo );
+    bool shouldAnalyzerDir = !compareIndexedMTime(dirUrl, dirInfo.lastModified());
+    if ( shouldAnalyzerDir ) {
+        KJob * indexer = new Indexer( dirInfo );
+        connect( indexer, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
+        indexer->start();
     }
 
     // get a map of all indexed files from the dir including their stored mtime
@@ -465,35 +478,17 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, UpdateDirFlags fl
     deleteEntries( filesToDelete );
 
     // analyze all files that are new or need updating
-    foreach( const QFileInfo& file, filesToIndex ) {
+    m_filesToUpdate.append( filesToIndex );
 
-        // wait if we are suspended or return if we are stopped
-        if ( !waitForContinue() )
-            return false;
-
-        m_currentUrl = file.filePath();
-        emit indexingFile( m_currentUrl.toLocalFile() );
-        m_indexer->indexFile( file );
-        m_currentUrl = KUrl();
-    }
-
-    return true;
+    return shouldAnalyzerDir;
 }
 
 
-bool Nepomuk::IndexScheduler::waitForContinue( bool disableDelay )
+void Nepomuk::IndexScheduler::callDoIndexing()
 {
-    QMutexLocker locker( &m_resumeStopMutex );
-    if ( m_suspended ) {
-        setIndexingStarted( false );
-        m_resumeStopWc.wait( &m_resumeStopMutex );
-        setIndexingStarted( true );
+    if( !m_suspended ) {
+        QTimer::singleShot( m_indexingDelay, this, SLOT(doIndexing()) );
     }
-    else if ( !disableDelay && m_speed != FullSpeed ) {
-        msleep( m_speed == ReducedSpeed ? s_reducedSpeedDelay : s_snailPaceDelay );
-    }
-
-    return !m_stopped;
 }
 
 
@@ -501,14 +496,18 @@ void Nepomuk::IndexScheduler::updateDir( const QString& path, UpdateDirFlags fla
 {
     QMutexLocker lock( &m_dirsToUpdateMutex );
     m_dirsToUpdate.prependDir( path, flags & ~AutoUpdateFolder );
-    m_dirsToUpdateWc.wakeAll();
+
+    if( !m_indexing )
+        callDoIndexing();
 }
 
 
 void Nepomuk::IndexScheduler::updateAll( bool forceUpdate )
 {
     queueAllFoldersForUpdate( forceUpdate );
-    m_dirsToUpdateWc.wakeAll();
+
+    if( !m_indexing )
+        callDoIndexing();
 }
 
 
@@ -533,15 +532,21 @@ void Nepomuk::IndexScheduler::queueAllFoldersForUpdate( bool forceUpdate )
 void Nepomuk::IndexScheduler::slotConfigChanged()
 {
     // restart to make sure we update all folders and removeOldAndUnwantedEntries
-    if ( isRunning() )
-        restart();
+    if( m_cleaner ) {
+        m_cleaner->kill();
+        delete m_cleaner;
+    }
+
+    m_cleaner = new IndexCleaner( this );
+    connect( m_cleaner, SIGNAL(finished(KJob*)), this, SLOT(slotCleaningDone()) );
+    m_cleaner->start();
 }
 
 
 void Nepomuk::IndexScheduler::analyzeFile( const QString& path )
 {
-    Indexer indexer;
-    indexer.indexFile( QFileInfo( path ) );
+    KJob * indexer = new Indexer( KUrl(path) );
+    indexer->start();
 }
 
 
@@ -549,246 +554,17 @@ void Nepomuk::IndexScheduler::deleteEntries( const QStringList& entries )
 {
     // recurse into subdirs
     // TODO: use a less mem intensive method
+    // FIXME: There are 2 lists, one for KUrl and the other for QUrl. They should be automatically
+    //        converted. Fix this in 4.8
+    QList<QUrl> urls;
+    KUrl::List kurls;
     for ( int i = 0; i < entries.count(); ++i ) {
+        KUrl url( entries[i] );
+        urls << url;
+        kurls << url;
         deleteEntries( getChildren( entries[i] ).keys() );
-        m_indexer->clearIndexedData( KUrl( entries[i] ) );
     }
-}
-
-
-namespace {
-    /**
-     * Creates one SPARQL filter expression that excludes the include folders.
-     * This is necessary since constructFolderSubFilter will append a slash to
-     * each folder to make sure it does not match something like
-     * '/home/foobar' with '/home/foo'.
-     */
-    QString constructExcludeIncludeFoldersFilter()
-    {
-        QStringList filters;
-        foreach( const QString& folder, Nepomuk::StrigiServiceConfig::self()->includeFolders() ) {
-            filters << QString::fromLatin1( "(?url!=%1)" ).arg( Soprano::Node::resourceToN3( KUrl( folder ) ) );
-        }
-        return filters.join( QLatin1String( " && " ) );
-    }
-
-    QString constructFolderSubFilter( const QList<QPair<QString, bool> > folders, int& index )
-    {
-        QString path = folders[index].first;
-        if ( !path.endsWith( '/' ) )
-            path += '/';
-        const bool include = folders[index].second;
-
-        ++index;
-
-        QStringList subFilters;
-        while ( index < folders.count() &&
-                folders[index].first.startsWith( path ) ) {
-            subFilters << constructFolderSubFilter( folders, index );
-        }
-
-        QString thisFilter = QString::fromLatin1( "REGEX(STR(?url),'^%1')" ).arg( QString::fromAscii( KUrl( path ).toEncoded() ) );
-
-        // we want all folders that should NOT be indexed
-        if ( include ) {
-            thisFilter.prepend( '!' );
-        }
-        subFilters.prepend( thisFilter );
-
-        if ( subFilters.count() > 1 ) {
-            return '(' + subFilters.join( include ? QLatin1String( " || " ) : QLatin1String( " && " ) ) + ')';
-        }
-        else {
-            return subFilters.first();
-        }
-    }
-
-    /**
-     * Creates one SPARQL filter which matches all files and folders that should NOT be indexed.
-     */
-    QString constructFolderFilter()
-    {
-        QStringList subFilters( constructExcludeIncludeFoldersFilter() );
-
-        // now add the actual filters
-        QList<QPair<QString, bool> > folders = Nepomuk::StrigiServiceConfig::self()->folders();
-        int index = 0;
-        while ( index < folders.count() ) {
-            subFilters << constructFolderSubFilter( folders, index );
-        }
-        return subFilters.join(" && ");
-    }
-}
-
-void Nepomuk::IndexScheduler::removeOldAndUnwantedEntries()
-{
-    //
-    // We now query all indexed files that are in folders that should not
-    // be indexed at once.
-    //
-    QString folderFilter = constructFolderFilter();
-    if( !folderFilter.isEmpty() )
-        folderFilter = QString::fromLatin1("FILTER(%1) .").arg(folderFilter);
-
-    //
-    // Query all the resources which are maintained by nepomukindexer
-    // and are not in one of the indexed folders
-    //
-    // vHanda: trying to remove more than 20 resources via removeDataByApp occasionally times out.
-    const int limit = 20;
-    QString query = QString::fromLatin1( "select distinct ?r where { "
-                                         "graph ?g { ?r %1 ?url . } "
-                                         "?g %2 ?app . "
-                                         "?app %3 %4 . "
-                                         " %5 } LIMIT %6" )
-                    .arg( Soprano::Node::resourceToN3( NIE::url() ),
-                          Soprano::Node::resourceToN3( NAO::maintainedBy() ),
-                          Soprano::Node::resourceToN3( NAO::identifier() ),
-                          Soprano::Node::literalToN3(QLatin1String("nepomukindexer")),
-                          folderFilter,
-                          QString::number( limit ) );
-
-    while( true ) {
-        QList<QUrl> resources;
-        Soprano::QueryResultIterator it = ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-        while( it.next() ) {
-            resources << it[0].uri();
-        }
-        Nepomuk::clearIndexedData(resources);
-
-        // wait for resume or stop (or simply continue)
-        kDebug() << "CHECKING";
-        if ( !waitForContinue() ) {
-            kDebug() << "RETURNING";
-            return;
-        }
-
-        if( resources.size() < limit )
-            break;
-    }
-
-    //
-    // We query all files that should not be in the store
-    // This for example excludes all filex:/ URLs.
-    //
-    query = QString::fromLatin1( "select distinct ?g where { "
-                                 "?r %1 ?url . "
-                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
-                                 "FILTER(REGEX(STR(?url),'^file:/')) . "
-                                 "%2 }" )
-                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                          folderFilter );
-    kDebug() << query;
-    if ( !removeAllGraphsFromQuery( query ) )
-        return;
-
-
-    //
-    // Build filter query for all exclude filters
-    //
-    QStringList fileFilters;
-    foreach( const QString& filter, Nepomuk::StrigiServiceConfig::self()->excludeFilters() ) {
-        QString filterRxStr = QRegExp::escape( filter );
-        filterRxStr.replace( "\\*", QLatin1String( ".*" ) );
-        filterRxStr.replace( "\\?", QLatin1String( "." ) );
-        filterRxStr.replace( '\\',"\\\\" );
-        fileFilters << QString::fromLatin1( "REGEX(STR(?fn),\"^%1$\")" ).arg( filterRxStr );
-    }
-    QString includeExcludeFilters = constructExcludeIncludeFoldersFilter();
-
-    QString filters;
-    if( !includeExcludeFilters.isEmpty() && !fileFilters.isEmpty() )
-        filters = QString::fromLatin1("FILTER((%1) && (%2)) .").arg( includeExcludeFilters, fileFilters.join(" || ") );
-    else if( !fileFilters.isEmpty() )
-        filters = QString::fromLatin1("FILTER(%1) .").arg( fileFilters.join(" || ") );
-    else if( !includeExcludeFilters.isEmpty() )
-        filters = QString::fromLatin1("FILTER(%1) .").arg( includeExcludeFilters );
-
-    query = QString::fromLatin1( "select distinct ?g where { "
-                                 "?r %1 ?url . "
-                                 "?r %2 ?fn . "
-                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
-                                 "FILTER(REGEX(STR(?url),\"^file:/\")) . "
-                                 "%3 }" )
-            .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                  Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
-                  filters );
-    kDebug() << query;
-    if ( !removeAllGraphsFromQuery( query ) )
-        return;
-
-
-    //
-    // Remove all old data from Xesam-times. While we leave out the data created by libnepomuk
-    // there is no problem since libnepomuk still uses backwards compatible queries and we use
-    // libnepomuk to determine URIs in the strigi backend.
-    //
-    query = QString::fromLatin1( "select distinct ?g where { "
-                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?x . "
-                                 "{ graph ?g { ?r1 <http://strigi.sf.net/ontologies/0.9#parentUrl> ?p1 . } } "
-                                 "UNION "
-                                 "{ graph ?g { ?r2 %1 ?u2 . } } "
-                                 "}" )
-            .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::Xesam::url() ) );
-    kDebug() << query;
-    if ( !removeAllGraphsFromQuery( query ) )
-        return;
-
-
-    //
-    // Remove data which is useless but still around from before. This could happen due to some buggy version of
-    // the indexer or the filewatch service or even some application messing up the data.
-    // We look for indexed files that do not have a nie:url defined and thus, will never be cached by any of the
-    // other queries. In addition we check for an isPartOf relation since strigi produces EmbeddedFileDataObjects
-    // for video and audio streams.
-    //
-    Query::Query q(
-        Strigi::Ontology::indexGraphFor()
-                == ( Soprano::Vocabulary::RDF::type()
-                     == Query::ResourceTerm( Nepomuk::Resource::fromResourceUri(Nepomuk::Vocabulary::NFO::FileDataObject()) ) &&
-                     !( Nepomuk::Vocabulary::NIE::url() == Query::Term() ) &&
-                     !( Nepomuk::Vocabulary::NIE::isPartOf() == Query::Term() ) )
-        );
-    q.setQueryFlags(Query::Query::NoResultRestrictions);
-    query = q.toSparqlQuery();
-    kDebug() << query;
-    removeAllGraphsFromQuery( query );
-}
-
-
-
-/**
- * Runs the query using a limit until all graphs have been deleted. This is not done
- * in one big loop to avoid the problems with messed up iterators when one of the iterated
- * item is deleted.
- */
-bool Nepomuk::IndexScheduler::removeAllGraphsFromQuery( const QString& query )
-{
-    while ( 1 ) {
-        // get the next batch of graphs
-        QList<Soprano::Node> graphs
-            = ResourceManager::instance()->mainModel()->executeQuery( query + QLatin1String( " LIMIT 200" ),
-                                                                      Soprano::Query::QueryLanguageSparql ).iterateBindings( 0 ).allNodes();
-
-        // remove all graphs in the batch
-        Q_FOREACH( const Soprano::Node& graph, graphs ) {
-
-            // wait for resume or stop (or simply continue)
-            if ( !waitForContinue() ) {
-                return false;
-            }
-
-            ResourceManager::instance()->mainModel()->removeContext( graph );
-        }
-
-        // we are done when the last graphs are queried
-        if ( graphs.count() < 200 ) {
-            return true;
-        }
-    }
-
-    // make gcc shut up
-    return true;
+    Nepomuk::clearIndexedData(urls);
 }
 
 

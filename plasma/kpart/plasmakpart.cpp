@@ -66,12 +66,7 @@ PlasmaKPart::PlasmaKPart(QWidget *parentWidget, QObject *parent, const QVariantL
         }
     }
 
-    if (args.length() > 1) {
-        m_category = args.at(1).value<QString>();
-    }
-
-    // this line initializes the corona.
-    corona();
+    initCorona();
 }
 
 PlasmaKPart::~PlasmaKPart()
@@ -121,19 +116,24 @@ void PlasmaKPart::syncConfig()
     KGlobal::config()->sync();
 }
 
-PlasmaKPartCorona* PlasmaKPart::corona()
+void PlasmaKPart::initCorona()
 {
-    if (!m_corona) {
-        m_corona = new PlasmaKPartCorona(this);
-        connect(m_corona, SIGNAL(containmentAdded(Plasma::Containment*)), this, SLOT(createView(Plasma::Containment*)));
-        connect(m_corona, SIGNAL(configSynced()), this, SLOT(syncConfig()));
-
-        m_corona->setItemIndexMethod(QGraphicsScene::NoIndex);
-        m_corona->initializeLayout();
-
-        m_view->show();
+    if (m_corona) {
+        return;
     }
 
+    m_corona = new PlasmaKPartCorona(this);
+    connect(m_corona, SIGNAL(containmentAdded(Plasma::Containment*)), this, SLOT(createView(Plasma::Containment*)));
+    connect(m_corona, SIGNAL(configSynced()), this, SLOT(syncConfig()));
+
+    m_corona->setItemIndexMethod(QGraphicsScene::NoIndex);
+    m_corona->initializeLayout();
+
+    m_view->show();
+}
+
+PlasmaKPartCorona* PlasmaKPart::corona() const
+{
     return m_corona;
 }
 
@@ -153,29 +153,14 @@ void PlasmaKPart::addApplet(const QString& name, const QVariantList& args, const
     containment()->addApplet(name, args, geometry);
 }
 
-Plasma::Applet::List PlasmaKPart::listActiveApplets( )
+Plasma::Applet::List PlasmaKPart::listActiveApplets() const
 {
     return containment()->applets();
 }
 
-Plasma::Containment* PlasmaKPart::containment()
+Plasma::Containment* PlasmaKPart::containment() const
 {
     return corona()->containments().first();
-}
-
-bool PlasmaKPart::setPluginLoader(Plasma::PluginLoader *loader)
-{
-    if (Plasma::PluginLoader::pluginLoader()) {
-        return false;
-    }
-
-    Plasma::PluginLoader::setPluginLoader(loader);
-    return true;
-}
-
-QString PlasmaKPart::category()
-{
-    return m_category;
 }
 
 #include "plasmakpart.moc"

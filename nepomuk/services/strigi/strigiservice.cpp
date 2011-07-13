@@ -40,7 +40,11 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
 {
     // setup the actual index scheduler including strigi stuff
     // ==============================================================
-    m_indexScheduler = new IndexScheduler( this );
+    m_schedulingThread = new QThread( this );
+    m_schedulingThread->start( QThread::IdlePriority );
+
+    m_indexScheduler = new IndexScheduler(); // must not have a parent
+    m_indexScheduler->moveToThread( m_schedulingThread );
 
     // monitor all kinds of events
     ( void )new EventMonitor( m_indexScheduler, this );
@@ -72,9 +76,6 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
     // FIXME: do not use a random delay value but wait for KDE to be started completely (using the session manager)
     QTimer::singleShot( 2*60*1000, this, SLOT( finishInitialization() ) );
 
-    // start the actual indexing
-    m_indexScheduler->start();
-
     // Connect some signals used in the DBus interface
     connect( this, SIGNAL( statusStringChanged() ),
              this, SIGNAL( statusChanged() ) );
@@ -89,8 +90,10 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
 
 Nepomuk::StrigiService::~StrigiService()
 {
-    m_indexScheduler->stop();
-    m_indexScheduler->wait();
+    m_schedulingThread->quit();
+    m_schedulingThread->wait();
+
+    delete m_indexScheduler;
 }
 
 

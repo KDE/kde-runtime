@@ -49,9 +49,13 @@ namespace Nepomuk {
         void setServiceInitialized( bool success );
         bool isInitialized() const;
         void shutdown();
+	QString description() const;
+	QString name() const;
 
     private:
         QString m_serviceName;
+	QString m_description;
+	QString m_readableName;
         KService::Ptr m_service;
         bool m_initialized;
     };

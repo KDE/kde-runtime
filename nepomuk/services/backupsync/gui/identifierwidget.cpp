@@ -23,8 +23,6 @@
 #include "identifierwidget.h"
 #include "identifiermodel.h"
 #include "identifiermodeltree.h"
-#include "identifierinterface.h"
-#include "../service/dbusoperators.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QVBoxLayout>
@@ -39,27 +37,23 @@
 
 Nepomuk::IdentifierWidget::IdentifierWidget(int id, QWidget* parent): QWidget(parent), m_id(id)
 {
-    registerMetaTypes();
+    //registerMetaTypes();
     setupUi(this);
-    
+
     m_model = new IdentifierModel( this );
 
     MergeConflictDelegate * delegate = new MergeConflictDelegate( m_viewConflicts, this );
     m_viewConflicts->setModel( m_model );
     m_viewConflicts->setItemDelegate( delegate );
 
-    m_identifier = new Identifier( QLatin1String("org.kde.nepomuk.services.nepomukbackupsync"),
-                                   QLatin1String("/identifier"),
-                                   QDBusConnection::sessionBus(), this );
-    
-    if( m_identifier->isValid() ) {
-        connect( m_identifier, SIGNAL(notIdentified(int,QString)),
-                 this, SLOT(notIdentified(int,QString)) );
-        connect( m_identifier, SIGNAL(identified(int,QString,QString)),
-                 this, SLOT(identified(int,QString,QString)) );
-        connect( m_identifier, SIGNAL(completed(int,int)),
-                 this, SLOT(completed(int,int)) );
-    }
+    m_identifier = Identifier::instance();
+
+    connect( m_identifier, SIGNAL(notIdentified(int,QString)),
+             this, SLOT(notIdentified(int,QString)) );
+    connect( m_identifier, SIGNAL(identified(int,QString,QString)),
+             this, SLOT(identified(int,QString,QString)) );
+    connect( m_identifier, SIGNAL(completed(int,int)),
+             this, SLOT(completed(int,int)) );
 
     connect( delegate, SIGNAL(requestResourceResolve(QUrl)),
              this, SLOT(identify()) );
@@ -73,14 +67,14 @@ Nepomuk::IdentifierWidget::IdentifierWidget(int id, QWidget* parent): QWidget(pa
 void Nepomuk::IdentifierWidget::ignore(const QUrl& uri)
 {
     Q_UNUSED( uri );
-    
+
     QModelIndex index = m_viewConflicts->currentIndex();
     if( !index.isValid() )
         return;
 
     IdentifierModelTreeItem * item = static_cast<IdentifierModelTreeItem*>( index.internalPointer() );
     item->setDiscarded( true );
-    
+
     m_identifier->ignore( m_id, item->resourceUri().toString(), true);
 }
 
@@ -107,7 +101,7 @@ void Nepomuk::IdentifierWidget::notIdentified(int id, const QString& string)
 {
     if( id != m_id )
         return;
-    
+
     kDebug() << string;
     const Soprano::Parser* parser = Soprano::PluginManager::instance()->discoverParserForSerialization( Soprano::SerializationNQuads );
 

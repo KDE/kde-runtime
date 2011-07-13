@@ -47,6 +47,7 @@ class NEPOMUK_DATA_MANAGEMENT_EXPORT SimpleResource
 {
 public:
     explicit SimpleResource(const QUrl& uri = QUrl());
+    SimpleResource(const PropertyHash& properties);
     SimpleResource(const SimpleResource& other);
     virtual ~SimpleResource();
 
@@ -130,6 +131,9 @@ public:
      */
     void addPropertyNode(const QUrl& property, const Soprano::Node& value);
 
+    void removeProperty(const QUrl& property, const QVariant& value);
+    void removeProperty(const QUrl& property);
+
     /**
      * A convenience method which adds a property of type rdf:type.
      * \param type The type to add to the resource. Must be the URI of an RDF class.
@@ -164,12 +168,18 @@ public:
      */
     bool isValid() const;
 
+
 private:
     class Private;
     QSharedDataPointer<Private> d;
 };
 
+
+NEPOMUK_DATA_MANAGEMENT_EXPORT QDataStream & operator<<(QDataStream &, const Nepomuk::SimpleResource& );
+NEPOMUK_DATA_MANAGEMENT_EXPORT QDataStream & operator>>(QDataStream &, Nepomuk::SimpleResource& );
 NEPOMUK_DATA_MANAGEMENT_EXPORT QDebug operator<<(QDebug dbg, const Nepomuk::SimpleResource& res);
+NEPOMUK_DATA_MANAGEMENT_EXPORT QDataStream & operator<<(QDataStream &, const Nepomuk::SimpleResource& );
+NEPOMUK_DATA_MANAGEMENT_EXPORT QDataStream & operator>>(QDataStream &, Nepomuk::SimpleResource& );
 
 NEPOMUK_DATA_MANAGEMENT_EXPORT uint qHash(const SimpleResource& res);
 }

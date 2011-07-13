@@ -23,7 +23,6 @@
 
 #include "changelogmerger.h"
 #include "nrio.h"
-#include "logstorage.h"
 
 #include <algorithm>
 
@@ -69,7 +68,7 @@ void Nepomuk::ChangeLogMerger::load()
 {
     kDebug() << "Loading the ChangeLog..." << m_logFile.size();
     m_hash = ResourceLogMap::fromChangeLog( m_logFile );
-    
+
     // The records are stored according to dateTime
     Q_ASSERT( m_logFile.toList().isEmpty() == false );
     m_minDateTime = m_logFile.toList().first().dateTime();
@@ -115,7 +114,7 @@ namespace {
 void Nepomuk::ChangeLogMerger::mergeChangeLog()
 {
     m_theGraph = createGraph();
-    
+
     kDebug();
     const Types::Property mergeableProperty( Nepomuk::Vocabulary::NRIO::mergeable() );
 
@@ -123,7 +122,7 @@ void Nepomuk::ChangeLogMerger::mergeChangeLog()
     // Get own changeLog
     //
     kDebug() << "minDateTime : " << m_minDateTime;
-    ChangeLog ownLog = LogStorage::instance()->getChangeLog( m_minDateTime );
+    ChangeLog ownLog;// = LogStorage::instance()->getChangeLog( m_minDateTime );
     kDebug() << "own Log : " << ownLog.size();
 
     // Get our and their hash
@@ -131,7 +130,7 @@ void Nepomuk::ChangeLogMerger::mergeChangeLog()
     // theirHash = derived from external ChangeLog
     ResourceLogMap ownHash = ResourceLogMap::fromChangeLog( ownLog );
     ResourceLogMap & theirHash = m_hash;
-    
+
     kDebug() << "own Hash : " << ownHash.size();
     kDebug() << "their hash : " << theirHash.size();
 

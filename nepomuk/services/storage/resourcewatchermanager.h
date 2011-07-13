@@ -32,24 +32,36 @@
 namespace Nepomuk {
 
     class ResourceWatcherConnection;
-    
+
     class ResourceWatcherManager : public QObject, protected QDBusContext
     {
         Q_OBJECT
         Q_CLASSINFO( "D-Bus Interface", "org.kde.nepomuk.ResourceWatcher" )
-        
-    public:
-        ResourceWatcherManager( QObject* parent=0 );
 
+    public:
+        ResourceWatcherManager( QObject* parent = 0 );
+        ~ResourceWatcherManager();
+
+        void addStatement(const Soprano::Statement &st);
         void addProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value);
         void removeProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value);
         void createResource(const QUrl& uri, const QList<QUrl>& types);
         void removeResource(const QUrl& uri, const QList<QUrl>& types);
 
     public slots:
-        Q_SCRIPTABLE QDBusObjectPath watch( const QList<QString> & resources,
-                                            const QList<QString> & properties,
-                                            const QList<QString> & types );
+        /**
+         * Used internally by watch() and by the unit tests to create watcher connections.
+         */
+        ResourceWatcherConnection* createConnection(const QList<QUrl>& resources,
+                                                    const QList<QUrl>& properties,
+                                                    const QList<QUrl>& types );
+
+        /**
+         * The main DBus methods exposed by the ResourceWatcher
+         */
+        Q_SCRIPTABLE QDBusObjectPath watch( const QStringList& resources,
+                                            const QStringList& properties,
+                                            const QStringList& types );
 
     private:
         /// called by ResourceWatcherConnection destructor
@@ -61,7 +73,7 @@ namespace Nepomuk {
 
         // only used to generate unique dbus paths
         int m_connectionCount;
-        
+
         friend class ResourceWatcherConnection;
     };
 

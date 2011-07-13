@@ -19,8 +19,6 @@
 
 #include <ActivityManager.h>
 
-#include <KDebug>
-
 #include <KAboutData>
 #include <KCmdLineArgs>
 

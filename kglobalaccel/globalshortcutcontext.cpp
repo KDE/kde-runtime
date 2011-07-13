@@ -77,9 +77,26 @@ QString GlobalShortcutContext::friendlyName() const
 
 GlobalShortcut *GlobalShortcutContext::getShortcutByKey(int key) const
     {
-    Q_FOREACH(GlobalShortcut *sc, _actions)
+    // Qt triggers both shortcuts that include Shift+Backtab and Shift+Tab
+    // when user presses Shift+Tab. Do the same here.
+    int keySym = key & ~Qt::KeyboardModifierMask;
+    int keyMod = key & Qt::KeyboardModifierMask;
+    if ((keyMod & Qt::SHIFT) && (keySym == Qt::Key_Backtab ||
+        keySym == Qt::Key_Tab))
         {
-        if (sc->keys().contains(key)) return sc;
+        Q_FOREACH(GlobalShortcut *sc, _actions)
+            {
+            if (sc->keys().contains(keyMod | Qt::Key_Tab) ||
+                sc->keys().contains(keyMod | Qt::Key_Backtab))
+                return sc;
+            }
+        }
+    else
+        {
+        Q_FOREACH(GlobalShortcut *sc, _actions)
+            {
+            if (sc->keys().contains(key)) return sc;
+            }
         }
     return NULL;
     }

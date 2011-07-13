@@ -22,6 +22,8 @@
 #ifndef DATAMANAGEMENTMODEL_H
 #define DATAMANAGEMENTMODEL_H
 
+#include "lib/datamanagement.h"
+
 #include <Soprano/FilterModel>
 
 #include <QtCore/QDateTime>
@@ -31,6 +33,7 @@ namespace Nepomuk {
 class ClassAndPropertyTree;
 class ResourceMerger;
 class SimpleResourceGraph;
+class ResourceWatcherManager;
 
 class DataManagementModel : public Soprano::FilterModel
 {
@@ -40,22 +43,8 @@ public:
     DataManagementModel(ClassAndPropertyTree* tree, Soprano::Model* model, QObject *parent = 0);
     ~DataManagementModel();
 
-    /**
-     * Flags to influence the behaviour of several data mangement
-     * methods.
-     */
-    enum RemovalFlag {
-        /// No flags - default behaviour
-        NoRemovalFlags = 0x0,
-
-        /**
-         * Remove sub resources of the resources specified in the parameters.
-         * This will remove sub-resources that are not referenced by any resource
-         * which will not be deleted.
-         */
-        RemoveSubResoures = 0x1
-    };
-    Q_DECLARE_FLAGS(RemovalFlags, RemovalFlag)
+    /// used by the unit tests
+    ResourceWatcherManager* resourceWatcherManager() const;
 
 public Q_SLOTS:
     /**
@@ -116,7 +105,7 @@ public Q_SLOTS:
      * other resources.
      */
     void removeResources(const QList<QUrl>& resources,
-                         RemovalFlags flags,
+                         Nepomuk::RemovalFlags flags,
                          const QString& app);
     //@}
 
@@ -149,25 +138,24 @@ public Q_SLOTS:
                                  const QString& app);
 
     /**
-     * Remove all statements involving any proerty from \p properties from
-     * all resources in \p resources if it was created by application \p app.
-     */
-    void removePropertiesByApplication(const QList<QUrl>& resources,
-                                       const QList<QUrl>& properties,
-                                       const QString& app);
-
-    /**
      * \param resources The resources to be merged. Blank nodes will be converted into new
      * URIs (unless the corresponding resource already exists).
-     * \param app The calling application
+     * \param identificationMode This method can try hard to avoid duplicate resources by looking
+     * for already existing duplicates based on nrl:IdentifyingProperty. By default it only looks
+     * for duplicates of resources that do not have a resource URI (SimpleResource::uri()) defined.
+     * This behaviour can be changed with this parameter.
+     * \param flags Additional flags to change the behaviour of the method.
      * \param additionalMetadata Additional metadata for the added resources. This can include
      * such details as the creator of the data or details on the method of data recovery.
      * One typical usecase is that the file indexer uses (rdf:type, nrl:DiscardableInstanceBase)
      * to state that the provided information can be recreated at any time. Only built-in types
      * such as int, string, or url are supported.
+     * \param app The calling application
      */
     void storeResources(const SimpleResourceGraph& resources,
                         const QString& app,
+                        Nepomuk::StoreIdentificationMode identificationMode = Nepomuk::IdentifyNew,
+                        Nepomuk::StoreResourcesFlags flags = Nepomuk::NoStoreResourcesFlags,
                         const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>() );
 
     /**
@@ -179,20 +167,27 @@ public Q_SLOTS:
     /**
      * Import an RDF graph from a URL.
      * \param url The url from which the graph should be loaded. This does not have to be local.
-     * \param app The calling application
      * \param serialization The RDF serialization used for the file. If Soprano::SerializationUnknown a crude automatic
      * detection based on file extension is used.
      * \param userSerialization If \p serialization is Soprano::SerializationUser this value is used. See Soprano::Parser
      * for details.
+     * \param identificationMode This method can try hard to avoid duplicate resources by looking
+     * for already existing duplicates based on nrl:IdentifyingProperty. By default it only looks
+     * for duplicates of resources that do not have a resource URI (SimpleResource::uri()) defined.
+     * This behaviour can be changed with this parameter.
+     * \param flags Additional flags to change the behaviour of the method.
      * \param additionalMetadata Additional metadata for the added resources. This can include
      * such details as the creator of the data or details on the method of data recovery.
      * One typical usecase is that the file indexer uses (rdf:type, nrl:DiscardableInstanceBase)
      * to state that the provided information can be recreated at any time. Only built-in types
      * such as int, string, or url are supported.
+     * \param app The calling application
      */
     void importResources(const QUrl& url, const QString& app,
                          Soprano::RdfSerialization serialization,
                          const QString& userSerialization = QString(),
+                         Nepomuk::StoreIdentificationMode identificationMode = Nepomuk::IdentifyNew,
+                         Nepomuk::StoreResourcesFlags flags = Nepomuk::NoStoreResourcesFlags,
                          const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>());
 
     /**
@@ -252,6 +247,13 @@ private:
      * \param app The calling application.
      */
     void addProperty(const QHash<QUrl, QUrl>& resources, const QUrl& property, const QHash<Soprano::Node, Soprano::Node>& nodes, const QString& app);
+
+    /**
+     * Removes the given resources without any additional checks. The provided list needs to contain already resolved valid resource URIs.
+     *
+     * Used by removeResources() and removeDataByApplication()
+     */
+    void removeAllResources(const QSet<QUrl>& resourceUris, RemovalFlags flags);
 
     /**
      * Checks if resource \p res actually exists. A resource exists if any information other than the standard metadata
@@ -318,7 +320,5 @@ private:
     friend class ResourceMerger;
 };
 }
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(Nepomuk::DataManagementModel::RemovalFlags)
 
 #endif

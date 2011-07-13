@@ -1,5 +1,13 @@
 set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR} )
 
+include_directories(
+  ${SOPRANO_INCLUDE_DIR}
+  ${CMAKE_SOURCE_DIR}
+  ${NEPOMUK_INCLUDE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}/..
+  ${CMAKE_CURRENT_SOURCE_DIR}/..
+  )
+
 kde4_add_unit_test(crappyinferencer2test
   crappyinferencer2test.cpp
   ../crappyinferencer2.cpp
@@ -33,8 +41,14 @@ set( DMTEST
   ../datamanagementcommand.cpp
   ../resourcemerger.cpp
   ../resourceidentifier.cpp
-  ../transactionmodel.cpp
+  qtest_dms.cpp
 )
+
+qt4_add_dbus_adaptor(DMTEST
+  ../../../interfaces/org.kde.nepomuk.ResourceWatcherConnection.xml
+  resourcewatcherconnection.h
+  Nepomuk::ResourceWatcherConnection)
+
 
 kde4_add_library( datamanagementtestlib STATIC ${DMTEST} )
 
@@ -123,3 +137,29 @@ target_link_libraries(asyncclientapitest
   ${NEPOMUK_LIBRARIES}
   nepomukdatamanagement
 )
+
+kde4_add_executable(resourcewatchertest
+  resourcewatchertest.cpp
+)
+
+target_link_libraries(resourcewatchertest
+  ${QT_QTTEST_LIBRARY}
+  ${SOPRANO_LIBRARIES}
+  ${SOPRANO_SERVER_LIBRARIES}
+  ${KDE4_KDECORE_LIBS}
+  ${KDE4_KIO_LIBS}
+  ${KDE4_SOLID_LIBS}
+  ${NEPOMUK_LIBRARIES}
+  nepomuksync
+  nepomukdatamanagement
+  datamanagementtestlib
+)
+
+kde4_add_unit_test(simpleresourceclassestest
+    simpleresourceclassestest.cpp
+    )
+target_link_libraries(simpleresourceclassestest
+    nepomukdatamanagement
+    ${QT_QTTEST_LIBRARY}
+    ${QT_QTCORE_LIBRARY}
+    )

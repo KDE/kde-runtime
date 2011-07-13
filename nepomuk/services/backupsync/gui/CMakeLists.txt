@@ -8,9 +8,10 @@ include_directories(
   ${NEPOMUK_INCLUDE_DIR}
   ${libnepomuksync_SOURCE_DIR}
   ${CMAKE_CURRENT_BUILD_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/../service/
   )
 
-set( NepomukBackup_GUI_SRCS 
+set( NepomukBackup_GUI_SRCS
   backupwizardpages.cpp
   backupwizard.cpp
   mergeconflictdelegate.cpp
@@ -19,14 +20,24 @@ set( NepomukBackup_GUI_SRCS
   identifiermodeltree.cpp
   identifierwidget.cpp
   filesystemtree.cpp
-  ../service/dbusoperators.cpp
+
+  # Restoration code
+  identifier.cpp
+  merger.cpp
+  changelogmerger.cpp
+  syncfileidentifier.cpp
+  resourcelog.cpp
+
+   # Code required by restoration
+  ../service/tools.cpp
+  ../service/changelog.cpp
+  ../service/changelogrecord.cpp
+  ../service/identificationset.cpp
+  ../service/syncfile.cpp
 )
 
 #----- DBus interfaces --------
 
-set_source_files_properties(
-  ../../../interfaces/org.kde.nepomuk.services.nepomukbackupsync.identifier.xml
-  PROPERTIES INCLUDE "../service/dbusoperators.h")
 set_source_files_properties(
   ../../../interfaces/org.kde.nepomuk.services.nepomukbackupsync.backupmanager.xml
   PROPERTIES INCLUDE "QtCore/QList")
@@ -34,12 +45,6 @@ set_source_files_properties(
   ../../../interfaces/org.kde.nepomuk.services.nepomukbackupsync.backupmanager.xml
   PROPERTIES INCLUDE "QtCore/QString")
 
-qt4_add_dbus_interface( NepomukBackup_GUI_SRCS
-                        ../../../interfaces/org.kde.nepomuk.services.nepomukbackupsync.identifier.xml
-                        identifierinterface )
-qt4_add_dbus_interface( NepomukBackup_GUI_SRCS
-                        ../../../interfaces/org.kde.nepomuk.services.nepomukbackupsync.merger.xml
-                        mergerinterface )
 qt4_add_dbus_interface( NepomukBackup_GUI_SRCS
                         ../../../interfaces/org.kde.nepomuk.services.nepomukbackupsync.syncmanager.xml
                         syncmanagerinterface )
@@ -59,6 +64,13 @@ kde4_add_ui_files( NepomukBackup_GUI_SRCS
   errorpage.ui
 )
 
+#--------- Ontologies -------#
+soprano_add_ontology(NepomukBackup_GUI_SRCS
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../../ontologies/nrio.trig
+  "NRIO"
+  "Nepomuk::Vocabulary"
+  "trig")
+
 kde4_add_executable(nepomukbackup ${NepomukBackup_GUI_SRCS})
 
 target_link_libraries(nepomukbackup
@@ -66,6 +78,7 @@ target_link_libraries(nepomukbackup
   ${KDE4_KIO_LIBS}
   ${NEPOMUK_LIBRARIES}
   ${SOPRANO_LIBRARIES}
+  nepomuksync
   )
 
 install(TARGETS nepomukbackup ${INSTALL_TARGETS_DEFAULT_ARGS} )

@@ -26,6 +26,9 @@
 
 #include <QtGui/QWizard>
 
+#include "identifier.h"
+#include "merger.h"
+
 namespace Nepomuk {
 
     class BackupWizard : public QWizard
@@ -45,10 +48,14 @@ namespace Nepomuk {
             Id_RestoreFinalPage,
             Id_ErrorPage
         };
-        
+
         void startBackup();
         void startRestore();
         void showError(const QString& error);
+
+    public:
+        Identifier* m_identifier;
+        Merger* m_merger;
     };
 
 }

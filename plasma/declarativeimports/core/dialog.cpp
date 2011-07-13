@@ -82,7 +82,8 @@ int DialogMargins::bottom() const
 
 DialogProxy::DialogProxy(QObject *parent)
     : QObject(parent),
-      m_declarativeItemContainer(0)
+      m_declarativeItemContainer(0),
+      m_activeWindow(false)
 {
     m_dialog = new Plasma::Dialog();
     m_margins = new DialogMargins(m_dialog, this);
@@ -133,10 +134,16 @@ void DialogProxy::syncMainItem()
             QGraphicsObject *qo = qobject_cast<QGraphicsObject *>(parent);
             if (qo) {
                 scene = qo->scene();
-                scene->addItem(m_mainItem.data());
-                break;
+                if (scene) {
+                    scene->addItem(m_mainItem.data());
+                    break;
+                }
             }
         }
+    }
+
+    if (!scene) {
+        return;
     }
 
     //the parent of the qobject never changed, only the parentitem, so put it back what it was
@@ -174,12 +181,14 @@ void DialogProxy::setVisible(const bool visible)
             m_dialog->setVisible(visible);
             m_dialog->raise();
         }
-        emit visibleChanged();
     }
 }
 
 QPoint DialogProxy::popupPosition(QGraphicsObject *item, int alignment) const
 {
+    if (!item) {
+        return QPoint();
+    }
     Plasma::Corona *corona = qobject_cast<Plasma::Corona *>(item->scene());
     if (corona) {
         return corona->popupPosition(item, m_dialog->size(), (Qt::AlignmentFlag)alignment);
@@ -219,6 +228,11 @@ int DialogProxy::height() const
     return m_dialog->size().height();
 }
 
+bool DialogProxy::isActiveWindow() const
+{
+    return m_activeWindow;
+}
+
 int DialogProxy::windowFlags() const
 {
     return (int)m_dialog->windowFlags();
@@ -256,6 +270,16 @@ bool DialogProxy::eventFilter(QObject *watched, QEvent *event)
         if (re->oldSize().height() != re->size().height()) {
             emit heightChanged();
         }
+    } else if (watched == m_dialog && event->type() == QEvent::Show) {
+        emit visibleChanged();
+    } else if (watched == m_dialog && event->type() == QEvent::Hide) {
+        emit visibleChanged();
+    } else if (watched == m_dialog && event->type() == QEvent::WindowActivate) {
+        m_activeWindow = true;
+        emit activeWindowChanged();
+    } else if (watched == m_dialog && event->type() == QEvent::WindowDeactivate) {
+        m_activeWindow = false;
+        emit activeWindowChanged();
     }
     return false;
 }

@@ -1,0 +1,112 @@
+#
+# Copyright (c) 2011 Ivan Cukic <ivan.cukic@kde.org>
+# All rights reserved, licensed under either CC-BY or BSD.
+#
+# You are free:
+#  * to Share - to copy, distribute and transmit the work
+#  * to Remix - to adapt the work
+# Under the following conditions:
+#  * Attribution - You must attribute the work in the manner specified by the author
+#    or licensor (but not in any way that suggests that they endorse you or your use
+#    of the work).
+#
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#  * Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+#  * Redistributions in binary form must reproduce the above copyright notice, this
+#    list of conditions and the following disclaimer in the documentation and/or
+#    other materials provided with the distribution.
+#  * Neither the names of the authors nor the names of contributors may
+#    be used to endorse or promote products derived from this ontology without
+#    specific prior written permission.
+#
+# THIS ONTOLOGY IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+# OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+# IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+# NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS ONTOLOGY, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix nao:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#> .
+@prefix nrl:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#> .
+@prefix nie:     <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix kamdrso:    <http://nepomuk.kde.org/ontologies/2011/06/01/kamdrso#> .
+@prefix nfo:     <http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#> .
+
+kamdrso: {
+    kamdrso:unixFileMode
+          a      rdf:Property ;
+          rdfs:label "Unix file mode" ;
+          rdfs:comment "The file mode value as seen on unix file systems." ;
+          rdfs:domain nfo:FileDataObject ;
+          rdfs:range xsd:integer ;
+          nao:userVisible false .
+
+    kamdrso:unixFileOwner
+          a      rdf:Property ;
+          rdfs:label "Unix file owner" ;
+          rdfs:comment "The owner of the file as seen on unix file systems. This is intended as the low-level counterpart to nfo:owner." ;
+          rdfs:domain nfo:FileDataObject ;
+          rdfs:range xsd:string ;
+          nao:userVisible false .
+
+    kamdrso:unixFileGroup
+          a      rdf:Property ;
+          rdfs:label "Unix file group" ;
+          rdfs:comment "The group of the file as seen on unix file systems." ;
+          rdfs:domain nfo:FileDataObject ;
+          rdfs:range xsd:string ;
+          nao:userVisible false .
+
+    kamdrso:Activity
+          a rdfs:Class ;
+          rdfs:subClassOf rdfs:Resource ;
+          rdfs:label "activity" ;
+          rdfs:comment "A Plasma activity." .
+
+    kamdrso:usedActivity
+          a rdf:Property ;
+          rdfs:label "used activity" ;
+          rdfs:comment "The activity that was active when resource was created. This is mostly used for graphs or desktop events." ;
+          rdfs:domain rdfs:Resource ;
+          rdfs:range kamdrso:Activity ;
+          nao:userVisible false .
+
+    kamdrso:activityIdentifier
+          a rdf:Property ;
+          rdfs:subPropertyOf nao:identifier ;
+          rdfs:label "activity identifier" ;
+          rdfs:comment "The unique ID of the activity as used outside of Nepomuk. Typically this is a UUID." ;
+          rdfs:domain kamdrso:Activity ;
+          rdfs:range xsd:string ;
+          nao:userVisible false .
+
+}
+
+<http://nepomuk.kde.org/ontologies/2011/06/01/kamdrso/metadata> {
+    <http://nepomuk.kde.org/ontologies/2011/06/01/kamdrso/metadata>
+          a       nrl:GraphMetadata ;
+          nrl:coreGraphMetadataFor kamdrso: .
+
+
+    kamdrso:
+          a       nrl:Ontology , nrl:DocumentGraph ;
+          nao:prefLabel "KDE Extensions Ontology" ;
+          nao:hasDefaultNamespace "http://nepomuk.kde.org/ontologies/2011/06/01/kamdrso#" ;
+          nao:hasDefaultNamespaceAbbreviation "kamdrso" ;
+          nao:lastModified "2011-06-02T12:31:43Z" ;
+          nao:serializationLanguage "TriG" ;
+          nao:status "Unstable" ;
+          nrl:updatable "0" ;
+          nao:version "2" .
+}
+

@@ -29,31 +29,31 @@
 #include "syncfile.h"
 
 namespace Nepomuk {
-    
+
     class SyncFileIdentifier : public Sync::ResourceIdentifier
     {
     public:
         SyncFileIdentifier( const SyncFile & sf );
         virtual ~SyncFileIdentifier();
-        
+
         virtual void identifyAll();
         int id();
-        
+
         ChangeLog convertedChangeLog();
         void load();
 
     protected:
-        virtual KUrl additionalIdentification(const KUrl& uri);
-        
+        virtual bool runIdentification(const KUrl& uri);
+
     private:
         ChangeLog m_changeLog;
         IdentificationSet m_identificationSet;
-        
+
         static int NextId;
         int m_id;
 
         Resource createNewResource(const Nepomuk::Sync::SyncResource& simpleRes) const;
-        
+
     };
 }
 

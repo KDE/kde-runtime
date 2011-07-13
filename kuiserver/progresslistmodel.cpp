@@ -29,6 +29,7 @@
 #include "jobviewserver_interface.h"
 #include "requestviewcallwatcher.h"
 #include "uiserver.h"
+#include <QtDBus/qdbusabstractinterface.h>
 
 ProgressListModel::ProgressListModel(QObject *parent)
         : QAbstractItemModel(parent), m_jobId(1),
@@ -255,24 +256,24 @@ void ProgressListModel::emitJobUrlsChanged()
     emit jobUrlsChanged(gatherJobUrls());
 }
 
-void ProgressListModel::registerService(const QString &service, const QString &objectPath)
+void ProgressListModel::registerService(const QString &serviceName, const QString &objectPath)
 {
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
 
-    if (!service.isEmpty() && !objectPath.isEmpty()) {
-        if (sessionBus.interface()->isServiceRegistered(service).value() &&
-                !m_registeredServices.contains(service)) {
+    if (!serviceName.isEmpty() && !objectPath.isEmpty()) {
+        if (sessionBus.interface()->isServiceRegistered(serviceName).value() &&
+                !m_registeredServices.contains(serviceName)) {
 
             org::kde::JobViewServer *client =
-                new org::kde::JobViewServer(service, objectPath, sessionBus);
+                new org::kde::JobViewServer(serviceName, objectPath, sessionBus);
 
             if (client->isValid()) {
 
                 delete m_uiServer;
                 m_uiServer = 0;
 
-                m_serviceWatcher->addWatchedService(service);
-                m_registeredServices.insert(service, client);
+                m_serviceWatcher->addWatchedService(serviceName);
+                m_registeredServices.insert(serviceName, client);
 
 
                 //tell this new client to create all of the same jobs that we currently have.
@@ -286,7 +287,7 @@ void ProgressListModel::registerService(const QString &service, const QString &o
 
                     QDBusPendingCall pendingCall = client->asyncCall(QLatin1String("requestView"), jobView->appName(), jobView->appIconName(), jobView->capabilities());
 
-                    RequestViewCallWatcher *watcher = new RequestViewCallWatcher(jobView, service, pendingCall, this);
+                    RequestViewCallWatcher *watcher = new RequestViewCallWatcher(jobView, serviceName, pendingCall, this);
                     connect(watcher, SIGNAL(callFinished(RequestViewCallWatcher*)),
                             this, SLOT(pendingCallFinished(RequestViewCallWatcher*)));
                 }
@@ -310,13 +311,22 @@ void ProgressListModel::serviceUnregistered(const QString &name)
         emit serviceDropped(name);
         m_registeredServices.remove(name);
 
-        /* unused
+        /* unused (FIXME)
         if (m_registeredServices.isEmpty()) {
             //the last service dropped, we *need* to show our GUI
             m_uiServer = new UiServer(this);
         }
          */
     }
+}
+
+QStringList ProgressListModel::registeredJobContacts()
+{
+    QStringList output;
+    foreach (JobView* jobView, m_jobViews) {
+        output.append(jobView->jobContacts());
+    }
+    return output;
 }
 
 #include "progresslistmodel.moc"

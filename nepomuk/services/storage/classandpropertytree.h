@@ -38,7 +38,10 @@ class Statement;
 
 
 namespace Nepomuk {
+
 class SimpleResource;
+class SimpleResourceGraph;
+
 class ClassAndPropertyTree : public QObject, public Soprano::Error::ErrorCache
 {
     Q_OBJECT
@@ -47,8 +50,14 @@ public:
     ClassAndPropertyTree(QObject *parent = 0);
     ~ClassAndPropertyTree();
 
+    /// \return \p true if \p uri is a class
+    bool isKnownClass(const QUrl& uri) const;
+
     QSet<QUrl> allParents(const QUrl& uri) const;
     bool isChildOf(const QUrl& type, const QUrl& superClass) const;
+
+    /// Returns true if the uri is a Class or a Property
+    bool contains(const QUrl& uri) const;
 
     /**
      * Returns true if any one of the uris in \p types is a child of \p superClass
@@ -74,6 +83,7 @@ public:
     QSet<Soprano::Node> variantListToNodeSet(const QVariantList& vl, const QUrl& property) const;
 
     QList<Soprano::Statement> simpleResourceToStatementList(const Nepomuk::SimpleResource& res) const;
+    QList<Soprano::Statement> simpleResourceGraphToStatementList(const Nepomuk::SimpleResourceGraph& graph) const;
 
     static ClassAndPropertyTree* self();
 

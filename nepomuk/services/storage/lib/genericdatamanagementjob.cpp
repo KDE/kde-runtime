@@ -37,13 +37,14 @@ Nepomuk::GenericDataManagementJob::GenericDataManagementJob(const char *methodNa
                                                             QGenericArgument val1,
                                                             QGenericArgument val2,
                                                             QGenericArgument val3,
-                                                            QGenericArgument val4)
+                                                            QGenericArgument val4,
+                                                            QGenericArgument val5)
     : KJob(0)
 {
     // DBus types necessary for storeResources
     DBus::registerDBusTypes();
 
-    org::kde::nepomuk::DataManagement dms(QLatin1String("org.kde.nepomuk.DataManagement"),
+    org::kde::nepomuk::DataManagement dms(QLatin1String(DMS_DBUS_SERVICE),
                                           QLatin1String("/datamanagement"),
                                           QDBusConnection::sessionBus());
     QDBusPendingReply<> reply;
@@ -55,7 +56,8 @@ Nepomuk::GenericDataManagementJob::GenericDataManagementJob(const char *methodNa
                               val1,
                               val2,
                               val3,
-                              val4);
+                              val4,
+                              val5);
     QDBusPendingCallWatcher* dbusCallWatcher = new QDBusPendingCallWatcher(reply);
     connect(dbusCallWatcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
             this, SLOT(slotDBusCallFinished(QDBusPendingCallWatcher*)));

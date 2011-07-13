@@ -26,3 +26,15 @@ EventBackend::EventBackend()
 EventBackend::~EventBackend()
 {
 }
+
+void EventBackend::addEvents(const EventList & events)
+{
+    Q_UNUSED(events)
+}
+
+void EventBackend::setResourceMimeType(const QString & uri, const QString & mimetype)
+{
+    Q_UNUSED(uri)
+    Q_UNUSED(mimetype)
+}
+

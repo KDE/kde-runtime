@@ -38,10 +38,14 @@ class KTempDir;
 class FakeDataManagementService : public QObject
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.kde.nepomuk.FakeDataManagement")
 
 public:
     FakeDataManagementService(QObject *parent = 0);
     ~FakeDataManagementService();
+
+public Q_SLOTS:
+    void updateClassAndPropertyTree();
 
 private:
     KTempDir* m_storageDir;

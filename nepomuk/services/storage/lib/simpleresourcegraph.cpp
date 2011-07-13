@@ -25,8 +25,10 @@
 
 #include <QtCore/QSharedData>
 #include <QtCore/QHash>
+#include <QtCore/QString>
 #include <QtCore/QUrl>
 #include <QtCore/QDebug>
+#include <QtCore/QDataStream>
 
 #include <KRandom>
 
@@ -101,9 +103,48 @@ void Nepomuk::SimpleResourceGraph::remove(const SimpleResource &res)
         remove( res.uri() );
 }
 
+void Nepomuk::SimpleResourceGraph::add(const QUrl &uri, const QUrl &property, const QVariant &value)
+{
+    if(!uri.isEmpty()) {
+        d->resources[uri].setUri(uri);
+        d->resources[uri].addProperty(property, value);
+    }
+}
+
+void Nepomuk::SimpleResourceGraph::set(const QUrl &uri, const QUrl &property, const QVariant &value)
+{
+    removeAll(uri, property);
+    add(uri, property, value);
+}
+
+void Nepomuk::SimpleResourceGraph::remove(const QUrl &uri, const QUrl &property, const QVariant &value)
+{
+    QHash< QUrl, SimpleResource >::iterator it = d->resources.find( uri );
+    if( it != d->resources.end() ) {
+        it.value().removeProperty(property, value);
+    }
+}
+
+void Nepomuk::SimpleResourceGraph::removeAll(const QUrl &uri, const QUrl &property)
+{
+    QHash< QUrl, SimpleResource >::iterator it = d->resources.find( uri );
+    if( it != d->resources.end() ) {
+        it.value().removeProperty(property);
+    }
+}
+
 bool Nepomuk::SimpleResourceGraph::contains(const QUrl &uri) const
 {
     return d->resources.contains(uri);
+}
+
+bool Nepomuk::SimpleResourceGraph::containsAny(const QUrl &res, const QUrl &property) const
+{
+    QHash< QUrl, SimpleResource >::const_iterator it = d->resources.constFind( res );
+    if( it == d->resources.constEnd() )
+        return false;
+
+    return it.value().contains(property);
 }
 
 bool Nepomuk::SimpleResourceGraph::contains(const SimpleResource &res) const
@@ -156,6 +197,39 @@ QVariant nodeToVariant(const Soprano::Node& node) {
 }
 }
 
+Nepomuk::SimpleResourceGraph &
+Nepomuk::SimpleResourceGraph::operator+=( const SimpleResourceGraph & graph )
+{
+    if ( this == &graph )
+        return *this;
+
+    if ( d->resources.size() == 0 ) {
+        d->resources = graph.d->resources;
+    }
+    else {
+        QHash<QUrl, SimpleResource>::const_iterator it;
+        QHash<QUrl, SimpleResource>::iterator fit;
+        for (it = graph.d->resources.begin();
+              it!= graph.d->resources.end();
+            ++it
+            )
+        {
+            fit = d->resources.find(it.key());
+            if ( fit == d->resources.end() ) {
+                // Not found
+                d->resources[it.key()] = it.value();
+            }
+            else {
+                // Found. Should merge
+                fit.value().addProperties(it.value().properties());
+            }
+        }
+    }
+
+    return *this;
+}
+
+
 void Nepomuk::SimpleResourceGraph::addStatement(const Soprano::Statement &s)
 {
     const QUrl uri = nodeToVariant(s.subject()).toUrl();
@@ -172,10 +246,36 @@ void Nepomuk::SimpleResourceGraph::addStatement(const Soprano::Node& subject, co
 
 KJob* Nepomuk::SimpleResourceGraph::save(const KComponentData& component) const
 {
-    return Nepomuk::storeResources(*this, QHash<QUrl, QVariant>(), component);
+    return Nepomuk::storeResources(*this, Nepomuk::IdentifyNew, Nepomuk::NoStoreResourcesFlags, QHash<QUrl, QVariant>(), component);
 }
 
 QDebug Nepomuk::operator<<(QDebug dbg, const Nepomuk::SimpleResourceGraph& graph)
 {
     return dbg << graph.toList();
+}
+
+QDataStream & Nepomuk::operator<<(QDataStream & stream, const Nepomuk::SimpleResourceGraph& graph)
+{
+    stream << graph.toList();
+    return stream;
+}
+
+QDataStream & Nepomuk::operator>>(QDataStream & stream, Nepomuk::SimpleResourceGraph& graph)
+{
+    QList<SimpleResource> l;
+    stream >> l;
+    graph = SimpleResourceGraph(l);
+    return stream;
+}
+
+
+bool Nepomuk::SimpleResourceGraph::operator!=( const SimpleResourceGraph & rhs) const
+{
+    return !(*this == rhs);
+}
+
+
+bool Nepomuk::SimpleResourceGraph::operator==( const SimpleResourceGraph & rhs) const
+{
+    return (d->resources == rhs.d->resources);
 }

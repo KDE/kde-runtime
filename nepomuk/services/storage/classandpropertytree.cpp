@@ -21,6 +21,7 @@
 
 #include "classandpropertytree.h"
 #include "simpleresource.h"
+#include "simpleresourcegraph.h"
 
 #include <QtCore/QSet>
 #include <QtCore/QDir>
@@ -40,6 +41,7 @@
 
 #include <KDebug>
 
+using namespace Soprano;
 using namespace Soprano::Vocabulary;
 
 Nepomuk::ClassAndPropertyTree* Nepomuk::ClassAndPropertyTree::s_self = 0;
@@ -92,6 +94,15 @@ Nepomuk::ClassAndPropertyTree::~ClassAndPropertyTree()
 {
     qDeleteAll(m_tree);
     s_self = 0;
+}
+
+bool Nepomuk::ClassAndPropertyTree::isKnownClass(const QUrl &uri) const
+{
+    QMutexLocker lock(&m_mutex);
+    if(const ClassOrProperty* cop = findClassOrProperty(uri))
+        return !cop->isProperty;
+    else
+        return false;
 }
 
 QSet<QUrl> Nepomuk::ClassAndPropertyTree::allParents(const QUrl &uri) const
@@ -270,6 +281,38 @@ QSet<Soprano::Node> Nepomuk::ClassAndPropertyTree::variantListToNodeSet(const QV
         }
         else {
             Q_FOREACH(const QVariant& value, vl) {
+                //
+                // Exiv data often contains floating point values encoded as a fraction
+                //
+                if((range == XMLSchema::xsdFloat() || range == XMLSchema::xsdDouble())
+                        && value.type() == QVariant::String) {
+                    int x = 0;
+                    int y = 0;
+                    if ( sscanf( value.toString().toLatin1().data(), "%d/%d", &x, &y ) == 2 && y != 0 ) {
+                        const double v = double( x )/double( y );
+#if SOPRANO_IS_VERSION(2, 6, 51)
+                        nodes.insert(LiteralValue::fromVariant(v, range));
+#else
+                        nodes.insert(LiteralValue::fromString(QString::number(v), range));
+#endif
+                        continue;
+                    }
+                }
+
+                //
+                // ID3 tags sometimes only contain the year of publication. We cover this
+                // special case here with a very dumb heuristic
+                //
+                else if(range == XMLSchema::dateTime()
+                        && value.canConvert(QVariant::UInt)) {
+                    bool ok = false;
+                    const int t = value.toInt(&ok);
+                    if(ok && t > 0 && t <= 9999) {
+                        nodes.insert(LiteralValue(QDateTime(QDate(t, 1, 1), QTime(0, 0), Qt::UTC)));
+                        continue;
+                    }
+                }
+
 #if SOPRANO_IS_VERSION(2, 6, 51)
                 Soprano::LiteralValue v = Soprano::LiteralValue::fromVariant(value, range);
                 if(v.isValid()) {
@@ -492,6 +535,11 @@ const Nepomuk::ClassAndPropertyTree::ClassOrProperty * Nepomuk::ClassAndProperty
         return it.value();
 }
 
+bool Nepomuk::ClassAndPropertyTree::contains(const QUrl& uri) const
+{
+    return m_tree.contains(uri);
+}
+
 
 /**
  * Set the value of nao:userVisible.
@@ -598,6 +646,15 @@ QList<Soprano::Statement> Nepomuk::ClassAndPropertyTree::simpleResourceToStateme
         list << Soprano::Statement(subject,
                                    it.key(),
                                    convertIfBlankNode(object));
+    }
+    return list;
+}
+
+QList<Soprano::Statement> Nepomuk::ClassAndPropertyTree::simpleResourceGraphToStatementList(const Nepomuk::SimpleResourceGraph &graph) const
+{
+    QList<Soprano::Statement> list;
+    foreach(const SimpleResource& res, graph.toList()) {
+        list += simpleResourceToStatementList(res);
     }
     return list;
 }

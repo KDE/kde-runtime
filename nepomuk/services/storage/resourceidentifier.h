@@ -22,25 +22,28 @@
 #define RESOURCEIDENTIFIER_H
 
 #include "../backupsync/lib/resourceidentifier.h"
+#include "datamanagement.h"
 
 #include <KUrl>
 
 namespace Nepomuk {
-    
+
 class ResourceIdentifier : public Sync::ResourceIdentifier
 {
 public:
-    ResourceIdentifier();
-    
+    ResourceIdentifier( Nepomuk::StoreIdentificationMode mode, Soprano::Model *model);
+
 protected:
-    virtual KUrl duplicateMatch(const KUrl& uri, const QSet< KUrl >& matchedUris, float score);
+    virtual KUrl duplicateMatch(const KUrl& uri, const QSet< KUrl >& matchedUris );
     virtual bool runIdentification(const KUrl& uri);
-    
+
 private:
-    bool isIdentfyingProperty( const QUrl& uri );
-    
+    bool isIdentifyingProperty( const QUrl& uri );
+
     /// Returns true if a resource with uri \p uri exists
     bool exists( const KUrl& uri );
+
+    Nepomuk::StoreIdentificationMode m_mode;
 };
 
 }

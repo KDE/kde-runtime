@@ -38,12 +38,12 @@
 using namespace Soprano::Vocabulary;
 
 namespace {
-QVariant nodeToVariant(const Soprano::Node& node) {
+QDBusVariant nodeToVariant(const Soprano::Node& node) {
     if(node.isResource()) {
-        return node.uri();
+        return QDBusVariant(node.uri());
     }
     else {
-        return node.literal().variant();
+        return QDBusVariant(node.literal().variant());
     }
 }
 
@@ -51,6 +51,13 @@ QStringList convertUris(const QList<QUrl>& uris) {
     QStringList sl;
     foreach(const QUrl& uri, uris)
         sl << KUrl(uri).url();
+    return sl;
+}
+
+QList<QUrl> convertUris(const QStringList& uris) {
+    QList<QUrl> sl;
+    foreach(const QString& uri, uris)
+        sl << KUrl(uri);
     return sl;
 }
 }
@@ -62,6 +69,22 @@ Nepomuk::ResourceWatcherManager::ResourceWatcherManager(QObject* parent)
     QDBusConnection::sessionBus().registerObject("/resourcewatcher", this, QDBusConnection::ExportScriptableSlots);
 }
 
+Nepomuk::ResourceWatcherManager::~ResourceWatcherManager()
+{
+    // the connections call removeConnection() from their descrutors. Thus,
+    // we need to clean them up before we are deleted ourselves
+    QSet<ResourceWatcherConnection*> allConnections
+            = QSet<ResourceWatcherConnection*>::fromList(m_resHash.values())
+            + QSet<ResourceWatcherConnection*>::fromList(m_propHash.values())
+            + QSet<ResourceWatcherConnection*>::fromList(m_typeHash.values());
+    qDeleteAll(allConnections);
+}
+
+
+void Nepomuk::ResourceWatcherManager::addStatement(const Soprano::Statement& st)
+{
+    addProperty( st.subject(), st.predicate().uri(), st.object() );
+}
 
 void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value)
 {
@@ -107,7 +130,7 @@ void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const
 void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value)
 {
     typedef ResourceWatcherConnection RWC;
-    
+
     //
     // Emit signals for all the connections that are only watching specific resources
     //
@@ -123,7 +146,7 @@ void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, co
             resConnections << con;
         }
     }
-    
+
     //
     // Emit signals for the conn2ections that are watching specific resources and properties
     //
@@ -148,7 +171,7 @@ void Nepomuk::ResourceWatcherManager::createResource(const QUrl &uri, const QLis
     }
 
     foreach(ResourceWatcherConnection* con, connections) {
-        con->resourceCreated(KUrl(uri).url(), convertUris(types));
+        emit con->resourceCreated(KUrl(uri).url(), convertUris(types));
     }
 }
 
@@ -165,31 +188,48 @@ void Nepomuk::ResourceWatcherManager::removeResource(const QUrl &res, const QLis
     }
 
     foreach(ResourceWatcherConnection* con, connections) {
-        con->resourceRemoved(KUrl(res).url(), convertUris(types));
+        emit con->resourceRemoved(KUrl(res).url(), convertUris(types));
     }
 }
 
-QDBusObjectPath Nepomuk::ResourceWatcherManager::watch(const QList< QString >& resources, const QList< QString >& properties, const QList< QString >& types)
+Nepomuk::ResourceWatcherConnection* Nepomuk::ResourceWatcherManager::createConnection(const QList<QUrl> &resources,
+                                                                                      const QList<QUrl> &properties,
+                                                                                      const QList<QUrl> &types)
 {
-    kDebug();
+    kDebug() << resources << properties << types;
 
-    if( resources.isEmpty() && properties.isEmpty() && types.isEmpty() )
+    if( resources.isEmpty() && properties.isEmpty() && types.isEmpty() ) {
+        return 0;
+    }
+
+    ResourceWatcherConnection* con = new ResourceWatcherConnection( this, !properties.isEmpty() );
+    foreach( const QUrl& res, resources ) {
+        m_resHash.insert(res, con);
+    }
+
+    foreach( const QUrl& prop, properties ) {
+        m_propHash.insert(prop, con);
+    }
+
+    foreach( const QUrl& type, types ) {
+        m_typeHash.insert(type, con);
+    }
+
+    return con;
+}
+
+QDBusObjectPath Nepomuk::ResourceWatcherManager::watch(const QStringList& resources,
+                                                       const QStringList& properties,
+                                                       const QStringList& types)
+{
+    kDebug() << resources << properties << types;
+
+    if(ResourceWatcherConnection* con = createConnection(convertUris(resources), convertUris(properties), convertUris(types))) {
+        return con->registerDBusObject(message().service(), ++m_connectionCount);
+    }
+    else {
         return QDBusObjectPath();
-
-    ResourceWatcherConnection * con = new ResourceWatcherConnection( this, !properties.isEmpty() );
-    foreach( const QString & res, resources ) {
-        m_resHash.insert( QUrl(res), con );
     }
-
-    foreach( const QString & prop, properties ) {
-        m_propHash.insert( QUrl(prop), con );
-    }
-
-    foreach( const QString & type, properties ) {
-        m_typeHash.insert( QUrl(type), con );
-    }
-    
-    return con->registerDBusObject(message().service(), ++m_connectionCount);
 }
 
 namespace {

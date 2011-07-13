@@ -25,6 +25,7 @@
 #include <QtCore/QSharedData>
 #include <QtCore/QVariant>
 #include <QtCore/QDebug>
+#include <QtCore/QDataStream>
 
 #include <Soprano/Node>
 #include <Soprano/LiteralValue>
@@ -62,6 +63,13 @@ Nepomuk::SimpleResource::SimpleResource(const QUrl& uri)
 {
     d = new Private();
     setUri(uri);
+}
+
+Nepomuk::SimpleResource::SimpleResource(const PropertyHash& properties)
+{
+    d = new Private();
+    setUri(QUrl());
+    setProperties(properties);
 }
 
 Nepomuk::SimpleResource::SimpleResource(const SimpleResource& other)
@@ -216,6 +224,16 @@ void Nepomuk::SimpleResource::addPropertyNode(const QUrl &property, const Sopran
     // else do nothing
 }
 
+void Nepomuk::SimpleResource::removeProperty(const QUrl &property, const QVariant &value)
+{
+    d->m_properties.remove(property, value);
+}
+
+void Nepomuk::SimpleResource::removeProperty(const QUrl &property)
+{
+    d->m_properties.remove(property);
+}
+
 void Nepomuk::SimpleResource::addType(const QUrl &type)
 {
     addProperty(Soprano::Vocabulary::RDF::type(), type);
@@ -258,4 +276,20 @@ uint Nepomuk::qHash(const SimpleResource& res)
 QDebug Nepomuk::operator<<(QDebug dbg, const Nepomuk::SimpleResource& res)
 {
     return dbg << res.uri() << res.properties();
+}
+
+QDataStream & Nepomuk::operator<<(QDataStream & stream, const Nepomuk::SimpleResource& resource)
+{
+    stream << resource.uri() << resource.properties();
+    return stream;
+}
+
+QDataStream & Nepomuk::operator>>(QDataStream & stream, Nepomuk::SimpleResource& resource)
+{
+    QUrl uri;
+    PropertyHash properties;
+    stream >> uri >> properties;
+    resource.setUri(uri);
+    resource.setProperties(properties);
+    return stream;
 }

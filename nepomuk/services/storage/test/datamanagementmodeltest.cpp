@@ -28,6 +28,7 @@
 
 #include <QtTest>
 #include "qtest_kde.h"
+#include "qtest_dms.h"
 
 #include <Soprano/Soprano>
 #include <Soprano/Graph>
@@ -36,7 +37,7 @@
 
 #include <KTemporaryFile>
 #include <KTempDir>
-#include <KTempDir>
+#include <KProtocolInfo>
 #include <KDebug>
 
 #include <Nepomuk/Vocabulary/NFO>
@@ -60,111 +61,7 @@ void DataManagementModelTest::resetModel()
 
     // add some classes and properties
     QUrl graph("graph:/onto");
-    m_model->addStatement( graph, RDF::type(), NRL::Ontology(), graph );
-    // removeResources depends on type inference
-    m_model->addStatement( graph, RDF::type(), NRL::Graph(), graph );
-
-    m_model->addStatement( QUrl("prop:/int"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int2"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int2"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int3"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int3"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int_c1"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int_c1"), RDFS::range(), XMLSchema::xsdInt(), graph );
-    m_model->addStatement( QUrl("prop:/int_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    m_model->addStatement( QUrl("prop:/string"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/string"), RDFS::range(), XMLSchema::string(), graph );
-
-    m_model->addStatement( QUrl("prop:/res"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res"), RDFS::range(), RDFS::Resource(), graph );
-
-    m_model->addStatement( QUrl("prop:/res2"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res2"), RDFS::range(), RDFS::Resource(), graph );
-
-    m_model->addStatement( QUrl("prop:/res3"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res3"), RDFS::range(), RDFS::Resource(), graph );
-
-    m_model->addStatement( QUrl("prop:/res_c1"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), RDFS::range(), RDFS::Resource(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    m_model->addStatement( QUrl("class:/typeA"), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( QUrl("class:/typeB"), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( QUrl("class:/typeB"), RDFS::subClassOf(), QUrl("class:/typeA"), graph );
-
-    // properties used all the time
-    m_model->addStatement( NAO::identifier(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( RDF::type(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( RDF::type(), RDFS::range(), RDFS::Class(), graph );
-    m_model->addStatement( NIE::url(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::url(), RDFS::range(), RDFS::Resource(), graph );
-
-
-    // some ontology things the ResourceMerger depends on
-    m_model->addStatement( RDFS::Class(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( RDFS::Class(), RDFS::subClassOf(), RDFS::Resource(), graph );
-    m_model->addStatement( NRL::Graph(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NRL::InstanceBase(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NRL::InstanceBase(), RDFS::subClassOf(), NRL::Graph(), graph );
-    m_model->addStatement( NAO::prefLabel(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::prefLabel(), RDFS::range(), RDFS::Literal(), graph );
-    m_model->addStatement( NFO::fileName(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NFO::fileName(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NCO::fullname(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NCO::fullname(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NIE::title(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::title(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NAO::created(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::created(), RDFS::range(), XMLSchema::dateTime(), graph );
-    m_model->addStatement( NAO::created(), NRL::maxCardinality(), LiteralValue(1), graph );
-    m_model->addStatement( NAO::lastModified(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
-    m_model->addStatement( NAO::lastModified(), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    // used in testStoreResources_sameNieUrl
-    m_model->addStatement( NAO::numericRating(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::numericRating(), RDFS::range(), XMLSchema::xsdInt(), graph );
-    m_model->addStatement( NAO::numericRating(), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    // some ontology things we need in testStoreResources_realLife
-    m_model->addStatement( NMM::season(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::season(), RDFS::range(), XMLSchema::xsdInt(), graph );
-    m_model->addStatement( NMM::episodeNumber(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::episodeNumber(), RDFS::range(), XMLSchema::xsdInt(), graph );
-    m_model->addStatement( NMM::hasEpisode(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::hasEpisode(), RDFS::range(), NMM::TVShow(), graph );
-    m_model->addStatement( NIE::description(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::description(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NMM::synopsis(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::synopsis(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NMM::series(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::series(), RDFS::range(), NMM::TVSeries(), graph );
-    m_model->addStatement( NIE::title(), RDFS::subClassOf(), QUrl("http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifyingProperty"), graph );
-
-    // some ontology things we need in testStoreResources_strigiCase
-    m_model->addStatement( NMM::performer(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::performer(), RDFS::range(), NCO::Contact(), graph );
-    m_model->addStatement( NMM::musicAlbum(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::musicAlbum(), RDFS::range(), NMM::MusicAlbum(), graph );
-
-    // used by testStoreResources_duplicates
-    m_model->addStatement( NFO::hashAlgorithm(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NFO::hashAlgorithm(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NFO::hashValue(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NFO::hashValue(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NFO::hasHash(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NFO::hasHash(), RDFS::range(), NFO::FileHash(), graph );
-    m_model->addStatement( NFO::hasHash(), RDFS::domain(), NFO::FileDataObject(), graph );
-
-    m_model->addStatement( NIE::isPartOf(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::isPartOf(), RDFS::range(), NFO::FileDataObject(), graph );
-    m_model->addStatement( NIE::lastModified(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
+    Nepomuk::insertOntologies( m_model, graph );
 
     // rebuild the internals of the data management model
     m_classAndPropertyTree->rebuildTree(m_dmModel);
@@ -203,12 +100,12 @@ void DataManagementModelTest::init()
 void DataManagementModelTest::testAddProperty()
 {
     // we start by simply adding a property
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("foobar")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("foobar")), QLatin1String("Testapp"));
 
     QVERIFY(!m_dmModel->lastError());
 
     // check that the actual data is there
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
 
     // check that the app resource has been created with its corresponding graphs
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
@@ -224,7 +121,7 @@ void DataManagementModelTest::testAddProperty()
 
     // check that we have an InstanceBase with a GraphMetadata graph
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
-                                                      "graph ?g { <res:/A> <prop:/string> %1 . } . "
+                                                      "graph ?g { <nepomuk:/res/A> <prop:/string> %1 . } . "
                                                       "graph ?mg { ?g a %2 . ?mg a %3 . ?mg %4 ?g . } . "
                                                       "}")
                                   .arg(Soprano::Node::literalToN3(QLatin1String("foobar")),
@@ -240,12 +137,12 @@ void DataManagementModelTest::testAddProperty()
     //
     // add another property value on top of the existing one
     //
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("hello world")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("hello world")), QLatin1String("Testapp"));
 
     // verify the values
-    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/string"), Node()).allStatements().count(), 2);
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world"))));
+    QCOMPARE(m_model->listStatements(QUrl("nepomuk:/res/A"), QUrl("prop:/string"), Node()).allStatements().count(), 2);
+    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world"))));
 
     // check that we only have one agent instance
     QCOMPARE(m_model->listStatements(Node(), RDF::type(), NAO::Agent()).allStatements().count(), 1);
@@ -254,7 +151,7 @@ void DataManagementModelTest::testAddProperty()
     // rewrite the same property with the same app
     //
     Soprano::Graph existingStatements = m_model->listStatements().allStatements();
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("hello world")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("hello world")), QLatin1String("Testapp"));
 
     // nothing should have changed
     QCOMPARE(existingStatements, Soprano::Graph(m_model->listStatements().allStatements()));
@@ -263,7 +160,7 @@ void DataManagementModelTest::testAddProperty()
     //
     // rewrite the same property with another app
     //
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("hello world")), QLatin1String("Otherapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("hello world")), QLatin1String("Otherapp"));
 
     // there should only be the new app, nothing else
     // thus, all previous statements need to be there
@@ -301,15 +198,15 @@ void DataManagementModelTest::testAddProperty()
 void DataManagementModelTest::testAddProperty_createRes()
 {
     // we create a new res by simply adding a property to it
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/int"), QVariantList() << 42, QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/int"), QVariantList() << 42, QLatin1String("Testapp"));
 
     // now the newly created resource should have all the metadata a resource needs to have
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::created(), Node()));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::lastModified(), Node()));
+    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), NAO::created(), Node()));
+    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), NAO::lastModified(), Node()));
 
     // and both created and last modification date should be similar
-    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).iterateObjects().allNodes().first(),
-             m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first());
+    QCOMPARE(m_model->listStatements(QUrl("nepomuk:/res/A"), NAO::created(), Node()).iterateObjects().allNodes().first(),
+             m_model->listStatements(QUrl("nepomuk:/res/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first());
 
     QVERIFY(!haveTrailingGraphs());
 }
@@ -318,16 +215,16 @@ void DataManagementModelTest::testAddProperty_createRes()
 void DataManagementModelTest::testAddProperty_cardinality()
 {
     // adding the same value twice in one call should result in one insert. This also includes the cardinality check
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/AA"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("res:/B")) << QVariant(QUrl("res:/B")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("nepomuk:/res/AA"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("nepomuk:/res/B")) << QVariant(QUrl("nepomuk:/res/B")), QLatin1String("Testapp"));
     QVERIFY(!m_dmModel->lastError());
-    QCOMPARE(m_model->listStatements(QUrl("res:/AA"), QUrl("prop:/res_c1"), QUrl("res:/B")).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(QUrl("nepomuk:/res/AA"), QUrl("prop:/res_c1"), QUrl("nepomuk:/res/B")).allStatements().count(), 1);
 
     // we now add two values for a property with cardinality 1
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("res:/B")) << QVariant(QUrl("res:/C")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("nepomuk:/res/B")) << QVariant(QUrl("nepomuk:/res/C")), QLatin1String("Testapp"));
     QVERIFY(m_dmModel->lastError());
 
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("res:/B")), QLatin1String("Testapp"));
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("res:/C")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("nepomuk:/res/B")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/res_c1"), QVariantList() << QVariant(QUrl("nepomuk:/res/C")), QLatin1String("Testapp"));
 
     // the second call needs to fail
     QVERIFY(m_dmModel->lastError());
@@ -392,10 +289,10 @@ void DataManagementModelTest::testAddProperty_file()
     QCOMPARE(m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().count(), 1);
 
     // test the same with the file as object
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res"), QVariantList() << QVariant(QUrl(fileA.fileName())) << QVariant(fileAUri), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/res"), QVariantList() << QVariant(KUrl(fileA.fileName())) << QVariant(fileAUri), QLatin1String("Testapp"));
 
-    QCOMPARE(m_model->listStatements(QUrl("res:/A"), QUrl("prop:/res"), fileAUri).allStatements().count(), 1);
-    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl::fromLocalFile(fileA.fileName())));
+    QCOMPARE(m_model->listStatements(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), fileAUri).allStatements().count(), 1);
+    QVERIFY(!m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), QUrl::fromLocalFile(fileA.fileName())));
     QCOMPARE(m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().count(), 1);
 
     QVERIFY(!haveTrailingGraphs());
@@ -409,6 +306,9 @@ void DataManagementModelTest::testAddProperty_invalidFile()
     //f1Url.setScheme("file");
 
     m_dmModel->addProperty( QList<QUrl>() << f1Url, RDF::type(), QVariantList() << NAO::Tag(), QLatin1String("testapp") );
+
+    // There should be some error that '' protocol doesn't exist
+    QVERIFY(m_dmModel->lastError());
 
     // The support for plain file paths is in the DBus adaptor through the usage of KUrl. If
     // local path support is neccesary on the level of the model, simply use KUrl which
@@ -596,12 +496,12 @@ void DataManagementModelTest::testAddProperty_akonadi()
 void DataManagementModelTest::testSetProperty()
 {
     // adding the most basic property
-    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("foobar")), QLatin1String("Testapp"));
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("foobar")), QLatin1String("Testapp"));
 
     QVERIFY(!m_dmModel->lastError());
 
     // check that the actual data is there
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
 
     // check that the app resource has been created with its corresponding graphs
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
@@ -617,7 +517,7 @@ void DataManagementModelTest::testSetProperty()
 
     // check that we have an InstanceBase with a GraphMetadata graph
     QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { "
-                                                      "graph ?g { <res:/A> <prop:/string> %1 . } . "
+                                                      "graph ?g { <nepomuk:/res/A> <prop:/string> %1 . } . "
                                                       "graph ?mg { ?g a %2 . ?mg a %3 . ?mg %4 ?g . } . "
                                                       "}")
                                   .arg(Soprano::Node::literalToN3(QLatin1String("foobar")),
@@ -636,15 +536,15 @@ void DataManagementModelTest::testSetProperty()
 void DataManagementModelTest::testSetProperty_createRes()
 {
     // we create a new res by simply adding a property to it
-    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/int"), QVariantList() << 42, QLatin1String("Testapp"));
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/int"), QVariantList() << 42, QLatin1String("Testapp"));
 
     // now the newly created resource should have all the metadata a resource needs to have
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::created(), Node()));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::lastModified(), Node()));
+    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), NAO::created(), Node()));
+    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), NAO::lastModified(), Node()));
 
     // and both created and last modification date should be similar
-    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NAO::created(), Node()).iterateObjects().allNodes().first(),
-             m_model->listStatements(QUrl("res:/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first());
+    QCOMPARE(m_model->listStatements(QUrl("nepomuk:/res/A"), NAO::created(), Node()).iterateObjects().allNodes().first(),
+             m_model->listStatements(QUrl("nepomuk:/res/A"), NAO::lastModified(), Node()).iterateObjects().allNodes().first());
 
     QVERIFY(!haveTrailingGraphs());
 }
@@ -786,7 +686,7 @@ void DataManagementModelTest::testSetProperty_invalid_args()
 
 
     // empty property uri
-    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl(), QVariantList() << 42, QLatin1String("testapp"));
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl(), QVariantList() << 42, QLatin1String("testapp"));
 
     // the call should have failed
     QVERIFY(m_dmModel->lastError());
@@ -796,7 +696,7 @@ void DataManagementModelTest::testSetProperty_invalid_args()
 
 
     // empty value list
-    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/int"), QVariantList(), QLatin1String("testapp"));
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/int"), QVariantList(), QLatin1String("testapp"));
 
     // the call should NOT have failed
     QVERIFY(!m_dmModel->lastError());
@@ -806,7 +706,7 @@ void DataManagementModelTest::testSetProperty_invalid_args()
 
 
     // empty app
-    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/int"), QVariantList() << 42, QString());
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/int"), QVariantList() << 42, QString());
 
     // the call should have failed
     QVERIFY(m_dmModel->lastError());
@@ -816,7 +716,7 @@ void DataManagementModelTest::testSetProperty_invalid_args()
 
 
     // invalid range
-    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/int"), QVariantList() << QLatin1String("foobar"), QLatin1String("testapp"));
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/int"), QVariantList() << QLatin1String("foobar"), QLatin1String("testapp"));
 
     // the call should have failed
     QVERIFY(m_dmModel->lastError());
@@ -837,7 +737,7 @@ void DataManagementModelTest::testSetProperty_invalid_args()
 
 
     // non-existing file as object
-    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/res"), QVariantList() << nonExistingFileUrl, QLatin1String("testapp"));
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/res"), QVariantList() << nonExistingFileUrl, QLatin1String("testapp"));
 
     // the call should have failed
     QVERIFY(m_dmModel->lastError());
@@ -849,25 +749,25 @@ void DataManagementModelTest::testSetProperty_invalid_args()
 void DataManagementModelTest::testSetProperty_nieUrl1()
 {
     // setting nie:url if it is not there yet should result in a normal setProperty including graph creation
-    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), NIE::url(), QVariantList() << QUrl("file:///tmp/A"), QLatin1String("testapp"));
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), NIE::url(), QVariantList() << QUrl("file:///tmp/A"), QLatin1String("testapp"));
 
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl("file:///tmp/A")));
+    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), NIE::url(), QUrl("file:///tmp/A")));
 
     // remember the graph since it should not change later on
-    const QUrl nieUrlGraph = m_model->listStatements(QUrl("res:/A"), NIE::url(), QUrl("file:///tmp/A")).allStatements().first().context().uri();
+    const QUrl nieUrlGraph = m_model->listStatements(QUrl("nepomuk:/res/A"), NIE::url(), QUrl("file:///tmp/A")).allStatements().first().context().uri();
 
     QVERIFY(!haveTrailingGraphs());
 
 
     // we reset the URL
-    m_dmModel->setProperty(QList<QUrl>() << QUrl("res:/A"), NIE::url(), QVariantList() << QUrl("file:///tmp/B"), QLatin1String("testapp"));
+    m_dmModel->setProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), NIE::url(), QVariantList() << QUrl("file:///tmp/B"), QLatin1String("testapp"));
 
     // the url should have changed
-    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl("file:///tmp/A")));
-    QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl("file:///tmp/B")));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), NIE::url(), QUrl("file:///tmp/A")));
+    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), NIE::url(), QUrl("file:///tmp/B")));
 
     // the graph should have been kept
-    QCOMPARE(m_model->listStatements(QUrl("res:/A"), NIE::url(), Node()).allStatements().first().context().uri(), nieUrlGraph);
+    QCOMPARE(m_model->listStatements(QUrl("nepomuk:/res/A"), NIE::url(), Node()).allStatements().first().context().uri(), nieUrlGraph);
 
     QVERIFY(!haveTrailingGraphs());
 }
@@ -1523,7 +1423,7 @@ void DataManagementModelTest::testRemoveResources()
     m_model->addStatement(QUrl("res:/B"), NIE::url(), QUrl::fromLocalFile(fileB.fileName()), g2);
 
 
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     // verify that the resource is gone
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -1533,7 +1433,7 @@ void DataManagementModelTest::testRemoveResources()
     QCOMPARE(m_model->listStatements(QUrl("res:/C"), Node(), Node()).allStatements().count(), 2);
 
     // verify that removing resources by file URL works
-    m_dmModel->removeResources(QList<QUrl>() << QUrl::fromLocalFile(fileB.fileName()), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl::fromLocalFile(fileB.fileName()), Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
 
@@ -1597,7 +1497,7 @@ void DataManagementModelTest::testRemoveResources_subresources()
     m_model->addStatement(QUrl("res:/F"), QUrl("prop:/int"), LiteralValue(42), g2);
 
     // delete the resource
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::RemoveSubResoures, QLatin1String("A"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), Nepomuk::RemoveSubResoures, QLatin1String("A"));
 
     // this should have removed A, B and C
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -1634,7 +1534,7 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
 
 
     // empty resource list
-    m_dmModel->removeResources(QList<QUrl>(), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>(), Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1644,7 +1544,7 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
 
 
     // resource list with empty URL
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A") << QUrl(), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A") << QUrl(), Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1654,7 +1554,7 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
 
 
     // empty app
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QString());
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QString());
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1665,7 +1565,7 @@ void DataManagementModelTest::testRemoveResources_invalid_args()
 
     // non-existing file
     const QUrl nonExistingFileUrl("file:///a/file/that/is/very/unlikely/to/exist");
-    m_dmModel->removeResources(QList<QUrl>() << nonExistingFileUrl, DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << nonExistingFileUrl, Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     // the call should have failed
     QVERIFY(m_dmModel->lastError());
@@ -1682,7 +1582,7 @@ void DataManagementModelTest::testRemoveResources_protectedTypes()
 
 
     // property
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("prop:/res"), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("prop:/res"), Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1692,7 +1592,7 @@ void DataManagementModelTest::testRemoveResources_protectedTypes()
 
 
     // class
-    m_dmModel->removeResources(QList<QUrl>() << NRL::Graph(), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << NRL::Graph(), Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1702,7 +1602,7 @@ void DataManagementModelTest::testRemoveResources_protectedTypes()
 
 
     // graph
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("graph:/onto"), DataManagementModel::NoRemovalFlags, QLatin1String("testapp"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("graph:/onto"), Nepomuk::NoRemovalFlags, QLatin1String("testapp"));
 
     // this call should fail
     QVERIFY(m_dmModel->lastError());
@@ -1750,7 +1650,7 @@ void DataManagementModelTest::testRemoveResources_mtimeRelated()
 
 
     // now we remove res:/A
-    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeResources(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
 
     // now only the mtime of B should have changed
@@ -1759,6 +1659,99 @@ void DataManagementModelTest::testRemoveResources_mtimeRelated()
 
     QCOMPARE(m_model->listStatements(QUrl("res:/C"), NAO::lastModified(), Node()).allElements().count(), 1);
     QCOMPARE(m_model->listStatements(QUrl("res:/C"), NAO::lastModified(), Node()).allElements().first().object().literal().toDateTime(), date);
+}
+
+// make sure we can remove data from non-existing files
+void DataManagementModelTest::testRemoveResources_deletedFile()
+{
+    QTemporaryFile fileA;
+    fileA.open();
+
+    const KUrl fileUrl(fileA.fileName());
+
+    // create our app
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+
+    // create the data graph
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    // create the resource
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), fileUrl, g1);
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), NFO::FileDataObject(), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+    // now remove the file
+    fileA.close();
+    QFile::remove(fileUrl.toLocalFile());
+
+    // now try removing the data
+    m_dmModel->removeResources(QList<QUrl>() << fileUrl, NoRemovalFlags, QLatin1String("A"));
+
+    // the call should succeed
+    QVERIFY(!m_dmModel->lastError());
+
+    // the resource should be gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(Node(), Node(), fileUrl));
+}
+
+void DataManagementModelTest::testCreateResource()
+{
+    // the simple test: we just create a resource using all params
+    const QUrl resUri = m_dmModel->createResource(QList<QUrl>() << QUrl("class:/typeA") << QUrl("class:/typeB"), QLatin1String("the label"), QLatin1String("the desc"), QLatin1String("A"));
+
+    // this call should succeed
+    QVERIFY(!m_dmModel->lastError());
+
+    // check if the returned uri is valid
+    QVERIFY(!resUri.isEmpty());
+    QCOMPARE(resUri.scheme(), QString(QLatin1String("nepomuk")));
+
+    // check if the resource was created properly
+    QVERIFY(m_model->containsAnyStatement(resUri, RDF::type(), QUrl("class:/typeA")));
+    QVERIFY(m_model->containsAnyStatement(resUri, RDF::type(), QUrl("class:/typeB")));
+    QVERIFY(m_model->containsAnyStatement(resUri, NAO::prefLabel(), LiteralValue::createPlainLiteral(QLatin1String("the label"))));
+    QVERIFY(m_model->containsAnyStatement(resUri, NAO::description(), LiteralValue::createPlainLiteral(QLatin1String("the desc"))));
+}
+
+void DataManagementModelTest::testCreateResource_invalid_args()
+{
+    // remember current state to compare later on
+    Soprano::Graph existingStatements = m_model->listStatements().allStatements();
+
+
+    // try to create a resource without any types
+    m_dmModel->createResource(QList<QUrl>(), QString(), QString(), QLatin1String("A"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // use an invalid type
+    m_dmModel->createResource(QList<QUrl>() << QUrl("class:/non-existing-type"), QString(), QString(), QLatin1String("A"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+
+
+    // use a property as type
+    m_dmModel->createResource(QList<QUrl>() << NAO::prefLabel(), QString(), QString(), QLatin1String("A"));
+
+    // this call should fail
+    QVERIFY(m_dmModel->lastError());
+
+    // no data should have been changed
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
 // the isolated test: create one graph with one resource, delete that resource
@@ -1779,7 +1772,7 @@ void DataManagementModelTest::testRemoveDataByApplication1()
     m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // verify that nothing is left, not even the graph
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -1814,7 +1807,7 @@ void DataManagementModelTest::testRemoveDataByApplication2()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // verify that graph1 is gone completely
     QVERIFY(!m_model->containsAnyStatement(Node(), Node(), Node(), g1));
@@ -1851,7 +1844,7 @@ void DataManagementModelTest::testRemoveDataByApplication3()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // the resource should still be there, without any changes, not even a changed mtime
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), Node(), Node()).allStatements().count(), 2);
@@ -1889,7 +1882,7 @@ void DataManagementModelTest::testRemoveDataByApplication4()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // now the nie:url should still be there even though A created it
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName())));
@@ -1926,7 +1919,7 @@ void DataManagementModelTest::testRemoveDataByApplication5()
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::RemoveSubResoures, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::RemoveSubResoures, QLatin1String("A"));
 
     // this should have removed both A and B
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -1996,7 +1989,7 @@ void DataManagementModelTest::testRemoveDataByApplication6()
     m_model->addStatement(QUrl("res:/G"), NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g2);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::RemoveSubResoures, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::RemoveSubResoures, QLatin1String("A"));
 
     // this should have removed A, B and C
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -2037,7 +2030,7 @@ void DataManagementModelTest::testRemoveDataByApplication7()
     m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // verify that the creation date is still there
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::created(), Soprano::Node()));
@@ -2067,7 +2060,7 @@ void DataManagementModelTest::testRemoveDataByApplication8()
     m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // verify that all has gone
     // verify that nothing is left, not even the graph
@@ -2105,7 +2098,7 @@ void DataManagementModelTest::testRemoveDataByApplication9()
     m_model->addStatement(QUrl("res:/B"), NAO::created(), LiteralValue(dt), g1);
 
     // now remove res:/A by app A
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // now there should be 2 graphs - once for res:/A which is only maintained by B, and one for res:/B which is still
     // maintained by A and B
@@ -2164,7 +2157,7 @@ void DataManagementModelTest::testRemoveDataByApplication10()
     // Remove the data
     //
 
-    m_dmModel->removeDataByApplication( uris, DataManagementModel::RemoveSubResoures,
+    m_dmModel->removeDataByApplication( uris, Nepomuk::RemoveSubResoures,
                                         QLatin1String("AppA") );
     QVERIFY( !m_dmModel->lastError() );
 
@@ -2209,7 +2202,7 @@ void DataManagementModelTest::testRemoveDataByApplication11()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
 
     // delete the resource
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl::fromLocalFile(fileA.fileName()), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // now the nie:url should still be there even though A created it
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NIE::url(), QUrl::fromLocalFile(fileA.fileName())));
@@ -2224,6 +2217,52 @@ void DataManagementModelTest::testRemoveDataByApplication11()
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world"))));
 
     QVERIFY(!haveTrailingGraphs());
+}
+
+// make sure that weird cross sub-resource'ing is handled properly. This is very unlikely to ever happen, but still...
+void DataManagementModelTest::testRemoveDataByApplication_subResourcesOfSubResources()
+{
+    // create our app
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+
+    // create the graph
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    // create the resource to delete
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+
+    // sub-resource 1
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+    // sub-resource 2
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/C"), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/C"), g1);
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+    // sub-resource 3 (also sub-resource to res:/C)
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/D"), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/D"), g1);
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/res"), QUrl("res:/D"), g1);
+    m_model->addStatement(QUrl("res:/C"), NAO::hasSubResource(), QUrl("res:/D"), g1);
+    m_model->addStatement(QUrl("res:/D"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+
+    // delete the resource
+    QBENCHMARK_ONCE
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::RemoveSubResoures, QLatin1String("A"));
+
+
+    // all resources should have been removed
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/C"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/D"), Node(), Node()));
 }
 
 // This is some real data that I have in my nepomuk repo
@@ -2309,7 +2348,7 @@ void DataManagementModelTest::testRemoveDataByApplication_realLife()
     QCOMPARE( appUri, QUrl("nepomuk:/res/e2eb2efb-14ee-4038-ac24-698f916289b0") );
 
     m_dmModel->removeDataByApplication( QList<QUrl>() << resUri,
-                                        Nepomuk::DataManagementModel::RemoveSubResoures,
+                                        Nepomuk::RemoveSubResoures,
                                         QLatin1String("nepomukindexer") );
 
     QString query2 = QString::fromLatin1("ask where { graph ?g { ?r %1 %2 .} "
@@ -2354,7 +2393,7 @@ void DataManagementModelTest::testRemoveDataByApplication_nieUrl()
     QVERIFY( !m_dmModel->lastError() );
 
     // Remove strigi indexed content
-    m_dmModel->removeDataByApplication( QList<QUrl>() << res1, DataManagementModel::RemoveSubResoures,
+    m_dmModel->removeDataByApplication( QList<QUrl>() << res1, Nepomuk::RemoveSubResoures,
                                         QLatin1String("nepomukindexer") );
 
     // The tag should still be there
@@ -2416,7 +2455,7 @@ void DataManagementModelTest::testRemoveDataByApplication_mtime()
 
 
     // we delete all three
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/B") << QUrl("res:/C"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/B") << QUrl("res:/C"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
 
     // now only the mtime of A should have changed
@@ -2463,7 +2502,7 @@ void DataManagementModelTest::testRemoveDataByApplication_mtimeRelated()
     m_model->addStatement(QUrl("res:/C"), NAO::lastModified(), LiteralValue(date), g2);
 
     // now we remove res:/A
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // now the mtime of res:/B should have been changed
     QCOMPARE(m_model->listStatements(QUrl("res:/B"), NAO::lastModified(), Node()).allElements().count(), 1);
@@ -2522,7 +2561,7 @@ void DataManagementModelTest::testRemoveDataByApplication_related()
 
 
     // now remove A
-    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"), DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"), Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // now only the relation in the first graph should have been removed
     QVERIFY(!m_model->containsStatement(QUrl("res:/B"), QUrl("prop:/res"), QUrl("res:/A"), g1));
@@ -2534,6 +2573,79 @@ void DataManagementModelTest::testRemoveDataByApplication_related()
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), QUrl("prop:/res3"), QUrl("res:/A")));
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/B"), QUrl("prop:/res2"), QUrl("res:/A")));
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), QUrl("prop:/res3"), QUrl("res:/C")));
+}
+
+// make sure legacy indexer data (the graphs marked with indexGraphFor) is removed properly
+void DataManagementModelTest::testRemoveDataByApplication_legacyIndexerData()
+{
+    // create our file
+    QTemporaryFile fileA;
+    fileA.open();
+    const QUrl fileAUrl = QUrl::fromLocalFile(fileA.fileName());
+    const QUrl fileARes("res:/A");
+
+    // create the graph containing the legacy data
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::DiscardableInstanceBase(), &mg1);
+
+    // mark the graph as being the legacy index graph
+    m_model->addStatement(g1, QUrl("http://www.strigi.org/fields#indexGraphFor"), fileARes, mg1);
+
+    // create the index data
+    m_model->addStatement(fileARes, NIE::url(), fileAUrl, g1);
+    m_model->addStatement(fileARes, RDF::type(), NFO::FileDataObject(), g1);
+    m_model->addStatement(fileARes, RDF::type(), NIE::InformationElement(), g1);
+    m_model->addStatement(fileARes, NIE::title(), LiteralValue(QLatin1String("foobar")), g1);
+
+
+    // remove the information claiming to be the indexer
+    QBENCHMARK_ONCE
+    m_dmModel->removeDataByApplication(QList<QUrl>() << fileAUrl, NoRemovalFlags, QLatin1String("nepomukindexer"));
+
+    // the call should succeed
+    QVERIFY(!m_dmModel->lastError());
+
+    // now make sure that everything is gone
+    QVERIFY(!m_model->containsAnyStatement(fileARes, Node(), Node(), Node()));
+
+    QVERIFY(!m_model->containsAnyStatement(Node(), Node(), Node(), g1));
+    QVERIFY(!m_model->containsAnyStatement(Node(), Node(), Node(), mg1));
+}
+
+// make sure we can remove data from non-existing files
+void DataManagementModelTest::testRemoveDataByApplication_deletedFile()
+{
+    QTemporaryFile* fileA = new QTemporaryFile();
+    fileA->open();
+    const KUrl fileUrl(fileA->fileName());
+    delete fileA;
+    QVERIFY(!QFile::exists(fileUrl.toLocalFile()));
+
+    // create our app
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+
+    // create the data graph
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+    // create the resource
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), fileUrl, g1);
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), NFO::FileDataObject(), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+
+    // now try removing the data
+    m_dmModel->removeDataByApplication(QList<QUrl>() << fileUrl, NoRemovalFlags, QLatin1String("A"));
+
+    // the call should succeed
+    QVERIFY(!m_dmModel->lastError());
+
+    // the resource should be gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(Node(), Node(), fileUrl));
 }
 
 // test that all is removed, ie. storage is clear afterwards
@@ -2562,7 +2674,7 @@ void DataManagementModelTest::testRemoveAllDataByApplication1()
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world 2")), g2);
     m_model->addStatement(QUrl("res:/B"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
 
-    m_dmModel->removeDataByApplication(DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     // make sure nothing is there anymore
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
@@ -2601,7 +2713,7 @@ void DataManagementModelTest::testRemoveAllDataByApplication2()
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world 2")), g2);
     m_model->addStatement(QUrl("res:/B"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g2);
 
-    m_dmModel->removeDataByApplication(DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
     QCOMPARE(m_model->listStatements(QUrl("res:/B"), Node(), Node()).allStatements().count(), 3);
@@ -2634,7 +2746,7 @@ void DataManagementModelTest::testRemoveAllDataByApplication3()
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world 2")), g1);
     m_model->addStatement(QUrl("res:/B"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
 
-    m_dmModel->removeDataByApplication(DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), Node(), Node()).allStatements().count(), 3);
     QCOMPARE(m_model->listStatements(QUrl("res:/B"), Node(), Node()).allStatements().count(), 3);
@@ -2667,7 +2779,7 @@ void DataManagementModelTest::testRemoveAllDataByApplication4()
     m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g2);
     m_model->addStatement(QUrl("res:/A"), NAO::created(), LiteralValue(QDateTime::currentDateTime()), g1);
 
-    m_dmModel->removeDataByApplication(DataManagementModel::NoRemovalFlags, QLatin1String("A"));
+    m_dmModel->removeDataByApplication(Nepomuk::NoRemovalFlags, QLatin1String("A"));
 
     QCOMPARE(m_model->listStatements(QUrl("res:/A"), Node(), Node()).allStatements().count(), 3);
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/A"), NAO::created(), Soprano::Node()));
@@ -2730,7 +2842,6 @@ void DataManagementModelTest::testStoreResources_strigiCase()
     album.addProperty( NIE::title(), "X&Y" );
 
     Nepomuk::SimpleResource res1;
-    res1.setUri( QUrl("nepomuk:/res/m/Res1") );
     res1.addProperty( RDF::type(), NFO::FileDataObject() );
     res1.addProperty( RDF::type(), NMM::MusicPiece() );
     res1.addProperty( NFO::fileName(), "Yellow.mp3" );
@@ -2746,34 +2857,39 @@ void DataManagementModelTest::testStoreResources_strigiCase()
     m_dmModel->storeResources( resGraph, "TestApp" );
     QVERIFY( !m_dmModel->lastError() );
 
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), Soprano::Node(),
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), RDF::type(), NMM::MusicPiece() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl res1Uri = stList.first().subject().uri();
+
+    QVERIFY( m_model->containsAnyStatement( res1Uri, Soprano::Node(),
                                             Soprano::Node() ) );
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), NFO::fileName(),
+    QVERIFY( m_model->containsAnyStatement( res1Uri, NFO::fileName(),
                                             Soprano::LiteralValue("Yellow.mp3") ) );
     // Make sure we have the nao:created and nao:lastModified
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), NAO::lastModified(),
+    QVERIFY( m_model->containsAnyStatement( res1Uri, NAO::lastModified(),
                                             Soprano::Node() ) );
-    QVERIFY( m_model->containsAnyStatement( res1.uri(), NAO::created(),
+    QVERIFY( m_model->containsAnyStatement( res1Uri, NAO::created(),
                                             Soprano::Node() ) );
-    kDebug() << m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements();
+    kDebug() << m_model->listStatements( res1Uri, Soprano::Node(), Soprano::Node() ).allStatements();
     // The +2 is because nao:created and nao:lastModified would have also been added
-    QCOMPARE( m_model->listStatements( res1.uri(), Soprano::Node(), Soprano::Node() ).allStatements().size(),
+    QCOMPARE( m_model->listStatements( res1Uri, Soprano::Node(), Soprano::Node() ).allStatements().size(),
                 res1.properties().size() + 2 );
 
-    QList< Node > objects = m_model->listStatements( res1.uri(), NMM::performer(), Soprano::Node() ).iterateObjects().allNodes();
+    QList< Node > objects = m_model->listStatements( res1Uri, NMM::performer(), Soprano::Node() ).iterateObjects().allNodes();
 
     QVERIFY( objects.size() == 1 );
     QVERIFY( objects.first().isResource() );
 
     QUrl coldplayUri = objects.first().uri();
     QCOMPARE( coldplayUri, QUrl("nepomuk:/res/coldplay") );
-    QList< Soprano::Statement > stList = coldplay.toStatementList();
+    stList = coldplay.toStatementList();
     foreach( Soprano::Statement st, stList ) {
         st.setSubject( coldplayUri );
         QVERIFY( m_model->containsAnyStatement( st ) );
     }
 
-    objects = m_model->listStatements( res1.uri(), NMM::musicAlbum(), Soprano::Node() ).iterateObjects().allNodes();
+    objects = m_model->listStatements( res1Uri, NMM::musicAlbum(), Soprano::Node() ).iterateObjects().allNodes();
 
     QVERIFY( objects.size() == 1 );
     QVERIFY( objects.first().isResource() );
@@ -2811,7 +2927,7 @@ void DataManagementModelTest::testStoreResources_graphRules()
 
         QHash<QUrl, QVariant> additionalMetadata;
         additionalMetadata.insert( RDF::type(), NRL::InstanceBase() );
-        m_dmModel->storeResources( resGraph, "TestApp", additionalMetadata );
+        m_dmModel->storeResources( resGraph, "TestApp", Nepomuk::IdentifyNew, Nepomuk::NoStoreResourcesFlags, additionalMetadata );
         QVERIFY( !m_dmModel->lastError() );
 
         QList<Soprano::Statement> stList = m_model->listStatements( Soprano::Node(), NCO::fullname(),
@@ -2843,7 +2959,7 @@ void DataManagementModelTest::testStoreResources_graphRules()
 
         QHash<QUrl, QVariant> additionalMetadata;
         additionalMetadata.insert( RDF::type(), NRL::InstanceBase() );
-        m_dmModel->storeResources( resGraph, "TestApp", additionalMetadata );
+        m_dmModel->storeResources( resGraph, "TestApp", Nepomuk::IdentifyNew, Nepomuk::NoStoreResourcesFlags, additionalMetadata );
         QVERIFY( !m_dmModel->lastError() );
 
         QList<Soprano::Statement> stList = m_model->listStatements( Soprano::Node(), NCO::fullname(),
@@ -2960,13 +3076,13 @@ void DataManagementModelTest::testStoreResources_createResource()
 
 
     // create a resource by specifying the URI
-    SimpleResource res2;
-    res2.setUri(QUrl("nepomuk:/res/A"));
-    res2.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("foobar")));
-    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"));
-    QVERIFY( !m_dmModel->lastError() );
-
-    QVERIFY(m_model->containsAnyStatement( res2.uri(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+//     SimpleResource res2;
+//     res2.setUri(QUrl("nepomuk:/res/A"));
+//     res2.addProperty(QUrl("prop:/string"), QVariant(QLatin1String("foobar")));
+//     m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"));
+//     QVERIFY( !m_dmModel->lastError() );
+//
+//     QVERIFY(m_model->containsAnyStatement( res2.uri(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
 
     QVERIFY(!haveTrailingGraphs());
 }
@@ -3052,7 +3168,7 @@ void DataManagementModelTest::testStoreResources_invalid_args()
     res.addProperty(QUrl("prop:/int"), QVariant(42));
     QHash<QUrl, QVariant> invalidMetadata;
     invalidMetadata.insert(QUrl("prop:/int"), QLatin1String("foobar"));
-    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"), invalidMetadata);
+    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"), Nepomuk::IdentifyNew, Nepomuk::NoStoreResourcesFlags, invalidMetadata);
 
     // the call should have failed
     QVERIFY(m_dmModel->lastError());
@@ -3064,7 +3180,7 @@ void DataManagementModelTest::testStoreResources_invalid_args()
     // invalid graph metadata 2
     invalidMetadata.clear();
     invalidMetadata.insert(NAO::maintainedBy(), QLatin1String("foobar"));
-    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"), invalidMetadata);
+    m_dmModel->storeResources(SimpleResourceGraph() << res2, QLatin1String("testapp"), Nepomuk::IdentifyNew, Nepomuk::NoStoreResourcesFlags, invalidMetadata);
 
     // the call should have failed
     QVERIFY(m_dmModel->lastError());
@@ -3211,26 +3327,31 @@ void DataManagementModelTest::testStoreResources_file2()
     const QUrl fileUrl = QUrl::fromLocalFile(fileA.fileName());
 
     SimpleResource r1;
-    r1.setUri(QUrl("nepomuk:/res/A"));
     r1.addProperty(QUrl("prop:/res"), fileUrl);
 
     m_dmModel->storeResources(SimpleResourceGraph() << r1, QLatin1String("testapp"));
     QVERIFY( !m_dmModel->lastError() );
 
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), QUrl("prop:/res"), Node() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl r1Uri = stList.first().subject().uri();
+
     // the property should have been created
-    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), Node()));
+    QVERIFY(m_model->containsAnyStatement(r1Uri, QUrl("prop:/res"), Node()));
 
     // but it should not be related to the file URL
-    QVERIFY(!m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), fileUrl));
+    QVERIFY(!m_model->containsAnyStatement(r1Uri, QUrl("prop:/res"), fileUrl));
 
     // there should be a nie:url for the file URL
     QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), fileUrl));
 
     // make sure file URL and res URI are properly related including the properties
-    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { <nepomuk:/res/A> <prop:/res> ?r . "
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { %3 <prop:/res> ?r . "
                                                       "?r %1 %2 . }")
                                   .arg(Node::resourceToN3(NIE::url()),
-                                       Node::resourceToN3(fileUrl)),
+                                       Node::resourceToN3(fileUrl),
+                                       Node::resourceToN3(r1Uri)),
                                   Query::QueryLanguageSparql).boolValue());
 
     QVERIFY(!haveTrailingGraphs());
@@ -3273,7 +3394,7 @@ void DataManagementModelTest::testStoreResources_file3()
 
     SimpleResource r2;
     r2.setUri( fileUrl );
-    r2.addProperty( QUrl("prop:/res"), QUrl("object:/custom") );
+    r2.addProperty( QUrl("prop:/res"), NFO::FileDataObject() );
 
     m_dmModel->storeResources( SimpleResourceGraph() << r2, QLatin1String("newApp") );
     QVERIFY( !m_dmModel->lastError() );
@@ -3342,6 +3463,48 @@ void DataManagementModelTest::testStoreResources_file4()
     QUrl fileResUri2 = stList.first().object().uri();
     QCOMPARE( fileResUri, fileResUri2 );
 }
+
+
+void DataManagementModelTest::testStoreResources_folder()
+{
+    QTemporaryFile file;
+    QVERIFY( file.open() );
+    KUrl fileUrl = KUrl::fromLocalFile( file.fileName() );
+    QUrl folderUrl = QUrl::fromLocalFile( fileUrl.directory() );
+
+    SimpleResource res( fileUrl );
+    res.addProperty( RDF::type(), NMM::MusicPiece() );
+    res.addProperty( NAO::prefLabel(), QLatin1String("Label") );
+    res.addProperty( NIE::isPartOf(), fileUrl.directory() );
+
+    SimpleResourceGraph graph;
+    graph << res;
+
+    m_dmModel->storeResources( graph, QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList<Statement> stList = m_model->listStatements( Node(), NIE::isPartOf(), Node() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl folderResUri = stList.first().object().uri();
+    QVERIFY( m_dmModel->containsAnyStatement( folderResUri, RDF::type(), NFO::FileDataObject() ) );
+    QVERIFY( m_dmModel->containsAnyStatement( folderResUri, RDF::type(), NFO::Folder() ) );
+    QVERIFY( m_dmModel->containsAnyStatement( folderResUri, NIE::url(), folderUrl ) );
+}
+
+
+void DataManagementModelTest::testStoreResources_fileExists()
+{
+    SimpleResource res(QUrl("file:///a/b/v/c/c"));
+    res.addType( NMM::MusicPiece() );
+    res.addProperty( NAO::numericRating(), 10 );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app") );
+
+    // Should give an error - The file does not exist ( probably )
+    QVERIFY( m_dmModel->lastError() );
+}
+
 
 void DataManagementModelTest::testStoreResources_sameNieUrl()
 {
@@ -3585,7 +3748,7 @@ void DataManagementModelTest::testStoreResources_missingMetadata()
     m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
 
     const QDateTime now = QDateTime::currentDateTime();
-    QUrl resA("res:/A");
+    QUrl resA("nepomuk:/res/A");
     m_model->addStatement(resA, RDF::type(), NAO::Tag(), g1);
     m_model->addStatement(resA, QUrl("prop:/int"), LiteralValue(42), g1);
     m_model->addStatement(resA, QUrl("prop:/string"), LiteralValue(QLatin1String("Foobar")), g1);
@@ -3973,13 +4136,59 @@ void DataManagementModelTest::testStoreResources_additionalMetadataApp()
     QHash<QUrl, QVariant> additionalMetadata;
     additionalMetadata.insert( NAO::maintainedBy(), app.uri() );
 
-    m_dmModel->storeResources( g, QLatin1String("appA"), additionalMetadata );
+    m_dmModel->storeResources( g, QLatin1String("appA"), Nepomuk::IdentifyNew, Nepomuk::NoStoreResourcesFlags, additionalMetadata );
 
     //FIXME: for now this should fail as nao:maintainedBy is protected,
     //       but what if we want to add some additionalMetadata which references
     //       a node in the SimpleResourceGraph. There needs to be a test for that.
     QVERIFY(m_dmModel->lastError());
 }
+
+void DataManagementModelTest::testStoreResources_itemUris()
+{
+    SimpleResourceGraph g;
+
+    for (int i = 0; i < 10; i++) {
+        QUrl uri( "testuri:?item="+QString::number(i) );
+        SimpleResource r(uri);
+        r.addType( NIE::DataObject() );
+        r.addType( NIE::InformationElement() );
+
+        QString label = QLatin1String("label") + QString::number(i);
+        r.setProperty( NAO::prefLabel(), label );
+        g.insert(r);
+    }
+
+    m_dmModel->storeResources( g, "app" );
+
+    // Should give an error 'testuri' is an unknown protocol
+    QVERIFY(m_dmModel->lastError());
+}
+
+void DataManagementModelTest::testStoreResources_kioProtocols()
+{
+    QStringList protocolList = KProtocolInfo::protocols();
+    protocolList.removeAll( QLatin1String("nepomuk") );
+    protocolList.removeAll( QLatin1String("file") );
+
+    kDebug() << "List: " << protocolList;
+    foreach( const QString& protocol, protocolList ) {
+        SimpleResource res( QUrl(protocol + ":/item") );
+        res.addType( NFO::FileDataObject() );
+        res.addType( NMM::MusicPiece() );
+
+        m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app") );
+        QVERIFY(!m_dmModel->lastError());
+
+        QVERIFY( m_model->containsAnyStatement( Node(), NIE::url(), res.uri() ) );
+
+        const QUrl resUri = m_model->listStatements( Node(), NIE::url(), res.uri() ).allStatements().first().subject().uri();
+
+        QVERIFY( m_model->containsAnyStatement( resUri, RDF::type(), NFO::FileDataObject() ) );
+        QVERIFY( m_model->containsAnyStatement( resUri, RDF::type(), NMM::MusicPiece() ) );
+    }
+}
+
 
 void DataManagementModelTest::testStoreResources_duplicates()
 {
@@ -4020,6 +4229,38 @@ void DataManagementModelTest::testStoreResources_duplicates()
     QVERIFY(!haveTrailingGraphs());
 }
 
+void DataManagementModelTest::testStoreResources_overwriteProperties()
+{
+    SimpleResource contact;
+    contact.addType( NCO::Contact() );
+    contact.addProperty( NCO::fullname(), QLatin1String("Spiderman") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << contact, QLatin1String("app") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList< Statement > stList = m_model->listStatements( Node(), RDF::type(), NCO::Contact() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl resUri = stList.first().subject().uri();
+
+    SimpleResource contact2( resUri );
+    contact2.addType( NCO::Contact() );
+    contact2.addProperty( NCO::fullname(), QLatin1String("Peter Parker") );
+
+    //m_dmModel->storeResources( SimpleResourceGraph() << contact2, QLatin1String("app") );
+    //QVERIFY( m_dmModel->lastError() ); // should fail without the merge flags
+
+    // Now everyone will know who Spiderman really is
+    m_dmModel->storeResources( SimpleResourceGraph() << contact2, QLatin1String("app"), IdentifyNew, OverwriteProperties );
+    QVERIFY( !m_dmModel->lastError() );
+
+    stList = m_model->listStatements( resUri, NCO::fullname(), Node() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    QString newName = stList.first().object().literal().toString();
+    QCOMPARE( newName, QLatin1String("Peter Parker") );
+}
+
 // make sure that already existing resource types are taken into account for domain checks
 void DataManagementModelTest::testStoreResources_correctDomainInStore()
 {
@@ -4042,6 +4283,48 @@ void DataManagementModelTest::testStoreResources_correctDomainInStore()
     m_dmModel->storeResources(SimpleResourceGraph() << piece << artist, QLatin1String("testapp"));
 
     QVERIFY(!m_dmModel->lastError());
+}
+
+void DataManagementModelTest::testStoreResources_correctDomainInStore2()
+{
+    SimpleResource res;
+    res.addType( NMM::MusicPiece() );
+    res.addType( NFO::FileDataObject() );
+    res.addProperty( NIE::title(), QLatin1String("Music") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), RDF::type(), NFO::FileDataObject() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl resUri = stList.first().subject().uri();
+
+    SimpleResource musicPiece;
+    musicPiece.addType( NFO::FileDataObject() );
+    // We're not giving it a nmm:MusicPiece type
+    musicPiece.addProperty( NIE::title(), QLatin1String("Music") );
+
+    SimpleResource artist;
+    artist.addType( NCO::Contact() );
+    artist.addProperty( NCO::fullname(), QLatin1String("Snow Patrol") );
+
+    // nmm:performer has a domain of nmm:MusicPiece which is already present in the store
+    musicPiece.addProperty( NMM::performer(), artist );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << musicPiece << artist,
+                               QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    // musicPiece should have gotten identified as res
+    stList = m_model->listStatements( Node(), RDF::type(), NFO::FileDataObject() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl musicPieceUri = stList.first().subject().uri();
+    QCOMPARE( musicPieceUri, resUri );
+
+    // It should have the artist
+    QVERIFY( m_model->containsAnyStatement( musicPieceUri, NMM::performer(), Node() ) );
 }
 
 // make sure that already existing resource types are taken into account for range checks
@@ -4067,6 +4350,174 @@ void DataManagementModelTest::testStoreResources_correctRangeInStore()
 
     QVERIFY(!m_dmModel->lastError());
 }
+
+void DataManagementModelTest::testStoreResources_correctRangeInStore2()
+{
+    SimpleResource res;
+    res.addType( NCO::Contact() );
+    res.addType( NFO::FileDataObject() );
+    res.addProperty( NCO::fullname(), QLatin1String("Jack Black") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList<Soprano::Statement> stList = m_model->listStatements( Node(), RDF::type(), NFO::FileDataObject() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl resUri = stList.first().subject().uri();
+
+    SimpleResource musicPiece;
+    musicPiece.addType( NFO::FileDataObject() );
+    musicPiece.addType( NMM::MusicPiece() );
+    musicPiece.addProperty( NIE::title(), QLatin1String("Music") );
+
+    SimpleResource artist;
+    artist.addType( NFO::FileDataObject() );
+    // We're not giving it the type NCO::Contact - should be inferred from the store
+    artist.addProperty( NCO::fullname(), QLatin1String("Jack Black") );
+
+    // nmm:performer has a range of nco:Contact which is already present in the store
+    musicPiece.addProperty( NMM::performer(), artist );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << musicPiece << artist,
+                               QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    // artist should have gotten identified as res
+    stList = m_model->listStatements( Node(), RDF::type(), NCO::Contact() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl artistUri = stList.first().subject().uri();
+    QCOMPARE( artistUri, resUri );
+
+    // It should have the artist
+    QVERIFY( m_model->containsAnyStatement( Node(), NMM::performer(), artistUri ) );
+}
+
+// make sure that the same values are simply merged even if encoded differently
+void DataManagementModelTest::testStoreResources_duplicateValuesAsString()
+{
+    SimpleResource res;
+
+    // add the same type twice
+    res.addType(QUrl("class:/typeA"));
+    res.addProperty(RDF::type(), QLatin1String("class:/typeA"));
+
+    // add the same value twice
+    res.addProperty(QUrl("prop:/int"), 42);
+    res.addProperty(QUrl("prop:/int"), QLatin1String("42"));
+
+    // now add the resource
+    m_dmModel->storeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
+
+    // this should succeed
+    QVERIFY(!m_dmModel->lastError());
+
+    // make sure all is well
+    QCOMPARE(m_model->listStatements(Soprano::Node(), RDF::type(), QUrl("class:/typeA")).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(Soprano::Node(), QUrl("prop:/int"), LiteralValue(42)).allStatements().count(), 1);
+}
+
+
+void DataManagementModelTest::testStoreResources_ontology()
+{
+    SimpleResource res( NFO::FileDataObject() );
+    res.addType( NCO::Contact() );
+
+    m_dmModel->storeResources(SimpleResourceGraph() << res, QLatin1String("testapp"));
+
+    // There should be some error, we're trying to set an ontology
+    QVERIFY( m_dmModel->lastError() );
+}
+
+
+void DataManagementModelTest::testStoreResources_legacyUris()
+{
+    const QUrl uri("res:/A");
+
+    const QUrl graphUri = m_nrlModel->createGraph( NRL::InstanceBase() );
+    m_model->addStatement( uri, RDF::type(), NFO::FileDataObject(), graphUri );
+    m_model->addStatement( uri, RDF::type(), NFO::Folder(), graphUri );
+    m_model->addStatement( uri, NAO::numericRating(), LiteralValue(5), graphUri );
+
+    SimpleResource res( uri );
+    res.addType( NFO::Folder() );
+    res.addType( NFO::FileDataObject() );
+    res.addProperty( NAO::numericRating(), QLatin1String("5") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app"), IdentifyNew, OverwriteProperties );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QVERIFY( m_model->containsAnyStatement( uri, NAO::numericRating(), LiteralValue(5) ) );
+
+    SimpleResource res2;
+    res2.addType( NFO::FileDataObject() );
+    res2.addProperty( NIE::isPartOf(), uri );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res2, QLatin1String("app") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QVERIFY( m_model->containsAnyStatement( Node(), NIE::isPartOf(), uri ) );
+}
+
+void DataManagementModelTest::testStoreResources_lazyCardinalities()
+{
+    SimpleResource res;
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("Superman") );
+    res.addProperty( NCO::fullname(), QLatin1String("Clark Kent") ); // Don't tell Lex!
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp"),
+                               Nepomuk::IdentifyNew, Nepomuk::LazyCardinalities );
+
+    // There shouldn't be any error, even though nco:fullname has maxCardinality = 1
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList< Statement > stList = m_model->listStatements( Node(), NCO::fullname(), Node() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    QString name = stList.first().object().literal().toString();
+    bool isClark = ( name == QLatin1String("Clark Kent") );
+    bool isSuperMan = ( name == QLatin1String("Superman") );
+
+    QVERIFY( isClark || isSuperMan );
+}
+
+void DataManagementModelTest::testStoreResources_graphMetadataFail()
+{
+    QList<Soprano::Statement> stList = m_model->listStatements().allStatements();
+
+    QHash<QUrl, QVariant> additionalMetadata;
+    additionalMetadata.insert( NCO::fullname(), QLatin1String("graphs can't have names") );
+
+    SimpleResource res;
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("Harry Potter") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp"),
+                               IdentifyNew, NoStoreResourcesFlags, additionalMetadata );
+
+    // There should be an error as graphs cannot have NFO::FileDataObject
+    QVERIFY( m_dmModel->lastError() );
+
+    // Nothing should have changed
+    QList<Soprano::Statement> newStList = m_model->listStatements().allStatements();
+    QCOMPARE( stList, newStList );
+}
+
+void DataManagementModelTest::testStoreResources_randomNepomukUri()
+{
+    SimpleResource res(QUrl("nepomuk:/res/random-uri"));
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("Mickey Mouse") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp") );
+
+    // There should be an error - We do not allow creation of arbitrary uris
+    // All uris must be created by the DataManagementModel
+    QVERIFY( m_dmModel->lastError() );
+}
+
 
 void DataManagementModelTest::testMergeResources()
 {

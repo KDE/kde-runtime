@@ -22,6 +22,14 @@
 #ifndef GENERICDATAMANAGEMENTJOB_H
 #define GENERICDATAMANAGEMENTJOB_H
 
+#include <QtGlobal>
+
+#ifndef NDEBUG
+#define DMS_DBUS_SERVICE (qgetenv("NEPOMUK_FAKE_DMS_DBUS_SERVICE").isEmpty() ? "org.kde.nepomuk.DataManagement" : qgetenv("NEPOMUK_FAKE_DMS_DBUS_SERVICE").constData())
+#else
+#define DMS_DBUS_SERVICE "org.kde.nepomuk.DataManagement"
+#endif
+
 #include <KJob>
 
 class QDBusPendingCallWatcher;
@@ -41,7 +49,8 @@ public:
                              QGenericArgument val1 = QGenericArgument(),
                              QGenericArgument val2 = QGenericArgument(),
                              QGenericArgument val3 = QGenericArgument(),
-                             QGenericArgument val4 = QGenericArgument());
+                             QGenericArgument val4 = QGenericArgument(),
+                             QGenericArgument val5 = QGenericArgument());
     ~GenericDataManagementJob();
 
     /// does nothing, we do all in the constructor - it simply needs to be implemented

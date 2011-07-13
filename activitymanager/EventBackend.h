@@ -31,7 +31,8 @@ public:
     EventBackend();
     virtual ~EventBackend();
 
-    virtual void addEvents(const EventList & events) = 0;
+    virtual void addEvents(const EventList & events);
+    virtual void setResourceMimeType(const QString & uri, const QString & mimetype);
 
 };
 

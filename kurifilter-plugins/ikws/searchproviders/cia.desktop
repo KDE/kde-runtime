@@ -78,6 +78,7 @@ Name[te]=CIA ప్రపంచ వాస్తవ పుస్తకం
 Name[tg]=Всемирная книга фактов (ЦРУ)
 Name[th]=CIA World Fact Book
 Name[tr]=CIA World Fact Book
+Name[ug]=CIA World Fact Book
 Name[uk]=Світова книга фактів ЦРУ
 Name[vi]=Sách sự thật Thế giới CIA
 Name[wa]=World Fact Book del CIA
@@ -138,7 +139,7 @@ Query[nb]=http://www.google.com/search?q=allintitle%3A\\{@}+world+factbook+site%
 Query[nds]=http://www.google.com/search?q=allintitle%3A\\{@}+world+fact+book+site%3Awww.cia.gov&ie=UTF-8&btnI=I%27m+Feeling+Lucky
 Query[ne]=http://www.google.com/search?q=allintitle%3A\\{@}+world+fact+book+site%3Awww.cia.gov&ie=UTF-8&btnI=I%27m+Feeling+Lucky
 Query[nl]=http://www.google.com/search?q=allintitle%3A\\{@}+world+fact+book+site%3Awww.cia.gov&ie=UTF-8&btnI=I%27m+Feeling+Lucky
-Query[nn]=http://www.google.com/search?q=allintitle%3A\\{@}+world+fact+book+site%3Awww.cia.gov&ie=UTF-8&btnI=I%27m+Feeling+Lucky&hl=nn
+Query[nn]=http://www.google.no/search?q=allintitle%3A\\{@}+world+fact+book+site%3Awww.cia.gov&ie=UTF-8&btnI=I%27m+Feeling+Lucky
 Query[oc]=http://www.google.com/search?q=allintitle%3A\\{@}+world+fact+book+site%3Awww.cia.gov&ie=UTF-8&btnI=I%27m+Feeling+Lucky
 Query[or]=http://www.google.com/search?q=allintitle%3A\\{@}+world+fact+book+site%3Awww.cia.gov&ie=UTF-8&btnI=I%27m+Feeling+Lucky
 Query[pa]=http://www.google.com/search?q=allintitle%3A\\{@}+world+fact+book+site%3Awww.cia.gov&ie=UTF-8&btnI=I%27m+Feeling+Lucky
