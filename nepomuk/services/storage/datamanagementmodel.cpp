@@ -508,21 +508,24 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     //
     // Remove values that are not wanted anymore
     //
-    const QSet<Soprano::Node> existingValues = QSet<Soprano::Node>::fromList(resolvedNodes.values());
-    QSet<QUrl> graphs;
-    QList<Soprano::BindingSet> existing
-            = executeQuery(QString::fromLatin1("select ?r ?v ?g where { graph ?g { ?r %1 ?v . FILTER(?r in (%2)) . } . }")
-                           .arg(Soprano::Node::resourceToN3(property),
-                                resourceHashToN3(uriHash).join(QLatin1String(","))),
-                           Soprano::Query::QueryLanguageSparql).allBindings();
-    Q_FOREACH(const Soprano::BindingSet& binding, existing) {
-        if(!existingValues.contains(binding["v"])) {
-            removeAllStatements(binding["r"], property, binding["v"]);
-            graphs.insert(binding["g"].uri());
-            d->m_watchManager->removeProperty(binding["r"], property, binding["v"]);
+    const QStringList uriHashN3 = resourceHashToN3(uriHash);
+    if(!uriHashN3.isEmpty()) {
+        const QSet<Soprano::Node> existingValues = QSet<Soprano::Node>::fromList(resolvedNodes.values());
+        QSet<QUrl> graphs;
+        QList<Soprano::BindingSet> existing
+                = executeQuery(QString::fromLatin1("select ?r ?v ?g where { graph ?g { ?r %1 ?v . FILTER(?r in (%2)) . } . }")
+                               .arg(Soprano::Node::resourceToN3(property),
+                                    uriHashN3.join(QLatin1String(","))),
+                               Soprano::Query::QueryLanguageSparql).allBindings();
+        Q_FOREACH(const Soprano::BindingSet& binding, existing) {
+            if(!existingValues.contains(binding["v"])) {
+                removeAllStatements(binding["r"], property, binding["v"]);
+                graphs.insert(binding["g"].uri());
+                d->m_watchManager->removeProperty(binding["r"], property, binding["v"]);
+            }
         }
+        removeTrailingGraphs(graphs);
     }
-    removeTrailingGraphs(graphs);
 
 
     //
