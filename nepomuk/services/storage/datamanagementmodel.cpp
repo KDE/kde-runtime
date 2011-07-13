@@ -1407,7 +1407,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     }
 
 
-    ResourceIdentifier resIdent( this );
+    ResourceIdentifier resIdent( identificationMode, this );
     QList<Soprano::Statement> allStatements;
     QList<Sync::SyncResource> extraResources;
 

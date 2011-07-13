@@ -4436,7 +4436,7 @@ void DataManagementModelTest::testStoreResources_legacyUris()
     res.addType( NFO::FileDataObject() );
     res.addProperty( NAO::numericRating(), QLatin1String("5") );
 
-    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app"), IdentifyAll, OverwriteProperties );
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app"), IdentifyNew, OverwriteProperties );
     QVERIFY( !m_dmModel->lastError() );
 
     QVERIFY( m_model->containsAnyStatement( uri, NAO::numericRating(), LiteralValue(5) ) );
@@ -4459,7 +4459,7 @@ void DataManagementModelTest::testStoreResources_lazyCardinalities()
     res.addProperty( NCO::fullname(), QLatin1String("Clark Kent") ); // Don't tell Lex!
 
     m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp"),
-                               Nepomuk::IdentifyAll, Nepomuk::LazyCardinalities );
+                               Nepomuk::IdentifyNew, Nepomuk::LazyCardinalities );
 
     // There shouldn't be any error, even though nco:fullname has maxCardinality = 1
     QVERIFY( !m_dmModel->lastError() );
@@ -4501,7 +4501,7 @@ void DataManagementModelTest::testStoreResources_graphMetadataFail()
     res.addProperty( NCO::fullname(), QLatin1String("Harry Potter") );
 
     m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp"),
-                               IdentifyAll, NoStoreResourcesFlags, additionalMetadata );
+                               IdentifyNew, NoStoreResourcesFlags, additionalMetadata );
 
     // There should be an error as graphs cannot have NFO::FileDataObject
     QVERIFY( m_dmModel->lastError() );
