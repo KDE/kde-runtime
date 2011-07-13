@@ -1064,6 +1064,26 @@ void DataManagementModelTest::testSetProperty_protectedTypes()
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
+// make sure we reuse legacy resource URIs
+void DataManagementModelTest::testSetProperty_legacyData()
+{
+    // create some legacy data
+    QTemporaryFile file;
+    file.open();
+    const KUrl url(file.fileName());
+
+    const QUrl g = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    m_model->addStatement(url, QUrl("prop:/int"), LiteralValue(42), g);
+
+    // set some data with the url
+    m_dmModel->setProperty(QList<QUrl>() << url, QUrl("prop:/int"), QVariantList() << 2, QLatin1String("A"));
+
+    // make sure the resource has changed
+    QCOMPARE(m_model->listStatements(url, QUrl("prop:/int"), Node()).allElements().count(), 1);
+    QCOMPARE(m_model->listStatements(url, QUrl("prop:/int"), Node()).allElements().first().object().literal(), LiteralValue(2));
+}
+
 void DataManagementModelTest::testRemoveProperty()
 {
     const int cleanCount = m_model->statementCount();
