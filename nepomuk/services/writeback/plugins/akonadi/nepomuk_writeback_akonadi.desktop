@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Akonadi plugin
+Name[x-test]=xxAkonadi pluginxx
+Comment=Nepomuk Akonadi Plugin which writeback to the metadata to akonadi.
+X-KDE-ServiceTypes=Nepomuk/WritebackPlugin
+Type=Service
+X-KDE-Library=nepomuk_writeback_akonadi
+
+# FIXME
+

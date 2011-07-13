@@ -47,13 +47,13 @@
         kDebug()<<"this part is executed";
 
         resourcewatcher  = new ResourceWatcher(this);
-        resourcewatcher->addProperty(Types::Property(NFO::FileDataObject()));
+        resourcewatcher->addType(NFO::FileDataObject());
         resourcewatcher->start();
 
-        connect( resourcewatcher, SIGNAL( propertyAdded(Nepomuk::Resource, Types::Property,QVariant) ),
-                 this, SLOT ( test(Nepomuk::Resource) ) );
-        connect( resourcewatcher, SIGNAL( propertyRemoved(Nepomuk::Resource, Types::Property, QVariant) ),
-                 this, SLOT ( test(Nepomuk::Resource) ) );
+        connect( resourcewatcher, SIGNAL( propertyAdded(Nepomuk::Resource, Nepomuk::Types::Property, QVariant) ),
+                this, SLOT ( test(Nepomuk::Resource) ) );
+        connect( resourcewatcher, SIGNAL( propertyRemoved(Nepomuk::Resource, Nepomuk::Types::Property, QVariant) ),
+                this, SLOT ( test(Nepomuk::Resource) ) );
     }
 
     Nepomuk::WriteBackService::~WriteBackService()
@@ -62,7 +62,7 @@
 
     void Nepomuk::WriteBackService::test(const Nepomuk::Resource & resource)
     {
-        kDebug()<<"lol";
+        kDebug()<<"Test method executed";
 
         const QStringList mimetypes = resource.property(NIE::mimeType()).toStringList();
         if(!mimetypes.isEmpty())
