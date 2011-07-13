@@ -30,8 +30,8 @@
 #include <time.h>
 #include "kext.h"
 
-#include "ActivityManager.h"
 #include "NepomukResourceScoreCache.h"
+#include "NepomukCommon.h"
 
 class NepomukResourceScoreMaintainerPrivate: public QThread {
 public:
@@ -65,7 +65,7 @@ void NepomukResourceScoreMaintainerPrivate::run()
             openResources.clear();
         NepomukResourceScoreMaintainerPrivate::openResources_mutex.unlock();
 
-        const QString & activity = ActivityManager::self()->CurrentActivity();
+        const QString & activity = currentActivityId;
 
         // Let us first process the events related to the current
         // activity so that the stats are available quicker
@@ -127,7 +127,7 @@ void NepomukResourceScoreMaintainer::processResource(const KUrl & resource, cons
 
     kDebug() << "Adding" << resource << application << "to the queue";
 
-    const QString & activity = ActivityManager::self()->CurrentActivity();
+    const QString & activity = currentActivityId;
 
     if (d->openResources.contains(activity) &&
             d->openResources[activity].contains(application) &&

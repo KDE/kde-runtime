@@ -50,14 +50,20 @@ public:
     QHash < WId, WindowData > const & windows() const;
     QHash < KUrl, ResourceData > const & resources() const;
 
+    QString currentActivity() const;
+
 private:
+    void setCurrentActivity(const QString & activity);
+
     QHash < WId, WindowData > m_windows;
     QHash < KUrl, ResourceData > m_resources;
+    QString m_currentActivity;
 
     static SharedInfo * s_instance;
     SharedInfo();
 
     friend class ActivityManager;
+    friend class ActivityManagerPrivate;
 };
 
 #endif // SHARED_INFO_H_

@@ -31,7 +31,6 @@
 #include "NepomukEventBackend.h"
 #endif
 
-// #include "SlcEventBackend.h"
 #include "EventBackend.h"
 
 #include <KDebug>
@@ -107,7 +106,6 @@ EventProcessor::EventProcessor()
 #ifdef HAVE_NEPOMUK
     d->lazyBackends.append(new NepomukEventBackend());
 #endif
-    // d->syncBackends.append(new SlcEventBackend());
 
     // Plugin loading
 

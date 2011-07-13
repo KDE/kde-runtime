@@ -18,6 +18,7 @@
  */
 
 #include "SharedInfo.h"
+#include "ActivityManager.h"
 
 #include <KDebug>
 
@@ -52,4 +53,13 @@ QHash < KUrl, SharedInfo::ResourceData > const & SharedInfo::resources() const
     return m_resources;
 }
 
+QString SharedInfo::currentActivity() const
+{
+    return m_currentActivity;
+}
+
+void SharedInfo::setCurrentActivity(const QString & activity)
+{
+    m_currentActivity = activity;
+}
 

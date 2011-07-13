@@ -147,6 +147,7 @@ void ActivityManagerPrivate::windowClosed(WId windowId)
 
 void ActivityManagerPrivate::activeWindowChanged(WId windowId)
 {
+    Q_UNUSED(windowId)
     // kDebug() << "Window focussed..." << windowId
     //          << "one of ours?" << windows.contains(windowId);
 
@@ -233,6 +234,7 @@ bool ActivityManagerPrivate::setCurrentActivity(const QString & id)
         scheduleConfigSync();
     }
 
+    SharedInfo::self()->setCurrentActivity(id);
     emit q->CurrentActivityChanged(id);
     return true;
 }
