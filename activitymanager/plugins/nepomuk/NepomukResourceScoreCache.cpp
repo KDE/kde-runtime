@@ -39,7 +39,7 @@
 using namespace Nepomuk::Vocabulary;
 
 #include "NepomukCommon.h"
-#include "NepomukFeederPlugin.h"
+#include "NepomukPlugin.h"
 
 /**
  *

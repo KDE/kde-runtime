@@ -32,8 +32,6 @@
  */
 class SharedInfo {
 public:
-    static SharedInfo * self();
-
     virtual ~SharedInfo();
 
     struct WindowData {
@@ -53,6 +51,8 @@ public:
     QString currentActivity() const;
 
 private:
+    static SharedInfo * self();
+
     void setCurrentActivity(const QString & activity);
 
     QHash < WId, WindowData > m_windows;
@@ -64,6 +64,7 @@ private:
 
     friend class ActivityManager;
     friend class ActivityManagerPrivate;
+    friend class EventProcessor;
 };
 
 #endif // SHARED_INFO_H_

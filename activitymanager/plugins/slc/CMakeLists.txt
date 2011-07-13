@@ -12,7 +12,7 @@ include_directories(
 set(
    slc_SRCS
    slc.cpp
-   ../../EventBackend.cpp
+   ../../Plugin.cpp
    ../../SharedInfo.cpp
    )
 

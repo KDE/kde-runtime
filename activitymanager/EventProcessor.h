@@ -25,7 +25,7 @@
 
 #include "Event.h"
 
-class EventBackend;
+class Plugin;
 class EventProcessorPrivate;
 
 /**

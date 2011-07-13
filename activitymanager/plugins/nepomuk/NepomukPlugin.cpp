@@ -18,7 +18,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "NepomukFeederPlugin.h"
+#include "NepomukPlugin.h"
 #include "NepomukResourceScoreMaintainer.h"
 
 #include "../../Event.h"
@@ -52,7 +52,7 @@ using namespace Nepomuk::Query;
 NepomukPlugin * NepomukPlugin::s_instance = NULL;
 
 NepomukPlugin::NepomukPlugin(QObject *parent, const QVariantList & args)
-    : EventBackend(parent)
+    : Plugin(parent)
 {
     Q_UNUSED(args)
     s_instance = this;
@@ -261,4 +261,4 @@ Nepomuk::Resource NepomukPlugin::createDesktopEvent(const KUrl& uri, const QDate
     return eventRes;
 }
 
-KAMD_EXPORT_PLUGIN(NepomukPlugin, "activitymanger_nepomuk")
+KAMD_EXPORT_PLUGIN(NepomukPlugin, "activitymanger_plugin_nepomuk")

@@ -5,10 +5,10 @@ find_package(Nepomuk REQUIRED)
 
 set(
    nepomuk_SRCS
-   NepomukFeederPlugin.cpp
+   NepomukPlugin.cpp
    NepomukResourceScoreCache.cpp
    NepomukResourceScoreMaintainer.cpp
-   ../../EventBackend.cpp
+   ../../Plugin.cpp
    ../../SharedInfo.cpp
    )
 

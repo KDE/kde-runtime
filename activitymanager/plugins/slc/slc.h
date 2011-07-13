@@ -24,9 +24,9 @@
 #include <QObject>
 #include <KUrl>
 
-#include "../../EventBackend.h"
+#include "../../Plugin.h"
 
-class SlcPlugin: public EventBackend
+class SlcPlugin: public Plugin
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.kde.ActivityManager.SLC")

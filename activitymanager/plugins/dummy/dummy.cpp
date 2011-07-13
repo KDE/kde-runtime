@@ -21,7 +21,7 @@
 #include "ActivityManager.h"
 
 DummyPlugin::DummyPlugin(QObject * parent, const QVariantList & args)
-    : EventBackend(parent)
+    : Plugin(parent)
 {
     Q_UNUSED(args)
     kDebug() << "We are in the DummyPlugin";
@@ -31,4 +31,4 @@ DummyPlugin::~DummyPlugin()
 {
 }
 
-KAMD_EXPORT_PLUGIN(DummyPlugin, "activitymanger_dummy")
+KAMD_EXPORT_PLUGIN(DummyPlugin, "activitymanger_plugin_dummy")

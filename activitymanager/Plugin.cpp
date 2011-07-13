@@ -17,40 +17,40 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "EventBackend.h"
+#include "Plugin.h"
 
-class EventBackend::Private {
+class Plugin::Private {
 public:
     SharedInfo * sharedInfo;
 };
 
-EventBackend::EventBackend(QObject * parent)
+Plugin::Plugin(QObject * parent)
     : QObject(parent), d(new Private())
 {
 }
 
-EventBackend::~EventBackend()
+Plugin::~Plugin()
 {
     delete d;
 }
 
-void EventBackend::addEvents(const EventList & events)
+void Plugin::addEvents(const EventList & events)
 {
     Q_UNUSED(events)
 }
 
-void EventBackend::setResourceMimeType(const QString & uri, const QString & mimetype)
+void Plugin::setResourceMimeType(const QString & uri, const QString & mimetype)
 {
     Q_UNUSED(uri)
     Q_UNUSED(mimetype)
 }
 
-void EventBackend::setSharedInfo(SharedInfo * sharedInfo)
+void Plugin::setSharedInfo(SharedInfo * sharedInfo)
 {
     d->sharedInfo = sharedInfo;
 }
 
-SharedInfo * EventBackend::sharedInfo() const
+SharedInfo * Plugin::sharedInfo() const
 {
     return d->sharedInfo;
 }

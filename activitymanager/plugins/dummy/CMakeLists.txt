@@ -12,19 +12,19 @@ include_directories(
 set(
    dummy_SRCS
    dummy.cpp
-   ../../EventBackend.cpp
+   ../../Plugin.cpp
    )
 
 kde4_add_plugin(
-   activitymanager_dummy
+   activitymanager_plugin_dummy
    ${dummy_SRCS}
    )
 
 target_link_libraries(
-   activitymanager_dummy
+   activitymanager_plugin_dummy
    ${KDE4_KDECORE_LIBS}
 )
 
-install(TARGETS activitymanager_dummy DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS activitymanager_plugin_dummy DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES activitymanager-dummy.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 

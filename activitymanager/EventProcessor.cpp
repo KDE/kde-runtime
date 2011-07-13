@@ -19,11 +19,11 @@
  */
 
 #include "EventProcessor.h"
-#include "EventBackend.h"
+#include "Plugin.h"
 
 #include "config-features.h"
 
-#include "EventBackend.h"
+#include "Plugin.h"
 
 #include <KDebug>
 
@@ -38,8 +38,8 @@
 
 class EventProcessorPrivate: public QThread {
 public:
-    QList < EventBackend * > lazyBackends;
-    QList < EventBackend * > syncBackends;
+    QList < Plugin * > lazyBackends;
+    QList < Plugin * > syncBackends;
 
     QList < Event > events;
     QMutex events_mutex;
@@ -74,7 +74,7 @@ void EventProcessorPrivate::run()
 
         EventProcessorPrivate::events_mutex.unlock();
 
-        foreach (EventBackend * backend, lazyBackends) {
+        foreach (Plugin * backend, lazyBackends) {
             backend->addEvents(currentEvents);
         }
     }
@@ -110,7 +110,7 @@ EventProcessor::EventProcessor()
             continue;
         }
 
-        EventBackend * plugin = factory->create < EventBackend > (this);
+        Plugin * plugin = factory->create < Plugin > (this);
         plugin->setSharedInfo(SharedInfo::self());
 
         if (plugin) {
@@ -145,7 +145,7 @@ void EventProcessor::addEvent(const QString & application, WId wid, const QStrin
 {
     Event newEvent(application, wid, uri, type, reason);
 
-    foreach (EventBackend * backend, d->syncBackends) {
+    foreach (Plugin * backend, d->syncBackends) {
         backend->addEvents(QList < Event > () << newEvent);
     }
 

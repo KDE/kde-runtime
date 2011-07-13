@@ -21,9 +21,9 @@
 #ifndef Dummy_H
 #define Dummy_H
 
-#include "../../EventBackend.h"
+#include "../../Plugin.h"
 
-class DummyPlugin: public EventBackend
+class DummyPlugin: public Plugin
 {
     Q_OBJECT
 
@@ -31,7 +31,5 @@ public:
     DummyPlugin(QObject *parent, const QVariantList & args);
     ~DummyPlugin();
 };
-
-// KAMD_EXPORT_PLUGIN(DummyPlugin, "activitymanger_dummy")
 
 #endif

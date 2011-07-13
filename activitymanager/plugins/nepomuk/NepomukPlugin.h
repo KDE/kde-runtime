@@ -26,9 +26,9 @@
 
 #include <Nepomuk/Resource>
 
-#include "../../EventBackend.h"
+#include "../../Plugin.h"
 
-class NepomukPlugin: public EventBackend {
+class NepomukPlugin: public Plugin {
 public:
     NepomukPlugin(QObject *parent = 0, const QVariantList & args = QVariantList());
 

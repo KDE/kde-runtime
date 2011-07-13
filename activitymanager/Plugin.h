@@ -37,12 +37,12 @@
 /**
  *
  */
-class KDE_EXPORT EventBackend: public QObject {
+class KDE_EXPORT Plugin: public QObject {
     Q_OBJECT
 
 public:
-    EventBackend(QObject * parent);
-    virtual ~EventBackend();
+    Plugin(QObject * parent);
+    virtual ~Plugin();
 
     virtual void addEvents(const EventList & events);
     virtual void setResourceMimeType(const QString & uri, const QString & mimetype);

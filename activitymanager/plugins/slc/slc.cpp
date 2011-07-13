@@ -24,7 +24,7 @@
 #include <KUrl>
 
 SlcPlugin::SlcPlugin(QObject * parent, const QVariantList & args)
-    : EventBackend(parent), focussedWindow(0)
+    : Plugin(parent), focussedWindow(0)
 {
     Q_UNUSED(args)
     kDebug() << "We are in the SlcPlugin";
@@ -129,4 +129,4 @@ void SlcPlugin::updateFocus(WId wid)
     }
 }
 
-KAMD_EXPORT_PLUGIN(SlcPlugin, "activitymanger_slc")
+KAMD_EXPORT_PLUGIN(SlcPlugin, "activitymanger_plugin_slc")

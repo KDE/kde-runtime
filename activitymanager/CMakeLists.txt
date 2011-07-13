@@ -39,7 +39,7 @@ include_directories(
 set(activity_manager_SRCS
     ActivityManager.cpp
     EventProcessor.cpp
-    EventBackend.cpp
+    Plugin.cpp
     Event.cpp
     SharedInfo.cpp
     main.cpp
@@ -49,11 +49,6 @@ qt4_add_dbus_adaptor(
     activity_manager_SRCS org.kde.ActivityManager.xml
     ActivityManager.h ActivityManager
     )
-
-# qt4_add_dbus_adaptor(
-#     activity_manager_SRCS org.kde.ActivityManager.SLC.xml
-#     SlcEventBackend.h SlcEventBackend
-#     )
 
 kde4_add_executable(activity-manager ${activity_manager_SRCS})
 

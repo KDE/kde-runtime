@@ -21,7 +21,7 @@
 #define NEPOMUK_COMMON_H_
 
 #include "nie.h"
-#include "NepomukFeederPlugin.h"
+#include "NepomukPlugin.h"
 
 #include <Nepomuk/Variant>
 
