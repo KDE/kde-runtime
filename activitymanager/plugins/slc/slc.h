@@ -1,8 +1,5 @@
 /*
- *   Copyright (C) 2008 Nick Shaforostoff <shaforostoff@kde.ru>
- *
- *   based on work by:
- *   Copyright (C) 2007 Thomas Georgiou <TAGeorgiou@gmail.com> and Jeff Cooper <weirdsox11@gmail.com>
+ *   Copyright (C) 2011 Ivan Cukic <ivan.cukic@kde.org>
  *
  *   This program is free software; you can redistribute it and/or
  *   modify it under the terms of the GNU General Public License as
