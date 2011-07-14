@@ -21,6 +21,9 @@
 #define NEPOMUK_COMMON_H_
 
 #include "nie.h"
+#include "NepomukPlugin.h"
+
+#include <Nepomuk/Variant>
 
 #define NUAO_targettedResource KUrl(NUAO::nuaoNamespace().toString() + QLatin1String("targettedResource"))
 #define NUAO_initiatingAgent   KUrl(NUAO::nuaoNamespace().toString() + QLatin1String("initiatingAgent"))
@@ -28,7 +31,8 @@
 
 #define activityResource(ID) Nepomuk::Resource(ID, KExt::Activity())
 #define agentResource(ID)    Nepomuk::Resource(ID, NAO::Agent())
-#define currentActivityRes   activityResource(ActivityManager::self()->CurrentActivity())
+#define currentActivityId    NepomukPlugin::self()->sharedInfo()->currentActivity()
+#define currentActivityRes   activityResource(currentActivityId)
 
 // #define anyResource(ID) Nepomuk::Resource(KUrl(ID))
 
