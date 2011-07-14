@@ -80,6 +80,12 @@ Nepomuk::ResourceWatcherManager::~ResourceWatcherManager()
     qDeleteAll(allConnections);
 }
 
+
+void Nepomuk::ResourceWatcherManager::addStatement(const Soprano::Statement& st)
+{
+    addProperty( st.subject(), st.predicate().uri(), st.object() );
+}
+
 void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value)
 {
     typedef ResourceWatcherConnection RWC;
@@ -165,7 +171,7 @@ void Nepomuk::ResourceWatcherManager::createResource(const QUrl &uri, const QLis
     }
 
     foreach(ResourceWatcherConnection* con, connections) {
-        con->resourceCreated(KUrl(uri).url(), convertUris(types));
+        emit con->resourceCreated(KUrl(uri).url(), convertUris(types));
     }
 }
 
@@ -182,7 +188,7 @@ void Nepomuk::ResourceWatcherManager::removeResource(const QUrl &res, const QLis
     }
 
     foreach(ResourceWatcherConnection* con, connections) {
-        con->resourceRemoved(KUrl(res).url(), convertUris(types));
+        emit con->resourceRemoved(KUrl(res).url(), convertUris(types));
     }
 }
 
@@ -205,7 +211,7 @@ Nepomuk::ResourceWatcherConnection* Nepomuk::ResourceWatcherManager::createConne
         m_propHash.insert(prop, con);
     }
 
-    foreach( const QUrl& type, properties ) {
+    foreach( const QUrl& type, types ) {
         m_typeHash.insert(type, con);
     }
 

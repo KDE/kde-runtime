@@ -28,6 +28,7 @@
 
 #include <QtTest>
 #include "qtest_kde.h"
+#include "qtest_dms.h"
 
 #include <Soprano/Soprano>
 #include <Soprano/Graph>
@@ -60,138 +61,7 @@ void DataManagementModelTest::resetModel()
 
     // add some classes and properties
     QUrl graph("graph:/onto");
-    m_model->addStatement( graph, RDF::type(), NRL::Ontology(), graph );
-    // removeResources depends on type inference
-    m_model->addStatement( graph, RDF::type(), NRL::Graph(), graph );
-
-    m_model->addStatement( QUrl("prop:/int"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int2"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int2"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int3"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int3"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int_c1"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int_c1"), RDFS::range(), XMLSchema::xsdInt(), graph );
-    m_model->addStatement( QUrl("prop:/int_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    m_model->addStatement( QUrl("prop:/string"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/string"), RDFS::range(), XMLSchema::string(), graph );
-
-    m_model->addStatement( QUrl("prop:/res"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res"), RDFS::range(), RDFS::Resource(), graph );
-
-    m_model->addStatement( QUrl("prop:/res2"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res2"), RDFS::range(), RDFS::Resource(), graph );
-
-    m_model->addStatement( QUrl("prop:/res3"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res3"), RDFS::range(), RDFS::Resource(), graph );
-
-    m_model->addStatement( QUrl("prop:/res_c1"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), RDFS::range(), RDFS::Resource(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    m_model->addStatement( QUrl("class:/typeA"), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( QUrl("class:/typeB"), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( QUrl("class:/typeB"), RDFS::subClassOf(), QUrl("class:/typeA"), graph );
-
-    // properties used all the time
-    m_model->addStatement( NAO::identifier(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( RDF::type(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( RDF::type(), RDFS::range(), RDFS::Class(), graph );
-    m_model->addStatement( NIE::url(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::url(), RDFS::range(), RDFS::Resource(), graph );
-
-
-    // some ontology things the ResourceMerger depends on
-    m_model->addStatement( RDFS::Class(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( RDFS::Class(), RDFS::subClassOf(), RDFS::Resource(), graph );
-    m_model->addStatement( NRL::Graph(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NRL::InstanceBase(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NRL::InstanceBase(), RDFS::subClassOf(), NRL::Graph(), graph );
-    m_model->addStatement( NAO::prefLabel(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::prefLabel(), RDFS::range(), RDFS::Literal(), graph );
-    m_model->addStatement( NFO::fileName(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NFO::fileName(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NCO::fullname(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NCO::fullname(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NIE::title(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::title(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NAO::created(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::created(), RDFS::range(), XMLSchema::dateTime(), graph );
-    m_model->addStatement( NAO::created(), NRL::maxCardinality(), LiteralValue(1), graph );
-    m_model->addStatement( NAO::lastModified(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
-    m_model->addStatement( NAO::lastModified(), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    // used in testStoreResources_sameNieUrl
-    m_model->addStatement( NAO::numericRating(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::numericRating(), RDFS::range(), XMLSchema::xsdInt(), graph );
-    m_model->addStatement( NAO::numericRating(), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    // some ontology things we need in testStoreResources_realLife
-    m_model->addStatement( NMM::season(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::season(), RDFS::range(), XMLSchema::xsdInt(), graph );
-    m_model->addStatement( NMM::episodeNumber(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::episodeNumber(), RDFS::range(), XMLSchema::xsdInt(), graph );
-    m_model->addStatement( NMM::hasEpisode(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::hasEpisode(), RDFS::range(), NMM::TVShow(), graph );
-    m_model->addStatement( NIE::description(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::description(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NMM::synopsis(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::synopsis(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NMM::series(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::series(), RDFS::range(), NMM::TVSeries(), graph );
-    m_model->addStatement( NIE::title(), RDFS::subClassOf(), QUrl("http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifyingProperty"), graph );
-
-    // some ontology things we need in testStoreResources_strigiCase
-    m_model->addStatement( NMM::performer(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::performer(), RDFS::domain(), NMM::MusicPiece(), graph );
-    m_model->addStatement( NMM::performer(), RDFS::range(), NCO::Contact(), graph );
-    m_model->addStatement( NMM::musicAlbum(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NMM::musicAlbum(), RDFS::range(), NMM::MusicAlbum(), graph );
-    m_model->addStatement( NMM::MusicAlbum(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NMM::TVShow(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NMM::TVSeries(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NMM::MusicPiece(), RDF::type(), RDFS::Class(), graph );
-
-    // used by testStoreResources_duplicates
-    m_model->addStatement( NFO::hashAlgorithm(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NFO::hashAlgorithm(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NFO::hashValue(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NFO::hashValue(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NFO::hashValue(), NRL::maxCardinality(), LiteralValue(1), graph );
-    m_model->addStatement( NFO::hasHash(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NFO::hasHash(), RDFS::range(), NFO::FileHash(), graph );
-    m_model->addStatement( NFO::hasHash(), RDFS::domain(), NFO::FileDataObject(), graph );
-    m_model->addStatement( NFO::FileHash(), RDF::type(), RDFS::Resource(), graph );
-    m_model->addStatement( NFO::FileHash(), RDF::type(), RDFS::Class(), graph );
-
-
-    m_model->addStatement( NIE::isPartOf(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::isPartOf(), RDFS::range(), NFO::FileDataObject(), graph );
-    m_model->addStatement( NIE::lastModified(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
-
-    m_model->addStatement( NCO::fullname(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NCO::fullname(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NCO::fullname(), RDFS::domain(), NCO::Contact(), graph );
-    m_model->addStatement( NCO::fullname(), NRL::maxCardinality(), LiteralValue(1), graph );
-    m_model->addStatement( NCO::Contact(), RDF::type(), RDFS::Resource(), graph );
-    m_model->addStatement( NCO::Contact(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NCO::Contact(), RDFS::subClassOf(), NCO::Role(), graph );
-    m_model->addStatement( NCO::Contact(), RDFS::subClassOf(), NAO::Party(), graph );
-
-    m_model->addStatement( NAO::Tag(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NFO::FileDataObject(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NFO::Folder(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NFO::Video(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NIE::InformationElement(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( QUrl("class:/typeA"), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( QUrl("class:/typeB"), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( QUrl("class:/typeC"), RDF::type(), RDFS::Class(), graph );
+    Nepomuk::insertOntologies( m_model, graph );
 
     // rebuild the internals of the data management model
     m_classAndPropertyTree->rebuildTree(m_dmModel);
@@ -3595,6 +3465,34 @@ void DataManagementModelTest::testStoreResources_file4()
 }
 
 
+void DataManagementModelTest::testStoreResources_folder()
+{
+    QTemporaryFile file;
+    QVERIFY( file.open() );
+    KUrl fileUrl = KUrl::fromLocalFile( file.fileName() );
+    QUrl folderUrl = QUrl::fromLocalFile( fileUrl.directory() );
+
+    SimpleResource res( fileUrl );
+    res.addProperty( RDF::type(), NMM::MusicPiece() );
+    res.addProperty( NAO::prefLabel(), QLatin1String("Label") );
+    res.addProperty( NIE::isPartOf(), fileUrl.directory() );
+
+    SimpleResourceGraph graph;
+    graph << res;
+
+    m_dmModel->storeResources( graph, QLatin1String("testApp") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList<Statement> stList = m_model->listStatements( Node(), NIE::isPartOf(), Node() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl folderResUri = stList.first().object().uri();
+    QVERIFY( m_dmModel->containsAnyStatement( folderResUri, RDF::type(), NFO::FileDataObject() ) );
+    QVERIFY( m_dmModel->containsAnyStatement( folderResUri, RDF::type(), NFO::Folder() ) );
+    QVERIFY( m_dmModel->containsAnyStatement( folderResUri, NIE::url(), folderUrl ) );
+}
+
+
 void DataManagementModelTest::testStoreResources_fileExists()
 {
     SimpleResource res(QUrl("file:///a/b/v/c/c"));
@@ -4547,7 +4445,7 @@ void DataManagementModelTest::testStoreResources_legacyUris()
     res.addType( NFO::FileDataObject() );
     res.addProperty( NAO::numericRating(), QLatin1String("5") );
 
-    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app"), IdentifyAll, OverwriteProperties );
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app"), IdentifyNew, OverwriteProperties );
     QVERIFY( !m_dmModel->lastError() );
 
     QVERIFY( m_model->containsAnyStatement( uri, NAO::numericRating(), LiteralValue(5) ) );
@@ -4570,7 +4468,7 @@ void DataManagementModelTest::testStoreResources_lazyCardinalities()
     res.addProperty( NCO::fullname(), QLatin1String("Clark Kent") ); // Don't tell Lex!
 
     m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp"),
-                               Nepomuk::IdentifyAll, Nepomuk::LazyCardinalities );
+                               Nepomuk::IdentifyNew, Nepomuk::LazyCardinalities );
 
     // There shouldn't be any error, even though nco:fullname has maxCardinality = 1
     QVERIFY( !m_dmModel->lastError() );
@@ -4597,7 +4495,7 @@ void DataManagementModelTest::testStoreResources_graphMetadataFail()
     res.addProperty( NCO::fullname(), QLatin1String("Harry Potter") );
 
     m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp"),
-                               IdentifyAll, NoStoreResourcesFlags, additionalMetadata );
+                               IdentifyNew, NoStoreResourcesFlags, additionalMetadata );
 
     // There should be an error as graphs cannot have NFO::FileDataObject
     QVERIFY( m_dmModel->lastError() );

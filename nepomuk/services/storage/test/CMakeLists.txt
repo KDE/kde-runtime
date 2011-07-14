@@ -41,6 +41,7 @@ set( DMTEST
   ../datamanagementcommand.cpp
   ../resourcemerger.cpp
   ../resourceidentifier.cpp
+  qtest_dms.cpp
 )
 
 qt4_add_dbus_adaptor(DMTEST
