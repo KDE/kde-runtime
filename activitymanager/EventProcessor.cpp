@@ -98,9 +98,27 @@ EventProcessor::EventProcessor()
 
     KService::List offers = KServiceTypeTrader::self()->query("ActivityManager/Plugin");
 
+    QStringList disabledPlugins = SharedInfo::self()->pluginConfig("Global").readEntry("disabledPlugins", QStringList());
+    kDebug() << disabledPlugins << "disabled due to the configuration in activitymanager-pluginsrc";
+
     foreach(const KService::Ptr & service, offers) {
+        if (!disabledPlugins.contains(service->library())) {
+            disabledPlugins.append(
+                    service->property("X-ActivityManager-PluginOverrides", QVariant::StringList).toStringList()
+                );
+            kDebug() << service->name() << "disables" <<
+                    service->property("X-ActivityManager-PluginOverrides", QVariant::StringList);
+
+        }
+    }
+
+    foreach(const KService::Ptr & service, offers) {
+        if (disabledPlugins.contains(service->library())) {
+            continue;
+        }
+
         kDebug() << "Loading plugin:"
-            << service->name()
+            << service->name() << service->storageId() << service->library()
             << service->property("X-ActivityManager-PluginType", QVariant::String);
 
         KPluginFactory * factory = KPluginLoader(service->library()).factory();

@@ -36,6 +36,7 @@ SharedInfo * SharedInfo::self()
 }
 
 SharedInfo::SharedInfo()
+    : m_config("activitymanager-pluginsrc")
 {
 }
 
@@ -61,5 +62,10 @@ QString SharedInfo::currentActivity() const
 void SharedInfo::setCurrentActivity(const QString & activity)
 {
     m_currentActivity = activity;
+}
+
+KConfigGroup SharedInfo::pluginConfig(const QString & pluginName) const
+{
+    return KConfigGroup(&m_config, pluginName);
 }
 

@@ -17,3 +17,4 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=true
 
 X-ActivityManager-PluginType=lazyeventhandler
+X-ActivityManager-PluginOverrides=activitymanager_plugin_dummy

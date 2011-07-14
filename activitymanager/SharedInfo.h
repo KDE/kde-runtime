@@ -25,6 +25,9 @@
 #include <QString>
 #include <QHash>
 
+#include <KConfigGroup>
+#include <KConfig>
+
 #include "Event.h"
 
 /**
@@ -50,6 +53,8 @@ public:
 
     QString currentActivity() const;
 
+    KConfigGroup pluginConfig(const QString & pluginName) const;
+
 private:
     static SharedInfo * self();
 
@@ -58,6 +63,7 @@ private:
     QHash < WId, WindowData > m_windows;
     QHash < KUrl, ResourceData > m_resources;
     QString m_currentActivity;
+    KConfig m_config;
 
     static SharedInfo * s_instance;
     SharedInfo();
