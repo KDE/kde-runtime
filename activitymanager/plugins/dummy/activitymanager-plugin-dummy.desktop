@@ -1,6 +1,14 @@
 [Desktop Entry]
 Name=Dummy plugin
+Name[nl]=Dummy plug-in
+Name[sv]=Testinsticksprogram
+Name[uk]=Тестовий додаток
+Name[x-test]=xxDummy pluginxx
 Comment=Just testing
+Comment[nl]=Gewoon testen
+Comment[sv]=Bara testning
+Comment[uk]=Тестування
+Comment[x-test]=xxJust testingxx
 Type=Service
 Icon=
 

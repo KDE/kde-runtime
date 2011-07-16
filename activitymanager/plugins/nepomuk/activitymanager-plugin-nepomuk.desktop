@@ -1,6 +1,14 @@
 [Desktop Entry]
 Name=Nepomuk Feeder Plugin
+Name[nl]=Plug-in van Nepomuk-feeder
+Name[sv]=Nepomuk-inmatningsinsticksprogram
+Name[uk]=Додаток передавання даних Nepomuk
+Name[x-test]=xxNepomuk Feeder Pluginxx
 Comment=Plugin to store and score events in Nepomuk
+Comment[nl]=Plug-in om gebeurtenissen in Nepomuk op te slaan en van een score te voorzien
+Comment[sv]=Insticksprogram för att lagra och betygsätta händelser i Nepomuk
+Comment[uk]=Додаток для зберігання і оцінки подій у Nepomuk
+Comment[x-test]=xxPlugin to store and score events in Nepomukxx
 Type=Service
 Icon=nepomukk
 
