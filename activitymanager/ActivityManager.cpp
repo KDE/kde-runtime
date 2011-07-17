@@ -218,12 +218,36 @@ void ActivityManagerPrivate::ensureCurrentActivityIsRunning()
 
 bool ActivityManagerPrivate::setCurrentActivity(const QString & id)
 {
+    kDebug() << id;
     if (id.isEmpty()) {
         currentActivity.clear();
 
     } else {
         if (!activities.contains(id)) {
             return false;
+        }
+
+        if (currentActivity != id) {
+            kDebug() << "registering the events";
+            // Closing the previous activity:
+            if (!currentActivity.isEmpty()) {
+                q->RegisterResourceEvent(
+                        "kactivitymanagerd", 0,
+                        "activities://" + currentActivity,
+                        Event::Closed, Event::User
+                    );
+            }
+
+            q->RegisterResourceEvent(
+                    "kactivitymanagerd", 0,
+                    "activities://" + id,
+                    Event::Accessed, Event::User
+                );
+            q->RegisterResourceEvent(
+                    "kactivitymanagerd", 0,
+                    "activities://" + id,
+                    Event::Opened, Event::User
+                );
         }
 
         q->StartActivity(id);
@@ -321,10 +345,29 @@ ActivityManager::ActivityManager()
     KCrash::setFlags(KCrash::AutoRestart);
 
     EventProcessor::self();
+
+    kDebug() << "RegisterResourceEvent open" << d->currentActivity;
+    RegisterResourceEvent(
+            "kactivitymanagerd", 0,
+            "activities://" + d->currentActivity,
+            Event::Accessed, Event::User
+        );
+    RegisterResourceEvent(
+            "kactivitymanagerd", 0,
+            "activities://" + d->currentActivity,
+            Event::Opened, Event::User
+        );
+
 }
 
 ActivityManager::~ActivityManager()
 {
+    kDebug() << "RegisterResourceEvent close" << d->currentActivity;
+    RegisterResourceEvent(
+            "kactivitymanagerd", 0,
+            "activities://" + d->currentActivity,
+            Event::Closed, Event::User
+        );
     delete d;
 }
 

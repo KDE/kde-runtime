@@ -74,6 +74,7 @@ void EventProcessorPrivate::run()
 
         EventProcessorPrivate::events_mutex.unlock();
 
+        kDebug() << "Passing the event to" << lazyBackends.size() << "lazy plugins";
         foreach (Plugin * backend, lazyBackends) {
             backend->addEvents(currentEvents);
         }
