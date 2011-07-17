@@ -1,11 +1,15 @@
 [Desktop Entry]
 Name=Dummy plugin
 Name[nl]=Dummy plug-in
+Name[pt]='Plugin' de testes
 Name[sv]=Testinsticksprogram
+Name[ug]=مەۋھۇم قىستۇرما
 Name[uk]=Тестовий додаток
 Name[x-test]=xxDummy pluginxx
 Comment=Just testing
 Comment[nl]=Gewoon testen
+Comment[pt]=Apenas para testes
+Comment[pt_BR]=Apenas testando
 Comment[sv]=Bara testning
 Comment[uk]=Тестування
 Comment[x-test]=xxJust testingxx
