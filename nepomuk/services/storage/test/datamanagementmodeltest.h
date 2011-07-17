@@ -69,10 +69,14 @@ private Q_SLOTS:
     void testRemoveProperty_file();
     void testRemoveProperty_invalid_args();
     void testRemoveProperty_protectedTypes();
+    void testRemoveProperty_subResource();
+    void testRemoveProperty_subResource2();
 
     void testRemoveProperties();
     void testRemoveProperties_invalid_args();
     void testRemoveProperties_protectedTypes();
+    void testRemoveProperties_subResource();
+    void testRemoveProperties_subResource2();
 
     void testRemoveResources();
     void testRemoveResources_subresources();

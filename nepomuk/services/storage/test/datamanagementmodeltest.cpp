@@ -1189,6 +1189,42 @@ void DataManagementModelTest::testRemoveProperty_protectedTypes()
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
+// make sure that sub-resources are removed as soon as nothing related to them anymore, ie. as soon as the nao:hasSubResource relation is removed
+void DataManagementModelTest::testRemoveProperty_subResource()
+{
+    // we create two resources, one being marked as sub-resource of the other
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("whatever")), g1);
+
+    // now we remove the sub-resource property
+    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), NAO::hasSubResource(), QVariantList() << QUrl("res:/B"), QLatin1String("A"));
+
+    // the sub-resource should have been removed, too. The reason is simple: a sub-resource does not make sense without its super-resource
+    // and with the relation being gone there is no super-resource anymore.
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
+}
+
+// make sure that sub-resources are not removed as long as they are still sub-resource to something else
+void DataManagementModelTest::testRemoveProperty_subResource2()
+{
+    // we create two resources, one being marked as sub-resource of the other
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("whatever")), g1);
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/C"), NAO::hasSubResource(), QUrl("res:/B"), g1);
+
+    // now we remove the sub-resource property
+    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), NAO::hasSubResource(), QVariantList() << QUrl("res:/B"), QLatin1String("A"));
+
+    // The sub-resource should still be there
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/C"), NAO::hasSubResource(), QUrl("res:/C")));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("whatever"))));
+}
+
 void DataManagementModelTest::testRemoveProperties()
 {
     QTemporaryFile fileA;
@@ -1414,7 +1450,44 @@ void DataManagementModelTest::testRemoveProperties_protectedTypes()
     QVERIFY(m_dmModel->lastError());
 
     // no data should have been changed
-    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);}
+    QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
+}
+
+// make sure that sub-resources are removed as soon as nothing related to them anymore, ie. as soon as the nao:hasSubResource relation is removed
+void DataManagementModelTest::testRemoveProperties_subResource()
+{
+    // we create two resources, one being marked as sub-resource of the other
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("whatever")), g1);
+
+    // now we remove the sub-resource property
+    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QList<QUrl>() << NAO::hasSubResource(), QLatin1String("A"));
+
+    // the sub-resource should have been removed, too. The reason is simple: a sub-resource does not make sense without its super-resource
+    // and with the relation being gone there is no super-resource anymore.
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
+}
+
+// make sure that sub-resources are not removed as long as they are still sub-resource to something else
+void DataManagementModelTest::testRemoveProperties_subResource2()
+{
+    // we create two resources, one being marked as sub-resource of the other
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("whatever")), g1);
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/C"), NAO::hasSubResource(), QUrl("res:/B"), g1);
+
+    // now we remove the sub-resource property
+    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QList<QUrl>() << NAO::hasSubResource(), QLatin1String("A"));
+
+    // The sub-resource should still be there
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/C"), NAO::hasSubResource(), QUrl("res:/C")));
+    QVERIFY(m_model->containsAnyStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("whatever"))));
+}
 
 void DataManagementModelTest::testRemoveResources()
 {
