@@ -1,4 +1,4 @@
-/*
+    /*
 Copyright (C) 2011  Smit Shah <Who828@gmail.com>
 
 This program is free software; you can redistribute it and/or
@@ -56,7 +56,6 @@ void Nepomuk::WritebackPlugin::writeback( const QUrl& url )
 void Nepomuk::WritebackPlugin::emitFinished()
 {
     emit finished();
-    //emit finished( this );
 }
 
 

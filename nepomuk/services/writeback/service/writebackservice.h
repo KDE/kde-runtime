@@ -37,7 +37,7 @@ public:
 
 public Q_SLOTS:
   Q_SCRIPTABLE  void test( const Nepomuk::Resource & resource);
-
+                void finishWriteback();
 
 };
 

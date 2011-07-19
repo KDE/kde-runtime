@@ -1,5 +1,4 @@
-    /*
-        <one line to give the program's name and a brief idea of what it does.>
+/*
         Copyright (C) 2011  Smit Shah <who828@gmail.com>
 
         This program is free software: you can redistribute it and/or modify
@@ -17,53 +16,55 @@
 
     */
 
-    #include "writebackservice.h"
-    #include "writebackplugin.h"
+#include "writebackservice.h"
+#include "writebackplugin.h"
 
-    #include <kmimetypetrader.h>
-    #include <KDebug>
-    #include <KUrl>
-    #include <KService>
+#include <kmimetypetrader.h>
+#include <KDebug>
+#include <KUrl>
+#include <KService>
+#include <KServiceTypeTrader>
 
-    #include <QString>
+#include <QString>
 
-    #include <taglib/fileref.h>
-    #include <taglib/tag.h>
-    #include<taglib/tstring.h>
+#include <taglib/fileref.h>
+#include <taglib/tag.h>
+#include<taglib/tstring.h>
 
-    #include<Nepomuk/Resource>
-    #include <Nepomuk/Vocabulary/NIE>
-    #include <Nepomuk/Vocabulary/NFO>
-    #include <Nepomuk/Variant>
-    #include <Nepomuk/Types/Class>
-    #include <Nepomuk/Types/Property>
+#include<Nepomuk/Resource>
+#include <Nepomuk/Vocabulary/NIE>
+#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk/Variant>
+#include <Nepomuk/Types/Class>
+#include <Nepomuk/Types/Property>
 
-    using namespace Nepomuk::Vocabulary;
+using namespace Nepomuk::Vocabulary;
 
-    Nepomuk::WriteBackService::WriteBackService( QObject* parent, const QList< QVariant >& )
-        : Service(parent)
+Nepomuk::WriteBackService::WriteBackService( QObject* parent, const QList< QVariant >& )
+    : Service(parent)
+{
+    ResourceWatcher* resourcewatcher;
+    kDebug()<<"this part is executed";
+
+    resourcewatcher  = new ResourceWatcher(this);
+    resourcewatcher->addType(NFO::FileDataObject());
+    resourcewatcher->start();
+
+    connect( resourcewatcher, SIGNAL( propertyAdded(Nepomuk::Resource, Nepomuk::Types::Property, QVariant) ),
+            this, SLOT ( test(Nepomuk::Resource) ) );
+    connect( resourcewatcher, SIGNAL( propertyRemoved(Nepomuk::Resource, Nepomuk::Types::Property, QVariant) ),
+            this, SLOT ( test(Nepomuk::Resource) ) );
+}
+
+Nepomuk::WriteBackService::~WriteBackService()
+{
+}
+
+void Nepomuk::WriteBackService::test(const Nepomuk::Resource & resource)
+{
+    kDebug()<<"Test method executed";
+    if(resource.hasType(NFO::FileDataObject()))
     {
-        ResourceWatcher* resourcewatcher;
-        kDebug()<<"this part is executed";
-
-        resourcewatcher  = new ResourceWatcher(this);
-        resourcewatcher->addType(NFO::FileDataObject());
-        resourcewatcher->start();
-
-        connect( resourcewatcher, SIGNAL( propertyAdded(Nepomuk::Resource, Nepomuk::Types::Property, QVariant) ),
-                this, SLOT ( test(Nepomuk::Resource) ) );
-        connect( resourcewatcher, SIGNAL( propertyRemoved(Nepomuk::Resource, Nepomuk::Types::Property, QVariant) ),
-                this, SLOT ( test(Nepomuk::Resource) ) );
-    }
-
-    Nepomuk::WriteBackService::~WriteBackService()
-    {
-    }
-
-    void Nepomuk::WriteBackService::test(const Nepomuk::Resource & resource)
-    {
-        kDebug()<<"Test method executed";
-
         const QStringList mimetypes = resource.property(NIE::mimeType()).toStringList();
         if(!mimetypes.isEmpty())
         {
@@ -80,10 +81,37 @@
             }
         }
     }
+    else
+    {
+        QStringList subQueries( "'*' in [X-Nepomuk-ResourceTypes]" );
+        for( int i = 0; i < (resource.types()).count(); ++i ) {
+            subQueries << QString( "'%1' in [X-Nepomuk-ResourceTypes]" ).arg( ((resource.types()).at(i)).toString() );
+        }
 
-    #include <kpluginfactory.h>
-    #include <kpluginloader.h>
+        KService::List services
+                = KServiceTypeTrader::self()->query( "Nepomuk/WritebackPlugin", subQueries.join( " or " ) );
 
-    NEPOMUK_EXPORT_SERVICE( Nepomuk::WriteBackService, "nepomukwritebackservice" )
+        foreach(const KSharedPtr<KService>& service, services) {
+            // Return the cached instance if we have one, create a new one else
+            WritebackPlugin* plugin = service->createInstance<WritebackPlugin>();
+            if ( plugin )
+                plugin->writeback(resource.resourceUri());
 
-    #include "writebackservice.moc"
+            connect(plugin,SIGNAL(finished()),this,SLOT(finishWriteback()));
+        }
+    }
+}
+
+void Nepomuk::WriteBackService::finishWriteback()
+{
+    kDebug()<<"Writeback finished";
+    return;
+}
+
+
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
+
+NEPOMUK_EXPORT_SERVICE( Nepomuk::WriteBackService, "nepomukwritebackservice" )
+
+#include "writebackservice.moc"

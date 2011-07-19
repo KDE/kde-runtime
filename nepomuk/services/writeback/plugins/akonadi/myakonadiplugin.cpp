@@ -119,6 +119,7 @@ void Nepomuk::MyAkonadiPlugin::fetchFinished( KJob *job )
     }
     Akonadi::ItemModifyJob *modifyJob = new Akonadi::ItemModifyJob( item );
     connect( modifyJob, SIGNAL( result( KJob* ) ), SLOT( modifyFinished( KJob* ) ) );
+    emitFinished();
 }
 
 void Nepomuk::MyAkonadiPlugin::modifyFinished( KJob *job )
