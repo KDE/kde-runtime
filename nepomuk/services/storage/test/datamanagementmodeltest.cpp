@@ -4538,6 +4538,38 @@ void DataManagementModelTest::testStoreResources_randomNepomukUri()
     QVERIFY( m_dmModel->lastError() );
 }
 
+void DataManagementModelTest::testStoreResources_legacyData()
+{
+    // create some legacy data
+    QTemporaryFile file;
+    file.open();
+    const KUrl url(file.fileName());
+
+    const QUrl g = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    m_model->addStatement(url, QUrl("prop:/int"), LiteralValue(42), g);
+    m_model->addStatement(url, RDF::type(), NFO::FileDataObject(), g);
+
+    // set some data with the url
+    SimpleResource res( url );
+    res.addType( NFO::FileDataObject() );
+    res.addProperty( QUrl("prop:/int"), 42 );
+    res.addProperty( QUrl("prop:/int2"), 50 );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app") );
+
+    // make sure the resource has changed
+    QList< Statement > stList = m_model->listStatements( Node(), RDF::type(), NFO::FileDataObject() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    stList = m_model->listStatements( Node(), QUrl("prop:/int2"), LiteralValue(50) ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    stList = m_model->listStatements( Node(), QUrl("prop:/int"), LiteralValue(42) ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+}
+
+
 
 void DataManagementModelTest::testMergeResources()
 {
