@@ -78,6 +78,10 @@ void Nepomuk::insertOntologies(Soprano::Model* m_model, const QUrl& graph)
     m_model->addStatement( QUrl("class:/typeB"), RDF::type(), RDFS::Class(), graph );
     m_model->addStatement( QUrl("class:/typeB"), RDFS::subClassOf(), QUrl("class:/typeA"), graph );
 
+    m_model->addStatement( QUrl("prop:/graph"), RDF::type(), RDF::Property(), graph );
+    m_model->addStatement( QUrl("prop:/graph"), RDFS::range(), RDFS::Resource(), graph );
+    m_model->addStatement( QUrl("prop:/graph"), RDFS::domain(), NRL::Graph(), graph );
+
     // properties used all the time
     m_model->addStatement( NAO::identifier(), RDF::type(), RDF::Property(), graph );
     m_model->addStatement( RDF::type(), RDF::type(), RDF::Property(), graph );

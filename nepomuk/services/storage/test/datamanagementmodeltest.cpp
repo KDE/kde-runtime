@@ -4569,7 +4569,24 @@ void DataManagementModelTest::testStoreResources_legacyData()
     QCOMPARE( stList.size(), 1 );
 }
 
+void DataManagementModelTest::testStoreResources_graphChecks()
+{
+    SimpleResource res;
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("John Coner") );
 
+    const QUrl graph = m_nrlModel->createGraph( NRL::InstanceBase() );
+    m_model->addStatement( QUrl("nepomuk:/repo"), RDF::type(), RDFS::Resource(), graph );
+
+    QHash<QUrl, QVariant> additionalMetadata;
+    additionalMetadata.insert( QUrl("prop:/graph"), QUrl("nepomuk:/repo") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app"), IdentifyNew,
+                               NoStoreResourcesFlags, additionalMetadata );
+
+    // The should be no error as the additionalMetadata should implicitly have the nrl:Graph type
+    QVERIFY( !m_dmModel->lastError() );
+}
 
 void DataManagementModelTest::testMergeResources()
 {
