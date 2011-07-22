@@ -116,6 +116,9 @@ QSet<QUrl> Nepomuk::ClassAndPropertyTree::allParents(const QUrl &uri) const
 
 bool Nepomuk::ClassAndPropertyTree::isChildOf(const QUrl &type, const QUrl &superClass) const
 {
+    if( type == superClass )
+        return true;
+
     QMutexLocker lock(&m_mutex);
     if(const ClassOrProperty* cop = findClassOrProperty(type))
         return cop->allParents.contains(superClass);
