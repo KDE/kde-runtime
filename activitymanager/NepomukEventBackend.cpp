@@ -21,7 +21,12 @@
 #include "config-features.h"
 
 #ifndef HAVE_NEPOMUK
+#ifdef _MSC_VER
+#pragma warning()
+#pragma message("No Nepomuk, disabling desktop events processing")
+#else
     #warning "No Nepomuk, disabling desktop events processing"
+#endif
 
 #else // HAVE_NEPOMUK
 
