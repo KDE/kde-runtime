@@ -25,13 +25,13 @@
 #include <KService>
 #include <KServiceTypeTrader>
 
-#include <QString>
+#include <QtCore/QString>
 
 #include <taglib/fileref.h>
 #include <taglib/tag.h>
-#include<taglib/tstring.h>
+#include <taglib/tstring.h>
 
-#include<Nepomuk/Resource>
+#include <Nepomuk/Resource>
 #include <Nepomuk/Vocabulary/NIE>
 #include <Nepomuk/Vocabulary/NFO>
 #include <Nepomuk/Variant>
