@@ -85,19 +85,21 @@ void Nepomuk::WriteBackService::test(const Nepomuk::Resource & resource)
     {
         QStringList subQueries( "'*' in [X-Nepomuk-ResourceTypes]" );
         for( int i = 0; i < (resource.types()).count(); ++i ) {
-            subQueries << QString( "'%1' in [X-Nepomuk-ResourceTypes]" ).arg( ((resource.types()).at(i)).toString() );
+            subQueries << QString::fromLatin1( "'%1' in [X-Nepomuk-ResourceTypes]" ).arg( ((resource.types()).at(i)).toString() );
         }
 
         KService::List services
-                = KServiceTypeTrader::self()->query( "Nepomuk/WritebackPlugin", subQueries.join( " or " ) );
+                = KServiceTypeTrader::self()->query( QString::fromLatin1 ("Nepomuk/WritebackPlugin"), subQueries.join( " or " ) );
 
         foreach(const KSharedPtr<KService>& service, services) {
             // Return the cached instance if we have one, create a new one else
             WritebackPlugin* plugin = service->createInstance<WritebackPlugin>();
-            if ( plugin )
+            if ( plugin ) {
                 plugin->writeback(resource.resourceUri());
-
-            connect(plugin,SIGNAL(finished()),this,SLOT(finishWriteback()));
+                connect(plugin,SIGNAL(finished()),this,SLOT(finishWriteback()));
+            }
+            else
+                kDebug() << "Error occurred";
         }
     }
 }
