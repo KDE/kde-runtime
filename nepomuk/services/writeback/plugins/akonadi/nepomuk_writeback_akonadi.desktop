@@ -6,6 +6,5 @@ X-KDE-ServiceTypes=Nepomuk/WritebackPlugin
 Type=Service
 X-KDE-Library=nepomuk_writeback_akonadi
 
-# FIXME
 
 X-Nepomuk-ResourceTypes=NCO:Contact
