@@ -71,7 +71,7 @@ void Nepomuk::MyAkonadiPlugin::fetchFinished( KJob *job )
 
     KABC::Addressee addressee = item.payload<KABC::Addressee>();
 
-   Nepomuk::Resource resource(item.url());
+    Nepomuk::Resource resource(item.url());
 
     if((resource.property(NCO::nickname())).isValid()) {
         QString nick= (resource.property(NCO::nickname())).toString();
@@ -85,7 +85,7 @@ void Nepomuk::MyAkonadiPlugin::fetchFinished( KJob *job )
     if((resource.property(NCO::nameFamily())).isValid()) {
         QString fname= (resource.property(NCO::nameFamily())).toString();
 
-            if(fname != addressee.familyName()) {
+        if(fname != addressee.familyName()) {
             addressee.setFamilyName(fname);
             item.setPayload<KABC::Addressee>( addressee );
         }
@@ -119,15 +119,16 @@ void Nepomuk::MyAkonadiPlugin::fetchFinished( KJob *job )
     }
     Akonadi::ItemModifyJob *modifyJob = new Akonadi::ItemModifyJob( item );
     connect( modifyJob, SIGNAL( result( KJob* ) ), SLOT( modifyFinished( KJob* ) ) );
-    emitFinished();
 }
 
 void Nepomuk::MyAkonadiPlugin::modifyFinished( KJob *job )
 {
     if ( job->error() )
         qDebug() << "Error occurred";
-    else
+    else {
         qDebug() << "Item modified successfully";
+        emitFinished();
+    }
 }
 
 NEPOMUK_EXPORT_WRITEBACK_PLUGIN(Nepomuk::MyAkonadiPlugin,"nepomuk_writeback_akonadi")
