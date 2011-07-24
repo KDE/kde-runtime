@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Dummy plugin
+Name[bg]=Празна приставка
 Name[nds]=Platzholl-Moduul
 Name[nl]=Dummy plug-in
 Name[pt]='Plugin' de testes
@@ -10,6 +11,7 @@ Name[ug]=مەۋھۇم قىستۇرما
 Name[uk]=Тестовий додаток
 Name[x-test]=xxDummy pluginxx
 Comment=Just testing
+Comment[bg]=Само за изпробване
 Comment[nl]=Gewoon testen
 Comment[pt]=Apenas para testes
 Comment[pt_BR]=Apenas testando
