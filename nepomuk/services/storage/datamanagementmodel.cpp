@@ -1381,9 +1381,12 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                 newResUri = SimpleResource().uri(); // HACK: improveme
 
                 res.addProperty( NIE::url(), nieUrl );
-                res.addProperty( RDF::type(), NFO::FileDataObject() );
-                if( QFileInfo( nieUrl.toLocalFile() ).isDir() )
-                    res.addProperty( RDF::type(), NFO::Folder() );
+
+                if( state == ExistingFileUrl ) {
+                    res.addProperty( RDF::type(), NFO::FileDataObject() );
+                    if( QFileInfo( nieUrl.toLocalFile() ).isDir() )
+                        res.addProperty( RDF::type(), NFO::Folder() );
+                }
             }
             resolvedNodes.insert( nieUrl, newResUri );
 
@@ -1475,10 +1478,12 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                         if( resolvedUri.isEmpty() ) {
                             resolvedUri = SimpleResource().uri(); // HACK: improveme
 
-                            newRes.insert( RDF::type(), NFO::FileDataObject() );
                             newRes.insert( NIE::url(), nieUrl );
-                            if( QFileInfo( nieUrl.toLocalFile() ).isDir() )
-                                newRes.insert( RDF::type(), NFO::Folder() );
+                            if( state == ExistingFileUrl ) {
+                                newRes.insert( RDF::type(), NFO::FileDataObject() );
+                                if( QFileInfo( nieUrl.toLocalFile() ).isDir() )
+                                    newRes.insert( RDF::type(), NFO::Folder() );
+                            }
                         }
 
                         newRes.setUri( resolvedUri );
