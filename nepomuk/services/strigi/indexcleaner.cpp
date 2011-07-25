@@ -246,6 +246,7 @@ void Nepomuk::IndexCleaner::start()
     // for video and audio streams.
     //
     m_removalQueries << QString::fromLatin1("select ?r where { "
+                                            "graph ?g { ?r ?pp ?oo . } . "
                                             "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
                                             "FILTER(!bif:exists((select (1) where { ?r %1 ?u . }))) . "
                                             "FILTER(!bif:exists((select (1) where { ?r %2 ?p . }))) . "
