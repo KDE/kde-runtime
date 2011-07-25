@@ -302,7 +302,7 @@ void Nepomuk::Sync::ResourceIdentifier::setModel(Soprano::Model* model)
 
 KUrl Nepomuk::Sync::ResourceIdentifier::mappedUri(const KUrl& resourceUri) const
 {
-    QHash< KUrl, KUrl >::iterator it = d->m_hash.find( resourceUri );
+    QHash< QUrl, QUrl >::iterator it = d->m_hash.find( resourceUri );
     if( it != d->m_hash.end() )
         return it.value();
     return KUrl();
@@ -313,7 +313,7 @@ KUrl::List Nepomuk::Sync::ResourceIdentifier::mappedUris() const
     return d->m_hash.uniqueKeys();
 }
 
-QHash<KUrl, KUrl> Nepomuk::Sync::ResourceIdentifier::mappings() const
+QHash<QUrl, QUrl> Nepomuk::Sync::ResourceIdentifier::mappings() const
 {
     return d->m_hash;
 }
@@ -345,7 +345,7 @@ QSet< KUrl > Nepomuk::Sync::ResourceIdentifier::unidentified() const
     return d->m_notIdentified;
 }
 
-QSet< KUrl > Nepomuk::Sync::ResourceIdentifier::identified() const
+QSet< QUrl > Nepomuk::Sync::ResourceIdentifier::identified() const
 {
     return d->m_hash.keys().toSet();
 }

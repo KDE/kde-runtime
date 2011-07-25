@@ -62,7 +62,7 @@ namespace Nepomuk {
              * The main identification hash which maps external ResourceUris
              * with the internal ones
              */
-            QHash<KUrl, KUrl> m_hash;
+            QHash<QUrl, QUrl> m_hash;
 
             QSet<KUrl> m_notIdentified;
 

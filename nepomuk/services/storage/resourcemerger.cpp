@@ -68,12 +68,12 @@ Nepomuk::ResourceMerger::~ResourceMerger()
 {
 }
 
-void Nepomuk::ResourceMerger::setMappings(const QHash< KUrl, KUrl >& mappings)
+void Nepomuk::ResourceMerger::setMappings(const QHash< QUrl, QUrl >& mappings)
 {
     m_mappings = mappings;
 }
 
-QHash< KUrl, KUrl > Nepomuk::ResourceMerger::mappings() const
+QHash< QUrl, QUrl > Nepomuk::ResourceMerger::mappings() const
 {
     return m_mappings;
 }
@@ -465,7 +465,7 @@ Soprano::Node Nepomuk::ResourceMerger::resolveMappedNode(const Soprano::Node& no
 {
     // Find in mappings
     const QUrl uri = node.isBlank() ? node.toN3() : node.uri();
-    QHash< KUrl, KUrl >::const_iterator it = m_mappings.constFind( uri );
+    QHash< QUrl, QUrl >::const_iterator it = m_mappings.constFind( uri );
     if( it != m_mappings.constEnd() ) {
         return it.value();
     }
@@ -490,7 +490,7 @@ Soprano::Node Nepomuk::ResourceMerger::resolveUnmappedNode(const Soprano::Node& 
     if( !node.isBlank() )
         return node;
 
-    QHash< KUrl, KUrl >::const_iterator it = m_mappings.constFind( QUrl(node.toN3()) );
+    QHash< QUrl, QUrl >::const_iterator it = m_mappings.constFind( QUrl(node.toN3()) );
     if( it != m_mappings.constEnd() ) {
         return it.value();
     }
