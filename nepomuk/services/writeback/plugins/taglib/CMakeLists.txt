@@ -16,7 +16,7 @@ include_directories(
  )
 
 set( writebackplugins_SCR
-mywritebackplugin.cpp
+TaglibWritebackPlugin.cpp
 )
 kde4_add_plugin(nepomuk_writeback_taglib ${writebackplugins_SCR})
 
