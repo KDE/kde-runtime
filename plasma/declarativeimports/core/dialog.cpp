@@ -106,9 +106,11 @@ void DialogProxy::setMainItem(QGraphicsObject *mainItem)
 {
     if (m_mainItem.data() != mainItem) {
         if (m_mainItem) {
-            m_mainItem.data()->setParent(mainItem->parent());
+            m_mainItem.data()->setParent(mainItem ? mainItem->parent() : 0);
         }
+
         m_mainItem = mainItem;
+
         if (mainItem) {
             mainItem->setParentItem(0);
             mainItem->setParent(this);
@@ -151,8 +153,10 @@ void DialogProxy::syncMainItem()
 
     QGraphicsWidget *widget = qobject_cast<QGraphicsWidget *>(m_mainItem.data());
     if (widget) {
-        m_declarativeItemContainer->deleteLater();
-        m_declarativeItemContainer = 0;
+        if (m_declarativeItemContainer) {
+            m_declarativeItemContainer->deleteLater();
+            m_declarativeItemContainer = 0;
+        }
     } else {
         QDeclarativeItem *di = qobject_cast<QDeclarativeItem *>(m_mainItem.data());
         if (di) {

@@ -18,18 +18,10 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "config-features.h"
-
-#ifndef HAVE_NEPOMUK
-    #warning "No Nepomuk, disabling desktop events processing"
-
-#else // HAVE_NEPOMUK
-
-#include "NepomukEventBackend.h"
+#include "NepomukPlugin.h"
 #include "NepomukResourceScoreMaintainer.h"
 
-#include "Event.h"
-#include "ActivityManager.h"
+#include "../../Event.h"
 #include "kext.h"
 
 #include <nepomuk/resource.h>
@@ -57,11 +49,21 @@ using namespace Soprano::Vocabulary;
 using namespace Nepomuk::Vocabulary;
 using namespace Nepomuk::Query;
 
-NepomukEventBackend::NepomukEventBackend()
+NepomukPlugin * NepomukPlugin::s_instance = NULL;
+
+NepomukPlugin::NepomukPlugin(QObject *parent, const QVariantList & args)
+    : Plugin(parent)
 {
+    Q_UNUSED(args)
+    s_instance = this;
 }
 
-void NepomukEventBackend::addEvents(const EventList & events)
+NepomukPlugin * NepomukPlugin::self()
+{
+    return s_instance;
+}
+
+void NepomukPlugin::addEvents(const EventList & events)
 {
     foreach (const Event& event, events) {
         kDebug() << "We are processing event" << event.type << event.uri;
@@ -209,7 +211,7 @@ void NepomukEventBackend::addEvents(const EventList & events)
     }
 }
 
-Nepomuk::Resource NepomukEventBackend::createDesktopEvent(const KUrl& uri, const QDateTime& startTime, const QString& app)
+Nepomuk::Resource NepomukPlugin::createDesktopEvent(const KUrl& uri, const QDateTime& startTime, const QString& app)
 {
     kDebug() << "Creating a new desktop event" << uri << startTime << app;
 
@@ -228,7 +230,7 @@ Nepomuk::Resource NepomukEventBackend::createDesktopEvent(const KUrl& uri, const
     // the activity
     if (!m_currentActivity.isValid()
             || m_currentActivity.identifiers().isEmpty()
-            || m_currentActivity.identifiers().first() != ActivityManager::self()->CurrentActivity()) {
+            || m_currentActivity.identifiers().first() != sharedInfo()->currentActivity()) {
         // update the current activity resource
 
         kDebug() << "Assigning the activity to the event";
@@ -250,7 +252,7 @@ Nepomuk::Resource NepomukEventBackend::createDesktopEvent(const KUrl& uri, const
             m_currentActivity = it[0].uri();
         } else {
             m_currentActivity = currentActivityRes;
-            m_currentActivity.setProperty(KExt::activityIdentifier(), ActivityManager::self()->CurrentActivity());
+            m_currentActivity.setProperty(KExt::activityIdentifier(), sharedInfo()->currentActivity());
         }
     }
 
@@ -259,4 +261,4 @@ Nepomuk::Resource NepomukEventBackend::createDesktopEvent(const KUrl& uri, const
     return eventRes;
 }
 
-#endif // HAVE_NEPOMUK
+KAMD_EXPORT_PLUGIN(NepomukPlugin, "activitymanger_plugin_nepomuk")

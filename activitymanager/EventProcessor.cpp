@@ -19,32 +19,27 @@
  */
 
 #include "EventProcessor.h"
-#include "EventBackend.h"
+#include "Plugin.h"
 
 #include "config-features.h"
 
-#ifdef HAVE_QZEITGEIST
-#include "ZeitgeistEventBackend.h"
-#endif
+#include "Plugin.h"
 
-#ifdef HAVE_NEPOMUK
-#include "NepomukEventBackend.h"
-#endif
-
-#include "SlcEventBackend.h"
+#include <KDebug>
 
 #include <QDateTime>
 #include <QList>
 #include <QMutex>
 
 #include <KDebug>
+#include <KServiceTypeTrader>
 
 #include <time.h>
 
 class EventProcessorPrivate: public QThread {
 public:
-    QList < EventBackend * > lazyBackends;
-    QList < EventBackend * > syncBackends;
+    QList < Plugin * > lazyBackends;
+    QList < Plugin * > syncBackends;
 
     QList < Event > events;
     QMutex events_mutex;
@@ -79,7 +74,8 @@ void EventProcessorPrivate::run()
 
         EventProcessorPrivate::events_mutex.unlock();
 
-        foreach (EventBackend * backend, lazyBackends) {
+        kDebug() << "Passing the event to" << lazyBackends.size() << "lazy plugins";
+        foreach (Plugin * backend, lazyBackends) {
             backend->addEvents(currentEvents);
         }
     }
@@ -97,13 +93,63 @@ EventProcessor * EventProcessor::self()
 EventProcessor::EventProcessor()
     : d(new EventProcessorPrivate())
 {
-#ifdef HAVE_QZEITGEIST
-    d->lazyBackends.append(new ZeitgeistEventBackend());
-#endif
-#ifdef HAVE_NEPOMUK
-    d->lazyBackends.append(new NepomukEventBackend());
-#endif
-    d->syncBackends.append(new SlcEventBackend());
+    // Plugin loading
+
+    kDebug() << "Loading plugins...";
+
+    KService::List offers = KServiceTypeTrader::self()->query("ActivityManager/Plugin");
+
+    QStringList disabledPlugins = SharedInfo::self()->pluginConfig("Global").readEntry("disabledPlugins", QStringList());
+    kDebug() << disabledPlugins << "disabled due to the configuration in activitymanager-pluginsrc";
+
+    foreach(const KService::Ptr & service, offers) {
+        if (!disabledPlugins.contains(service->library())) {
+            disabledPlugins.append(
+                    service->property("X-ActivityManager-PluginOverrides", QVariant::StringList).toStringList()
+                );
+            kDebug() << service->name() << "disables" <<
+                    service->property("X-ActivityManager-PluginOverrides", QVariant::StringList);
+
+        }
+    }
+
+    foreach(const KService::Ptr & service, offers) {
+        if (disabledPlugins.contains(service->library())) {
+            continue;
+        }
+
+        kDebug() << "Loading plugin:"
+            << service->name() << service->storageId() << service->library()
+            << service->property("X-ActivityManager-PluginType", QVariant::String);
+
+        KPluginFactory * factory = KPluginLoader(service->library()).factory();
+
+        if (!factory) {
+            kDebug() << "Failed to load plugin:" << service->name();
+            continue;
+        }
+
+        Plugin * plugin = factory->create < Plugin > (this);
+        plugin->setSharedInfo(SharedInfo::self());
+
+        if (plugin) {
+            const QString & type = service->property("X-ActivityManager-PluginType", QVariant::String).toString();
+
+            if (type == "lazyeventhandler") {
+                d->lazyBackends << plugin;
+                kDebug() << "Added to lazy plugins";
+
+            } else if (type == "synceventhandler"){
+                d->syncBackends << plugin;
+                kDebug() << "Added to sync plugins";
+
+            }
+
+        } else {
+            kDebug() << "Failed to load plugin:" << service->name();
+        }
+
+    }
 }
 
 EventProcessor::~EventProcessor()
@@ -118,7 +164,7 @@ void EventProcessor::addEvent(const QString & application, WId wid, const QStrin
 {
     Event newEvent(application, wid, uri, type, reason);
 
-    foreach (EventBackend * backend, d->syncBackends) {
+    foreach (Plugin * backend, d->syncBackends) {
         backend->addEvents(QList < Event > () << newEvent);
     }
 

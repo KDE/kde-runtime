@@ -1,0 +1,3 @@
+macro_optional_add_subdirectory(dummy)
+macro_optional_add_subdirectory(slc)
+macro_optional_add_subdirectory(nepomuk)

@@ -49,8 +49,8 @@ namespace Nepomuk {
                         const StoreResourcesFlags& flags );
         virtual ~ResourceMerger();
 
-        void setMappings( const QHash<KUrl, KUrl> & mappings );
-        QHash<KUrl, KUrl> mappings() const;
+        void setMappings( const QHash<QUrl, QUrl> & mappings );
+        QHash<QUrl, QUrl> mappings() const;
 
         bool merge(const Soprano::Graph& graph);
 
@@ -83,7 +83,7 @@ namespace Nepomuk {
         void removeDuplicatesInList( QList<Soprano::Statement> *stList );
         QMultiHash<QUrl, Soprano::Statement> m_duplicateStatements;
 
-        QHash<KUrl, KUrl> m_mappings;
+        QHash<QUrl, QUrl> m_mappings;
 
         /// Can set the error
         QMultiHash<QUrl, Soprano::Node> toNodeHash( const QHash<QUrl, QVariant> &hash );

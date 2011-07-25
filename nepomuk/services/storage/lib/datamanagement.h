@@ -131,6 +131,33 @@ namespace Nepomuk {
      * syncing). But it can be queried at any time to be used for whatever purpose.
      *
      *
+     * \section nepomuk_dms_resource_identification Resource Identification
+     *
+     * Resource identification is an important issue in storeResources(). There are basically three ways to identify a resource:
+     * -# The trivial way to identify a resource is to provide the exact resource URI.
+     * -# The second, also rather trivial way to identify a resource is through its nie:url. This can be a local file URL or an
+     * http URL or anything else as decribed in \ref nepomuk_dms_resource_uris.
+     * -# The last, most interesting way to identify a resource is through its properties and relations. This is what
+     * storeResources() does in Nepomuk::IdentifyNew mode.
+     *
+     * In general all properties with a literal range are considered identifying. This includes properties like nao:prefLabel,
+     * nie:title, nco:fullname, and so on. All properties with a non-literal range are considered non-identifying. However,
+     * there are exceptions to this rule. Some properties with literal ranges are non-identifying since they express the state
+     * of a resource or an opinion of a particular user.
+     *
+     * Examples of properties like this include \c nao:numericRating, nie:comment, or nco:imStatus. On the other hand there are
+     * properties with non-literal ranges which are in fact identifying. Typical examples include \c rdf:type, \c nfo:hasHash,
+     * or \c nmm:performer.
+     *
+     * To this end we make use of \c nrl:IdentifyingProperty and \c nrl:FluxProperty. The former is used to mark specific properties
+     * as being identifying while the latter states that a property can change over time without actually chaning the identity
+     * of the resource.
+     *
+     * In storeResources() two resources are considered being equal if all of their identifying properties match and they have at
+     * least one identifying propery in common. Matching identifying properties here means that there is no identifying property
+     * with a different value in the other resource.
+     *
+     *
      * \section nepomuk_dms_advanced Advanced Nepomuk Concepts
      *
      * This section described advanced concepts in Nepomuk such as the data layout used throughout the database.
@@ -326,6 +353,10 @@ namespace Nepomuk {
         /// are just saved with their given URI, provided the URI already exists.
         IdentifyNew = 0,
 
+        /// All resources are identified no matter what. The resource URI given is not considered
+        /// even if it already exists
+        IdentifyAll = 1,
+
         /// All resources are treated as new ones. The only exception are those with a defined
         /// resource URI.
         IdentifyNone = 2
@@ -410,6 +441,8 @@ namespace Nepomuk {
      * to state that the provided information can be recreated at any time. Only built-in types
      * such as int, string, or url are supported.
      * \param component The calling component. Typically this is left to the default.
+     *
+     * See \ref nepomuk_dms_resource_identification for details on how resources are identified.
      */
     NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* storeResources(const Nepomuk::SimpleResourceGraph& resources,
                                                         Nepomuk::StoreIdentificationMode identificationMode = Nepomuk::IdentifyNew,
@@ -439,6 +472,8 @@ namespace Nepomuk {
      * to state that the provided information can be recreated at any time. Only built-in types
      * such as int, string, or url are supported.
      * \param component The calling component. Typically this is left to the default.
+     *
+     * See \ref nepomuk_dms_resource_identification for details on how resources are identified.
      */
     NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* importResources(const KUrl& url,
                                                          Soprano::RdfSerialization serialization,

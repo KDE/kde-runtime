@@ -17,23 +17,43 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef ZEITGEIST_EVENT_BACKEND_H_
-#define ZEITGEIST_EVENT_BACKEND_H_
+#ifndef EVENT_BACKEND_H_
+#define EVENT_BACKEND_H_
 
-#include "EventBackend.h"
+#include <EventProcessor.h>
+
+#include <kdemacros.h>
+#include <KPluginFactory>
+#include <KPluginLoader>
+
+#include "Event.h"
+#include "SharedInfo.h"
+
+#define KAMD_EXPORT_PLUGIN(ClassName, AboutData)                       \
+    K_PLUGIN_FACTORY(ClassName##Factory, registerPlugin<ClassName>();) \
+    K_EXPORT_PLUGIN(ClassName##Factory("AboutData"))
+
 
 /**
  *
  */
-class ZeitgeistEventBackend: public EventBackend {
+class KDE_EXPORT Plugin: public QObject {
+    Q_OBJECT
+
 public:
-    ZeitgeistEventBackend();
+    Plugin(QObject * parent);
+    virtual ~Plugin();
 
     virtual void addEvents(const EventList & events);
+    virtual void setResourceMimeType(const QString & uri, const QString & mimetype);
+
+    virtual void setSharedInfo(SharedInfo * sharedInfo);
+    SharedInfo * sharedInfo() const;
 
 private:
-    /* data */
+    class Private;
+    Private * const d;
 };
 
-#endif // ZEITGEIST_EVENT_BACKEND_H_
+#endif // EVENT_BACKEND_H_
 

@@ -63,6 +63,7 @@ private Q_SLOTS:
     void testSetProperty_nieUrl5();
     void testSetProperty_nieUrl6();
     void testSetProperty_protectedTypes();
+    void testSetProperty_legacyData();
 
     void testRemoveProperty();
     void testRemoveProperty_file();
@@ -145,6 +146,9 @@ private Q_SLOTS:
     void testStoreResources_lazyCardinalities();
     void testStoreResources_graphMetadataFail();
     void testStoreResources_randomNepomukUri();
+    void testStoreResources_legacyData();
+    void testStoreResources_graphChecks();
+    void testStoreResources_identifyAll();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();

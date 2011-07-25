@@ -40,7 +40,9 @@ target_link_libraries(nepomukdatamanagement
   ${NEPOMUK_LIBRARIES}
   ${KDE4_KDECORE_LIBS})
 
-install(TARGETS nepomukdatamanagement DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS nepomukdatamanagement
+  DESTINATION ${LIB_INSTALL_DIR})
+
 install(FILES
   simpleresource.h
   simpleresourcegraph.h
@@ -49,8 +51,12 @@ install(FILES
   describeresourcesjob.h
   resourcewatcher.h
   nepomukdatamanagement_export.h
-  DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk)
+  DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk
+  COMPONENT Devel)
 
+install(PROGRAMS nepomuk-simpleresource-rcgen.py
+  DESTINATION ${BIN_INSTALL_DIR}
+  COMPONENT Devel)
 
 # API docs
 find_package(Doxygen)
