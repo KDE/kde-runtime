@@ -51,45 +51,45 @@ void Nepomuk::Exiv2WritebackPlugin::doWriteback(const QUrl& url)
 
         if((resource.property(NEXIF::dateTime())).isValid())
         {
-            QString datetime = (resource.property(NEXIF::dateTime())).toString();
-            if(datetime != image.getExifTagString("Exif.Image.DateTime"))
+            QDateTime datetime = (resource.property(NEXIF::dateTime())).toDateTime();
+            if(datetime != QDateTime::fromString(image.getExifTagString("Exif.Image.DateTime"), QLatin1String("yyyy:MM:dd hh:mm:ss")))
             {
-                image.setExifTagString("Exif.Image.DateTime",datetime);
+                image.setExifTagString("Exif.Image.DateTime",datetime.toString(QLatin1String("yyyy:MM:dd hh:mm:ss")));
             }
         }
 
         if((resource.property(NEXIF::dateTimeDigitized())).isValid())
         {
-            QString datetime = (resource.property(NEXIF::dateTimeDigitized())).toString();
-            if(datetime != image.getExifTagString("Exif.Photo.DateTimeDigitized"))
+            QDateTime datetime = (resource.property(NEXIF::dateTimeDigitized())).toDateTime();
+            if(datetime != QDateTime::fromString(image.getExifTagString("Exif.Photo.DateTimeDigitized"),QLatin1String("yyyy:MM:dd hh:mm:ss")))
             {
-                image.setExifTagString("Exif.Photo.DateTimeDigitized",datetime);
+                image.setExifTagString("Exif.Photo.DateTimeDigitized",datetime.toString(QLatin1String("yyyy:MM:dd hh:mm:ss")));
             }
         }
         if((resource.property(NEXIF::dateTimeOriginal())).isValid())
         {
-            QString datetime = (resource.property(NEXIF::dateTimeOriginal())).toString();
-            if(datetime != image.getExifTagString("Exif.Image.DateTimeOriginal"))
+            QDateTime datetime = (resource.property(NEXIF::dateTimeOriginal())).toDateTime();
+            if(datetime !=QDateTime::fromString (image.getExifTagString("Exif.Image.DateTimeOriginal"),QLatin1String("yyyy:MM:dd hh:mm:ss")))
             {
-                image.setExifTagString("Exif.Image.DateTimeOriginal",datetime);
+                image.setExifTagString("Exif.Image.DateTimeOriginal",datetime.toString(QLatin1String("yyyy:MM:dd hh:mm:ss")));
             }
         }
 
         if((resource.property(NEXIF::imageDescription())).isValid())
         {
-            QString datetime = (resource.property(NEXIF::imageDescription())).toString();
-            if(datetime != image.getExifTagString("Exif.Image.ImageDescription"))
+            QString imagedes = (resource.property(NEXIF::imageDescription())).toString();
+            if(imagedes != image.getExifTagString("Exif.Image.ImageDescription"))
             {
-                image.setExifTagString("Exif.Image.ImageDescription",datetime);
+                image.setExifTagString("Exif.Image.ImageDescription",imagedes);
             }
         }
 
         if((resource.property(NEXIF::orientation())).isValid())
         {
-            QString datetime = (resource.property(NEXIF::imageDescription())).toString();
-            if(datetime != image.getExifTagString("Exif.Image.Orientation"))
+            QString imageorin = (resource.property(NEXIF::orientation())).toString();
+            if(imageorin != image.getExifTagString("Exif.Image.Orientation"))
             {
-                image.setExifTagString("Exif.Image.Orientation",datetime);
+                image.setExifTagString("Exif.Image.Orientation",imageorin);
             }
         }
         image.applyChanges();
