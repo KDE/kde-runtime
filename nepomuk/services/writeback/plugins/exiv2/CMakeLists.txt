@@ -16,7 +16,7 @@ include_directories(
  )
 
 set( writebackplugins_SCR
-Exiv2WritebackPlugin.cpp
+exiv2writebackplugin.cpp
 )
 kde4_add_plugin(nepomuk_writeback_exiv2 ${writebackplugins_SCR})
 

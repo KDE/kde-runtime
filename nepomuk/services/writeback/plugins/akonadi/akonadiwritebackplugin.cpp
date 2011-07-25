@@ -34,7 +34,7 @@
 
 #include <KABC/Addressee>
 
-#include "AkonadiWritebackPlugin.h"
+#include "akonadiwritebackplugin.h"
 
 using namespace Nepomuk::Vocabulary;
 

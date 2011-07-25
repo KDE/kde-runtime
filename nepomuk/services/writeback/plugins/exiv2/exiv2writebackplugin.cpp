@@ -27,7 +27,7 @@
 #include <Nepomuk/Vocabulary/NEXIF>
 #include <Nepomuk/Variant>
 
-#include "Exiv2WritebackPlugin.h"
+#include "exiv2writebackplugin.h"
 
 using namespace Nepomuk::Vocabulary;
 
@@ -52,29 +52,24 @@ void Nepomuk::Exiv2WritebackPlugin::doWriteback(const QUrl& url)
         if((resource.property(NEXIF::dateTime())).isValid())
         {
             QDateTime datetime = (resource.property(NEXIF::dateTime())).toDateTime();
-            if(datetime != QDateTime::fromString(image.getExifTagString("Exif.Image.DateTime"), QLatin1String("yyyy:MM:dd hh:mm:ss")))
-            {
-                image.setExifTagString("Exif.Image.DateTime",datetime.toString(QLatin1String("yyyy:MM:dd hh:mm:ss")));
+            if(datetime != exifDateToDateTime(image.getExifTagString("Exif.Image.DateTime"))) {
+                image.setExifTagString("Exif.Image.DateTime",exifDateFromDateTime(datetime));
             }
         }
-
         if((resource.property(NEXIF::dateTimeDigitized())).isValid())
         {
             QDateTime datetime = (resource.property(NEXIF::dateTimeDigitized())).toDateTime();
-            if(datetime != QDateTime::fromString(image.getExifTagString("Exif.Photo.DateTimeDigitized"),QLatin1String("yyyy:MM:dd hh:mm:ss")))
-            {
-                image.setExifTagString("Exif.Photo.DateTimeDigitized",datetime.toString(QLatin1String("yyyy:MM:dd hh:mm:ss")));
+            if(datetime != exifDateToDateTime(image.getExifTagString("Exif.Photo.DateTimeDigitized"))) {
+                image.setExifTagString("Exif.Photo.DateTimeDigitized",exifDateFromDateTime(datetime));
             }
         }
         if((resource.property(NEXIF::dateTimeOriginal())).isValid())
         {
             QDateTime datetime = (resource.property(NEXIF::dateTimeOriginal())).toDateTime();
-            if(datetime !=QDateTime::fromString (image.getExifTagString("Exif.Image.DateTimeOriginal"),QLatin1String("yyyy:MM:dd hh:mm:ss")))
-            {
-                image.setExifTagString("Exif.Image.DateTimeOriginal",datetime.toString(QLatin1String("yyyy:MM:dd hh:mm:ss")));
+            if(datetime !=exifDateToDateTime(image.getExifTagString("Exif.Image.DateTimeOriginal"))) {
+                image.setExifTagString("Exif.Image.DateTimeOriginal",exifDateFromDateTime(datetime));
             }
         }
-
         if((resource.property(NEXIF::imageDescription())).isValid())
         {
             QString imagedes = (resource.property(NEXIF::imageDescription())).toString();
@@ -83,7 +78,6 @@ void Nepomuk::Exiv2WritebackPlugin::doWriteback(const QUrl& url)
                 image.setExifTagString("Exif.Image.ImageDescription",imagedes);
             }
         }
-
         if((resource.property(NEXIF::orientation())).isValid())
         {
             QString imageorin = (resource.property(NEXIF::orientation())).toString();
@@ -97,5 +91,15 @@ void Nepomuk::Exiv2WritebackPlugin::doWriteback(const QUrl& url)
     }
 }
 
+QDateTime Nepomuk::Exiv2WritebackPlugin::exifDateToDateTime(const QString& string)
+{
+    return QDateTime::fromString(string,datetimeformat);
+}
+
+QString Nepomuk::Exiv2WritebackPlugin::exifDateFromDateTime(const QDateTime& datetime)
+{
+    return datetime.toString(datetimeformat);
+}
+
 NEPOMUK_EXPORT_WRITEBACK_PLUGIN(Nepomuk::Exiv2WritebackPlugin,"nepomuk_writeback_exiv2")
-#include "Exiv2WritebackPlugin.moc"
+#include "exiv2writebackplugin.moc"

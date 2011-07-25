@@ -36,7 +36,7 @@ along with this program.  If not, see <http:www.gnu.org/licenses/>.
 
 #include <Nepomuk/Variant>
 
-#include <TaglibWritebackPlugin.h>
+#include <taglibwritebackplugin.h>
 
 using namespace Nepomuk::Vocabulary;
 Nepomuk::TaglibWritebackPlugin::TaglibWritebackPlugin(QObject* parent,const QList<QVariant>&): WritebackPlugin(parent)
@@ -119,4 +119,4 @@ void Nepomuk::TaglibWritebackPlugin::doWriteback(const QUrl& url)
     }
 }
 NEPOMUK_EXPORT_WRITEBACK_PLUGIN(Nepomuk::TaglibWritebackPlugin,"nepomuk_writeback_taglib")
-#include "TaglibWritebackPlugin.moc"
+#include "taglibwritebackplugin.moc"
