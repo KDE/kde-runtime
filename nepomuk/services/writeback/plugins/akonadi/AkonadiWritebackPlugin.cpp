@@ -50,10 +50,10 @@ Nepomuk::AkonadiWritebackPlugin::~MyAkonadiPlugin()
 
 void Nepomuk::AkonadiWritebackPlugin::doWriteback(const QUrl& url)
 {
-    Nepomuk::Resource resource(url.toLocalFile());
+    Nepomuk::Resource resource(url);
     if(resource.isValid()) {
         Akonadi::Item  item;
-        item.fromUrl(url.toLocalFile());
+        item.fromUrl(url);
         Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob( item );
         fetchJob->fetchScope().fetchFullPayload();
         connect( fetchJob, SIGNAL( result( KJob* ) ), SLOT( fetchFinished( KJob* ) ) );
