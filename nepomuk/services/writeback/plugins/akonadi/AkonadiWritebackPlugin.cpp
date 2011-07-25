@@ -78,7 +78,6 @@ void Nepomuk::AkonadiWritebackPlugin::fetchFinished( KJob *job )
 
         if(nick != addressee.nickName()) {
             addressee.setNickName(nick);
-            item.setPayload<KABC::Addressee>( addressee );
         }
     }
 
@@ -87,7 +86,6 @@ void Nepomuk::AkonadiWritebackPlugin::fetchFinished( KJob *job )
 
         if(fname != addressee.familyName()) {
             addressee.setFamilyName(fname);
-            item.setPayload<KABC::Addressee>( addressee );
         }
     }
 
@@ -96,7 +94,6 @@ void Nepomuk::AkonadiWritebackPlugin::fetchFinished( KJob *job )
 
         if(gname != addressee.givenName()) {
             addressee.setGivenName(gname);
-            item.setPayload<KABC::Addressee>( addressee );
         }
     }
 
@@ -105,7 +102,6 @@ void Nepomuk::AkonadiWritebackPlugin::fetchFinished( KJob *job )
 
         if(email != addressee.preferredEmail()) {
             addressee.insertEmail(email,true);
-            item.setPayload<KABC::Addressee>( addressee );
         }
     }
 
@@ -114,9 +110,9 @@ void Nepomuk::AkonadiWritebackPlugin::fetchFinished( KJob *job )
 
         if(birthDate != addressee.birthday()) {
             addressee.setBirthday(birthDate);
-            item.setPayload<KABC::Addressee>( addressee );
         }
     }
+    item.setPayload<KABC::Addressee>( addressee );
     Akonadi::ItemModifyJob *modifyJob = new Akonadi::ItemModifyJob( item );
     connect( modifyJob, SIGNAL( result( KJob* ) ), SLOT( modifyFinished( KJob* ) ) );
 }
