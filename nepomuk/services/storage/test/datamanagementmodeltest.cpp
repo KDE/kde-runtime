@@ -4588,6 +4588,32 @@ void DataManagementModelTest::testStoreResources_graphChecks()
     QVERIFY( !m_dmModel->lastError() );
 }
 
+void DataManagementModelTest::testStoreResources_identifyAll()
+{
+    const QUrl graph = m_nrlModel->createGraph( NRL::InstanceBase() );
+    const QUrl contact1("nepomuk:/res/contact1");
+    const QUrl contact2("nepomuk:/res/contact2");
+
+    m_model->addStatement( contact1, RDF::type(), NCO::Contact(), graph );
+    m_model->addStatement( contact1, NCO::fullname(), LiteralValue("Eragon"), graph );
+    m_model->addStatement( contact2, RDF::type(), NCO::Contact(), graph );
+    m_model->addStatement( contact2, NCO::fullname(), LiteralValue("Arya"), graph );
+
+    SimpleResource res( contact2 );
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("Eragon") );
+    res.addProperty( NCO::contactUID(), QLatin1String("some-uuid") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp"),
+                               IdentifyAll, NoStoreResourcesFlags );
+
+    QList<Statement> stList = m_model->listStatements( QUrl(), RDF::type(), NCO::Contact() ).allStatements();
+    QCOMPARE( stList.size(), 2 );
+
+    QVERIFY( m_model->containsAnyStatement( contact1, NCO::contactUID(), LiteralValue("some-uuid") ) );
+}
+
+
 void DataManagementModelTest::testMergeResources()
 {
     // first we need to create the two resources we want to merge as well as one that should not be touched

@@ -148,6 +148,7 @@ private Q_SLOTS:
     void testStoreResources_randomNepomukUri();
     void testStoreResources_legacyData();
     void testStoreResources_graphChecks();
+    void testStoreResources_identifyAll();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();
