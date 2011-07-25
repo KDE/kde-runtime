@@ -54,10 +54,6 @@ install(FILES
   DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk
   COMPONENT Devel)
 
-install(PROGRAMS nepomuk-simpleresource-rcgen.py
-  DESTINATION ${BIN_INSTALL_DIR}
-  COMPONENT Devel)
-
 # API docs
 find_package(Doxygen)
 

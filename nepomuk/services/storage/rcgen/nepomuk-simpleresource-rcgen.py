@@ -1,8 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 ## This file is part of the Nepomuk KDE project.
 ## Copyright (C) 2011 Sebastian Trueg <trueg@kde.org>
+## Copyright (C) 2011 Serebriyskiy Artem <v.for.vandal@gmail.com>
 ##
 ## This library is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU Lesser General Public
@@ -21,7 +22,7 @@
 ## License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import optparse
+import argparse
 import sys
 import os, errno
 from PyKDE4.soprano import Soprano
@@ -53,7 +54,7 @@ def makeFancy(name, cardinality):
 def extractOntologyName(uri):
     "The name of the ontology is typically the section before the name of the entity"
     return uri.toString().section(QtCore.QRegExp('[#/:]'), -2, -2)
-    
+
 def mkdir_p(path):
     "Create a folder and all its missing parent folders"
     try:
@@ -113,7 +114,8 @@ class OntologyParser():
 
         return True
 
-    def writeAll(self):
+    def write(self):
+
         # add rdfs:Resource as domain for all properties without a domain
         query = 'select ?p where { ?p a %s . OPTIONAL { ?p %s ?d . } . FILTER(!BOUND(?d)) . }' \
                  % (Soprano.Node.resourceToN3(Soprano.Vocabulary.RDF.Property()), \
@@ -133,6 +135,8 @@ class OntologyParser():
         
         while it.next():
             uri = it['uri'].uri()
+            if verbose:
+                print "Parsing class: ", uri
             ns = self.getNamespaceAbbreviationForUri(uri)
             name = extractNameFromUri(uri)
             self.writeHeader(uri, ns, name, it['label'].toString(), it['comment'].toString())
@@ -165,7 +169,6 @@ class OntologyParser():
         return classes
 
     def getPropertiesForClass(self, uri):
-        #print "Getting properties for %s..." % uri.toString()
         query = "select distinct ?p ?range ?comment ?c ?mc where { ?p a %s . ?p %s %s . ?p %s ?range . OPTIONAL { ?p %s ?comment . } . OPTIONAL { ?p %s ?c . } . OPTIONAL { ?p %s ?mc . } . }" \
             % (Soprano.Node.resourceToN3(Soprano.Vocabulary.RDF.Property()),
                Soprano.Node.resourceToN3(Soprano.Vocabulary.RDFS.domain()),
@@ -187,7 +190,6 @@ class OntologyParser():
             else:
                 c = it['mc'].literal().toInt();
             properties[p] = dict([('range', r), ('cardinality', c), ('comment', comment)])
-        #print "Done getting properties."
         return properties
 
     def writeComment(self, theFile, text, indent):
@@ -246,8 +248,9 @@ class OntologyParser():
 
     def writeHeader(self, uri, nsAbbr, className, label, comment):
         # Construct paths
+        relative_path = nsAbbr + '/' + className.toLower() + '.h'
         folder = output_path + '/' + nsAbbr
-        filePath = folder + '/' + className.toLower() + '.h'
+        filePath = output_path + '/' + relative_path
 
         if verbose:
             print "Writing header file: %s" % filePath
@@ -292,6 +295,7 @@ class OntologyParser():
         # write the class + parent classes
         self.writeComment(header, comment, 0)
         header.write('class %s' % className)
+
         if len(parentClassNames) > 0:
             header.write(' : ')
         header.write(', '.join(['public %s' % (p) for p in parentClassNames]))
@@ -364,24 +368,26 @@ def main():
     global verbose
     
     usage = "Usage: %prog [options] ontologyfile1 ontologyfile2 ..."
-    optparser = optparse.OptionParser(usage=usage, description="Nepomuk SimpleResource code generator. It will generate a hierarchy of simple wrapper classes around Nepomuk::SimpleResource which provide convinience methods to get and set properties of those classes. Each wrapper class will be defined in its own header file and be written to a subdirectory named as the default ontology prefix. Example: the header file for nao:Tag would be written to nao/tag.h and be defined in the namespace Nepomuk::NAO.")
-    optparser.add_option('--output', '-o', metavar='PATH', dest='output', help='The destination folder')
-    optparser.add_option('--quiet', '-q', action="store_false", dest="verbose", default=True, help="don't print status messages to stdout")
+    optparser = argparse.ArgumentParser(description="Nepomuk SimpleResource code generator. It will generate a hierarchy of simple wrapper classes around Nepomuk::SimpleResource which provide convinience methods to get and set properties of those classes. Each wrapper class will be defined in its own header file and be written to a subdirectory named as the default ontology prefix. Example: the header file for nao:Tag would be written to nao/tag.h and be defined in the namespace Nepomuk::NAO.")
+    optparser.add_argument('--output', '-o', type=str, nargs=1, metavar='PATH', dest='output', help='The destination folder')
+    optparser.add_argument('--quiet', '-q', action="store_false", dest="verbose", default=True, help="don't print status messages to stdout")
+    optparser.add_argument("ontologies", type=str, nargs='+', metavar="ONTOLOGY", help="Ontology files to use")
 
-    (options, args) = optparser.parse_args()
-    if len(args) == 0:
-        optparser.error('No ontology file specified.')
-    if options.output and len(options.output) > 0:
-        output_path = options.output
-    verbose = options.verbose
-    
+    args = optparser.parse_args()
+    if args.output :
+        output_path = args.output[0]
+
+
+    verbose = args.verbose
+
+
     if verbose:
-        print 'Generating from ontology files %s' % ','.join(args)
+        print 'Generating from ontology files %s' % ','.join(args.ontologies)
         print 'Writing files to %s.' % output_path
 
     # Parse all ontology files
     ontoParser = OntologyParser()
-    for f in args:
+    for f in args.ontologies:
         if verbose:
             print "Reading ontology '%s'" % f
         ontoParser.parseFile(f)
@@ -389,7 +395,7 @@ def main():
         print "All ontologies read. Generating code..."
 
     # Get all classes and handle them one by one
-    ontoParser.writeAll()
+    ontoParser.write()
 
 if __name__ == "__main__":
     main()
