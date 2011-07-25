@@ -20,17 +20,18 @@
 #ifndef EVENT_PROCESSOR_H
 #define EVENT_PROCESSOR_H
 
+#include <QObject>
 #include <QThread>
 
 #include "Event.h"
 
-class EventBackend;
+class Plugin;
 class EventProcessorPrivate;
 
 /**
  * Thread to process desktop/usage events
  */
-class EventProcessor {
+class EventProcessor: public QObject {
 public:
     static EventProcessor * self();
 

@@ -330,6 +330,8 @@ bool Nepomuk::ResourceMerger::checkGraphMetadata(const QMultiHash< QUrl, Soprano
     ClassAndPropertyTree* tree = m_model->classAndPropertyTree();
 
     QList<QUrl> types;
+    types << NRL::Graph();
+
     QHash<QUrl, int> propCardinality;
 
     QHash< QUrl, Soprano::Node >::const_iterator it = hash.constBegin();

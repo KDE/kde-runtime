@@ -935,6 +935,26 @@ void DataManagementModelTest::testSetProperty_protectedTypes()
     QCOMPARE(Graph(m_model->listStatements().allStatements()), existingStatements);
 }
 
+// make sure we reuse legacy resource URIs
+void DataManagementModelTest::testSetProperty_legacyData()
+{
+    // create some legacy data
+    QTemporaryFile file;
+    file.open();
+    const KUrl url(file.fileName());
+
+    const QUrl g = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    m_model->addStatement(url, QUrl("prop:/int"), LiteralValue(42), g);
+
+    // set some data with the url
+    m_dmModel->setProperty(QList<QUrl>() << url, QUrl("prop:/int"), QVariantList() << 2, QLatin1String("A"));
+
+    // make sure the resource has changed
+    QCOMPARE(m_model->listStatements(url, QUrl("prop:/int"), Node()).allElements().count(), 1);
+    QCOMPARE(m_model->listStatements(url, QUrl("prop:/int"), Node()).allElements().first().object().literal(), LiteralValue(2));
+}
+
 void DataManagementModelTest::testRemoveProperty()
 {
     const int cleanCount = m_model->statementCount();
@@ -4516,6 +4536,81 @@ void DataManagementModelTest::testStoreResources_randomNepomukUri()
     // There should be an error - We do not allow creation of arbitrary uris
     // All uris must be created by the DataManagementModel
     QVERIFY( m_dmModel->lastError() );
+}
+
+void DataManagementModelTest::testStoreResources_legacyData()
+{
+    // create some legacy data
+    QTemporaryFile file;
+    file.open();
+    const KUrl url(file.fileName());
+
+    const QUrl g = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    m_model->addStatement(url, QUrl("prop:/int"), LiteralValue(42), g);
+    m_model->addStatement(url, RDF::type(), NFO::FileDataObject(), g);
+
+    // set some data with the url
+    SimpleResource res( url );
+    res.addType( NFO::FileDataObject() );
+    res.addProperty( QUrl("prop:/int"), 42 );
+    res.addProperty( QUrl("prop:/int2"), 50 );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app") );
+
+    // make sure the resource has changed
+    QList< Statement > stList = m_model->listStatements( Node(), RDF::type(), NFO::FileDataObject() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    stList = m_model->listStatements( Node(), QUrl("prop:/int2"), LiteralValue(50) ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    stList = m_model->listStatements( Node(), QUrl("prop:/int"), LiteralValue(42) ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+}
+
+void DataManagementModelTest::testStoreResources_graphChecks()
+{
+    SimpleResource res;
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("John Coner") );
+
+    const QUrl graph = m_nrlModel->createGraph( NRL::InstanceBase() );
+    m_model->addStatement( QUrl("nepomuk:/repo"), RDF::type(), RDFS::Resource(), graph );
+
+    QHash<QUrl, QVariant> additionalMetadata;
+    additionalMetadata.insert( QUrl("prop:/graph"), QUrl("nepomuk:/repo") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app"), IdentifyNew,
+                               NoStoreResourcesFlags, additionalMetadata );
+
+    // The should be no error as the additionalMetadata should implicitly have the nrl:Graph type
+    QVERIFY( !m_dmModel->lastError() );
+}
+
+void DataManagementModelTest::testStoreResources_identifyAll()
+{
+    const QUrl graph = m_nrlModel->createGraph( NRL::InstanceBase() );
+    const QUrl contact1("nepomuk:/res/contact1");
+    const QUrl contact2("nepomuk:/res/contact2");
+
+    m_model->addStatement( contact1, RDF::type(), NCO::Contact(), graph );
+    m_model->addStatement( contact1, NCO::fullname(), LiteralValue("Eragon"), graph );
+    m_model->addStatement( contact2, RDF::type(), NCO::Contact(), graph );
+    m_model->addStatement( contact2, NCO::fullname(), LiteralValue("Arya"), graph );
+
+    SimpleResource res( contact2 );
+    res.addType( NCO::Contact() );
+    res.addProperty( NCO::fullname(), QLatin1String("Eragon") );
+    res.addProperty( NCO::contactUID(), QLatin1String("some-uuid") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("testApp"),
+                               IdentifyAll, NoStoreResourcesFlags );
+
+    QList<Statement> stList = m_model->listStatements( QUrl(), RDF::type(), NCO::Contact() ).allStatements();
+    QCOMPARE( stList.size(), 2 );
+
+    QVERIFY( m_model->containsAnyStatement( contact1, NCO::contactUID(), LiteralValue("some-uuid") ) );
 }
 
 

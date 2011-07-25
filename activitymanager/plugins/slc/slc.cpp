@@ -1,23 +1,21 @@
 /*
- *   Copyright (C) 2010 Ivan Cukic <ivan.cukic(at)kde.org>
+ *   Copyright (C) 2011 Ivan Cukic ivan.cukic(at)kde.org
  *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License version 2,
- *   or (at your option) any later version, as published by the Free
- *   Software Foundation
+ *   This program is free software; you can redistribute it and/or
+ *   modify it under the terms of the GNU General Public License as
+ *   published by the Free Software Foundation; either version 2 of
+ *   the License, or (at your option) any later version.
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details
+ *   GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public
- *   License along with this program; if not, write to the
- *   Free Software Foundation, Inc.,
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SlcEventBackend.h"
+#include "slc.h"
 #include "slcadaptor.h"
 
 #include <QDBusConnection>
@@ -25,11 +23,12 @@
 #include <KWindowSystem>
 #include <KUrl>
 
-#include "SharedInfo.h"
-
-SlcEventBackend::SlcEventBackend()
-    : focussedWindow(0)
+SlcPlugin::SlcPlugin(QObject * parent, const QVariantList & args)
+    : Plugin(parent), focussedWindow(0)
 {
+    Q_UNUSED(args)
+    kDebug() << "We are in the SlcPlugin";
+
     QDBusConnection dbus = QDBusConnection::sessionBus();
     new SLCAdaptor(this);
     dbus.registerObject("/SLC", this);
@@ -38,7 +37,11 @@ SlcEventBackend::SlcEventBackend()
             this, SLOT(activeWindowChanged(WId)));
 }
 
-void SlcEventBackend::addEvents(const EventList & events)
+SlcPlugin::~SlcPlugin()
+{
+}
+
+void SlcPlugin::addEvents(const EventList & events)
 {
     foreach (const Event & event, events) {
         switch (event.type) {
@@ -75,14 +78,14 @@ void SlcEventBackend::addEvents(const EventList & events)
     }
 }
 
-KUrl SlcEventBackend::_focussedResourceURI()
+KUrl SlcPlugin::_focussedResourceURI()
 {
     KUrl kuri;
 
     if (lastFocussedResource.contains(focussedWindow)) {
         kuri = lastFocussedResource[focussedWindow];
     } else {
-        foreach (const KUrl & uri, SharedInfo::self()->windows()[focussedWindow].resources) {
+        foreach (const KUrl & uri, sharedInfo()->windows()[focussedWindow].resources) {
             kuri = uri;
             break;
         }
@@ -91,18 +94,18 @@ KUrl SlcEventBackend::_focussedResourceURI()
     return kuri;
 }
 
-QString SlcEventBackend::focussedResourceURI()
+QString SlcPlugin::focussedResourceURI()
 {
     return _focussedResourceURI().url();
 }
 
-QString SlcEventBackend::focussedResourceMimetype()
+QString SlcPlugin::focussedResourceMimetype()
 {
-    return SharedInfo::self()->resources().contains(_focussedResourceURI()) ?
-        SharedInfo::self()->resources()[_focussedResourceURI()].mimetype : QString();
+    return sharedInfo()->resources().contains(_focussedResourceURI()) ?
+        sharedInfo()->resources()[_focussedResourceURI()].mimetype : QString();
 }
 
-void SlcEventBackend::activeWindowChanged(WId wid)
+void SlcPlugin::activeWindowChanged(WId wid)
 {
     if (wid == focussedWindow) return;
 
@@ -111,17 +114,19 @@ void SlcEventBackend::activeWindowChanged(WId wid)
     updateFocus(wid);
 }
 
-void SlcEventBackend::updateFocus(WId wid)
+void SlcPlugin::updateFocus(WId wid)
 {
-    // kDebug() << "Updating focus for " << wid;
+    kDebug() << "SHARED INFO" << (void*) sharedInfo();
 
-    if (wid == 0 || !SharedInfo::self()->windows().contains(wid)) {
-        // kDebug() << "Clearing focus";
+    if (wid == 0 || !sharedInfo()->windows().contains(wid)) {
+        kDebug() << "Clearing focus" << wid;
         emit focusChanged(QString(), QString());
 
     } else if (wid == focussedWindow) {
-        // kDebug() << "It is the currently focussed window";
-        emit focusChanged(focussedResourceURI(), SharedInfo::self()->resources()[_focussedResourceURI()].mimetype);
+        kDebug() << "It is the currently focussed window" << wid;
+        emit focusChanged(focussedResourceURI(), sharedInfo()->resources()[_focussedResourceURI()].mimetype);
 
     }
 }
+
+KAMD_EXPORT_PLUGIN(SlcPlugin, "activitymanger_plugin_slc")

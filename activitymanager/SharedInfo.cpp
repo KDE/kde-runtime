@@ -18,6 +18,9 @@
  */
 
 #include "SharedInfo.h"
+#include "ActivityManager.h"
+
+#include <KDebug>
 
 SharedInfo * SharedInfo::s_instance = NULL;
 
@@ -25,12 +28,15 @@ SharedInfo * SharedInfo::self()
 {
     if (!s_instance) {
         s_instance = new SharedInfo();
+
+        kDebug() << "SHARED INFO" << (void*) s_instance;
     }
 
     return s_instance;
 }
 
 SharedInfo::SharedInfo()
+    : m_config("activitymanager-pluginsrc")
 {
 }
 
@@ -48,4 +54,18 @@ QHash < KUrl, SharedInfo::ResourceData > const & SharedInfo::resources() const
     return m_resources;
 }
 
+QString SharedInfo::currentActivity() const
+{
+    return m_currentActivity;
+}
+
+void SharedInfo::setCurrentActivity(const QString & activity)
+{
+    m_currentActivity = activity;
+}
+
+KConfigGroup SharedInfo::pluginConfig(const QString & pluginName) const
+{
+    return KConfigGroup(&m_config, pluginName);
+}
 

@@ -25,6 +25,9 @@
 #include <QString>
 #include <QHash>
 
+#include <KConfigGroup>
+#include <KConfig>
+
 #include "Event.h"
 
 /**
@@ -32,8 +35,6 @@
  */
 class SharedInfo {
 public:
-    static SharedInfo * self();
-
     virtual ~SharedInfo();
 
     struct WindowData {
@@ -50,14 +51,26 @@ public:
     QHash < WId, WindowData > const & windows() const;
     QHash < KUrl, ResourceData > const & resources() const;
 
+    QString currentActivity() const;
+
+    KConfigGroup pluginConfig(const QString & pluginName) const;
+
 private:
+    static SharedInfo * self();
+
+    void setCurrentActivity(const QString & activity);
+
     QHash < WId, WindowData > m_windows;
     QHash < KUrl, ResourceData > m_resources;
+    QString m_currentActivity;
+    KConfig m_config;
 
     static SharedInfo * s_instance;
     SharedInfo();
 
     friend class ActivityManager;
+    friend class ActivityManagerPrivate;
+    friend class EventProcessor;
 };
 
 #endif // SHARED_INFO_H_
