@@ -51,7 +51,10 @@ namespace {
     }
 }
 
-Nepomuk::ResourceIdentifier::ResourceIdentifier()
+Nepomuk::ResourceIdentifier::ResourceIdentifier( Nepomuk::StoreIdentificationMode mode,
+                                                 Soprano::Model *model)
+    : Nepomuk::Sync::ResourceIdentifier( model ),
+      m_mode( mode )
 {
     // Resource Metadata
     addOptionalProperty( NAO::created() );
@@ -105,6 +108,16 @@ bool Nepomuk::ResourceIdentifier::isIdentifyingProperty(const QUrl& uri)
 
 bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
 {
+    if( m_mode == IdentifyNone )
+        return false;
+
+    if( m_mode == IdentifyNew ) {
+        if( exists( uri ) ) {
+            manualIdentification( uri, uri );
+            return true;
+        }
+    }
+
     //kDebug() << "Identifying : " << uri;
     //
     // Check if a uri with the same name exists

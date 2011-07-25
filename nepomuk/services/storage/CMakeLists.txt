@@ -21,7 +21,6 @@ set(storage_SRCS
   crappyinferencer.cpp
   crappyinferencer2.cpp
   removablemediamodel.cpp
-  transactionmodel.cpp
   datamanagementmodel.cpp
   datamanagementadaptor.cpp
   datamanagementcommand.cpp
@@ -36,6 +35,11 @@ qt4_add_dbus_adaptor(storage_SRCS
   ../../interfaces/org.kde.nepomuk.OntologyManager.xml
   ontologyloader.h
   Nepomuk::OntologyLoader)
+
+qt4_add_dbus_adaptor(storage_SRCS
+  ../../interfaces/org.kde.nepomuk.ResourceWatcherConnection.xml
+  resourcewatcherconnection.h
+  Nepomuk::ResourceWatcherConnection)
 
 set(HAVE_SOPRANO_INDEX ${SopranoIndex_FOUND})
 
