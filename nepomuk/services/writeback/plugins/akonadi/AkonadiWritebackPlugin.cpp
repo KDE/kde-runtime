@@ -38,12 +38,12 @@
 
 using namespace Nepomuk::Vocabulary;
 
-Nepomuk::AkonadiWritebackPlugin::MyAkonadiPlugin(QObject* parent,const QList<QVariant>&): WritebackPlugin(parent)
+Nepomuk::AkonadiWritebackPlugin::AkonadiWritebackPlugin(QObject* parent,const QList<QVariant>&): WritebackPlugin(parent)
 {
 
 }
 
-Nepomuk::AkonadiWritebackPlugin::~MyAkonadiPlugin()
+Nepomuk::AkonadiWritebackPlugin::~AkonadiWritebackPlugin()
 {
 
 }
@@ -127,4 +127,4 @@ void Nepomuk::AkonadiWritebackPlugin::modifyFinished( KJob *job )
     }
 }
 
-NEPOMUK_EXPORT_WRITEBACK_PLUGIN(Nepomuk::MyAkonadiPlugin,"nepomuk_writeback_akonadi")
+NEPOMUK_EXPORT_WRITEBACK_PLUGIN(Nepomuk::AkonadiWritebackPlugin,"nepomuk_writeback_akonadi")

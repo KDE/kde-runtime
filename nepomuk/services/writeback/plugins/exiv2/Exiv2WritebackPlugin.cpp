@@ -31,12 +31,12 @@
 
 using namespace Nepomuk::Vocabulary;
 
-Nepomuk::Exiv2WritebackPlugin::MyExiv2Plugin(QObject* parent,const QList<QVariant>&): WritebackPlugin(parent)
+Nepomuk::Exiv2WritebackPlugin::Exiv2WritebackPlugin(QObject* parent,const QList<QVariant>&): WritebackPlugin(parent)
 {
 
 }
 
-Nepomuk::Exiv2WritebackPlugin::~MyExiv2Plugin()
+Nepomuk::Exiv2WritebackPlugin::~Exiv2WritebackPlugin()
 {
 
 }
@@ -97,5 +97,5 @@ void Nepomuk::Exiv2WritebackPlugin::doWriteback(const QUrl& url)
     }
 }
 
-NEPOMUK_EXPORT_WRITEBACK_PLUGIN(Nepomuk::MyExiv2Plugin,"nepomuk_writeback_exiv2")
-#include "myexiv2plugin.moc"
+NEPOMUK_EXPORT_WRITEBACK_PLUGIN(Nepomuk::Exiv2WritebackPlugin,"nepomuk_writeback_exiv2")
+#include "Exiv2WritebackPlugin.moc"
