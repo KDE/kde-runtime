@@ -22,23 +22,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define NEPOMUKWRITEBACKPLUGIN_H
 #include "writebackplugin.h"
 #include <QString>
-#include <KJob>
 
 namespace Nepomuk
 {
-  class MyAkonadiPlugin : public Nepomuk::WritebackPlugin
+  class Exiv2WritebackPlugin : public Nepomuk::WritebackPlugin
   {
   public:
-    MyAkonadiPlugin(QObject* parent,const QList<QVariant>&);
-    ~MyAkonadiPlugin();
+    Exiv2WritebackPlugin(QObject* parent,const QList<QVariant>&);
+    ~Exiv2WritebackPlugin();
   public:
     void doWriteback(const QUrl& url);
-    void fetchFinished (KJob *job);
-    void modifyFinished (KJob *job);
-    
   };
 
 }
 
 
-#endif 
+#endif // MYEXIV2PLUGIN_H

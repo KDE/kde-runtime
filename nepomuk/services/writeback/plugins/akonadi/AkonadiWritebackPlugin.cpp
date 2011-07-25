@@ -34,21 +34,21 @@
 
 #include <KABC/Addressee>
 
-#include "myakonadiplugin.h"
+#include "AkonadiWritebackPlugin.h"
 
 using namespace Nepomuk::Vocabulary;
 
-Nepomuk::MyAkonadiPlugin::MyAkonadiPlugin(QObject* parent,const QList<QVariant>&): WritebackPlugin(parent)
+Nepomuk::AkonadiWritebackPlugin::MyAkonadiPlugin(QObject* parent,const QList<QVariant>&): WritebackPlugin(parent)
 {
 
 }
 
-Nepomuk::MyAkonadiPlugin::~MyAkonadiPlugin()
+Nepomuk::AkonadiWritebackPlugin::~MyAkonadiPlugin()
 {
 
 }
 
-void Nepomuk::MyAkonadiPlugin::doWriteback(const QUrl& url)
+void Nepomuk::AkonadiWritebackPlugin::doWriteback(const QUrl& url)
 {
     Nepomuk::Resource resource(url.toLocalFile());
     if(resource.isValid()) {
@@ -60,7 +60,7 @@ void Nepomuk::MyAkonadiPlugin::doWriteback(const QUrl& url)
     }
 }
 
-void Nepomuk::MyAkonadiPlugin::fetchFinished( KJob *job )
+void Nepomuk::AkonadiWritebackPlugin::fetchFinished( KJob *job )
 {
     if ( job->error() )
         return;
@@ -121,7 +121,7 @@ void Nepomuk::MyAkonadiPlugin::fetchFinished( KJob *job )
     connect( modifyJob, SIGNAL( result( KJob* ) ), SLOT( modifyFinished( KJob* ) ) );
 }
 
-void Nepomuk::MyAkonadiPlugin::modifyFinished( KJob *job )
+void Nepomuk::AkonadiWritebackPlugin::modifyFinished( KJob *job )
 {
     if ( job->error() )
         qDebug() << "Error occurred";

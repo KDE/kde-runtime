@@ -27,21 +27,21 @@
 #include <Nepomuk/Vocabulary/NEXIF>
 #include <Nepomuk/Variant>
 
-#include "myexiv2plugin.h"
+#include "Exiv2WritebackPlugin.h"
 
 using namespace Nepomuk::Vocabulary;
 
-Nepomuk::MyExiv2Plugin::MyExiv2Plugin(QObject* parent,const QList<QVariant>&): WritebackPlugin(parent)
+Nepomuk::Exiv2WritebackPlugin::MyExiv2Plugin(QObject* parent,const QList<QVariant>&): WritebackPlugin(parent)
 {
 
 }
 
-Nepomuk::MyExiv2Plugin::~MyExiv2Plugin()
+Nepomuk::Exiv2WritebackPlugin::~MyExiv2Plugin()
 {
 
 }
 
-void Nepomuk::MyExiv2Plugin::doWriteback(const QUrl& url)
+void Nepomuk::Exiv2WritebackPlugin::doWriteback(const QUrl& url)
 {
     Nepomuk::Resource resource(url.toLocalFile());
     if(resource.isValid())

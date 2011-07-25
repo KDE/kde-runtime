@@ -18,7 +18,7 @@ include_directories(
  )
 
 set( writebackplugins_SCR
-myakonadiplugin.cpp
+AkonadiWritebackPlugin.cpp
 )
 kde4_add_plugin(nepomuk_writeback_akonadi ${writebackplugins_SCR})
 
