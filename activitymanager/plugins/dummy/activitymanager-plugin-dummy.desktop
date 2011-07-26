@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Dummy plugin
 Name[bg]=Празна приставка
+Name[et]=Kohatäiteplugin
+Name[ia]=Plugin vacue
 Name[nds]=Platzholl-Moduul
 Name[nl]=Dummy plug-in
 Name[pt]='Plugin' de testes
@@ -12,6 +14,8 @@ Name[uk]=Тестовий додаток
 Name[x-test]=xxDummy pluginxx
 Comment=Just testing
 Comment[bg]=Само за изпробване
+Comment[et]=Lihtsalt test
+Comment[ia]=Solmente per essayar
 Comment[nl]=Gewoon testen
 Comment[pt]=Apenas para testes
 Comment[pt_BR]=Apenas testando

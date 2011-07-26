@@ -1,5 +1,7 @@
 [Desktop Entry]
 Name=Nepomuk Feeder Plugin
+Name[et]=Nepomuki sööturi plugin
+Name[ia]=Plugin de Syndacation de Nepomuk
 Name[nl]=Plug-in van Nepomuk-feeder
 Name[pt]='Plugin' de Fontes do Nepomuk
 Name[pt_BR]=Plug-in de fontes de notícias do Nepomuk
@@ -8,6 +10,8 @@ Name[sv]=Nepomuk-inmatningsinsticksprogram
 Name[uk]=Додаток передавання даних Nepomuk
 Name[x-test]=xxNepomuk Feeder Pluginxx
 Comment=Plugin to store and score events in Nepomuk
+Comment[et]=Plugin sündmuste salvestamiseks Nepomukki ja nende hindamiseks
+Comment[ia]=Plugin pro immagazinar e dar punctos a eventos in Nepomuk
 Comment[nl]=Plug-in om gebeurtenissen in Nepomuk op te slaan en van een score te voorzien
 Comment[pt]='Plugin' para guardar e classificar os eventos no Nepomuk
 Comment[pt_BR]=Plug-in para armazenar e classificar os eventos no Nepomuk
