@@ -147,6 +147,7 @@ private Q_SLOTS:
     void testStoreResources_graphMetadataFail();
     void testStoreResources_randomNepomukUri();
     void testStoreResources_legacyData();
+    void testStoreResources_missingBlankNode();
     void testStoreResources_graphChecks();
 
     void testMergeResources();

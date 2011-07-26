@@ -4569,6 +4569,33 @@ void DataManagementModelTest::testStoreResources_legacyData()
     QCOMPARE( stList.size(), 1 );
 }
 
+void DataManagementModelTest::testStoreResources_missingBlankNode()
+{
+    SimpleResource album;
+    album.addType( NMM::MusicAlbum() );
+    album.setProperty( NIE::title(), QLatin1String("Some album") );
+
+    SimpleResource artist;
+    artist.addType( NCO::Contact() );
+    artist.addProperty( NCO::fullname(), QLatin1String("Coldplay") );
+
+    QTemporaryFile file;
+    file.open();
+
+    SimpleResource res(KUrl(file.fileName()));
+    res.addProperty( NMM::musicAlbum(), album );
+    res.addProperty( NMM::performer(), artist );
+
+    SimpleResourceGraph graph;
+    // Do not add the album
+    graph << res << artist;
+
+    m_dmModel->storeResources( graph, QLatin1String("testApp") );
+
+    // It should have screamed that album hasn't been added
+    QVERIFY( m_dmModel->lastError() );
+}
+
 void DataManagementModelTest::testStoreResources_graphChecks()
 {
     SimpleResource res;

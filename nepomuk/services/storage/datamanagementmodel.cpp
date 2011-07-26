@@ -1453,9 +1453,29 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             it.next();
 
             const Soprano::Node object = it.value();
-            if( object.isResource() && it.key() != NIE::url() ) {
+            if( object.isBlank() ) {
+                //
+                // Extra checks it is a blank node -
+                // If it is a blank node make sure it was present as the subject
+                QSet< QUrl >::const_iterator fit = allNonFileResources.constFind( QUrl(object.toN3()) );
+                if( fit == allNonFileResources.constEnd() ) {
+                    QString error = QString::fromLatin1("%1 does not exist in the graph. In statement (%2, %3, %4)")
+                                    .arg( object.toN3(),
+                                          syncRes.uri().url(),
+                                          it.key().url(),
+                                          it.value().toN3() );
+                    setError( error, Soprano::Error::ErrorInvalidArgument );
+                    return;
+                }
+                else {
+                    continue;
+                }
+            }
+
+            else if( object.isResource() && it.key() != NIE::url() ) {
+
                 const UriState state = uriState(object.uri());
-                if(state==NepomukUri || state==BlankUri || state == OntologyUri) {
+                if(state==NepomukUri || state == OntologyUri) {
                     continue;
                 }
                 else if(state == NonExistingFileUrl) {
