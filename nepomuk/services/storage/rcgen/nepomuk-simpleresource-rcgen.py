@@ -116,7 +116,7 @@ class OntologyParser():
 
         return True
 
-    def write(self):
+    def writeAll(self):
 
         # add rdfs:Resource as domain for all properties without a domain
         query = 'select ?p where { ?p a %s . OPTIONAL { ?p %s ?d . } . FILTER(!BOUND(?d)) . }' \
@@ -232,7 +232,7 @@ class OntologyParser():
 
     def writeSetter(self, theFile, prop, name, propRange, cardinality):
         theFile.write('    void set%s%s(const %s& value) {\n' % (makeFancy(name, cardinality)[0].toUpper(), makeFancy(name, cardinality).mid(1), typeString(propRange, cardinality)))
-        theFile.write('        m_res->addProperty(Soprano::Vocabulary::RDF::type(), resourceType());\n')
+        theFile.write('        m_res->addType(resourceType());\n')
         theFile.write('        QVariantList values;\n')
         if cardinality == 1:
             theFile.write('        values << value;\n')
@@ -244,7 +244,7 @@ class OntologyParser():
 
     def writeAdder(self, theFile, prop, name, propRange, cardinality):
         theFile.write('    void add%s%s(const %s& value) {\n' % (makeFancy(name, 1)[0].toUpper(), makeFancy(name, 1).mid(1), typeString(propRange, 1)))
-        theFile.write('        m_res->addProperty(Soprano::Vocabulary::RDF::type(), resourceType());\n')
+        theFile.write('        m_res->addType(resourceType());\n')
         theFile.write('        m_res->addProperty(QUrl::fromEncoded("%s", QUrl::StrictMode), value);\n' % prop.toString())
         theFile.write('    }\n')
 
@@ -278,7 +278,6 @@ class OntologyParser():
         header.write('#include <QtCore/QDate>\n')
         header.write('#include <QtCore/QTime>\n')
         header.write('#include <QtCore/QDateTime>\n')
-        header.write('#include <Soprano/Vocabulary/RDF>\n')
         header.write('\n')
 
         # all classes need the SimpleResource include
@@ -287,8 +286,11 @@ class OntologyParser():
         # write includes for the parent classes
         parentClassNames = []
         for parent in parentClasses.keys():
-             header.write('#include "%s/%s.h"\n' % (parentClasses[parent]['ns'], parentClasses[parent]['name'].toLower()))
-             parentClassNames.append("%s::%s" %(parentClasses[parent]['ns'].toUpper(), parentClasses[parent]['name']))
+            header.write('#include "%s/%s.h"\n' % (parentClasses[parent]['ns'], parentClasses[parent]['name'].toLower()))
+            parentClassNames.append("%s::%s" %(parentClasses[parent]['ns'].toUpper(), parentClasses[parent]['name']))
+
+        if len(parentClassNames) > 0:
+            header.write('\n')
 
         # write the class namespace
         header.write('namespace Nepomuk {\n')
@@ -379,9 +381,7 @@ def main():
     if args.output :
         output_path = args.output[0]
 
-
     verbose = args.verbose
-
 
     if verbose:
         print 'Generating from ontology files %s' % ','.join(args.ontologies)
@@ -397,7 +397,7 @@ def main():
         print "All ontologies read. Generating code..."
 
     # Get all classes and handle them one by one
-    ontoParser.write()
+    ontoParser.writeAll()
 
 if __name__ == "__main__":
     main()
