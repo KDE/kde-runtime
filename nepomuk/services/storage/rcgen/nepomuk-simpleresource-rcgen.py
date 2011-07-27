@@ -43,6 +43,8 @@ def extractNameFromUri(uri):
     return normalizeName(name)
 
 def makeFancy(name, cardinality):
+    if name.startsWith("has"):
+        name = name[3].toLower() + name.mid(4)
     if cardinality != 1:
         if name.endsWith('s'):
             return name + 'es'
