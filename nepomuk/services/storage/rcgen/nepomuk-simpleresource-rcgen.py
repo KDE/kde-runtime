@@ -188,9 +188,9 @@ class OntologyParser():
             comment = it['comment'].toString()
             c = 0
             if it['c'].isValid():
-                c = it['c'].literal().toInt();
+                c = it['c'].literal().toInt()
             else:
-                c = it['mc'].literal().toInt();
+                c = it['mc'].literal().toInt()
             properties[p] = dict([('range', r), ('cardinality', c), ('comment', comment)])
         return properties
 
@@ -232,7 +232,6 @@ class OntologyParser():
 
     def writeSetter(self, theFile, prop, name, propRange, cardinality):
         theFile.write('    void set%s%s(const %s& value) {\n' % (makeFancy(name, cardinality)[0].toUpper(), makeFancy(name, cardinality).mid(1), typeString(propRange, cardinality)))
-        theFile.write('        m_res->addType(resourceType());\n')
         theFile.write('        QVariantList values;\n')
         if cardinality == 1:
             theFile.write('        values << value;\n')
@@ -244,7 +243,6 @@ class OntologyParser():
 
     def writeAdder(self, theFile, prop, name, propRange, cardinality):
         theFile.write('    void add%s%s(const %s& value) {\n' % (makeFancy(name, 1)[0].toUpper(), makeFancy(name, 1).mid(1), typeString(propRange, 1)))
-        theFile.write('        m_res->addType(resourceType());\n')
         theFile.write('        m_res->addProperty(QUrl::fromEncoded("%s", QUrl::StrictMode), value);\n' % prop.toString())
         theFile.write('    }\n')
 
@@ -307,15 +305,20 @@ class OntologyParser():
         header.write('public:\n')
 
         # write the constructor
+        # We directly set the type of the class to the SimpleResource. If the class is a base class
+        # not derived from any other classes then we set the type directly. Otherwise we use the
+        # protected constructor defined below which takes a type as parameter making sure that we
+        # only add one type instead of the whole hierarchy
         header.write('    %s(Nepomuk::SimpleResource* res)\n' % className)
         header.write('      : ')
-        header.write(', '.join(['%s(res)' % p for p in parentClassNames]))
+        header.write(', '.join([('%s(res, QUrl::fromEncoded("' + uri.toString().toUtf8().data() + '", QUrl::StrictMode))') % p for p in parentClassNames]))
         if len(parentClassNames) > 0:
             header.write(', ')
-        header.write('m_res(res)\n    {}\n\n')
+        header.write('m_res(res)\n    {\n')
+        if len(parentClassNames) == 0:
+            header.write('        m_res->addType(QUrl::fromEncoded("%s", QUrl::StrictMode));\n' % uri.toString())
+        header.write('    }\n\n')
 
-        # write the destructor (necessary for the virtual resourceType() method
-        header.write('    virtual ~%s() {}\n\n' % className)
 
         # Write getter and setter methods for all properties
         # This includes the properties that have domain rdfs:Resource on base classes, ie.
@@ -348,10 +351,17 @@ class OntologyParser():
             self.writeAdder(header, p, properties[p]['name'], properties[p]['range'], properties[p]['cardinality'])
             header.write('\n')
 
-        # write the protected resource type access method
+        # write the protected constructor which avoids adding the whole type hierarchy
         header.write('protected:\n')
-        header.write('    virtual QUrl resourceType() const { return QUrl::fromEncoded("%s", QUrl::StrictMode); }\n' % uri.toString())
-        header.write('\n')
+        header.write('    %s(Nepomuk::SimpleResource* res, const QUrl& type)\n' % className)
+        header.write('      : ')
+        header.write(', '.join(['%s(res, type)' % p for p in parentClassNames]))
+        if len(parentClassNames) > 0:
+            header.write(', ')
+        header.write('m_res(res)\n    {\n')
+        if len(parentClassNames) == 0:
+            header.write('        m_res->addType(type);\n')
+        header.write('    }\n\n')
 
         # write the private members
         header.write('private:\n')
