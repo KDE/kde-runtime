@@ -142,6 +142,7 @@ class OntologyParser():
             ns = self.getNamespaceAbbreviationForUri(uri)
             name = extractNameFromUri(uri)
             self.writeHeader(uri, ns, name, it['label'].toString(), it['comment'].toString())
+            print "\n\n"
 
     def getNamespaceAbbreviationForUri(self, uri):
         query = "select ?ns where { graph ?g { %s ?p ?o . } . ?g %s ?ns . } LIMIT 1" \
@@ -154,6 +155,7 @@ class OntologyParser():
             return extractOntologyName(uri)
 
     def getParentClasses(self, uri):
+        "Returns a dict which maps parent class URIs to a dict containing keys 'ns' and 'name'"
         # We only select parent classes that we actually generate
         query = "select distinct ?uri where {{ {0} {1} ?uri . ?uri a {2} . }}" \
              .format(Soprano.Node.resourceToN3(uri), \
@@ -167,8 +169,20 @@ class OntologyParser():
                 cd = {}
                 cd['ns'] = self.getNamespaceAbbreviationForUri(puri)
                 cd['name'] = extractNameFromUri(puri)
-                classes[puri] = cd
+                classes[puri.toString()] = cd
         return classes
+
+    # here we need to use strings as keys since QUrls result in duplicate entries.
+    def getFullParentHierarchy(self, uri, currentParents):
+        "Returns a dict which maps parent class URIs to a dict containing keys 'ns' and 'name'"
+        print "getFullParentHierarchy(%s)" % uri.toString()
+        print currentParents
+        directParents = self.getParentClasses(uri)
+        for p in directParents.keys():
+            if not p in currentParents:
+                currentParents[p] = directParents[p]
+                currentParents = self.getFullParentHierarchy(QtCore.QUrl(p), currentParents)
+        return currentParents
 
     def getPropertiesForClass(self, uri):
         query = "select distinct ?p ?range ?comment ?c ?mc where { ?p a %s . ?p %s %s . ?p %s ?range . OPTIONAL { ?p %s ?comment . } . OPTIONAL { ?p %s ?c . } . OPTIONAL { ?p %s ?mc . } . }" \
@@ -222,10 +236,10 @@ class OntologyParser():
         theFile.write('    %s %s() const {\n' % (typeString(propRange, cardinality), makeFancy(name, cardinality)))
         theFile.write('        %s value;\n' % typeString(propRange, cardinality))
         if cardinality == 1:
-            theFile.write('        if(m_res->contains(QUrl::fromEncoded("%s", QUrl::StrictMode)))\n' % prop.toString())
-            theFile.write('            value = m_res->property(QUrl::fromEncoded("{0}", QUrl::StrictMode)).first().value<{1}>();\n'.format(prop.toString(), typeString(propRange, 1)))
+            theFile.write('        if(contains(QUrl::fromEncoded("%s", QUrl::StrictMode)))\n' % prop.toString())
+            theFile.write('            value = property(QUrl::fromEncoded("{0}", QUrl::StrictMode)).first().value<{1}>();\n'.format(prop.toString(), typeString(propRange, 1)))
         else:
-            theFile.write('        foreach(const QVariant& v, m_res->property(QUrl::fromEncoded("%s", QUrl::StrictMode)))\n' % prop.toString())
+            theFile.write('        foreach(const QVariant& v, property(QUrl::fromEncoded("%s", QUrl::StrictMode)))\n' % prop.toString())
             theFile.write('            value << v.value<{0}>();\n'.format(typeString(propRange, 1)))
         theFile.write('        return value;\n')
         theFile.write('    }\n')
@@ -238,12 +252,12 @@ class OntologyParser():
         else:
              theFile.write('        foreach(const %s& v, value)\n' % typeString(propRange, 1))
              theFile.write('            values << v;\n')
-        theFile.write('        m_res->setProperty(QUrl::fromEncoded("%s", QUrl::StrictMode), values);\n' % prop.toString())
+        theFile.write('        setProperty(QUrl::fromEncoded("%s", QUrl::StrictMode), values);\n' % prop.toString())
         theFile.write('    }\n')
 
     def writeAdder(self, theFile, prop, name, propRange, cardinality):
         theFile.write('    void add%s%s(const %s& value) {\n' % (makeFancy(name, 1)[0].toUpper(), makeFancy(name, 1).mid(1), typeString(propRange, 1)))
-        theFile.write('        m_res->addProperty(QUrl::fromEncoded("%s", QUrl::StrictMode), value);\n' % prop.toString())
+        theFile.write('        addProperty(QUrl::fromEncoded("%s", QUrl::StrictMode), value);\n' % prop.toString())
         theFile.write('    }\n')
 
     def writeHeader(self, uri, nsAbbr, className, label, comment):
@@ -261,7 +275,14 @@ class OntologyParser():
         # open the header file
         header = open(filePath, 'w')
 
+        # get all direct base classes
         parentClasses = self.getParentClasses(uri)
+
+        # get all base classes which we require due to the virtual base class constructor ordering in C++
+        fullParentHierarchy = self.getFullParentHierarchy(uri, {})
+        fullParentHierarchyNames = []
+        for parent in fullParentHierarchy.keys():
+            fullParentHierarchyNames.append("%s::%s" %(fullParentHierarchy[parent]['ns'].toUpper(), fullParentHierarchy[parent]['name']))
 
         # write protecting ifdefs
         header_protect = '_%s_%s_H_' % (nsAbbr.toUpper(), className.toUpper())
@@ -295,30 +316,53 @@ class OntologyParser():
         header.write('namespace %s {\n' % nsAbbr.toUpper())
 
         # write the class + parent classes
+        # We use virtual inheritance when deriving from SimpleResource since our ontologies
+        # make use of multi-inheritance and without it the compiler would not know which
+        # addProperty and friends to call.
+        # We need to do the same with all parent classes since some classes like
+        # nco:CellPhoneNumber as derived from other classes that have yet another parent
+        # class in common which is not SimpleResource.
         self.writeComment(header, comment, 0)
         header.write('class %s' % className)
-
-        if len(parentClassNames) > 0:
-            header.write(' : ')
-        header.write(', '.join(['public %s' % (p) for p in parentClassNames]))
+        header.write(' : ')
+        header.write(', '.join(['public virtual %s' % (p) for p in parentClassNames]))
+        if len(parentClassNames) == 0:
+            header.write('public virtual Nepomuk::SimpleResource');
         header.write('\n{\n')
         header.write('public:\n')
 
-        # write the constructor
+        # write the default constructor
         # We directly set the type of the class to the SimpleResource. If the class is a base class
         # not derived from any other classes then we set the type directly. Otherwise we use the
         # protected constructor defined below which takes a type as parameter making sure that we
         # only add one type instead of the whole hierarchy
-        header.write('    %s(Nepomuk::SimpleResource* res)\n' % className)
-        header.write('      : ')
-        header.write(', '.join([('%s(res, QUrl::fromEncoded("' + uri.toString().toUtf8().data() + '", QUrl::StrictMode))') % p for p in parentClassNames]))
-        if len(parentClassNames) > 0:
-            header.write(', ')
-        header.write('m_res(res)\n    {\n')
+        header.write('    %s()' % className)
+        if len(parentClasses) > 0:
+            header.write('\n      : ')
+        header.write(', '.join([('%s(QUrl::fromEncoded("' + uri.toString().toUtf8().data() + '", QUrl::StrictMode))') % p for p in fullParentHierarchyNames]))
+        header.write(' {\n')
         if len(parentClassNames) == 0:
-            header.write('        m_res->addType(QUrl::fromEncoded("%s", QUrl::StrictMode));\n' % uri.toString())
+            header.write('        addType(QUrl::fromEncoded("%s", QUrl::StrictMode));\n' % uri.toString())
         header.write('    }\n\n')
 
+        # write the copy constructor
+        header.write('    %s(const SimpleResource& res)\n' % className)
+        header.write('      : ')
+        header.write('SimpleResource(res)')
+        if len(parentClassNames) > 0:
+            header.write(', ')
+            header.write(', '.join([('%s(res, QUrl::fromEncoded("' + uri.toString().toUtf8().data() + '", QUrl::StrictMode))') % p for p in fullParentHierarchyNames]))
+        header.write(' {\n')
+        if len(parentClassNames) == 0:
+            header.write('        addType(QUrl::fromEncoded("%s", QUrl::StrictMode));\n' % uri.toString())
+        header.write('    }\n\n')
+
+        # write the assignment operator
+        header.write('    %s& operator=(const SimpleResource& res) {\n' % className)
+        header.write('        SimpleResource::operator=(res);\n')
+        header.write('        addType(QUrl::fromEncoded("%s", QUrl::StrictMode));\n' % uri.toString())
+        header.write('        return *this;\n')
+        header.write('    }\n\n')
 
         # Write getter and setter methods for all properties
         # This includes the properties that have domain rdfs:Resource on base classes, ie.
@@ -351,21 +395,27 @@ class OntologyParser():
             self.writeAdder(header, p, properties[p]['name'], properties[p]['range'], properties[p]['cardinality'])
             header.write('\n')
 
-        # write the protected constructor which avoids adding the whole type hierarchy
+        # write the protected constructors which avoid adding the whole type hierarchy
         header.write('protected:\n')
-        header.write('    %s(Nepomuk::SimpleResource* res, const QUrl& type)\n' % className)
+        header.write('    %s(const QUrl& type)' % className)
+        if len(parentClassNames) > 0:
+            header.write('\n      : ')
+            header.write(', '.join(['%s(type)' % p for p in fullParentHierarchyNames]))
+        header.write(' {\n')
+        if len(parentClassNames) == 0:
+            header.write('        addType(type);\n')
+        header.write('    }\n')
+
+        header.write('    %s(const SimpleResource& res, const QUrl& type)\n' % className)
         header.write('      : ')
-        header.write(', '.join(['%s(res, type)' % p for p in parentClassNames]))
+        header.write('SimpleResource(res)')
         if len(parentClassNames) > 0:
             header.write(', ')
-        header.write('m_res(res)\n    {\n')
+            header.write(', '.join(['%s(res, type)' % p for p in fullParentHierarchyNames]))
+        header.write(' {\n')
         if len(parentClassNames) == 0:
-            header.write('        m_res->addType(type);\n')
-        header.write('    }\n\n')
-
-        # write the private members
-        header.write('private:\n')
-        header.write('    Nepomuk::SimpleResource* m_res;\n')
+            header.write('        addType(type);\n')
+        header.write('    }\n')
 
         # close the class
         header.write('};\n')
