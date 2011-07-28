@@ -43,7 +43,7 @@ Nepomuk::SystemTray::SystemTray( QObject* parent )
 {
     setCategory( SystemServices );
     setIconByName( "nepomuk" );
-    setTitle( i18n( "Nepomuk File Indexing" ) );
+    setTitle( i18n( "Desktop Search File Indexing" ) );
 
     // the status widget
     connect(this, SIGNAL(activateRequested(bool,QPoint)), this, SLOT(slotActivateRequested()));
@@ -115,7 +115,7 @@ void Nepomuk::SystemTray::slotUpdateStrigiStatus()
     if( strigiServiceInitialized )
         statusString = m_service->userStatusString();
     else
-        statusString = i18n("Nepomuk File Indexing Service not running");
+        statusString = i18n("File indexing service not running");
     if ( statusString != m_prevStatus ) {
         m_prevStatus = statusString;
         setToolTip("nepomuk", i18n("Search Service"), statusString );

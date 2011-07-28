@@ -139,7 +139,7 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
       m_failedToInitialize( false )
 {
     KAboutData *about = new KAboutData(
-        "kcm_nepomuk", "kcm_nepomuk", ki18n("Nepomuk Configuration Module"),
+        "kcm_nepomuk", "kcm_nepomuk", ki18n("Desktop Search Configuration Module"),
         KDE_VERSION_STRING, KLocalizedString(), KAboutData::License_GPL,
         ki18n("Copyright 2007-2010 Sebastian Trüg"));
     about->addAuthor(ki18n("Sebastian Trüg"), KLocalizedString(), "trueg@kde.org");
@@ -228,7 +228,7 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
         }
     }
     else {
-        QLabel* label = new QLabel( i18n( "The Nepomuk installation is not complete. No Nepomuk settings can be provided." ) );
+        QLabel* label = new QLabel( i18n( "The Nepomuk installation is not complete. No desktop search settings can be provided." ) );
         label->setAlignment( Qt::AlignCenter );
         QVBoxLayout* layout = new QVBoxLayout( this );
         layout->addWidget( label );
@@ -365,9 +365,9 @@ void Nepomuk::ServerConfigModule::save()
     else if( m_checkEnableNepomuk->isChecked() ) {
         if ( !QProcess::startDetached( QLatin1String( "nepomukserver" ) ) ) {
             KMessageBox::error( this,
-                                i18n( "Failed to start Nepomuk Server. The settings have been saved "
+                                i18n( "Failed to start the desktop search service (Nepomuk). The settings have been saved "
                                       "and will be used the next time the server is started." ),
-                                i18n( "Nepomuk server not running" ) );
+                                i18n( "Desktop search service not running" ) );
         }
     }
 
@@ -404,10 +404,10 @@ void Nepomuk::ServerConfigModule::updateNepomukServerStatus()
 {
     if ( m_serverInterface &&
          m_serverInterface->isNepomukEnabled() ) {
-        m_labelNepomukStatus->setText( i18nc( "@info:status", "Nepomuk system is active" ) );
+        m_labelNepomukStatus->setText( i18nc( "@info:status", "Desktop search services are active" ) );
     }
     else {
-        m_labelNepomukStatus->setText( i18nc( "@info:status", "Nepomuk system is inactive" ) );
+        m_labelNepomukStatus->setText( i18nc( "@info:status", "Desktop search services are disabled" ) );
     }
 }
 
@@ -429,11 +429,11 @@ void Nepomuk::ServerConfigModule::updateStrigiStatus()
         }
         else {
             m_failedToInitialize = true;
-            m_labelStrigiStatus->setText( i18nc( "@info:status", "Strigi service failed to initialize, most likely due to an installation problem." ) );
+            m_labelStrigiStatus->setText( i18nc( "@info:status", "File indexing service failed to initialize, most likely due to an installation problem." ) );
         }
     }
     else if ( !m_failedToInitialize ) {
-        m_labelStrigiStatus->setText( i18nc( "@info:status", "Strigi service not running." ) );
+        m_labelStrigiStatus->setText( i18nc( "@info:status", "File indexing service not running." ) );
     }
 }
 
