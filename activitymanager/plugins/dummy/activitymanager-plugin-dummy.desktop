@@ -12,6 +12,7 @@ Name[sv]=Testinsticksprogram
 Name[ug]=مەۋھۇم قىستۇرما
 Name[uk]=Тестовий додаток
 Name[x-test]=xxDummy pluginxx
+Name[zh_TW]=空白外掛程式
 Comment=Just testing
 Comment[bg]=Само за изпробване
 Comment[et]=Lihtsalt test
@@ -23,6 +24,7 @@ Comment[ro]=Doar pentru testare
 Comment[sv]=Bara testning
 Comment[uk]=Тестування
 Comment[x-test]=xxJust testingxx
+Comment[zh_TW]=測試用
 Type=Service
 Icon=
 
