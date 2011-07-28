@@ -155,8 +155,10 @@ class OntologyParser():
             return extractOntologyName(uri)
 
     def getParentClasses(self, uri):
-        "Returns a dict which maps parent class URIs to a dict containing keys 'ns' and 'name'"
-        # We only select parent classes that we actually generate
+        """
+        Returns a dict which maps parent class URIs to a dict containing keys 'ns' and 'name'
+        Only parent classes that are actually generated are returned.
+        """
         query = "select distinct ?uri where {{ {0} {1} ?uri . ?uri a {2} . }}" \
              .format(Soprano.Node.resourceToN3(uri), \
                           Soprano.Node.resourceToN3(Soprano.Vocabulary.RDFS.subClassOf()), \
@@ -172,17 +174,43 @@ class OntologyParser():
                 classes[puri.toString()] = cd
         return classes
 
-    # here we need to use strings as keys since QUrls result in duplicate entries.
-    def getFullParentHierarchy(self, uri, currentParents):
-        "Returns a dict which maps parent class URIs to a dict containing keys 'ns' and 'name'"
-        print "getFullParentHierarchy(%s)" % uri.toString()
-        print currentParents
+    def getFullParentHierarchyTree(self, uri, currentParents):
+        """
+        Returns a tree with nodes consisting of dicts containing keys 'children', 'ns' and 'name'.
+        currentParents is a running variable used to avoid endless loops when recursing. It should
+        always be set to the empty list [].
+        Only used by getFullParentHierarchy()
+        """
+        parents = []
         directParents = self.getParentClasses(uri)
         for p in directParents.keys():
             if not p in currentParents:
-                currentParents[p] = directParents[p]
-                currentParents = self.getFullParentHierarchy(QtCore.QUrl(p), currentParents)
-        return currentParents
+                currentParents.append(p)
+                cd = directParents[p]
+                cd['children'] = self.getFullParentHierarchyTree(QtCore.QUrl(p), currentParents)
+                parents.append(cd)
+        return parents
+
+    def getFullParentHierarchy(self, uri):
+        """
+        Returns a list of dicts with keys 'ns' and 'name' ordered by reversed specialization.
+        This is required for virtual inheritance where the constructors are called beginning
+        from most generic one.
+        """
+        tree = self.getFullParentHierarchyTree(uri, [])
+        parents = []
+        while len(tree) > 0:
+            # Perform a depth-first to find the most general type first
+            # the add that type to the list of parents and remove it
+            # from the tree.
+            tmp = tree[0]
+            last = tree
+            while len(tmp['children']) > 0:
+                last = tmp['children']
+                tmp = tmp['children'][0]
+            parents.append(tmp)
+            last.pop(0)
+        return parents
 
     def getPropertiesForClass(self, uri):
         query = "select distinct ?p ?range ?comment ?c ?mc where { ?p a %s . ?p %s %s . ?p %s ?range . OPTIONAL { ?p %s ?comment . } . OPTIONAL { ?p %s ?c . } . OPTIONAL { ?p %s ?mc . } . }" \
@@ -278,12 +306,6 @@ class OntologyParser():
         # get all direct base classes
         parentClasses = self.getParentClasses(uri)
 
-        # get all base classes which we require due to the virtual base class constructor ordering in C++
-        fullParentHierarchy = self.getFullParentHierarchy(uri, {})
-        fullParentHierarchyNames = []
-        for parent in fullParentHierarchy.keys():
-            fullParentHierarchyNames.append("%s::%s" %(fullParentHierarchy[parent]['ns'].toUpper(), fullParentHierarchy[parent]['name']))
-
         # write protecting ifdefs
         header_protect = '_%s_%s_H_' % (nsAbbr.toUpper(), className.toUpper())
         header.write('#ifndef %s\n' % header_protect)
@@ -307,6 +329,12 @@ class OntologyParser():
         for parent in parentClasses.keys():
             header.write('#include "%s/%s.h"\n' % (parentClasses[parent]['ns'], parentClasses[parent]['name'].toLower()))
             parentClassNames.append("%s::%s" %(parentClasses[parent]['ns'].toUpper(), parentClasses[parent]['name']))
+
+        # get all base classes which we require due to the virtual base class constructor ordering in C++
+        # We inverse the order to match the virtual inheritance constructor calling order
+        fullParentHierarchyNames = []
+        for parent in self.getFullParentHierarchy(uri):
+            fullParentHierarchyNames.append("%s::%s" %(parent['ns'].toUpper(), parent['name']))
 
         if len(parentClassNames) > 0:
             header.write('\n')
