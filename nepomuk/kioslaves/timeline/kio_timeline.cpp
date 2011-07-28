@@ -126,7 +126,7 @@ void Nepomuk::TimelineProtocol::listDir( const KUrl& url )
                                              "/servicecontrol",
                                              QDBusConnection::sessionBus() ).isInitialized() ) {
         error( KIO::ERR_SLAVE_DEFINED,
-               i18n( "The Nepomuk Strigi file indexing service is not running. Without it timeline results are not available." ) );
+               i18n( "The file indexing service is not running. Without it timeline results are not available." ) );
         return;
     }
 
