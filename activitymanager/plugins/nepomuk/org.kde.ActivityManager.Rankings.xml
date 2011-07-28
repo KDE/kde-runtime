@@ -1,0 +1,23 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.ActivityManager.Rankings">
+    <method name="registerClient">
+      <arg name="client" type="s" direction="in"/>
+      <arg name="activity" type="s" direction="in"/>
+      <arg name="application" type="s" direction="in"/>
+      <arg name="resourceType" type="s" direction="in"/>
+    </method>
+    <method name="registerClient">
+      <arg name="client" type="s" direction="in"/>
+      <arg name="activity" type="s" direction="in"/>
+      <arg name="application" type="s" direction="in"/>
+    </method>
+    <method name="registerClient">
+      <arg name="client" type="s" direction="in"/>
+      <arg name="activity" type="s" direction="in"/>
+    </method>
+    <method name="registerClient">
+      <arg name="client" type="s" direction="in"/>
+    </method>
+  </interface>
+</node>

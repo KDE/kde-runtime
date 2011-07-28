@@ -8,8 +8,15 @@ set(
    NepomukPlugin.cpp
    NepomukResourceScoreCache.cpp
    NepomukResourceScoreMaintainer.cpp
+   Rankings.cpp
    ../../Plugin.cpp
    ../../SharedInfo.cpp
+   )
+
+qt4_add_dbus_adaptor(
+   nepomuk_SRCS
+   org.kde.ActivityManager.Rankings.xml
+   Rankings.h Rankings
    )
 
 soprano_add_ontology(nepomuk_SRCS

@@ -64,6 +64,8 @@ public Q_SLOTS:
 Q_SIGNALS:
     void scoreUpdateRequested(const QString & application, const QString & uri);
 
+    void currentActivityChanged(const QString & activity);
+
 private:
     static SharedInfo * self();
 

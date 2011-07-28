@@ -136,9 +136,11 @@ EventProcessor::EventProcessor()
         }
 
         Plugin * plugin = factory->create < Plugin > (this);
-        plugin->setSharedInfo(shared);
 
         if (plugin) {
+            plugin->setSharedInfo(shared);
+            plugin->init();
+
             const QString & type = service->property("X-ActivityManager-PluginType", QVariant::String).toString();
 
             if (type == "lazyeventhandler") {
