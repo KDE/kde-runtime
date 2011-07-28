@@ -1,0 +1,19 @@
+[Desktop Entry]
+Name=Zeitgeist plugin
+Comment=Forwards activity metadata to Zeitgeist
+Type=Service
+Icon=zeitgeist
+X-KDE-ServiceTypes=ActivityManager/Plugin
+X-KDE-Library=activitymanager_plugin_zeitgeist
+X-KDE-PluginInfo-Author=Trever Fischer
+X-KDE-PluginInfo-Email=tdfischer@fedoraproject.org
+X-KDE-PluginInfo-Name=org.kde.kactivitymanager.zeitgeist
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://zeitgeist-project.com/
+X-KDE-PluginInfo-Category=Language
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
+
+X-ActivityManager-PluginType=lazyeventhandler
+X-ActivityManager-PluginOverrides=activitymanager_plugin_nepomuk
