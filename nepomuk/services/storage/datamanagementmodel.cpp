@@ -1357,7 +1357,9 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         SimpleResource & res = iter.next();
 
         if( !res.isValid() ) {
-            setError(QLatin1String("storeResources: One of the resources is Invalid."), Soprano::Error::ErrorInvalidArgument);
+            QString error = QString::fromLatin1("The resource with URI %1 is invalid.")
+                            .arg( res.uri().toString() );
+            setError(error, Soprano::Error::ErrorInvalidArgument);
             return;
         }
 
