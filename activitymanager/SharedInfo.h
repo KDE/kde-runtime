@@ -24,6 +24,7 @@
 #include <QSet>
 #include <QString>
 #include <QHash>
+#include <QObject>
 
 #include <KConfigGroup>
 #include <KConfig>
@@ -33,7 +34,9 @@
 /**
  *
  */
-class SharedInfo {
+class SharedInfo: public QObject {
+    Q_OBJECT;
+
 public:
     virtual ~SharedInfo();
 
@@ -54,6 +57,12 @@ public:
     QString currentActivity() const;
 
     KConfigGroup pluginConfig(const QString & pluginName) const;
+
+public Q_SLOTS:
+    void requestScoreUpdate(const QString & application, const QString & uri);
+
+Q_SIGNALS:
+    void scoreUpdateRequested(const QString & application, const QString & uri);
 
 private:
     static SharedInfo * self();

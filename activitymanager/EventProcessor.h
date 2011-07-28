@@ -32,13 +32,18 @@ class EventProcessorPrivate;
  * Thread to process desktop/usage events
  */
 class EventProcessor: public QObject {
+    Q_OBJECT;
+
 public:
     static EventProcessor * self();
 
     virtual ~EventProcessor();
 
     void addEvent(const QString & application, WId wid, const QString & uri,
-            Event::Type type = Event::Accessed, Event::Reason reason = Event::User);
+            int type = Event::Accessed, int reason = Event::User);
+
+private Q_SLOTS:
+    void updateScore(const QString & application, const QString & uri);
 
 private:
     EventProcessor();

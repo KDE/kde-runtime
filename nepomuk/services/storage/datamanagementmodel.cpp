@@ -1357,7 +1357,9 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         SimpleResource & res = iter.next();
 
         if( !res.isValid() ) {
-            setError(QLatin1String("storeResources: One of the resources is Invalid."), Soprano::Error::ErrorInvalidArgument);
+            QString error = QString::fromLatin1("The resource with URI %1 is invalid.")
+                            .arg( res.uri().toString() );
+            setError(error, Soprano::Error::ErrorInvalidArgument);
             return;
         }
 
@@ -1381,9 +1383,12 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                 newResUri = SimpleResource().uri(); // HACK: improveme
 
                 res.addProperty( NIE::url(), nieUrl );
-                res.addProperty( RDF::type(), NFO::FileDataObject() );
-                if( QFileInfo( nieUrl.toLocalFile() ).isDir() )
-                    res.addProperty( RDF::type(), NFO::Folder() );
+
+                if( state == ExistingFileUrl ) {
+                    res.addProperty( RDF::type(), NFO::FileDataObject() );
+                    if( QFileInfo( nieUrl.toLocalFile() ).isDir() )
+                        res.addProperty( RDF::type(), NFO::Folder() );
+                }
             }
             resolvedNodes.insert( nieUrl, newResUri );
 
@@ -1450,9 +1455,29 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             it.next();
 
             const Soprano::Node object = it.value();
-            if( object.isResource() && it.key() != NIE::url() ) {
+            if( object.isBlank() ) {
+                //
+                // Extra checks it is a blank node -
+                // If it is a blank node make sure it was present as the subject
+                QSet< QUrl >::const_iterator fit = allNonFileResources.constFind( QUrl(object.toN3()) );
+                if( fit == allNonFileResources.constEnd() ) {
+                    QString error = QString::fromLatin1("%1 does not exist in the graph. In statement (%2, %3, %4)")
+                                    .arg( object.toN3(),
+                                          syncRes.uri().url(),
+                                          it.key().url(),
+                                          it.value().toN3() );
+                    setError( error, Soprano::Error::ErrorInvalidArgument );
+                    return;
+                }
+                else {
+                    continue;
+                }
+            }
+
+            else if( object.isResource() && it.key() != NIE::url() ) {
+
                 const UriState state = uriState(object.uri());
-                if(state==NepomukUri || state==BlankUri || state == OntologyUri) {
+                if(state==NepomukUri || state == OntologyUri) {
                     continue;
                 }
                 else if(state == NonExistingFileUrl) {
@@ -1475,10 +1500,12 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                         if( resolvedUri.isEmpty() ) {
                             resolvedUri = SimpleResource().uri(); // HACK: improveme
 
-                            newRes.insert( RDF::type(), NFO::FileDataObject() );
                             newRes.insert( NIE::url(), nieUrl );
-                            if( QFileInfo( nieUrl.toLocalFile() ).isDir() )
-                                newRes.insert( RDF::type(), NFO::Folder() );
+                            if( state == ExistingFileUrl ) {
+                                newRes.insert( RDF::type(), NFO::FileDataObject() );
+                                if( QFileInfo( nieUrl.toLocalFile() ).isDir() )
+                                    newRes.insert( RDF::type(), NFO::Folder() );
+                            }
                         }
 
                         newRes.setUri( resolvedUri );
@@ -2259,8 +2286,9 @@ QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFil
 
         // non-existing unsupported URL
         else if( state == OtherUri ) {
-            setError(QString::fromLatin1("Unknown protocol '%1' encountered.").arg(url.scheme()),
-                     Soprano::Error::ErrorInvalidArgument);
+            QString error = QString::fromLatin1("Unknown protocol '%1' encountered in %2")
+                            .arg(url.scheme(), url.toString());
+            setError(error, Soprano::Error::ErrorInvalidArgument);
             return QUrl();
         }
 

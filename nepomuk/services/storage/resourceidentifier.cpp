@@ -112,13 +112,19 @@ bool Nepomuk::ResourceIdentifier::runIdentification(const KUrl& uri)
         return false;
 
     if( m_mode == IdentifyNew ) {
-        //
-        // Check if a uri with the same name exists
-        //
         if( exists( uri ) ) {
             manualIdentification( uri, uri );
             return true;
         }
+    }
+
+    //kDebug() << "Identifying : " << uri;
+    //
+    // Check if a uri with the same name exists
+    //
+    if( exists( uri ) ) {
+        manualIdentification( uri, uri );
+        return true;
     }
 
     const Sync::SyncResource & res = simpleResource( uri );

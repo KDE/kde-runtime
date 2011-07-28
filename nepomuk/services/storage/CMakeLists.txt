@@ -71,4 +71,5 @@ install(
 # -----------------------------
 
 add_subdirectory(lib)
+add_subdirectory(rcgen)
 add_subdirectory(test)

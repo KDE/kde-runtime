@@ -155,23 +155,23 @@ QString Nepomuk::StrigiService::userStatusString( bool simple ) const
     bool suspended = m_indexScheduler->isSuspended();
 
     if ( suspended ) {
-        return i18nc( "@info:status", "File indexer is suspended" );
+        return i18nc( "@info:status", "File indexer is suspended." );
     }
     else if ( indexing ) {
         QString folder = m_indexScheduler->currentFolder();
 
         if ( folder.isEmpty() || simple )
-            return i18nc( "@info:status", "Strigi is currently indexing files" );
+            return i18nc( "@info:status", "Indexing files for desktop search." );
         else {
             QString file = KUrl( m_indexScheduler->currentFile() ).fileName();
             if( file.isEmpty() )
-                return i18nc( "@info:status", "Strigi is currently indexing files in folder %1", folder );
+                return i18nc( "@info:status", "Indexing files in %1", folder );
             else
-                return i18nc( "@info:status", "Strigi is currently indexing files in folder %1 (%2)", folder, file );
+                return i18nc( "@info:status", "Indexing files in %1 (%2)", folder, file );
         }
     }
     else {
-        return i18nc( "@info:status", "File indexer is idle" );
+        return i18nc( "@info:status", "File indexer is idle." );
     }
 }
 

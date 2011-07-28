@@ -353,10 +353,6 @@ namespace Nepomuk {
         /// are just saved with their given URI, provided the URI already exists.
         IdentifyNew = 0,
 
-        /// All resources are identified no matter what. The resource URI given is not considered
-        /// even if it already exists
-        IdentifyAll = 1,
-
         /// All resources are treated as new ones. The only exception are those with a defined
         /// resource URI.
         IdentifyNone = 2
