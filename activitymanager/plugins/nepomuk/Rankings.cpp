@@ -21,17 +21,32 @@
 #include <QDBusConnection>
 #include <KDebug>
 
+#include <Nepomuk/Resource>
+#include <Nepomuk/ResourceManager>
+#include <Nepomuk/Variant>
+
+#include <Nepomuk/Query/Query>
+#include <Nepomuk/Query/ResourceTerm>
+#include <Nepomuk/Query/ResourceTypeTerm>
+#include <Nepomuk/Query/ComparisonTerm>
+#include <Nepomuk/Query/LiteralTerm>
+#include <Nepomuk/Query/NegationTerm>
+
+#include <Soprano/QueryResultIterator>
+#include <Soprano/Node>
+#include <Soprano/Model>
+
+#include <Nepomuk/Vocabulary/NUAO>
+#include <Soprano/Vocabulary/NAO>
+#include "kext.h"
+
+#include "NepomukCommon.h"
+
+using namespace Soprano::Vocabulary;
+using namespace Nepomuk::Vocabulary;
+using namespace Nepomuk::Query;
+
 Rankings * Rankings::s_instance = NULL;
-
-inline uint qHash(const Rankings::QueryParams & item)
-{
-    return qHash(item.activity) ^ qHash(item.application) ^ qHash(item.resourceType);
-}
-
-inline bool operator == (const Rankings::QueryParams & l, const Rankings::QueryParams & r)
-{
-    return l.activity == r.activity && l.application == r.application && l.resourceType == r.resourceType;
-}
 
 void Rankings::init(QObject * parent)
 {
@@ -59,28 +74,96 @@ Rankings::~Rankings()
 {
 }
 
-void Rankings::registerClient(const QString & client,
-        const QString & activity, const QString & application,
-        const QString & resourceType)
+void Rankings::resourceScoreUpdated(const QString & activity,
+        const QString & application, const QString & uri, qreal score)
 {
-    kDebug() << client;
 
-    QueryParams params = QueryParams(activity, application, resourceType);
-    m_queryParamsForClient[client] = params;
-    m_clientsForQueryParams[params] << client;
+}
+
+void Rankings::registerClient(const QString & client,
+        const QString & activity)
+{
+    kDebug() << client << "wants to get resources for" << activity;
+
+    if (!m_clients.contains(activity)) {
+        kDebug() << "Initialising the resources for" << activity;
+        initResults(activity);
+    }
+
+    if (!m_clients[activity].contains(client)) {
+        kDebug() << "Adding client";
+        m_clients[activity] << client;
+
+        // DBUS TODO
+    }
 }
 
 void Rankings::deregisterClient(const QString & client)
 {
-    QueryParams params = m_queryParamsForClient[client];
-    m_queryParamsForClient.remove(client);
-    m_clientsForQueryParams[params].removeAll(client);
-    if (m_clientsForQueryParams[params].isEmpty()) {
-        m_clientsForQueryParams.remove(params);
+    QMutableHashIterator < Activity, QStringList > i(m_clients);
+
+    while (i.hasNext()) {
+        i.next();
+
+        i.value().removeAll(client);
+        if (i.value().isEmpty()) {
+            i.remove();
+        }
     }
 }
 
 void Rankings::setCurrentActivity(const QString & activity)
 {
+    // We need to update scores for items that have no
+    // activity specified
+}
 
+void Rankings::initResults(const QString & activity)
+{
+    kDebug() << activity << NepomukPlugin::self()->sharedInfo()->currentActivity();
+
+    m_clients[activity].clear();
+
+    const QString query = QString::fromLatin1(
+        "select distinct ?resource, "
+        "( "
+            "( "
+                "SUM ( "
+                    "?lastScore * bif:exp( "
+                        "- bif:datediff('day', ?lastUpdate, %1) "
+                    ") "
+                ") "
+            ") "
+            "as ?score "
+        ") where { "
+            "?cache kext:targettedResource ?resource . "
+            "?cache a kext:ResourceScoreCache . "
+            "?cache nao:lastModified ?lastUpdate . "
+            "?cache kext:cachedScore ?lastScore . "
+            "?cache kext:usedActivity %2 . "
+        "} "
+        "GROUP BY (?resource) ORDER BY DESC (?score) LIMIT 10"
+    ).arg(
+        litN3(QDateTime::currentDateTime()),
+        resN3(activityResource(
+            activity.isEmpty()
+                ? "8e227d2d-c1f6-4431-88f2-5c07ccabf8e1" // NepomukPlugin::self()->sharedInfo()->currentActivity()
+                : activity
+            )
+        )
+    );
+
+    kDebug() << query;
+
+    Soprano::QueryResultIterator it
+        = Nepomuk::ResourceManager::instance()->mainModel()
+                ->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+
+    while (it.next()) {
+        Nepomuk::Resource result(it[0].uri());
+
+        kDebug() << "This is one result" << result;
+    }
+
+    it.close();
 }

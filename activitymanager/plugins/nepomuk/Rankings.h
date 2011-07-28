@@ -32,6 +32,9 @@ public:
     static void init(QObject * parent = 0);
     static Rankings * self();
 
+    void resourceScoreUpdated(const QString & activity,
+            const QString & application, const QString & uri, qreal score);
+
     ~Rankings();
 
 public Q_SLOTS:
@@ -45,26 +48,14 @@ public Q_SLOTS:
      *     not the activity that was current when calling this method.
      */
     void registerClient(const QString & client,
-            const QString & activity = QString(),
-            const QString & application = QString(),
-            const QString & resourceType = QString());
+            const QString & activity = QString());
 
+    /**
+     * Deregisters a client
+     */
     void deregisterClient(const QString & client);
 
 public:
-    class QueryParams {
-    public:
-        QueryParams(
-                const QString & _activity = QString(),
-                const QString & _application = QString(),
-                const QString & _resourceType = QString()
-            )
-            : activity(_activity), application(_application), resourceType(_resourceType)
-        {
-        }
-
-        QString activity, application, resourceType;
-    };
 
 private Q_SLOTS:
     void setCurrentActivity(const QString & activityId);
@@ -74,9 +65,32 @@ private:
 
     static Rankings * s_instance;
 
+public:
+    class ResultItem {
+    public:
+        ResultItem(
+                const QString & _uri,
+                const QString & _title, const QString & _description,
+                const QString & _icon, qreal _score
+            )
+            : uri(_uri), title(_title), description(_description),
+              icon(_icon), score(_score)
+        {
+        }
 
-    QHash < QString, QueryParams > m_queryParamsForClient;
-    QHash < QueryParams, QStringList > m_clientsForQueryParams;
+        QString uri, title, description, icon;
+        qreal score;
+
+    };
+
+    typedef QString Activity;
+    typedef QString Client;
+
+private:
+    void initResults(const QString & activity);
+
+    QHash < Activity, QStringList > m_clients;
+    QHash < Activity, QList < ResultItem > > m_results;
 };
 
 #endif

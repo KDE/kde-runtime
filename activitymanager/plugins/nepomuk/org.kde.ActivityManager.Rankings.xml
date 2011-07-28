@@ -4,19 +4,11 @@
     <method name="registerClient">
       <arg name="client" type="s" direction="in"/>
       <arg name="activity" type="s" direction="in"/>
-      <arg name="application" type="s" direction="in"/>
-      <arg name="resourceType" type="s" direction="in"/>
     </method>
     <method name="registerClient">
       <arg name="client" type="s" direction="in"/>
-      <arg name="activity" type="s" direction="in"/>
-      <arg name="application" type="s" direction="in"/>
     </method>
-    <method name="registerClient">
-      <arg name="client" type="s" direction="in"/>
-      <arg name="activity" type="s" direction="in"/>
-    </method>
-    <method name="registerClient">
+    <method name="deregisterClient">
       <arg name="client" type="s" direction="in"/>
     </method>
   </interface>
