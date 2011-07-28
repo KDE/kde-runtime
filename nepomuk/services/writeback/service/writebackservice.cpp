@@ -18,6 +18,7 @@
 
 #include "writebackservice.h"
 #include "writebackplugin.h"
+#include "writebackjob.h"
 
 #include <kmimetypetrader.h>
 #include <KDebug>
@@ -26,6 +27,7 @@
 #include <KServiceTypeTrader>
 
 #include <QtCore/QString>
+#include <QList>
 
 #include <taglib/fileref.h>
 #include <taglib/tag.h>
@@ -43,11 +45,11 @@ using namespace Nepomuk::Vocabulary;
 Nepomuk::WriteBackService::WriteBackService( QObject* parent, const QList< QVariant >& )
     : Service(parent)
 {
-    ResourceWatcher* resourcewatcher;
     kDebug()<<"this part is executed";
 
-    resourcewatcher  = new ResourceWatcher(this);
-    resourcewatcher->addType(NFO::FileDataObject());
+    ResourceWatcher* resourcewatcher  = new ResourceWatcher(this);
+    //resourcewatcher->addType(NFO::FileDataObject());
+    resourcewatcher->addProperty(NIE::title());
     resourcewatcher->start();
 
     connect( resourcewatcher, SIGNAL( propertyAdded(Nepomuk::Resource, Nepomuk::Types::Property, QVariant) ),
@@ -69,47 +71,45 @@ void Nepomuk::WriteBackService::test(const Nepomuk::Resource & resource)
         if(!mimetypes.isEmpty())
         {
             QString  mimetype = mimetypes.first();
-            WritebackPlugin* plugin= KMimeTypeTrader::createInstanceFromQuery<WritebackPlugin>(mimetype,"Nepomuk/WritebackPlugin",this);
 
-            if (plugin)
-            {
-                plugin->writeback(resource.resourceUri());
-            }
-            else
-            {
-                kError(5001) << "read write part";
-            }
+            KService::List services
+                    = KMimeTypeTrader::self()->query(mimetype,QString::fromLatin1 ("Nepomuk/WritebackPlugin"));
+
+            performWriteback(services,resource);
         }
-    }
-    else
-    {
-        QStringList subQueries( "'*' in [X-Nepomuk-ResourceTypes]" );
-        for( int i = 0; i < (resource.types()).count(); ++i ) {
-            subQueries << QString::fromLatin1( "'%1' in [X-Nepomuk-ResourceTypes]" ).arg( ((resource.types()).at(i)).toString() );
-        }
-
-        KService::List services
-                = KServiceTypeTrader::self()->query( QString::fromLatin1 ("Nepomuk/WritebackPlugin"), subQueries.join( " or " ) );
-
-        foreach(const KSharedPtr<KService>& service, services) {
-            // Return the cached instance if we have one, create a new one else
-            WritebackPlugin* plugin = service->createInstance<WritebackPlugin>();
-            if ( plugin ) {
-                plugin->writeback(resource.resourceUri());
-                connect(plugin,SIGNAL(finished()),this,SLOT(finishWriteback()));
+        else {
+            QStringList subQueries( "'*' in [X-Nepomuk-ResourceTypes]" );
+            for( int i = 0; i < (resource.types()).count(); ++i ) {
+                subQueries << QString::fromLatin1( "'%1' in [X-Nepomuk-ResourceTypes]" ).arg( ((resource.types()).at(i)).toString() );
             }
-            else
-                kDebug() << "Error occurred";
+
+            KService::List services
+                    = KServiceTypeTrader::self()->query( QString::fromLatin1 ("Nepomuk/WritebackPlugin"), subQueries.join( " or " ) );
+
+            performWriteback(services,resource);
+
         }
     }
 }
 
-void Nepomuk::WriteBackService::finishWriteback()
+void Nepomuk::WriteBackService::performWriteback(const KService::List services,const Nepomuk::Resource & resource)
 {
-    kDebug()<<"Writeback finished";
-    return;
-}
+    QList<WritebackPlugin*> plugins;
 
+    foreach(const KSharedPtr<KService>& service, services) {
+
+        WritebackPlugin* plugin = service->createInstance<WritebackPlugin>();
+
+        if (plugin)
+            plugins.append(plugin);
+    }
+    if (! plugins.isEmpty() ) {
+        Nepomuk::WritebackJob *job = new WritebackJob(this);
+        job->setPlugins(plugins);
+        job->setResource(resource);
+        job->start();
+    }
+}
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>

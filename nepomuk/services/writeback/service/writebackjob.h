@@ -1,4 +1,4 @@
-    /*
+/*
 Copyright (C) 2011  Smit Shah <Who828@gmail.com>
 
 This program is free software; you can redistribute it and/or
@@ -17,48 +17,34 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "writebackplugin.h"
-#include <KDebug>
 
-class Nepomuk::WritebackPlugin::Private
+#ifndef WRITEBACKJOB_H
+#define WRITEBACKJOB_H
+#include <kjob.h>
+#include "writebackplugin.h"
+#include <Nepomuk/Resource>
+
+namespace Nepomuk {
+class WritebackJob : public KJob
 {
 public:
-    Private( WritebackPlugin* parent)
-        : q (parent)
-    {
-     kDebug();
-    }
+    WritebackJob(QObject* parent = 0);
+    ~WritebackJob();
 
+    void setPlugins(const QList<WritebackPlugin*>& plugins);
+    void setResource(const Nepomuk::Resource & resource);
 private:
-    WritebackPlugin* q;
+    QList<WritebackPlugin*> m_plugins;
+    Nepomuk::Resource m_resource;
+
+public Q_SLOTS:
+    void start();
+
+private Q_SLOTS:
+    void tryNextPlugin();
+    void slotWritebackFinished(Nepomuk::WritebackPlugin* plugin);
 };
-
-
-
-Nepomuk::WritebackPlugin::WritebackPlugin(QObject* parent)
-    : QObject(parent),
-      d( new Private(this) )
-{
-}
-
-Nepomuk::WritebackPlugin::~WritebackPlugin()
-{
-    delete d;
 }
 
 
-void Nepomuk::WritebackPlugin::writeback( const QUrl& url )
-{
-    doWriteback( url );
-}
-
-
-void Nepomuk::WritebackPlugin::emitFinished()
-{
-    emit finished();
-    emit finished( this );
-}
-
-
-
-#include "writebackplugin.moc"
+#endif // WRITEBACKJOB_H

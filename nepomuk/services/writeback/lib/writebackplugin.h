@@ -40,13 +40,14 @@ class NEPOMUK_WRITEBACK_EXPORT WritebackPlugin : public QObject
     Q_OBJECT
 
 public:
-    WritebackPlugin( QObject* parent);
+    WritebackPlugin( QObject* parent=0);
     virtual ~WritebackPlugin();
 
 Q_SIGNALS:
     // to signal that writeback is finished
-    void finished();
+    void finished( Nepomuk::WritebackPlugin* plugin );
 
+   void finished();
     //private:
     // emited by plugin once plugin is done, can't be called directly must use emitfinished // in public.
     //void finished( Nepomuk::WritebackPlugin* plugin );

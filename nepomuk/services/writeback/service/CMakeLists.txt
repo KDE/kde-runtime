@@ -14,6 +14,7 @@ include_directories(
 
 set( writebackservice_SCR
 writebackservice.cpp
+writebackjob.cpp
 )
 kde4_add_plugin(nepomukwritebackservice ${writebackservice_SCR})
 

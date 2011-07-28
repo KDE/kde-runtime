@@ -1,5 +1,4 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
     Copyright (C) 2011  Smit Shah <who828@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
@@ -24,6 +23,7 @@
 #include <Nepomuk/Types/Property>
 #include <QVariant>
 #include <nepomuk/resourcewatcher.h>
+#include <KService>
 
 namespace Nepomuk {
 
@@ -35,12 +35,12 @@ public:
     WriteBackService( QObject * parent = 0, const QList<QVariant>& args = QList<QVariant>() );
     ~WriteBackService();
 
+private:
+    void performWriteback(const KService::List services,const Nepomuk::Resource & resource);
+
 public Q_SLOTS:
-  Q_SCRIPTABLE  void test( const Nepomuk::Resource & resource);
-                void finishWriteback();
-
+    Q_SCRIPTABLE  void test( const Nepomuk::Resource & resource);
 };
-
 }
 
 #endif // NEPOMUKWRITEBACKSERVICE_H
