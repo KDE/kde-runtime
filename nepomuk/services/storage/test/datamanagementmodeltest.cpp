@@ -1463,7 +1463,7 @@ void DataManagementModelTest::testRemoveProperties_subResource()
     m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("whatever")), g1);
 
     // now we remove the sub-resource property
-    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QList<QUrl>() << NAO::hasSubResource(), QLatin1String("A"));
+    m_dmModel->removeProperties(QList<QUrl>() << QUrl("res:/A"), QList<QUrl>() << NAO::hasSubResource(), QLatin1String("A"));
 
     // the sub-resource should have been removed, too. The reason is simple: a sub-resource does not make sense without its super-resource
     // and with the relation being gone there is no super-resource anymore.
@@ -1482,7 +1482,7 @@ void DataManagementModelTest::testRemoveProperties_subResource2()
     m_model->addStatement(QUrl("res:/C"), NAO::hasSubResource(), QUrl("res:/B"), g1);
 
     // now we remove the sub-resource property
-    m_dmModel->removeProperty(QList<QUrl>() << QUrl("res:/A"), QList<QUrl>() << NAO::hasSubResource(), QLatin1String("A"));
+    m_dmModel->removeProperties(QList<QUrl>() << QUrl("res:/A"), QList<QUrl>() << NAO::hasSubResource(), QLatin1String("A"));
 
     // The sub-resource should still be there
     QVERIFY(m_model->containsAnyStatement(QUrl("res:/C"), NAO::hasSubResource(), QUrl("res:/C")));
