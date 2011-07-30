@@ -299,7 +299,7 @@ bool Nepomuk::IndexScheduler::isIndexing() const
 
 QString Nepomuk::IndexScheduler::currentFolder() const
 {
-    return m_currentFolder;
+    return m_currentUrl.directory();
 }
 
 
@@ -345,7 +345,6 @@ void Nepomuk::IndexScheduler::doIndexing()
         QFileInfo file = m_filesToUpdate.dequeue();
 
         m_currentUrl = file.filePath();
-        m_currentFolder = m_currentUrl.directory();
 
         emit indexingFile( m_currentUrl.toLocalFile() );
 
@@ -379,7 +378,6 @@ void Nepomuk::IndexScheduler::slotIndexingDone(KJob* job)
     kDebug() << job;
     Q_UNUSED( job );
 
-    m_currentFolder.clear();
     m_currentUrl.clear();
 
     callDoIndexing();
@@ -397,8 +395,6 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
 
     // inform interested clients
     emit indexingFolder( dir );
-
-    m_currentFolder = dir;
     m_currentUrl = KUrl( dir );
 
     const bool recursive = flags&UpdateRecursive;
