@@ -166,6 +166,7 @@ private:
 
     void resetModel();
     bool haveTrailingGraphs() const;
+    bool haveDataInDefaultGraph() const;
 
     KTempDir* m_storageDir;
     Soprano::Model* m_model;
