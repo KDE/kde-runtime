@@ -95,6 +95,12 @@ namespace Nepomuk {
         };
         Q_DECLARE_FLAGS( UpdateDirFlags, UpdateDirFlag )
 
+        /**
+         * The UpdateDirFlags of the the current url that is being
+         * indexed.
+         */
+        UpdateDirFlags currentFlags() const;
+
         enum IndexingSpeed {
             /**
              * Index at full speed, i.e. do not use any artificial
@@ -220,6 +226,7 @@ namespace Nepomuk {
         QMutex m_dirsToUpdateMutex;
 
         KUrl m_currentUrl;
+        UpdateDirFlags m_currentFlags;
 
         int m_indexingDelay;
         IndexCleaner* m_cleaner;
