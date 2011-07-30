@@ -174,43 +174,22 @@ class OntologyParser():
                 classes[puri.toString()] = cd
         return classes
 
-    def getFullParentHierarchyTree(self, uri, currentParents):
+    def getFullParentHierarchy(self, uri, currentParents, result):
         """
-        Returns a tree with nodes consisting of dicts containing keys 'children', 'ns' and 'name'.
+        Returns a list of dicts containing keys 'ns' and 'name'.
         currentParents is a running variable used to avoid endless loops when recursing. It should
         always be set to the empty list [].
-        Only used by getFullParentHierarchy()
+        result is another running variable which stores the final result set. It should also be set
+        to the empty list [].
         """
-        parents = []
+        # we perform a depth-first search for the most general type
         directParents = self.getParentClasses(uri)
         for p in directParents.keys():
             if not p in currentParents:
                 currentParents.append(p)
-                cd = directParents[p]
-                cd['children'] = self.getFullParentHierarchyTree(QtCore.QUrl(p), currentParents)
-                parents.append(cd)
-        return parents
-
-    def getFullParentHierarchy(self, uri):
-        """
-        Returns a list of dicts with keys 'ns' and 'name' ordered by reversed specialization.
-        This is required for virtual inheritance where the constructors are called beginning
-        from most generic one.
-        """
-        tree = self.getFullParentHierarchyTree(uri, [])
-        parents = []
-        while len(tree) > 0:
-            # Perform a depth-first to find the most general type first
-            # the add that type to the list of parents and remove it
-            # from the tree.
-            tmp = tree[0]
-            last = tree
-            while len(tmp['children']) > 0:
-                last = tmp['children']
-                tmp = tmp['children'][0]
-            parents.append(tmp)
-            last.pop(0)
-        return parents
+                self.getFullParentHierarchy(QtCore.QUrl(p), currentParents, result)
+                result.append(directParents[p])
+        return result
 
     def getPropertiesForClass(self, uri):
         query = "select distinct ?p ?range ?comment ?c ?mc where { ?p a %s . ?p %s %s . ?p %s ?range . OPTIONAL { ?p %s ?comment . } . OPTIONAL { ?p %s ?c . } . OPTIONAL { ?p %s ?mc . } . }" \
@@ -333,7 +312,7 @@ class OntologyParser():
         # get all base classes which we require due to the virtual base class constructor ordering in C++
         # We inverse the order to match the virtual inheritance constructor calling order
         fullParentHierarchyNames = []
-        for parent in self.getFullParentHierarchy(uri):
+        for parent in self.getFullParentHierarchy(uri, [], []):
             fullParentHierarchyNames.append("%s::%s" %(parent['ns'].toUpper(), parent['name']))
 
         if len(parentClassNames) > 0:
