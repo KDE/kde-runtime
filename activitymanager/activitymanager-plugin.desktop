@@ -5,6 +5,7 @@ X-KDE-ServiceType=ActivityManager/Plugin
 Comment=Activity manager plugin
 Comment[bg]=Приставка за управление на дейности
 Comment[et]=Tegevuste haldamise plugin
+Comment[eu]=Jarduera kudeatzailearen plugina
 Comment[ia]=Plugin de gerente de activitate
 Comment[nb]=Programtillegg for aktivitetshåndterng
 Comment[nds]=Aktivitetenpleger-Moduul
