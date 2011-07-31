@@ -22,6 +22,7 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include <QUrl>
 
 class Rankings: public QObject
 {
@@ -33,7 +34,7 @@ public:
     static Rankings * self();
 
     void resourceScoreUpdated(const QString & activity,
-            const QString & application, const QString & uri, qreal score);
+            const QString & application, const QUrl & uri, qreal score);
 
     ~Rankings();
 
@@ -43,12 +44,14 @@ public Q_SLOTS:
      * @param client d-bus name
      * @param activity activity to track. If empty, uses the default activity.
      * @param application application to track. If empty, all applications are aggregated
-     * @param resource type that the client is interested in
+     * @param type resource type that the client is interested in
      * @note If the activity is left empty - the results are always related to the current activity,
      *     not the activity that was current when calling this method.
      */
     void registerClient(const QString & client,
-            const QString & activity = QString());
+            const QString & activity = QString(),
+            const QString & type = QString()
+        );
 
     /**
      * Deregisters a client
@@ -69,16 +72,14 @@ public:
     class ResultItem {
     public:
         ResultItem(
-                const QString & _uri,
-                const QString & _title, const QString & _description,
-                const QString & _icon, qreal _score
+                const QUrl & _uri,
+                qreal _score
             )
-            : uri(_uri), title(_title), description(_description),
-              icon(_icon), score(_score)
+            : uri(_uri), score(_score)
         {
         }
 
-        QString uri, title, description, icon;
+        QUrl uri;
         qreal score;
 
     };
@@ -88,6 +89,7 @@ public:
 
 private:
     void initResults(const QString & activity);
+    void notifyResultsUpdated(const QString & activity, QStringList clients = QStringList());
 
     QHash < Activity, QStringList > m_clients;
     QHash < Activity, QList < ResultItem > > m_results;

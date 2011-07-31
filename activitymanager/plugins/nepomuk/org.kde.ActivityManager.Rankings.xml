@@ -4,6 +4,11 @@
     <method name="registerClient">
       <arg name="client" type="s" direction="in"/>
       <arg name="activity" type="s" direction="in"/>
+      <arg name="type" type="s" direction="in"/>
+    </method>
+    <method name="registerClient">
+      <arg name="client" type="s" direction="in"/>
+      <arg name="activity" type="s" direction="in"/>
     </method>
     <method name="registerClient">
       <arg name="client" type="s" direction="in"/>

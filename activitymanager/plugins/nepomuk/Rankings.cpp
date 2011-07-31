@@ -19,6 +19,7 @@
 #include "rankingsadaptor.h"
 
 #include <QDBusConnection>
+#include <QVariantList>
 #include <KDebug>
 
 #include <Nepomuk/Resource>
@@ -41,6 +42,10 @@
 #include "kext.h"
 
 #include "NepomukCommon.h"
+
+#define RESULT_COUNT_LIMIT 10
+#define COALESCE_ACTIVITY(Activity) ((Activity.isEmpty()) ? \
+        (NepomukPlugin::self()->sharedInfo()->currentActivity()) : (Activity))
 
 using namespace Soprano::Vocabulary;
 using namespace Nepomuk::Vocabulary;
@@ -75,26 +80,59 @@ Rankings::~Rankings()
 }
 
 void Rankings::resourceScoreUpdated(const QString & activity,
-        const QString & application, const QString & uri, qreal score)
+        const QString & application, const QUrl & uri, qreal score)
 {
+    kDebug() << activity << application << uri << score;
 
+    QList < ResultItem > & list = m_results[activity];
+
+    for (int i = 0; i < list.size(); i++) {
+        if (list[i].uri == uri) {
+            list.removeAt(i);
+            break;
+        }
+    }
+
+    int i = list.size() - 1;
+
+    kDebug() << "List size is:" << i;
+
+    if (i < 0) {
+        list << ResultItem(uri, score);
+
+        return;
+    }
+
+    while (list[i].score < score) {
+        --i;
+    }
+
+    if (i + 1 < RESULT_COUNT_LIMIT) {
+        list.insert(i + 1, ResultItem(uri, score));
+    }
+
+    while (list.size() > RESULT_COUNT_LIMIT) {
+        list.removeLast();
+    }
+
+    notifyResultsUpdated(activity);
 }
 
 void Rankings::registerClient(const QString & client,
-        const QString & activity)
+        const QString & activity, const QString & type)
 {
     kDebug() << client << "wants to get resources for" << activity;
 
     if (!m_clients.contains(activity)) {
         kDebug() << "Initialising the resources for" << activity;
-        initResults(activity);
+        initResults(COALESCE_ACTIVITY(activity));
     }
 
     if (!m_clients[activity].contains(client)) {
         kDebug() << "Adding client";
         m_clients[activity] << client;
 
-        // DBUS TODO
+        notifyResultsUpdated(activity, QStringList() << client);
     }
 }
 
@@ -116,13 +154,13 @@ void Rankings::setCurrentActivity(const QString & activity)
 {
     // We need to update scores for items that have no
     // activity specified
+
+    initResults(activity);
 }
 
 void Rankings::initResults(const QString & activity)
 {
-    kDebug() << activity << NepomukPlugin::self()->sharedInfo()->currentActivity();
-
-    m_clients[activity].clear();
+    m_results[activity].clear();
 
     const QString query = QString::fromLatin1(
         "select distinct ?resource, "
@@ -140,17 +178,15 @@ void Rankings::initResults(const QString & activity)
             "?cache a kext:ResourceScoreCache . "
             "?cache nao:lastModified ?lastUpdate . "
             "?cache kext:cachedScore ?lastScore . "
-            "?cache kext:usedActivity %2 . "
+            "?resource nao:prefLabel ?label . "
+            "?resource nie:url ?icon . "
+            "?resource nie:url ?description . "
+            // "?cache kext:usedActivity %2 . "
         "} "
         "GROUP BY (?resource) ORDER BY DESC (?score) LIMIT 10"
     ).arg(
         litN3(QDateTime::currentDateTime()),
-        resN3(activityResource(
-            activity.isEmpty()
-                ? "8e227d2d-c1f6-4431-88f2-5c07ccabf8e1" // NepomukPlugin::self()->sharedInfo()->currentActivity()
-                : activity
-            )
-        )
+        resN3(activityResource(COALESCE_ACTIVITY(activity)))
     );
 
     kDebug() << query;
@@ -162,8 +198,46 @@ void Rankings::initResults(const QString & activity)
     while (it.next()) {
         Nepomuk::Resource result(it[0].uri());
 
-        kDebug() << "This is one result" << result;
+        kDebug() << "This is one result" << it[0].uri() << result
+            << it[1].literal().toDouble();
+
+        // kDebug() << "###" << result.resourceUri()
+        //     << result.label() << result.genericIcon();
+
+        m_results[activity] << ResultItem(it[0].uri(), it[1].literal().toDouble());
     }
 
     it.close();
+
+    notifyResultsUpdated(activity);
+}
+
+void Rankings::notifyResultsUpdated(const QString & activity, QStringList clients)
+{
+    kDebug() << "####### These are the results for: " << activity << "current activity is" <<
+            NepomukPlugin::self()->sharedInfo()->currentActivity();
+
+    QVariantList data;
+    foreach (const ResultItem & item, m_results[COALESCE_ACTIVITY(activity)]) {
+        kDebug() << item.uri << item.score;
+        data << item.uri.toString();
+    }
+
+    kDebug() << m_clients << clients;
+
+    if (clients.isEmpty()) {
+        clients = m_clients[COALESCE_ACTIVITY(activity)];
+
+        if (activity == NepomukPlugin::self()->sharedInfo()->currentActivity()) {
+            kDebug() << "This is the current activity, notifying all";
+            clients.append(m_clients[QString()]);
+        }
+    }
+
+    kDebug() << "Notify clients" << clients << data;
+
+    foreach (const QString & client, clients) {
+        QDBusInterface rankingsservice(client, "/RankingsClient", "org.kde.ActivityManager.RankingsClient");
+        rankingsservice.call("updated", data);
+    }
 }

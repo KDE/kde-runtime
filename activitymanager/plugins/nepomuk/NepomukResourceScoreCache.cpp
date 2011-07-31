@@ -212,4 +212,6 @@ void NepomukResourceScoreCache::updateScore()
     kDebug() << "New calculated score:" << score << d->self.isValid();
     d->self.setProperty(KExt::cachedScore(), score);
     d->self.setProperty(NAO::score(), score);
+
+    Rankings::self()->resourceScoreUpdated(d->activity, d->application, d->resource, score);
 }
