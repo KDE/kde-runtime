@@ -729,13 +729,24 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
                     continue;
                 }
 
-                // TODO: Maybe list the existing values as well?
+                //
+                // Display a very informative error message
+                //
+                QString query = QString::fromLatin1("select distinct ?v where {"
+                                                    " %1 %2 ?v ."
+                                                    "FILTER( %3 ) . }")
+                                    .arg( Soprano::Node::resourceToN3( subUri ),
+                                          Soprano::Node::resourceToN3( propUri ),
+                                          filterStringList.join( QLatin1String(" && ") ) );
+                QList< Soprano::Node > existingValues = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql ).iterateBindings(0).allNodes();
+
                 QString error = QString::fromLatin1("%1 has a max cardinality of %2. Provided "
-                                                    "%3 values - %4")
+                                                    "%3 values - %4. Existing - %5")
                                 .arg( propUri.toString(),
                                       QString::number(maxCardinality),
                                       QString::number(objectN3.size()),
-                                      objectN3.join(QLatin1String(", ")) );
+                                      objectN3.join(QLatin1String(", ")),
+                                      nodesToN3(existingValues).join(QLatin1String(", ")) );
                 setError( error, Soprano::Error::ErrorInvalidStatement );
                 return false;
             }
