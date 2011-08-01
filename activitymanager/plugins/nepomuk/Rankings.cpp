@@ -181,7 +181,7 @@ void Rankings::initResults(const QString & activity)
             "?resource nao:prefLabel ?label . "
             "?resource nie:url ?icon . "
             "?resource nie:url ?description . "
-            // "?cache kext:usedActivity %2 . "
+            "?cache kext:usedActivity %2 . "
         "} "
         "GROUP BY (?resource) ORDER BY DESC (?score) LIMIT 10"
     ).arg(
