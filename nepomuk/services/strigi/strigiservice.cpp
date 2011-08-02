@@ -163,7 +163,7 @@ QString Nepomuk::StrigiService::userStatusString( bool simple ) const
 
         if ( folder.isEmpty() || simple ) {
             if( autoUpdate ) {
-                return i18nc( "@info:status", "Scanning for recent changes in files for dekstop search");
+                return i18nc( "@info:status", "Scanning for recent changes in files for desktop search");
             }
             else {
                 return i18nc( "@info:status", "Indexing files for desktop search." );
