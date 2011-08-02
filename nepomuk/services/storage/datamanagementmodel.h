@@ -192,11 +192,15 @@ public Q_SLOTS:
 
     /**
      * Describe a set of resources, i.e. retrieve all their properties.
-     * \param resources The resource URIs of the resources to describe.
-     * \param includeSubResources If \p true sub resources will be included.
+     * \param resources The resource URIs of the resources to describe. Non-existing resources are ignored.
+     * \param flags Optional flags to modify the data which is returned.
+     * \param targetParties This optional list can be used to specify the parties (nao:Party) which should
+     * receive the returned data. This will result in a filtering of the result according to configured
+     * permissions. Only data which is set as being public or readable by the specified parties is returned.
      */
     SimpleResourceGraph describeResources(const QList<QUrl>& resources,
-                                          bool includeSubResources) const;
+                                          DescribeResourcesFlags flags = NoDescribeResourcesFlags,
+                                          const QList<QUrl>& targetParties = QList<QUrl>() ) const;
     //@}
 
 private:
@@ -274,9 +278,9 @@ private:
      * Resolves local file URLs through nie:url.
      * \return a Hash mapping \p urls to their actual resource URIs or an empty QUrl if the resource does not exist.
      *
-     * This method does check if the local file exists and may set an error.
+     * \param statLocalFiles If \p true this method does check if the local file exists and may set an error if not.
      */
-    QHash<QUrl, QUrl> resolveUrls(const QList<QUrl>& urls) const;
+    QHash<QUrl, QUrl> resolveUrls(const QList<QUrl>& urls, bool statLocalFiles = true) const;
 
     /**
      * Resolves local file URLs through nie:url.

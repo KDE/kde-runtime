@@ -99,6 +99,9 @@ void DataManagementModelTest::init()
 
 void DataManagementModelTest::testAddProperty()
 {
+    // remember graph count
+    const int initialGraphCount = m_model->listContexts().allElements().count();
+
     // we start by simply adding a property
     m_dmModel->addProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("foobar")), QLatin1String("Testapp"));
 
@@ -130,8 +133,8 @@ void DataManagementModelTest::testAddProperty()
                                        Soprano::Node::resourceToN3(NRL::coreGraphMetadataFor())),
                                   Soprano::Query::QueryLanguageSparql).boolValue());
 
-    // check the number of graphs (two for the app, two for the actual data, and one for the ontology)
-    QCOMPARE(m_model->listContexts().allElements().count(), 5);
+    // check the number of graphs (two for the app, two for the actual data, and the initial count)
+    QCOMPARE(m_model->listContexts().allElements().count(), initialGraphCount + 4);
 
 
     //
@@ -503,6 +506,9 @@ void DataManagementModelTest::testAddProperty_akonadi()
 
 void DataManagementModelTest::testSetProperty()
 {
+    // remember graph count
+    const int initialGraphCount = m_model->listContexts().allElements().count();
+
     // adding the most basic property
     m_dmModel->setProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("foobar")), QLatin1String("Testapp"));
 
@@ -534,8 +540,8 @@ void DataManagementModelTest::testSetProperty()
                                        Soprano::Node::resourceToN3(NRL::coreGraphMetadataFor())),
                                   Soprano::Query::QueryLanguageSparql).boolValue());
 
-    // check the number of graphs (two for the app, two for the actual data, and one for the ontology)
-    QCOMPARE(m_model->listContexts().allElements().count(), 5);
+    // check the number of graphs (two for the app, two for the actual data, and the initial count)
+    QCOMPARE(m_model->listContexts().allElements().count(), initialGraphCount + 4);
 
     QVERIFY(!haveTrailingGraphs());
     QVERIFY(!haveDataInDefaultGraph());
@@ -5040,156 +5046,312 @@ void DataManagementModelTest::testDescribeResources()
     m_model->addStatement(QUrl("res:/D"), QUrl("prop:/string"), LiteralValue(QLatin1String("Hello")), g1);
 
 
-    // get one resource without sub-res
-    QList<SimpleResource> g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A"), false).toList();
+    // get one resource without related
+    SimpleResourceGraph g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A"), Nepomuk::ExcludeRelatedResources);
 
     // no error
     QVERIFY(!m_dmModel->lastError());
 
-    // only one resource in the result
-    QCOMPARE(g.count(), 1);
-
-    // the one result is res:/A
-    QCOMPARE(g.first().uri(), QUrl("res:/A"));
+    // A and its sub-res B
+    QVERIFY(g.contains(QUrl("res:/A")));
+    QVERIFY(g.contains(QUrl("res:/B")));
+    QCOMPARE(g.count(), 2);
 
     // res:/A has 3 properties
-    QCOMPARE(g.first().properties().count(), 3);
+    QEXPECT_FAIL("", "Not clear yet if prop:/res should be returned in addition to nao:hasSubResource", Continue);
+    QCOMPARE(g[QUrl("res:/A")].properties().count(), 3);
 
 
-    // get one resource by file-url without sub-res
-    g = m_dmModel->describeResources(QList<QUrl>() << QUrl::fromLocalFile(fileC.fileName()), false).toList();
+    // get one resource by file-url without related
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl::fromLocalFile(fileC.fileName()), Nepomuk::ExcludeRelatedResources);
 
     // no error
     QVERIFY(!m_dmModel->lastError());
 
-    // only one resource in the result
-    QCOMPARE(g.count(), 1);
-
-    // the one result is res:/C
-    QCOMPARE(g.first().uri(), QUrl("res:/C"));
+    // C and its sub-res
+    QVERIFY(g.contains(QUrl("res:/C")));
+    QVERIFY(g.contains(QUrl("res:/D")));
+    QCOMPARE(g.count(), 2);
 
     // res:/C has 3 properties
-    QCOMPARE(g.first().properties().count(), 3);
+    QVERIFY(g[QUrl("res:/C")].contains(NIE::url(), QUrl::fromLocalFile(fileC.fileName())));
+    QVERIFY(g[QUrl("res:/C")].contains(QUrl("prop:/int"), 42));
+    QVERIFY(g[QUrl("res:/C")].contains(NAO::hasSubResource(), QUrl("res:/D")));
+    QCOMPARE(g[QUrl("res:/C")].properties().count(), 3);
 
 
-    // get one resource with sub-res
-    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A"), true).toList();
-
-    // no error
-    QVERIFY(!m_dmModel->lastError());
-
-    // only one resource in the result
-    QCOMPARE(g.count(), 2);
-
-    // the results are res:/A and res:/B
-    SimpleResource r1 = g.first();
-    SimpleResource r2 = g.back();
-    QVERIFY(r1.uri() == QUrl("res:/A") || r2.uri() == QUrl("res:/A"));
-    QVERIFY(r1.uri() == QUrl("res:/B") || r2.uri() == QUrl("res:/B"));
-
-    // res:/A has 3 properties
-    if(r1.uri() == QUrl("res:/A")) {
-        QCOMPARE(r1.properties().count(), 3);
-        QCOMPARE(r2.properties().count(), 1);
-    }
-    else {
-        QCOMPARE(r1.properties().count(), 1);
-        QCOMPARE(r2.properties().count(), 3);
-    }
-
-
-    // get one resource via file URL with sub-res
-    g = m_dmModel->describeResources(QList<QUrl>() << QUrl::fromLocalFile(fileC.fileName()), true).toList();
-
-    // no error
-    QVERIFY(!m_dmModel->lastError());
-
-    // only one resource in the result
-    QCOMPARE(g.count(), 2);
-
-    // the results are res:/C and res:/D
-    r1 = g.first();
-    r2 = g.back();
-    QVERIFY(r1.uri() == QUrl("res:/C") || r2.uri() == QUrl("res:/C"));
-    QVERIFY(r1.uri() == QUrl("res:/D") || r2.uri() == QUrl("res:/D"));
-
-    // res:/A has 3 properties
-    if(r1.uri() == QUrl("res:/C")) {
-        QCOMPARE(r1.properties().count(), 3);
-        QCOMPARE(r2.properties().count(), 1);
-    }
-    else {
-        QCOMPARE(r1.properties().count(), 1);
-        QCOMPARE(r2.properties().count(), 3);
-    }
-
-
-    // get two resources without sub-res
-    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"), false).toList();
-
-    // no error
-    QVERIFY(!m_dmModel->lastError());
-
-    // only one resource in the result
-    QCOMPARE(g.count(), 2);
-
-    // the results are res:/A and res:/C
-    r1 = g.first();
-    r2 = g.back();
-    QVERIFY(r1.uri() == QUrl("res:/A") || r2.uri() == QUrl("res:/A"));
-    QVERIFY(r1.uri() == QUrl("res:/C") || r2.uri() == QUrl("res:/C"));
-
-    // res:/A has 3 properties
-    QCOMPARE(r1.properties().count(), 3);
-    QCOMPARE(r2.properties().count(), 3);
-
-
-    // get two resources with sub-res
-    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"), true).toList();
-
-    // no error
-    QVERIFY(!m_dmModel->lastError());
-
-    // only one resource in the result
-    QCOMPARE(g.count(), 4);
-
-    // the results are res:/A, res:/B, res:/C and res:/D
-    QList<SimpleResource>::const_iterator it = g.constBegin();
-    r1 = *it;
-    ++it;
-    r2 = *it;
-    ++it;
-    SimpleResource r3 = *it;
-    ++it;
-    SimpleResource r4 = *it;
-    QVERIFY(r1.uri() == QUrl("res:/A") || r2.uri() == QUrl("res:/A") || r3.uri() == QUrl("res:/A") || r4.uri() == QUrl("res:/A"));
-    QVERIFY(r1.uri() == QUrl("res:/B") || r2.uri() == QUrl("res:/B") || r3.uri() == QUrl("res:/B") || r4.uri() == QUrl("res:/B"));
-    QVERIFY(r1.uri() == QUrl("res:/C") || r2.uri() == QUrl("res:/C") || r3.uri() == QUrl("res:/C") || r4.uri() == QUrl("res:/C"));
-    QVERIFY(r1.uri() == QUrl("res:/D") || r2.uri() == QUrl("res:/D") || r3.uri() == QUrl("res:/D") || r4.uri() == QUrl("res:/D"));
+    // the result with related res should be the same as there is no related non-sub-res
+    QCOMPARE(g, m_dmModel->describeResources(QList<QUrl>() << QUrl::fromLocalFile(fileC.fileName())));
 
 
     // get two resources with sub-res and mixed URL/URI
-    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl::fromLocalFile(fileC.fileName()), true).toList();
+    g = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl::fromLocalFile(fileC.fileName()));
 
     // no error
     QVERIFY(!m_dmModel->lastError());
 
     // only one resource in the result
+    QVERIFY(g.contains(QUrl("res:/A")));
+    QVERIFY(g.contains(QUrl("res:/B")));
+    QVERIFY(g.contains(QUrl("res:/C")));
+    QVERIFY(g.contains(QUrl("res:/D")));
     QCOMPARE(g.count(), 4);
+}
 
-    // the results are res:/A, res:/B, res:/C and res:/D
-    it = g.constBegin();
-    r1 = *it;
-    ++it;
-    r2 = *it;
-    ++it;
-    r3 = *it;
-    ++it;
-    r4 = *it;
-    QVERIFY(r1.uri() == QUrl("res:/A") || r2.uri() == QUrl("res:/A") || r3.uri() == QUrl("res:/A") || r4.uri() == QUrl("res:/A"));
-    QVERIFY(r1.uri() == QUrl("res:/B") || r2.uri() == QUrl("res:/B") || r3.uri() == QUrl("res:/B") || r4.uri() == QUrl("res:/B"));
-    QVERIFY(r1.uri() == QUrl("res:/C") || r2.uri() == QUrl("res:/C") || r3.uri() == QUrl("res:/C") || r4.uri() == QUrl("res:/C"));
-    QVERIFY(r1.uri() == QUrl("res:/D") || r2.uri() == QUrl("res:/D") || r3.uri() == QUrl("res:/D") || r4.uri() == QUrl("res:/D"));
+// test that related resources are properly returned, ie. only containing their identifying properties
+void DataManagementModelTest::testDescribeResources_relatedResources()
+{
+    // create two main resources, one sub-resource, two related resources,
+    // one related resource to the sub-resource, one sub-resource to a related resource,
+    // and one related resource to one related resource. The latter once as identifying
+    // and once non-identifying
+    const QUrl g = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    // main res 1: A
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), QUrl("class:/typeA"), g);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g);
+
+    // main res 2: B
+    m_model->addStatement(QUrl("res:/B"), RDF::type(), QUrl("class:/typeB"), g);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/int"), LiteralValue(2), g);
+
+    // sub-resource to A
+    m_model->addStatement(QUrl("res:/AA"), RDF::type(), QUrl("class:/typeA"), g);
+    m_model->addStatement(QUrl("res:/AA"), QUrl("prop:/int"), LiteralValue(42), g);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/AA"), g);
+
+    // related res to AA
+    m_model->addStatement(QUrl("res:/AAA"), RDF::type(), QUrl("class:/typeB"), g);
+    m_model->addStatement(QUrl("res:/AAA"), QUrl("prop:/int"), LiteralValue(42), g);
+    m_model->addStatement(QUrl("res:/AA"), QUrl("prop:/res"), QUrl("res:/AAA"), g);
+
+    // related res to B
+    m_model->addStatement(QUrl("res:/BB"), RDF::type(), QUrl("class:/typeC"), g);
+    m_model->addStatement(QUrl("res:/BB"), QUrl("prop:/int"), LiteralValue(42), g);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/res"), QUrl("res:/BB"), g);
+
+    // related res to BB (identifying)
+    m_model->addStatement(QUrl("res:/BBB_ident"), RDF::type(), QUrl("class:/typeC"), g);
+    m_model->addStatement(QUrl("res:/BBB_ident"), QUrl("prop:/int"), LiteralValue(42), g);
+    m_model->addStatement(QUrl("res:/BB"), QUrl("prop:/res_ident"), QUrl("res:/BBB_ident"), g);
+
+    // related res to BB (non-identifying)
+    m_model->addStatement(QUrl("res:/BBB"), RDF::type(), QUrl("class:/typeC"), g);
+    m_model->addStatement(QUrl("res:/BBB"), QUrl("prop:/int"), LiteralValue(42), g);
+    m_model->addStatement(QUrl("res:/BB"), QUrl("prop:/res"), QUrl("res:/BBB"), g);
+
+    // sub-resource to AA
+    m_model->addStatement(QUrl("res:/AAA_sub"), RDF::type(), QUrl("class:/typeB"), g);
+    m_model->addStatement(QUrl("res:/AAA_sub"), QUrl("prop:/int"), LiteralValue(42), g);
+    m_model->addStatement(QUrl("res:/AA"), NAO::hasSubResource(), QUrl("res:/AAA_sub"), g);
+
+
+    {
+        // describe A and B
+        const SimpleResourceGraph graph = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/B"));
+
+        // the graph should contain all resources except BBB which is a non-identifying relation to a related resource
+        QVERIFY(graph.contains(QUrl("res:/A")));
+        QVERIFY(graph.contains(QUrl("res:/B")));
+        QVERIFY(graph.contains(QUrl("res:/AA")));
+        QVERIFY(graph.contains(QUrl("res:/AAA")));
+        QVERIFY(graph.contains(QUrl("res:/BB")));
+        QVERIFY(graph.contains(QUrl("res:/BBB_ident")));
+        QVERIFY(graph.contains(QUrl("res:/AAA_sub")));
+        QCOMPARE(graph.count(), 7);
+
+        const SimpleResource resA = graph[QUrl("res:/A")];
+        const SimpleResource resB = graph[QUrl("res:/B")];
+        const SimpleResource resAA = graph[QUrl("res:/AA")];
+        const SimpleResource resAAA = graph[QUrl("res:/AAA")];
+        const SimpleResource resBB = graph[QUrl("res:/BB")];
+        const SimpleResource resBBB_ident = graph[QUrl("res:/BBB_ident")];
+        const SimpleResource resAAA_sub = graph[QUrl("res:/AAA_sub")];
+
+        // A
+        QVERIFY(resA.contains(RDF::type(), QUrl("class:/typeA")));
+        QVERIFY(resA.contains(QUrl("prop:/string"), QLatin1String("foobar")));
+        QVERIFY(resA.contains(QUrl("prop:/int"), 42));
+        QVERIFY(resA.contains(NAO::hasSubResource(), QUrl("res:/AA")));
+        QCOMPARE(resA.properties().count(), 4);
+
+        // B
+        QVERIFY(resB.contains(RDF::type(), QUrl("class:/typeB")));
+        QVERIFY(resB.contains(QUrl("prop:/string"), QLatin1String("hello world")));
+        QVERIFY(resB.contains(QUrl("prop:/int"), 2));
+        QVERIFY(resB.contains(QUrl("prop:/res"), QUrl("res:/BB")));
+        QCOMPARE(resB.properties().count(), 4);
+
+        // AA
+        QVERIFY(resAA.contains(RDF::type(), QUrl("class:/typeA")));
+        QVERIFY(resAA.contains(QUrl("prop:/int"), 42));
+        QVERIFY(resAA.contains(QUrl("prop:/res"), QUrl("res:/AAA")));
+        QVERIFY(resAA.contains(NAO::hasSubResource(), QUrl("res:/AAA_sub")));
+        QCOMPARE(resAA.properties().count(), 4);
+
+        // AAA
+        QVERIFY(resAAA.contains(RDF::type(), QUrl("class:/typeB")));
+        QVERIFY(resAAA.contains(QUrl("prop:/int"), 42));
+        QCOMPARE(resAAA.properties().count(), 2);
+
+        // BB
+        QVERIFY(resBB.contains(RDF::type(), QUrl("class:/typeC")));
+        QVERIFY(resBB.contains(QUrl("prop:/int"), 42));
+        QVERIFY(resBB.contains(QUrl("prop:/res_ident"), QUrl("res:/BBB_ident")));
+        QCOMPARE(resBB.properties().count(), 3);
+
+        // BBB_ident
+        QVERIFY(resBBB_ident.contains(RDF::type(), QUrl("class:/typeC")));
+        QVERIFY(resBBB_ident.contains(QUrl("prop:/int"), 42));
+        QCOMPARE(resBBB_ident.properties().count(), 2);
+
+        // AAA_sub
+        QVERIFY(resAAA_sub.contains(RDF::type(), QUrl("class:/typeB")));
+        QVERIFY(resAAA_sub.contains(QUrl("prop:/int"), 42));
+        QCOMPARE(resAAA_sub.properties().count(), 2);
+    }
+
+    {
+        // describe A and B excluding related resources
+        const SimpleResourceGraph graph = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/B"), ExcludeRelatedResources);
+
+        // the graph should only contains A and B and their sub-resources
+        QVERIFY(graph.contains(QUrl("res:/A")));
+        QVERIFY(graph.contains(QUrl("res:/B")));
+        QVERIFY(graph.contains(QUrl("res:/AA")));
+        QVERIFY(graph.contains(QUrl("res:/AAA_sub")));
+        QCOMPARE(graph.count(), 4);
+
+        const SimpleResource resA = graph[QUrl("res:/A")];
+        const SimpleResource resB = graph[QUrl("res:/B")];
+        const SimpleResource resAA = graph[QUrl("res:/AA")];
+        const SimpleResource resAAA_sub = graph[QUrl("res:/AAA_sub")];
+
+        // A
+        QVERIFY(resA.contains(RDF::type(), QUrl("class:/typeA")));
+        QVERIFY(resA.contains(QUrl("prop:/string"), QLatin1String("foobar")));
+        QVERIFY(resA.contains(QUrl("prop:/int"), 42));
+        QVERIFY(resA.contains(NAO::hasSubResource(), QUrl("res:/AA")));
+        QCOMPARE(resA.properties().count(), 4);
+
+        // B
+        QVERIFY(resB.contains(RDF::type(), QUrl("class:/typeB")));
+        QVERIFY(resB.contains(QUrl("prop:/string"), QLatin1String("hello world")));
+        QVERIFY(resB.contains(QUrl("prop:/int"), 2));
+        QCOMPARE(resB.properties().count(), 3);
+
+        // AA
+        QVERIFY(resAA.contains(RDF::type(), QUrl("class:/typeA")));
+        QVERIFY(resAA.contains(QUrl("prop:/int"), 42));
+        QVERIFY(resAA.contains(NAO::hasSubResource(), QUrl("res:/AAA_sub")));
+        QCOMPARE(resAA.properties().count(), 3);
+
+        // AAA_sub
+        QVERIFY(resAAA_sub.contains(RDF::type(), QUrl("class:/typeB")));
+        QVERIFY(resAAA_sub.contains(QUrl("prop:/int"), 42));
+        QCOMPARE(resAAA_sub.properties().count(), 2);
+    }
+}
+
+// test that discardable data is excluded properly
+void DataManagementModelTest::testDescribeResources_excludeDiscardableData()
+{
+    QTemporaryFile file;
+    file.open();
+
+    // create three graphs: 2 discardable and one non-discardable
+    const QUrl g1 = m_nrlModel->createGraph(NRL::DiscardableInstanceBase());
+    const QUrl g2 = m_nrlModel->createGraph(NRL::DiscardableInstanceBase());
+    const QUrl g3 = m_nrlModel->createGraph(NRL::InstanceBase());
+
+
+    // create the main resource - a bit of discardable and non-discardable data
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), QUrl("class:/typeA"), g1);
+    m_model->addStatement(QUrl("res:/A"), NIE::url(), KUrl(file.fileName()), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello")), g2);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("world")), g3);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/int"), LiteralValue(42), g3);
+
+    // a discardable sub-resource relation to a discardable resource
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/B"), RDF::type(), QUrl("class:/typeB"), g2);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g2);
+
+    // a discardable sub-resource relation to a non-discardable resource
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/C"), g1);
+    m_model->addStatement(QUrl("res:/C"), RDF::type(), QUrl("class:/typeB"), g3);
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g3);
+
+    // a discardable relation to a discardable resource
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/D"), g1);
+    m_model->addStatement(QUrl("res:/D"), RDF::type(), QUrl("class:/typeB"), g2);
+    m_model->addStatement(QUrl("res:/D"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g2);
+
+    // a discardable relation to a non-discardable resource
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/E"), g1);
+    m_model->addStatement(QUrl("res:/E"), RDF::type(), QUrl("class:/typeB"), g3);
+    m_model->addStatement(QUrl("res:/E"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g3);
+
+    // a non-discardable sub-resource relation to a discardable resource
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/F"), g3);
+    m_model->addStatement(QUrl("res:/F"), RDF::type(), QUrl("class:/typeB"), g2);
+    m_model->addStatement(QUrl("res:/F"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g2);
+
+    // a non-discardable sub-resource relation to a non-discardable resource
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/G"), g3);
+    m_model->addStatement(QUrl("res:/G"), RDF::type(), QUrl("class:/typeB"), g3);
+    m_model->addStatement(QUrl("res:/G"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g3);
+
+    // a non-discardable relation to a discardable resource
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/H"), g3);
+    m_model->addStatement(QUrl("res:/H"), RDF::type(), QUrl("class:/typeB"), g2);
+    m_model->addStatement(QUrl("res:/H"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g2);
+
+    // a non-discardable relation to a non-discardable resource
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/I"), g3);
+    m_model->addStatement(QUrl("res:/I"), RDF::type(), QUrl("class:/typeB"), g3);
+    m_model->addStatement(QUrl("res:/I"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g3);
+
+    // a second main resource, completely discardable except for some metadata -> this should be omitted completely
+    m_model->addStatement(QUrl("res:/J"), RDF::type(), QUrl("class:/typeA"), g1);
+    m_model->addStatement(QUrl("res:/J"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/J"), NAO::lastModified(), LiteralValue(QDateTime::currentDateTime()), g3);
+    m_model->addStatement(QUrl("res:/J"), NAO::userVisible(), LiteralValue(true), g3);
+
+
+    // describe res:/A and res:/J
+    const SimpleResourceGraph graph = m_dmModel->describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/J"), ExcludeDiscardableData);
+
+    // now the graph should contain res:/A, res:/G, res:/I
+    QCOMPARE(graph.count(), 3);
+    QVERIFY(graph.contains(QUrl("res:/A")));
+    QVERIFY(graph.contains(QUrl("res:/G")));
+    QVERIFY(graph.contains(QUrl("res:/I")));
+
+    const SimpleResource resA = graph[QUrl("res:/A")];
+    const SimpleResource resG = graph[QUrl("res:/G")];
+    const SimpleResource resI = graph[QUrl("res:/I")];
+
+    // resA
+    QVERIFY(resA.contains(QUrl("prop:/string"), QLatin1String("world")));
+    QVERIFY(resA.contains(QUrl("prop:/int"), 42));
+    QVERIFY(resA.contains(NIE::url(), QUrl(KUrl(file.fileName()))));
+    QVERIFY(resA.contains(NAO::hasSubResource(), QUrl("res:/G")));
+    QVERIFY(resA.contains(QUrl("prop:/res"), QUrl("res:/I")));
+    QCOMPARE(resA.properties().count(), 5);
+
+    // resG
+    QVERIFY(resG.contains(QUrl("prop:/string"), QLatin1String("foobar")));
+    QVERIFY(resG.contains(RDF::type(), QUrl("class:/typeB")));
+    QCOMPARE(resG.properties().count(), 2);
+
+    // resI
+    QVERIFY(resI.contains(QUrl("prop:/string"), QLatin1String("foobar")));
+    QVERIFY(resI.contains(RDF::type(), QUrl("class:/typeB")));
+    QCOMPARE(resI.properties().count(), 2);
 }
 
 KTempDir * DataManagementModelTest::createNieUrlTestData()

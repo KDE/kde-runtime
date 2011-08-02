@@ -343,6 +343,9 @@ void Nepomuk::CrappyInferencer::createInferenceIndex()
         d->m_subProperties.insert( it["x"].uri(), it["y"].uri() );
         d->m_superProperties.insert( it["y"].uri(), it["x"].uri() );
     }
+
+    // we only create ontology statements - we need to mark the graph as such
+    parentModel()->addStatement(d->infoContext(), Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::Ontology(), d->infoContext());
 }
 
 #include "crappyinferencer.moc"

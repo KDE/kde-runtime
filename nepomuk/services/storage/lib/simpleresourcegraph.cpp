@@ -121,15 +121,23 @@ void Nepomuk::SimpleResourceGraph::remove(const QUrl &uri, const QUrl &property,
 {
     QHash< QUrl, SimpleResource >::iterator it = d->resources.find( uri );
     if( it != d->resources.end() ) {
-        it.value().removeProperty(property, value);
+        it.value().remove(property, value);
     }
 }
 
-void Nepomuk::SimpleResourceGraph::removeAll(const QUrl &uri, const QUrl &property)
+void Nepomuk::SimpleResourceGraph::removeAll(const QUrl &uri, const QUrl &property, const QVariant &value)
 {
-    QHash< QUrl, SimpleResource >::iterator it = d->resources.find( uri );
-    if( it != d->resources.end() ) {
-        it.value().removeProperty(property);
+    if(!uri.isEmpty()) {
+        QHash< QUrl, SimpleResource >::iterator it = d->resources.find( uri );
+        if( it != d->resources.end() ) {
+            it.value().removeAll(property, value);
+        }
+    }
+    else {
+        for(QHash<QUrl, SimpleResource>::iterator it = d->resources.begin();
+            it != d->resources.end(); ++it) {
+            it->removeAll(property, value);
+        }
     }
 }
 
@@ -169,6 +177,11 @@ QSet<Nepomuk::SimpleResource> Nepomuk::SimpleResourceGraph::toSet() const
 QList<Nepomuk::SimpleResource> Nepomuk::SimpleResourceGraph::toList() const
 {
     return d->resources.values();
+}
+
+QList<QUrl> Nepomuk::SimpleResourceGraph::allResourceUris() const
+{
+    return d->resources.keys();
 }
 
 void Nepomuk::SimpleResourceGraph::clear()
@@ -243,7 +256,6 @@ void Nepomuk::SimpleResourceGraph::addStatement(const Soprano::Node& subject, co
     addStatement( Soprano::Statement( subject, predicate, object ) );
 }
 
-
 KJob* Nepomuk::SimpleResourceGraph::save(const KComponentData& component) const
 {
     return Nepomuk::storeResources(*this, Nepomuk::IdentifyNew, Nepomuk::NoStoreResourcesFlags, QHash<QUrl, QVariant>(), component);
@@ -251,7 +263,12 @@ KJob* Nepomuk::SimpleResourceGraph::save(const KComponentData& component) const
 
 QDebug Nepomuk::operator<<(QDebug dbg, const Nepomuk::SimpleResourceGraph& graph)
 {
-    return dbg << graph.toList();
+    dbg.nospace() << "SimpleResourceGraph(" << endl;
+    foreach(const SimpleResource& res, graph.toList()) {
+        dbg << res << endl;
+    }
+    dbg.nospace() << ")" << endl;
+    return dbg;
 }
 
 QDataStream & Nepomuk::operator<<(QDataStream & stream, const Nepomuk::SimpleResourceGraph& graph)

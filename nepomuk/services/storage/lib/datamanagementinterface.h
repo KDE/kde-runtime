@@ -72,10 +72,10 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QLatin1String("createResource"), argumentList, s_defaultTimeout);
     }
 
-    inline QDBusPendingReply<QList<Nepomuk::SimpleResource> > describeResources(const QStringList &resources, bool includeSubResources)
+    inline QDBusPendingReply<QList<Nepomuk::SimpleResource> > describeResources(const QStringList &resources, int flags, const QStringList &targetParties)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(resources) << qVariantFromValue(includeSubResources);
+        argumentList << qVariantFromValue(resources) << qVariantFromValue(flags) << qVariantFromValue(targetParties);
         return asyncCallWithArgumentList(QLatin1String("describeResources"), argumentList, s_defaultTimeout);
     }
 

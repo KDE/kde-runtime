@@ -158,6 +158,8 @@ private Q_SLOTS:
     void testMergeResources_protectedTypes();
 
     void testDescribeResources();
+    void testDescribeResources_relatedResources();
+    void testDescribeResources_excludeDiscardableData();
 
     void testImportResources();
 
