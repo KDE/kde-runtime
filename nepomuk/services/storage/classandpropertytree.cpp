@@ -523,10 +523,12 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
     }
 
     // rdf:type is identifying by default
-    m_tree[RDF::type()]->identifying = 1;
+    if(m_tree.contains(RDF::type()))
+        m_tree[RDF::type()]->identifying = 1;
 
     // nao:hasSubResource is identifying by default
-    m_tree[NAO::hasSubResource()]->identifying = 1;
+    if(m_tree.contains(NAO::hasSubResource()))
+        m_tree[NAO::hasSubResource()]->identifying = 1;
 
     for ( QHash<QUrl, ClassOrProperty*>::iterator it = m_tree.begin();
           it != m_tree.end(); ++it ) {
