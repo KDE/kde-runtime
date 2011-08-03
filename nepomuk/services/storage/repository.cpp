@@ -19,6 +19,7 @@
 #include "datamanagementmodel.h"
 #include "datamanagementadaptor.h"
 #include "classandpropertytree.h"
+#include "graphmaintainer.h"
 
 #include <Soprano/Backend>
 #include <Soprano/PluginManager>
@@ -176,6 +177,12 @@ void Nepomuk::Repository::open()
     }
 
     kDebug() << "Successfully created new model for repository" << name();
+
+    // Fire up the graph maintainer on the pure data model.
+    // =================================
+    GraphMaintainer* graphMaintainer = new GraphMaintainer(m_model);
+    connect(graphMaintainer, SIGNAL(finished()), graphMaintainer, SLOT(deleteLater()));
+    graphMaintainer->start();
 
     // create the one class and property tree to be used in the crappy inferencer 2 and in DMS
     // =================================
