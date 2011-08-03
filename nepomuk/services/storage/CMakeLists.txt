@@ -29,6 +29,7 @@ set(storage_SRCS
   resourceidentifier.cpp
   resourcewatchermanager.cpp
   resourcewatcherconnection.cpp
+  graphmaintainer.cpp
   )
 
 qt4_add_dbus_adaptor(storage_SRCS
