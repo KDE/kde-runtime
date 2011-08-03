@@ -33,7 +33,17 @@ namespace Nepomuk
     ~AkonadiWritebackPlugin();
   public:
     void doWriteback(const QUrl& url);
+   /**
+     * Fetches the payload of the given item , its called
+     * using connect and it compares with the metadata
+     * in nepomuk storage if there is any changes calls
+     * modifyJob to change the metadata.
+     */
     void fetchFinished (KJob *job);
+    /**
+      * Modifies the item and informs if it was a success
+      * or a failure.
+      */
     void modifyFinished (KJob *job);
     
   };

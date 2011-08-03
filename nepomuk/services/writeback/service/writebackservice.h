@@ -26,7 +26,9 @@
 #include <KService>
 
 namespace Nepomuk {
-
+/**
+  * Service controlling the writeback
+  */
 class WriteBackService : public Service
 {
     Q_OBJECT
@@ -36,9 +38,16 @@ public:
     ~WriteBackService();
 
 private:
+/**
+  * Makes plugin list and passes it to writebackjob along with the resource.
+  */
     void performWriteback(const KService::List services,const Nepomuk::Resource & resource);
 
 public Q_SLOTS:
+    /**
+      * This method is selects the plugin using either the mimetype or rdf type
+      * than passes it to performWriteback method to do the actual writeback.
+      */
     Q_SCRIPTABLE  void test( const Nepomuk::Resource & resource);
 };
 }

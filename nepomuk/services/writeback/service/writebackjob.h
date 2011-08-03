@@ -30,18 +30,35 @@ class WritebackJob : public KJob
 public:
     WritebackJob(QObject* parent = 0);
     ~WritebackJob();
-
+/**
+  * Sets plugins as member variable of the class.
+  */
     void setPlugins(const QList<WritebackPlugin*>& plugins);
+    /**
+      * Sets the resource as a member variable of the class.
+      */
     void setResource(const Nepomuk::Resource & resource);
 private:
     QList<WritebackPlugin*> m_plugins;
     Nepomuk::Resource m_resource;
 
 public Q_SLOTS:
+    /**
+     * Starts the writeback job.
+     */
     void start();
 
 private Q_SLOTS:
+    /**
+      * Selects a plugin from the list and performs the writeback,
+      * than connects with slotWritebackFinished.
+      */
     void tryNextPlugin();
+    /**
+     * If there are more plugins avaliable, it will again call tryNextPlugin
+     * to perform the writeback , else it will emitResult hence finishing the
+     * job.
+     */
     void slotWritebackFinished(Nepomuk::WritebackPlugin* plugin);
 };
 }

@@ -20,30 +20,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "writebackplugin.h"
 #include <KDebug>
 
-class Nepomuk::WritebackPlugin::Private
-{
-public:
-    Private( WritebackPlugin* parent)
-        : q (parent)
-    {
-     kDebug();
-    }
-
-private:
-    WritebackPlugin* q;
-};
-
-
 
 Nepomuk::WritebackPlugin::WritebackPlugin(QObject* parent)
-    : QObject(parent),
-      d( new Private(this) )
+    : QObject(parent)
 {
+
 }
 
 Nepomuk::WritebackPlugin::~WritebackPlugin()
 {
-    delete d;
+
 }
 
 
@@ -55,7 +41,6 @@ void Nepomuk::WritebackPlugin::writeback( const QUrl& url )
 
 void Nepomuk::WritebackPlugin::emitFinished()
 {
-    emit finished();
     emit finished( this );
 }
 
