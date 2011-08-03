@@ -197,7 +197,11 @@ namespace Nepomuk {
         // no signal is emitted twice
         void setIndexingStarted( bool started );
 
-        void callDoIndexing();
+        /**
+         * Continue indexing async after waiting for the configured delay.
+         * \param noDelay If true indexing will be started immediately without any delay.
+         */
+        void callDoIndexing( bool noDelay = false );
 
         bool m_suspended;
         bool m_indexing;
@@ -216,6 +220,7 @@ namespace Nepomuk {
         // queue of folders to update (+flags defined in the source file) - changed by updateDir
         UpdateDirQueue m_dirsToUpdate;
 
+        // queue of files to update. This is filled from the dirs queue and manual methods like analyzeFile
         QQueue<QFileInfo> m_filesToUpdate;
 
         QMutex m_dirsToUpdateMutex;
