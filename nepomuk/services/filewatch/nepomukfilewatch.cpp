@@ -234,19 +234,31 @@ void Nepomuk::FileWatch::slotFileDeleted( const QString& urlString, bool isDir )
 void Nepomuk::FileWatch::slotFileCreated( const QString& path )
 {
     kDebug() << path;
-    updateFolderViaStrigi( path );
+    updateFileViaStrigi( path );
 }
 
 
 void Nepomuk::FileWatch::slotFileModified( const QString& path )
 {
-    updateFolderViaStrigi( path );
+    updateFileViaStrigi( path );
 }
 
 
 void Nepomuk::FileWatch::slotMovedWithoutData( const QString& path )
 {
     updateFolderViaStrigi( path );
+}
+
+
+// static
+void Nepomuk::FileWatch::updateFileViaStrigi(const QString &path)
+{
+    if( StrigiServiceConfig::self()->shouldBeIndexed(path) ) {
+        org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
+        if ( strigi.isValid() ) {
+            strigi.indexFile( path );
+        }
+    }
 }
 
 
@@ -365,6 +377,5 @@ void Nepomuk::FileWatch::slotDeviceMounted(const Nepomuk::RemovableMediaCache::E
     kDebug() << "Installing watch for removable storage at mount point" << entry->mountPath();
     watchFolder(entry->mountPath());
 }
-
 
 #include "nepomukfilewatch.moc"

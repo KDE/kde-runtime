@@ -323,6 +323,7 @@ Nepomuk::IndexScheduler::UpdateDirFlags Nepomuk::IndexScheduler::currentFlags() 
 void Nepomuk::IndexScheduler::setIndexingStarted( bool started )
 {
     QMutexLocker locker( &m_indexingMutex );
+
     if ( started != m_indexing ) {
         m_indexing = started;
         emit indexingStateChanged( m_indexing );
@@ -509,20 +510,20 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
 }
 
 
-void Nepomuk::IndexScheduler::callDoIndexing()
+void Nepomuk::IndexScheduler::callDoIndexing(bool noDelay)
 {
     if( !m_suspended ) {
-        QTimer::singleShot( m_indexingDelay, this, SLOT(doIndexing()) );
+        QTimer::singleShot( noDelay ? 0 : m_indexingDelay, this, SLOT(doIndexing()) );
     }
 }
 
 
 void Nepomuk::IndexScheduler::updateDir( const QString& path, UpdateDirFlags flags )
 {
-    QMutexLocker lock( &m_dirsToUpdateMutex );
+    QMutexLocker dirLock( &m_dirsToUpdateMutex );
     m_dirsToUpdate.prependDir( path, flags & ~AutoUpdateFolder );
 
-    QMutexLocker locker( &m_indexingMutex );
+    QMutexLocker statusLock( &m_indexingMutex );
     if( !m_indexing )
         callDoIndexing();
 }
@@ -575,8 +576,28 @@ void Nepomuk::IndexScheduler::slotConfigChanged()
 
 void Nepomuk::IndexScheduler::analyzeFile( const QString& path )
 {
-    KJob * indexer = new Indexer( KUrl(path) );
-    indexer->start();
+    kDebug() << path;
+    QMutexLocker fileLock(&m_filesToUpdateMutex);
+
+    // we prepend the file to give preference to newly created and changed files over
+    // the initial indexing. Sadly operator== cannot be relied on for QFileInfo. Thus
+    // we need to do a dumb search
+    QMutableListIterator<QFileInfo> it(m_filesToUpdate);
+    while(it.hasNext()) {
+        if(it.next().filePath() == path) {
+            kDebug() << "Already queued:" << path << "Moving to front of queue.";
+            it.remove();
+            break;
+        }
+    }
+    kDebug() << "Queuing" << path;
+    m_filesToUpdate.prepend(path);
+
+    // continue indexing without any delay. We want changes reflected as soon as possible
+    QMutexLocker statusLock(&m_indexingMutex);
+    if( !m_indexing ) {
+        callDoIndexing(true);
+    }
 }
 
 
