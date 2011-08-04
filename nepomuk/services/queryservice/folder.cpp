@@ -111,12 +111,14 @@ void Nepomuk::Query::Folder::update()
 
 QList<Nepomuk::Query::Result> Nepomuk::Query::Folder::entries() const
 {
+    QMutexLocker lock(&m_runnableMutex);
     return m_results.values();
 }
 
 
 bool Nepomuk::Query::Folder::initialListingDone() const
 {
+    QMutexLocker lock(&m_runnableMutex);
     return m_initialListingDone;
 }
 
@@ -142,6 +144,8 @@ Nepomuk::Query::RequestPropertyMap Nepomuk::Query::Folder::requestPropertyMap() 
 // called from SearchRunnable in the search thread
 void Nepomuk::Query::Folder::addResults( const QList<Nepomuk::Query::Result>& results )
 {
+    QMutexLocker lock(&m_runnableMutex);
+
     QSet<Result> newResults;
     Q_FOREACH( const Result& result, results ) {
         if ( !m_results.contains( result.resource().resourceUri() ) ) {

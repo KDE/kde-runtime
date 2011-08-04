@@ -321,20 +321,23 @@ class DescribeResourcesCommand : public DataManagementCommand
 {
 public:
     DescribeResourcesCommand(const QList<QUrl>& res,
-                             bool includeSubResources,
+                             Nepomuk::DescribeResourcesFlags flags,
+                             const QList<QUrl>& targetParties,
                              Nepomuk::DataManagementModel* model,
                              const QDBusMessage& msg)
         : DataManagementCommand(model, msg),
           m_resources(res),
-          m_includeSubResources(includeSubResources) {}
+          m_flags(flags),
+          m_targetParties(targetParties) {}
 
 private:
     QVariant runCommand() {
-        return QVariant::fromValue(model()->describeResources(m_resources, m_includeSubResources).toList());
+        return QVariant::fromValue(model()->describeResources(m_resources, m_flags, m_targetParties).toList());
     }
 
     QList<QUrl> m_resources;
-    bool m_includeSubResources;
+    Nepomuk::DescribeResourcesFlags m_flags;
+    QList<QUrl> m_targetParties;
 };
 
 class ImportResourcesCommand : public DataManagementCommand

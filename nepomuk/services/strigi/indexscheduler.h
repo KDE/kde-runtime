@@ -95,6 +95,12 @@ namespace Nepomuk {
         };
         Q_DECLARE_FLAGS( UpdateDirFlags, UpdateDirFlag )
 
+        /**
+         * The UpdateDirFlags of the the current url that is being
+         * indexed.
+         */
+        UpdateDirFlags currentFlags() const;
+
         enum IndexingSpeed {
             /**
              * Index at full speed, i.e. do not use any artificial
@@ -176,8 +182,6 @@ namespace Nepomuk {
         void doIndexing();
 
     private:
-        void run();
-
         /**
          * It first indexes \p dir. Then it indexes all the files in \p dir, and
          * finally recursivly analyzes all the subfolders in \p dir IF \p flags
@@ -221,8 +225,8 @@ namespace Nepomuk {
 
         QMutex m_dirsToUpdateMutex;
 
-        QString m_currentFolder;
         KUrl m_currentUrl;
+        UpdateDirFlags m_currentFlags;
 
         int m_indexingDelay;
         IndexCleaner* m_cleaner;

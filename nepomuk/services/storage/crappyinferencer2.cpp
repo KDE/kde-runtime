@@ -449,6 +449,10 @@ void CrappyInferencer2::updateInferenceIndex()
 
     QMutexLocker lock( &d->m_mutex );
 
+    // we only create ontology statements - we need to mark the graph as such
+    parentModel()->addStatement(d->m_inferenceContext, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::Ontology(), d->m_inferenceContext);
+
+
     // Build superclasses hash
     // ==============================================
 

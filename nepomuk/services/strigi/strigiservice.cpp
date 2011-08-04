@@ -1,6 +1,6 @@
 /* This file is part of the KDE Project
    Copyright (c) 2008-2010 Sebastian Trueg <trueg@kde.org>
-   Copyright (c) 2010 Vishesh Handa <handa.vish@gmail.com>
+   Copyright (c) 2010-2011 Vishesh Handa <handa.vish@gmail.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -159,15 +159,28 @@ QString Nepomuk::StrigiService::userStatusString( bool simple ) const
     }
     else if ( indexing ) {
         QString folder = m_indexScheduler->currentFolder();
+        bool autoUpdate =  m_indexScheduler->currentFlags() & IndexScheduler::AutoUpdateFolder;
 
-        if ( folder.isEmpty() || simple )
-            return i18nc( "@info:status", "Indexing files for desktop search." );
+        if ( folder.isEmpty() || simple ) {
+            if( autoUpdate ) {
+                return i18nc( "@info:status", "Scanning for recent changes in files for desktop search");
+            }
+            else {
+                return i18nc( "@info:status", "Indexing files for desktop search." );
+            }
+        }
         else {
             QString file = KUrl( m_indexScheduler->currentFile() ).fileName();
-            if( file.isEmpty() )
-                return i18nc( "@info:status", "Indexing files in %1", folder );
-            else
-                return i18nc( "@info:status", "Indexing files in %1 (%2)", folder, file );
+
+            if( autoUpdate ) {
+                return i18nc( "@info:status", "Scanning for recent changes in %1", folder );
+            }
+            else {
+                if( file.isEmpty() )
+                    return i18nc( "@info:status", "Indexing files in %1", folder );
+                else
+                    return i18nc( "@info:status", "Indexing %1", file );
+            }
         }
     }
     else {

@@ -41,6 +41,7 @@ set( DMTEST
   ../datamanagementcommand.cpp
   ../resourcemerger.cpp
   ../resourceidentifier.cpp
+  ../crappyinferencer.cpp
   qtest_dms.cpp
 )
 

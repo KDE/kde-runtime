@@ -41,6 +41,7 @@ Nepomuk::StatusWidget::StatusWidget( QWidget* parent )
       m_updatingJobCnt( 0 ),
       m_updateRequested( false )
 {
+    KGlobal::locale()->insertCatalog("kcm_nepomuk");
     setupUi( mainWidget() );
 
     setCaption( m_title->text() );

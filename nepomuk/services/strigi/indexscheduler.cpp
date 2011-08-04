@@ -65,7 +65,7 @@ namespace {
 
 
     /* vHanda:
-     * FIXME: Fix this properly by using MergeFlags in storeResources. 
+     * FIXME: Fix this properly by using MergeFlags in storeResources.
      *
      * A long explaination of why this is required -
      * You have a folder, called "coldplay", with a number of files in it. You then decide
@@ -299,13 +299,19 @@ bool Nepomuk::IndexScheduler::isIndexing() const
 
 QString Nepomuk::IndexScheduler::currentFolder() const
 {
-    return m_currentFolder;
+    return m_currentUrl.directory();
 }
 
 
 QString Nepomuk::IndexScheduler::currentFile() const
 {
     return m_currentUrl.toLocalFile();
+}
+
+
+Nepomuk::IndexScheduler::UpdateDirFlags Nepomuk::IndexScheduler::currentFlags() const
+{
+    return m_currentFlags;
 }
 
 
@@ -345,7 +351,6 @@ void Nepomuk::IndexScheduler::doIndexing()
         QFileInfo file = m_filesToUpdate.dequeue();
 
         m_currentUrl = file.filePath();
-        m_currentFolder = m_currentUrl.directory();
 
         emit indexingFile( m_currentUrl.toLocalFile() );
 
@@ -379,8 +384,8 @@ void Nepomuk::IndexScheduler::slotIndexingDone(KJob* job)
     kDebug() << job;
     Q_UNUSED( job );
 
-    m_currentFolder.clear();
     m_currentUrl.clear();
+    m_currentFlags = NoUpdateFlags;
 
     callDoIndexing();
 }
@@ -397,9 +402,8 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
 
     // inform interested clients
     emit indexingFolder( dir );
-
-    m_currentFolder = dir;
     m_currentUrl = KUrl( dir );
+    m_currentFlags = flags;
 
     const bool recursive = flags&UpdateRecursive;
     const bool forceUpdate = flags&ForceUpdate;
@@ -442,6 +446,8 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
 
         // do we need to update? Did the file change?
         bool fileChanged = !newFile && fileInfo.lastModified() != filesInStoreIt.value();
+        //TODO: At some point make these "NEW", "CHANGED", and "FORCED" strings public
+        //      so that they can be used to create a better status message.
         if ( fileChanged )
             kDebug() << "CHANGED:" << path << fileInfo.lastModified() << filesInStoreIt.value();
         else if( forceUpdate )

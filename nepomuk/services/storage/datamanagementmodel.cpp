@@ -1738,17 +1738,13 @@ QVariant nodeToVariant(const Soprano::Node& node) {
 }
 }
 
-Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(const QList<QUrl> &resources, bool includeSubResources) const
+Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(const QList<QUrl> &resources,
+                                                                             DescribeResourcesFlags flags,
+                                                                             const QList<QUrl>& targetParties) const
 {
-    kDebug() << resources << includeSubResources;
-
     //
     // check parameters
     //
-    if(resources.isEmpty()) {
-        setError(QLatin1String("describeResources: No resource specified."), Soprano::Error::ErrorInvalidArgument);
-        return SimpleResourceGraph();
-    }
     foreach( const QUrl & res, resources ) {
         if(res.isEmpty()) {
             setError(QLatin1String("describeResources: Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
@@ -1756,87 +1752,194 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
         }
     }
 
+    if(!targetParties.isEmpty()) {
+        setError(QLatin1String("Permission handling has not been implemented yet."));
+        return SimpleResourceGraph();
+    }
+
 
     clearError();
 
 
     //
-    // Split into nie:urls and URIs so we can get all data in one query
+    // Resolve all URLs - for now we ignore non-existing resources
     //
-    QSet<QUrl> nieUrls;
-    QSet<QUrl> resUris;
-    foreach( const QUrl & res, resources ) {
-        const UriState state = uriState(res);
-        if(state == NonExistingFileUrl) {
-            setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(res.toLocalFile()),
-                     Soprano::Error::ErrorInvalidArgument);
-            return SimpleResourceGraph();
-        }
-        else if(state == ExistingFileUrl || state == SupportedUrl) {
-            nieUrls.insert(res);
-        }
-        else if(state == NepomukUri || state == OtherUri){
-            resUris.insert(res);
-        }
-        else if(state == BlankUri) {
-            setError(QString::fromLatin1("Cannot give information about blank uris. '%1' does not exist").arg(res.toString()),
-                     Soprano::Error::ErrorInvalidArgument);
-            return SimpleResourceGraph();
-        }
-    }
-
-
-    //
-    // Build the query
-    //
-    QStringList terms;
-    if(!nieUrls.isEmpty()) {
-        terms << QString::fromLatin1("?s ?p ?o . ?s %1 ?u . FILTER(?u in (%2)) . ")
-                 .arg(Soprano::Node::resourceToN3(Vocabulary::NIE::url()),
-                      resourcesToN3(nieUrls).join(QLatin1String(",")));
-        if(includeSubResources) {
-            terms << QString::fromLatin1("?s ?p ?o . ?r %1 ?s . ?r %2 ?u . FILTER(?u in (%3)) . ")
-                     .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
-                          Soprano::Node::resourceToN3(Vocabulary::NIE::url()),
-                          resourcesToN3(nieUrls).join(QLatin1String(",")));
-        }
-    }
-    if(!resUris.isEmpty()) {
-        terms << QString::fromLatin1("?s ?p ?o . FILTER(?s in (%1)) . ")
-                 .arg(resourcesToN3(resUris).join(QLatin1String(",")));
-        if(includeSubResources) {
-            terms << QString::fromLatin1("?s ?p ?o . ?r %1 ?s . FILTER(?r in (%2)) . ")
-                     .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
-                          resourcesToN3(resUris).join(QLatin1String(",")));
-        }
-    }
-
-    QString query = QLatin1String("select distinct ?s ?p ?o where { ");
-    if(terms.count() == 1) {
-        query += terms.first();
-    }
-    else {
-        query += QLatin1String("{ ") + terms.join(QLatin1String("} UNION { ")) + QLatin1String("}");
-    }
-    query += QLatin1String(" }");
-
-
-    //
-    // Build the graph
-    //
-    QHash<QUrl, SimpleResource> graph;
-    Soprano::QueryResultIterator it = executeQuery(query, Soprano::Query::QueryLanguageSparql);
-    while(it.next()) {
-        const QUrl r = it["s"].uri();
-        graph[r].setUri(r);
-        graph[r].addProperty(it["p"].uri(), nodeToVariant(it["o"]));
-    }
-    if(it.lastError()) {
-        setError(it.lastError());
+    QSet<QUrl> resolvedResources(QSet<QUrl>::fromList(resolveUrls(resources, false /* do not stat local files - it would be a waste of resources */).values()));
+    if(resolvedResources.isEmpty()) {
+        setError(QLatin1String("describeResources: No useful resource specified."), Soprano::Error::ErrorInvalidArgument);
         return SimpleResourceGraph();
     }
 
-    return graph.values();
+
+    //
+    // In case we need to exclude discardable data we make sure that metadata properties are
+    // exported in any case as those are maintained by us and are only in the specific graph
+    // "by chance".
+    //
+    const QString discardableDataExcludeFilter
+            = (flags & ExcludeDiscardableData
+               ? QString::fromLatin1("FILTER(!bif:exists((select (1) where { ?g a %1 . })) || %2) . ")
+                 .arg(Soprano::Node::resourceToN3(NRL::DiscardableInstanceBase()),
+                      createResourceMetadataPropertyFilter(QLatin1String("?p"), false))
+               : QString());
+
+    //
+    // Get all sub-resources and add them to the list of resources to describe
+    //
+    {
+        QSet<QUrl> subResources = resolvedResources;
+        int resCount = 0;
+        do {
+            resCount = resolvedResources.count();
+            // FIXME: as soon as the issue with the empty result list is fixed change this loop back into a single query
+            // (email sent to Virtuoso ml: http://sourceforge.net/mailarchive/forum.php?thread_name=4E36D5ED.9020904%40kde.org&forum_name=virtuoso-users)
+            QSet<QUrl> tmp(subResources);
+            subResources.clear();
+            foreach(const QUrl& res, tmp) {
+                Soprano::QueryResultIterator it
+                        = executeQuery(QString::fromLatin1("select ?r where { "
+                                                           "graph ?g { ?parent ?p ?r . "
+                                                           "FILTER(?parent in (%1)) . } . "
+                                                           "?p %2 %3 . "
+                                                           "%4"
+                                                           "}")
+                                       .arg(/*resourcesToN3(subResources).join(QLatin1String(","))*/Soprano::Node::resourceToN3(res),
+                                            Soprano::Node::resourceToN3(RDFS::subPropertyOf()),
+                                            Soprano::Node::resourceToN3(NAO::hasSubResource()),
+                                            discardableDataExcludeFilter),
+                                       Soprano::Query::QueryLanguageSparql);
+                subResources.clear();
+                while(it.next()) {
+                    subResources << it[0].uri();
+                }
+                resolvedResources += subResources;
+            }
+        } while(resCount < resolvedResources.count());
+    }
+
+    //
+    // Build the basic graph consisting of the requested resources and all sub-resources
+    // The query excludes all our inferred triples by excluding the crappy inferencer graphs.
+    //
+    SimpleResourceGraph graph;
+    QSet<QUrl> relatedResourcesToFetch;
+    // FIXME: as soon as the issue with the empty result list is fixed change this loop back into a single query
+    // (email sent to Virtuoso ml: http://sourceforge.net/mailarchive/forum.php?thread_name=4E36D5ED.9020904%40kde.org&forum_name=virtuoso-users)
+    foreach(const QUrl& res, resolvedResources) {
+        Soprano::QueryResultIterator it
+                = executeQuery(QString::fromLatin1("select distinct ?s ?p ?o where { "
+                                                   "graph ?g { ?s ?p ?o . "
+                                                   "FILTER(?s in (%1)) . } . "
+                                                   "FILTER(!(?g in (<urn:crappyinference:inferredtriples>,<urn:crappyinference2:inferredtriples>))) . "
+                                                   "%2"
+                                                   "}")
+                               .arg(/*resourcesToN3(resolvedResources).join(QLatin1String(","))*/Soprano::Node::resourceToN3(res),
+                                    discardableDataExcludeFilter),
+                               Soprano::Query::QueryLanguageSparql);
+        while(it.next()) {
+            const Soprano::Node r = it["s"];
+            const Soprano::Node p = it["p"];
+            const Soprano::Node o = it["o"];
+
+            if(!o.isResource() ||
+                    !(flags & ExcludeRelatedResources) ||
+                    d->m_classAndPropertyTree->isIdentifyingProperty(p.uri()) ||
+                    p == NIE::url()) {
+                graph.addStatement(r, p, o);
+            }
+
+            if(o.isResource() &&
+                    (!(flags & ExcludeRelatedResources) ||
+                     d->m_classAndPropertyTree->isIdentifyingProperty(p.uri())) &&
+                    !d->m_classAndPropertyTree->isChildOf(p.uri(), NAO::hasSubResource()) &&
+                    p != NIE::url() &&
+                    p != RDF::type()) {
+                relatedResourcesToFetch << o.uri();
+            }
+        }
+        if(it.lastError()) {
+            setError(it.lastError());
+            return SimpleResourceGraph();
+        }
+    }
+
+
+    //
+    // Now fetch related resources and their identifying properties,
+    // ignoring anything that comes from an ontology.
+    //
+    // For related resources we only take the identifying properties since
+    // that is all that is required to describe them.
+    //
+    QSet<QUrl> currentRelatedResources(relatedResourcesToFetch);
+    while(!currentRelatedResources.isEmpty()) {
+        // FIXME: as soon as the issue with the empty result list is fixed change this loop back into a single query
+        // (email sent to Virtuoso ml: http://sourceforge.net/mailarchive/forum.php?thread_name=4E36D5ED.9020904%40kde.org&forum_name=virtuoso-users)
+        QSet<QUrl> tmp(currentRelatedResources);
+        currentRelatedResources.clear();
+        foreach(const QUrl& res, tmp) {
+            Soprano::QueryResultIterator it
+                    = executeQuery(QString::fromLatin1("select distinct ?s ?p ?o where { "
+                                                       "graph ?g { ?s ?p ?o . "
+                                                       "FILTER(?s in (%1)) . "
+                                                       "FILTER(!(?o in (%2))) . } . "
+                                                       "FILTER(!bif:exists((select (1) where { ?g a %3 }))) . "
+                                                       "%4"
+                                                       "}")
+                                   .arg(/*resourcesToN3(currentRelatedResources).join(QLatin1String(","))*/Soprano::Node::resourceToN3(res),
+                                        resourcesToN3(graph.allResourceUris()).join(QLatin1String(",")),
+                                        Soprano::Node::resourceToN3(NRL::Ontology()),
+                                        discardableDataExcludeFilter),
+                                   Soprano::Query::QueryLanguageSparql);
+            //currentRelatedResources.clear();
+            while(it.next()) {
+                const Soprano::Node r = it["s"];
+                const Soprano::Node p = it["p"];
+                const Soprano::Node o = it["o"];
+                if(d->m_classAndPropertyTree->isIdentifyingProperty(p.uri())) {
+                    graph.addStatement(r, p, o);
+                    if(o.isResource()) {
+                        currentRelatedResources << o.uri();
+                    }
+                }
+            }
+            if(it.lastError()) {
+                setError(it.lastError());
+                return SimpleResourceGraph();
+            }
+        }
+    }
+
+
+    //
+    // Throw out all relations to related resources which were not fetched.
+    // FIXME: do we really want this??
+    //
+    foreach(const QUrl& res, relatedResourcesToFetch + resolvedResources) {
+        if(!graph.contains(res)) {
+            graph.removeAll(QUrl(), QUrl(), res);
+        }
+    }
+
+
+    //
+    // Final cleanup: remove all resources that do only have metadata defined.
+    //
+    foreach(const QUrl& res, graph.allResourceUris()) {
+        bool hasNonMetadataProps = false;
+        foreach(const QUrl& prop, graph[res].properties().keys()) {
+            if(!d->m_protectedProperties.contains(prop)) {
+                hasNonMetadataProps = true;
+                break;
+            }
+        }
+        if(!hasNonMetadataProps) {
+            graph.remove(res);
+        }
+    }
+
+
+    return graph;
 }
 
 
@@ -2236,11 +2339,11 @@ bool Nepomuk::DataManagementModel::doesResourceExist(const QUrl &res, const QUrl
     }
 }
 
-QHash<QUrl, QUrl> Nepomuk::DataManagementModel::resolveUrls(const QList<QUrl> &urls) const
+QHash<QUrl, QUrl> Nepomuk::DataManagementModel::resolveUrls(const QList<QUrl> &urls, bool statLocalFiles) const
 {
     QHash<QUrl, QUrl> uriHash;
     Q_FOREACH(const QUrl& url, urls) {
-        const QUrl resolved = resolveUrl(url, true);
+        const QUrl resolved = resolveUrl(url, statLocalFiles);
         if(url.isEmpty() && lastError()) {
             break;
         }
