@@ -531,12 +531,15 @@ void Nepomuk::IndexScheduler::queueAllFoldersForUpdate( bool forceUpdate )
 
 void Nepomuk::IndexScheduler::slotConfigChanged()
 {
-    // restart to make sure we update all folders and removeOldAndUnwantedEntries
+    // TODO: only update folders that were added in the config
+    updateAll();
+
     if( m_cleaner ) {
         m_cleaner->kill();
         delete m_cleaner;
     }
 
+    // TODO: only clean the folders that were removed from the config
     m_cleaner = new IndexCleaner( this );
     connect( m_cleaner, SIGNAL(finished(KJob*)), this, SLOT(slotCleaningDone()) );
     m_cleaner->start();
