@@ -131,8 +131,13 @@ protected Q_SLOTS:
             */
     void emitFinished();
 
-};
 
+private:
+
+    class Private;
+    Private* const d;
+
+};
 } // End namespace Nepomuk
 
 /**

@@ -1,4 +1,4 @@
-    /*
+/*
 Copyright (C) 2011  Smit Shah <Who828@gmail.com>
 
 This program is free software; you can redistribute it and/or
@@ -21,15 +21,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 
 
+class Nepomuk::WritebackPlugin::Private
+{
+public:
+
+    Private( WritebackPlugin* parent)
+        : q (parent)
+    {
+        kDebug();
+    }
+private:
+
+    WritebackPlugin* q;
+};
+
+
 Nepomuk::WritebackPlugin::WritebackPlugin(QObject* parent)
-    : QObject(parent)
+    : QObject(parent),d( new Private(this) )
 {
 
 }
 
 Nepomuk::WritebackPlugin::~WritebackPlugin()
 {
-
+delete d;
 }
 
 
