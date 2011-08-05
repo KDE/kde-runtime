@@ -2594,6 +2594,47 @@ void DataManagementModelTest::testRemoveDataByApplication_nieUrl()
     QVERIFY(!haveDataInDefaultGraph());
 }
 
+// make sure we keep the nie:url in case a relation from another resource exists which is not removed
+void DataManagementModelTest::testRemoveDataByApplication_nieUrlRelated()
+{
+    // create the file we will be removing data for
+    KTemporaryFile file;
+    file.open();
+    const KUrl fileUrl( file.fileName() );
+
+
+    // Indexed the file with some data
+    SimpleResource simpleRes( fileUrl );
+    simpleRes.addProperty( RDF::type(), NFO::FileDataObject() );
+    simpleRes.addProperty( RDF::type(), NMM::MusicPiece() );
+    m_dmModel->storeResources( SimpleResourceGraph() << simpleRes, QLatin1String("A"));
+    QVERIFY( !m_dmModel->lastError() );
+    QVERIFY(m_model->containsAnyStatement(Soprano::Node(), NIE::url(), fileUrl));
+
+
+    // now add a relation to some other resource
+    const QUrl res = m_dmModel->createResource(QList<QUrl>() << QUrl("class:/typeA"), QLatin1String("foobar"), QString(), QLatin1String("B"));
+    QVERIFY( !m_dmModel->lastError() );
+    m_dmModel->addProperty(QList<QUrl>() << res, QUrl("prop:/res"), QVariantList() << QUrl(fileUrl), QLatin1String("B"));
+    QVERIFY( !m_dmModel->lastError() );
+
+
+    // remove all the indexed data
+    m_dmModel->removeDataByApplication(QList<QUrl>() << fileUrl, NoRemovalFlags, QLatin1String("A"));
+    QVERIFY( !m_dmModel->lastError() );
+
+
+    // now the basic data from the indexed file should still be there
+    QVERIFY(m_model->containsAnyStatement(Soprano::Node(), NIE::url(), fileUrl));
+
+    // and the relation created by the other application should still be there, too
+    const QUrl fileResUri = m_model->listStatements(Soprano::Node(), NIE::url(), fileUrl).allElements().first().subject().uri();
+    QVERIFY(m_model->containsAnyStatement(res, QUrl("prop:/res"), fileResUri));
+
+    QVERIFY(!haveTrailingGraphs());
+    QVERIFY(!haveDataInDefaultGraph());
+}
+
 // make sure the mtime is updated properly in different situations
 void DataManagementModelTest::testRemoveDataByApplication_mtime()
 {
