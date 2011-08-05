@@ -2389,7 +2389,7 @@ QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFil
 
         // non-existing unsupported URL
         else if( state == OtherUri ) {
-            QString error = QString::fromLatin1("Unknown protocol '%1' encountered in %2")
+            QString error = QString::fromLatin1("Unknown protocol '%1' encountered in '%2'.")
                             .arg(url.scheme(), url.toString());
             setError(error, Soprano::Error::ErrorInvalidArgument);
             return QUrl();
