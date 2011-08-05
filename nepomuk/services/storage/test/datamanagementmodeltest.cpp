@@ -4472,6 +4472,8 @@ void DataManagementModelTest::testStoreResources_duplicates()
     m_dmModel->storeResources( graph, "appA" );
     QVERIFY(!m_dmModel->lastError());
 
+    QEXPECT_FAIL("", "Duplicate resolviong not implemented yet.", Abort);
+
     // hash1 and hash2 are the same, they should have been merged together
     int hashCount = m_model->listStatements( Node(), RDF::type(), NFO::FileHash() ).allStatements().size();
     QCOMPARE( hashCount, 1 );
