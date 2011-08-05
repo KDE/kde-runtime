@@ -31,6 +31,8 @@
 
 #include <KDebug>
 
+#include <QtCore/QTime>
+
 
 using namespace Soprano::Vocabulary;
 
@@ -50,6 +52,11 @@ Nepomuk::GraphMaintainer::~GraphMaintainer()
 void Nepomuk::GraphMaintainer::run()
 {
     kDebug() << "Running graph maintenance";
+
+#ifndef NDEBUG
+    QTime timer;
+    timer.start();
+#endif
 
     m_canceled = false;
 
@@ -90,7 +97,12 @@ void Nepomuk::GraphMaintainer::run()
         }
     }
 
+#ifndef NDEBUG
+    kDebug() << "Finished graph maintenance Elapsed:" << double(timer.elapsed())/1000.0 << "sec";
+#else
     kDebug() << "Finished graph maintenance";
+#endif
+
 }
 
 #include "graphmaintainer.moc"
