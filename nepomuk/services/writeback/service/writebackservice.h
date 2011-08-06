@@ -24,6 +24,8 @@
 #include <QVariant>
 #include <nepomuk/resourcewatcher.h>
 #include <KService>
+#include <QQueue>
+#include <writebackjob.h>
 
 namespace Nepomuk {
 /**
@@ -42,6 +44,9 @@ private:
   * Makes plugin list and passes it to writebackjob along with the resource.
   */
     void performWriteback(const KService::List services,const Nepomuk::Resource & resource);
+    QQueue <Nepomuk::Resource> m_queue;
+    Nepomuk::WritebackJob* m_currentjob;
+
 
 public Q_SLOTS:
     /**
@@ -49,7 +54,12 @@ public Q_SLOTS:
       * than passes it to performWriteback method to do the actual writeback.
       */
     Q_SCRIPTABLE  void test( const Nepomuk::Resource & resource);
+                  void slotQueue( const Nepomuk::Resource &resource);
+                  void slotFinished();
+                  void startWriteback();
+
 };
 }
 
 #endif // NEPOMUKWRITEBACKSERVICE_H
+bool  jobFinished();

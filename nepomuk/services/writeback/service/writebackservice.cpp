@@ -53,13 +53,33 @@ Nepomuk::WriteBackService::WriteBackService( QObject* parent, const QList< QVari
     resourcewatcher->start();
 
     connect( resourcewatcher, SIGNAL( propertyAdded(Nepomuk::Resource, Nepomuk::Types::Property, QVariant) ),
-            this, SLOT ( test(Nepomuk::Resource) ) );
+            this, SLOT ( slotQueue(Nepomuk::Resource) ) );
     connect( resourcewatcher, SIGNAL( propertyRemoved(Nepomuk::Resource, Nepomuk::Types::Property, QVariant) ),
-            this, SLOT ( test(Nepomuk::Resource) ) );
+            this, SLOT ( slotQueue(Nepomuk::Resource) ) );
 }
 
 Nepomuk::WriteBackService::~WriteBackService()
 {
+}
+
+void Nepomuk::WriteBackService::slotQueue(const Nepomuk::Resource &resource)
+{
+    if(m_currentjob == 0)
+        test(resource);
+    else
+        m_queue.enqueue(resource);
+}
+
+void Nepomuk::WriteBackService::startWriteback()
+{
+    if(!m_queue.isEmpty())
+        test(m_queue.dequeue());
+}
+
+void Nepomuk::WriteBackService::slotFinished()
+{
+    m_currentjob = 0;
+    startWriteback();
 }
 
 void Nepomuk::WriteBackService::test(const Nepomuk::Resource & resource)
@@ -103,11 +123,12 @@ void Nepomuk::WriteBackService::performWriteback(const KService::List services,c
         if (plugin)
             plugins.append(plugin);
     }
-    if (! plugins.isEmpty() ) {
-        Nepomuk::WritebackJob *job = new WritebackJob(this);
-        job->setPlugins(plugins);
-        job->setResource(resource);
-        job->start();
+    if(!plugins.isEmpty()) {
+        m_currentjob = new WritebackJob(this);
+        m_currentjob->setPlugins(plugins);
+        m_currentjob->setResource(resource);
+        connect(m_currentjob,SIGNAL(KJob::result(kjob *)),this,SLOT(slotFinished()));
+        m_currentjob->start();
     }
 }
 
