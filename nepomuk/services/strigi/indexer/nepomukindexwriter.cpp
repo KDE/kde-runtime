@@ -295,11 +295,15 @@ void Nepomuk::StrigiIndexWriter::startAnalysis( const AnalysisResult* idx )
     FileMetaData* data = new FileMetaData( idx, d->resourceUri );
 
     // remove previously indexed data
-    if( !data->resourceUri.isEmpty() ) {
-        Nepomuk::clearIndexedData(data->resourceUri)->exec();
-    }
-    else {
-        Nepomuk::clearIndexedData(data->fileUrl)->exec();
+    // but only for files. We cannot remove folders since that would also remove the
+    // nie:isPartOf links from the files.
+    if(!data->fileInfo.isDir()) {
+        if( !data->resourceUri.isEmpty() ) {
+            Nepomuk::clearIndexedData(data->resourceUri)->exec();
+        }
+        else {
+            Nepomuk::clearIndexedData(data->fileUrl)->exec();
+        }
     }
 
     // remember the file data
@@ -514,7 +518,7 @@ void Nepomuk::StrigiIndexWriter::finishAnalysis( const AnalysisResult* idx )
     additionalMetadata.insert( RDF::type(), NRL::DiscardableInstanceBase() );
 
     // we do not have an event loop - thus, we need to delete the job ourselves
-    QScopedPointer<KJob> job( Nepomuk::storeResources( graph, Nepomuk::IdentifyNew, Nepomuk::LazyCardinalities, additionalMetadata ) );
+    QScopedPointer<KJob> job( Nepomuk::storeResources( graph, Nepomuk::IdentifyNew, Nepomuk::LazyCardinalities|Nepomuk::OverwriteProperties, additionalMetadata ) );
     job->setAutoDelete(false);
     job->exec();
     if( job->error() ) {
