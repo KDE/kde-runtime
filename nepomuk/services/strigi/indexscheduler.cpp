@@ -172,6 +172,10 @@ Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
 
     connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( slotConfigChanged() ) );
+
+    // start the initial indexing
+    queueAllFoldersForUpdate();
+    callDoIndexing();
 }
 
 
@@ -286,16 +290,7 @@ void Nepomuk::IndexScheduler::setIndexingStarted( bool started )
 
 void Nepomuk::IndexScheduler::slotCleaningDone()
 {
-    // initialization
-    queueAllFoldersForUpdate();
-
-    // reset state
-    m_suspendMutex.lock();
-    m_suspended = false;
-    m_suspendMutex.unlock();
     m_cleaner = 0;
-
-    callDoIndexing();
 }
 
 void Nepomuk::IndexScheduler::doIndexing()
