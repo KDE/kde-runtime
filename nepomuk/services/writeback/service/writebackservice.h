@@ -40,10 +40,12 @@ public:
     ~WriteBackService();
 
 private:
-/**
+    /**
   * Makes plugin list and passes it to writebackjob along with the resource.
   */
     void performWriteback(const KService::List services,const Nepomuk::Resource & resource);
+    bool isResourceDuplicated (const  Nepomuk::Resource &resource);
+
     QQueue <Nepomuk::Resource> m_queue;
     Nepomuk::WritebackJob* m_currentjob;
 

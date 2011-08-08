@@ -28,6 +28,7 @@
 
 #include <QtCore/QString>
 #include <QList>
+#include <QDebug>
 
 #include <taglib/fileref.h>
 #include <taglib/tag.h>
@@ -45,7 +46,7 @@ using namespace Nepomuk::Vocabulary;
 Nepomuk::WriteBackService::WriteBackService( QObject* parent, const QList< QVariant >& )
     : Service(parent)
 {
-    kDebug()<<"this part is executed";
+    qDebug()<<"this part is executed";
 
     ResourceWatcher* resourcewatcher  = new ResourceWatcher(this);
     //resourcewatcher->addType(NFO::FileDataObject());
@@ -66,7 +67,7 @@ void Nepomuk::WriteBackService::slotQueue(const Nepomuk::Resource &resource)
 {
     if(m_currentjob == 0)
         test(resource);
-    else
+    else if (! isResourceDuplicated(resource))
         m_queue.enqueue(resource);
 }
 
@@ -82,9 +83,19 @@ void Nepomuk::WriteBackService::slotFinished()
     startWriteback();
 }
 
+bool Nepomuk::WriteBackService::isResourceDuplicated (const Nepomuk::Resource &resource )
+{
+foreach (const Nepomuk::Resource &res, m_queue) {
+         if(resource == res)
+             return true;
+}
+ return false;
+}
+
+
 void Nepomuk::WriteBackService::test(const Nepomuk::Resource & resource)
 {
-    kDebug()<<"Test method executed";
+    qDebug()<<"Test method executed";
     if(resource.hasType(NFO::FileDataObject()))
     {
         const QStringList mimetypes = resource.property(NIE::mimeType()).toStringList();
@@ -114,6 +125,7 @@ void Nepomuk::WriteBackService::test(const Nepomuk::Resource & resource)
 
 void Nepomuk::WriteBackService::performWriteback(const KService::List services,const Nepomuk::Resource & resource)
 {
+    qDebug() << "performWriteback";
     QList<WritebackPlugin*> plugins;
 
     foreach(const KSharedPtr<KService>& service, services) {
