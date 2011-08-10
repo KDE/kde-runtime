@@ -848,7 +848,7 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
     //
     // Resolve file URLs, we can simply ignore the non-existing file resources which are reflected by empty resolved URIs
     //
-    QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources).values());
+    QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources, false).values());
     resolvedResources.remove(QUrl());
     if(resolvedResources.isEmpty() || lastError()) {
         return;
@@ -902,7 +902,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     //
     // Resolve file URLs, we can simply ignore the non-existing file resources which are reflected by empty resolved URIs
     //
-    QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources).values());
+    QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources, false).values());
     resolvedResources.remove(QUrl());
     if(resolvedResources.isEmpty() || lastError()) {
         return;
