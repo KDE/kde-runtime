@@ -158,6 +158,14 @@ namespace Nepomuk {
      * with a different value in the other resource.
      *
      *
+     * \section nepomuk_dms_permissions Permissions in %Nepomuk
+     *
+     * FIXME: define exactly how permissions are handled. By default all is private. Questions remaining:
+     * - Do we define permissions on the graph level?
+     * - What is the range of the permissions? \c nao:Party?
+     * - How do we define "public to all"?
+     *
+     *
      * \section nepomuk_dms_advanced Advanced Nepomuk Concepts
      *
      * This section described advanced concepts in Nepomuk such as the data layout used throughout the database.
