@@ -35,14 +35,14 @@ namespace Nepomuk {
     /**
      * Service controlling the strigidaemon
      */
-    class StrigiService : public Nepomuk::Service
+    class FileIndexer : public Nepomuk::Service
     {
         Q_OBJECT
         Q_CLASSINFO("D-Bus Interface", "org.kde.nepomuk.Strigi")
 
     public:
-        StrigiService( QObject* parent = 0, const QList<QVariant>& args = QList<QVariant>() );
-        ~StrigiService();
+        FileIndexer( QObject* parent = 0, const QList<QVariant>& args = QList<QVariant>() );
+        ~FileIndexer();
 
     Q_SIGNALS:
         void statusStringChanged();

@@ -95,7 +95,7 @@ namespace {
         Q_UNUSED( flags );
 
         //Only watch the strigi index folders for file creation and change.
-        if( Nepomuk::StrigiServiceConfig::self()->shouldFolderBeIndexed( path ) ) {
+        if( Nepomuk::FileIndexerConfig::self()->shouldFolderBeIndexed( path ) ) {
             modes |= KInotify::EventCreate;
             modes |= KInotify::EventModify;
         }
@@ -166,7 +166,7 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
 
     (new InvalidFileResourceCleaner(this))->start();
     
-    connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
+    connect( FileIndexerConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( updateIndexedFoldersWatches() ) );
 }
 
@@ -253,7 +253,7 @@ void Nepomuk::FileWatch::slotMovedWithoutData( const QString& path )
 // static
 void Nepomuk::FileWatch::updateFileViaStrigi(const QString &path)
 {
-    if( StrigiServiceConfig::self()->shouldBeIndexed(path) ) {
+    if( FileIndexerConfig::self()->shouldBeIndexed(path) ) {
         org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
         if ( strigi.isValid() ) {
             strigi.indexFile( path );
@@ -265,7 +265,7 @@ void Nepomuk::FileWatch::updateFileViaStrigi(const QString &path)
 // static
 void Nepomuk::FileWatch::updateFolderViaStrigi( const QString& path )
 {
-    if( StrigiServiceConfig::self()->shouldBeIndexed(path) ) {
+    if( FileIndexerConfig::self()->shouldBeIndexed(path) ) {
         //
         // Tell Strigi service (if running) to update the newly created
         // folder or the folder containing the newly created file
@@ -311,7 +311,7 @@ void Nepomuk::FileWatch::updateIndexedFoldersWatches()
 {
 #ifdef BUILD_KINOTIFY
     if( m_dirWatch ) {
-        QStringList folders = StrigiServiceConfig::self()->includeFolders();
+        QStringList folders = FileIndexerConfig::self()->includeFolders();
         foreach( const QString & folder, folders ) {
             m_dirWatch->removeWatch( folder );
             watchFolder( folder );

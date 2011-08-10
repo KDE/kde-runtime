@@ -63,7 +63,7 @@ namespace {
     QString constructExcludeIncludeFoldersFilter()
     {
         QStringList filters;
-        foreach( const QString& folder, Nepomuk::StrigiServiceConfig::self()->includeFolders() ) {
+        foreach( const QString& folder, Nepomuk::FileIndexerConfig::self()->includeFolders() ) {
             filters << QString::fromLatin1( "(?url!=%1)" ).arg( Soprano::Node::resourceToN3( KUrl( folder ) ) );
         }
         return filters.join( QLatin1String( " && " ) );
@@ -108,7 +108,7 @@ namespace {
         QStringList subFilters( constructExcludeIncludeFoldersFilter() );
 
         // now add the actual filters
-        QList<QPair<QString, bool> > folders = Nepomuk::StrigiServiceConfig::self()->folders();
+        QList<QPair<QString, bool> > folders = Nepomuk::FileIndexerConfig::self()->folders();
         int index = 0;
         while ( index < folders.count() ) {
             subFilters << constructFolderSubFilter( folders, index );
@@ -178,7 +178,7 @@ void Nepomuk::IndexCleaner::start()
     // 3. Build filter query for all exclude filters
     //
     QStringList fileFilters;
-    foreach( const QString& filter, Nepomuk::StrigiServiceConfig::self()->excludeFilters() ) {
+    foreach( const QString& filter, Nepomuk::FileIndexerConfig::self()->excludeFilters() ) {
         QString filterRxStr = QRegExp::escape( filter );
         filterRxStr.replace( "\\*", QLatin1String( ".*" ) );
         filterRxStr.replace( "\\?", QLatin1String( "." ) );

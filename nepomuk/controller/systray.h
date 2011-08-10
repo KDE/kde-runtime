@@ -27,7 +27,7 @@ class KToggleAction;
 
 namespace Nepomuk {
 
-    class StrigiService;
+    class FileIndexer;
     class StatusWidget;
 
     class SystemTray : public KStatusNotifierItem
