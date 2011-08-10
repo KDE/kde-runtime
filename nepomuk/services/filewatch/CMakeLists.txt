@@ -9,7 +9,7 @@ include_directories(
   ${KDE4_INCLUDES}
   ${SOPRANO_INCLUDE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../strigi
+  ${CMAKE_CURRENT_SOURCE_DIR}/../fileindexer
   ${CMAKE_CURRENT_SOURCE_DIR}/../storage/lib/
   )
 
@@ -18,7 +18,7 @@ set(SRCS
   metadatamover.cpp
   updaterequest.cpp
   invalidfileresourcecleaner.cpp
-  ../strigi/strigiserviceconfig.cpp
+  ../fileindexer/strigiserviceconfig.cpp
   removabledeviceindexnotification.cpp
   )
 

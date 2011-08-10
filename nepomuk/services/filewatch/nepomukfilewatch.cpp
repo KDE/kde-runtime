@@ -23,7 +23,7 @@
 #include "invalidfileresourcecleaner.h"
 #include "removabledeviceindexnotification.h"
 #include "removablemediacache.h"
-#include "../strigi/strigiserviceconfig.h"
+#include "strigiserviceconfig.h"
 
 #ifdef BUILD_KINOTIFY
 #include "kinotify.h"
