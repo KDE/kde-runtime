@@ -16,7 +16,7 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "strigiserviceconfig.h"
+#include "fileindexerconfig.h"
 #include "fileexcludefilters.h"
 
 #include <QtCore/QStringList>
@@ -269,4 +269,4 @@ void Nepomuk::FileIndexerConfig::buildExcludeFilterRegExpCache()
     m_excludeFilterRegExpCache.rebuildCacheFromFilterList( excludeFilters() );
 }
 
-#include "strigiserviceconfig.moc"
+#include "fileindexerconfig.moc"

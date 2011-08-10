@@ -18,12 +18,12 @@
 
 #include "nepomukfilewatch.h"
 #include "metadatamover.h"
-#include "strigiserviceinterface.h"
+#include "fileindexerinterface.h"
 #include "fileexcludefilters.h"
 #include "invalidfileresourcecleaner.h"
 #include "removabledeviceindexnotification.h"
 #include "removablemediacache.h"
-#include "strigiserviceconfig.h"
+#include "fileindexerconfig.h"
 
 #ifdef BUILD_KINOTIFY
 #include "kinotify.h"

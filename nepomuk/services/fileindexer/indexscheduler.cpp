@@ -21,7 +21,7 @@
 */
 
 #include "indexscheduler.h"
-#include "strigiserviceconfig.h"
+#include "fileindexerconfig.h"
 #include "nepomukindexer.h"
 #include "util.h"
 #include "datamanagement.h"

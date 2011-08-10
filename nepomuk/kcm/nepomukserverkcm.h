@@ -22,7 +22,7 @@
 #include <KCModule>
 #include "ui_nepomukconfigwidget.h"
 #include "nepomukserverinterface.h"
-#include "strigiserviceinterface.h"
+#include "fileindexerinterface.h"
 
 #include <Nepomuk/Query/Query>
 

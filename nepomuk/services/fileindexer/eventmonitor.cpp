@@ -18,7 +18,7 @@
 */
 
 #include "eventmonitor.h"
-#include "strigiserviceconfig.h"
+#include "fileindexerconfig.h"
 #include "indexscheduler.h"
 
 #include <KDebug>

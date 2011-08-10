@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=NepomukService
+X-KDE-Library=fileindexerservice
+X-KDE-Nepomuk-autostart=true
+X-KDE-Nepomuk-start-on-demand=false
+Name=File Indexer Service
+Comment=Nepomuk Service which indexes files on the desktop

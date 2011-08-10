@@ -17,11 +17,11 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "strigiservice.h"
-#include "strigiadaptor.h"
+#include "fileindexer.h"
+#include "fileindexeradaptor.h"
 #include "indexscheduler.h"
 #include "eventmonitor.h"
-#include "strigiserviceconfig.h"
+#include "fileindexerconfig.h"
 #include "filewatchserviceinterface.h"
 #include "util.h"
 
@@ -295,5 +295,5 @@ void Nepomuk::FileIndexer::indexFolder(const QString& path, bool recursive, bool
 
 NEPOMUK_EXPORT_SERVICE( Nepomuk::FileIndexer, "nepomukstrigiservice" )
 
-#include "strigiservice.moc"
+#include "fileindexer.moc"
 

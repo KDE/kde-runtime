@@ -21,7 +21,7 @@
 */
 
 #include "indexcleaner.h"
-#include "strigiserviceconfig.h"
+#include "fileindexerconfig.h"
 #include "util.h"
 
 #include <QtCore/QTimer>

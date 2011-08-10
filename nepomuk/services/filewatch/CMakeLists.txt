@@ -18,11 +18,11 @@ set(SRCS
   metadatamover.cpp
   updaterequest.cpp
   invalidfileresourcecleaner.cpp
-  ../fileindexer/strigiserviceconfig.cpp
+  ../fileindexer/fileindexerconfig.cpp
   removabledeviceindexnotification.cpp
   )
 
-qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.Strigi.xml strigiserviceinterface)
+qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.FileIndexer.xml fileindexerinterface)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   set(SRCS
