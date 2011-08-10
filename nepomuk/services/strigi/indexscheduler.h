@@ -202,7 +202,8 @@ namespace Nepomuk {
         bool m_suspended;
         bool m_indexing;
 
-        QMutex m_resumeStopMutex;
+        mutable QMutex m_suspendMutex;
+        mutable QMutex m_indexingMutex;
 
         // A specialized queue that gives priority to dirs that do not use the AutoUpdateFolder flag.
         class UpdateDirQueue : public QQueue<QPair<QString, UpdateDirFlags> >
@@ -218,7 +219,9 @@ namespace Nepomuk {
         QQueue<QFileInfo> m_filesToUpdate;
 
         QMutex m_dirsToUpdateMutex;
+        QMutex m_filesToUpdateMutex;
 
+        mutable QMutex m_currentMutex;
         KUrl m_currentUrl;
 
         int m_indexingDelay;
@@ -231,3 +234,4 @@ namespace Nepomuk {
 Q_DECLARE_OPERATORS_FOR_FLAGS(Nepomuk::IndexScheduler::UpdateDirFlags)
 
 #endif
+

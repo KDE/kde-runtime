@@ -226,8 +226,8 @@ Nepomuk::IndexScheduler::~IndexScheduler()
 
 void Nepomuk::IndexScheduler::suspend()
 {
+    QMutexLocker locker( &m_suspendMutex );
     if ( !m_suspended ) {
-        QMutexLocker locker( &m_resumeStopMutex );
         m_suspended = true;
         if( m_cleaner ) {
             m_cleaner->suspend();
@@ -239,8 +239,8 @@ void Nepomuk::IndexScheduler::suspend()
 
 void Nepomuk::IndexScheduler::resume()
 {
+    QMutexLocker locker( &m_suspendMutex );
     if ( m_suspended ) {
-        QMutexLocker locker( &m_resumeStopMutex );
         m_suspended = false;
 
         if( m_cleaner ) {
@@ -287,30 +287,35 @@ void Nepomuk::IndexScheduler::setReducedIndexingSpeed( bool reduced )
 
 bool Nepomuk::IndexScheduler::isSuspended() const
 {
+    QMutexLocker locker( &m_suspendMutex );
     return m_suspended;
 }
 
 
 bool Nepomuk::IndexScheduler::isIndexing() const
 {
+    QMutexLocker locker( &m_indexingMutex );
     return m_indexing;
 }
 
 
 QString Nepomuk::IndexScheduler::currentFolder() const
 {
+    QMutexLocker locker( &m_currentMutex );
     return m_currentUrl.directory();
 }
 
 
 QString Nepomuk::IndexScheduler::currentFile() const
 {
+    QMutexLocker locker( &m_currentMutex );
     return m_currentUrl.toLocalFile();
 }
 
 
 void Nepomuk::IndexScheduler::setIndexingStarted( bool started )
 {
+    QMutexLocker locker( &m_indexingMutex );
     if ( started != m_indexing ) {
         m_indexing = started;
         emit indexingStateChanged( m_indexing );
@@ -328,7 +333,9 @@ void Nepomuk::IndexScheduler::slotCleaningDone()
     queueAllFoldersForUpdate();
 
     // reset state
+    m_suspendMutex.lock();
     m_suspended = false;
+    m_suspendMutex.unlock();
     m_cleaner = 0;
 
     callDoIndexing();
@@ -338,15 +345,20 @@ void Nepomuk::IndexScheduler::doIndexing()
 {
     setIndexingStarted( true );
 
+    // lock file and dir queues as we check their status
+    QMutexLocker fileLock( &m_filesToUpdateMutex );
+    QMutexLocker dirLock( &m_dirsToUpdateMutex );
+
     // get the next file
     if( !m_filesToUpdate.isEmpty() ) {
         kDebug() << "File";
 
         QFileInfo file = m_filesToUpdate.dequeue();
 
+        m_currentMutex.lock();
         m_currentUrl = file.filePath();
-
-        emit indexingFile( m_currentUrl.toLocalFile() );
+        m_currentMutex.unlock();
+        emit indexingFile( currentFile() );
 
         KJob * indexer = new Indexer( file );
         connect( indexer, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
@@ -357,9 +369,9 @@ void Nepomuk::IndexScheduler::doIndexing()
     else if( !m_dirsToUpdate.isEmpty() ) {
         kDebug() << "Directory";
 
-        m_dirsToUpdateMutex.lock();
         QPair<QString, UpdateDirFlags> dir = m_dirsToUpdate.dequeue();
-        m_dirsToUpdateMutex.unlock();
+        dirLock.unlock();
+        fileLock.unlock();
 
         // If a dir was not analyzed, then doIndexing must be called to
         // process the next file/directory in the queue
@@ -378,7 +390,9 @@ void Nepomuk::IndexScheduler::slotIndexingDone(KJob* job)
     kDebug() << job;
     Q_UNUSED( job );
 
+    m_currentMutex.lock();
     m_currentUrl.clear();
+    m_currentMutex.unlock();
 
     callDoIndexing();
 }
@@ -395,7 +409,9 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
 
     // inform interested clients
     emit indexingFolder( dir );
+    m_currentMutex.lock();
     m_currentUrl = KUrl( dir );
+    m_currentMutex.unlock();
 
     const bool recursive = flags&UpdateRecursive;
     const bool forceUpdate = flags&ForceUpdate;
@@ -474,7 +490,9 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
     deleteEntries( filesToDelete );
 
     // analyze all files that are new or need updating
+    m_filesToUpdateMutex.lock();
     m_filesToUpdate.append( filesToIndex );
+    m_filesToUpdateMutex.unlock();
 
     return shouldAnalyzerDir;
 }
@@ -493,6 +511,7 @@ void Nepomuk::IndexScheduler::updateDir( const QString& path, UpdateDirFlags fla
     QMutexLocker lock( &m_dirsToUpdateMutex );
     m_dirsToUpdate.prependDir( path, flags & ~AutoUpdateFolder );
 
+    QMutexLocker locker( &m_indexingMutex );
     if( !m_indexing )
         callDoIndexing();
 }
@@ -502,6 +521,7 @@ void Nepomuk::IndexScheduler::updateAll( bool forceUpdate )
 {
     queueAllFoldersForUpdate( forceUpdate );
 
+    QMutexLocker locker( &m_indexingMutex );
     if( !m_indexing )
         callDoIndexing();
 }
