@@ -101,13 +101,13 @@
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>Strigi Desktop File Indexer</string>
+          <string>Nepomuk Desktop File Indexer</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <widget class="QLabel" name="label_2">
             <property name="text">
-             <string>Strigi desktop search allows searching for files by content instead of just by name.</string>
+             <string>Nepomuk desktop search allows searching for files by content instead of just by name.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -115,9 +115,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="m_checkEnableStrigi">
+           <widget class="QCheckBox" name="m_checkEnableFileIndexer">
             <property name="text">
-             <string>Enable Strigi Desktop File Indexer</string>
+             <string>Enable Nepomuk File Indexer</string>
             </property>
            </widget>
           </item>
@@ -140,7 +140,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="KSqueezedTextLabel" name="m_labelStrigiStatus">
+             <widget class="KSqueezedTextLabel" name="m_labelFileIndexerStatus">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                 <horstretch>1</horstretch>

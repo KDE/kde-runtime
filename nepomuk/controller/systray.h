@@ -16,11 +16,11 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef _NEPOMUK_STRIGI_SYSTRAY_H_
-#define _NEPOMUK_STRIGI_SYSTRAY_H_
+#ifndef _NEPOMUK_CONTROLLER_SYSTRAY_H_
+#define _NEPOMUK_CONTROLLER_SYSTRAY_H_
 
 #include <KStatusNotifierItem>
-#include "strigiserviceinterface.h"
+#include "fileindexerinterface.h"
 #include "servicecontrol.h"
 
 class KToggleAction;
@@ -39,7 +39,7 @@ namespace Nepomuk {
         ~SystemTray();
 
     private Q_SLOTS:
-        void slotUpdateStrigiStatus();
+        void slotUpdateFileIndexerStatus();
         void slotConfigure();
         void slotSuspend( bool suspended );
 
@@ -48,7 +48,7 @@ namespace Nepomuk {
     private:
         KToggleAction* m_suspendResumeAction;
 
-        org::kde::nepomuk::Strigi* m_service;
+        org::kde::nepomuk::FileIndexer* m_service;
         org::kde::nepomuk::ServiceControl* m_serviceControl;
         bool m_suspendedManually;
 

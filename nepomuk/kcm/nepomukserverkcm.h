@@ -49,7 +49,7 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void updateNepomukServerStatus();
-        void updateStrigiStatus();
+        void updateFileIndexerStatus();
         void updateBackupStatus();
         void recreateInterfaces();
         void slotCustomQueryButtonClicked();
@@ -67,7 +67,7 @@ namespace Nepomuk {
         bool m_nepomukAvailable;
 
         org::kde::NepomukServer* m_serverInterface;
-        org::kde::nepomuk::Strigi* m_strigiInterface;
+        org::kde::nepomuk::FileIndexer* m_fileIndexerInterface;
 
         IndexFolderSelectionDialog* m_indexFolderSelectionDialog;
 

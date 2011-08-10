@@ -11,7 +11,7 @@ include_directories(
   ../storage/lib/
   )
 
-set(fileindexerservice_SRCS
+set(nepomukfileindexer_SRCS
   fileindexer.cpp
   indexscheduler.cpp
   indexcleaner.cpp
@@ -21,13 +21,13 @@ set(fileindexerservice_SRCS
   nepomukindexer.cpp
   )
 
-qt4_add_dbus_adaptor(fileindexerservice_SRCS ../../interfaces/org.kde.nepomuk.FileIndexer.xml fileindexer.h Nepomuk::FileIndexer )
+qt4_add_dbus_adaptor(nepomukfileindexer_SRCS ../../interfaces/org.kde.nepomuk.FileIndexer.xml fileindexer.h Nepomuk::FileIndexer )
 
-qt4_add_dbus_interface(fileindexerservice_SRCS ../../interfaces/org.kde.nepomuk.FileWatch.xml filewatchserviceinterface)
+qt4_add_dbus_interface(nepomukfileindexer_SRCS ../../interfaces/org.kde.nepomuk.FileWatch.xml filewatchserviceinterface)
 
-kde4_add_plugin(fileindexerservice ${fileindexerservice_SRCS})
+kde4_add_plugin(nepomukfileindexer ${nepomukfileindexer_SRCS})
 
-target_link_libraries(fileindexerservice
+target_link_libraries(nepomukfileindexer
   nepomukcommon
   nepomukdatamanagement
   ${KDE4_KDEUI_LIBS}
@@ -40,15 +40,15 @@ target_link_libraries(fileindexerservice
   )
 
 install(
-  FILES fileindexerservice.desktop
+  FILES nepomukfileindexer.desktop
   DESTINATION ${SERVICES_INSTALL_DIR})
 
 install(
-  FILES fileindexerservice.notifyrc
+  FILES nepomukfileindexer.notifyrc
   DESTINATION ${DATA_INSTALL_DIR}/fileindexerservice)
 
 install(
-  TARGETS fileindexerservice
+  TARGETS nepomukfileindexer
   DESTINATION ${PLUGIN_INSTALL_DIR})
 
 add_subdirectory(indexer)

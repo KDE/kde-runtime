@@ -54,7 +54,7 @@ Nepomuk::FileIndexer::FileIndexer( QObject* parent, const QList<QVariant>& )
              this, SLOT( updateWatches() ) );
 
     // export on dbus
-    ( void )new StrigiAdaptor( this );
+    ( void )new FileIndexerAdaptor( this );
 
     // setup status connections
     connect( m_indexScheduler, SIGNAL( indexingStarted() ),
@@ -293,7 +293,7 @@ void Nepomuk::FileIndexer::indexFolder(const QString& path, bool recursive, bool
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 
-NEPOMUK_EXPORT_SERVICE( Nepomuk::FileIndexer, "nepomukstrigiservice" )
+NEPOMUK_EXPORT_SERVICE( Nepomuk::FileIndexer, "nepomukfileindexer" )
 
 #include "fileindexer.moc"
 
