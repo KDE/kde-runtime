@@ -2474,7 +2474,6 @@ void DataManagementModelTest::testRemoveDataByApplication_nieUrlRelated()
     QVERIFY(m_model->containsAnyStatement(res, QUrl("prop:/res"), fileResUri));
 
     QVERIFY(!haveTrailingGraphs());
-    QVERIFY(!haveDataInDefaultGraph());
 }
 
 // make sure the mtime is updated properly in different situations
