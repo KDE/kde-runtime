@@ -39,7 +39,7 @@ ProcessControl::ProcessControl( QObject *parent )
 
 ProcessControl::~ProcessControl()
 {
-    stop();
+    waitForFinishedAndTerminate();
 }
 
 bool ProcessControl::start( const QString &application, const QStringList &arguments, CrashPolicy policy, int maxCrash )
@@ -59,7 +59,7 @@ void ProcessControl::setCrashPolicy( CrashPolicy policy )
     mPolicy = policy;
 }
 
-void ProcessControl::stop()
+void ProcessControl::waitForFinishedAndTerminate()
 {
     if ( mProcess.state() != QProcess::NotRunning ) {
         if ( !mProcess.waitForFinished( 60*1000 ) ) {

@@ -68,7 +68,7 @@ public:
     /**
      * Stops the currently running application.
      */
-    void stop();
+    void waitForFinishedAndTerminate();
 
     /**
      * Sets the crash policy.

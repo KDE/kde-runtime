@@ -71,6 +71,8 @@ namespace Nepomuk {
          */
         bool waitForInitialized( int timeout = 30000 );
 
+        void waitForStoppedAndTerminate();
+
     Q_SIGNALS:
         /**
          * Emitted once the service has been initialized
@@ -89,7 +91,8 @@ namespace Nepomuk {
         void slotServiceRegistered( const QString& serviceName );
         void slotServiceUnregistered( const QString& serviceName );
         void slotServiceInitialized( bool success );
-        
+        void slotStopTimeout();
+
         void createServiceControlInterface();
 
     private:

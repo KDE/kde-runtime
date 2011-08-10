@@ -144,6 +144,9 @@ public:
     // services that wait for dependencies to initialize
     QSet<ServiceController*> pendingServices;
 
+    // services that were stopped and are waiting for services to stop that depend on them
+    QSet<ServiceController*> stoppedServices;
+
     ServiceController* findService( const QString& name );
     void buildServiceMap();
 
@@ -154,15 +157,9 @@ public:
     void startService( ServiceController* );
 
     /**
-     * Stop a service and all services depending on it.
-     * Return true if it was stopped, false if it was not running.
+     * Schedule a service and all services depending on it to be stopped.
      */
-    bool stopService( ServiceController* );
-
-    /**
-     * Start pending services based on the newly initialized service newService
-     */
-    void startPendingServices( ServiceController* newService );
+    void stopService( ServiceController* );
 
     /**
      * Slot connected to all ServiceController::serviceInitialized
@@ -229,6 +226,8 @@ void Nepomuk::ServiceManager::Private::startService( ServiceController* sc )
 {
     kDebug() << sc->name();
 
+    stoppedServices.remove(sc);
+
     if( !sc->isRunning() ) {
         // start dependencies if possible
         bool needToQueue = false;
@@ -253,40 +252,29 @@ void Nepomuk::ServiceManager::Private::startService( ServiceController* sc )
 }
 
 
-bool Nepomuk::ServiceManager::Private::stopService( ServiceController* sc )
+void Nepomuk::ServiceManager::Private::stopService( ServiceController* service )
 {
-    // shut down any service depending of this one first
-    foreach( const QString &dep, dependencyTree.servicesDependingOn( sc->name() ) ) {
-        ServiceController* sc = services[dep];
-        if( sc->isRunning() ) {
-            pendingServices.insert( sc );
-            stopService( sc );
+    pendingServices.remove(service);
+
+    if( service->isRunning() ) {
+        // shut down any service depending of this one first
+        bool haveRunningRevDeps = false;
+        foreach(const QString& dep, dependencyTree.servicesDependingOn( service->name() )) {
+            ServiceController* sc = services[dep];
+            if( sc->isRunning() ) {
+                kDebug() << "Revdep still running:" << sc->name() << "Queuing to be stopped:" << service->name();
+                stoppedServices.insert( service );
+                haveRunningRevDeps = true;
+
+                stopService( sc );
+                pendingServices.insert( sc );
+            }
         }
-    }
 
-    // stop it if already running
-    if( sc->isRunning() ) {
-        sc->stop();
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
-
-void Nepomuk::ServiceManager::Private::startPendingServices( ServiceController* newService )
-{
-    kDebug() << newService->name() << pendingServices;
-
-    // check the list of pending services and start as many as possible
-    // (we can start services whose dependencies are initialized)
-    QList<ServiceController*> sl = pendingServices.toList();
-    foreach( ServiceController* service, sl ) {
-        if ( service->dependencies().contains( newService->name() ) ) {
-            // try to start the service again
-            pendingServices.remove( service );
-            startService( service );
+        // if we did not queue it to be stopped we can do it now
+        if(!haveRunningRevDeps) {
+            stoppedServices.remove(service);
+            service->stop();
         }
     }
 }
@@ -296,7 +284,17 @@ void Nepomuk::ServiceManager::Private::_k_serviceInitialized( ServiceController*
 {
     kDebug() << "Service initialized:" << sc->name();
 
-    startPendingServices( sc );
+    // check the list of pending services and start as many as possible
+    // (we can start services whose dependencies are initialized)
+    QList<ServiceController*> sl = pendingServices.toList();
+    foreach( ServiceController* service, sl ) {
+        if ( service->dependencies().contains( sc->name() ) ) {
+            // try to start the service again
+            pendingServices.remove( service );
+            startService( service );
+        }
+    }
+
     emit q->serviceInitialized( sc->name() );
 }
 
@@ -305,16 +303,31 @@ void Nepomuk::ServiceManager::Private::_k_serviceStopped( ServiceController* sc 
 {
     kDebug() << "Service stopped:" << sc->name();
 
+    // 1. The standard case: we stopped a service and waited for the rev deps to go down
+    //
+    // try to stop all stopped services that are still waiting for reverse deps to shut down
+    QSet<ServiceController*> ss = stoppedServices;
+    foreach(ServiceController* sc, ss) {
+        stoppedServices.remove(sc);
+        stopService(sc);
+    }
+
+
+    // 2. The other case where a service was stopped from the outside and we have to shut down its
+    //    reverse deps
+    //
     // stop and queue all services depending on the stopped one
     // this will re-trigger this method until all reverse-deps are stopped
     foreach( const QString &dep, dependencyTree.servicesDependingOn( sc->name() ) ) {
         ServiceController* depsc = services[dep];
         if( depsc->isRunning() ) {
             kDebug() << "Stopping and queuing rev-dep" << depsc->name();
-            depsc->stop();
+            stopService(depsc);
             pendingServices.insert( depsc );
         }
     }
+
+
 }
 
 
@@ -376,10 +389,9 @@ bool Nepomuk::ServiceManager::startService( const QString& name )
 bool Nepomuk::ServiceManager::stopService( const QString& name )
 {
     if( ServiceController* sc = d->findService( name ) ) {
-        // make sure the service is not scheduled to be started later anymore
-        d->pendingServices.remove( sc );
-
-        return d->stopService( sc );
+        d->stopService( sc );
+        sc->waitForStoppedAndTerminate();
+        return true;
     }
     return false;
 }

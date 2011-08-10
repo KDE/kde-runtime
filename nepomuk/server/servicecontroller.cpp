@@ -127,6 +127,7 @@ Nepomuk::ServiceController::ServiceController( KService::Ptr service, QObject* p
 Nepomuk::ServiceController::~ServiceController()
 {
     stop();
+    waitForStoppedAndTerminate();
     delete d;
 }
 
@@ -231,15 +232,14 @@ void Nepomuk::ServiceController::stop()
             d->serviceControlInterface->shutdown();
         }
 
-        if( d->processControl ) {
-            d->processControl->stop();
-        }
-
         // make sure all loops waiting for the service to initialize
         // are terminated.
         foreach( QEventLoop* loop, d->loops ) {
             loop->exit();
         }
+
+        // terminate if not stopped after timeout
+        QTimer::singleShot(20000, this, SLOT(slotStopTimeout()));
     }
 }
 
@@ -278,6 +278,16 @@ bool Nepomuk::ServiceController::waitForInitialized( int timeout )
 }
 
 
+void Nepomuk::ServiceController::waitForStoppedAndTerminate()
+{
+    if( isRunning() ) {
+        if( d->processControl ) {
+            d->processControl->waitForFinishedAndTerminate();
+        }
+    }
+}
+
+
 void Nepomuk::ServiceController::slotProcessFinished( bool /*clean*/ )
 {
     kDebug() << "Service" << name() << "went down";
@@ -305,6 +315,8 @@ void Nepomuk::ServiceController::slotServiceUnregistered( const QString& service
     // on its restart-on-crash feature and have to do it manually. Afterwards it is back
     // to normal
     if( serviceName == dbusServiceName( name() ) ) {
+
+        waitForStoppedAndTerminate();
 
         emit serviceStopped( this );
 
@@ -370,6 +382,7 @@ void Nepomuk::ServiceController::slotServiceInitialized( bool success )
             d->failedToInitialize = true;
             kDebug() << "Failed to initialize service" << name();
             stop();
+            waitForStoppedAndTerminate();
         }
     }
 
@@ -377,3 +390,11 @@ void Nepomuk::ServiceController::slotServiceInitialized( bool success )
         loop->exit();
     }
 }
+
+void Nepomuk::ServiceController::slotStopTimeout()
+{
+    // FIXME: terminate without waiting since we already waited with a timer!
+    waitForStoppedAndTerminate();
+}
+
+#include "servicecontroller.moc"
