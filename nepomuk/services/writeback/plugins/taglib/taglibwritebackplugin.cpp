@@ -54,11 +54,11 @@ Nepomuk::TaglibWritebackPlugin::~TaglibWritebackPlugin()
 void Nepomuk::TaglibWritebackPlugin::doWriteback(const QUrl& url)
 {
 
-    Nepomuk::Resource resource(url.toLocalFile());
+    Nepomuk::Resource resource(url);
     if(resource.exists())
     {
         // creatin  Nepomuk::Resource resource(KUrl(url));
-        TagLib::FileRef f(QFile::encodeName( url.toLocalFile()).data());
+        TagLib::FileRef f(QFile::encodeName((resource.property(NIE::url())).toString()).data());
         if((resource.property(NIE::title())).isString())
         {
             QString title = (resource.property(NIE::title())).toString();

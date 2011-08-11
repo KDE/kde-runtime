@@ -25,6 +25,7 @@
 
 #include <Nepomuk/Resource>
 #include <Nepomuk/Vocabulary/NEXIF>
+#include <Nepomuk/Vocabulary/NIE>
 #include <Nepomuk/Variant>
 
 #include "exiv2writebackplugin.h"
@@ -43,11 +44,11 @@ Nepomuk::Exiv2WritebackPlugin::~Exiv2WritebackPlugin()
 
 void Nepomuk::Exiv2WritebackPlugin::doWriteback(const QUrl& url)
 {
-    Nepomuk::Resource resource(url.toLocalFile());
+    Nepomuk::Resource resource(url);
     if(resource.isValid())
     {
         KExiv2Iface::KExiv2 image;
-        image.load(url.toLocalFile());
+        image.load((resource.property(NIE::url())).toString());
 
         if((resource.property(NEXIF::dateTime())).isValid())
         {
@@ -76,14 +77,6 @@ void Nepomuk::Exiv2WritebackPlugin::doWriteback(const QUrl& url)
             if(imagedes != image.getExifTagString("Exif.Image.ImageDescription"))
             {
                 image.setExifTagString("Exif.Image.ImageDescription",imagedes);
-            }
-        }
-        if((resource.property(NEXIF::orientation())).isValid())
-        {
-            QString imageorin = (resource.property(NEXIF::orientation())).toString();
-            if(imageorin != image.getExifTagString("Exif.Image.Orientation"))
-            {
-                image.setExifTagString("Exif.Image.Orientation",imageorin);
             }
         }
         image.applyChanges();
