@@ -73,6 +73,7 @@ namespace {
         ".git",
         "_darcs",
         ".bzr",
+        ".hg",
 
         // development
         "CMakeFiles",
