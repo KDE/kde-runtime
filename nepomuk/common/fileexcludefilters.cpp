@@ -72,6 +72,7 @@ namespace {
         ".svn",
         ".git",
         "_darcs",
+        ".bzr",
 
         // development
         "CMakeFiles",
