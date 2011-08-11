@@ -6,5 +6,4 @@ X-KDE-ServiceTypes=Nepomuk/WritebackPlugin
 Type=Service
 X-KDE-Library=nepomuk_writeback_akonadi
 
-
-X-Nepomuk-ResourceTypes=NCO:Contact
+X-Nepomuk-ResourceTypes=http://www.semanticdesktop.org/ontologies/2007/03/22/nco#PersonContact

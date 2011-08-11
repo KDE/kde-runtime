@@ -44,7 +44,7 @@ Nepomuk::WritebackPlugin::WritebackPlugin(QObject* parent)
 
 Nepomuk::WritebackPlugin::~WritebackPlugin()
 {
-delete d;
+    delete d;
 }
 
 

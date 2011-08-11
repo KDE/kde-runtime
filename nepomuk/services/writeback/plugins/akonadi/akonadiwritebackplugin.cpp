@@ -53,17 +53,20 @@ void Nepomuk::AkonadiWritebackPlugin::doWriteback(const QUrl& url)
     Nepomuk::Resource resource(url);
     if(resource.isValid()) {
         Akonadi::Item  item;
-        item.fromUrl(url);
-        Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob( item );
+        Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob( item.fromUrl(url)  );
         fetchJob->fetchScope().fetchFullPayload();
-        connect( fetchJob, SIGNAL( result( KJob* ) ), SLOT( fetchFinished( KJob* ) ) );
+
+        connect( fetchJob, SIGNAL( result(KJob*) ), SLOT( fetchFinished(KJob*) ) );
     }
 }
 
-void Nepomuk::AkonadiWritebackPlugin::fetchFinished( KJob *job )
+void Nepomuk::AkonadiWritebackPlugin::fetchFinished(KJob* job)
 {
-    if ( job->error() )
+    if ( job->error() ) {
+        qDebug() << "Error encountered" ;
         return;
+    }
+    qDebug() << "in fetchFinished";
 
     Akonadi::ItemFetchJob *fetchJob = qobject_cast<Akonadi::ItemFetchJob*>( job );
 
@@ -128,3 +131,5 @@ void Nepomuk::AkonadiWritebackPlugin::modifyFinished( KJob *job )
 }
 
 NEPOMUK_EXPORT_WRITEBACK_PLUGIN(Nepomuk::AkonadiWritebackPlugin,"nepomuk_writeback_akonadi")
+
+#include <akonadiwritebackplugin.moc>

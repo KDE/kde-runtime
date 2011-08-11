@@ -5,5 +5,5 @@ X-KDE-ServiceType=Nepomuk/WritebackPlugin
 Comment=Nepomuk Writeback plugin
 Comment[x-test]=xxNepomuk Writeback pluginxx
 
-
- 
+[PropertyDef::X-Nepomuk-ResourceTypes]
+Type=QStringList
