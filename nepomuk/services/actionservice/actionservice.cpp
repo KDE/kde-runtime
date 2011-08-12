@@ -30,6 +30,10 @@
 
 #include <QtCore/QStringList>
 #include <QtCore/QSet>
+#include <QtCore/QProcess>
+
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusInterface>
 
 // TODO: make all async
 
@@ -97,12 +101,45 @@ bool Nepomuk::ActionService::executeAction(const QString &actionId, const QStrin
         }
     }
     else if(!service->exec().isEmpty()) {
-        // TODO: extend KRun? use our own code?
-        return false;
+        QString command = service->exec();
+        command.replace(QLatin1String("%s"), subjectResources.join(QLatin1String(" ")));
+        command.replace(QLatin1String("%o"), objectResources.join(QLatin1String(" ")));
+        return QProcess::startDetached(command);
     }
     else if(!service->property(QLatin1String("X-Nepomuk-DBusCommand"), QVariant::String).toString().isEmpty()) {
-        // TODO
-        return false;
+        const QStringList commandTokens = service->property(QLatin1String("X-Nepomuk-DBusCommand"), QVariant::String).toString().split(QLatin1String(" "));
+        if(commandTokens.count() < 4) {
+            kDebug() << "Invalid DBus command:" << commandTokens;
+            return false;
+        }
+        const QString dbusService = commandTokens[0];
+        const QString dbusObject = commandTokens[1];
+        const QString dbusInterface = commandTokens[2];
+        const QString dbusMethod = commandTokens[3];
+
+        QVariantList arguments;
+        for(int i = 4; i < commandTokens.count(); ++i) {
+            QString token = commandTokens[i].simplified();
+            if(token == QLatin1String("%s")) {
+                arguments << subjectResources;
+            }
+            else if(token == QLatin1String("%s")) {
+                arguments << objectResources;
+            }
+            else {
+                // FIXME: do we need to cast to the appropriate type?
+                arguments << token;
+            }
+        }
+
+        return QDBusInterface(dbusService,
+                              dbusObject,
+                              dbusInterface,
+                              QDBusConnection::sessionBus())
+                .callWithArgumentList(QDBus::Block,
+                                      dbusMethod,
+                                      arguments)
+                .errorName().isEmpty();
     }
     else {
         kDebug() << "Invalid action service description" << service->desktopEntryName();
