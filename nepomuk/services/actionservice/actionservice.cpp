@@ -20,9 +20,18 @@
 */
 
 #include "actionservice.h"
+#include "resourceactionplugin.h"
 
 #include <KPluginFactory>
+#include <kservice.h>
+#include <kservicetypetrader.h>
+#include <kurl.h>
+#include <kdebug.h>
 
+#include <QtCore/QStringList>
+#include <QtCore/QSet>
+
+// TODO: make all async
 
 NEPOMUK_EXPORT_SERVICE( Nepomuk::ActionService, "nepomukactionservice")
 
@@ -33,6 +42,122 @@ Nepomuk::ActionService::ActionService(QObject *parent, const QVariantList& )
 
 Nepomuk::ActionService::~ActionService()
 {
+}
+
+QStringList Nepomuk::ActionService::actionsForResources(const QStringList &subjectResources, const QStringList &objectResources)
+{
+    QSet<QString> actionIds;
+    QStringList desktopFilesNames;
+    foreach(KService::Ptr service, actionServicesForResources(subjectResources, objectResources)) {
+        if(!service->library().isEmpty()) {
+            //
+            // Check if the plugin can handle the resources
+            //
+            ResourceActionPlugin* plugin = pluginFromCache(service);
+            if(!plugin ||
+               actionIds.contains(service->name()) ||
+               !plugin->canExecuteActionFor(service->name(), KUrl::List(subjectResources), KUrl::List(objectResources))) {
+                continue;
+            }
+        }
+
+        if(!actionIds.contains(service->name())) {
+            actionIds << service->name();
+            desktopFilesNames << service->desktopEntryName();
+        }
+    }
+    return desktopFilesNames;
+}
+
+QStringList Nepomuk::ActionService::actionsForTypes(const QString &subjectType, const QString &objectType, int subjectCount, int objectCount)
+{
+    QSet<QString> actionIds;
+    QStringList desktopFilesNames;
+    foreach(const KService::Ptr& service, actionServicesForTypes(subjectType, objectType, subjectCount, objectCount)) {
+        // FIXME: determine the preferred service for the action
+        if(!actionIds.contains(service->name())) {
+            actionIds << service->name();
+            desktopFilesNames << service->desktopEntryName();
+        }
+    }
+    return desktopFilesNames;
+}
+
+bool Nepomuk::ActionService::executeAction(const QString &actionId, const QStringList &subjectResources, const QStringList &objectResources)
+{
+    KService::Ptr service = KService::serviceByDesktopName(actionId);
+    if(!service->library().isEmpty()) {
+        ResourceActionPlugin* plugin = pluginFromCache(service);
+        if(plugin) {
+            return plugin->executeAction(actionId, KUrl::List(subjectResources), KUrl::List(objectResources));
+        }
+        else {
+            kDebug() << "Failed to load plugin" << service->library();
+            return false;
+        }
+    }
+    else if(!service->exec().isEmpty()) {
+        // TODO: extend KRun? use our own code?
+        return false;
+    }
+    else if(!service->property(QLatin1String("X-Nepomuk-DBusCommand"), QVariant::String).toString().isEmpty()) {
+        // TODO
+        return false;
+    }
+    else {
+        kDebug() << "Invalid action service description" << service->desktopEntryName();
+        return false;
+    }
+}
+
+KService::List Nepomuk::ActionService::actionServicesForTypes(const QString &subjectType, const QString &objectType, int subjectCount, int objectCount)
+{
+    // FIXME: handle super-types, prefer actions on more specific types
+    QStringList constraints;
+    if(!subjectType.isEmpty()) {
+        constraints << QString::fromLatin1("( '*' in [X-Nepomuk-SubjectTypes] or '%1' in [X-Nepomuk-SubjectTypes] )").arg(subjectType);
+        if(subjectCount != 1) {
+            if(subjectCount != 0) {
+                constraints << QString::fromLatin1("( [X-Nepomuk-SubjectCardinality] == %1 or [X-Nepomuk-SubjectCardinality] == 0 )").arg(subjectCount);
+            }
+            else {
+                constraints << QString::fromLatin1("( [X-Nepomuk-SubjectCardinality] == 0 )");
+            }
+        }
+    }
+    if(!objectType.isEmpty()) {
+        constraints << QString::fromLatin1("( '*' in [X-Nepomuk-ObjectTypes] or '%1' in [X-Nepomuk-ObjectTypes] )").arg(objectType);
+        if(objectCount != 1) {
+            if(objectCount != 0) {
+                constraints << QString::fromLatin1("( [X-Nepomuk-ObjectCardinality] == %1 or [X-Nepomuk-ObjectCardinality] == 0 )").arg(objectCount);
+            }
+            else {
+                constraints << QString::fromLatin1("( [X-Nepomuk-ObjectCardinality] == 0 )");
+            }
+        }
+    }
+
+    return KServiceTypeTrader::self()->query(QLatin1String("Nepomuk/ActionPlugin"), constraints.join(QLatin1String(" and ")));
+}
+
+KService::List Nepomuk::ActionService::actionServicesForResources(const QStringList &subjects, const QStringList &objects)
+{
+    // TODO
+    return KService::List();
+}
+
+Nepomuk::ResourceActionPlugin * Nepomuk::ActionService::pluginFromCache(KService::Ptr service)
+{
+    if(m_pluginCache.contains(service->desktopEntryName())) {
+        return m_pluginCache[service->desktopEntryName()];
+    }
+    else {
+        ResourceActionPlugin* plugin = service->createInstance<Nepomuk::ResourceActionPlugin>();
+        if(plugin) {
+            m_pluginCache.insert(service->desktopEntryName(), plugin);
+        }
+        return plugin;
+    }
 }
 
 #include "actionservice.moc"

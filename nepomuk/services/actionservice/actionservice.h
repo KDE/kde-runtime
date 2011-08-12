@@ -26,7 +26,12 @@
 
 #include <QtCore/QVariant>
 
+#include <kservice.h>
+
+
 namespace Nepomuk {
+class ResourceActionPlugin;
+
 class ActionService : public Nepomuk::Service
 {
     Q_OBJECT
@@ -37,7 +42,34 @@ public:
     ~ActionService();
 
 public slots:
+    /**
+     * \return A list of desktop file names which identify the actions
+     * that can be executed on the provided resources.
+     */
+    Q_SCRIPTABLE QStringList actionsForResources(const QStringList& subjectResources, const QStringList& objectResources);
 
+    /**
+     * \return A list of desktop file names which identify the actions
+     * that can be executed on resources of type \p subjectType and \p objectType.
+     *
+     * \param subjectCount The number of subject resources of type \p subjectType.
+     * A value of 0 refers to "many".
+     * \param objectCount The number of object resources of type \p objectType.
+     * A value of 0 refers to "many".
+     */
+    Q_SCRIPTABLE QStringList actionsForTypes(const QString& subjectType, const QString& objectType, int subjectCount, int objectCount);
+
+    /**
+     * Execute the action referred to by \p desktop file name on the provided resources.
+     */
+    Q_SCRIPTABLE bool executeAction(const QString& desktopFileName, const QStringList& subjectResources, const QStringList& objectResources);
+
+private:
+    KService::List actionServicesForTypes(const QString& subjectType, const QString& objectType, int subjectCount, int objectCount);
+    KService::List actionServicesForResources(const QStringList& subjects, const QStringList& objects);
+    ResourceActionPlugin* pluginFromCache(KService::Ptr service);
+
+    QHash<QString, ResourceActionPlugin*> m_pluginCache;
 };
 }
 

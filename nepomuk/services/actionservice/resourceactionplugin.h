@@ -22,23 +22,60 @@
 #ifndef RESOURCEACTIONPLUGIN_H
 #define RESOURCEACTIONPLUGIN_H
 
-#include <QObject>
+#include <QtCore/QObject>
+#include <QtCore/QUrl>
+#include <QtCore/QList>
 
 #include "nepomukactions_export.h"
 
 namespace Nepomuk {
 
+/**
+ * \class ResourceActionPlugin resourceactionplugin.h
+ *
+ * \brief Base class for plugins that provide actions for specific resource types.
+ *
+ * More documentation yet to be written...
+ *
+ * \author Sebastian Trueg <trueg@kde.org>, Laura Dragan <laura.dragan@deri.com>
+ */
 class NEPOMUKACTIONS_EXPORT ResourceActionPlugin : public QObject
 {
     Q_OBJECT
 
 public:
+    /**
+     * Constructor
+     */
     ResourceActionPlugin(QObject *parent = 0);
 
-public slots:
+    /**
+     * Destructor
+     */
+    virtual ~ResourceActionPlugin();
 
+public:
+    /**
+     * By reimplementing this method plugins may check additional constraints on resources
+     * like the presence of a contact in order for a chat to be started or the existance
+     * of some required property.
+     *
+     * The default implementation simply returns \a true.
+     */
+    virtual bool canExecuteActionFor(const QString& actionId, const QList<QUrl>& subjectResources, const QList<QUrl>& objectResources);
+
+    /**
+     * Execute the actual action as specified by \p actionId on the resources specified in \p subjectResources and
+     * \p objectResources.
+     *
+     * Each plugin needs to implement this method.
+     */
+    virtual bool executeAction(const QString& actionId, const QList<QUrl>& subjectResources, const QList<QUrl>& objectResources) = 0;
+
+private:
+    class Private;
+    Private* const d;
 };
-
 }
 
 #endif // RESOURCEACTIONPLUGIN_H

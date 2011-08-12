@@ -1,0 +1,19 @@
+[Desktop Entry]
+Type=ServiceType
+X-KDE-ServiceType=Nepomuk/ActionPlugin
+Comment=Nepomuk Action Plugin
+
+[PropertyDef::X-Nepomuk-SubjectTypes]
+Type=QStringList
+
+[PropertyDef::X-Nepomuk-ObjectTypes]
+Type=QStringList
+
+[PropertyDef::X-Nepomuk-SubjectCardinality]
+Type=int
+
+[PropertyDef::X-Nepomuk-ObjectCardinality]
+Type=int
+
+[PropertyDef::X-Nepomuk-DBusCommand]
+Type=QString

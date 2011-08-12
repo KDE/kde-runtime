@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=NepomukService
+X-KDE-Library=nepomukactionservice
+X-KDE-Nepomuk-autostart=true
+X-KDE-Nepomuk-start-on-demand=false
+Name=Nepomuk Action Service
+Comment=The Nepomuk action service provides actions on Nepomuk resources

@@ -21,11 +21,22 @@
 
 #include "resourceactionplugin.h"
 
-namespace Nepomuk {
-
-ResourceActionPlugin::ResourceActionPlugin(QObject *parent) :
-    QObject(parent)
+Nepomuk::ResourceActionPlugin::ResourceActionPlugin(QObject *parent)
+    : QObject(parent),
+      d(0)
 {
 }
 
-} // namespace Nepomuk
+Nepomuk::ResourceActionPlugin::~ResourceActionPlugin()
+{
+}
+
+bool Nepomuk::ResourceActionPlugin::canExecuteActionFor(const QString &actionId, const QList<QUrl> &subjectResources, const QList<QUrl> &objectResources)
+{
+    Q_UNUSED(actionId);
+    Q_UNUSED(subjectResources);
+    Q_UNUSED(objectResources);
+    return true;
+}
+
+#include "resourceactionplugin.moc"
