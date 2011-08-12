@@ -189,7 +189,7 @@ Nepomuk::ResourceActionPlugin * Nepomuk::ActionService::pluginFromCache(KService
         return m_pluginCache[service->desktopEntryName()];
     }
     else {
-        ResourceActionPlugin* plugin = service->createInstance<Nepomuk::ResourceActionPlugin>();
+        ResourceActionPlugin* plugin = service->createInstance<Nepomuk::ResourceActionPlugin>(this);
         if(plugin) {
             m_pluginCache.insert(service->desktopEntryName(), plugin);
         }
