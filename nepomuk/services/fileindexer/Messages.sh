@@ -1,2 +1,2 @@
 #! /usr/bin/env bash
-$XGETTEXT `find . -name "*.cpp"` -o $podir/nepomukstrigiservice.pot
+$XGETTEXT `find . -name "*.cpp"` -o $podir/nepomukfileindexer.pot
