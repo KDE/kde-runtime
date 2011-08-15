@@ -93,7 +93,7 @@ bool lowerPriority()
 
 bool lowerSchedulingPriority()
 {
-#ifdef SCHED_BATCH
+#ifdef SCHED_IDLE
     struct sched_param param;
     memset( &param, 0, sizeof(param) );
     param.sched_priority = 0;
