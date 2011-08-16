@@ -421,9 +421,9 @@ void Nepomuk::StrigiIndexWriter::addTriplet( const std::string& s,
     FileMetaData* md = fileDataForResult( d->currentResultStack.top() );
 
     // convert the std strings to Qt values
-    const QString subResId(QLatin1String(s.c_str()));
+    const QString subResId(QString::fromUtf8(s.c_str()));
     const QUrl property(QString::fromUtf8(p.c_str()));
-    const QString value(QString::fromUtf8( o.c_str()));
+    const QString value(QString::fromUtf8(o.c_str()));
 
     // the subject might be the indexed file itself
     if(KUrl(subResId) == md->fileUrl) {
