@@ -62,6 +62,8 @@
 
 #include <KIO/NetAccess>
 
+#define STRIGI_INDEX_GRAPH_FOR "http://www.strigi.org/fields#indexGraphFor"
+
 using namespace Nepomuk::Vocabulary;
 using namespace Soprano::Vocabulary;
 
@@ -984,7 +986,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     //
     if(app == QLatin1String("nepomukindexer")) {
         graphRemovalCandidates += executeQuery(QString::fromLatin1("select distinct ?g (0) as ?c where { "
-                                                                   "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
+                                                                   "?g <"STRIGI_INDEX_GRAPH_FOR"> ?r . "
                                                                    "FILTER(?r in (%1)) . }")
                                                .arg(Nepomuk::resourcesToN3(resolvedResources).join(QLatin1String(","))),
                                                Soprano::Query::QueryLanguageSparql).allElements();
@@ -1133,6 +1135,12 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
 
     //
     // Determine the resources we did not remove completely.
+    // This includes resource that have still other properties than the metadata ones defined
+    // and those that have relations from other resources created by other applications and have a nie:url.
+    // The latter is a special case which has two reasons:
+    // 1. A nie:url identifies the resource even outside of Nepomuk
+    // 2. The indexers use this method to update indexed data. If the resource has incoming relations
+    //    they should be kept between updates. (The only exception is the legacy index graph relation.)
     //
     QSet<QUrl> resourcesToRemoveCompletely(resolvedResources);
     Soprano::QueryResultIterator resComplIt
@@ -1142,6 +1150,15 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                            Soprano::Query::QueryLanguageSparql);
     while(resComplIt.next()) {
         resourcesToRemoveCompletely.remove(resComplIt[0].uri());
+    }
+    resComplIt = executeQuery(QString::fromLatin1("select ?r where { ?o ?p ?r . FILTER(?r in (%1)) . FILTER(?p != <"STRIGI_INDEX_GRAPH_FOR">) . }")
+                              .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                              Soprano::Query::QueryLanguageSparql);
+    while(resComplIt.next()) {
+        const QUrl r = resComplIt[0].uri();
+        if(metadata.containsAnyStatement(r, NIE::url(), Soprano::Node())) {
+            resourcesToRemoveCompletely.remove(resComplIt[0].uri());
+        }
     }
 
     // no need to update metadata on resource we remove completely
@@ -2259,8 +2276,9 @@ QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFil
 
         // non-existing unsupported URL
         else if( state == OtherUri ) {
-            setError(QString::fromLatin1("Unknown protocol '%1' encountered.").arg(url.scheme()),
-                     Soprano::Error::ErrorInvalidArgument);
+            QString error = QString::fromLatin1("Unknown protocol '%1' encountered in %2")
+                            .arg(url.scheme(), url.toString());
+            setError(error, Soprano::Error::ErrorInvalidArgument);
             return QUrl();
         }
 

@@ -104,6 +104,8 @@ public:
         Q_FOREACH(const QUrl& type, m_model->d->m_typeVisibilityTree->visibleTypes()) {
             if(m_canceled)
                 break;
+            if(m_model->d->m_typeVisibilityTree->isChildOf(type, Soprano::Vocabulary::NRL::Graph()))
+                continue;
             const QString query = QString::fromLatin1("insert into graph %1 { ?r %2 1 . } where { "
                                                       "graph ?g { ?r a %3 . } . "
                                                       "FILTER(?g!=%1) . "
@@ -119,10 +121,14 @@ public:
 #endif
 
         // update the resource type inference on all resources that were created before KDE 4.6.1
+        // we ignore graphs entirely to save space and allow the DMS to use SPARUL to remove graphs
         Soprano::QueryResultIterator it = m_model->executeQuery(QString::fromLatin1("select distinct ?t where { ?t a %1 . "
-                                                                                    "FILTER(bif:exists((select (1) where { graph ?g { ?r a ?t . } . FILTER(?g!=%2) . }))) . }")
+                                                                                    "FILTER(bif:exists((select (1) where { graph ?g { ?r a ?t . } . FILTER(?g!=%2) . }))) . "
+                                                                                    "FILTER(!bif:exists((select (1) where { ?t %3 %4 . }))) . }")
                                                                 .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::Class()),
-                                                                     Soprano::Node::resourceToN3(m_model->crappyInferenceContext())),
+                                                                     Soprano::Node::resourceToN3(m_model->crappyInferenceContext()),
+                                                                     Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::subClassOf()),
+                                                                     Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::Graph())),
                                                                 Soprano::Query::QueryLanguageSparql);
         while(!m_canceled && it.next()) {
             const QUrl type = it["t"].uri();
@@ -270,11 +276,12 @@ Soprano::Error::ErrorCode CrappyInferencer2::addStatement(const Soprano::Stateme
     Soprano::Error::ErrorCode r = parentModel()->addStatement( statement );
     if( r == Soprano::Error::ErrorNone ) {
         //
-        // Handle the inference
+        // Handle the inference. However, we ignore inference for all graphs to save space and allow the DMS to use SPARUL there.
         //
         if ( statement.subject().isResource() &&
-                statement.object().isResource() &&
-                statement.predicate() == Soprano::Vocabulary::RDF::type() ) {
+             statement.object().isResource() &&
+             statement.predicate() == Soprano::Vocabulary::RDF::type() &&
+             !d->m_typeVisibilityTree->isChildOf(statement.object().uri(), Soprano::Vocabulary::NRL::Graph())) {
             addInferenceStatements( statement.subject().uri(), statement.object().uri() );
         }
     }

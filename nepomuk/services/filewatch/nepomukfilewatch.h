@@ -52,6 +52,12 @@ namespace Nepomuk {
         ~FileWatch();
 
         /**
+         * Tells strigi to update the file (it can also be a folder but
+         * then updating will not be recursive) at \p path.
+         */
+        static void updateFileViaStrigi( const QString& path );
+
+        /**
          * Tells strigi to update the folder at \p path or the folder
          * containing \p path in case it is a file.
          */
