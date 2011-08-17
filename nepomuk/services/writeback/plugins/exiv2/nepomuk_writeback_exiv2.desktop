@@ -6,6 +6,6 @@ X-KDE-ServiceTypes=Nepomuk/WritebackPlugin
 Type=Service
 X-KDE-Library=nepomuk_writeback_exiv2
 
-# FIXME
 MimeType=image/jpeg;image/tiff;
 
+X-Nepomuk-ResourceTypes=http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject

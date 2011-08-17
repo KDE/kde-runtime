@@ -7,3 +7,4 @@ Comment[x-test]=xxNepomuk Writeback pluginxx
 
 [PropertyDef::X-Nepomuk-ResourceTypes]
 Type=QStringList
+

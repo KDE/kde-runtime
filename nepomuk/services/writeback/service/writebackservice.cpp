@@ -42,17 +42,22 @@
 #include <Nepomuk/Types/Property>
 
 using namespace Nepomuk::Vocabulary;
-
 Nepomuk::WriteBackService::WriteBackService( QObject* parent, const QList< QVariant >& )
     : Service(parent)
 {
     m_currentjob = 0;
-
+    QStringList types;
     qDebug()<<"this part is executed";
+    KService::List services
+            = KServiceTypeTrader::self()->query( QString::fromLatin1 ("Nepomuk/WritebackPlugin"));
 
     ResourceWatcher* resourcewatcher  = new ResourceWatcher(this);
-    //resourcewatcher->addType(NFO::FileDataObject());
-    resourcewatcher->addProperty(NIE::title());
+    foreach(const KSharedPtr<KService>& service, services)
+        types  = (service->property("X-Nepomuk-ResourceTypes",QVariant::Type(11))).toStringList();
+
+    foreach(const QString& type, types)
+        resourcewatcher->addType(Nepomuk::Types::Class(KUrl(type)));
+
     resourcewatcher->start();
 
     connect( resourcewatcher, SIGNAL( propertyAdded(Nepomuk::Resource, Nepomuk::Types::Property, QVariant) ),

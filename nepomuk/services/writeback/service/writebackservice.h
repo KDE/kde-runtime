@@ -48,16 +48,17 @@ private:
     QQueue <Nepomuk::Resource> m_queue;
     Nepomuk::WritebackJob* m_currentjob;
 
-
-private Q_SLOTS:
+public Q_SLOTS:
     /**
       * This method is selects the plugin using either the mimetype or rdf type
       * than passes it to performWriteback method to do the actual writeback.
       */
-                  void writebackResource( const Nepomuk::Resource & resource);
-                  void slotQueue( const Nepomuk::Resource &resource);
-                  void slotFinished();
-                  void startWriteback();
+    Q_SCRIPTABLE  void writebackResource( const Nepomuk::Resource & resource);
+
+private Q_SLOTS:
+    void slotQueue( const Nepomuk::Resource &resource);
+    void slotFinished();
+    void startWriteback();
 
 };
 }
