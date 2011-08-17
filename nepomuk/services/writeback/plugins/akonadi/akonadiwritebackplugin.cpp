@@ -129,4 +129,4 @@ void Nepomuk::AkonadiWritebackPlugin::modifyFinished( KJob *job )
 
 NEPOMUK_EXPORT_WRITEBACK_PLUGIN(Nepomuk::AkonadiWritebackPlugin,"nepomuk_writeback_akonadi")
 
-#include <akonadiwritebackplugin.moc>
+#include "akonadiwritebackplugin.moc"

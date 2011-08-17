@@ -66,4 +66,4 @@ void Nepomuk::WritebackJob::slotWritebackFinished(Nepomuk::WritebackPlugin *plug
         emitResult();
 }
 
-#include <writebackjob.moc>
+#include "writebackjob.moc"

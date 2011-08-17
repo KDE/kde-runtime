@@ -68,7 +68,7 @@ Nepomuk::WriteBackService::~WriteBackService()
 void Nepomuk::WriteBackService::slotQueue(const Nepomuk::Resource &resource)
 {
     if(m_currentjob == 0)
-        findPlugin(resource);
+        writebackResource(resource);
     else if (!m_queue.contains(resource))
         m_queue.enqueue(resource);
 }
@@ -76,7 +76,7 @@ void Nepomuk::WriteBackService::slotQueue(const Nepomuk::Resource &resource)
 void Nepomuk::WriteBackService::startWriteback()
 {
     if(!m_queue.isEmpty())
-        findPlugin(m_queue.dequeue());
+        writebackResource(m_queue.dequeue());
 }
 
 void Nepomuk::WriteBackService::slotFinished()
@@ -85,7 +85,7 @@ void Nepomuk::WriteBackService::slotFinished()
     startWriteback();
 }
 
-void Nepomuk::WriteBackService::findPlugin(const Nepomuk::Resource & resource)
+void Nepomuk::WriteBackService::writebackResource(const Nepomuk::Resource & resource)
 {
     qDebug()<<"Test method executed";
     if(resource.hasType(NFO::FileDataObject()))
