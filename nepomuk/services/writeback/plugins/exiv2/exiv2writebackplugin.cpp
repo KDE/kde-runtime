@@ -80,7 +80,7 @@ void Nepomuk::Exiv2WritebackPlugin::doWriteback(const QUrl& url)
             }
         }
         image.applyChanges();
-        emitFinished();
+        emitFinished(true);
     }
 }
 

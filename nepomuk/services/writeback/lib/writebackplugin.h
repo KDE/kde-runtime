@@ -99,7 +99,7 @@ Q_SIGNALS:
              *
              * \param plugin The plugin emitting the signal.
              */
-    void finished( Nepomuk::WritebackPlugin* plugin );
+    void finished( Nepomuk::WritebackPlugin* plugin, bool status );
 
 public Q_SLOTS:
     /**
@@ -129,7 +129,7 @@ protected Q_SLOTS:
     /**
             * Emits the finished signal.
             */
-    void emitFinished();
+    void emitFinished(bool status);
 
 
 private:

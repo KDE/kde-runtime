@@ -115,7 +115,7 @@ void Nepomuk::TaglibWritebackPlugin::doWriteback(const QUrl& url)
             }
         }
         f.save();
-        emitFinished();
+        emitFinished(true);
     }
 }
 NEPOMUK_EXPORT_WRITEBACK_PLUGIN(Nepomuk::TaglibWritebackPlugin,"nepomuk_writeback_taglib")

@@ -52,7 +52,7 @@ void Nepomuk::WritebackJob::setResource(const Nepomuk::Resource &resource)
 void Nepomuk::WritebackJob::tryNextPlugin()
 {
     WritebackPlugin* p = m_plugins.takeFirst();
-    connect(p,SIGNAL(finished(Nepomuk::WritebackPlugin*)),this,SLOT(slotWritebackFinished(Nepomuk::WritebackPlugin*)));
+    connect(p,SIGNAL(finished(Nepomuk::WritebackPlugin*,bool)),this,SLOT(slotWritebackFinished(Nepomuk::WritebackPlugin*)));
     p->writeback(m_resource.resourceUri());
 }
 
