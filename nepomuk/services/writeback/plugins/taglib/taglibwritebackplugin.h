@@ -24,15 +24,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Nepomuk
 {
-  class TaglibWritebackPlugin : public Nepomuk::WritebackPlugin
-  {
-  public:
+class TaglibWritebackPlugin : public Nepomuk::WritebackPlugin
+{
+public:
     TaglibWritebackPlugin(QObject* parent,const QList<QVariant>&);
     ~TaglibWritebackPlugin();
-  public:
+public:
     void doWriteback(const QUrl& url);
-  };
-  
+};
+
 }
 
 #endif

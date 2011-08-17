@@ -18,8 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
 
-#include <libkexiv2/kexiv2.h>
-
 #include <QFile>
 #include <QUrl>
 
@@ -52,8 +50,7 @@ void Nepomuk::AkonadiWritebackPlugin::doWriteback(const QUrl& url)
 {
     Nepomuk::Resource resource(url);
     if(resource.isValid()) {
-        Akonadi::Item  item;
-        Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob( item.fromUrl(url)  );
+        Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob(  Akonadi::Item::fromUrl(url)  );
         fetchJob->fetchScope().fetchFullPayload();
 
         connect( fetchJob, SIGNAL( result(KJob*) ), SLOT( fetchFinished(KJob*) ) );

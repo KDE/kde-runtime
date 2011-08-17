@@ -46,6 +46,8 @@ using namespace Nepomuk::Vocabulary;
 Nepomuk::WriteBackService::WriteBackService( QObject* parent, const QList< QVariant >& )
     : Service(parent)
 {
+    m_currentjob = 0;
+
     qDebug()<<"this part is executed";
 
     ResourceWatcher* resourcewatcher  = new ResourceWatcher(this);
@@ -66,15 +68,15 @@ Nepomuk::WriteBackService::~WriteBackService()
 void Nepomuk::WriteBackService::slotQueue(const Nepomuk::Resource &resource)
 {
     if(m_currentjob == 0)
-        test(resource);
-    else if (! isResourceDuplicated(resource))
+        findPlugin(resource);
+    else if (!m_queue.contains(resource))
         m_queue.enqueue(resource);
 }
 
 void Nepomuk::WriteBackService::startWriteback()
 {
     if(!m_queue.isEmpty())
-        test(m_queue.dequeue());
+        findPlugin(m_queue.dequeue());
 }
 
 void Nepomuk::WriteBackService::slotFinished()
@@ -83,17 +85,7 @@ void Nepomuk::WriteBackService::slotFinished()
     startWriteback();
 }
 
-bool Nepomuk::WriteBackService::isResourceDuplicated (const Nepomuk::Resource &resource )
-{
-foreach (const Nepomuk::Resource &res, m_queue) {
-         if(resource == res)
-             return true;
-}
- return false;
-}
-
-
-void Nepomuk::WriteBackService::test(const Nepomuk::Resource & resource)
+void Nepomuk::WriteBackService::findPlugin(const Nepomuk::Resource & resource)
 {
     qDebug()<<"Test method executed";
     if(resource.hasType(NFO::FileDataObject()))
@@ -108,20 +100,21 @@ void Nepomuk::WriteBackService::test(const Nepomuk::Resource & resource)
 
             performWriteback(services,resource);
         }
-        else {
-            QStringList subQueries( "'*' in [X-Nepomuk-ResourceTypes]" );
-            for( int i = 0; i < (resource.types()).count(); ++i ) {
-                subQueries << QString::fromLatin1( "'%1' in [X-Nepomuk-ResourceTypes]" ).arg( ((resource.types()).at(i)).toString() );
-            }
-
-            KService::List services
-                    = KServiceTypeTrader::self()->query( QString::fromLatin1 ("Nepomuk/WritebackPlugin"), subQueries.join( " or " ) );
-
-            performWriteback(services,resource);
-
+    }
+    else {
+        QStringList subQueries( "'*' in [X-Nepomuk-ResourceTypes]" );
+        for( int i = 0; i < (resource.types()).count(); ++i ) {
+            subQueries << QString::fromLatin1( "'%1' in [X-Nepomuk-ResourceTypes]" ).arg( ((resource.types()).at(i)).toString() );
         }
+
+        KService::List services
+                = KServiceTypeTrader::self()->query( QString::fromLatin1 ("Nepomuk/WritebackPlugin"), subQueries.join( " or " ) );
+
+        performWriteback(services,resource);
+
     }
 }
+
 
 void Nepomuk::WriteBackService::performWriteback(const KService::List services,const Nepomuk::Resource & resource)
 {
@@ -139,7 +132,7 @@ void Nepomuk::WriteBackService::performWriteback(const KService::List services,c
         m_currentjob = new WritebackJob(this);
         m_currentjob->setPlugins(plugins);
         m_currentjob->setResource(resource);
-        connect(m_currentjob,SIGNAL(KJob::result(kjob *)),this,SLOT(slotFinished()));
+        connect(m_currentjob,SIGNAL(result(KJob *)),this,SLOT(slotFinished()));
         m_currentjob->start();
     }
 }

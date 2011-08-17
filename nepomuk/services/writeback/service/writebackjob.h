@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace Nepomuk {
 class WritebackJob : public KJob
 {
+    Q_OBJECT
 public:
     WritebackJob(QObject* parent = 0);
     ~WritebackJob();
