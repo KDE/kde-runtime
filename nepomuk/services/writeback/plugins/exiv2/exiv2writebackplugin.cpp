@@ -50,32 +50,27 @@ void Nepomuk::Exiv2WritebackPlugin::doWriteback(const QUrl& url)
         KExiv2Iface::KExiv2 image;
         image.load((resource.property(NIE::url())).toString());
 
-        if ((resource.property(NEXIF::dateTime())).isValid())
-        {
+        if ((resource.property(NEXIF::dateTime())).isValid()) {
             QDateTime datetime = (resource.property(NEXIF::dateTime())).toDateTime();
             if (datetime != exifDateToDateTime(image.getExifTagString("Exif.Image.DateTime"))) {
                 image.setExifTagString("Exif.Image.DateTime",exifDateFromDateTime(datetime));
             }
         }
-        if ((resource.property(NEXIF::dateTimeDigitized())).isValid())
-        {
+        if ((resource.property(NEXIF::dateTimeDigitized())).isValid()) {
             QDateTime datetime = (resource.property(NEXIF::dateTimeDigitized())).toDateTime();
             if (datetime != exifDateToDateTime(image.getExifTagString("Exif.Photo.DateTimeDigitized"))) {
                 image.setExifTagString("Exif.Photo.DateTimeDigitized",exifDateFromDateTime(datetime));
             }
         }
-        if ((resource.property(NEXIF::dateTimeOriginal())).isValid())
-        {
+        if ((resource.property(NEXIF::dateTimeOriginal())).isValid()) {
             QDateTime datetime = (resource.property(NEXIF::dateTimeOriginal())).toDateTime();
             if (datetime !=exifDateToDateTime(image.getExifTagString("Exif.Image.DateTimeOriginal"))) {
                 image.setExifTagString("Exif.Image.DateTimeOriginal",exifDateFromDateTime(datetime));
             }
         }
-        if ((resource.property(NEXIF::imageDescription())).isValid())
-        {
+        if ((resource.property(NEXIF::imageDescription())).isValid()) {
             QString imagedes = (resource.property(NEXIF::imageDescription())).toString();
-            if (imagedes != image.getExifTagString("Exif.Image.ImageDescription"))
-            {
+            if (imagedes != image.getExifTagString("Exif.Image.ImageDescription")) {
                 image.setExifTagString("Exif.Image.ImageDescription",imagedes);
             }
         }
