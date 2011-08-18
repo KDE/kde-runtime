@@ -34,15 +34,15 @@ namespace Nepomuk {
 class WriteBackService : public Service
 {
     Q_OBJECT
-    
+
 public:
     WriteBackService( QObject * parent = 0, const QList<QVariant>& args = QList<QVariant>() );
     ~WriteBackService();
 
 private:
-    /**
-  * Makes plugin list and passes it to writebackjob along with the resource.
-  */
+   /**
+    * Makes plugin list and passes it to writebackjob along with the resource.
+    */
     void performWriteback(const KService::List services,const Nepomuk::Resource & resource);
 
     QQueue <Nepomuk::Resource> m_queue;

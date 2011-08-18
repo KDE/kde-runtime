@@ -31,9 +31,9 @@ class WritebackJob : public KJob
 public:
     WritebackJob(QObject* parent = 0);
     ~WritebackJob();
-/**
-  * Sets plugins as member variable of the class.
-  */
+    /**
+      * Sets plugins as member variable of the class.
+      */
     void setPlugins(const QList<WritebackPlugin*>& plugins);
     /**
       * Sets the resource as a member variable of the class.

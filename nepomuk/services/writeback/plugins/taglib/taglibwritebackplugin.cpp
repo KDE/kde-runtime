@@ -55,60 +55,60 @@ void Nepomuk::TaglibWritebackPlugin::doWriteback(const QUrl& url)
 {
 
     Nepomuk::Resource resource(url);
-    if(resource.exists())
+    if (resource.exists())
     {
-        // creatin  Nepomuk::Resource resource(KUrl(url));
+// creatin  Nepomuk::Resource resource(KUrl(url));
         TagLib::FileRef f(QFile::encodeName((resource.property(NIE::url())).toString()).data());
-        if((resource.property(NIE::title())).isString())
+        if ((resource.property(NIE::title())).isString())
         {
             QString title = (resource.property(NIE::title())).toString();
-            if(title != TStringToQString(f.tag()->title()))
+            if (title != TStringToQString(f.tag()->title()))
             {
                 f.tag()->setTitle(Q4StringToTString(title));
             }
         }
-        if((resource.property(NMM::musicAlbum())).isValid())
+        if ((resource.property(NMM::musicAlbum())).isValid())
         {
-            if((((resource.property(NMM::musicAlbum())).toResource()).property(NIE::title())).isString())
+            if ((((resource.property(NMM::musicAlbum())).toResource()).property(NIE::title())).isString())
             {
                 QString album =(((resource.property(NMM::musicAlbum())).toResource()).property(NIE::title())).toString();
-                if(album != TStringToQString(f.tag()->album()))
+                if (album != TStringToQString(f.tag()->album()))
                 {
                     f.tag()->setAlbum(Q4StringToTString(album));
                 }
             }
         }
-        if((resource.property(NIE::comment())).isString())
+        if ((resource.property(NIE::comment())).isString())
         {
             QString comment = (resource.property(NIE::comment())).toString();
-            if(comment != TStringToQString(f.tag()->comment()))
+            if (comment != TStringToQString(f.tag()->comment()))
             {
                 f.tag()->setComment(Q4StringToTString(comment));
             }
         }
-        if((resource.property(NMM::genre()).isString()))
+        if ((resource.property(NMM::genre()).isString()))
         {
             QString genre = (resource.property(NMM::genre())).toString();
-            if(genre != TStringToQString(f.tag()->genre()))
+            if (genre != TStringToQString(f.tag()->genre()))
             {
                 f.tag()->setGenre(Q4StringToTString(genre));
             }
         }
-        if((resource.property(NMM::trackNumber()).isInt()))
+        if ((resource.property(NMM::trackNumber()).isInt()))
         {
             uint track = (resource.property(NMM::trackNumber())).toInt();
-            if(track != f.tag()->track())
+            if (track != f.tag()->track())
             {
                 f.tag()->setTrack(track);
 
             }
         }
-        if((resource.property(NMM::performer())).isValid())
+        if ((resource.property(NMM::performer())).isValid())
         {
-            if(((((resource.property(NMM::performer())).toResource()).property(NCO::fullname())).isString()))
+            if (((((resource.property(NMM::performer())).toResource()).property(NCO::fullname())).isString()))
             {
                 QString artist =(((resource.property(NMM::performer())).toResource()).property(NCO::fullname())).toString();
-                if(artist != TStringToQString(f.tag()->artist()))
+                if (artist != TStringToQString(f.tag()->artist()))
                 {
                     f.tag()->setArtist(Q4StringToTString(artist));
                 }

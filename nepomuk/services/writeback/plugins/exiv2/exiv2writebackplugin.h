@@ -34,12 +34,12 @@ public:
 public:
     void doWriteback(const QUrl& url);
     /**
-    * Converts exif datetime (ASCII) into QDateTime format.
-    */
+     * Converts exif datetime (ASCII) into QDateTime format.
+     */
     QDateTime exifDateToDateTime(const QString& string);
     /**
-      * Converts QDateTime into exif datetime format(ASCII).
-      */
+     * Converts QDateTime into exif datetime format(ASCII).
+     */
     QString  exifDateFromDateTime(const QDateTime& datetime);
 };
 }

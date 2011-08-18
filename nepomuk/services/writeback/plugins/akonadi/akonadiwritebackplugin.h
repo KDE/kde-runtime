@@ -27,7 +27,8 @@ class KJob;
 namespace Nepomuk
 {
 class AkonadiWritebackPlugin : public Nepomuk::WritebackPlugin
-{ Q_OBJECT
+{
+    Q_OBJECT
 public:
     AkonadiWritebackPlugin(QObject* parent, const QList<QVariant>&);
     ~AkonadiWritebackPlugin();
@@ -47,10 +48,10 @@ public Q_SLOTS:
       * or a failure.
       */
     void modifyFinished (KJob *job);
-    
+
 };
 
 }
 
 
-#endif 
+#endif

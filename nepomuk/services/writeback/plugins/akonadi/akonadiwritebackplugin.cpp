@@ -49,7 +49,7 @@ Nepomuk::AkonadiWritebackPlugin::~AkonadiWritebackPlugin()
 void Nepomuk::AkonadiWritebackPlugin::doWriteback(const QUrl& url)
 {
     Nepomuk::Resource resource(url);
-    if(resource.isValid()) {
+    if (resource.isValid()) {
         Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob(  Akonadi::Item::fromUrl(url)  );
         fetchJob->fetchScope().fetchFullPayload();
 
@@ -74,42 +74,42 @@ void Nepomuk::AkonadiWritebackPlugin::fetchFinished(KJob* job)
 
     Nepomuk::Resource resource(item.url());
 
-    if((resource.property(NCO::nickname())).isValid()) {
+    if ((resource.property(NCO::nickname())).isValid()) {
         QString nick= (resource.property(NCO::nickname())).toString();
 
-        if(nick != addressee.nickName()) {
+        if (nick != addressee.nickName()) {
             addressee.setNickName(nick);
         }
     }
 
-    if((resource.property(NCO::nameFamily())).isValid()) {
+    if ((resource.property(NCO::nameFamily())).isValid()) {
         QString fname= (resource.property(NCO::nameFamily())).toString();
 
-        if(fname != addressee.familyName()) {
+        if (fname != addressee.familyName()) {
             addressee.setFamilyName(fname);
         }
     }
 
-    if((resource.property(NCO::nameGiven())).isValid()) {
+    if ((resource.property(NCO::nameGiven())).isValid()) {
         QString gname= (resource.property(NCO::nameGiven())).toString();
 
-        if(gname != addressee.givenName()) {
+        if (gname != addressee.givenName()) {
             addressee.setGivenName(gname);
         }
     }
 
-    if((resource.property(NCO::EmailAddress())).isValid()) {
+    if ((resource.property(NCO::EmailAddress())).isValid()) {
         QString email= (resource.property(NCO::EmailAddress())).toString();
 
-        if(email != addressee.preferredEmail()) {
+        if (email != addressee.preferredEmail()) {
             addressee.insertEmail(email,true);
         }
     }
 
-    if((resource.property(NCO::birthDate())).isValid()) {
+    if ((resource.property(NCO::birthDate())).isValid()) {
         QDateTime birthDate= (resource.property(NCO::birthDate())).toDateTime();
 
-        if(birthDate != addressee.birthday()) {
+        if (birthDate != addressee.birthday()) {
             addressee.setBirthday(birthDate);
         }
     }

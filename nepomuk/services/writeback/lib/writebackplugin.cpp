@@ -26,7 +26,7 @@ class Nepomuk::WritebackPlugin::Private
 public:
 
     Private( WritebackPlugin* parent)
-        : q (parent)
+            : q (parent)
     {
         kDebug();
     }
@@ -37,7 +37,7 @@ private:
 
 
 Nepomuk::WritebackPlugin::WritebackPlugin(QObject* parent)
-    : QObject(parent),d( new Private(this) )
+        : QObject(parent),d( new Private(this) )
 {
 
 }
