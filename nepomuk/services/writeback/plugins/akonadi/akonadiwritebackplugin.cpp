@@ -62,6 +62,7 @@ void Nepomuk::AkonadiWritebackPlugin::fetchFinished(KJob* job)
     if ( job->error() ) {
         qDebug() << "Error encountered" ;
         emitFinished(false);
+        return;
     }
     qDebug() << "in fetchFinished";
 
@@ -122,6 +123,8 @@ void Nepomuk::AkonadiWritebackPlugin::modifyFinished( KJob *job )
     if ( job->error() ) {
         qDebug() << "Error occurred";
         emitFinished(false);
+        return;
+
     }
     else {
         qDebug() << "Item modified successfully";

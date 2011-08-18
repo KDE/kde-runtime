@@ -56,7 +56,7 @@ void Nepomuk::WritebackPlugin::writeback( const QUrl& url )
 
 void Nepomuk::WritebackPlugin::emitFinished( bool status)
 {
-    emit finished( this );
+    emit finished( this , status);
 }
 
 

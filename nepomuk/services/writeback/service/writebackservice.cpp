@@ -52,11 +52,12 @@ Nepomuk::WriteBackService::WriteBackService( QObject* parent, const QList< QVari
             = KServiceTypeTrader::self()->query( QString::fromLatin1 ("Nepomuk/WritebackPlugin"));
 
     ResourceWatcher* resourcewatcher  = new ResourceWatcher(this);
-    foreach(const KSharedPtr<KService>& service, services)
-        types  = (service->property("X-Nepomuk-ResourceTypes",QVariant::Type(11))).toStringList();
 
-    foreach(const QString& type, types)
-        resourcewatcher->addType(Nepomuk::Types::Class(KUrl(type)));
+    foreach(const KSharedPtr<KService>& service, services) {
+        foreach(const QString& type,
+        (service->property("X-Nepomuk-ResourceTypes",QVariant::StringList)).toStringList())
+               resourcewatcher->addType(Nepomuk::Types::Class(KUrl(type)));
+    }
 
     resourcewatcher->start();
 

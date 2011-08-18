@@ -8,4 +8,5 @@ X-KDE-Library=nepomuk_writeback_taglib
 
 MimeType=audio/mpeg;audio/x-musepack;audio/flac;video/mp4;video/x-ms-asf;audio/x-aiff;audio/x-wav;audio/ogg;
 
+# Note
 X-Nepomuk-ResourceTypes=http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject

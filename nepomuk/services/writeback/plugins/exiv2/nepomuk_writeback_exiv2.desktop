@@ -8,4 +8,5 @@ X-KDE-Library=nepomuk_writeback_exiv2
 
 MimeType=image/jpeg;image/tiff;
 
+# Note
 X-Nepomuk-ResourceTypes=http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject
