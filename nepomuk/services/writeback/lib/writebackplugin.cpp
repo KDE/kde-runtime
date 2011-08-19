@@ -24,20 +24,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class Nepomuk::WritebackPlugin::Private
 {
 public:
-
     Private( WritebackPlugin* parent)
-            : q (parent)
+        : q (parent)
     {
-        kDebug();
     }
-private:
 
+private:
     WritebackPlugin* q;
 };
 
 
 Nepomuk::WritebackPlugin::WritebackPlugin(QObject* parent)
-        : QObject(parent),d( new Private(this) )
+        : QObject(parent),
+          d( new Private(this) )
 {
 
 }
@@ -58,7 +57,5 @@ void Nepomuk::WritebackPlugin::emitFinished( bool status)
 {
     emit finished( this , status);
 }
-
-
 
 #include "writebackplugin.moc"

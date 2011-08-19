@@ -20,8 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef NEPOMUKWRITEBACKPLUGIN_H
 #define NEPOMUKWRITEBACKPLUGIN_H
-#define datetimeformat QLatin1String("yyyy:MM:dd hh:mm:ss")
+
 #include "writebackplugin.h"
+
 #include <QString>
 
 namespace Nepomuk
@@ -31,16 +32,19 @@ class Exiv2WritebackPlugin : public Nepomuk::WritebackPlugin
 public:
     Exiv2WritebackPlugin(QObject* parent,const QList<QVariant>&);
     ~Exiv2WritebackPlugin();
+
 public:
     void doWriteback(const QUrl& url);
+
     /**
      * Converts exif datetime (ASCII) into QDateTime format.
      */
-    QDateTime exifDateToDateTime(const QString& string);
+    static QDateTime exifDateToDateTime(const QString& string);
+
     /**
      * Converts QDateTime into exif datetime format(ASCII).
      */
-    QString  exifDateFromDateTime(const QDateTime& datetime);
+    static QString  exifDateFromDateTime(const QDateTime& datetime);
 };
 }
 

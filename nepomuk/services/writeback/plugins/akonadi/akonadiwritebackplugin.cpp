@@ -32,39 +32,34 @@
 
 #include <KABC/Addressee>
 
+#include <kdebug.h>
+
 #include "akonadiwritebackplugin.h"
 
 using namespace Nepomuk::Vocabulary;
 
-Nepomuk::AkonadiWritebackPlugin::AkonadiWritebackPlugin(QObject* parent,const QList<QVariant>&): WritebackPlugin(parent)
+Nepomuk::AkonadiWritebackPlugin::AkonadiWritebackPlugin(QObject* parent,const QList<QVariant>&)
+    : WritebackPlugin(parent)
 {
-
 }
 
 Nepomuk::AkonadiWritebackPlugin::~AkonadiWritebackPlugin()
 {
-
 }
 
 void Nepomuk::AkonadiWritebackPlugin::doWriteback(const QUrl& url)
 {
-    Nepomuk::Resource resource(url);
-    if (resource.isValid()) {
-        Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob(  Akonadi::Item::fromUrl(url)  );
-        fetchJob->fetchScope().fetchFullPayload();
-
-        connect( fetchJob, SIGNAL( result(KJob*) ), SLOT( fetchFinished(KJob*) ) );
-    }
+    Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob( Akonadi::Item::fromUrl(url) );
+    fetchJob->fetchScope().fetchFullPayload();
+    connect( fetchJob, SIGNAL( result(KJob*) ), SLOT( fetchFinished(KJob*) ) );
 }
 
 void Nepomuk::AkonadiWritebackPlugin::fetchFinished(KJob* job)
 {
     if ( job->error() ) {
-        qDebug() << "Error encountered" ;
         emitFinished(false);
         return;
     }
-    qDebug() << "in fetchFinished";
 
     Akonadi::ItemFetchJob *fetchJob = qobject_cast<Akonadi::ItemFetchJob*>( job );
 
@@ -121,13 +116,13 @@ void Nepomuk::AkonadiWritebackPlugin::fetchFinished(KJob* job)
 void Nepomuk::AkonadiWritebackPlugin::modifyFinished( KJob *job )
 {
     if ( job->error() ) {
-        qDebug() << "Error occurred";
+        kDebug() << "Error occurred";
         emitFinished(false);
         return;
 
     }
     else {
-        qDebug() << "Item modified successfully";
+        kDebug() << "Item modified successfully";
         emitFinished(true);
     }
 }

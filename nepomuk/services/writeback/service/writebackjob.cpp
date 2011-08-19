@@ -20,9 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "writebackjob.h"
 
-Nepomuk::WritebackJob::WritebackJob(QObject *parent): KJob(parent)
+Nepomuk::WritebackJob::WritebackJob(QObject *parent)
+    : KJob(parent)
 {
-
 }
 
 Nepomuk::WritebackJob::~WritebackJob()
@@ -52,7 +52,8 @@ void Nepomuk::WritebackJob::setResource(const Nepomuk::Resource &resource)
 void Nepomuk::WritebackJob::tryNextPlugin()
 {
     WritebackPlugin* p = m_plugins.takeFirst();
-    connect(p,SIGNAL(finished(Nepomuk::WritebackPlugin*,bool)),this,SLOT(slotWritebackFinished(Nepomuk::WritebackPlugin*)));
+    connect(p, SIGNAL(finished(Nepomuk::WritebackPlugin*,bool)),
+            this, SLOT(slotWritebackFinished(Nepomuk::WritebackPlugin*)));
     p->writeback(m_resource.resourceUri());
 }
 
@@ -62,8 +63,9 @@ void Nepomuk::WritebackJob::slotWritebackFinished(Nepomuk::WritebackPlugin *plug
     if (!m_plugins.isEmpty()) {
         tryNextPlugin();
     }
-    else
+    else {
         emitResult();
+    }
 }
 
 #include "writebackjob.moc"

@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef NEPOMUKWRITEBACKPLUGIN_H
 #define NEPOMUKWRITEBACKPLUGIN_H
-#define Q4StringToTString(s) TagLib::String(s.toUtf8().data(),TagLib::String::UTF8)
+
 #include "writebackplugin.h"
 
 namespace Nepomuk
@@ -29,10 +29,10 @@ class TaglibWritebackPlugin : public Nepomuk::WritebackPlugin
 public:
     TaglibWritebackPlugin(QObject* parent,const QList<QVariant>&);
     ~TaglibWritebackPlugin();
+
 public:
     void doWriteback(const QUrl& url);
 };
-
 }
 
 #endif

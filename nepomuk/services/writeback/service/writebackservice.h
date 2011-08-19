@@ -18,6 +18,7 @@
 
 #ifndef NEPOMUKEXAMPLESERVICE_H
 #define NEPOMUKEXAMPLESERVICE_H
+
 #include <Nepomuk/Service>
 #include <Nepomuk/Resource>
 #include <Nepomuk/Types/Property>
@@ -39,6 +40,18 @@ public:
     WriteBackService( QObject * parent = 0, const QList<QVariant>& args = QList<QVariant>() );
     ~WriteBackService();
 
+public Q_SLOTS:
+    /**
+      * This method is selects the plugin using either the mimetype or rdf type
+      * than passes it to performWriteback method to do the actual writeback.
+      */
+    Q_SCRIPTABLE void writebackResource( const Nepomuk::Resource & resource);
+
+private Q_SLOTS:
+    void slotQueue( const Nepomuk::Resource &resource);
+    void slotFinished();
+    void startWriteback();
+
 private:
    /**
     * Makes plugin list and passes it to writebackjob along with the resource.
@@ -47,21 +60,7 @@ private:
 
     QQueue <Nepomuk::Resource> m_queue;
     Nepomuk::WritebackJob* m_currentjob;
-
-public Q_SLOTS:
-    /**
-      * This method is selects the plugin using either the mimetype or rdf type
-      * than passes it to performWriteback method to do the actual writeback.
-      */
-    Q_SCRIPTABLE  void writebackResource( const Nepomuk::Resource & resource);
-
-private Q_SLOTS:
-    void slotQueue( const Nepomuk::Resource &resource);
-    void slotFinished();
-    void startWriteback();
-
 };
 }
 
 #endif // NEPOMUKWRITEBACKSERVICE_H
-bool  jobFinished();

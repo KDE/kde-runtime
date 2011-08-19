@@ -17,9 +17,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #ifndef WRITEBACKPLUGIN_H
 #define WRITEBACKPLUGIN_H
-
 
 #include <QtCore/QObject>
 #include<QString>
@@ -84,6 +84,7 @@ public:
       * \param parent The parent object
       */
     WritebackPlugin( QObject* parent=0);
+
     /**
       * Destructor
       */
@@ -130,12 +131,9 @@ protected Q_SLOTS:
       */
     void emitFinished(bool status);
 
-
 private:
-
     class Private;
     Private* const d;
-
 };
 } // End namespace Nepomuk
 

@@ -38,26 +38,24 @@ along with this program.  If not, see <http:www.gnu.org/licenses/>.
 
 #include <taglibwritebackplugin.h>
 
+#define Q4StringToTString(s) TagLib::String(s.toUtf8().data(),TagLib::String::UTF8)
+
 using namespace Nepomuk::Vocabulary;
-Nepomuk::TaglibWritebackPlugin::TaglibWritebackPlugin(QObject* parent,const QList<QVariant>&): WritebackPlugin(parent)
+
+Nepomuk::TaglibWritebackPlugin::TaglibWritebackPlugin(QObject* parent,const QList<QVariant>&)
+    : WritebackPlugin(parent)
 
 {
-
 }
 
 Nepomuk::TaglibWritebackPlugin::~TaglibWritebackPlugin()
 {
-
 }
-
 
 void Nepomuk::TaglibWritebackPlugin::doWriteback(const QUrl& url)
 {
-
     Nepomuk::Resource resource(url);
-    if (resource.exists())
-    {
-// creatin  Nepomuk::Resource resource(KUrl(url));
+    if (resource.exists()) {
         TagLib::FileRef f(QFile::encodeName((resource.property(NIE::url())).toString()).data());
         if ((resource.property(NIE::title())).isString()) {
             QString title = (resource.property(NIE::title())).toString();
@@ -103,5 +101,7 @@ void Nepomuk::TaglibWritebackPlugin::doWriteback(const QUrl& url)
         emitFinished(true);
     }
 }
+
 NEPOMUK_EXPORT_WRITEBACK_PLUGIN(Nepomuk::TaglibWritebackPlugin,"nepomuk_writeback_taglib")
+
 #include "taglibwritebackplugin.moc"

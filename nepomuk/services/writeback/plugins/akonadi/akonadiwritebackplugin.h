@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef NEPOMUKWRITEBACKPLUGIN_H
 #define NEPOMUKWRITEBACKPLUGIN_H
+
 #include "writebackplugin.h"
 #include <QString>
 
@@ -29,9 +30,11 @@ namespace Nepomuk
 class AkonadiWritebackPlugin : public Nepomuk::WritebackPlugin
 {
     Q_OBJECT
+
 public:
     AkonadiWritebackPlugin(QObject* parent, const QList<QVariant>&);
     ~AkonadiWritebackPlugin();
+
 public:
     void doWriteback(const QUrl& url);
 
@@ -43,15 +46,13 @@ public Q_SLOTS:
      * modifyJob to change the metadata.
      */
     void fetchFinished (KJob* job);
+
     /**
       * Modifies the item and informs if it was a success
       * or a failure.
       */
     void modifyFinished (KJob *job);
-
 };
-
 }
-
 
 #endif

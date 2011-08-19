@@ -30,6 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "exiv2writebackplugin.h"
 
+#define datetimeformat QLatin1String("yyyy:MM:dd hh:mm:ss")
+
 using namespace Nepomuk::Vocabulary;
 
 Nepomuk::Exiv2WritebackPlugin::Exiv2WritebackPlugin(QObject* parent,const QList<QVariant>&): WritebackPlugin(parent)
@@ -51,25 +53,25 @@ void Nepomuk::Exiv2WritebackPlugin::doWriteback(const QUrl& url)
         image.load((resource.property(NIE::url())).toString());
 
         if ((resource.property(NEXIF::dateTime())).isValid()) {
-            QDateTime datetime = (resource.property(NEXIF::dateTime())).toDateTime();
+            const QDateTime datetime = (resource.property(NEXIF::dateTime())).toDateTime();
             if (datetime != exifDateToDateTime(image.getExifTagString("Exif.Image.DateTime"))) {
                 image.setExifTagString("Exif.Image.DateTime",exifDateFromDateTime(datetime));
             }
         }
         if ((resource.property(NEXIF::dateTimeDigitized())).isValid()) {
-            QDateTime datetime = (resource.property(NEXIF::dateTimeDigitized())).toDateTime();
+            const QDateTime datetime = (resource.property(NEXIF::dateTimeDigitized())).toDateTime();
             if (datetime != exifDateToDateTime(image.getExifTagString("Exif.Photo.DateTimeDigitized"))) {
                 image.setExifTagString("Exif.Photo.DateTimeDigitized",exifDateFromDateTime(datetime));
             }
         }
         if ((resource.property(NEXIF::dateTimeOriginal())).isValid()) {
-            QDateTime datetime = (resource.property(NEXIF::dateTimeOriginal())).toDateTime();
+            const QDateTime datetime = (resource.property(NEXIF::dateTimeOriginal())).toDateTime();
             if (datetime !=exifDateToDateTime(image.getExifTagString("Exif.Image.DateTimeOriginal"))) {
                 image.setExifTagString("Exif.Image.DateTimeOriginal",exifDateFromDateTime(datetime));
             }
         }
         if ((resource.property(NEXIF::imageDescription())).isValid()) {
-            QString imagedes = (resource.property(NEXIF::imageDescription())).toString();
+            const QString imagedes = (resource.property(NEXIF::imageDescription())).toString();
             if (imagedes != image.getExifTagString("Exif.Image.ImageDescription")) {
                 image.setExifTagString("Exif.Image.ImageDescription",imagedes);
             }
@@ -90,4 +92,5 @@ QString Nepomuk::Exiv2WritebackPlugin::exifDateFromDateTime(const QDateTime& dat
 }
 
 NEPOMUK_EXPORT_WRITEBACK_PLUGIN(Nepomuk::Exiv2WritebackPlugin,"nepomuk_writeback_exiv2")
+
 #include "exiv2writebackplugin.moc"
