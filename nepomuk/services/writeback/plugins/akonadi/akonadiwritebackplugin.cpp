@@ -39,7 +39,7 @@
 using namespace Nepomuk::Vocabulary;
 
 Nepomuk::AkonadiWritebackPlugin::AkonadiWritebackPlugin(QObject* parent,const QList<QVariant>&)
-    : WritebackPlugin(parent)
+        : WritebackPlugin(parent)
 {
 }
 
@@ -72,41 +72,36 @@ void Nepomuk::AkonadiWritebackPlugin::fetchFinished(KJob* job)
     if ((resource.property(NCO::nickname())).isValid()) {
         QString nick= (resource.property(NCO::nickname())).toString();
 
-        if (nick != addressee.nickName()) {
+        if (nick != addressee.nickName())
             addressee.setNickName(nick);
-        }
     }
 
     if ((resource.property(NCO::nameFamily())).isValid()) {
         QString fname= (resource.property(NCO::nameFamily())).toString();
 
-        if (fname != addressee.familyName()) {
+        if (fname != addressee.familyName())
             addressee.setFamilyName(fname);
-        }
     }
 
     if ((resource.property(NCO::nameGiven())).isValid()) {
         QString gname= (resource.property(NCO::nameGiven())).toString();
 
-        if (gname != addressee.givenName()) {
+        if (gname != addressee.givenName())
             addressee.setGivenName(gname);
-        }
     }
 
     if ((resource.property(NCO::EmailAddress())).isValid()) {
         QString email= (resource.property(NCO::EmailAddress())).toString();
 
-        if (email != addressee.preferredEmail()) {
+        if (email != addressee.preferredEmail())
             addressee.insertEmail(email,true);
-        }
     }
 
     if ((resource.property(NCO::birthDate())).isValid()) {
         QDateTime birthDate= (resource.property(NCO::birthDate())).toDateTime();
 
-        if (birthDate != addressee.birthday()) {
+        if (birthDate != addressee.birthday())
             addressee.setBirthday(birthDate);
-        }
     }
     item.setPayload<KABC::Addressee>( addressee );
     Akonadi::ItemModifyJob *modifyJob = new Akonadi::ItemModifyJob( item );
@@ -119,7 +114,6 @@ void Nepomuk::AkonadiWritebackPlugin::modifyFinished( KJob *job )
         kDebug() << "Error occurred";
         emitFinished(false);
         return;
-
     }
     else {
         kDebug() << "Item modified successfully";
