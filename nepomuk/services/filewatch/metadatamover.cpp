@@ -210,7 +210,7 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to )
     }
     else {
         //
-        // If we have no metadata yet we need to tell strigi (if running) so it can
+        // If we have no metadata yet we need to tell the file indexer (if running) so it can
         // create the metadata in case the target folder is configured to be indexed.
         //
         emit movedWithoutData( to.directory( KUrl::IgnoreTrailingSlash ) );

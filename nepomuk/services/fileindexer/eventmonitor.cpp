@@ -18,7 +18,7 @@
 */
 
 #include "eventmonitor.h"
-#include "strigiserviceconfig.h"
+#include "fileindexerconfig.h"
 #include "indexscheduler.h"
 
 #include <KDebug>
@@ -59,7 +59,7 @@ Nepomuk::EventMonitor::EventMonitor( IndexScheduler* scheduler, QObject* parent 
     connect( &m_availSpaceTimer, SIGNAL( timeout() ),
              this, SLOT( slotCheckAvailableSpace() ) );
 
-    if ( StrigiServiceConfig::self()->isInitialRun() ) {
+    if ( FileIndexerConfig::self()->isInitialRun() ) {
         // TODO: add actions to this notification
 
         m_indexingStartTime = QDateTime::currentDateTime();
@@ -112,7 +112,7 @@ void Nepomuk::EventMonitor::slotCheckAvailableSpace()
 {
     KDiskFreeSpaceInfo info = KDiskFreeSpaceInfo::freeSpaceInfo( KStandardDirs::locateLocal( "data", "nepomuk/repository/", false ) );
     if ( info.isValid() ) {
-        if ( info.available() <= StrigiServiceConfig::self()->minDiskSpace() ) {
+        if ( info.available() <= FileIndexerConfig::self()->minDiskSpace() ) {
             if ( !m_indexScheduler->isSuspended() ) {
                 pauseIndexing( PausedDueToAvailSpace );
                 sendEvent( "indexingSuspended",

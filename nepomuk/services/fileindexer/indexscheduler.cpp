@@ -21,7 +21,7 @@
 */
 
 #include "indexscheduler.h"
-#include "strigiserviceconfig.h"
+#include "fileindexerconfig.h"
 #include "nepomukindexer.h"
 #include "util.h"
 #include "datamanagement.h"
@@ -170,7 +170,7 @@ Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
     connect( m_cleaner, SIGNAL(finished(KJob*)), this, SLOT(slotCleaningDone()) );
     m_cleaner->start();
 
-    connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
+    connect( FileIndexerConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( slotConfigChanged() ) );
 
     // start the initial indexing
@@ -401,7 +401,7 @@ void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
         // need to use another approach than the getChildren one.
         QFileInfo fileInfo = dirIt.fileInfo();//.canonialFilePath();
 
-        bool indexFile = Nepomuk::StrigiServiceConfig::self()->shouldFileBeIndexed( fileInfo.fileName() );
+        bool indexFile = Nepomuk::FileIndexerConfig::self()->shouldFileBeIndexed( fileInfo.fileName() );
 
         // check if this file is new by looking it up in the store
         QHash<QString, QDateTime>::iterator filesInStoreIt = filesInStore.find( path );
@@ -435,7 +435,7 @@ void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
                 recursive &&
                 fileInfo.isDir() &&
                 !fileInfo.isSymLink() &&
-                StrigiServiceConfig::self()->shouldFolderBeIndexed( path ) ) {
+                FileIndexerConfig::self()->shouldFolderBeIndexed( path ) ) {
             QMutexLocker lock( &m_dirsToUpdateMutex );
             m_dirsToUpdate.prependDir( path, flags );
         }
@@ -496,7 +496,7 @@ void Nepomuk::IndexScheduler::queueAllFoldersForUpdate( bool forceUpdate )
         flags |= ForceUpdate;
 
     // update everything again in case the folders changed
-    foreach( const QString& f, StrigiServiceConfig::self()->includeFolders() ) {
+    foreach( const QString& f, FileIndexerConfig::self()->includeFolders() ) {
         m_dirsToUpdate.enqueueDir( f, flags );
     }
 }

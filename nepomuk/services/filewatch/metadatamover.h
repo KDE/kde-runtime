@@ -53,7 +53,7 @@ namespace Nepomuk {
     Q_SIGNALS:
         /**
          * Emitted for files (and folders) that have been moved but
-         * do not have metadata to be moved. This allows the strigi
+         * do not have metadata to be moved. This allows the file indexer
          * service to pick them up in case they are of interest. The
          * typical example would be moving a file from a non-indexed into
          * an indexed folder.

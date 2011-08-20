@@ -34,13 +34,13 @@ namespace Nepomuk {
      * Active config class which emits signals if the config
      * was changed, for example if the KCM saved the config file.
      */
-    class StrigiServiceConfig : public QObject
+    class FileIndexerConfig : public QObject
     {
         Q_OBJECT
 
     public:
-        ~StrigiServiceConfig();
-        static StrigiServiceConfig* self();
+        ~FileIndexerConfig();
+        static FileIndexerConfig* self();
 
         /**
          * A cleaned up list of all include and exclude folders
@@ -118,7 +118,7 @@ namespace Nepomuk {
         void slotConfigDirty();
 
     private:
-        StrigiServiceConfig();
+        FileIndexerConfig();
 
         /**
          * Check if \p path is in the list of folders to be indexed taking

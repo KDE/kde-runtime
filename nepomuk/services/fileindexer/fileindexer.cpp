@@ -17,11 +17,11 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "strigiservice.h"
-#include "strigiadaptor.h"
+#include "fileindexer.h"
+#include "fileindexeradaptor.h"
 #include "indexscheduler.h"
 #include "eventmonitor.h"
-#include "strigiserviceconfig.h"
+#include "fileindexerconfig.h"
 #include "filewatchserviceinterface.h"
 #include "util.h"
 
@@ -35,7 +35,7 @@
 #include <QtCore/QTimer>
 
 
-Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
+Nepomuk::FileIndexer::FileIndexer( QObject* parent, const QList<QVariant>& )
     : Service( parent )
 {
     // setup the actual index scheduler including strigi stuff
@@ -50,11 +50,11 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
     ( void )new EventMonitor( m_indexScheduler, this );
 
     // update the watches if the config changes
-    connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
+    connect( FileIndexerConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( updateWatches() ) );
 
     // export on dbus
-    ( void )new StrigiAdaptor( this );
+    ( void )new FileIndexerAdaptor( this );
 
     // setup status connections
     connect( m_indexScheduler, SIGNAL( indexingStarted() ),
@@ -88,7 +88,7 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
 }
 
 
-Nepomuk::StrigiService::~StrigiService()
+Nepomuk::FileIndexer::~FileIndexer()
 {
     m_schedulingThread->quit();
     m_schedulingThread->wait();
@@ -97,7 +97,7 @@ Nepomuk::StrigiService::~StrigiService()
 }
 
 
-void Nepomuk::StrigiService::finishInitialization()
+void Nepomuk::FileIndexer::finishInitialization()
 {
     // slow down on user activity (start also only after 2 minutes)
     KIdleTime* idleTime = KIdleTime::instance();
@@ -114,42 +114,42 @@ void Nepomuk::StrigiService::finishInitialization()
     updateWatches();
 }
 
-void Nepomuk::StrigiService::slotIdleTimeoutReached()
+void Nepomuk::FileIndexer::slotIdleTimeoutReached()
 {
     m_indexScheduler->setIndexingSpeed( IndexScheduler::FullSpeed );
     KIdleTime::instance()->catchNextResumeEvent();
 }
 
-void Nepomuk::StrigiService::slotIdleTimerResume()
+void Nepomuk::FileIndexer::slotIdleTimerResume()
 {
     m_indexScheduler->setIndexingSpeed( IndexScheduler::ReducedSpeed );
 }
 
 
-void Nepomuk::StrigiService::updateWatches()
+void Nepomuk::FileIndexer::updateWatches()
 {
     org::kde::nepomuk::FileWatch filewatch( "org.kde.nepomuk.services.nepomukfilewatch",
                                             "/nepomukfilewatch",
                                             QDBusConnection::sessionBus() );
-    foreach( const QString& folder, StrigiServiceConfig::self()->includeFolders() ) {
+    foreach( const QString& folder, FileIndexerConfig::self()->includeFolders() ) {
         filewatch.watchFolder( folder );
     }
 }
 
 
-QString Nepomuk::StrigiService::userStatusString() const
+QString Nepomuk::FileIndexer::userStatusString() const
 {
     return userStatusString( false );
 }
 
 
-QString Nepomuk::StrigiService::simpleUserStatusString() const
+QString Nepomuk::FileIndexer::simpleUserStatusString() const
 {
     return userStatusString( true );
 }
 
 
-QString Nepomuk::StrigiService::userStatusString( bool simple ) const
+QString Nepomuk::FileIndexer::userStatusString( bool simple ) const
 {
     bool indexing = m_indexScheduler->isIndexing();
     bool suspended = m_indexScheduler->isSuspended();
@@ -189,7 +189,7 @@ QString Nepomuk::StrigiService::userStatusString( bool simple ) const
 }
 
 
-void Nepomuk::StrigiService::setSuspended( bool suspend )
+void Nepomuk::FileIndexer::setSuspended( bool suspend )
 {
     if ( suspend ) {
         m_indexScheduler->suspend();
@@ -200,43 +200,43 @@ void Nepomuk::StrigiService::setSuspended( bool suspend )
 }
 
 
-bool Nepomuk::StrigiService::isSuspended() const
+bool Nepomuk::FileIndexer::isSuspended() const
 {
     return m_indexScheduler->isSuspended();
 }
 
 
-bool Nepomuk::StrigiService::isIndexing() const
+bool Nepomuk::FileIndexer::isIndexing() const
 {
     return m_indexScheduler->isIndexing();
 }
 
 
-void Nepomuk::StrigiService::suspend() const
+void Nepomuk::FileIndexer::suspend() const
 {
     m_indexScheduler->suspend();
 }
 
 
-void Nepomuk::StrigiService::resume() const
+void Nepomuk::FileIndexer::resume() const
 {
     m_indexScheduler->resume();
 }
 
 
-QString Nepomuk::StrigiService::currentFile() const
+QString Nepomuk::FileIndexer::currentFile() const
 {
    return m_indexScheduler->currentFile();
 }
 
 
-QString Nepomuk::StrigiService::currentFolder() const
+QString Nepomuk::FileIndexer::currentFolder() const
 {
     return m_indexScheduler->currentFolder();
 }
 
 
-void Nepomuk::StrigiService::updateFolder(const QString& path, bool recursive, bool forced)
+void Nepomuk::FileIndexer::updateFolder(const QString& path, bool recursive, bool forced)
 {
     kDebug() << "Called with path: " << path;
     QFileInfo info( path );
@@ -247,26 +247,26 @@ void Nepomuk::StrigiService::updateFolder(const QString& path, bool recursive, b
         else
             dirPath = info.absolutePath();
 
-        if ( StrigiServiceConfig::self()->shouldFolderBeIndexed( dirPath ) ) {
+        if ( FileIndexerConfig::self()->shouldFolderBeIndexed( dirPath ) ) {
             indexFolder(path, recursive, forced);
         }
     }
 }
 
 
-void Nepomuk::StrigiService::updateAllFolders(bool forced)
+void Nepomuk::FileIndexer::updateAllFolders(bool forced)
 {
     m_indexScheduler->updateAll( forced );
 }
 
 
-void Nepomuk::StrigiService::indexFile(const QString& path)
+void Nepomuk::FileIndexer::indexFile(const QString& path)
 {
     m_indexScheduler->analyzeFile( path );
 }
 
 
-void Nepomuk::StrigiService::indexFolder(const QString& path, bool recursive, bool forced)
+void Nepomuk::FileIndexer::indexFolder(const QString& path, bool recursive, bool forced)
 {
     QFileInfo info( path );
     if ( info.exists() ) {
@@ -293,7 +293,7 @@ void Nepomuk::StrigiService::indexFolder(const QString& path, bool recursive, bo
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 
-NEPOMUK_EXPORT_SERVICE( Nepomuk::StrigiService, "nepomukstrigiservice" )
+NEPOMUK_EXPORT_SERVICE( Nepomuk::FileIndexer, "nepomukfileindexer" )
 
-#include "strigiservice.moc"
+#include "fileindexer.moc"
 
