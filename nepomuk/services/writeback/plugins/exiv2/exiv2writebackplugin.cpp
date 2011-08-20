@@ -54,23 +54,27 @@ void Nepomuk::Exiv2WritebackPlugin::doWriteback(const QUrl& url)
 
         if ((resource.property(NEXIF::dateTime())).isValid()) {
             const QDateTime datetime = (resource.property(NEXIF::dateTime())).toDateTime();
-            if (datetime != exifDateToDateTime(image.getExifTagString("Exif.Image.DateTime")))
+            if (datetime != exifDateToDateTime(image.getExifTagString("Exif.Image.DateTime"))) {
                 image.setExifTagString("Exif.Image.DateTime",exifDateFromDateTime(datetime));
+            }
         }
         if ((resource.property(NEXIF::dateTimeDigitized())).isValid()) {
             const QDateTime datetime = (resource.property(NEXIF::dateTimeDigitized())).toDateTime();
-            if (datetime != exifDateToDateTime(image.getExifTagString("Exif.Photo.DateTimeDigitized")))
+            if (datetime != exifDateToDateTime(image.getExifTagString("Exif.Photo.DateTimeDigitized"))) {
                 image.setExifTagString("Exif.Photo.DateTimeDigitized",exifDateFromDateTime(datetime));
+            }
         }
         if ((resource.property(NEXIF::dateTimeOriginal())).isValid()) {
             const QDateTime datetime = (resource.property(NEXIF::dateTimeOriginal())).toDateTime();
-            if (datetime !=exifDateToDateTime(image.getExifTagString("Exif.Image.DateTimeOriginal")))
+            if (datetime !=exifDateToDateTime(image.getExifTagString("Exif.Image.DateTimeOriginal"))) {
                 image.setExifTagString("Exif.Image.DateTimeOriginal",exifDateFromDateTime(datetime));
+            }
         }
         if ((resource.property(NEXIF::imageDescription())).isValid()) {
             const QString imagedes = (resource.property(NEXIF::imageDescription())).toString();
-            if (imagedes != image.getExifTagString("Exif.Image.ImageDescription"))
+            if (imagedes != image.getExifTagString("Exif.Image.ImageDescription")) {
                 image.setExifTagString("Exif.Image.ImageDescription",imagedes);
+            }
         }
         image.applyChanges();
         emitFinished(true);
