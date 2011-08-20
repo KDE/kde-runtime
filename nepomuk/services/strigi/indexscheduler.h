@@ -183,13 +183,12 @@ namespace Nepomuk {
 
     private:
         /**
-         * It first indexes \p dir. Then it indexes all the files in \p dir, and
-         * finally recursivly analyzes all the subfolders in \p dir IF \p flags
-         * contains the 'UpdateRecursive' flag. It even sets m_currentFolder
-         *
-         * Returns true if the folder was analyzed
+         * It first indexes \p dir. Then it checks all the files in \p dir
+         * against the configuration and the data in Nepomuk to fill
+         * m_filesToUpdate. No actual indexing is done besides \p dir
+         * itself.
          */
-        bool analyzeDir( const QString& dir, UpdateDirFlags flags );
+        void analyzeDir( const QString& dir, UpdateDirFlags flags );
 
         void queueAllFoldersForUpdate( bool forceUpdate = false );
 

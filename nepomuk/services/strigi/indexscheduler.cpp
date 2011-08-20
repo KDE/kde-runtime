@@ -332,11 +332,8 @@ void Nepomuk::IndexScheduler::doIndexing()
         dirLock.unlock();
         fileLock.unlock();
 
-        // If a dir was not analyzed, then doIndexing must be called to
-        // process the next file/directory in the queue
-        if( !analyzeDir( dir.first, dir.second ) ) {
-            callDoIndexing();
-        }
+        analyzeDir( dir.first, dir.second );
+        callDoIndexing();
     }
 
     else {
@@ -357,7 +354,7 @@ void Nepomuk::IndexScheduler::slotIndexingDone(KJob* job)
     callDoIndexing();
 }
 
-bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexScheduler::UpdateDirFlags flags )
+void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexScheduler::UpdateDirFlags flags )
 {
 //    kDebug() << dir << analyzer << recursive;
 
@@ -380,8 +377,7 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
     // we start by updating the folder itself
     QFileInfo dirInfo( dir );
     KUrl dirUrl( dir );
-    bool shouldAnalyzerDir = !compareIndexedMTime(dirUrl, dirInfo.lastModified());
-    if ( shouldAnalyzerDir ) {
+    if ( !compareIndexedMTime(dirUrl, dirInfo.lastModified()) ) {
         KJob * indexer = new Indexer( dirInfo );
         connect( indexer, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
         indexer->start();
@@ -456,8 +452,6 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
     m_filesToUpdateMutex.lock();
     m_filesToUpdate.append( filesToIndex );
     m_filesToUpdateMutex.unlock();
-
-    return shouldAnalyzerDir;
 }
 
 
