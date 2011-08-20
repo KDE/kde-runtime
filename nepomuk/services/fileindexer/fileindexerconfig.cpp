@@ -269,4 +269,9 @@ void Nepomuk::FileIndexerConfig::buildExcludeFilterRegExpCache()
     m_excludeFilterRegExpCache.rebuildCacheFromFilterList( excludeFilters() );
 }
 
+bool Nepomuk::FileIndexerConfig::isDebugModeEnabled() const
+{
+    return m_config.group( "General" ).readEntry( "debug mode", false );
+}
+
 #include "fileindexerconfig.moc"

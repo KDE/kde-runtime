@@ -76,7 +76,6 @@ namespace Nepomuk {
     private:
         KUrl m_url;
         KProcess* m_process;
-        int m_exitCode;
     };
 }
 

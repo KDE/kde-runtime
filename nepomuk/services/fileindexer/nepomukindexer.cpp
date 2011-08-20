@@ -21,6 +21,7 @@
 
 #include "nepomukindexer.h"
 #include "util.h"
+#include "fileindexerconfig.h"
 
 #include <Nepomuk/Resource>
 
@@ -30,30 +31,30 @@
 #include <KStandardDirs>
 
 #include <QtCore/QFileInfo>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
 
 
 Nepomuk::Indexer::Indexer(const KUrl& localUrl, QObject* parent)
     : KJob(parent),
-      m_url( localUrl ),
-      m_exitCode( -1 )
+      m_url( localUrl )
 {
 }
 
 Nepomuk::Indexer::Indexer(const QFileInfo& info, QObject* parent)
     : KJob(parent),
-      m_url( info.absoluteFilePath() ),
-      m_exitCode( -1 )
+      m_url( info.absoluteFilePath() )
 {
 }
 
 void Nepomuk::Indexer::start()
 {
     const QString exe = KStandardDirs::findExe(QLatin1String("nepomukindexer"));
-    m_process = new KProcess( this );
-    m_process->setProgram( exe, QStringList() << m_url.toLocalFile() );
-
     kDebug() << "Running" << exe << m_url.toLocalFile();
 
+    m_process = new KProcess( this );
+    m_process->setProgram( exe, QStringList() << m_url.toLocalFile() );
+    m_process->setOutputChannelMode(KProcess::OnlyStdoutChannel);
     connect( m_process, SIGNAL(finished(int)), this, SLOT(slotIndexedFile(int)) );
     m_process->start();
 }
@@ -62,8 +63,13 @@ void Nepomuk::Indexer::start()
 void Nepomuk::Indexer::slotIndexedFile(int exitCode)
 {
     kDebug() << "Indexing of " << m_url.toLocalFile() << "finished with exit code" << exitCode;
-    m_exitCode = exitCode;
-
+    if(exitCode == 1 && FileIndexerConfig::self()->isDebugModeEnabled()) {
+        QFile errorLogFile(KStandardDirs::locateLocal("data", QLatin1String("nepomuk/file-indexer-error-log"), true));
+        if(errorLogFile.open(QIODevice::Append)) {
+            QTextStream s(&errorLogFile);
+            s << m_url.toLocalFile() << ": " << QString::fromLocal8Bit(m_process->readAllStandardOutput()) << endl;
+        }
+    }
     emitResult();
 }
 

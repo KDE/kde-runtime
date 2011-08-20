@@ -111,6 +111,13 @@ namespace Nepomuk {
          */
         bool shouldFileBeIndexed( const QString& fileName ) const;
 
+        /**
+         * Check if the debug mode is enabled. The debug mode is a hidden
+         * configuration option (without any GUI) that will make the indexer
+         * log errors in a dedicated file.
+         */
+        bool isDebugModeEnabled() const;
+
     Q_SIGNALS:
         void configChanged();
 
