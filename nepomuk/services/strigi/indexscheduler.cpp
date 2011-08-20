@@ -206,9 +206,9 @@ void Nepomuk::IndexScheduler::resume()
         if( m_cleaner ) {
             m_cleaner->resume();
         }
-        else {
-            callDoIndexing();
-        }
+
+        callDoIndexing();
+
         emit indexingSuspended( false );
     }
 }
@@ -330,6 +330,11 @@ void Nepomuk::IndexScheduler::doIndexing()
     }
 
     else {
+        // reset status
+        m_currentMutex.lock();
+        m_currentUrl.clear();
+        m_currentMutex.unlock();
+
         setIndexingStarted( false );
     }
 }
@@ -441,6 +446,11 @@ void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
     m_filesToUpdateMutex.lock();
     m_filesToUpdate.append( filesToIndex );
     m_filesToUpdateMutex.unlock();
+
+    // reset status
+    m_currentMutex.lock();
+    m_currentUrl.clear();
+    m_currentMutex.unlock();
 }
 
 
