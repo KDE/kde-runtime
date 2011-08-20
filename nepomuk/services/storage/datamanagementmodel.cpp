@@ -2095,8 +2095,11 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
                     return;
                 }
             }
-            QUrl uri = createUri(ResourceUri);
-            addStatement(uri, Vocabulary::NIE::url(), it.key().uri(), graph);
+            const QUrl uri = createUri(ResourceUri);
+            addStatement(uri, Vocabulary::NIE::url(), it.key(), graph);
+            if(it.key().uri().scheme() == QLatin1String("file")) {
+                addStatement(uri, RDF::type(), NFO::FileDataObject(), graph);
+            }
             resolvedNodes.insert(uri);
         }
         else {
@@ -2119,6 +2122,9 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
             }
             uri = createUri(ResourceUri);
             addStatement(uri, Vocabulary::NIE::url(), it.key(), graph);
+            if(it.key().scheme() == QLatin1String("file")) {
+                addStatement(uri, RDF::type(), NFO::FileDataObject(), graph);
+            }
         }
         else {
             knownResources << uri;
