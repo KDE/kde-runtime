@@ -254,8 +254,14 @@ void DataManagementModelTest::testAddProperty_file()
     QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())));
     QVERIFY(!m_model->containsAnyStatement(QUrl::fromLocalFile(fileA.fileName()), Node(), Node()));
 
+    // get the resource uri
+    const QUrl fileAResUri = m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().first().subject().uri();
+
+    // make sure the resource is a file
+    QVERIFY(m_model->containsAnyStatement(fileAResUri, RDF::type(), NFO::FileDataObject()));
+
     // make sure the actual value is there
-    QVERIFY(m_model->containsAnyStatement(m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().first().subject(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+    QVERIFY(m_model->containsAnyStatement(fileAResUri, QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
 
 
     // add relation from file to file
@@ -265,10 +271,14 @@ void DataManagementModelTest::testAddProperty_file()
     QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl::fromLocalFile(fileB.fileName())));
     QVERIFY(!m_model->containsAnyStatement(QUrl::fromLocalFile(fileB.fileName()), Node(), Node()));
 
+    // get the resource uri
+    const QUrl fileBResUri = m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileB.fileName())).allStatements().first().subject().uri();
+
+    // make sure the resource is a file
+    QVERIFY(m_model->containsAnyStatement(fileBResUri, RDF::type(), NFO::FileDataObject()));
+
     // make sure the actual value is there
-    QVERIFY(m_model->containsAnyStatement(m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().first().subject(),
-                                          QUrl("prop:/res"),
-                                          m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileB.fileName())).allStatements().first().subject()));
+    QVERIFY(m_model->containsAnyStatement(fileAResUri, QUrl("prop:/res"), fileBResUri));
 
 
     // add the same relation but with another app
@@ -285,19 +295,16 @@ void DataManagementModelTest::testAddProperty_file()
     QVERIFY(m_dmModel->lastError());
 
 
-    // get the res URI for file:/A
-    const QUrl fileAUri = m_model->listStatements(Soprano::Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().first().subject().uri();
-
     // test adding a property to both the file and the resource URI. The result should be the exact same as doing it with only one of them
-    m_dmModel->addProperty(QList<QUrl>() << fileAUri << QUrl::fromLocalFile(fileA.fileName()), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("Whatever")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << fileAResUri << QUrl::fromLocalFile(fileA.fileName()), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("Whatever")), QLatin1String("Testapp"));
 
-    QCOMPARE(m_model->listStatements(fileAUri, QUrl("prop:/string"), LiteralValue(QLatin1String("Whatever"))).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(fileAResUri, QUrl("prop:/string"), LiteralValue(QLatin1String("Whatever"))).allStatements().count(), 1);
     QCOMPARE(m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().count(), 1);
 
     // test the same with the file as object
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/res"), QVariantList() << QVariant(KUrl(fileA.fileName())) << QVariant(fileAUri), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/res"), QVariantList() << QVariant(KUrl(fileA.fileName())) << QVariant(fileAResUri), QLatin1String("Testapp"));
 
-    QCOMPARE(m_model->listStatements(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), fileAUri).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), fileAResUri).allStatements().count(), 1);
     QVERIFY(!m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), QUrl::fromLocalFile(fileA.fileName())));
     QCOMPARE(m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().count(), 1);
 
