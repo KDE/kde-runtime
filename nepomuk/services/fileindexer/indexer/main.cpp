@@ -31,6 +31,7 @@
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDir>
+#include <QtCore/QTextStream>
 
 #include <KDebug>
 #include <KUrl>
@@ -69,8 +70,14 @@ int main(int argc, char *argv[])
 
     if( args->count() == 0 ) {
         Nepomuk::Indexer indexer;
-        indexer.indexStdin( uri, mtime );
-        return 0;
+        if( !indexer.indexStdin( uri, mtime ) ) {
+            QTextStream s(stdout);
+            s << indexer.lastError();
+            return 1;
+        }
+        else {
+            return 0;
+        }
     }
     else if( args->isSet("clear") ) {
         Nepomuk::clearIndexedData( args->url(0) );
@@ -79,8 +86,14 @@ int main(int argc, char *argv[])
     }
     else {
         Nepomuk::Indexer indexer;
-        indexer.indexFile( args->url(0), uri, mtime );
-        kDebug() << "Indexed data for" << args->url(0);
-        return 0;
+        if( !indexer.indexFile( args->url(0), uri, mtime ) ) {
+            QTextStream s(stdout);
+            s << indexer.lastError();
+            return 1;
+        }
+        else {
+            kDebug() << "Indexed data for" << args->url(0);
+            return 0;
+        }
     }
 }
