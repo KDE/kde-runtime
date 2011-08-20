@@ -776,6 +776,7 @@ void DataManagementModelTest::testSetProperty_nieUrl1()
     m_dmModel->setProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), NIE::url(), QVariantList() << QUrl("file:///tmp/A"), QLatin1String("testapp"));
 
     QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), NIE::url(), QUrl("file:///tmp/A")));
+    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), RDF::type(), NFO::FileDataObject()));
 
     // remember the graph since it should not change later on
     const QUrl nieUrlGraph = m_model->listStatements(QUrl("nepomuk:/res/A"), NIE::url(), QUrl("file:///tmp/A")).allStatements().first().context().uri();
