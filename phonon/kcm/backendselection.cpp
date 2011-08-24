@@ -37,6 +37,14 @@ BackendSelection::BackendSelection(QWidget *parent)
     : QWidget(parent)
 {
     setupUi(this);
+
+    m_messageWidget->setShown(false);
+    m_messageWidget->setCloseButtonVisible(false);
+    m_messageWidget->setMessageType(KMessageWidget::Information);
+    m_messageWidget->setText(i18nc("@info User changed Phonon backend",
+                                   "To apply the backend change you will have "
+                                   "to log out and back in again."));
+
     m_down->setIcon(KIcon("go-down"));
     m_up->setIcon(KIcon("go-up"));
     m_comment->setWordWrap(true);
@@ -141,13 +149,12 @@ void BackendSelection::save()
         }
     }
 
-    // be very conservative with this signal as it interrupts all playback:
-    if (offers != services) {
-        KServiceTypeProfile::writeServiceTypeProfile("PhononBackend", services);
-
-        QDBusMessage signal = QDBusMessage::createSignal("/", "org.kde.Phonon.Factory", "phononBackendChanged");
-        QDBusConnection::sessionBus().send(signal);
-    }
+    // If the user changed the backend order, show a message that they need to
+    // log out and back in again to apply the change. This is because runtime
+    // backend switching was considered not worth the effort to actually
+    // maintain it (across backends).
+    if (offers != services)
+        m_messageWidget->animatedShow();
 }
 
 void BackendSelection::defaults()
