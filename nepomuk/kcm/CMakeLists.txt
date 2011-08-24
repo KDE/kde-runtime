@@ -19,6 +19,7 @@ qt4_add_dbus_interface(kcmnepomuk_SRCS ../interfaces/org.kde.NepomukServer.xml n
 qt4_add_dbus_interface(kcmnepomuk_SRCS ../interfaces/org.kde.nepomuk.ServiceControl.xml nepomukservicecontrolinterface)
 qt4_add_dbus_interface(kcmnepomuk_SRCS ../interfaces/org.kde.nepomuk.Strigi.xml strigiserviceinterface)
 
+
 kde4_add_ui_files(kcmnepomuk_SRCS
   nepomukconfigwidget.ui
   indexfolderselectionwidget.ui

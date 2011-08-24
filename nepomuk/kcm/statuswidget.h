@@ -21,45 +21,56 @@
 
 #include <KDialog>
 #include "ui_statuswidget.h"
+#include "servicecontrol.h"
+#include "strigiserviceinterface.h"
 
 #include <QtCore/QTimer>
 
 class QShowEvent;
 class QHideEvent;
 class KJob;
+class StrigiService;
+class StatusWidget;
 
 namespace Soprano {
-    namespace Util {
-        class AsyncQuery;
-    }
+namespace Util {
+class AsyncQuery;
+}
 }
 
 namespace Nepomuk {
 
 
-    class StatusWidget : public KDialog, public Ui::StatusWidget
-    {
-        Q_OBJECT
+class StatusWidget : public KDialog, public Ui::StatusWidget
+{
+    Q_OBJECT
 
-    public:
-        StatusWidget( QWidget* parent = 0 );
-        ~StatusWidget();
+public:
+    StatusWidget( QWidget* parent = 0 );
+    ~StatusWidget();
 
-    private Q_SLOTS:
-        void slotUpdateStoreStatus();
-        void slotStoreSizeCalculated( KJob* job );
-        void slotFileCountFinished( Soprano::Util::AsyncQuery* query );
-        void slotUpdateTimeout();
+private Q_SLOTS:
+    void slotUpdateStoreStatus();
+    void slotFileCountFinished( Soprano::Util::AsyncQuery* query );
+    void slotUpdateTimeout();
+    void slotUpdateStatus();
+    void slotSuspendResume();
 
-    private:
-        void showEvent( QShowEvent* event );
-        void hideEvent( QHideEvent* event );
+private:
+    void updateSuspendResumeButtonText(bool suspended);
 
-        bool m_connected;
-        QTimer m_updateTimer;
-        int m_updatingJobCnt;
-        bool m_updateRequested;
-    };
+    void showEvent( QShowEvent* event );
+    void hideEvent( QHideEvent* event );
+
+    bool m_connected;
+    QTimer m_updateTimer;
+    int m_updatingJobCnt;
+    bool m_updateRequested;
+
+    org::kde::nepomuk::Strigi* m_service;
+    org::kde::nepomuk::ServiceControl* m_serviceControl;
+
+};
 }
 
 #endif
