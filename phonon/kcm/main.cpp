@@ -20,12 +20,15 @@
 */
 
 #include "main.h"
-#include <kpluginfactory.h>
-#include <ktabwidget.h>
-#include <kaboutdata.h>
-#include <kdeversion.h>
+
 #include <QtGui/QBoxLayout>
-#include <kdialog.h>
+
+#include <KDE/KAboutData>
+#include <KDE/KDialog>
+#include <KDE/KPluginFactory>
+#include <KDE/KTabWidget>
+#include <kdeversion.h>
+
 #include "devicepreference.h"
 #include "backendselection.h"
 
