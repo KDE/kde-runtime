@@ -148,12 +148,15 @@ void BackendSelection::save()
         }
     }
 
-    // If the user changed the backend order, show a message that they need to
-    // log out and back in again to apply the change. This is because runtime
-    // backend switching was considered not worth the effort to actually
-    // maintain it (across backends).
-    if (offers != services)
+    if (offers != services) {
+        KServiceTypeProfile::writeServiceTypeProfile("PhononBackend", services);
+
+        // If the user changed the backend order, show a message that they need to
+        // log out and back in again to apply the change. This is because runtime
+        // backend switching was considered not worth the effort to actually
+        // maintain it (across backends).
         m_messageWidget->animatedShow();
+    }
 }
 
 void BackendSelection::defaults()
