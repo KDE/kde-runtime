@@ -284,7 +284,7 @@ void Nepomuk::IndexCleaner::clearNextBatch()
         //
         if(m_excludeFilterRemovalQueries.contains(m_query)) {
             const QString fileName = it["fn"].toString();
-            if(FileIndexerConfig::self()->shouldFileBeIndexed(fileName)) {
+            if(StrigiServiceConfig::self()->shouldFileBeIndexed(fileName)) {
                 continue;
             }
         }
