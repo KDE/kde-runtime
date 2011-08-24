@@ -151,8 +151,8 @@ static QRect screenRect( QWidget *widget, int screen )
     KConfig gc( "kdeglobals", KConfig::NoGlobals );
     KConfigGroup cg(&gc, "Windows" );
     if ( desktop->isVirtualDesktop() &&
-         cg.readEntry( "XineramaEnabled", true ) &&
-         cg.readEntry( "XineramaPlacementEnabled", true ) ) {
+            cg.readEntry( "XineramaEnabled", true ) &&
+            cg.readEntry( "XineramaPlacementEnabled", true ) ) {
 
         if ( screen < 0 || screen >= desktop->numScreens() ) {
             if ( screen == -1 )
@@ -178,7 +178,7 @@ void Nepomuk::SystemTray::slotActivateRequested()
 
         const QRect rect = screenRect( 0, -3 );
         m_statusWidget->move( rect.center().x() - m_statusWidget->width() / 2,
-                              rect.center().y() - m_statusWidget->height() / 2 );
+                             rect.center().y() - m_statusWidget->height() / 2 );
     }
     else {
         m_statusWidget->hide();

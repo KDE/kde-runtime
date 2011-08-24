@@ -18,7 +18,7 @@
 
 #include "nepomukserverkcm.h"
 #include "nepomukserverinterface.h"
-#include "nepomukservicecontrolinterface.h"
+#include "servicecontrol.h"
 #include "fileexcludefilters.h"
 #include "../kioslaves/common/standardqueries.h"
 #include "fileindexerinterface.h"

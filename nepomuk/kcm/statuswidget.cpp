@@ -34,12 +34,16 @@
 
 #include <QtCore/QTimer>
 
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusConnectionInterface>
+#include <QtDBus/QDBusServiceWatcher>
 
 Nepomuk::StatusWidget::StatusWidget( QWidget* parent )
-    : KDialog( parent ),
-      m_connected( false ),
-      m_updatingJobCnt( 0 ),
-      m_updateRequested( false )
+        : KDialog( parent ),
+        m_connected( false ),
+        m_updatingJobCnt( 0 ),
+        m_updateRequested( false ),
+        m_fileIndexerService(0)
 {
     KGlobal::locale()->insertCatalog("kcm_nepomuk");
     setupUi( mainWidget() );
@@ -56,8 +60,35 @@ Nepomuk::StatusWidget::StatusWidget( QWidget* parent )
     m_updateTimer.setInterval( 10*1000 ); // do not update multiple times in 10 seconds
     connect( &m_updateTimer, SIGNAL( timeout() ),
              this, SLOT( slotUpdateTimeout() ) );
-}
 
+    // connect to the strigi service
+    m_fileIndexerService = new org::kde::nepomuk::FileIndexer( QLatin1String("org.kde.nepomuk.services.nepomukstrigiservice"),
+            QLatin1String("/nepomukstrigiservice"),
+            QDBusConnection::sessionBus(),
+            this );
+    m_fileIndexerServiceControl = new org::kde::nepomuk::ServiceControl( QLatin1String("org.kde.nepomuk.services.nepomukstrigiservice"),
+            QLatin1String("/servicecontrol"),
+            QDBusConnection::sessionBus(),
+            this );
+    connect( m_fileIndexerService, SIGNAL( statusChanged() ), this, SLOT( slotUpdateStatus() ) );
+
+    // watch for the strigi service to come up and go down
+    QDBusServiceWatcher* dbusServiceWatcher = new QDBusServiceWatcher( m_fileIndexerService->service(),
+            QDBusConnection::sessionBus(),
+            QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration,
+            this );
+    connect( dbusServiceWatcher, SIGNAL( serviceRegistered( QString ) ),
+             this, SLOT( slotUpdateStatus()) );
+    connect( dbusServiceWatcher, SIGNAL( serviceUnregistered( QString ) ),
+             this, SLOT( slotUpdateStatus()) );
+
+    slotUpdateStatus();
+
+    connect( m_suspendResumeButton, SIGNAL(clicked()),
+             this, SLOT(slotSuspendResume()) );
+
+    updateSuspendResumeButtonText( m_fileIndexerService->isSuspended() );
+}
 
 Nepomuk::StatusWidget::~StatusWidget()
 {
@@ -69,42 +100,19 @@ void Nepomuk::StatusWidget::slotUpdateStoreStatus()
     if ( !m_updatingJobCnt && !m_updateTimer.isActive() ) {
         m_updatingJobCnt = 2;
 
-        // update storage size
-        // ========================================
-        QString path = KStandardDirs::locateLocal( "data", "nepomuk/repository/main/", false );
-        KIO::DirectorySizeJob* job = KIO::directorySize( path );
-        connect( job, SIGNAL( result( KJob* ) ), this, SLOT( slotStoreSizeCalculated( KJob* ) ) );
-        job->start();
-
         // update file count
         // ========================================
         Soprano::Util::AsyncQuery* query
-            = Soprano::Util::AsyncQuery::executeQuery( ResourceManager::instance()->mainModel(),
-                                                       QString::fromLatin1( "select count(distinct ?r) where { ?r a %1 . }" )
-                                                       .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::FileDataObject() ) ),
-                                                       Soprano::Query::QueryLanguageSparql );
+        = Soprano::Util::AsyncQuery::executeQuery( ResourceManager::instance()->mainModel(),
+                QString::fromLatin1( "select count(distinct ?r) where { ?r a %1 . }" )
+                .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::FileDataObject() ) ),
+                Soprano::Query::QueryLanguageSparql );
         connect( query, SIGNAL( nextReady(Soprano::Util::AsyncQuery*) ), this, SLOT( slotFileCountFinished(Soprano::Util::AsyncQuery*) ) );
     }
     else {
         m_updateRequested = true;
     }
 }
-
-
-void Nepomuk::StatusWidget::slotStoreSizeCalculated( KJob* job )
-{
-    KIO::DirectorySizeJob* dirJob = static_cast<KIO::DirectorySizeJob*>( job );
-    if ( !job->error() )
-        m_labelStoreSize->setText( KIO::convertSize( dirJob->totalSize() ) );
-    else
-        m_labelStoreSize->setText( i18n( "Calculation failed" ) );
-
-    if ( !--m_updatingJobCnt ) {
-        // start the timer to avoid too many updates
-        m_updateTimer.start();
-    }
-}
-
 
 void Nepomuk::StatusWidget::slotFileCountFinished( Soprano::Util::AsyncQuery* query )
 {
@@ -126,6 +134,47 @@ void Nepomuk::StatusWidget::slotUpdateTimeout()
     }
 }
 
+void Nepomuk::StatusWidget::slotUpdateStatus()
+{
+    const bool strigiServiceInitialized =
+        QDBusConnection::sessionBus().interface()->isServiceRegistered(m_fileIndexerService->service()) &&
+        m_fileIndexerServiceControl->isInitialized();
+
+    QString statusString;
+    if ( strigiServiceInitialized )
+        statusString = m_fileIndexerService->userStatusString();
+    else
+        statusString = i18n("File indexing service not running");
+
+    if ( statusString != m_labelFileIndexing->text() ) {
+        m_labelFileIndexing->setText(statusString);
+    }
+    m_suspendResumeButton->setEnabled( strigiServiceInitialized );
+
+    updateSuspendResumeButtonText( m_fileIndexerService->isSuspended() );
+}
+
+void Nepomuk::StatusWidget::slotSuspendResume()
+{
+    if ( m_fileIndexerService->isSuspended()) {
+        m_fileIndexerService->resume();
+        updateSuspendResumeButtonText( false );
+    }
+    else {
+        m_fileIndexerService->suspend();
+        updateSuspendResumeButtonText( true );
+    }
+}
+
+void Nepomuk::StatusWidget::updateSuspendResumeButtonText(bool suspended)
+{
+    if (!suspended) {
+        m_suspendResumeButton->setText( i18nc("Suspends the Nepomuk file indexing service.","Suspend File Indexing") );
+    }
+    else {
+        m_suspendResumeButton->setText( i18nc("Resumes the Nepomuk file indexing service.","Resume File Indexing") );
+    }
+}
 
 void Nepomuk::StatusWidget::showEvent( QShowEvent* event )
 {
