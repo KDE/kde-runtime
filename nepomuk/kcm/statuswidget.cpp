@@ -61,18 +61,18 @@ Nepomuk::StatusWidget::StatusWidget( QWidget* parent )
     connect( &m_updateTimer, SIGNAL( timeout() ),
              this, SLOT( slotUpdateTimeout() ) );
 
-    // connect to the strigi service
-    m_fileIndexerService = new org::kde::nepomuk::FileIndexer( QLatin1String("org.kde.nepomuk.services.nepomukstrigiservice"),
-            QLatin1String("/nepomukstrigiservice"),
+    // connect to the file indexer service
+    m_fileIndexerService = new org::kde::nepomuk::FileIndexer( QLatin1String("org.kde.nepomuk.services.nepomukfileindexer"),
+            QLatin1String("/nepomukfileindexer"),
             QDBusConnection::sessionBus(),
             this );
-    m_fileIndexerServiceControl = new org::kde::nepomuk::ServiceControl( QLatin1String("org.kde.nepomuk.services.nepomukstrigiservice"),
+    m_fileIndexerServiceControl = new org::kde::nepomuk::ServiceControl( QLatin1String("org.kde.nepomuk.services.nepomukfileindexer"),
             QLatin1String("/servicecontrol"),
             QDBusConnection::sessionBus(),
             this );
     connect( m_fileIndexerService, SIGNAL( statusChanged() ), this, SLOT( slotUpdateStatus() ) );
 
-    // watch for the strigi service to come up and go down
+    // watch for the file indexer service to come up and go down
     QDBusServiceWatcher* dbusServiceWatcher = new QDBusServiceWatcher( m_fileIndexerService->service(),
             QDBusConnection::sessionBus(),
             QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration,
@@ -136,12 +136,12 @@ void Nepomuk::StatusWidget::slotUpdateTimeout()
 
 void Nepomuk::StatusWidget::slotUpdateStatus()
 {
-    const bool strigiServiceInitialized =
+    const bool fileIndexerInitialized =
         QDBusConnection::sessionBus().interface()->isServiceRegistered(m_fileIndexerService->service()) &&
         m_fileIndexerServiceControl->isInitialized();
 
     QString statusString;
-    if ( strigiServiceInitialized )
+    if ( fileIndexerInitialized )
         statusString = m_fileIndexerService->userStatusString();
     else
         statusString = i18n("File indexing service not running");
@@ -149,7 +149,7 @@ void Nepomuk::StatusWidget::slotUpdateStatus()
     if ( statusString != m_labelFileIndexing->text() ) {
         m_labelFileIndexing->setText(statusString);
     }
-    m_suspendResumeButton->setEnabled( strigiServiceInitialized );
+    m_suspendResumeButton->setEnabled( fileIndexerInitialized );
 
     updateSuspendResumeButtonText( m_fileIndexerService->isSuspended() );
 }
