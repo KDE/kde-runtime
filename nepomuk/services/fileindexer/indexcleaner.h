@@ -23,7 +23,7 @@
 #ifndef INDEXCLEANER_H
 #define INDEXCLEANER_H
 
-#include <QtCore/QStringList>
+#include <QtCore/QString>
 #include <QtCore/QQueue>
 #include <QtCore/QMutex>
 
@@ -63,9 +63,6 @@ namespace Nepomuk {
         QMutex m_stateMutex;
         bool m_suspended;
         int m_delay;
-
-        /// the queries from m_removalQueries that handle exclude filters
-        QStringList m_excludeFilterRemovalQueries;
     };
 }
 
