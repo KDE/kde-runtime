@@ -49,6 +49,7 @@ public:
         Event::Reason reason;
         QSet < QString > activities;
         QString mimetype;
+        QString title;
     };
 
     QHash < WId, WindowData > const & windows() const;
