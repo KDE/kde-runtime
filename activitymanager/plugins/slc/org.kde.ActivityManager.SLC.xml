@@ -11,5 +11,8 @@
     <method name="focussedResourceMimetype">
       <arg type="s" direction="out"/>
     </method>
+    <method name="focussedResourceTitle">
+      <arg type="s" direction="out"/>
+    </method>
   </interface>
 </node>
