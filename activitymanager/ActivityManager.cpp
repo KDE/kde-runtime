@@ -761,6 +761,13 @@ void ActivityManager::RegisterResourceMimeType(const QString & uri, const QStrin
     d->resources[kuri].mimetype = mimetype;
 }
 
+void ActivityManager::RegisterResourceTitle(const QString & uri, const QString & title)
+{
+    KUrl kuri(uri);
+
+    d->resources[kuri].title = title;
+}
+
 // static
 ActivityManager * ActivityManager::self()
 {
