@@ -1,0 +1,22 @@
+[Currency Code]
+CurrencyCodeIsoAlpha3=SSP
+#CurrencyCodeIsoNumeric3=
+#Context for Name: Adjectival Country Name and Currency Name
+Name=South Sudanese Pound
+CurrencyNameIso=South Sudanese pound
+CurrencyUnitSymbols=SSP
+CurrencyUnitSymbolDefault=SSP
+CurrencyUnitSymbolUnambiguous=SSP
+CurrencyUnitSingular=pound
+CurrencyUnitPlural=pounds
+CurrencySubunitSymbol=
+CurrencySubunitSingular=piastre
+CurrencySubunitPlural=piastres
+CurrencyIntroducedDate=2007,01,10
+#CurrencySuspendedDate=
+#CurrencyWithdrawnDate=
+#CurrencySubunits=1
+#CurrencySubunitsInCirculation=true
+#CurrencySubunitsPerUnit=100
+#CurrencyDecimalPlacesDisplay=2
+CurrencyCountriesInUse=SS

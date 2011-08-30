@@ -1,0 +1,7 @@
+[KCM Locale]
+Name=South Sudan
+Region=eastafrica
+Languages=en_US
+CurrencyCodesInUse=SSP,SDG
+CurrencyCode=SSP
+Author=John Layt <jlayt@kde.org>
