@@ -121,7 +121,7 @@ void ProductMapping::getRelatedProductsUsingInternalFile(const QString & bugzill
 void ProductMapping::delayedLoginCheck(bool logged)
 {
     if (logged) {
-        m_bugzillaManagerPtr->delayedCheckVersionsForProduct(m_bugzillaProduct);
+        m_bugzillaManagerPtr->checkVersionsForProduct(m_bugzillaProduct);
     }
 }
 
