@@ -40,9 +40,10 @@ private Q_SLOTS:
 public Q_SLOTS:
     QString focussedResourceURI();
     QString focussedResourceMimetype();
+    QString focussedResourceTitle();
 
 Q_SIGNALS:
-    void focusChanged(const QString & uri, const QString & mimetype);
+    void focusChanged(const QString & uri, const QString & mimetype, const QString & title);
 
 private:
     void updateFocus(WId wid = 0);

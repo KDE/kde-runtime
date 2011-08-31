@@ -254,6 +254,16 @@ public Q_SLOTS:
      */
     void RegisterResourceMimeType(const QString & uri, const QString & mimetype);
 
+    /**
+     * Registers resource's title. If not manually specified, it will be a shortened
+     * version of the uri
+     *
+     * Note that this will be forgotten when the resource in question is closed.
+     * @param uri URI of the resource
+     */
+    void RegisterResourceTitle(const QString & uri, const QString & title);
+
+
 private:
     friend class ActivityManagerPrivate;
     class ActivityManagerPrivate * const d;

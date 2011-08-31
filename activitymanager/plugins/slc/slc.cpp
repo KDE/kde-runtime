@@ -105,6 +105,12 @@ QString SlcPlugin::focussedResourceMimetype()
         sharedInfo()->resources()[_focussedResourceURI()].mimetype : QString();
 }
 
+QString SlcPlugin::focussedResourceTitle()
+{
+    return sharedInfo()->resources().contains(_focussedResourceURI()) ?
+        sharedInfo()->resources()[_focussedResourceURI()].title : QString();
+}
+
 void SlcPlugin::activeWindowChanged(WId wid)
 {
     if (wid == focussedWindow) return;
@@ -120,11 +126,12 @@ void SlcPlugin::updateFocus(WId wid)
 
     if (wid == 0 || !sharedInfo()->windows().contains(wid)) {
         kDebug() << "Clearing focus" << wid;
-        emit focusChanged(QString(), QString());
+        emit focusChanged(QString(), QString(), QString());
 
     } else if (wid == focussedWindow) {
         kDebug() << "It is the currently focussed window" << wid;
-        emit focusChanged(focussedResourceURI(), sharedInfo()->resources()[_focussedResourceURI()].mimetype);
+        SharedInfo::ResourceData resourceData = sharedInfo()->resources()[_focussedResourceURI()];
+        emit focusChanged(focussedResourceURI(), resourceData.mimetype, resourceData.title);
 
     }
 }

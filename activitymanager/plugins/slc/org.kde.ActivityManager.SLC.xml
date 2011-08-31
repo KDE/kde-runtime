@@ -4,11 +4,15 @@
     <signal name="focusChanged">
       <arg name="uri" type="s" direction="out"/>
       <arg name="mimetype" type="s" direction="out"/>
+      <arg name="title" type="s" direction="out"/>
     </signal>
     <method name="focussedResourceURI">
       <arg type="s" direction="out"/>
     </method>
     <method name="focussedResourceMimetype">
+      <arg type="s" direction="out"/>
+    </method>
+    <method name="focussedResourceTitle">
       <arg type="s" direction="out"/>
     </method>
   </interface>
