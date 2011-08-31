@@ -240,7 +240,7 @@ void BugzillaManager::stopCurrentSearch()
 void BugzillaManager::loginJobFinished(KJob* job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * loginJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * loginJob = static_cast<KIO::StoredTransferJob*>(job);
         QByteArray response = loginJob->data();
 
         bool error = false;
@@ -269,7 +269,7 @@ void BugzillaManager::loginJobFinished(KJob* job)
 void BugzillaManager::fetchBugJobFinished(KJob* job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * fetchBugJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * fetchBugJob = static_cast<KIO::StoredTransferJob*>(job);
 
         BugReportXMLParser * parser = new BugReportXMLParser(fetchBugJob->data());
         BugReport report = parser->parse();
@@ -291,7 +291,7 @@ void BugzillaManager::fetchBugJobFinished(KJob* job)
 void BugzillaManager::searchBugsJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * searchBugsJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * searchBugsJob = static_cast<KIO::StoredTransferJob*>(job);
 
         BugListCSVParser * parser = new BugListCSVParser(searchBugsJob->data());
         BugMapList list = parser->parse();
@@ -313,7 +313,7 @@ void BugzillaManager::searchBugsJobFinished(KJob * job)
 void BugzillaManager::sendReportJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * sendJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * sendJob = static_cast<KIO::StoredTransferJob*>(job);
         QString response = sendJob->data();
         response.remove('\r'); response.remove('\n');
 
@@ -358,7 +358,7 @@ void BugzillaManager::sendReportJobFinished(KJob * job)
 void BugzillaManager::attachToReportJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * sendJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * sendJob = static_cast<KIO::StoredTransferJob*>(job);
         QString response = sendJob->data();
         response.remove('\r'); response.remove('\n');
         
@@ -383,7 +383,7 @@ void BugzillaManager::attachToReportJobFinished(KJob * job)
 void BugzillaManager::addCommentSubJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * checkJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * checkJob = static_cast<KIO::StoredTransferJob*>(job);
         QString response = checkJob->data();
         response.remove('\r'); response.remove('\n');
 
@@ -422,7 +422,7 @@ void BugzillaManager::addCommentSubJobFinished(KJob * job)
 void BugzillaManager::addCommentJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * addCommentJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * addCommentJob = static_cast<KIO::StoredTransferJob*>(job);
         QString response = addCommentJob->data();
         response.remove('\r'); response.remove('\n');
 
@@ -452,7 +452,7 @@ void BugzillaManager::addCommentJobFinished(KJob * job)
 void BugzillaManager::addMeToCCSubJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * checkJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * checkJob = static_cast<KIO::StoredTransferJob*>(job);
         QString response = checkJob->data();
         response.remove('\r'); response.remove('\n');
 
@@ -486,7 +486,7 @@ void BugzillaManager::addMeToCCSubJobFinished(KJob * job)
 void BugzillaManager::addMeToCCJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * addCCJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * addCCJob = static_cast<KIO::StoredTransferJob*>(job);
         QString response = addCCJob->data();
         response.remove('\r'); response.remove('\n');
         
@@ -511,7 +511,7 @@ void BugzillaManager::addMeToCCJobFinished(KJob * job)
 void BugzillaManager::checkVersionJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * checkVersionJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * checkVersionJob = static_cast<KIO::StoredTransferJob*>(job);
 
         QString response = checkVersionJob->data();
 
@@ -579,7 +579,7 @@ void BugzillaManager::checkVersionJobFinished(KJob * job)
 void BugzillaManager::delayedCheckVersionJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * checkVersionJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * checkVersionJob = static_cast<KIO::StoredTransferJob*>(job);
 
         QString response = checkVersionJob->data();
 
