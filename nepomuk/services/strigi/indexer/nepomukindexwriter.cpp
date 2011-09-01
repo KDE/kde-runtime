@@ -318,6 +318,12 @@ void Nepomuk::StrigiIndexWriter::addText( const AnalysisResult* idx, const char*
     }
 
     FileMetaData* md = fileDataForResult( idx );
+
+    // make sure text fragments are separated
+    if(md->content.size() > 0)
+        md->content.append( " " );
+
+    // append the new fragment
     md->content.append( text, length );
 }
 
