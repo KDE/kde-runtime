@@ -3,8 +3,6 @@ project(activitymanager-plugin-nepomuk)
 # Checking for Nepomuk
 find_package(Nepomuk REQUIRED)
 
-include_directories(${NEPOMUK_INCLUDE_DIR})
-
 set(
    nepomuk_SRCS
    NepomukPlugin.cpp
@@ -20,8 +18,18 @@ soprano_add_ontology(nepomuk_SRCS
     )
 
 soprano_add_ontology(nepomuk_SRCS
+    ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
+    "NIE" "Nepomuk::Vocabulary" "trig"
+    )
+
+soprano_add_ontology(nepomuk_SRCS
     ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nepomuk/nao.trig
     "NAO" "Nepomuk::Vocabulary" "trig"
+    )
+
+soprano_add_ontology(nepomuk_SRCS
+    ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nepomuk/nuao.trig
+    "NUAO" "Nepomuk::Vocabulary" "trig"
     )
 
 include_directories(
