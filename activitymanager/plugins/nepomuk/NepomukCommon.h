@@ -20,7 +20,7 @@
 #ifndef NEPOMUK_COMMON_H_
 #define NEPOMUK_COMMON_H_
 
-#include "nie.h"
+#include <nepomuk/nie.h>
 #include "NepomukPlugin.h"
 
 #include <Nepomuk/Variant>

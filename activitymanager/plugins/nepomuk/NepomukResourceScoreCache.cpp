@@ -32,7 +32,7 @@
 
 #include "kext.h"
 #include "nao.h"
-#include "nuao.h"
+#include <nepomuk/nuao.h>
 
 #include "ActivityManager.h"
 
