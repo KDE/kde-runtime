@@ -1,5 +1,10 @@
 [KCM Locale]
 Name=South Sudan
+Name[nl]=Zuid-Soedan
+Name[pt]=Sudão do Sul
+Name[sv]=Sydsudan
+Name[uk]=Південний Судан
+Name[x-test]=xxSouth Sudanxx
 Region=eastafrica
 Languages=en_US
 CurrencyCodesInUse=SSP,SDG

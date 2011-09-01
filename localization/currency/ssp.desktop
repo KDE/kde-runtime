@@ -3,6 +3,11 @@ CurrencyCodeIsoAlpha3=SSP
 #CurrencyCodeIsoNumeric3=
 #Context for Name: Adjectival Country Name and Currency Name
 Name=South Sudanese Pound
+Name[nl]=Zuid-Soedanees pond
+Name[pt]=Libra do Sudão do Sul
+Name[sv]=Sydsudanesiska pund
+Name[uk]=Південносуданський фунт
+Name[x-test]=xxSouth Sudanese Poundxx
 CurrencyNameIso=South Sudanese pound
 CurrencyUnitSymbols=SSP
 CurrencyUnitSymbolDefault=SSP
