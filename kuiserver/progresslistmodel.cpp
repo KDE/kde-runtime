@@ -288,7 +288,7 @@ void ProgressListModel::registerService(const QString &service, const QString &o
 
                     RequestViewCallWatcher *watcher = new RequestViewCallWatcher(jobView, service, pendingCall, this);
                     connect(watcher, SIGNAL(callFinished(RequestViewCallWatcher*)),
-                            this, SLOT(pendingCallFinished(RequestViewCallWatcher*)));
+                            jobView, SLOT(pendingCallFinished(RequestViewCallWatcher*)));
                 }
             } else {
                 delete client;
