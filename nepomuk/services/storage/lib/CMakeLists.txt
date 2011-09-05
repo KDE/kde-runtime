@@ -31,8 +31,7 @@ target_link_libraries(nepomukdatamanagement
   ${NEPOMUK_LIBRARIES}
   ${KDE4_KDECORE_LIBS})
 
-install(TARGETS nepomukdatamanagement
-  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS nepomukdatamanagement ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 install(FILES
   simpleresource.h
