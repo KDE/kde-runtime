@@ -556,7 +556,7 @@ void AudioSetup::cardChanged()
         if (it->cardIndex == card_index)
             deviceBox->addItem(KIcon(it->icon), i18n("Playback (%1)", it->name), it->index);
     }
-    for (it = s_Sources.begin(); it != s_Sources.constEnd(); ++it) {
+    for (it = s_Sources.constBegin(); it != s_Sources.constEnd(); ++it) {
         if (it->cardIndex == card_index)
             deviceBox->addItem(KIcon(it->icon), i18n("Recording (%1)", it->name), ((-1*it->index) - 1));
     }
