@@ -97,7 +97,7 @@ a message box appear in response to a system notification.  One notification doe
 
 <varlistentry>
 <term><guilabel>Show a message in a pop up</guilabel></term>
-<listitem><para>If a mark is in this checkbox, &kde; will open a message box and inform the user of the notification.  The text of the box can not be changed from this dialog.  If you place a mark in the checkbox labeled <guilabel>Use a passive window that does not interrupt other work</guilabel>, &kde; will open the message box, but it will not change desktops and the message box will not appear until the user returns to the program sending the notification.  If that box is left empty, the user must respond to the message box even if it means they have to stop working on another program.</para></listitem>
+<listitem><para>If a mark is in this checkbox, &kde; will open a message box and inform the user of the notification.  The text of the box can not be changed from this dialog.</para></listitem>
 </varlistentry>
 
 <varlistentry>
