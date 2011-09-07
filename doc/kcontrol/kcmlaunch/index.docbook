@@ -61,7 +61,7 @@ enabled, you can set a time in the
 window, or an entry in the taskbar.  Some of them, for example, are
 docked into the &kde; system tray. Alternatively, it might be that you
 sent it off to a different virtual desktop, and in the <guilabel>Filters</guilabel> 
-section of the <ulink url="help:/plasma/index.html#panel">
+section of the <ulink url="help:/plasma-desktop/index.html#panel">
 <guilabel>Task Manager Settings</guilabel></ulink> the option <guilabel>Only show
 tasks from the current desktop</guilabel> is checked.  Setting a timeout ensures that,
 even in these cases, you can still get launch feedback, but also that
