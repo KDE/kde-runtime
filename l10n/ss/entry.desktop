@@ -1,13 +1,5 @@
 [KCM Locale]
 Name=South Sudan
-Name[eu]=Hego Sudan
-Name[nds]=Söödsudan
-Name[nl]=Zuid-Soedan
-Name[pt]=Sudão do Sul
-Name[pt_BR]=Sudão do Sul
-Name[sv]=Sydsudan
-Name[uk]=Південний Судан
-Name[x-test]=xxSouth Sudanxx
 Region=eastafrica
 Languages=en_US
 CurrencyCodesInUse=SSP,SDG
