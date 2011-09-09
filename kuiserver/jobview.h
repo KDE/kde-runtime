@@ -200,6 +200,14 @@ private:
 
     QString m_error;           ///< The error message of the job, set when it's terminated
 
+    QString m_totalUnit;       ///< The unit used in setTotalAmount
+
+    qulonglong m_totalAmount;  ///< The amount used in setTotalAmount
+
+    QString m_processUnit;     ///< The unit used in setProcessedAmount
+
+    qulonglong m_processAmount; ///< The processed amount (setProcessedAmount)
+
     QHash<uint, QPair<QString, QString> > m_descFields;
 
     QVariant m_destUrl;
