@@ -2,6 +2,7 @@
 Name=kdbgwin
 Name[ast]=kdbgwin
 Name[bg]=kdbgwin
+Name[bs]=Kdbgwin
 Name[ca]=kdbgwin
 Name[ca@valencia]=kdbgwin
 Name[cs]=kdbgwin
@@ -50,6 +51,7 @@ Name[sv]=kdbgwin
 Name[tg]=kdbgwin
 Name[th]=kdbgwin
 Name[tr]=kdbgwin
+Name[ug]=kdbgwin
 Name[uk]=kdbgwin
 Name[wa]=kdbgwin
 Name[x-test]=xxkdbgwinxx

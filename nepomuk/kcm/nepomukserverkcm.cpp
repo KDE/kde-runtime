@@ -18,9 +18,10 @@
 
 #include "nepomukserverkcm.h"
 #include "nepomukserverinterface.h"
+#include "servicecontrol.h"
 #include "fileexcludefilters.h"
 #include "../kioslaves/common/standardqueries.h"
-#include "nepomukservicecontrolinterface.h"
+#include "fileindexerinterface.h"
 #include "indexfolderselectiondialog.h"
 #include "statuswidget.h"
 
@@ -105,7 +106,6 @@ namespace {
         DisableAutomaticBackups = 0,
         DailyBackup = 1,
         WeeklyBackup = 2,
-        MonthlyBackup = 3
     };
 
 
@@ -115,8 +115,6 @@ namespace {
             return QLatin1String("daily");
         case WeeklyBackup:
             return QLatin1String("weekly");
-        case MonthlyBackup:
-            return QLatin1String("monthly");
         default:
             return QLatin1String("disabled");
         }
@@ -135,11 +133,11 @@ namespace {
 Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariantList& args )
     : KCModule( NepomukConfigModuleFactory::componentData(), parent, args ),
       m_serverInterface( 0 ),
-      m_strigiInterface( 0 ),
+      m_fileIndexerInterface( 0 ),
       m_failedToInitialize( false )
 {
     KAboutData *about = new KAboutData(
-        "kcm_nepomuk", "kcm_nepomuk", ki18n("Nepomuk Configuration Module"),
+        "kcm_nepomuk", "kcm_nepomuk", ki18n("Desktop Search Configuration Module"),
         KDE_VERSION_STRING, KLocalizedString(), KAboutData::License_GPL,
         ki18n("Copyright 2007-2010 Sebastian Trüg"));
     about->addAuthor(ki18n("Sebastian Trüg"), KLocalizedString(), "trueg@kde.org");
@@ -155,7 +153,7 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
         m_indexFolderSelectionDialog = new IndexFolderSelectionDialog( this );
 
         QDBusServiceWatcher * watcher = new QDBusServiceWatcher( this );
-        watcher->addWatchedService( QLatin1String("org.kde.nepomuk.services.nepomukstrigiservice") );
+        watcher->addWatchedService( QLatin1String("org.kde.nepomuk.services.nepomukfileindexer") );
         watcher->addWatchedService( QLatin1String("org.kde.NepomukServer") );
         watcher->setConnection( QDBusConnection::sessionBus() );
         watcher->setWatchMode( QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration );
@@ -167,13 +165,14 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
 
         recreateInterfaces();
 
-        connect( m_checkEnableStrigi, SIGNAL( toggled(bool) ),
+        connect( m_checkEnableFileIndexer, SIGNAL( toggled(bool) ),
                  this, SLOT( changed() ) );
         connect( m_checkEnableNepomuk, SIGNAL( toggled(bool) ),
                  this, SLOT( changed() ) );
         connect( m_sliderMemoryUsage, SIGNAL( valueChanged(int) ),
                  this, SLOT( changed() ) );
-        connect( m_checkIndexRemovableMedia, SIGNAL( toggled(bool) ),
+        connect( m_comboRemovableMediaHandling, SIGNAL( activated(int)
+                                                        ),
                  this, SLOT( changed() ) );
         connect( m_spinMaxResults, SIGNAL( valueChanged( int ) ),
                  this, SLOT( changed() ) );
@@ -196,7 +195,6 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
         m_comboBackupFrequency->addItem(i18nc("@item:inlistbox", "Disable Automatic Backups"));
         m_comboBackupFrequency->addItem(i18nc("@item:inlistbox", "Daily Backup"));
         m_comboBackupFrequency->addItem(i18nc("@item:inlistbox", "Weekly Backup"));
-        m_comboBackupFrequency->addItem(i18nc("@item:inlistbox", "Monthly Backup"));
 
         for( int i = 1; i <= 7; ++i )
             m_comboBackupDay->addItem(KGlobal::locale()->calendar()->weekDayName(i), i);
@@ -220,9 +218,14 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
         // update backup status whenever manual backups are created
         KDirWatch::self()->addDir( KStandardDirs::locateLocal( "data", "nepomuk/backupsync/backups/" ) );
         connect( KDirWatch::self(), SIGNAL(dirty(QString)), this, SLOT(updateBackupStatus()) );
+
+        // args[0] can be the page index allowing to open the config with a specific page
+        if(args.count() > 0 && args[0].toInt() < m_mainTabWidget->count()) {
+            m_mainTabWidget->setCurrentIndex(args[0].toInt());
+        }
     }
     else {
-        QLabel* label = new QLabel( i18n( "The Nepomuk installation is not complete. No Nepomuk settings can be provided." ) );
+        QLabel* label = new QLabel( i18n( "The Nepomuk installation is not complete. No desktop search settings can be provided." ) );
         label->setAlignment( Qt::AlignCenter );
         QVBoxLayout* layout = new QVBoxLayout( this );
         layout->addWidget( label );
@@ -232,7 +235,7 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
 
 Nepomuk::ServerConfigModule::~ServerConfigModule()
 {
-    delete m_strigiInterface;
+    delete m_fileIndexerInterface;
     delete m_serverInterface;
 }
 
@@ -245,16 +248,20 @@ void Nepomuk::ServerConfigModule::load()
     // 1. basic setup
     KConfig config( "nepomukserverrc" );
     m_checkEnableNepomuk->setChecked( config.group( "Basic Settings" ).readEntry( "Start Nepomuk", true ) );
-    m_checkEnableStrigi->setChecked( config.group( "Service-nepomukstrigiservice" ).readEntry( "autostart", true ) );
+    m_checkEnableFileIndexer->setChecked( config.group( "Service-nepomukfileindexer" ).readEntry( "autostart", true ) );
 
 
-    // 2. strigi settings
-    KConfig strigiConfig( "nepomukstrigirc" );
-    m_indexFolderSelectionDialog->setIndexHiddenFolders( strigiConfig.group( "General" ).readEntry( "index hidden folders", false ) );
-    m_indexFolderSelectionDialog->setFolders( strigiConfig.group( "General" ).readPathEntry( "folders", defaultFolders() ),
-                                              strigiConfig.group( "General" ).readPathEntry( "exclude folders", QStringList() ) );
-    m_indexFolderSelectionDialog->setExcludeFilters( strigiConfig.group( "General" ).readEntry( "exclude filters", Nepomuk::defaultExcludeFilterList() ) );
-    m_checkIndexRemovableMedia->setChecked( strigiConfig.group( "General" ).readEntry( "index newly mounted", false ) );
+    // 2. file indexer settings
+    KConfig fileIndexerConfig( "nepomukstrigirc" );
+    m_indexFolderSelectionDialog->setIndexHiddenFolders( fileIndexerConfig.group( "General" ).readEntry( "index hidden folders", false ) );
+    m_indexFolderSelectionDialog->setFolders( fileIndexerConfig.group( "General" ).readPathEntry( "folders", defaultFolders() ),
+                                              fileIndexerConfig.group( "General" ).readPathEntry( "exclude folders", QStringList() ) );
+    m_indexFolderSelectionDialog->setExcludeFilters( fileIndexerConfig.group( "General" ).readEntry( "exclude filters", Nepomuk::defaultExcludeFilterList() ) );
+
+    const bool indexNewlyMounted = fileIndexerConfig.group( "RemovableMedia" ).readEntry( "index newly mounted", false );
+    const bool askIndividually = fileIndexerConfig.group( "RemovableMedia" ).readEntry( "ask user", false );
+    // combobox items: 0 - ignore, 1 - index all, 2 - ask user
+    m_comboRemovableMediaHandling->setCurrentIndex(int(indexNewlyMounted) + int(askIndividually));
 
     groupBox->setEnabled(m_checkEnableNepomuk->isChecked());
 
@@ -296,7 +303,7 @@ void Nepomuk::ServerConfigModule::load()
     m_labelIndexFolders->setText( buildFolderLabel( m_indexFolderSelectionDialog->includeFolders(),
                                                     m_indexFolderSelectionDialog->excludeFolders() ) );
     recreateInterfaces();
-    updateStrigiStatus();
+    updateFileIndexerStatus();
     updateNepomukServerStatus();
 
     // 7. all values loaded -> no changes
@@ -315,17 +322,20 @@ void Nepomuk::ServerConfigModule::save()
     // 1. change the settings (in case the server is not running)
     KConfig config( "nepomukserverrc" );
     config.group( "Basic Settings" ).writeEntry( "Start Nepomuk", m_checkEnableNepomuk->isChecked() );
-    config.group( "Service-nepomukstrigiservice" ).writeEntry( "autostart", m_checkEnableStrigi->isChecked() );
+    config.group( "Service-nepomukfileindexer" ).writeEntry( "autostart", m_checkEnableFileIndexer->isChecked() );
     config.group( "main Settings" ).writeEntry( "Maximum memory", m_sliderMemoryUsage->value() );
 
 
-    // 2. update Strigi config
-    KConfig strigiConfig( "nepomukstrigirc" );
-    strigiConfig.group( "General" ).writePathEntry( "folders", includeFolders );
-    strigiConfig.group( "General" ).writePathEntry( "exclude folders", excludeFolders );
-    strigiConfig.group( "General" ).writeEntry( "exclude filters", m_indexFolderSelectionDialog->excludeFilters() );
-    strigiConfig.group( "General" ).writeEntry( "index hidden folders", m_indexFolderSelectionDialog->indexHiddenFolders() );
-    strigiConfig.group( "General" ).writeEntry( "index newly mounted", m_checkIndexRemovableMedia->isChecked() );
+    // 2. update file indexer config
+    KConfig fileIndexerConfig( "nepomukstrigirc" );
+    fileIndexerConfig.group( "General" ).writePathEntry( "folders", includeFolders );
+    fileIndexerConfig.group( "General" ).writePathEntry( "exclude folders", excludeFolders );
+    fileIndexerConfig.group( "General" ).writeEntry( "exclude filters", m_indexFolderSelectionDialog->excludeFilters() );
+    fileIndexerConfig.group( "General" ).writeEntry( "index hidden folders", m_indexFolderSelectionDialog->indexHiddenFolders() );
+
+    // combobox items: 0 - ignore, 1 - index all, 2 - ask user
+    fileIndexerConfig.group( "RemovableMedia" ).writeEntry( "index newly mounted", m_comboRemovableMediaHandling->currentIndex() > 0 );
+    fileIndexerConfig.group( "RemovableMedia" ).writeEntry( "ask user", m_comboRemovableMediaHandling->currentIndex() == 2 );
 
 
     // 3. update kio_nepomuksearch config
@@ -347,21 +357,21 @@ void Nepomuk::ServerConfigModule::save()
     // 5. update the current state of the nepomuk server
     if ( m_serverInterface->isValid() ) {
         m_serverInterface->enableNepomuk( m_checkEnableNepomuk->isChecked() );
-        m_serverInterface->enableStrigi( m_checkEnableStrigi->isChecked() );
+        m_serverInterface->enableFileIndexer( m_checkEnableFileIndexer->isChecked() );
     }
     else if( m_checkEnableNepomuk->isChecked() ) {
         if ( !QProcess::startDetached( QLatin1String( "nepomukserver" ) ) ) {
             KMessageBox::error( this,
-                                i18n( "Failed to start Nepomuk Server. The settings have been saved "
+                                i18n( "Failed to start the desktop search service (Nepomuk). The settings have been saved "
                                       "and will be used the next time the server is started." ),
-                                i18n( "Nepomuk server not running" ) );
+                                i18n( "Desktop search service not running" ) );
         }
     }
 
 
     // 6. update state
     recreateInterfaces();
-    updateStrigiStatus();
+    updateFileIndexerStatus();
     updateNepomukServerStatus();
 
 
@@ -375,7 +385,7 @@ void Nepomuk::ServerConfigModule::defaults()
     if ( !m_nepomukAvailable )
         return;
 
-    m_checkEnableStrigi->setChecked( true );
+    m_checkEnableFileIndexer->setChecked( true );
     m_checkEnableNepomuk->setChecked( true );
     m_indexFolderSelectionDialog->setIndexHiddenFolders( false );
     m_indexFolderSelectionDialog->setExcludeFilters( Nepomuk::defaultExcludeFilterList() );
@@ -391,36 +401,36 @@ void Nepomuk::ServerConfigModule::updateNepomukServerStatus()
 {
     if ( m_serverInterface &&
          m_serverInterface->isNepomukEnabled() ) {
-        m_labelNepomukStatus->setText( i18nc( "@info:status", "Nepomuk system is active" ) );
+        m_labelNepomukStatus->setText( i18nc( "@info:status", "Desktop search services are active" ) );
     }
     else {
-        m_labelNepomukStatus->setText( i18nc( "@info:status", "Nepomuk system is inactive" ) );
+        m_labelNepomukStatus->setText( i18nc( "@info:status", "Desktop search services are disabled" ) );
     }
 }
 
 
-void Nepomuk::ServerConfigModule::updateStrigiStatus()
+void Nepomuk::ServerConfigModule::updateFileIndexerStatus()
 {
-    if ( QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.nepomuk.services.nepomukstrigiservice" ) ) {
-        if ( org::kde::nepomuk::ServiceControl( "org.kde.nepomuk.services.nepomukstrigiservice", "/servicecontrol", QDBusConnection::sessionBus() ).isInitialized() ) {
-            QString status = m_strigiInterface->userStatusString();
+    if ( QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.nepomuk.services.nepomukfileindexer" ) ) {
+        if ( org::kde::nepomuk::ServiceControl( "org.kde.nepomuk.services.nepomukfileindexer", "/servicecontrol", QDBusConnection::sessionBus() ).isInitialized() ) {
+            QString status = m_fileIndexerInterface->userStatusString();
             if ( status.isEmpty() ) {
-                m_labelStrigiStatus->setText( i18nc( "@info:status %1 is an error message returned by a dbus interface.",
-                                                     "Failed to contact Strigi indexer (%1)",
-                                                     m_strigiInterface->lastError().message() ) );
+                m_labelFileIndexerStatus->setText( i18nc( "@info:status %1 is an error message returned by a dbus interface.",
+                                                         "Failed to contact File Indexer service (%1)",
+                                                         m_fileIndexerInterface->lastError().message() ) );
             }
             else {
                 m_failedToInitialize = false;
-                m_labelStrigiStatus->setText( status );
+                m_labelFileIndexerStatus->setText( status );
             }
         }
         else {
             m_failedToInitialize = true;
-            m_labelStrigiStatus->setText( i18nc( "@info:status", "Strigi service failed to initialize, most likely due to an installation problem." ) );
+            m_labelFileIndexerStatus->setText( i18nc( "@info:status", "File indexing service failed to initialize, most likely due to an installation problem." ) );
         }
     }
     else if ( !m_failedToInitialize ) {
-        m_labelStrigiStatus->setText( i18nc( "@info:status", "Strigi service not running." ) );
+        m_labelFileIndexerStatus->setText( i18nc( "@info:status", "File indexing service not running." ) );
     }
 }
 
@@ -446,14 +456,14 @@ void Nepomuk::ServerConfigModule::updateBackupStatus()
 
 void Nepomuk::ServerConfigModule::recreateInterfaces()
 {
-    delete m_strigiInterface;
+    delete m_fileIndexerInterface;
     delete m_serverInterface;
 
-    m_strigiInterface = new org::kde::nepomuk::Strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
+    m_fileIndexerInterface = new org::kde::nepomuk::FileIndexer( "org.kde.nepomuk.services.nepomukfileindexer", "/nepomukfileindexer", QDBusConnection::sessionBus() );
     m_serverInterface = new org::kde::NepomukServer( "org.kde.NepomukServer", "/nepomukserver", QDBusConnection::sessionBus() );
 
-    connect( m_strigiInterface, SIGNAL( statusChanged() ),
-             this, SLOT( updateStrigiStatus() ) );
+    connect( m_fileIndexerInterface, SIGNAL( statusChanged() ),
+             this, SLOT( updateFileIndexerStatus() ) );
 }
 
 

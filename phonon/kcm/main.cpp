@@ -20,17 +20,20 @@
 */
 
 #include "main.h"
-#include <kpluginfactory.h>
-#include <ktabwidget.h>
-#include <kaboutdata.h>
-#include <kdeversion.h>
+
 #include <QtGui/QBoxLayout>
-#include <kdialog.h>
+
+#include <KDE/KAboutData>
+#include <KDE/KDialog>
+#include <KDE/KPluginFactory>
+#include <KDE/KTabWidget>
+#include <kdeversion.h>
+
 #include "devicepreference.h"
 #include "backendselection.h"
 
 #ifdef HAVE_PULSEAUDIO
-#  include "speakersetup.h"
+#  include "audiosetup.h"
 #endif
 
 K_PLUGIN_FACTORY(PhononKcmFactory, registerPlugin<PhononKcm>();)
@@ -44,7 +47,7 @@ PhononKcm::PhononKcm(QWidget *parent, const QVariantList &args)
             KDE_VERSION_STRING, KLocalizedString(), KAboutData::License_GPL,
             ki18n("Copyright 2006 Matthias Kretz"));
     about->addAuthor(ki18n("Matthias Kretz"), KLocalizedString(), "kretz@kde.org");
-    about->addAuthor(ki18n("Colin Guthrie"), KLocalizedString(), "cguthrie@mandriva.org");
+    about->addAuthor(ki18n("Colin Guthrie"), KLocalizedString(), "colin@mageia.org");
     setAboutData(about);
 
     setLayout(new QHBoxLayout);
@@ -66,7 +69,7 @@ PhononKcm::PhononKcm(QWidget *parent, const QVariantList &args)
     setButtons( KCModule::Default|KCModule::Apply|KCModule::Help );
 
 #ifdef HAVE_PULSEAUDIO
-    m_speakerSetup = new SpeakerSetup(this);
+    m_speakerSetup = new AudioSetup(this);
     m_speakerSetup->setVisible(false);
     connect(m_speakerSetup, SIGNAL(ready()), SLOT(speakerSetupReady()));
     connect(m_speakerSetup, SIGNAL(changed()), SLOT(changed()));
@@ -94,7 +97,8 @@ void PhononKcm::defaults()
 #ifdef HAVE_PULSEAUDIO
 void PhononKcm::speakerSetupReady()
 {
-  m_tabs->insertTab(1, m_speakerSetup, i18n("Speaker Setup"));
+  m_tabs->insertTab(1, m_speakerSetup, i18n("Audio Hardware Setup"));
+  m_devicePreferenceWidget->pulseAudioEnabled();
   emit changed();
 }
 #endif

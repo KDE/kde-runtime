@@ -1,15 +1,18 @@
 project(ActivityManager)
 
-set (ADDITIONAL_LINK_LIBS)
+set(ADDITIONAL_LINK_LIBS)
 
 add_subdirectory(kded)
+# add_subdirectory(ontologies)
+
+add_subdirectory(plugins)
 
 # Checking for Nepomuk
 macro_optional_find_package(Nepomuk)
 macro_log_feature(
         Nepomuk_FOUND
         "Nepomuk" "Nepomuk" "http://www.kde.org" FALSE ""
-        "STRONGLY_RECOMMENDED: Nepomuk is needed for resource tracking and for storing some activity-related info")
+        "STRONGLY_RECOMMENDED: Nepomuk is needed for some activity-related info")
 
 if(Nepomuk_FOUND)
     set(HAVE_NEPOMUK 1)
@@ -21,6 +24,7 @@ if(Nepomuk_FOUND)
     )
 endif(Nepomuk_FOUND)
 
+# config file
 configure_file(config-features.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-features.h )
 
 # Standard stuff
@@ -35,6 +39,9 @@ include_directories(
 set(activity_manager_SRCS
     ActivityManager.cpp
     EventProcessor.cpp
+    Plugin.cpp
+    Event.cpp
+    SharedInfo.cpp
     main.cpp
     )
 
@@ -63,4 +70,10 @@ install(
 install(
     TARGETS activity-manager ${INSTALL_TARGETS_DEFAULT_ARGS}
     )
+
+install(FILES
+    activitymanager-plugin.desktop
+    DESTINATION ${SERVICETYPES_INSTALL_DIR}
+    )
+
 

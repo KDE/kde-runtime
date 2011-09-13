@@ -105,6 +105,8 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 	_lvLoD->setHeaderLabels( cols );
 	_lvLoD->setAllColumnsShowFocus(true);
 	_lvLoD->setRootIsDecorated( false );
+	_lvLoD->setSortingEnabled(true);
+	_lvLoD->sortByColumn(0, Qt::AscendingOrder);
 	_lvLoD->header()->setStretchLastSection(true);
 	gblay->addWidget( _lvLoD );
 
@@ -125,6 +127,8 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 	_lvStartup->setHeaderLabels( cols );
 	_lvStartup->setAllColumnsShowFocus(true);
 	_lvStartup->setRootIsDecorated( false );
+	_lvStartup->setSortingEnabled(true);
+	_lvStartup->sortByColumn(1, Qt::AscendingOrder);
 	_lvStartup->header()->setStretchLastSection(true);
 	gblay->addWidget( _lvStartup );
 

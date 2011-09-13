@@ -1,6 +1,6 @@
 /*******************************************************************
 * bugzillalib.h
-* Copyright  2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright  2009, 2011   Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -236,7 +236,6 @@ public:
     void addMeToCC(int);
 
     void checkVersionsForProduct(const QString &);
-    void delayedCheckVersionsForProduct(const QString &);
     
     /* Misc methods */
     QString urlForBug(int bug_number) const;
@@ -257,7 +256,6 @@ private Q_SLOTS:
     void addMeToCCSubJobFinished(KJob*);
     void addMeToCCJobFinished(KJob*);
     void checkVersionJobFinished(KJob*);
-    void delayedCheckVersionJobFinished(KJob*);
 
 Q_SIGNALS:
     /* Bugzilla actions finished successfully */
@@ -271,14 +269,14 @@ Q_SIGNALS:
     void checkVersionsForProductFinished(const QStringList);
 
     /* Bugzilla actions had errors */
-    void loginError(const QString &);
+    void loginError(const QString &, const QString &);
     void bugReportError(const QString &, QObject *);
     void searchError(const QString &);
-    void sendReportError(const QString &);
+    void sendReportError(const QString &, const QString &);
     void sendReportErrorInvalidValues(); //To use default values
-    void attachToReportError(const QString &);
-    void addCommentError(const QString &);
-    void addMeToCCError(const QString &);
+    void attachToReportError(const QString &, const QString &);
+    void addCommentError(const QString &, const QString &);
+    void addMeToCCError(const QString &, const QString &);
     void checkVersionsForProductError();
 
 private:

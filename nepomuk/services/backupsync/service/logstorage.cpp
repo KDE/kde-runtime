@@ -83,7 +83,7 @@ Nepomuk::ChangeLog Nepomuk::LogStorage::getChangeLog(const QDateTime& min)
             continue;
 
         //TODO: Optimize : Every record shouldn't be checked. Be smart!
-        log += ChangeLog::fromUrl( m_dirUrl + fileName, min );
+        log += ChangeLog::fromUrl( QString( m_dirUrl + fileName ), min );
     }
 
     //TODO: Optimize this!

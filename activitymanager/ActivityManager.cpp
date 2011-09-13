@@ -66,9 +66,14 @@ __inline int toInt(WId wid)
 
 // Private
 
-ActivityManagerPrivate::ActivityManagerPrivate(ActivityManager * parent)
+ActivityManagerPrivate::ActivityManagerPrivate(ActivityManager * parent,
+            QHash < WId, SharedInfo::WindowData > & _windows,
+            QHash < KUrl, SharedInfo::ResourceData > & _resources
+        )
     : haveSessions(false),
     config("activitymanagerrc"),
+    windows(_windows),
+    resources(_resources),
 #ifdef HAVE_NEPOMUK
     m_nepomukInitCalled(false),
 #endif
@@ -99,6 +104,8 @@ ActivityManagerPrivate::ActivityManagerPrivate(ActivityManager * parent)
 
     connect(KWindowSystem::self(), SIGNAL(windowRemoved(WId)),
             this, SLOT(windowClosed(WId)));
+    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
+            this, SLOT(activeWindowChanged(WId)));
 
     //listen to ksmserver for starting/stopping
     ksmserverInterface = new QDBusInterface("org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface");
@@ -116,7 +123,6 @@ ActivityManagerPrivate::ActivityManagerPrivate(ActivityManager * parent)
         ksmserverInterface->deleteLater();
         ksmserverInterface = 0;
     }
-
 }
 
 ActivityManagerPrivate::~ActivityManagerPrivate()
@@ -126,13 +132,25 @@ ActivityManagerPrivate::~ActivityManagerPrivate()
 
 void ActivityManagerPrivate::windowClosed(WId windowId)
 {
-    if (!resourcesForWindow.contains(windowId)) {
+    // kDebug() << "Window closed..." << windowId
+    //          << "one of ours?" << windows.contains(windowId);
+
+    if (!windows.contains(windowId)) {
         return;
     }
 
-    foreach(const KUrl & uri, resourcesForWindow[windowId]) {
-        q->NotifyResourceClosed(toInt(windowId), uri.url());
+    foreach (const KUrl & uri, windows[windowId].resources) {
+        q->RegisterResourceEvent(windows[windowId].application,
+                toInt(windowId), uri.url(), Event::Closed, resources[uri].reason);
     }
+}
+
+void ActivityManagerPrivate::activeWindowChanged(WId windowId)
+{
+    Q_UNUSED(windowId)
+    // kDebug() << "Window focussed..." << windowId
+    //          << "one of ours?" << windows.contains(windowId);
+
 }
 
 void ActivityManagerPrivate::setActivityState(const QString & id, ActivityManager::State state)
@@ -200,12 +218,36 @@ void ActivityManagerPrivate::ensureCurrentActivityIsRunning()
 
 bool ActivityManagerPrivate::setCurrentActivity(const QString & id)
 {
+    kDebug() << id;
     if (id.isEmpty()) {
         currentActivity.clear();
 
     } else {
         if (!activities.contains(id)) {
             return false;
+        }
+
+        if (currentActivity != id) {
+            kDebug() << "registering the events";
+            // Closing the previous activity:
+            if (!currentActivity.isEmpty()) {
+                q->RegisterResourceEvent(
+                        "kactivitymanagerd", 0,
+                        "activities://" + currentActivity,
+                        Event::Closed, Event::User
+                    );
+            }
+
+            q->RegisterResourceEvent(
+                    "kactivitymanagerd", 0,
+                    "activities://" + id,
+                    Event::Accessed, Event::User
+                );
+            q->RegisterResourceEvent(
+                    "kactivitymanagerd", 0,
+                    "activities://" + id,
+                    Event::Opened, Event::User
+                );
         }
 
         q->StartActivity(id);
@@ -216,6 +258,7 @@ bool ActivityManagerPrivate::setCurrentActivity(const QString & id)
         scheduleConfigSync();
     }
 
+    SharedInfo::self()->setCurrentActivity(id);
     emit q->CurrentActivityChanged(id);
     return true;
 }
@@ -239,6 +282,7 @@ void ActivityManagerPrivate::configSync()
 }
 
 #ifdef HAVE_NEPOMUK
+
 Nepomuk::Resource ActivityManagerPrivate::activityResource(const QString & id)
 {
     kDebug() << "testing for nepomuk";
@@ -272,12 +316,21 @@ void ActivityManagerPrivate::backstoreAvailable()
         emit q->ActivityChanged(i.key());
     }
 }
+
+#else // HAVE_NEPOMUK
+
+void ActivityManagerPrivate::backstoreAvailable()
+{
+}
+
 #endif // HAVE_NEPOMUK
 
 // Main
 
 ActivityManager::ActivityManager()
-    : d(new ActivityManagerPrivate(this))
+    : d(new ActivityManagerPrivate(this,
+            SharedInfo::self()->m_windows,
+            SharedInfo::self()->m_resources))
 {
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
@@ -290,10 +343,31 @@ ActivityManager::ActivityManager()
     // ensureCurrentActivityIsRunning();
 
     KCrash::setFlags(KCrash::AutoRestart);
+
+    EventProcessor::self();
+
+    kDebug() << "RegisterResourceEvent open" << d->currentActivity;
+    RegisterResourceEvent(
+            "kactivitymanagerd", 0,
+            "activities://" + d->currentActivity,
+            Event::Accessed, Event::User
+        );
+    RegisterResourceEvent(
+            "kactivitymanagerd", 0,
+            "activities://" + d->currentActivity,
+            Event::Opened, Event::User
+        );
+
 }
 
 ActivityManager::~ActivityManager()
 {
+    kDebug() << "RegisterResourceEvent close" << d->currentActivity;
+    RegisterResourceEvent(
+            "kactivitymanagerd", 0,
+            "activities://" + d->currentActivity,
+            Event::Closed, Event::User
+        );
     delete d;
 }
 
@@ -648,47 +722,49 @@ void ActivityManager::SetActivityIcon(const QString & id, const QString & icon)
 
 
 // Resource related mothods
-
-void ActivityManager::NotifyResourceAccessed(const QString & application, const QString & uri)
+void ActivityManager::RegisterResourceEvent(const QString & application, uint _windowId,
+        const QString & uri, uint event, uint reason)
 {
-    EventProcessor::addEvent(application, uri, EventProcessor::Accessed);
-}
+    if (event > Event::LastEventType || reason > Event::LastEventReason)
+        return;
 
-void ActivityManager::NotifyResourceClosed(uint _windowId, const QString & uri)
-{
-    WId windowId = (WId)_windowId;
-    d->resourcesForWindow[windowId].remove(KUrl(uri));
+    WId windowId = (WId) _windowId;
 
-    EventProcessor::addEvent(d->applicationForWindow[windowId], uri, EventProcessor::Closed);
+    kDebug() << "New event on the horizon" << application << _windowId << windowId << event << Event::Opened;
+    if (event == Event::Opened) {
 
-    if (d->resourcesForWindow[windowId].size() == 0) {
-        d->resourcesForWindow.remove(windowId);
-        d->applicationForWindow.remove(windowId);
-    }
-}
+        KUrl kuri(uri);
 
-void ActivityManager::NotifyResourceModified(uint windowId, const QString & uri)
-{
-    EventProcessor::addEvent(d->applicationForWindow[(WId)windowId], uri, EventProcessor::Modified);
-}
+        kDebug() << "Saving the open event for the window" << windowId;
 
-void ActivityManager::NotifyResourceOpened(const QString & application, uint _windowId, const QString & uri)
-{
-    WId windowId = (WId)_windowId;
-    if (!d->applicationForWindow.contains(windowId)) {
-        d->applicationForWindow[windowId] = application;
+        d->windows[windowId].resources << kuri;
+        d->resources[kuri].activities << CurrentActivity();
+
+        kDebug() << d->windows.keys();
+
+    } else if (event == Event::Closed) {
+
+        // TODO: Remove from d->resources if needed
+        d->windows.remove(windowId);
+
     }
 
+    EventProcessor::self()->addEvent(application, windowId,
+            uri, (Event::Type) event, (Event::Reason) reason);
+
+}
+
+void ActivityManager::RegisterResourceMimeType(const QString & uri, const QString & mimetype)
+{
     KUrl kuri(uri);
-    d->resourcesForWindow[windowId] << kuri;
-    d->activitiesForUrl[kuri] << CurrentActivity();
 
-    EventProcessor::addEvent(application, uri, EventProcessor::Opened);
+    d->resources[kuri].mimetype = mimetype;
 }
 
-QStringList ActivityManager::ActivitiesForResource(const QString & uri) const
+// static
+ActivityManager * ActivityManager::self()
 {
-    return d->activitiesForUrl.value(uri).toList();
+    return static_cast<ActivityManager*>(kapp);
 }
 
 

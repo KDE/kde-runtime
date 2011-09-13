@@ -274,7 +274,7 @@ bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 bool Nepomuk::NepomukProtocol::ensureNepomukRunning()
 {
     if ( Nepomuk::ResourceManager::instance()->init() ) {
-        error( KIO::ERR_SLAVE_DEFINED, i18n( "The Nepomuk system is not activated. Unable to answer queries without it." ) );
+        error( KIO::ERR_SLAVE_DEFINED, i18n( "The desktop search service is not activated. Unable to answer queries without it." ) );
         return false;
     }
     else {

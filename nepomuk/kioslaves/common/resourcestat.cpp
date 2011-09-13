@@ -171,7 +171,7 @@ KUrl Nepomuk::convertRemovableMediaFileUrl( const KUrl& url, bool evenMountIfNec
          ( storage->isAccessible() ||
            ( evenMountIfNecessary && Nepomuk::mountAndWait( storage ) ) ) ) {
         kDebug() << "converted:" << KUrl( storage->filePath() + QLatin1String( "/" ) + url.path() );
-        return storage->filePath() + QLatin1String( "/" ) + url.path();
+        return QString( storage->filePath() + QLatin1String( "/" ) + url.path() );
     }
     else {
         return KUrl();

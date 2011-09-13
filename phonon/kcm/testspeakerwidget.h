@@ -26,23 +26,24 @@
 #include <pulse/pulseaudio.h>
 
 
-class SpeakerSetup;
+class AudioSetup;
 
 class TestSpeakerWidget: public KPushButton
 {
     Q_OBJECT
     public:
-        TestSpeakerWidget(const pa_channel_position_t pos, ca_context *canberra, SpeakerSetup* ss);
+        TestSpeakerWidget(const pa_channel_position_t pos, ca_context *canberra, AudioSetup* ss);
+        ~TestSpeakerWidget();
 
     private slots:
-        void clicked();
+        void toggled(bool);
 
     private:
         QString _positionName();
         const char* _positionAsString();
         const char* _positionSoundName();
 
-        SpeakerSetup* m_Ss;
+        AudioSetup* m_Ss;
         pa_channel_position_t m_Pos;
         ca_context* m_Canberra;
 };

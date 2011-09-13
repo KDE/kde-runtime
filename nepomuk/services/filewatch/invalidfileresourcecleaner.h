@@ -28,7 +28,7 @@ namespace Nepomuk {
     /**
      * Once started cleans up file resource entries for
      * files that do not exist anymore.
-     * This is something that might happen when strigi is
+     * This is something that might happen when the file indexer is
      * disabled and files have been removed while Nepomuk
      * was not running.
      *
@@ -53,10 +53,19 @@ namespace Nepomuk {
          */
         ~InvalidFileResourceCleaner();
 
+        /**
+         * Start the cleaner thread with a base path, ie. only
+         * check files under that optional path.
+         */
+        void start(const QString& basePath);
+
+        using QThread::start;
+
     private:
         void run();
 
         bool m_stopped;
+        QString m_basePath;
     };
 }
 

@@ -51,6 +51,9 @@ kuvo: {
     nao:userVisible
         nao:userVisible false .
 
+    nao:hasSubResource
+        nao:userVisible false .
+
     nuao:Event
         nao:userVisible false .
 

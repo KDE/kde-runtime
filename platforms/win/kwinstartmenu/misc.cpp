@@ -108,7 +108,7 @@ QString getKDEStartMenuRootEntry()
 {
     QString version = KDE::versionString();
     QStringList versions = version.split(' '); 
-    QString addOn = !globalOptions.rootCustomString.isEmpty() ?  globalOptions.rootCustomString + ' ' : "";
+    QString addOn = !globalOptions.rootCustomString.isEmpty() ? globalOptions.rootCustomString + QString(" ") : QString("");
 #ifdef QT_NO_DEBUG
     QString compileMode = "Release"; 
 #else

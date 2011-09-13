@@ -37,19 +37,19 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout">
+      <layout class="QHBoxLayout" name="showAdvancedDevicesContainer">
        <property name="spacing">
         <number>0</number>
        </property>
        <item>
-        <widget class="QCheckBox" name="showCheckBox">
+        <widget class="QCheckBox" name="showAdvancedDevicesCheckBox">
          <property name="text">
           <string>Show advanced devices</string>
          </property>
         </widget>
        </item>
        <item>
-        <spacer>
+        <spacer name="showAdvancedDevicesSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -152,19 +152,6 @@
    </item>
    <item row="1" column="1">
     <layout class="QHBoxLayout">
-     <item>
-      <widget class="QToolButton" name="removeButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Remove</string>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextBesideIcon</enum>
-       </property>
-      </widget>
-     </item>
      <item>
       <spacer>
        <property name="orientation">

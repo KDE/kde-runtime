@@ -23,7 +23,7 @@
 
 #include "kaction.h"
 #include "globalshortcutsregistry.h"
-#include "kkeyserver_x11.h"
+#include "kkeyserver.h"
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -88,6 +88,7 @@ bool KGlobalAccelImpl::grabKey( int keyQt, bool grab )
 
 	int keyCodeX;
 	uint keyModX;
+	uint keySymX;
 
 	// Resolve the modifier
 	if( !KKeyServer::keyQtToModX(keyQt, &keyModX) ) {
@@ -95,10 +96,23 @@ bool KGlobalAccelImpl::grabKey( int keyQt, bool grab )
 		return false;
 	}
 
-	// Resolve the key
-	if( !KKeyServer::keyQtToCodeX(keyQt, &keyCodeX) ) {
+	// Resolve the X symbol
+	if( !KKeyServer::keyQtToSymX(keyQt, (int *)&keySymX) ) {
 		kDebug() << "keyQt (0x" << hex << keyQt << ") failed to resolve to x11 keycode";
 		return false;
+	}
+
+	keyCodeX = XKeysymToKeycode( QX11Info::display(), keySymX );
+
+	// Check if shift needs to be added to the grab since KKeySequenceWidget
+	// can remove shift for some keys. (all the %&* and such)
+	if( !(keyQt & Qt::SHIFT) &&
+	    !KKeyServer::isShiftAsModifierAllowed( keyQt ) &&
+	    keySymX != XKeycodeToKeysym( QX11Info::display(), keyCodeX, 0 ) &&
+	    keySymX == XKeycodeToKeysym( QX11Info::display(), keyCodeX, 1 ) )
+	{
+		kDebug() << "adding shift to the grab";
+		keyModX |= KKeyServer::modXShift();
 	}
 
 	keyModX &= g_keyModMaskXAccel; // Get rid of any non-relevant bits in mod
@@ -140,8 +154,8 @@ bool KGlobalAccelImpl::grabKey( int keyQt, bool grab )
 			for( uint m = 0; m <= 0xff; m++ ) {
 				if(( m & keyModMaskX ) == 0 )
 					XUngrabKey( QX11Info::display(), keyCodeX, keyModX | m, QX11Info::appRootWindow() );
-				}
 			}
+		}
 	}
 
 	return !failed;
@@ -233,6 +247,11 @@ bool KGlobalAccelImpl::x11KeyPress( const XEvent *pEvent )
 	int keyModQt;
 	KKeyServer::symXToKeyQt(keySymX, &keyCodeQt);
 	KKeyServer::modXToQt(keyModX, &keyModQt);
+
+	if( keyModQt & Qt::SHIFT && !KKeyServer::isShiftAsModifierAllowed( keyCodeQt ) ) {
+		kDebug() << "removing shift modifier";
+		keyModQt &= ~Qt::SHIFT;
+	}
 
 	int keyQt = keyCodeQt | keyModQt;
 

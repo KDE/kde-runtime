@@ -474,8 +474,11 @@ void Newspaper::saveContents(KConfigGroup &group) const
             const Applet *applet = dynamic_cast<Applet *>(lay->itemAt(row));
             if (applet) {
                 KConfigGroup appletConfig(&appletsConfig, QString::number(applet->id()));
-                KConfigGroup layoutConfig(&appletConfig, "LayoutInformation");
+                appletConfig.deleteEntry("geometry");
+                appletConfig.deleteEntry("zvalue");
+                appletConfig.deleteEntry("transform");
 
+                KConfigGroup layoutConfig(&appletConfig, "LayoutInformation");
                 layoutConfig.writeEntry("Column", column);
                 layoutConfig.writeEntry("Order", row);
             }

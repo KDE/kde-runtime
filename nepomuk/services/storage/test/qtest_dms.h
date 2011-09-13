@@ -25,19 +25,25 @@
 #include <QtTest>
 #include <Soprano/Statement>
 #include <Soprano/Node>
+#include <Soprano/Model>
 
 namespace QTest {
 template<>
-char* toString(const Soprano::Node& node) {
+inline char* toString(const Soprano::Node& node) {
     return qstrdup( node.toN3().toLatin1().data() );
 }
 
 template<>
-char* toString(const Soprano::Statement& s) {
+inline char* toString(const Soprano::Statement& s) {
     return qstrdup( (s.subject().toN3() + QLatin1String(" ") +
                      s.predicate().toN3() + QLatin1String(" ") +
                      s.object().toN3() + QLatin1String(" . ")).toLatin1().data() );
 }
+
+}
+
+namespace Nepomuk {
+    void insertOntologies( Soprano::Model *model, const QUrl &ontologyGraph );
 }
 
 #endif // QTEST_DMS_H

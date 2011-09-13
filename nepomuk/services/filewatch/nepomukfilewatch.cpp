@@ -18,10 +18,12 @@
 
 #include "nepomukfilewatch.h"
 #include "metadatamover.h"
-#include "strigiserviceinterface.h"
+#include "fileindexerinterface.h"
 #include "fileexcludefilters.h"
 #include "invalidfileresourcecleaner.h"
-#include "../strigi/strigiserviceconfig.h"
+#include "removabledeviceindexnotification.h"
+#include "removablemediacache.h"
+#include "fileindexerconfig.h"
 
 #ifdef BUILD_KINOTIFY
 #include "kinotify.h"
@@ -42,15 +44,6 @@
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Node>
-
-#include <Solid/DeviceNotifier>
-#include <Solid/DeviceInterface>
-#include <Solid/Device>
-#include <Solid/StorageDrive>
-#include <Solid/StorageAccess>
-#include <Solid/StorageVolume>
-#include <Solid/NetworkShare>
-#include <Solid/Predicate>
 
 
 NEPOMUK_EXPORT_SERVICE( Nepomuk::FileWatch, "nepomukfilewatch")
@@ -101,12 +94,14 @@ namespace {
     {
         Q_UNUSED( flags );
 
-        //Only watch the strigi index folders for file creation.
-        if( Nepomuk::StrigiServiceConfig::self()->shouldFolderBeIndexed( path ) ) {
+        // Only watch the index folders for file creation and change.
+        if( Nepomuk::FileIndexerConfig::self()->shouldFolderBeIndexed( path ) ) {
             modes |= KInotify::EventCreate;
+            modes |= KInotify::EventModify;
         }
         else {
             modes &= (~KInotify::EventCreate);
+            modes &= (~KInotify::EventModify);
         }
 
         return true;
@@ -119,7 +114,7 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
     : Service( parent )
 {
     // the list of default exclude filters we use here differs from those
-    // that can be configured for the strigi service
+    // that can be configured for the file indexer service
     // the default list should only contain files and folders that users are
     // very unlikely to ever annotate but that change very often. This way
     // we avoid a lot of work while hopefully not breaking the workflow of
@@ -164,14 +159,14 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
 #endif
 
     // we automatically watch newly mounted media - it is very unlikely that anything non-interesting is mounted
+    m_removableMediaCache = new RemovableMediaCache(this);
+    connect(m_removableMediaCache, SIGNAL(deviceMounted(const Nepomuk::RemovableMediaCache::Entry*)),
+            this, SLOT(slotDeviceMounted(const Nepomuk::RemovableMediaCache::Entry*)));
     addWatchesForMountedRemovableMedia();
-    connect( Solid::DeviceNotifier::instance(), SIGNAL( deviceAdded( const QString& ) ),
-             this, SLOT( slotSolidDeviceAdded( const QString& ) ) );
-
 
     (new InvalidFileResourceCleaner(this))->start();
     
-    connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
+    connect( FileIndexerConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( updateIndexedFoldersWatches() ) );
 }
 
@@ -190,7 +185,7 @@ void Nepomuk::FileWatch::watchFolder( const QString& path )
 #ifdef BUILD_KINOTIFY
     if ( m_dirWatch && !m_dirWatch->watchingPath( path ) )
         m_dirWatch->addWatch( path,
-                              KInotify::WatchEvents( KInotify::EventMove|KInotify::EventDelete|KInotify::EventDeleteSelf|KInotify::EventCreate ),
+                              KInotify::WatchEvents( KInotify::EventMove|KInotify::EventDelete|KInotify::EventDeleteSelf|KInotify::EventCreate|KInotify::EventModify ),
                               KInotify::WatchFlags() );
 #endif
 }
@@ -239,33 +234,45 @@ void Nepomuk::FileWatch::slotFileDeleted( const QString& urlString, bool isDir )
 void Nepomuk::FileWatch::slotFileCreated( const QString& path )
 {
     kDebug() << path;
-    updateFolderViaStrigi( path );
+    updateFileViaFileIndexer( path );
 }
 
 
 void Nepomuk::FileWatch::slotFileModified( const QString& path )
 {
-    updateFolderViaStrigi( path );
+    updateFileViaFileIndexer( path );
 }
 
 
 void Nepomuk::FileWatch::slotMovedWithoutData( const QString& path )
 {
-    updateFolderViaStrigi( path );
+    updateFolderViaFileIndexer( path );
 }
 
 
 // static
-void Nepomuk::FileWatch::updateFolderViaStrigi( const QString& path )
+void Nepomuk::FileWatch::updateFileViaFileIndexer(const QString &path)
 {
-    if( StrigiServiceConfig::self()->shouldBeIndexed(path) ) {
+    if( FileIndexerConfig::self()->shouldBeIndexed(path) ) {
+        org::kde::nepomuk::FileIndexer fileIndexer( "org.kde.nepomuk.services.nepomukfileindexer", "/nepomukfileindexer", QDBusConnection::sessionBus() );
+        if ( fileIndexer.isValid() ) {
+            fileIndexer.indexFile( path );
+        }
+    }
+}
+
+
+// static
+void Nepomuk::FileWatch::updateFolderViaFileIndexer( const QString& path )
+{
+    if( FileIndexerConfig::self()->shouldBeIndexed(path) ) {
         //
-        // Tell Strigi service (if running) to update the newly created
+        // Tell the file indexer service (if running) to update the newly created
         // folder or the folder containing the newly created file
         //
-        org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
-        if ( strigi.isValid() ) {
-            strigi.updateFolder( path, false /* non-recursive */, false /* no forced update */ );
+        org::kde::nepomuk::FileIndexer fileIndexer( "org.kde.nepomuk.services.nepomukfileindexer", "/nepomukfileindexer", QDBusConnection::sessionBus() );
+        if ( fileIndexer.isValid() ) {
+            fileIndexer.updateFolder( path, false /* non-recursive */, false /* no forced update */ );
         }
     }
 }
@@ -304,7 +311,7 @@ void Nepomuk::FileWatch::updateIndexedFoldersWatches()
 {
 #ifdef BUILD_KINOTIFY
     if( m_dirWatch ) {
-        QStringList folders = StrigiServiceConfig::self()->includeFolders();
+        QStringList folders = FileIndexerConfig::self()->includeFolders();
         foreach( const QString & folder, folders ) {
             m_dirWatch->removeWatch( folder );
             watchFolder( folder );
@@ -313,82 +320,62 @@ void Nepomuk::FileWatch::updateIndexedFoldersWatches()
 #endif
 }
 
-namespace {
-    bool isUsableDevice( const Solid::Device& dev ) {
-        if ( dev.is<Solid::StorageAccess>() ) {
-            if( dev.is<Solid::StorageVolume>() &&
-                    dev.parent().is<Solid::StorageDrive>() &&
-                    ( dev.parent().as<Solid::StorageDrive>()->isRemovable() ||
-                      dev.parent().as<Solid::StorageDrive>()->isHotpluggable() ) ) {
-                const Solid::StorageVolume* volume = dev.as<Solid::StorageVolume>();
-                if ( !volume->isIgnored() && volume->usage() == Solid::StorageVolume::FileSystem )
-                    return true;
-            }
-            else if(dev.is<Solid::NetworkShare>()) {
-                return !dev.as<Solid::NetworkShare>()->url().isEmpty();
-            }
-        }
-
-        // fallback
-        return false;
-    }
-
-    bool isUsableDevice( const QString& udi ) {
-        Solid::Device dev( udi );
-        return isUsableDevice( dev );
-    }
-}
 
 void Nepomuk::FileWatch::addWatchesForMountedRemovableMedia()
 {
-    QList<Solid::Device> devices
-            = Solid::Device::listFromQuery(QLatin1String("StorageVolume.usage=='FileSystem'"))
-            + Solid::Device::listFromType(Solid::DeviceInterface::NetworkShare);
-    foreach( const Solid::Device& dev, devices ) {
-        slotSolidDeviceAdded(dev.udi());
+    Q_FOREACH(const RemovableMediaCache::Entry* entry, m_removableMediaCache->allMedia()) {
+        if(entry->isMounted())
+            slotDeviceMounted(entry);
     }
 }
 
-void Nepomuk::FileWatch::slotSolidDeviceAdded(const QString &udi)
+void Nepomuk::FileWatch::slotDeviceMounted(const Nepomuk::RemovableMediaCache::Entry* entry)
 {
     //
-    // We are interested in every mount there is.
+    // now that the device is mounted we can clean up our db - in case we have any
+    // data for file that have been deleted from the device in the meantime.
     //
-    Solid::Device dev(udi);
-    if ( isUsableDevice(dev) ) {
-        const Solid::StorageAccess* storage = dev.as<Solid::StorageAccess>();
-        if ( storage && !storage->isIgnored() ) {
-            connect(storage, SIGNAL(accessibilityChanged(bool,QString)), SLOT(slotDeviceAccessibilityChanged(bool,QString)));
-            slotDeviceAccessibilityChanged(storage->isAccessible(), dev.udi());
+    InvalidFileResourceCleaner* cleaner = new InvalidFileResourceCleaner(this);
+    cleaner->start(entry->mountPath());
+
+    //
+    // tell the file indexer to update the newly mounted device
+    //
+    KConfig fileIndexerConfig( "nepomukstrigirc" );
+    int index = 0;
+    if(fileIndexerConfig.group("Devices").hasKey(entry->url())) {
+        index = fileIndexerConfig.group("Devices").readEntry(entry->url(), false) ? 1 : -1;
+    }
+
+    const bool indexNewlyMounted = fileIndexerConfig.group( "RemovableMedia" ).readEntry( "index newly mounted", false );
+    const bool askIndividually = fileIndexerConfig.group( "RemovableMedia" ).readEntry( "ask user", false );
+
+    if( index == 0 && indexNewlyMounted && !askIndividually ) {
+        index = 1;
+    }
+
+    // index automatically
+    if( index == 1 ) {
+        kDebug() << "Device configured for automatic indexing. Calling the file indexer service.";
+        org::kde::nepomuk::FileIndexer fileIndexer( "org.kde.nepomuk.services.nepomukfileindexer", "/nepomukfileindexer", QDBusConnection::sessionBus() );
+        if ( fileIndexer.isValid() ) {
+            fileIndexer.indexFolder( entry->mountPath(), true /* recursive */, false /* no forced update */ );
         }
     }
-}
 
-void Nepomuk::FileWatch::slotDeviceAccessibilityChanged(bool accessible, const QString &udi)
-{
-    if(accessible) {
-        Solid::Device dev(udi);
-        if(Solid::StorageAccess* sa = dev.as<Solid::StorageAccess>()) {
-            kDebug() << "Installing watch for removable storage at mount point" << sa->filePath();
-            watchFolder(sa->filePath());
-
-            // TODO: start an InvalidFileResourceCleaner thread on this path
-
-            //
-            // tell Strigi to update the newly mounted device
-            // TODO: create a better config for this: let the user decide on a case-by-case thingi
-            //       very much like KDE's auto-mounting handling. (maybe both KCMs can be combined
-            //       into one removable media KCM)
-            //
-            if( KConfig( "nepomukstrigirc" ).group( "General" ).readEntry( "index newly mounted", false ) ) {
-                org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
-                if ( strigi.isValid() ) {
-                    strigi.indexFolder( sa->filePath(), true /* recursive */, false /* no forced update */ );
-                }
-            }
-        }
+    // ask the user if we should index
+    else if( index == 0 && indexNewlyMounted && askIndividually ) {
+        kDebug() << "Device unknown. Asking user for action.";
+        (new RemovableDeviceIndexNotification(entry, this))->sendEvent();
     }
-}
 
+    else {
+        // TODO: remove all the indexed info
+        kDebug() << "Device configured to not be indexed.";
+    }
+
+    kDebug() << "Installing watch for removable storage at mount point" << entry->mountPath();
+    watchFolder(entry->mountPath());
+}
 
 #include "nepomukfilewatch.moc"

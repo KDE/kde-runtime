@@ -111,12 +111,14 @@ void Nepomuk::Query::Folder::update()
 
 QList<Nepomuk::Query::Result> Nepomuk::Query::Folder::entries() const
 {
-    return m_results.toList();
+    QMutexLocker lock(&m_runnableMutex);
+    return m_results.values();
 }
 
 
 bool Nepomuk::Query::Folder::initialListingDone() const
 {
+    QMutexLocker lock(&m_runnableMutex);
     return m_initialListingDone;
 }
 
@@ -142,17 +144,23 @@ Nepomuk::Query::RequestPropertyMap Nepomuk::Query::Folder::requestPropertyMap() 
 // called from SearchRunnable in the search thread
 void Nepomuk::Query::Folder::addResults( const QList<Nepomuk::Query::Result>& results )
 {
+    QMutexLocker lock(&m_runnableMutex);
+
     QSet<Result> newResults;
     Q_FOREACH( const Result& result, results ) {
-        if ( !m_results.contains( result ) ) {
+        if ( !m_results.contains( result.resource().resourceUri() ) ) {
             newResults.insert( result );
         }
     }
 
-    m_newResults += newResults;
+    Q_FOREACH(const Result& result, results) {
+        if ( !m_newResults.contains( result.resource().resourceUri() ) ) {
+            m_newResults.insert(result.resource().resourceUri(), result);
+        }
+    }
 
     if( !newResults.isEmpty() ) {
-        emit newEntries( newResults.toList() );
+        emit newEntries( newResults.values() );
     }
 }
 
@@ -169,7 +177,7 @@ void Nepomuk::Query::Folder::listingFinished()
 
     // legacy removed results
     foreach( const Result& result, m_results ) {
-        if ( !m_newResults.contains( result ) ) {
+        if ( !m_newResults.contains( result.resource().resourceUri() ) ) {
             removedResults << result;
             emit entriesRemoved( QList<QUrl>() << KUrl(result.resource().resourceUri()).url() );
         }

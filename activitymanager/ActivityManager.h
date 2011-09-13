@@ -51,6 +51,18 @@ public:
     };
 
     /**
+     * The event type
+     */
+    enum EventType {
+        Accessed = 1,
+        Opened = 2,
+        Modified = 3,
+        Closed = 4,
+        FocussedIn = 5,
+        FocussedOut = 6
+    };
+
+    /**
      * Creates new ActivityManager
      */
     ActivityManager();
@@ -60,7 +72,7 @@ public:
      */
     virtual ~ActivityManager();
 
-
+    static ActivityManager* self();
 
 // service control methods
 public Q_SLOTS:
@@ -222,70 +234,25 @@ Q_SIGNALS:
 
 // Resource related mothods
 public Q_SLOTS:
-    /**
-     * Should be called when the client application accesses
-     * the file but is not interested in registering more advanced
-     * events like open/modify/close.
-     * @param application unformatted name of the application
-     * @param uri uri of the resource
-     */
-    void NotifyResourceAccessed(const QString & application, const QString & uri);
 
     /**
-     * Should be called when the client application
-     * opens a new resource identifiable by an uri.
-     * @param application unformatted name of the application
-     * @param windowId ID of the window that registers the resource
-     * @param uri uri of the resource
+     * Registers a new event
+     * @param application the name of application that sent the event. Ignored if the event is not of type Opened
+     * @param windowId ID of the window that displays the resource. Ignored if the event is of type Accessed
+     * @param uri URI of the resource on which the event happened
+     * @param event type of the event
+     * @param reason reason for opening the resource
      */
-    void NotifyResourceOpened(const QString & application, uint windowId, const QString & uri);
+    void RegisterResourceEvent(const QString & application, uint windowId, const QString & uri, uint event, uint reason);
 
     /**
-     * Should be called when the client application
-     * modifies a resource already registered with NotifyResourceOpened
-     * @param windowId ID of the window that registers the resource
-     * @param uri uri of the resource
+     * Registers resource's mimetype. If not manually specified, it will
+     * be retrieved if needed from Nepomuk
+     *
+     * Note that this will be forgotten when the resource in question is closed.
+     * @param uri URI of the resource
      */
-    void NotifyResourceModified(uint windowId, const QString & uri);
-
-    /**
-     * Should be called when the client application
-     * closes a resource previously registered with
-     * NotifyResourceOpened.
-     * @param ID of the window that unregisters the resource
-     * @param uri uri of the resource
-     */
-    void NotifyResourceClosed(uint windowId, const QString & uri);
-
-    /**
-     * @returns the list of activities that are associated with
-     * the specified resource
-     * @param uri uri of the resource
-     */
-    QStringList ActivitiesForResource(const QString & uri) const;
-
-Q_SIGNALS:
-    /**
-     * @see NotifyResourceAccessed
-     */
-    void ResourceAccessed(const QString & application, const QString & uri);
-
-    /**
-     * @see NotifyResourceOpened
-     */
-    void ResourceOpened(const QString & application, uint windowId, const QString & uri);
-
-    /**
-     * @see NotifyResourceModified
-     */
-    void ResourceModified(uint windowId, const QString & uri);
-
-    /**
-     * @see NotifyResourceClosed
-     */
-    void ResourceClosed(uint windowId, const QString & uri);
-
-
+    void RegisterResourceMimeType(const QString & uri, const QString & mimetype);
 
 private:
     friend class ActivityManagerPrivate;

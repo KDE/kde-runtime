@@ -1,2 +1,2 @@
 #! /usr/bin/env bash
-$XGETTEXT `find . -name "*.cpp"` -o $podir/nepomukstorage.pot
+$XGETTEXT `find . -name "*.cpp" | grep -v '/test/'` -o $podir/nepomukstorage.pot

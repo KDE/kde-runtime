@@ -78,6 +78,8 @@ void SystemInformation::lsbReleaseFinished()
         setBugzillaPlatform(QLatin1String("RedHat RPMs"));
     } else if ( m_lsbRelease.contains("mandriva",Qt::CaseInsensitive) ) {
         setBugzillaPlatform(QLatin1String("Mandriva RPMs"));
+    } else if ( m_lsbRelease.contains("mageia",Qt::CaseInsensitive) ) {
+        setBugzillaPlatform(QLatin1String("Mageia RPMs"));
     } else if ( m_lsbRelease.contains("slack",Qt::CaseInsensitive) ) {
         setBugzillaPlatform(QLatin1String("Slackware Packages"));
     } else if ( m_lsbRelease.contains("pardus",Qt::CaseInsensitive) ) {
@@ -90,6 +92,8 @@ void SystemInformation::lsbReleaseFinished()
         setBugzillaPlatform(QLatin1String("OpenBSD Packages"));
     } else if ( m_lsbRelease.contains("solaris",Qt::CaseInsensitive) ) {
         setBugzillaPlatform(QLatin1String("Solaris Packages"));
+    } else if ( m_lsbRelease.contains("chakra",Qt::CaseInsensitive) ) {
+        setBugzillaPlatform(QLatin1String("Chakra"));
     } else if ( m_lsbRelease.contains("arch",Qt::CaseInsensitive) ) {
         setBugzillaPlatform(QLatin1String("Archlinux Packages"));
     } else if ( m_lsbRelease.contains("debian",Qt::CaseInsensitive) ) {

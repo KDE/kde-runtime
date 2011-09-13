@@ -218,7 +218,9 @@ static bool isFunctionUseful(const BacktraceLine & line)
     //Misc ignores
     if ( line.functionName() == "__kernel_vsyscall"
          || line.functionName() == "raise"
-         || line.functionName() == "abort" ) {
+         || line.functionName() == "abort"
+         || line.functionName() == "__libc_message"
+         || line.functionName() == "thr_kill" /* *BSD */) {
         return false;
     }
 
@@ -238,9 +240,13 @@ static bool isFunctionUseful(const BacktraceLine & line)
     }
 
     //Ignore core Qt containers misc functions
-    if ( line.functionName().endsWith(QLatin1String("::detach"))
-        || line.functionName().endsWith(QLatin1String("::detach_helper"))
-        || line.functionName().endsWith(QLatin1String("::node_create")) ) {
+    if ( line.functionName().endsWith(QLatin1String("detach"))
+        || line.functionName().endsWith(QLatin1String("detach_helper"))
+        || line.functionName().endsWith(QLatin1String("node_create"))
+        || line.functionName().endsWith(QLatin1String("deref"))
+        || line.functionName().endsWith(QLatin1String("ref"))
+        || line.functionName().endsWith(QLatin1String("node_copy"))
+        || line.functionName().endsWith(QLatin1String("d_func")) ) {
         return false;
     }
 
@@ -267,8 +273,10 @@ static bool isFunctionUsefulForSearch(const BacktraceLine & line)
         || line.functionName().startsWith(QLatin1String("QSet"))
         || line.functionName().startsWith(QLatin1String("QMap"))
         || line.functionName().startsWith(QLatin1String("QMultiMap"))
+        || line.functionName().startsWith(QLatin1String("QMapData"))
         || line.functionName().startsWith(QLatin1String("QHash"))
-        || line.functionName().startsWith(QLatin1String("QMultiHash")) ) {
+        || line.functionName().startsWith(QLatin1String("QMultiHash"))
+        || line.functionName().startsWith(QLatin1String("QHashData")) ) {
         return false;
     }
 

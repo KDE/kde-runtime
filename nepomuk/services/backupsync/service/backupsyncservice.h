@@ -28,8 +28,6 @@
 namespace Nepomuk {
 
     class DiffGenerator;
-    class Identifier;
-    class Merger;
 
     class SyncManager;
     class BackupManager;
@@ -47,8 +45,6 @@ namespace Nepomuk {
 
     private:
         DiffGenerator * m_diffGenerator;
-        Identifier * m_identifier;
-        Merger * m_merger;
 
         SyncManager * m_syncManager;
         BackupManager * m_backupManager;

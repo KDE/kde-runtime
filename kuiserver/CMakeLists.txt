@@ -3,7 +3,7 @@ add_subdirectory( tests )
 include_directories( ${KDE4_KIO_INCLUDES} )
 
 # for dbus_add_activation_service
-include(PkgConfigGetVar)
+include(MacroDBusAddActivationService)
 
 set(kuiserver_KDEINIT_SRCS
 main.cpp

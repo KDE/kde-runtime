@@ -45,6 +45,7 @@ set(drkonqi_SRCS
     debuggermanager.cpp
     applicationdetailsexamples.cpp
     gdbhighlighter.cpp
+    findconfigdatajob.cpp
 )
 
 kde4_add_ui_files(drkonqi_SRCS
@@ -70,6 +71,6 @@ kde4_add_ui_files(drkonqi_SRCS
 
 kde4_add_executable(drkonqi ${drkonqi_SRCS})
 
-target_link_libraries(drkonqi ${KDE4_KIO_LIBS} drkonqi_backtrace_parser)
+target_link_libraries(drkonqi ${KDE4_KIO_LIBS} ${QT_QTWEBKIT_LIBRARY} ${KDE4_KDEWEBKIT_LIBRARY} drkonqi_backtrace_parser)
 
 install(TARGETS drkonqi DESTINATION ${LIBEXEC_INSTALL_DIR})

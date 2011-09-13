@@ -20,30 +20,30 @@
 #ifndef EVENT_PROCESSOR_H
 #define EVENT_PROCESSOR_H
 
+#include <QObject>
 #include <QThread>
 
+#include "Event.h"
+
+class Plugin;
 class EventProcessorPrivate;
 
 /**
  * Thread to process desktop/usage events
  */
-class EventProcessor: public QThread {
+class EventProcessor: public QObject {
+    Q_OBJECT;
+
 public:
     static EventProcessor * self();
 
     virtual ~EventProcessor();
 
-    enum EventType {
-        Accessed,
-        Opened,
-        Modified,
-        Closed
-    };
+    void addEvent(const QString & application, WId wid, const QString & uri,
+            int type = Event::Accessed, int reason = Event::User);
 
-    static void addEvent(const QString & application, const QString & uri, EventType type);
-
-protected:
-    void _event(const QString & application, const QString & uri, EventType type);
+private Q_SLOTS:
+    void updateScore(const QString & application, const QString & uri);
 
 private:
     EventProcessor();

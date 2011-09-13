@@ -20,7 +20,6 @@ add_definitions(-DDISABLE_NEPOMUK_LEGACY=1)
 set(nepomuksync_SRCS
     resourcemerger.cpp
     resourceidentifier.cpp
-    resourceidentifier_p.cpp
     identificationsetgenerator.cpp
     syncresource.cpp
 )
@@ -45,11 +44,11 @@ target_link_libraries(nepomuksync
   )
 
 install(TARGETS nepomuksync EXPORT kdelibsLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS})
-
-install(FILES
-    resourceidentifier.h
-    resourcemerger.h
-    syncresource.h
-    nepomuksync_export.h
-    DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk COMPONENT Devel
-)
+#
+# install(FILES
+#     resourceidentifier.h
+#     resourcemerger.h
+#     syncresource.h
+#     nepomuksync_export.h
+#     DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk COMPONENT Devel
+# )
