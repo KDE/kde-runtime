@@ -68,7 +68,7 @@ Rankings * Rankings::self()
 Rankings::Rankings(QObject * parent)
     : QObject(parent)
 {
-    kDebug() << "We are in the Rankings";
+    // kDebug() << "We are in the Rankings";
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     new RankingsAdaptor(this);
@@ -100,19 +100,18 @@ void Rankings::resourceScoreUpdated(const QString & activity,
     if (i < 0) {
         list << ResultItem(uri, score);
 
-        return;
-    }
+    } else {
+        while (list[i].score < score) {
+            --i;
+        }
 
-    while (list[i].score < score) {
-        --i;
-    }
+        if (i + 1 < RESULT_COUNT_LIMIT) {
+            list.insert(i + 1, ResultItem(uri, score));
+        }
 
-    if (i + 1 < RESULT_COUNT_LIMIT) {
-        list.insert(i + 1, ResultItem(uri, score));
-    }
-
-    while (list.size() > RESULT_COUNT_LIMIT) {
-        list.removeLast();
+        while (list.size() > RESULT_COUNT_LIMIT) {
+            list.removeLast();
+        }
     }
 
     notifyResultsUpdated(activity);
@@ -131,9 +130,9 @@ void Rankings::registerClient(const QString & client,
     if (!m_clients[activity].contains(client)) {
         kDebug() << "Adding client";
         m_clients[activity] << client;
-
-        notifyResultsUpdated(activity, QStringList() << client);
     }
+
+    notifyResultsUpdated(activity, QStringList() << client);
 }
 
 void Rankings::deregisterClient(const QString & client)
@@ -160,7 +159,7 @@ void Rankings::setCurrentActivity(const QString & activity)
 
 void Rankings::initResults(const QString & activity)
 {
-    m_results[activity].clear();
+    m_results[COALESCE_ACTIVITY(activity)].clear();
 
     const QString query = QString::fromLatin1(
         "select distinct ?resource, "
@@ -189,7 +188,7 @@ void Rankings::initResults(const QString & activity)
         resN3(activityResource(COALESCE_ACTIVITY(activity)))
     );
 
-    kDebug() << query;
+    // kDebug() << query;
 
     Soprano::QueryResultIterator it
         = Nepomuk::ResourceManager::instance()->mainModel()
@@ -198,8 +197,8 @@ void Rankings::initResults(const QString & activity)
     while (it.next()) {
         Nepomuk::Resource result(it[0].uri());
 
-        kDebug() << "This is one result" << it[0].uri() << result
-            << it[1].literal().toDouble();
+        // kDebug() << "This is one result" << it[0].uri() << result
+        //     << it[1].literal().toDouble();
 
         // kDebug() << "###" << result.resourceUri()
         //     << result.label() << result.genericIcon();
@@ -214,8 +213,8 @@ void Rankings::initResults(const QString & activity)
 
 void Rankings::notifyResultsUpdated(const QString & activity, QStringList clients)
 {
-    kDebug() << "####### These are the results for: " << activity << "current activity is" <<
-            NepomukPlugin::self()->sharedInfo()->currentActivity();
+    kDebug() << "####### These are the results for: " << activity << COALESCE_ACTIVITY(activity)
+             << "current activity is" << NepomukPlugin::self()->sharedInfo()->currentActivity();
 
     QVariantList data;
     foreach (const ResultItem & item, m_results[COALESCE_ACTIVITY(activity)]) {
@@ -223,10 +222,12 @@ void Rankings::notifyResultsUpdated(const QString & activity, QStringList client
         data << item.uri.toString();
     }
 
-    kDebug() << m_clients << clients;
+    kDebug() << "These are the clients" << m_clients << "We are gonna update this:" << clients;
 
     if (clients.isEmpty()) {
         clients = m_clients[COALESCE_ACTIVITY(activity)];
+        kDebug() << "This is the current activity" << activity << COALESCE_ACTIVITY(activity)
+                 << "And the clients for it" << clients;
 
         if (activity == NepomukPlugin::self()->sharedInfo()->currentActivity()) {
             kDebug() << "This is the current activity, notifying all";
