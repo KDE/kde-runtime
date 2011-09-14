@@ -20,7 +20,7 @@
 */
 
 #include "removabledeviceindexnotification.h"
-#include "strigiserviceinterface.h"
+#include "fileindexerinterface.h"
 
 #include <KLocale>
 #include <KConfig>
@@ -56,19 +56,19 @@ RemovableDeviceIndexNotification::RemovableDeviceIndexNotification(const Nepomuk
 
 void RemovableDeviceIndexNotification::slotActionDoIndexActivated()
 {
-    KConfig strigiConfig( "nepomukstrigirc" );
-    strigiConfig.group("Devices").writeEntry(m_medium->url(), true);
+    KConfig fileIndexerConfig( "nepomukstrigirc" );
+    fileIndexerConfig.group("Devices").writeEntry(m_medium->url(), true);
 
-    org::kde::nepomuk::Strigi strigi( "org.kde.nepomuk.services.nepomukstrigiservice", "/nepomukstrigiservice", QDBusConnection::sessionBus() );
-    strigi.indexFolder( m_medium->mountPath(), true /* recursive */, false /* no forced update */ );
+    org::kde::nepomuk::FileIndexer fileIndexer( "org.kde.nepomuk.services.nepomukfileindexer", "/nepomukfileindexer", QDBusConnection::sessionBus() );
+    fileIndexer.indexFolder( m_medium->mountPath(), true /* recursive */, false /* no forced update */ );
 
     close();
 }
 
 void RemovableDeviceIndexNotification::slotActionDoNotIndexActivated()
 {
-    KConfig strigiConfig( "nepomukstrigirc" );
-    strigiConfig.group("Devices").writeEntry(m_medium->url(), false);
+    KConfig fileIndexerConfig( "nepomukstrigirc" );
+    fileIndexerConfig.group("Devices").writeEntry(m_medium->url(), false);
 
     close();
 }

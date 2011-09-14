@@ -163,7 +163,8 @@ KJob* Nepomuk::importResources(const KUrl& url,
 }
 
 Nepomuk::DescribeResourcesJob* Nepomuk::describeResources(const QList<QUrl>& resources,
-                                                          bool includeSubResources)
+                                                          DescribeResourcesFlags flags,
+                                                          const QList<QUrl>& targetParties )
 {
-    return new DescribeResourcesJob(resources, includeSubResources);
+    return new DescribeResourcesJob(resources, flags, targetParties);
 }

@@ -20,8 +20,6 @@
 #ifndef EVENT_BACKEND_H_
 #define EVENT_BACKEND_H_
 
-#include <EventProcessor.h>
-
 #include <kdemacros.h>
 #include <KPluginFactory>
 #include <KPluginLoader>

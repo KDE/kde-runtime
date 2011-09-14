@@ -89,11 +89,11 @@ QString Nepomuk::DataManagementAdaptor::createResource(const QString &type, cons
     return createResource(QStringList() << type, label, description, app);
 }
 
-QList<Nepomuk::SimpleResource> Nepomuk::DataManagementAdaptor::describeResources(const QStringList &resources, bool includeSubResources)
+QList<Nepomuk::SimpleResource> Nepomuk::DataManagementAdaptor::describeResources(const QStringList &resources, int flags, const QStringList& targetParties)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new DescribeResourcesCommand(decodeUris(resources), includeSubResources, m_model, message()));
+    enqueueCommand(new DescribeResourcesCommand(decodeUris(resources), Nepomuk::DescribeResourcesFlags(flags), decodeUris(targetParties), m_model, message()));
     // QtDBus will ignore this return value
     return QList<SimpleResource>();
 }

@@ -16,7 +16,7 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "strigiserviceconfig.h"
+#include "fileindexerconfig.h"
 #include "fileexcludefilters.h"
 
 #include <QtCore/QStringList>
@@ -27,7 +27,7 @@
 #include <KConfigGroup>
 
 
-Nepomuk::StrigiServiceConfig::StrigiServiceConfig()
+Nepomuk::FileIndexerConfig::FileIndexerConfig()
     : QObject(),
       m_config( "nepomukstrigirc" )
 {
@@ -43,26 +43,26 @@ Nepomuk::StrigiServiceConfig::StrigiServiceConfig()
 }
 
 
-Nepomuk::StrigiServiceConfig::~StrigiServiceConfig()
+Nepomuk::FileIndexerConfig::~FileIndexerConfig()
 {
     m_config.group( "General" ).writeEntry( "first run", false );
 }
 
 
-Nepomuk::StrigiServiceConfig* Nepomuk::StrigiServiceConfig::self()
+Nepomuk::FileIndexerConfig* Nepomuk::FileIndexerConfig::self()
 {
-    K_GLOBAL_STATIC( StrigiServiceConfig, _self );
+    K_GLOBAL_STATIC( FileIndexerConfig, _self );
     return _self;
 }
 
 
-QList<QPair<QString, bool> > Nepomuk::StrigiServiceConfig::folders() const
+QList<QPair<QString, bool> > Nepomuk::FileIndexerConfig::folders() const
 {
     return m_folderCache;
 }
 
 
-QStringList Nepomuk::StrigiServiceConfig::includeFolders() const
+QStringList Nepomuk::FileIndexerConfig::includeFolders() const
 {
     QStringList fl;
     for ( int i = 0; i < m_folderCache.count(); ++i ) {
@@ -73,7 +73,7 @@ QStringList Nepomuk::StrigiServiceConfig::includeFolders() const
 }
 
 
-QStringList Nepomuk::StrigiServiceConfig::excludeFolders() const
+QStringList Nepomuk::FileIndexerConfig::excludeFolders() const
 {
     QStringList fl;
     for ( int i = 0; i < m_folderCache.count(); ++i ) {
@@ -84,26 +84,26 @@ QStringList Nepomuk::StrigiServiceConfig::excludeFolders() const
 }
 
 
-QStringList Nepomuk::StrigiServiceConfig::excludeFilters() const
+QStringList Nepomuk::FileIndexerConfig::excludeFilters() const
 {
     return m_config.group( "General" ).readEntry( "exclude filters", defaultExcludeFilterList() );
 }
 
 
-bool Nepomuk::StrigiServiceConfig::indexHiddenFilesAndFolders() const
+bool Nepomuk::FileIndexerConfig::indexHiddenFilesAndFolders() const
 {
     return m_config.group( "General" ).readEntry( "index hidden folders", false );
 }
 
 
-KIO::filesize_t Nepomuk::StrigiServiceConfig::minDiskSpace() const
+KIO::filesize_t Nepomuk::FileIndexerConfig::minDiskSpace() const
 {
     // default: 200 MB
     return m_config.group( "General" ).readEntry( "min disk space", KIO::filesize_t( 200*1024*1024 ) );
 }
 
 
-void Nepomuk::StrigiServiceConfig::slotConfigDirty()
+void Nepomuk::FileIndexerConfig::slotConfigDirty()
 {
     m_config.reparseConfiguration();
     buildFolderCache();
@@ -112,13 +112,13 @@ void Nepomuk::StrigiServiceConfig::slotConfigDirty()
 }
 
 
-bool Nepomuk::StrigiServiceConfig::isInitialRun() const
+bool Nepomuk::FileIndexerConfig::isInitialRun() const
 {
     return m_config.group( "General" ).readEntry( "first run", true );
 }
 
 
-bool Nepomuk::StrigiServiceConfig::shouldBeIndexed( const QString& path ) const
+bool Nepomuk::FileIndexerConfig::shouldBeIndexed( const QString& path ) const
 {
     QFileInfo fi( path );
     if( fi.isDir() ) {
@@ -144,7 +144,7 @@ namespace {
     }
 }
 
-bool Nepomuk::StrigiServiceConfig::shouldFolderBeIndexed( const QString& path ) const
+bool Nepomuk::FileIndexerConfig::shouldFolderBeIndexed( const QString& path ) const
 {
     bool exact = false;
     if ( folderInFolderList( path, exact ) ) {
@@ -170,7 +170,7 @@ bool Nepomuk::StrigiServiceConfig::shouldFolderBeIndexed( const QString& path ) 
 }
 
 
-bool Nepomuk::StrigiServiceConfig::shouldFileBeIndexed( const QString& fileName ) const
+bool Nepomuk::FileIndexerConfig::shouldFileBeIndexed( const QString& fileName ) const
 {
     // check the filters
     QMutexLocker lock( &m_folderCacheMutex );
@@ -178,7 +178,7 @@ bool Nepomuk::StrigiServiceConfig::shouldFileBeIndexed( const QString& fileName 
 }
 
 
-bool Nepomuk::StrigiServiceConfig::folderInFolderList( const QString& path, bool& exact ) const
+bool Nepomuk::FileIndexerConfig::folderInFolderList( const QString& path, bool& exact ) const
 {
     QMutexLocker lock( &m_folderCacheMutex );
 
@@ -249,7 +249,7 @@ namespace {
 }
 
 
-void Nepomuk::StrigiServiceConfig::buildFolderCache()
+void Nepomuk::FileIndexerConfig::buildFolderCache()
 {
     QMutexLocker lock( &m_folderCacheMutex );
 
@@ -263,10 +263,10 @@ void Nepomuk::StrigiServiceConfig::buildFolderCache()
 }
 
 
-void Nepomuk::StrigiServiceConfig::buildExcludeFilterRegExpCache()
+void Nepomuk::FileIndexerConfig::buildExcludeFilterRegExpCache()
 {
     QMutexLocker lock( &m_folderCacheMutex );
     m_excludeFilterRegExpCache.rebuildCacheFromFilterList( excludeFilters() );
 }
 
-#include "strigiserviceconfig.moc"
+#include "fileindexerconfig.moc"

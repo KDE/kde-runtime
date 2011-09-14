@@ -31,13 +31,24 @@ class Event {
 public:
     enum Type {
         Accessed = 0,    ///< resource was accessed, but we don't know for how long it will be open/used
+
         Opened = 1,      ///< resource was opened
         Modified = 2,    ///< previously opened resource was modified
         Closed = 3,      ///< previously opened resource was closed
+
         FocussedIn = 4,  ///< resource get the keyboard focus
         FocussedOut = 5, ///< resource lost the focus
 
-        LastEventType = 5
+        LastEventType = 5,
+        UserEventType = 32
+
+    };
+
+    // These events can't come outside of the activity manager daemon,
+    // they are intended to provide some additional functionality
+    // to the daemon plugins
+    enum UserType {
+        UpdateScore = UserEventType + 1
 
     };
 
@@ -48,10 +59,12 @@ public:
         System = 3,
         World = 4,
 
-        LastEventReason = 4
+        LastEventReason = 4,
+        UserEventReason = 32
     };
 
-    Event(const QString & application, WId wid, const QString & uri, Type type = Accessed, Reason reason = User);
+    Event(const QString & application, WId wid, const QString & uri,
+            int type = Accessed, int reason = User);
 
     bool operator == (const Event & other) const;
 
@@ -59,8 +72,8 @@ public:
     QString application;
     WId     wid;
     QString uri;
-    Type    type;
-    Reason  reason;
+    int     type;
+    int     reason;
     QDateTime timestamp;
 };
 

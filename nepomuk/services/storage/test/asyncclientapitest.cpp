@@ -391,7 +391,7 @@ void AsyncClientApiTest::testDescribeResources()
 
 
     // we only use one of the test cases from the dms test: get two resources with subresoruces
-    DescribeResourcesJob* job = Nepomuk::describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"), true);
+    DescribeResourcesJob* job = Nepomuk::describeResources(QList<QUrl>() << QUrl("res:/A") << QUrl("res:/C"));
     QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
     QVERIFY(!job->error());
 

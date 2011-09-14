@@ -24,16 +24,34 @@
 #include <pulse/pulseaudio.h>
 
 #include "ui_audiosetup.h"
-#define KDE3_SUPPORT
-#include <kcmodule.h>
-#undef KDE3_SUPPORT
 #include <kconfig.h>
 
 class QTimer;
 
+struct pa_glib_mainloop;
+
+typedef struct {
+    quint32 index;
+    QString name;
+    QString icon;
+    QMap<quint32, QPair<QString, QString> > profiles;
+    QString activeProfile;
+} cardInfo;
+
+typedef struct {
+    quint32 index;
+    quint32 cardIndex;
+    QString name;
+    QString icon;
+    pa_channel_map channelMap;
+    QMap<quint32, QPair<QString, QString> > ports;
+    QString activePort;
+} deviceInfo;
+
 class AudioSetup : public QWidget, private Ui::AudioSetup
 {
     Q_OBJECT
+
     public:
         AudioSetup(QWidget *parent = 0);
         ~AudioSetup();
@@ -67,13 +85,14 @@ class AudioSetup : public QWidget, private Ui::AudioSetup
         void _updatePlacementTester();
         void _createMonitorStreamForSource(uint32_t);
 
-        QLabel* m_Icon;
+        QLabel *m_icon;
         int m_OutstandingRequests;
         ca_context* m_Canberra;
         pa_stream* m_VUStream;
         int m_VURealValue;
         QTimer* m_VUTimer;
-  
 };
+
+QDebug operator<<(QDebug dbg, const pa_context_state_t &state);
 
 #endif // PHONON_AUDIOSETUP_H

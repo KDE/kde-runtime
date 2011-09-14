@@ -136,6 +136,10 @@ void NepomukPlugin::addEvents(const EventList & events)
                 break;
             }
 
+            case Event::UserEventType:
+                NepomukResourceScoreMaintainer::self()->processResource(event.uri, event.application);
+                break;
+
             default:
                 // Nothing yet
                 // TODO: Add focus and modification

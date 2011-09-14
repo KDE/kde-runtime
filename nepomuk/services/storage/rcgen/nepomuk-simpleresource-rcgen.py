@@ -1,8 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 ## This file is part of the Nepomuk KDE project.
 ## Copyright (C) 2011 Sebastian Trueg <trueg@kde.org>
+## Copyright (C) 2011 Serebriyskiy Artem <v.for.vandal@gmail.com>
 ##
 ## This library is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU Lesser General Public
@@ -21,7 +22,7 @@
 ## License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import optparse
+import argparse
 import sys
 import os, errno
 from PyKDE4.soprano import Soprano
@@ -42,6 +43,8 @@ def extractNameFromUri(uri):
     return normalizeName(name)
 
 def makeFancy(name, cardinality):
+    if name.startsWith("has"):
+        name = name[3].toLower() + name.mid(4)
     if cardinality != 1:
         if name.endsWith('s'):
             return name + 'es'
@@ -53,7 +56,7 @@ def makeFancy(name, cardinality):
 def extractOntologyName(uri):
     "The name of the ontology is typically the section before the name of the entity"
     return uri.toString().section(QtCore.QRegExp('[#/:]'), -2, -2)
-    
+
 def mkdir_p(path):
     "Create a folder and all its missing parent folders"
     try:
@@ -114,6 +117,7 @@ class OntologyParser():
         return True
 
     def writeAll(self):
+
         # add rdfs:Resource as domain for all properties without a domain
         query = 'select ?p where { ?p a %s . OPTIONAL { ?p %s ?d . } . FILTER(!BOUND(?d)) . }' \
                  % (Soprano.Node.resourceToN3(Soprano.Vocabulary.RDF.Property()), \
@@ -133,9 +137,12 @@ class OntologyParser():
         
         while it.next():
             uri = it['uri'].uri()
+            if verbose:
+                print "Parsing class: ", uri
             ns = self.getNamespaceAbbreviationForUri(uri)
             name = extractNameFromUri(uri)
             self.writeHeader(uri, ns, name, it['label'].toString(), it['comment'].toString())
+            print "\n\n"
 
     def getNamespaceAbbreviationForUri(self, uri):
         query = "select ?ns where { graph ?g { %s ?p ?o . } . ?g %s ?ns . } LIMIT 1" \
@@ -148,7 +155,10 @@ class OntologyParser():
             return extractOntologyName(uri)
 
     def getParentClasses(self, uri):
-        # We only select parent classes that we actually generate
+        """
+        Returns a dict which maps parent class URIs to a dict containing keys 'ns' and 'name'
+        Only parent classes that are actually generated are returned.
+        """
         query = "select distinct ?uri where {{ {0} {1} ?uri . ?uri a {2} . }}" \
              .format(Soprano.Node.resourceToN3(uri), \
                           Soprano.Node.resourceToN3(Soprano.Vocabulary.RDFS.subClassOf()), \
@@ -161,11 +171,27 @@ class OntologyParser():
                 cd = {}
                 cd['ns'] = self.getNamespaceAbbreviationForUri(puri)
                 cd['name'] = extractNameFromUri(puri)
-                classes[puri] = cd
+                classes[puri.toString()] = cd
         return classes
 
+    def getFullParentHierarchy(self, uri, currentParents, result):
+        """
+        Returns a list of dicts containing keys 'ns' and 'name'.
+        currentParents is a running variable used to avoid endless loops when recursing. It should
+        always be set to the empty list [].
+        result is another running variable which stores the final result set. It should also be set
+        to the empty list [].
+        """
+        # we perform a depth-first search for the most general type
+        directParents = self.getParentClasses(uri)
+        for p in directParents.keys():
+            if not p in currentParents:
+                currentParents.append(p)
+                self.getFullParentHierarchy(QtCore.QUrl(p), currentParents, result)
+                result.append(directParents[p])
+        return result
+
     def getPropertiesForClass(self, uri):
-        #print "Getting properties for %s..." % uri.toString()
         query = "select distinct ?p ?range ?comment ?c ?mc where { ?p a %s . ?p %s %s . ?p %s ?range . OPTIONAL { ?p %s ?comment . } . OPTIONAL { ?p %s ?c . } . OPTIONAL { ?p %s ?mc . } . }" \
             % (Soprano.Node.resourceToN3(Soprano.Vocabulary.RDF.Property()),
                Soprano.Node.resourceToN3(Soprano.Vocabulary.RDFS.domain()),
@@ -183,11 +209,10 @@ class OntologyParser():
             comment = it['comment'].toString()
             c = 0
             if it['c'].isValid():
-                c = it['c'].literal().toInt();
+                c = it['c'].literal().toInt()
             else:
-                c = it['mc'].literal().toInt();
+                c = it['mc'].literal().toInt()
             properties[p] = dict([('range', r), ('cardinality', c), ('comment', comment)])
-        #print "Done getting properties."
         return properties
 
     def writeComment(self, theFile, text, indent):
@@ -218,36 +243,35 @@ class OntologyParser():
         theFile.write('    %s %s() const {\n' % (typeString(propRange, cardinality), makeFancy(name, cardinality)))
         theFile.write('        %s value;\n' % typeString(propRange, cardinality))
         if cardinality == 1:
-            theFile.write('        if(m_res->contains(QUrl::fromEncoded("%s", QUrl::StrictMode)))\n' % prop.toString())
-            theFile.write('            value = m_res->property(QUrl::fromEncoded("{0}", QUrl::StrictMode)).first().value<{1}>();\n'.format(prop.toString(), typeString(propRange, 1)))
+            theFile.write('        if(contains(QUrl::fromEncoded("%s", QUrl::StrictMode)))\n' % prop.toString())
+            theFile.write('            value = property(QUrl::fromEncoded("{0}", QUrl::StrictMode)).first().value<{1}>();\n'.format(prop.toString(), typeString(propRange, 1)))
         else:
-            theFile.write('        foreach(const QVariant& v, m_res->property(QUrl::fromEncoded("%s", QUrl::StrictMode)))\n' % prop.toString())
+            theFile.write('        foreach(const QVariant& v, property(QUrl::fromEncoded("%s", QUrl::StrictMode)))\n' % prop.toString())
             theFile.write('            value << v.value<{0}>();\n'.format(typeString(propRange, 1)))
         theFile.write('        return value;\n')
         theFile.write('    }\n')
 
     def writeSetter(self, theFile, prop, name, propRange, cardinality):
         theFile.write('    void set%s%s(const %s& value) {\n' % (makeFancy(name, cardinality)[0].toUpper(), makeFancy(name, cardinality).mid(1), typeString(propRange, cardinality)))
-        theFile.write('        m_res->addProperty(Soprano::Vocabulary::RDF::type(), resourceType());\n')
         theFile.write('        QVariantList values;\n')
         if cardinality == 1:
             theFile.write('        values << value;\n')
         else:
              theFile.write('        foreach(const %s& v, value)\n' % typeString(propRange, 1))
              theFile.write('            values << v;\n')
-        theFile.write('        m_res->setProperty(QUrl::fromEncoded("%s", QUrl::StrictMode), values);\n' % prop.toString())
+        theFile.write('        setProperty(QUrl::fromEncoded("%s", QUrl::StrictMode), values);\n' % prop.toString())
         theFile.write('    }\n')
 
     def writeAdder(self, theFile, prop, name, propRange, cardinality):
         theFile.write('    void add%s%s(const %s& value) {\n' % (makeFancy(name, 1)[0].toUpper(), makeFancy(name, 1).mid(1), typeString(propRange, 1)))
-        theFile.write('        m_res->addProperty(Soprano::Vocabulary::RDF::type(), resourceType());\n')
-        theFile.write('        m_res->addProperty(QUrl::fromEncoded("%s", QUrl::StrictMode), value);\n' % prop.toString())
+        theFile.write('        addProperty(QUrl::fromEncoded("%s", QUrl::StrictMode), value);\n' % prop.toString())
         theFile.write('    }\n')
 
     def writeHeader(self, uri, nsAbbr, className, label, comment):
         # Construct paths
+        relative_path = nsAbbr + '/' + className.toLower() + '.h'
         folder = output_path + '/' + nsAbbr
-        filePath = folder + '/' + className.toLower() + '.h'
+        filePath = output_path + '/' + relative_path
 
         if verbose:
             print "Writing header file: %s" % filePath
@@ -258,6 +282,7 @@ class OntologyParser():
         # open the header file
         header = open(filePath, 'w')
 
+        # get all direct base classes
         parentClasses = self.getParentClasses(uri)
 
         # write protecting ifdefs
@@ -273,7 +298,6 @@ class OntologyParser():
         header.write('#include <QtCore/QDate>\n')
         header.write('#include <QtCore/QTime>\n')
         header.write('#include <QtCore/QDateTime>\n')
-        header.write('#include <Soprano/Vocabulary/RDF>\n')
         header.write('\n')
 
         # all classes need the SimpleResource include
@@ -282,32 +306,70 @@ class OntologyParser():
         # write includes for the parent classes
         parentClassNames = []
         for parent in parentClasses.keys():
-             header.write('#include "%s/%s.h"\n' % (parentClasses[parent]['ns'], parentClasses[parent]['name'].toLower()))
-             parentClassNames.append("%s::%s" %(parentClasses[parent]['ns'].toUpper(), parentClasses[parent]['name']))
+            header.write('#include "%s/%s.h"\n' % (parentClasses[parent]['ns'], parentClasses[parent]['name'].toLower()))
+            parentClassNames.append("%s::%s" %(parentClasses[parent]['ns'].toUpper(), parentClasses[parent]['name']))
+
+        # get all base classes which we require due to the virtual base class constructor ordering in C++
+        # We inverse the order to match the virtual inheritance constructor calling order
+        fullParentHierarchyNames = []
+        for parent in self.getFullParentHierarchy(uri, [], []):
+            fullParentHierarchyNames.append("%s::%s" %(parent['ns'].toUpper(), parent['name']))
+
+        if len(parentClassNames) > 0:
+            header.write('\n')
 
         # write the class namespace
         header.write('namespace Nepomuk {\n')
         header.write('namespace %s {\n' % nsAbbr.toUpper())
 
         # write the class + parent classes
+        # We use virtual inheritance when deriving from SimpleResource since our ontologies
+        # make use of multi-inheritance and without it the compiler would not know which
+        # addProperty and friends to call.
+        # We need to do the same with all parent classes since some classes like
+        # nco:CellPhoneNumber as derived from other classes that have yet another parent
+        # class in common which is not SimpleResource.
         self.writeComment(header, comment, 0)
         header.write('class %s' % className)
-        if len(parentClassNames) > 0:
-            header.write(' : ')
-        header.write(', '.join(['public %s' % (p) for p in parentClassNames]))
+        header.write(' : ')
+        header.write(', '.join(['public virtual %s' % (p) for p in parentClassNames]))
+        if len(parentClassNames) == 0:
+            header.write('public virtual Nepomuk::SimpleResource');
         header.write('\n{\n')
         header.write('public:\n')
 
-        # write the constructor
-        header.write('    %s(Nepomuk::SimpleResource* res)\n' % className)
+        # write the default constructor
+        # We directly set the type of the class to the SimpleResource. If the class is a base class
+        # not derived from any other classes then we set the type directly. Otherwise we use the
+        # protected constructor defined below which takes a type as parameter making sure that we
+        # only add one type instead of the whole hierarchy
+        header.write('    %s()' % className)
+        if len(parentClasses) > 0:
+            header.write('\n      : ')
+        header.write(', '.join([('%s(QUrl::fromEncoded("' + uri.toString().toUtf8().data() + '", QUrl::StrictMode))') % p for p in fullParentHierarchyNames]))
+        header.write(' {\n')
+        if len(parentClassNames) == 0:
+            header.write('        addType(QUrl::fromEncoded("%s", QUrl::StrictMode));\n' % uri.toString())
+        header.write('    }\n\n')
+
+        # write the copy constructor
+        header.write('    %s(const SimpleResource& res)\n' % className)
         header.write('      : ')
-        header.write(', '.join(['%s(res)' % p for p in parentClassNames]))
+        header.write('SimpleResource(res)')
         if len(parentClassNames) > 0:
             header.write(', ')
-        header.write('m_res(res)\n    {}\n\n')
+            header.write(', '.join([('%s(res, QUrl::fromEncoded("' + uri.toString().toUtf8().data() + '", QUrl::StrictMode))') % p for p in fullParentHierarchyNames]))
+        header.write(' {\n')
+        if len(parentClassNames) == 0:
+            header.write('        addType(QUrl::fromEncoded("%s", QUrl::StrictMode));\n' % uri.toString())
+        header.write('    }\n\n')
 
-        # write the destructor (necessary for the virtual resourceType() method
-        header.write('    virtual ~%s() {}\n\n' % className)
+        # write the assignment operator
+        header.write('    %s& operator=(const SimpleResource& res) {\n' % className)
+        header.write('        SimpleResource::operator=(res);\n')
+        header.write('        addType(QUrl::fromEncoded("%s", QUrl::StrictMode));\n' % uri.toString())
+        header.write('        return *this;\n')
+        header.write('    }\n\n')
 
         # Write getter and setter methods for all properties
         # This includes the properties that have domain rdfs:Resource on base classes, ie.
@@ -340,14 +402,27 @@ class OntologyParser():
             self.writeAdder(header, p, properties[p]['name'], properties[p]['range'], properties[p]['cardinality'])
             header.write('\n')
 
-        # write the protected resource type access method
+        # write the protected constructors which avoid adding the whole type hierarchy
         header.write('protected:\n')
-        header.write('    virtual QUrl resourceType() const { return QUrl::fromEncoded("%s", QUrl::StrictMode); }\n' % uri.toString())
-        header.write('\n')
+        header.write('    %s(const QUrl& type)' % className)
+        if len(parentClassNames) > 0:
+            header.write('\n      : ')
+            header.write(', '.join(['%s(type)' % p for p in fullParentHierarchyNames]))
+        header.write(' {\n')
+        if len(parentClassNames) == 0:
+            header.write('        addType(type);\n')
+        header.write('    }\n')
 
-        # write the private members
-        header.write('private:\n')
-        header.write('    Nepomuk::SimpleResource* m_res;\n')
+        header.write('    %s(const SimpleResource& res, const QUrl& type)\n' % className)
+        header.write('      : ')
+        header.write('SimpleResource(res)')
+        if len(parentClassNames) > 0:
+            header.write(', ')
+            header.write(', '.join(['%s(res, type)' % p for p in fullParentHierarchyNames]))
+        header.write(' {\n')
+        if len(parentClassNames) == 0:
+            header.write('        addType(type);\n')
+        header.write('    }\n')
 
         # close the class
         header.write('};\n')
@@ -364,24 +439,24 @@ def main():
     global verbose
     
     usage = "Usage: %prog [options] ontologyfile1 ontologyfile2 ..."
-    optparser = optparse.OptionParser(usage=usage, description="Nepomuk SimpleResource code generator. It will generate a hierarchy of simple wrapper classes around Nepomuk::SimpleResource which provide convinience methods to get and set properties of those classes. Each wrapper class will be defined in its own header file and be written to a subdirectory named as the default ontology prefix. Example: the header file for nao:Tag would be written to nao/tag.h and be defined in the namespace Nepomuk::NAO.")
-    optparser.add_option('--output', '-o', metavar='PATH', dest='output', help='The destination folder')
-    optparser.add_option('--quiet', '-q', action="store_false", dest="verbose", default=True, help="don't print status messages to stdout")
+    optparser = argparse.ArgumentParser(description="Nepomuk SimpleResource code generator. It will generate a hierarchy of simple wrapper classes around Nepomuk::SimpleResource which provide convinience methods to get and set properties of those classes. Each wrapper class will be defined in its own header file and be written to a subdirectory named as the default ontology prefix. Example: the header file for nao:Tag would be written to nao/tag.h and be defined in the namespace Nepomuk::NAO.")
+    optparser.add_argument('--output', '-o', type=str, nargs=1, metavar='PATH', dest='output', help='The destination folder')
+    optparser.add_argument('--quiet', '-q', action="store_false", dest="verbose", default=True, help="don't print status messages to stdout")
+    optparser.add_argument("ontologies", type=str, nargs='+', metavar="ONTOLOGY", help="Ontology files to use")
 
-    (options, args) = optparser.parse_args()
-    if len(args) == 0:
-        optparser.error('No ontology file specified.')
-    if options.output and len(options.output) > 0:
-        output_path = options.output
-    verbose = options.verbose
-    
+    args = optparser.parse_args()
+    if args.output :
+        output_path = args.output[0]
+
+    verbose = args.verbose
+
     if verbose:
-        print 'Generating from ontology files %s' % ','.join(args)
+        print 'Generating from ontology files %s' % ','.join(args.ontologies)
         print 'Writing files to %s.' % output_path
 
     # Parse all ontology files
     ontoParser = OntologyParser()
-    for f in args:
+    for f in args.ontologies:
         if verbose:
             print "Reading ontology '%s'" % f
         ontoParser.parseFile(f)

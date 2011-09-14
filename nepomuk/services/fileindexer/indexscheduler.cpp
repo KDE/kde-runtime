@@ -21,7 +21,7 @@
 */
 
 #include "indexscheduler.h"
-#include "strigiserviceconfig.h"
+#include "fileindexerconfig.h"
 #include "nepomukindexer.h"
 #include "util.h"
 #include "datamanagement.h"
@@ -63,62 +63,18 @@ namespace {
     const int s_reducedSpeedDelay = 500; // ms
     const int s_snailPaceDelay = 3000;   // ms
 
-
-    /* vHanda:
-     * FIXME: Fix this properly by using MergeFlags in storeResources. 
-     *
-     * A long explaination of why this is required -
-     * You have a folder, called "coldplay", with a number of files in it. You then decide
-     * to rename it from "coldplay" to "Coldplay" ( capital C ), then you restart the
-     * strigi service or the filewatch services notifies you of the change.
-     * This is what will happen -
-     * - removeDataByApp( folder-called-Coldplay )
-     *   It will remove the nie:isPartOf statement for all the files in that folder
-     *
-     * without the additional "?r nie:isPartOf ?o", below, isResourcePresent will return true
-     * which will cause getChildren to use a query which depends on nie:isPartOf, which no longer
-     * exists. The getChildren function will therefore return an empty QHash< nie:url, nao:lastModified >
-     * The indexer will compare each filesystem modification date of the file with the
-     * nao:lastModified provided by the hash. Except that the hash is empty.
-     *
-     * So, it will cooly consider all these files to be "NEW" files, and re-index them. If the
-     * folder "Coldplay" had an directories in it, those will also be re-indexed, and the
-     * nie:isPartOf will be removed from its sub-folders also. Triggering a recursive reindexing.
-     */
-    bool isResourcePresent( const QString & dir ) {
-        QString query = QString::fromLatin1(" ask { ?r %1 %2. ?r %4 ?o. } ")
-                        .arg( Soprano::Node::resourceToN3( NIE::url() ),
-                              Soprano::Node::resourceToN3( KUrl( dir ) ),
-                              Soprano::Node::resourceToN3( NIE::isPartOf() ) );
-        return Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
-    }
-
     QHash<QString, QDateTime> getChildren( const QString& dir )
     {
         QHash<QString, QDateTime> children;
-        QString query;
-
-        if( !isResourcePresent( dir ) ) {
-            query = QString::fromLatin1( "select distinct ?url ?mtime where { "
-                                         "?r %1 ?url . "
-                                         "FILTER( regex(str(?url), '^file://%2/([^/]*)$') ) . "
-                                         "?r %3 ?mtime ."
-                                         "}" )
-                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                          dir,
-                          Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::lastModified() ) );
-        }
-        else {
-            query = QString::fromLatin1( "select distinct ?url ?mtime where { "
-                                        "?r %1 ?parent . ?parent %2 %3 . "
-                                        "?r %4 ?mtime . "
-                                        "?r %2 ?url . "
-                                        "}" )
-                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ),
-                        Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                        Soprano::Node::resourceToN3( KUrl( dir ) ),
-                        Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::lastModified() ) );
-        }
+        QString query = QString::fromLatin1( "select distinct ?url ?mtime where { "
+                                             "?r %1 ?parent . ?parent %2 %3 . "
+                                             "?r %4 ?mtime . "
+                                             "?r %2 ?url . "
+                                             "}" )
+                .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ),
+                      Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                      Soprano::Node::resourceToN3( KUrl( dir ) ),
+                      Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::lastModified() ) );
         //kDebug() << "running getChildren query:" << query;
 
         Soprano::QueryResultIterator result = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
@@ -214,8 +170,12 @@ Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
     connect( m_cleaner, SIGNAL(finished(KJob*)), this, SLOT(slotCleaningDone()) );
     m_cleaner->start();
 
-    connect( StrigiServiceConfig::self(), SIGNAL( configChanged() ),
+    connect( FileIndexerConfig::self(), SIGNAL( configChanged() ),
              this, SLOT( slotConfigChanged() ) );
+
+    // start the initial indexing
+    queueAllFoldersForUpdate();
+    callDoIndexing();
 }
 
 
@@ -226,8 +186,8 @@ Nepomuk::IndexScheduler::~IndexScheduler()
 
 void Nepomuk::IndexScheduler::suspend()
 {
+    QMutexLocker locker( &m_suspendMutex );
     if ( !m_suspended ) {
-        QMutexLocker locker( &m_resumeStopMutex );
         m_suspended = true;
         if( m_cleaner ) {
             m_cleaner->suspend();
@@ -239,16 +199,16 @@ void Nepomuk::IndexScheduler::suspend()
 
 void Nepomuk::IndexScheduler::resume()
 {
+    QMutexLocker locker( &m_suspendMutex );
     if ( m_suspended ) {
-        QMutexLocker locker( &m_resumeStopMutex );
         m_suspended = false;
 
         if( m_cleaner ) {
             m_cleaner->resume();
         }
-        else {
-            callDoIndexing();
-        }
+
+        callDoIndexing();
+
         emit indexingSuspended( false );
     }
 }
@@ -287,30 +247,43 @@ void Nepomuk::IndexScheduler::setReducedIndexingSpeed( bool reduced )
 
 bool Nepomuk::IndexScheduler::isSuspended() const
 {
+    QMutexLocker locker( &m_suspendMutex );
     return m_suspended;
 }
 
 
 bool Nepomuk::IndexScheduler::isIndexing() const
 {
+    QMutexLocker locker( &m_indexingMutex );
     return m_indexing;
 }
 
 
 QString Nepomuk::IndexScheduler::currentFolder() const
 {
-    return m_currentFolder;
+    QMutexLocker locker( &m_currentMutex );
+    return m_currentUrl.directory();
 }
 
 
 QString Nepomuk::IndexScheduler::currentFile() const
 {
+    QMutexLocker locker( &m_currentMutex );
     return m_currentUrl.toLocalFile();
+}
+
+
+Nepomuk::IndexScheduler::UpdateDirFlags Nepomuk::IndexScheduler::currentFlags() const
+{
+    QMutexLocker locker( &m_currentMutex );
+    return m_currentFlags;
 }
 
 
 void Nepomuk::IndexScheduler::setIndexingStarted( bool started )
 {
+    QMutexLocker locker( &m_indexingMutex );
+
     if ( started != m_indexing ) {
         m_indexing = started;
         emit indexingStateChanged( m_indexing );
@@ -324,19 +297,16 @@ void Nepomuk::IndexScheduler::setIndexingStarted( bool started )
 
 void Nepomuk::IndexScheduler::slotCleaningDone()
 {
-    // initialization
-    queueAllFoldersForUpdate();
-
-    // reset state
-    m_suspended = false;
     m_cleaner = 0;
-
-    callDoIndexing();
 }
 
 void Nepomuk::IndexScheduler::doIndexing()
 {
     setIndexingStarted( true );
+
+    // lock file and dir queues as we check their status
+    QMutexLocker fileLock( &m_filesToUpdateMutex );
+    QMutexLocker dirLock( &m_dirsToUpdateMutex );
 
     // get the next file
     if( !m_filesToUpdate.isEmpty() ) {
@@ -344,10 +314,10 @@ void Nepomuk::IndexScheduler::doIndexing()
 
         QFileInfo file = m_filesToUpdate.dequeue();
 
+        m_currentMutex.lock();
         m_currentUrl = file.filePath();
-        m_currentFolder = m_currentUrl.directory();
-
-        emit indexingFile( m_currentUrl.toLocalFile() );
+        m_currentMutex.unlock();
+        emit indexingFile( currentFile() );
 
         KJob * indexer = new Indexer( file );
         connect( indexer, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
@@ -358,18 +328,21 @@ void Nepomuk::IndexScheduler::doIndexing()
     else if( !m_dirsToUpdate.isEmpty() ) {
         kDebug() << "Directory";
 
-        m_dirsToUpdateMutex.lock();
         QPair<QString, UpdateDirFlags> dir = m_dirsToUpdate.dequeue();
-        m_dirsToUpdateMutex.unlock();
+        dirLock.unlock();
+        fileLock.unlock();
 
-        // If a dir was not analyzed, then doIndexing must be called to
-        // process the next file/directory in the queue
-        if( !analyzeDir( dir.first, dir.second ) ) {
-            callDoIndexing();
-        }
+        analyzeDir( dir.first, dir.second );
+        callDoIndexing();
     }
 
     else {
+        // reset status
+        m_currentMutex.lock();
+        m_currentUrl.clear();
+        m_currentFlags = NoUpdateFlags;
+        m_currentMutex.unlock();
+
         setIndexingStarted( false );
     }
 }
@@ -379,13 +352,15 @@ void Nepomuk::IndexScheduler::slotIndexingDone(KJob* job)
     kDebug() << job;
     Q_UNUSED( job );
 
-    m_currentFolder.clear();
+    m_currentMutex.lock();
     m_currentUrl.clear();
+    m_currentFlags = NoUpdateFlags;
+    m_currentMutex.unlock();
 
     callDoIndexing();
 }
 
-bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexScheduler::UpdateDirFlags flags )
+void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexScheduler::UpdateDirFlags flags )
 {
 //    kDebug() << dir << analyzer << recursive;
 
@@ -397,9 +372,10 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
 
     // inform interested clients
     emit indexingFolder( dir );
-
-    m_currentFolder = dir;
+    m_currentMutex.lock();
     m_currentUrl = KUrl( dir );
+    m_currentFlags = flags;
+    m_currentMutex.unlock();
 
     const bool recursive = flags&UpdateRecursive;
     const bool forceUpdate = flags&ForceUpdate;
@@ -407,8 +383,7 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
     // we start by updating the folder itself
     QFileInfo dirInfo( dir );
     KUrl dirUrl( dir );
-    bool shouldAnalyzerDir = !compareIndexedMTime(dirUrl, dirInfo.lastModified());
-    if ( shouldAnalyzerDir ) {
+    if ( !compareIndexedMTime(dirUrl, dirInfo.lastModified()) ) {
         KJob * indexer = new Indexer( dirInfo );
         connect( indexer, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
         indexer->start();
@@ -432,7 +407,7 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
         // need to use another approach than the getChildren one.
         QFileInfo fileInfo = dirIt.fileInfo();//.canonialFilePath();
 
-        bool indexFile = Nepomuk::StrigiServiceConfig::self()->shouldFileBeIndexed( fileInfo.fileName() );
+        bool indexFile = Nepomuk::FileIndexerConfig::self()->shouldFileBeIndexed( fileInfo.fileName() );
 
         // check if this file is new by looking it up in the store
         QHash<QString, QDateTime>::iterator filesInStoreIt = filesInStore.find( path );
@@ -442,6 +417,8 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
 
         // do we need to update? Did the file change?
         bool fileChanged = !newFile && fileInfo.lastModified() != filesInStoreIt.value();
+        //TODO: At some point make these "NEW", "CHANGED", and "FORCED" strings public
+        //      so that they can be used to create a better status message.
         if ( fileChanged )
             kDebug() << "CHANGED:" << path << fileInfo.lastModified() << filesInStoreIt.value();
         else if( forceUpdate )
@@ -464,7 +441,7 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
                 recursive &&
                 fileInfo.isDir() &&
                 !fileInfo.isSymLink() &&
-                StrigiServiceConfig::self()->shouldFolderBeIndexed( path ) ) {
+                FileIndexerConfig::self()->shouldFolderBeIndexed( path ) ) {
             QMutexLocker lock( &m_dirsToUpdateMutex );
             m_dirsToUpdate.prependDir( path, flags );
         }
@@ -478,25 +455,32 @@ bool Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
     deleteEntries( filesToDelete );
 
     // analyze all files that are new or need updating
+    m_filesToUpdateMutex.lock();
     m_filesToUpdate.append( filesToIndex );
+    m_filesToUpdateMutex.unlock();
 
-    return shouldAnalyzerDir;
+    // reset status
+    m_currentMutex.lock();
+    m_currentUrl.clear();
+    m_currentFlags = NoUpdateFlags;
+    m_currentMutex.unlock();
 }
 
 
-void Nepomuk::IndexScheduler::callDoIndexing()
+void Nepomuk::IndexScheduler::callDoIndexing(bool noDelay)
 {
     if( !m_suspended ) {
-        QTimer::singleShot( m_indexingDelay, this, SLOT(doIndexing()) );
+        QTimer::singleShot( noDelay ? 0 : m_indexingDelay, this, SLOT(doIndexing()) );
     }
 }
 
 
 void Nepomuk::IndexScheduler::updateDir( const QString& path, UpdateDirFlags flags )
 {
-    QMutexLocker lock( &m_dirsToUpdateMutex );
+    QMutexLocker dirLock( &m_dirsToUpdateMutex );
     m_dirsToUpdate.prependDir( path, flags & ~AutoUpdateFolder );
 
+    QMutexLocker statusLock( &m_indexingMutex );
     if( !m_indexing )
         callDoIndexing();
 }
@@ -506,6 +490,7 @@ void Nepomuk::IndexScheduler::updateAll( bool forceUpdate )
 {
     queueAllFoldersForUpdate( forceUpdate );
 
+    QMutexLocker locker( &m_indexingMutex );
     if( !m_indexing )
         callDoIndexing();
 }
@@ -523,7 +508,7 @@ void Nepomuk::IndexScheduler::queueAllFoldersForUpdate( bool forceUpdate )
         flags |= ForceUpdate;
 
     // update everything again in case the folders changed
-    foreach( const QString& f, StrigiServiceConfig::self()->includeFolders() ) {
+    foreach( const QString& f, FileIndexerConfig::self()->includeFolders() ) {
         m_dirsToUpdate.enqueueDir( f, flags );
     }
 }
@@ -531,12 +516,15 @@ void Nepomuk::IndexScheduler::queueAllFoldersForUpdate( bool forceUpdate )
 
 void Nepomuk::IndexScheduler::slotConfigChanged()
 {
-    // restart to make sure we update all folders and removeOldAndUnwantedEntries
+    // TODO: only update folders that were added in the config
+    updateAll();
+
     if( m_cleaner ) {
         m_cleaner->kill();
         delete m_cleaner;
     }
 
+    // TODO: only clean the folders that were removed from the config
     m_cleaner = new IndexCleaner( this );
     connect( m_cleaner, SIGNAL(finished(KJob*)), this, SLOT(slotCleaningDone()) );
     m_cleaner->start();
@@ -545,8 +533,28 @@ void Nepomuk::IndexScheduler::slotConfigChanged()
 
 void Nepomuk::IndexScheduler::analyzeFile( const QString& path )
 {
-    KJob * indexer = new Indexer( KUrl(path) );
-    indexer->start();
+    kDebug() << path;
+    QMutexLocker fileLock(&m_filesToUpdateMutex);
+
+    // we prepend the file to give preference to newly created and changed files over
+    // the initial indexing. Sadly operator== cannot be relied on for QFileInfo. Thus
+    // we need to do a dumb search
+    QMutableListIterator<QFileInfo> it(m_filesToUpdate);
+    while(it.hasNext()) {
+        if(it.next().filePath() == path) {
+            kDebug() << "Already queued:" << path << "Moving to front of queue.";
+            it.remove();
+            break;
+        }
+    }
+    kDebug() << "Queuing" << path;
+    m_filesToUpdate.prepend(path);
+
+    // continue indexing without any delay. We want changes reflected as soon as possible
+    QMutexLocker statusLock(&m_indexingMutex);
+    if( !m_indexing ) {
+        callDoIndexing(true);
+    }
 }
 
 
@@ -554,17 +562,10 @@ void Nepomuk::IndexScheduler::deleteEntries( const QStringList& entries )
 {
     // recurse into subdirs
     // TODO: use a less mem intensive method
-    // FIXME: There are 2 lists, one for KUrl and the other for QUrl. They should be automatically
-    //        converted. Fix this in 4.8
-    QList<QUrl> urls;
-    KUrl::List kurls;
     for ( int i = 0; i < entries.count(); ++i ) {
-        KUrl url( entries[i] );
-        urls << url;
-        kurls << url;
         deleteEntries( getChildren( entries[i] ).keys() );
     }
-    Nepomuk::clearIndexedData(urls);
+    Nepomuk::clearIndexedData(KUrl::List(entries));
 }
 
 

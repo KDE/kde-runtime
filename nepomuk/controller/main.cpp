@@ -46,6 +46,7 @@ int main( int argc, char *argv[] )
     if( KUniqueApplication::start() ) {
         KUniqueApplication app;
         app.setQuitOnLastWindowClosed(false);
+        KGlobal::locale()->insertCatalog( QLatin1String( "kcm_nepomuk" )); 
         (void)new Nepomuk::SystemTray(0);
         return app.exec();
     }

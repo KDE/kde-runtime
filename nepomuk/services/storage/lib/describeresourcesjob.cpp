@@ -43,7 +43,8 @@ public:
 };
 
 Nepomuk::DescribeResourcesJob::DescribeResourcesJob(const QList<QUrl>& resources,
-                                                    bool includeSubResources)
+                                                    DescribeResourcesFlags flags,
+                                                    const QList<QUrl>& targetGroups)
     : KJob(0),
       d(new Private)
 {
@@ -54,7 +55,8 @@ Nepomuk::DescribeResourcesJob::DescribeResourcesJob(const QList<QUrl>& resources
                                           QDBusConnection::sessionBus());
     QDBusPendingCallWatcher* dbusCallWatcher
             = new QDBusPendingCallWatcher(dms.describeResources(Nepomuk::DBus::convertUriList(resources),
-                                                                includeSubResources));
+                                                                int(flags),
+                                                                Nepomuk::DBus::convertUriList(targetGroups)));
     connect(dbusCallWatcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
             this, SLOT(slotDBusCallFinished(QDBusPendingCallWatcher*)));
 }

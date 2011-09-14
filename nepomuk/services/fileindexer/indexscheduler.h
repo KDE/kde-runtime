@@ -95,6 +95,12 @@ namespace Nepomuk {
         };
         Q_DECLARE_FLAGS( UpdateDirFlags, UpdateDirFlag )
 
+        /**
+         * The UpdateDirFlags of the the current url that is being
+         * indexed.
+         */
+        UpdateDirFlags currentFlags() const;
+
         enum IndexingSpeed {
             /**
              * Index at full speed, i.e. do not use any artificial
@@ -176,16 +182,13 @@ namespace Nepomuk {
         void doIndexing();
 
     private:
-        void run();
-
         /**
-         * It first indexes \p dir. Then it indexes all the files in \p dir, and
-         * finally recursivly analyzes all the subfolders in \p dir IF \p flags
-         * contains the 'UpdateRecursive' flag. It even sets m_currentFolder
-         *
-         * Returns true if the folder was analyzed
+         * It first indexes \p dir. Then it checks all the files in \p dir
+         * against the configuration and the data in Nepomuk to fill
+         * m_filesToUpdate. No actual indexing is done besides \p dir
+         * itself.
          */
-        bool analyzeDir( const QString& dir, UpdateDirFlags flags );
+        void analyzeDir( const QString& dir, UpdateDirFlags flags );
 
         void queueAllFoldersForUpdate( bool forceUpdate = false );
 
@@ -199,12 +202,17 @@ namespace Nepomuk {
         // no signal is emitted twice
         void setIndexingStarted( bool started );
 
-        void callDoIndexing();
+        /**
+         * Continue indexing async after waiting for the configured delay.
+         * \param noDelay If true indexing will be started immediately without any delay.
+         */
+        void callDoIndexing( bool noDelay = false );
 
         bool m_suspended;
         bool m_indexing;
 
-        QMutex m_resumeStopMutex;
+        mutable QMutex m_suspendMutex;
+        mutable QMutex m_indexingMutex;
 
         // A specialized queue that gives priority to dirs that do not use the AutoUpdateFolder flag.
         class UpdateDirQueue : public QQueue<QPair<QString, UpdateDirFlags> >
@@ -217,12 +225,15 @@ namespace Nepomuk {
         // queue of folders to update (+flags defined in the source file) - changed by updateDir
         UpdateDirQueue m_dirsToUpdate;
 
+        // queue of files to update. This is filled from the dirs queue and manual methods like analyzeFile
         QQueue<QFileInfo> m_filesToUpdate;
 
         QMutex m_dirsToUpdateMutex;
+        QMutex m_filesToUpdateMutex;
 
-        QString m_currentFolder;
+        mutable QMutex m_currentMutex;
         KUrl m_currentUrl;
+        UpdateDirFlags m_currentFlags;
 
         int m_indexingDelay;
         IndexCleaner* m_cleaner;
@@ -234,3 +245,4 @@ namespace Nepomuk {
 Q_DECLARE_OPERATORS_FOR_FLAGS(Nepomuk::IndexScheduler::UpdateDirFlags)
 
 #endif
+

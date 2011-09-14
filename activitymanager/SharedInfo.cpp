@@ -18,7 +18,6 @@
  */
 
 #include "SharedInfo.h"
-#include "ActivityManager.h"
 
 #include <KDebug>
 
@@ -67,5 +66,10 @@ void SharedInfo::setCurrentActivity(const QString & activity)
 KConfigGroup SharedInfo::pluginConfig(const QString & pluginName) const
 {
     return KConfigGroup(&m_config, pluginName);
+}
+
+void SharedInfo::requestScoreUpdate(const QString & application, const QString & uri)
+{
+    scoreUpdateRequested(application, uri);
 }
 

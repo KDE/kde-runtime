@@ -338,7 +338,7 @@ void ReportAssistantDialog::closeEvent(QCloseEvent * event)
             saveBacktraceItem.setText(i18nc("@action:button", "Save information and close"));
 
             int ret = KMessageBox::questionYesNoCancel(this,
-                           i18nc("@info","Do you really want to close the bug reporting assistant?"
+                           i18nc("@info","Do you really want to close the bug reporting assistant? "
                            "<note>The crash information is still valid, so "
                            "you can save the report before closing if you want.</note>"),
                            i18nc("@title:window","Close the Assistant"),

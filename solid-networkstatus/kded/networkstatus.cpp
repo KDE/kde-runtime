@@ -39,6 +39,8 @@
 #include "networkmanagerstatus.h"
 #endif
 
+#include "wicdstatus.h"
+
 #include <kpluginfactory.h>
 #include "ntracknetworkstate.h"
 
@@ -200,6 +202,7 @@ void NetworkStatusModule::init()
 #ifdef NM_BACKEND_ENABLED
     backends << new NetworkManagerStatus( this );
 #endif
+    backends << new WicdStatus( this );
 
     while ( !backends.isEmpty() ) {
         d->backend = backends.takeFirst();

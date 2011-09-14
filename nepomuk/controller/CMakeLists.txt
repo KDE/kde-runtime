@@ -15,7 +15,7 @@ set(controller_SRCS
   ../kcm/statuswidget.cpp
   )
 
-qt4_add_dbus_interface(controller_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../interfaces/org.kde.nepomuk.Strigi.xml strigiserviceinterface)
+qt4_add_dbus_interface(controller_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../interfaces/org.kde.nepomuk.FileIndexer.xml fileindexerinterface)
 qt4_add_dbus_interface(controller_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../interfaces/org.kde.nepomuk.ServiceControl.xml servicecontrol)
 
 kde4_add_ui_files(controller_SRCS ../kcm/statuswidget.ui)

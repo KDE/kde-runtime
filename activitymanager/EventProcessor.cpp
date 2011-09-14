@@ -93,13 +93,19 @@ EventProcessor * EventProcessor::self()
 EventProcessor::EventProcessor()
     : d(new EventProcessorPrivate())
 {
+    // Initializing SharedInfo
+    SharedInfo * shared = SharedInfo::self();
+
+    connect(shared, SIGNAL(scoreUpdateRequested(const QString &, const QString &)),
+            this, SLOT(updateScore(const QString &, const QString &)));
+
     // Plugin loading
 
     kDebug() << "Loading plugins...";
 
     KService::List offers = KServiceTypeTrader::self()->query("ActivityManager/Plugin");
 
-    QStringList disabledPlugins = SharedInfo::self()->pluginConfig("Global").readEntry("disabledPlugins", QStringList());
+    QStringList disabledPlugins = shared->pluginConfig("Global").readEntry("disabledPlugins", QStringList());
     kDebug() << disabledPlugins << "disabled due to the configuration in activitymanager-pluginsrc";
 
     foreach(const KService::Ptr & service, offers) {
@@ -130,9 +136,10 @@ EventProcessor::EventProcessor()
         }
 
         Plugin * plugin = factory->create < Plugin > (this);
-        plugin->setSharedInfo(SharedInfo::self());
 
         if (plugin) {
+            plugin->setSharedInfo(shared);
+
             const QString & type = service->property("X-ActivityManager-PluginType", QVariant::String).toString();
 
             if (type == "lazyeventhandler") {
@@ -160,7 +167,7 @@ EventProcessor::~EventProcessor()
 }
 
 void EventProcessor::addEvent(const QString & application, WId wid, const QString & uri,
-            Event::Type type, Event::Reason reason)
+            int type, int reason)
 {
     Event newEvent(application, wid, uri, type, reason);
 
@@ -188,6 +195,16 @@ void EventProcessor::addEvent(const QString & application, WId wid, const QStrin
     d->events_mutex.unlock();
 
     d->start();
+}
+
+void EventProcessor::updateScore(const QString & application, const QString & uri)
+{
+    // This is not a real event, it just notifies the system to recalculate
+    // the score for the specified uri
+    EventProcessor::self()->addEvent(application, 0, uri,
+            Event::UpdateScore, Event::UserEventReason);
+
+    kDebug() << "Score updating requested for" << application << uri;
 }
 
 

@@ -9,14 +9,9 @@ set(datamanagement_SRC
   dbustypes.cpp
   datamanagement.cpp
   resourcewatcher.cpp
+  abstracttimeoutdbusinterface.cpp
+  datamanagementinterface.cpp
 )
-
-set(datamanagementservice_dbus_desc ../../../interfaces/org.kde.nepomuk.DataManagement.xml)
-
-set_source_files_properties(
-  ${datamanagementservice_dbus_desc}
-  PROPERTIES
-  INCLUDE "dbustypes.h")
 
 qt4_add_dbus_interface(datamanagement_SRC
   ../../../interfaces/org.kde.nepomuk.ResourceWatcherConnection.xml
@@ -25,10 +20,6 @@ qt4_add_dbus_interface(datamanagement_SRC
 qt4_add_dbus_interface(datamanagement_SRC
   ../../../interfaces/org.kde.nepomuk.ResourceWatcher.xml
   resourcewatchermanagerinterface)
-
-qt4_add_dbus_interface(datamanagement_SRC
-  ${datamanagementservice_dbus_desc}
-  datamanagementinterface)
 
 kde4_add_library(nepomukdatamanagement SHARED
   ${datamanagement_SRC})
@@ -40,8 +31,7 @@ target_link_libraries(nepomukdatamanagement
   ${NEPOMUK_LIBRARIES}
   ${KDE4_KDECORE_LIBS})
 
-install(TARGETS nepomukdatamanagement
-  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS nepomukdatamanagement ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 install(FILES
   simpleresource.h
@@ -52,10 +42,6 @@ install(FILES
   resourcewatcher.h
   nepomukdatamanagement_export.h
   DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk
-  COMPONENT Devel)
-
-install(PROGRAMS nepomuk-simpleresource-rcgen.py
-  DESTINATION ${BIN_INSTALL_DIR}
   COMPONENT Devel)
 
 # API docs

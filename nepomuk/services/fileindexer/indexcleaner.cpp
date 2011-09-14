@@ -21,7 +21,7 @@
 */
 
 #include "indexcleaner.h"
-#include "strigiserviceconfig.h"
+#include "fileindexerconfig.h"
 #include "util.h"
 
 #include <QtCore/QTimer>
@@ -63,7 +63,7 @@ namespace {
     QString constructExcludeIncludeFoldersFilter()
     {
         QStringList filters;
-        foreach( const QString& folder, Nepomuk::StrigiServiceConfig::self()->includeFolders() ) {
+        foreach( const QString& folder, Nepomuk::FileIndexerConfig::self()->includeFolders() ) {
             filters << QString::fromLatin1( "(?url!=%1)" ).arg( Soprano::Node::resourceToN3( KUrl( folder ) ) );
         }
         return filters.join( QLatin1String( " && " ) );
@@ -108,7 +108,7 @@ namespace {
         QStringList subFilters( constructExcludeIncludeFoldersFilter() );
 
         // now add the actual filters
-        QList<QPair<QString, bool> > folders = Nepomuk::StrigiServiceConfig::self()->folders();
+        QList<QPair<QString, bool> > folders = Nepomuk::FileIndexerConfig::self()->folders();
         int index = 0;
         while ( index < folders.count() ) {
             subFilters << constructFolderSubFilter( folders, index );
@@ -178,50 +178,48 @@ void Nepomuk::IndexCleaner::start()
     // 3. Build filter query for all exclude filters
     //
     QStringList fileFilters;
-    foreach( const QString& filter, Nepomuk::StrigiServiceConfig::self()->excludeFilters() ) {
+    foreach( const QString& filter, Nepomuk::FileIndexerConfig::self()->excludeFilters() ) {
         QString filterRxStr = QRegExp::escape( filter );
         filterRxStr.replace( "\\*", QLatin1String( ".*" ) );
         filterRxStr.replace( "\\?", QLatin1String( "." ) );
         filterRxStr.replace( '\\',"\\\\" );
         fileFilters << QString::fromLatin1( "REGEX(STR(?fn),\"^%1$\")" ).arg( filterRxStr );
     }
-    QString includeExcludeFilters = constructExcludeIncludeFoldersFilter();
+    const QString includeExcludeFilters = constructExcludeIncludeFoldersFilter();
 
-    QString filters;
-    if( !includeExcludeFilters.isEmpty() && !fileFilters.isEmpty() )
-        filters = QString::fromLatin1("FILTER((%1) && (%2)) .").arg( includeExcludeFilters, fileFilters.join(" || ") );
-    else if( !fileFilters.isEmpty() )
-        filters = QString::fromLatin1("FILTER(%1) .").arg( fileFilters.join(" || ") );
-    else if( !includeExcludeFilters.isEmpty() )
-        filters = QString::fromLatin1("FILTER(%1) .").arg( includeExcludeFilters );
+    if( !includeExcludeFilters.isEmpty() && !fileFilters.isEmpty() ) {
+        const QString filters = QString::fromLatin1("FILTER((%1) && (%2)) .").arg( includeExcludeFilters, fileFilters.join(" || ") );
 
-    // 3.1. Data for files which are excluded through filters
-    if(!appRes.isEmpty()) {
-        m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
-                                                 "graph ?g { ?r %1 ?url . } . "
+        // 3.1. Data for files which are excluded through filters
+        if(!appRes.isEmpty()) {
+            m_removalQueries << QString::fromLatin1( "select distinct ?r ?fn where { "
+                                                     "graph ?g { ?r %1 ?url . } . "
+                                                     "?r %2 ?fn . "
+                                                     "?g %3 %4 . "
+                                                     "FILTER(REGEX(STR(?url),\"^file:/\")) . "
+                                                     "%6 } LIMIT %7" )
+                                .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                                      Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
+                                      Soprano::Node::resourceToN3( NAO::maintainedBy() ),
+                                      Soprano::Node::resourceToN3( appRes ),
+                                      filters )
+                                .arg(limit);
+            m_excludeFilterRemovalQueries << m_removalQueries.last();
+        }
+
+        // 3.2. (legacy data) Data for files which are excluded through filters
+        m_removalQueries << QString::fromLatin1( "select distinct ?r ?fn where { "
+                                                 "?r %1 ?url . "
                                                  "?r %2 ?fn . "
-                                                 "?g %3 %4 . "
+                                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
                                                  "FILTER(REGEX(STR(?url),\"^file:/\")) . "
-                                                 "%6 } LIMIT %7" )
+                                                 "%3 } LIMIT %4" )
                             .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
                                   Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
-                                  Soprano::Node::resourceToN3( NAO::maintainedBy() ),
-                                  Soprano::Node::resourceToN3( appRes ),
                                   filters )
                             .arg(limit);
+        m_excludeFilterRemovalQueries << m_removalQueries.last();
     }
-
-    // 3.2. (legacy data) Data for files which are excluded through filters
-    m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
-                                             "?r %1 ?url . "
-                                             "?r %2 ?fn . "
-                                             "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
-                                             "FILTER(REGEX(STR(?url),\"^file:/\")) . "
-                                             "%3 } LIMIT %4" )
-                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                              Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
-                              filters )
-                        .arg(limit);
 
 
     //
@@ -246,6 +244,7 @@ void Nepomuk::IndexCleaner::start()
     // for video and audio streams.
     //
     m_removalQueries << QString::fromLatin1("select ?r where { "
+                                            "graph ?g { ?r ?pp ?oo . } . "
                                             "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
                                             "FILTER(!bif:exists((select (1) where { ?r %1 ?u . }))) . "
                                             "FILTER(!bif:exists((select (1) where { ?r %2 ?p . }))) . "
@@ -279,6 +278,16 @@ void Nepomuk::IndexCleaner::clearNextBatch()
     Soprano::QueryResultIterator it
             = ResourceManager::instance()->mainModel()->executeQuery( m_query, Soprano::Query::QueryLanguageSparql );
     while( it.next() ) {
+        //
+        // Workaround for a bug in Virtuoso 6.1.3 where file names with umlauts and
+        // accents always match
+        //
+        if(m_excludeFilterRemovalQueries.contains(m_query)) {
+            const QString fileName = it["fn"].toString();
+            if(FileIndexerConfig::self()->shouldFileBeIndexed(fileName)) {
+                continue;
+            }
+        }
         resources << it[0].uri();
     }
 

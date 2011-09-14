@@ -9,7 +9,7 @@ include_directories(
   ${KDE4_INCLUDES}
   ${SOPRANO_INCLUDE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../strigi
+  ${CMAKE_CURRENT_SOURCE_DIR}/../fileindexer
   ${CMAKE_CURRENT_SOURCE_DIR}/../storage/lib/
   )
 
@@ -18,11 +18,11 @@ set(SRCS
   metadatamover.cpp
   updaterequest.cpp
   invalidfileresourcecleaner.cpp
-  ../strigi/strigiserviceconfig.cpp
+  ../fileindexer/fileindexerconfig.cpp
   removabledeviceindexnotification.cpp
   )
 
-qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.Strigi.xml strigiserviceinterface)
+qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.FileIndexer.xml fileindexerinterface)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   set(SRCS

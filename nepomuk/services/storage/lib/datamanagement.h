@@ -158,6 +158,14 @@ namespace Nepomuk {
      * with a different value in the other resource.
      *
      *
+     * \section nepomuk_dms_permissions Permissions in %Nepomuk
+     *
+     * FIXME: define exactly how permissions are handled. By default all is private. Questions remaining:
+     * - Do we define permissions on the graph level?
+     * - What is the range of the permissions? \c nao:Party?
+     * - How do we define "public to all"?
+     *
+     *
      * \section nepomuk_dms_advanced Advanced Nepomuk Concepts
      *
      * This section described advanced concepts in Nepomuk such as the data layout used throughout the database.
@@ -353,10 +361,6 @@ namespace Nepomuk {
         /// are just saved with their given URI, provided the URI already exists.
         IdentifyNew = 0,
 
-        /// All resources are identified no matter what. The resource URI given is not considered
-        /// even if it already exists
-        IdentifyAll = 1,
-
         /// All resources are treated as new ones. The only exception are those with a defined
         /// resource URI.
         IdentifyNone = 2
@@ -379,6 +383,23 @@ namespace Nepomuk {
         LazyCardinalities = 2
     };
     Q_DECLARE_FLAGS(StoreResourcesFlags, StoreResourcesFlag)
+
+    /**
+     * \brief Flags to influence the result of describeResources().
+     *
+     * See the documentation of describeResources() for details.
+     */
+    enum DescribeResourcesFlag {
+        /// No flags - default behaviour
+        NoDescribeResourcesFlags = 0,
+
+        /// Exclude discardable data, ie. data which can be re-generated
+        ExcludeDiscardableData = 1,
+
+        /// Exclude related resources, only include literal properties
+        ExcludeRelatedResources = 2
+    };
+    Q_DECLARE_FLAGS(DescribeResourcesFlags, DescribeResourcesFlag)
 
     /**
      * \brief Remove all information about resources from the database which
@@ -486,16 +507,42 @@ namespace Nepomuk {
     /**
      * \brief Retrieve all information about a set of resources.
      *
+     * Different levels of detail are available when retrieving resources. These are modified through the
+     * \p flags where the following values are supported:
+     *
+     * - \c ExcludeDiscardableData - If this flag is enabled no discardable data will be returned. This means
+     * that any data that has been created through storeResources() using additional metadata including a graph
+     * type \c nrl:DiscardableInstanceBase is ignored. This includes for example all information the file
+     * indexer has created. Be aware that this might even mean that some of the requested \p resources are not
+     * returned at all since they only contain discardable information.
+     *
+     * - \c ExcludeRelatedResources - If this flag is enabled related resources are ignored, only properties with
+     * a literal value will be returned. The only exception are sub-resources which are treated as part of the
+     * resource itself. Typical examples of sub-resources are address details of a contact or the performer
+     * contact of a music track.
+     *
+     * \b Related \b resources:
+     *
+     * If the \c ExcludeRelatedResources flag is not specified related resources are returned as well. Related
+     * resoures are returned by including only their identifying properties. \ref nepomuk_dms_resource_identification
+     * explains the usage of identifying properties in more detail.
+     *
      * \param resources The resources to describe. See \ref nepomuk_dms_resource_uris for details.
-     * \param includeSubResources If \p true sub resources will be included. See \ref nepomuk_dms_sub_resources for details.
+     * \param flags Optional flags to modify the data which is returned.
+     * \param targetParties This optional list can be used to specify the parties (nao:Party) which should
+     * receive the returned data. This will result in a filtering of the result according to configured
+     * permissions. Only data which is set as being public or readable by the specified parties is returned.
+     * See \ref nepomuk_dms_permissions for details. \b NOT \b IMPLEMENTED \b YET!
      */
     NEPOMUK_DATA_MANAGEMENT_EXPORT DescribeResourcesJob* describeResources(const QList<QUrl>& resources,
-                                                                           bool includeSubResources);
+                                                                           DescribeResourcesFlags flags = NoDescribeResourcesFlags,
+                                                                           const QList<QUrl>& targetParties = QList<QUrl>() );
     //@}
     //@}
 }
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Nepomuk::RemovalFlags)
 Q_DECLARE_OPERATORS_FOR_FLAGS(Nepomuk::StoreResourcesFlags)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Nepomuk::DescribeResourcesFlags)
 
 #endif
