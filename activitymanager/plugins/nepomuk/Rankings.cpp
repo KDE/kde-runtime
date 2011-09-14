@@ -68,11 +68,13 @@ Rankings * Rankings::self()
 Rankings::Rankings(QObject * parent)
     : QObject(parent)
 {
-    // kDebug() << "We are in the Rankings";
+    kDebug() << "%%%%%%%%%% We are in the Rankings %%%%%%%%%%";
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     new RankingsAdaptor(this);
     dbus.registerObject("/Rankings", this);
+
+    initResults(QString());
 }
 
 Rankings::~Rankings()
@@ -95,13 +97,11 @@ void Rankings::resourceScoreUpdated(const QString & activity,
 
     int i = list.size() - 1;
 
-    kDebug() << "List size is:" << i;
-
     if (i < 0) {
         list << ResultItem(uri, score);
 
     } else {
-        while (list[i].score < score) {
+        while (list[i].score < score && i > 0) {
             --i;
         }
 
@@ -157,10 +157,14 @@ void Rankings::setCurrentActivity(const QString & activity)
     initResults(activity);
 }
 
-void Rankings::initResults(const QString & activity)
+void Rankings::initResults(const QString & _activity)
 {
-    m_results[COALESCE_ACTIVITY(activity)].clear();
+    const QString & activity = COALESCE_ACTIVITY(_activity);
 
+    m_results[activity].clear();
+
+#define QUERY_DEBUGGING
+#ifndef QUERY_DEBUGGING
     const QString query = QString::fromLatin1(
         "select distinct ?resource, "
         "( "
@@ -177,18 +181,49 @@ void Rankings::initResults(const QString & activity)
             "?cache a kext:ResourceScoreCache . "
             "?cache nao:lastModified ?lastUpdate . "
             "?cache kext:cachedScore ?lastScore . "
-            "?resource nao:prefLabel ?label . "
-            "?resource nie:url ?icon . "
-            "?resource nie:url ?description . "
+            // "?resource nao:prefLabel ?label . "
+            // "?resource nie:url ?icon . "
+            // "?resource nie:url ?description . "
             "?cache kext:usedActivity %2 . "
         "} "
         "GROUP BY (?resource) ORDER BY DESC (?score) LIMIT 10"
     ).arg(
         litN3(QDateTime::currentDateTime()),
-        resN3(activityResource(COALESCE_ACTIVITY(activity)))
+        resN3(activityResource(activity))
     );
 
-    // kDebug() << query;
+#else
+    kDebug() << "\n\nvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n\n";
+
+    const QString query = QString::fromLatin1(
+    "    select distinct ?resource, \n"
+    "    ( \n"
+    "        ( \n"
+    "            SUM ( \n"
+    "                ?lastScore * bif:exp( \n"
+    "                    - bif:datediff('day', ?lastUpdate, %1) \n"
+    "                ) \n"
+    "            ) \n"
+    "        ) \n"
+    "        as ?score \n"
+    "    ) where { \n"
+    "        ?cache kext:targettedResource ?resource . \n"
+    "        ?cache a kext:ResourceScoreCache . \n"
+    "        ?cache nao:lastModified ?lastUpdate . \n"
+    "        ?cache kext:cachedScore ?lastScore . \n"
+    // "        ?resource nao:prefLabel ?label . \n"
+    // "        ?resource nie:url ?icon . \n"
+    // "        ?resource nie:url ?description . \n"
+    "        ?cache kext:usedActivity %2 . \n"
+    "    } \n"
+    "    GROUP BY (?resource) ORDER BY DESC (?score) LIMIT 10\n"
+    ).arg(
+        litN3(QDateTime::currentDateTime()),
+        resN3(activityResource(activity))
+    );
+
+    kDebug() << query;
+#endif
 
     Soprano::QueryResultIterator it
         = Nepomuk::ResourceManager::instance()->mainModel()
@@ -197,11 +232,16 @@ void Rankings::initResults(const QString & activity)
     while (it.next()) {
         Nepomuk::Resource result(it[0].uri());
 
-        // kDebug() << "This is one result" << it[0].uri() << result
-        //     << it[1].literal().toDouble();
-
-        // kDebug() << "###" << result.resourceUri()
-        //     << result.label() << result.genericIcon();
+        kDebug() << "This is one result:\n"
+            << " URI:" << result.property(NIE::url()).toString() << "\n"
+            // << it[0].uri() << result << " - " << "\n"
+            << it[1].literal().toDouble() << "\n"
+            // << " - ### uri:" << result.resourceUri() << "\n"
+            << " - label:" << result.label() << "\n"
+            << " - icon:" << result.genericIcon() << "\n"
+            << " IDS:" << result.identifiers() << "\n"
+            << " Type:" << result.types() << "\n"
+        ;
 
         m_results[activity] << ResultItem(it[0].uri(), it[1].literal().toDouble());
     }
@@ -211,13 +251,12 @@ void Rankings::initResults(const QString & activity)
     notifyResultsUpdated(activity);
 }
 
-void Rankings::notifyResultsUpdated(const QString & activity, QStringList clients)
+void Rankings::notifyResultsUpdated(const QString & _activity, QStringList clients)
 {
-    kDebug() << "####### These are the results for: " << activity << COALESCE_ACTIVITY(activity)
-             << "current activity is" << NepomukPlugin::self()->sharedInfo()->currentActivity();
+    const QString & activity = COALESCE_ACTIVITY(_activity);
 
     QVariantList data;
-    foreach (const ResultItem & item, m_results[COALESCE_ACTIVITY(activity)]) {
+    foreach (const ResultItem & item, m_results[activity]) {
         kDebug() << item.uri << item.score;
         data << item.uri.toString();
     }
@@ -225,8 +264,8 @@ void Rankings::notifyResultsUpdated(const QString & activity, QStringList client
     kDebug() << "These are the clients" << m_clients << "We are gonna update this:" << clients;
 
     if (clients.isEmpty()) {
-        clients = m_clients[COALESCE_ACTIVITY(activity)];
-        kDebug() << "This is the current activity" << activity << COALESCE_ACTIVITY(activity)
+        clients = m_clients[activity];
+        kDebug() << "This is the current activity" << activity
                  << "And the clients for it" << clients;
 
         if (activity == NepomukPlugin::self()->sharedInfo()->currentActivity()) {
