@@ -31,6 +31,10 @@
 
 JobView::JobView(uint jobId, QObject *parent)
     : QObject(parent),
+    m_capabilities(-1),
+    m_percent(-1),
+    m_totalAmount(0),
+    m_processAmount(0),
     m_jobId(jobId),
     m_state(Running),
     m_isTerminated(false),
@@ -110,6 +114,9 @@ void JobView::setTotalAmount(qulonglong amount, const QString &unit)
         pair.second->asyncCall(QLatin1String("setTotalAmount"), amount, unit);
     }
 
+    m_totalAmount = amount;
+    m_totalUnit = unit;
+
     if (unit == "bytes") {
         m_sizeTotal = amount ? KGlobal::locale()->formatByteSize(amount) : QString();
 
@@ -134,6 +141,9 @@ void JobView::setProcessedAmount(qulonglong amount, const QString &unit)
     foreach(const iFacePair &pair, m_objectPaths) {
         pair.second->asyncCall(QLatin1String("setProcessedAmount"), amount, unit);
     }
+
+    m_processAmount = amount;
+    m_processUnit = unit;
 
     if (unit == "bytes") {
         m_sizeProcessed = amount ? KGlobal::locale()->formatByteSize(amount) : QString();
@@ -316,6 +326,47 @@ void JobView::addJobContact(const QString& objectPath, const QString& address)
     connect(client, SIGNAL(cancelRequested()), this, SIGNAL(cancelRequested()));
     Q_ASSERT(!m_objectPaths.contains(address));
     m_objectPaths.insert(address, pair);
+
+    //If the job already has any information, send it to the contact
+    if (m_capabilities > -1) {
+        client->asyncCall(QLatin1String("setCapabilities"), m_capabilities);
+    }
+
+    if (!m_applicationName.isEmpty()) {
+        client->asyncCall(QLatin1String("setAppName"), m_applicationName);
+    }
+
+    if (!m_appIconName.isEmpty()) {
+        client->asyncCall(QLatin1String("setAppIconName"), m_appIconName);
+    }
+
+    if (m_percent > -1) {
+        client->asyncCall(QLatin1String("setPercent"), m_percent);
+    }
+
+    if (!m_infoMessage.isEmpty()) {
+        client->asyncCall(QLatin1String("setInfoMessage"), m_infoMessage);
+    }
+
+    if (!m_descFields.isEmpty()) {
+        QHashIterator<uint, QPair <QString, QString > > i(m_descFields);
+        while (i.hasNext()) {
+            i.next();
+            client->asyncCall(QLatin1String("setDescriptionField"), i.key(), i.value().first, i.value().second);
+        }
+    }
+
+    if (m_state == Suspended) {
+        client->asyncCall(QLatin1String("setSuspended"), true);
+    }
+
+    if (m_processAmount > 0) {
+        client->asyncCall(QLatin1String("setProcessedAmount"), m_processAmount, m_processUnit);
+    }
+
+    if (m_totalAmount > 0) {
+        client->asyncCall(QLatin1String("setTotalAmount"), m_totalAmount, m_totalUnit);
+    }
 }
 
 void JobView::pendingCallStarted()

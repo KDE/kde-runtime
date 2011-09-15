@@ -214,6 +214,13 @@ void DataModel::setDataSource(QObject *object)
 
     disconnect(m_dataSource, 0, this, 0);
     m_dataSource = source;
+
+    QMap<QString, QVariant>::const_iterator i = source->data().constBegin();
+    while (i != source->data().constEnd()) {
+        dataUpdated(i.key(), i.value().value<Plasma::DataEngine::Data>());
+        ++i;
+    }
+
     connect(m_dataSource, SIGNAL(newData(const QString &, const Plasma::DataEngine::Data &)),
             this, SLOT(dataUpdated(const QString &, const Plasma::DataEngine::Data &)));
     connect(m_dataSource, SIGNAL(sourceRemoved(const QString &)), this, SLOT(removeSource(const QString &)));
@@ -262,19 +269,23 @@ void DataModel::setItems(const QString &sourceName, const QVariantList &list)
 
     if (!list.isEmpty()) {
         if (list.first().canConvert<QVariantHash>()) {
-            foreach (const QString& roleName, list.first().value<QVariantHash>().keys()) {
-                if (!m_roleIds.contains(roleName)) {
-                    ++m_maxRoleId;
-                    m_roleNames[m_maxRoleId] = roleName.toLatin1();
-                    m_roleIds[roleName] = m_maxRoleId;
+            foreach (const QVariant &item, list) {
+                foreach (const QString& roleName, item.value<QVariantHash>().keys()) {
+                    if (!m_roleIds.contains(roleName)) {
+                        ++m_maxRoleId;
+                        m_roleNames[m_maxRoleId] = roleName.toLatin1();
+                        m_roleIds[roleName] = m_maxRoleId;
+                    }
                 }
             }
         } else {
-            foreach (const QString& roleName, list.first().value<QVariantMap>().keys()) {
-                if (!m_roleIds.contains(roleName)) {
-                    ++m_maxRoleId;
-                    m_roleNames[m_maxRoleId] = roleName.toLatin1();
-                    m_roleIds[roleName] = m_maxRoleId;
+            foreach (const QVariant &item, list) {
+                foreach (const QString& roleName, item.value<QVariantMap>().keys()) {
+                    if (!m_roleIds.contains(roleName)) {
+                        ++m_maxRoleId;
+                        m_roleNames[m_maxRoleId] = roleName.toLatin1();
+                        m_roleIds[roleName] = m_maxRoleId;
+                    }
                 }
             }
         }
