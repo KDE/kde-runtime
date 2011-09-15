@@ -16,7 +16,7 @@
       <attribute name="title">
        <string>Basic Settings</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_11">
+      <layout class="QVBoxLayout" name="verticalLayout_13">
        <item>
         <widget class="QGroupBox" name="groupBox_2">
          <property name="title">
@@ -165,6 +165,29 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="m_emailIndexingBox">
+         <property name="title">
+          <string>Email Indexing</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <item>
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Email indexing allows full text search in email and their attachements.</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="m_checkEnableEmailIndexer">
+            <property name="text">
+             <string>Enable Email Indexer</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -213,7 +236,7 @@
                </font>
               </property>
               <property name="text">
-               <string notr="true">KSqueezedTextLabel</string>
+               <string notr="true"/>
               </property>
              </widget>
             </item>
@@ -366,7 +389,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string notr="true">KSqueezedTextLabel</string>
+                 <string notr="true"/>
                 </property>
                </widget>
               </item>
@@ -696,14 +719,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KSqueezedTextLabel</class>
-   <extends>QLabel</extends>
-   <header>ksqueezedtextlabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>KUrlLabel</class>
@@ -711,9 +729,14 @@
    <header>kurllabel.h</header>
   </customwidget>
   <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KIntNumInput</class>
+   <extends>QWidget</extends>
+   <header>knuminput.h</header>
   </customwidget>
   <customwidget>
    <class>KTabWidget</class>
@@ -722,9 +745,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>KIntNumInput</class>
-   <extends>QWidget</extends>
-   <header>knuminput.h</header>
+   <class>KSqueezedTextLabel</class>
+   <extends>QLabel</extends>
+   <header>ksqueezedtextlabel.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
