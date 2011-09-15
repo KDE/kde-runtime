@@ -68,6 +68,7 @@ kde4_add_ui_files(drkonqi_SRCS
 # Comment this out for release.
 #add_definitions(-DBACKTRACE_PARSER_DEBUG)
 
+kde4_add_app_icon(drkonqi_SRCS "${KDE4_INSTALL_DIR}/share/icons/oxygen/*/apps/kbugbuster.png")
 kde4_add_executable(drkonqi ${drkonqi_SRCS})
 
 target_link_libraries(drkonqi ${KDE4_KIO_LIBS} ${QT_QTWEBKIT_LIBRARY} ${KDE4_KDEWEBKIT_LIBRARY} drkonqi_backtrace_parser)
