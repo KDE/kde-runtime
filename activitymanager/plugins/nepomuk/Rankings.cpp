@@ -243,7 +243,9 @@ void Rankings::initResults(const QString & _activity)
             << " Type:" << result.types() << "\n"
         ;
 
-        m_results[activity] << ResultItem(it[0].uri(), it[1].literal().toDouble());
+        m_results[activity] << ResultItem(
+                result.property(NIE::url()).toUrl(),
+                it[1].literal().toDouble());
     }
 
     it.close();
