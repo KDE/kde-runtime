@@ -139,6 +139,7 @@ EventProcessor::EventProcessor()
 
         if (plugin) {
             plugin->setSharedInfo(shared);
+            plugin->init();
 
             const QString & type = service->property("X-ActivityManager-PluginType", QVariant::String).toString();
 

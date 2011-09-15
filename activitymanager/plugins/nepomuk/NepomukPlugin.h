@@ -27,6 +27,7 @@
 #include <Nepomuk/Resource>
 
 #include "../../Plugin.h"
+#include "Rankings.h"
 
 class NepomukPlugin: public Plugin {
 public:
@@ -36,10 +37,13 @@ public:
 
     static NepomukPlugin * self();
 
+    bool init();
+
 private:
     Nepomuk::Resource createDesktopEvent(const KUrl& uri, const QDateTime& startTime, const QString& app);
 
     Nepomuk::Resource m_currentActivity;
+    Rankings * m_rankings;
 
     static NepomukPlugin * s_instance;
 };

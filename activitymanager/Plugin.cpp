@@ -54,3 +54,8 @@ SharedInfo * Plugin::sharedInfo() const
 {
     return d->sharedInfo;
 }
+
+bool Plugin::init()
+{
+    return true;
+}

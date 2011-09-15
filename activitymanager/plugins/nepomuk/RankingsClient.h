@@ -17,43 +17,33 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef EVENT_BACKEND_H_
-#define EVENT_BACKEND_H_
+#ifndef RANKINGSCLIENT_H_
+#define RANKINGSCLIENT_H_
 
-#include <kdemacros.h>
-#include <KPluginFactory>
-#include <KPluginLoader>
+#include <QObject>
+#include <QVariantList>
 
-#include "Event.h"
-#include "SharedInfo.h"
-
-#define KAMD_EXPORT_PLUGIN(ClassName, AboutData)                       \
-    K_PLUGIN_FACTORY(ClassName##Factory, registerPlugin<ClassName>();) \
-    K_EXPORT_PLUGIN(ClassName##Factory("AboutData"))
-
+class RankingsClientPrivate;
 
 /**
  *
  */
-class KDE_EXPORT Plugin: public QObject {
+class RankingsClient: public QObject {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.kde.ActivityManager.RankingsClient")
 
 public:
-    Plugin(QObject * parent);
-    virtual ~Plugin();
+    RankingsClient();
+    ~RankingsClient();
 
-    virtual void addEvents(const EventList & events);
-    virtual void setResourceMimeType(const QString & uri, const QString & mimetype);
-
-    virtual void setSharedInfo(SharedInfo * sharedInfo);
-    SharedInfo * sharedInfo() const;
-
-    virtual bool init();
+public Q_SLOTS:
+    void updated(const QVariantList & data);
+    void inserted(int position, const QVariantList & item);
+    void removed(int position);
+    void changed(int position, const QVariantList & item);
 
 private:
-    class Private;
-    Private * const d;
+    class RankingsClientPrivate * const d;
 };
 
-#endif // EVENT_BACKEND_H_
-
+#endif // RANKINGSCLIENT_H_

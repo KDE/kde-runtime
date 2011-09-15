@@ -27,7 +27,7 @@ SlcPlugin::SlcPlugin(QObject * parent, const QVariantList & args)
     : Plugin(parent), focussedWindow(0)
 {
     Q_UNUSED(args)
-    kDebug() << "We are in the SlcPlugin";
+    // kDebug() << "We are in the SlcPlugin";
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     new SLCAdaptor(this);
@@ -122,14 +122,14 @@ void SlcPlugin::activeWindowChanged(WId wid)
 
 void SlcPlugin::updateFocus(WId wid)
 {
-    kDebug() << "SHARED INFO" << (void*) sharedInfo();
+    // kDebug() << "SHARED INFO" << (void*) sharedInfo();
 
     if (wid == 0 || !sharedInfo()->windows().contains(wid)) {
-        kDebug() << "Clearing focus" << wid;
+        // kDebug() << "Clearing focus" << wid;
         emit focusChanged(QString(), QString(), QString());
 
     } else if (wid == focussedWindow) {
-        kDebug() << "It is the currently focussed window" << wid;
+        // kDebug() << "It is the currently focussed window" << wid;
         SharedInfo::ResourceData resourceData = sharedInfo()->resources()[_focussedResourceURI()];
         emit focusChanged(focussedResourceURI(), resourceData.mimetype, resourceData.title);
 

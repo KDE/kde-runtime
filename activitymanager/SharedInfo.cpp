@@ -61,6 +61,8 @@ QString SharedInfo::currentActivity() const
 void SharedInfo::setCurrentActivity(const QString & activity)
 {
     m_currentActivity = activity;
+
+    emit currentActivityChanged(activity);
 }
 
 KConfigGroup SharedInfo::pluginConfig(const QString & pluginName) const

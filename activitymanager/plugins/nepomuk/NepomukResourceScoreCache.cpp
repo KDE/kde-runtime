@@ -67,7 +67,7 @@ public:
 NepomukResourceScoreCache::NepomukResourceScoreCache(const QString & activity, const QString & application, const QUrl & resource)
     : d(new NepomukResourceScoreCachePrivate())
 {
-    kDebug() << "Cache for" << activity << application << resource << anyResource(resource).resourceUri();
+    // kDebug() << "Cache for" << activity << application << resource << anyResource(resource).resourceUri();
 
     d->activity = activity;
     d->application = application;
@@ -87,7 +87,7 @@ NepomukResourceScoreCache::NepomukResourceScoreCache(const QString & activity, c
                 /* %4 */ resN3(anyResource(resource))
             );
 
-    kDebug() << query;
+    // kDebug() << query;
 
     Soprano::QueryResultIterator it
         = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(query, Soprano::Query::QueryLanguageSparql);
@@ -98,8 +98,8 @@ NepomukResourceScoreCache::NepomukResourceScoreCache(const QString & activity, c
 
         d->self = result;
 
-        kDebug() << "Found an old cache" << d->self.resourceUri() << d->self.resourceType()
-                 << "With a score of" << d->self.property(KExt::cachedScore()) << d->self.property(NAO::score());
+        // kDebug() << "Found an old cache" << d->self.resourceUri() << d->self.resourceType()
+        //          << "With a score of" << d->self.property(KExt::cachedScore()) << d->self.property(NAO::score());
 
     } else {
         Nepomuk::Resource result(QUrl(), KExt::ResourceScoreCache());
@@ -118,7 +118,7 @@ NepomukResourceScoreCache::NepomukResourceScoreCache(const QString & activity, c
 
         d->self = result;
 
-        kDebug() << "Created a new cache resource" << d->self.resourceUri() << d->self.resourceType();
+        // kDebug() << "Created a new cache resource" << d->self.resourceUri() << d->self.resourceType();
 
     }
 }
@@ -130,8 +130,8 @@ NepomukResourceScoreCache::~NepomukResourceScoreCache()
 
 void NepomukResourceScoreCache::updateScore()
 {
-    kDebug() << "Updating the score for " << d->resource;
-    kDebug() << "Last modified as string" << d->self.property(NAO::lastModified());
+    // kDebug() << "Updating the score for " << d->resource;
+    // kDebug() << "Last modified as string" << d->self.property(NAO::lastModified());
 
     QDateTime lastModified = d->self.property(NAO::lastModified()).toDateTime();
 
@@ -141,9 +141,9 @@ void NepomukResourceScoreCache::updateScore()
         // Adjusting the score depending on the time that passed since the
         // last update
 
-        kDebug() << "Previous score:" << score;
+        // kDebug() << "Previous score:" << score;
         score *= d->timeFactor(lastModified);
-        kDebug() << "Adjusted score:" << score;
+        // kDebug() << "Adjusted score:" << score;
 
     } else {
         // If we haven't had previous calculation, set the score to 0
@@ -151,7 +151,7 @@ void NepomukResourceScoreCache::updateScore()
 
     }
 
-    kDebug() << "Last modified timestamp is" << lastModified << lastModified.isValid();
+    // kDebug() << "Last modified timestamp is" << lastModified << lastModified.isValid();
 
     const QString query
         = QString::fromLatin1("select distinct ?r where { "
@@ -172,7 +172,7 @@ void NepomukResourceScoreCache::updateScore()
                 /* %7 */ litN3(lastModified.isValid() ? lastModified : QDateTime::fromMSecsSinceEpoch(0))
             );
 
-    kDebug() << query;
+    // kDebug() << query;
 
     Soprano::QueryResultIterator it
         = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(query, Soprano::Query::QueryLanguageSparql);
@@ -205,11 +205,13 @@ void NepomukResourceScoreCache::updateScore()
             score += d->timeFactor(eventEnd) * intervalLength / 60.0;
         }
 
-        kDebug() << result.resourceUri() << eventStart << eventEnd << intervalLength;
+        // kDebug() << result.resourceUri() << eventStart << eventEnd << intervalLength;
 
     }
 
-    kDebug() << "New calculated score:" << score << d->self.isValid();
+    // kDebug() << "New calculated score:" << score << d->self.isValid();
     d->self.setProperty(KExt::cachedScore(), score);
     d->self.setProperty(NAO::score(), score);
+
+    Rankings::self()->resourceScoreUpdated(d->activity, d->application, d->resource, score);
 }

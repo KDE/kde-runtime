@@ -44,6 +44,7 @@
 #include <kdebug.h>
 
 #include "NepomukCommon.h"
+#include "Rankings.h"
 
 using namespace Soprano::Vocabulary;
 using namespace Nepomuk::Vocabulary;
@@ -56,6 +57,17 @@ NepomukPlugin::NepomukPlugin(QObject *parent, const QVariantList & args)
 {
     Q_UNUSED(args)
     s_instance = this;
+}
+
+bool NepomukPlugin::init()
+{
+    Rankings::init(this);
+
+    connect(sharedInfo(), SIGNAL(currentActivityChanged(QString)),
+            Rankings::self(), SLOT(setCurrentActivity(QString)));
+
+    // TODO: Check for nepomuk and return false if not running
+    return true;
 }
 
 NepomukPlugin * NepomukPlugin::self()

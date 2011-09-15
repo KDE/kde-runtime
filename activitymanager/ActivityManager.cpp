@@ -101,6 +101,7 @@ ActivityManagerPrivate::ActivityManagerPrivate(ActivityManager * parent,
 
     currentActivity = mainConfig().readEntry("currentActivity", QString());
     kDebug() << "currentActivity is" << currentActivity;
+    SharedInfo::self()->setCurrentActivity(currentActivity);
 
     connect(KWindowSystem::self(), SIGNAL(windowRemoved(WId)),
             this, SLOT(windowClosed(WId)));
@@ -258,6 +259,7 @@ bool ActivityManagerPrivate::setCurrentActivity(const QString & id)
         scheduleConfigSync();
     }
 
+    kDebug() << (void*) SharedInfo::self() << "Rankings << shared info";
     SharedInfo::self()->setCurrentActivity(id);
     emit q->CurrentActivityChanged(id);
     return true;
