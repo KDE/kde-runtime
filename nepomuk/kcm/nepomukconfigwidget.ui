@@ -173,7 +173,7 @@
           <item>
            <widget class="QLabel" name="label_12">
             <property name="text">
-             <string>Email indexing allows full text search in email and their attachements.</string>
+             <string>Email indexing allows full text search in email and their attachments.</string>
             </property>
            </widget>
           </item>
