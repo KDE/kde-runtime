@@ -263,6 +263,22 @@ public Q_SLOTS:
      */
     void RegisterResourceTitle(const QString & uri, const QString & title);
 
+    /**
+     * Links the specified resource to the activity
+     * @param uri URI of the resource
+     * @param uri activity id of the activity to link to. If empty, the resource
+     *     is linked to the current activity
+     */
+    void LinkResourceToActivity(const QString & uri, const QString & activity = QString());
+
+    /**
+     * Links the specified resource to the activity
+     * @param uri URI of the resource
+     * @param uri activity id of the activity to link to. If empty, the resource
+     *     is linked to the current activity
+     */
+    // void UnlinkResourceFromActivity(const QString & uri, const QString & activity = QString());
+
 
 private:
     friend class ActivityManagerPrivate;

@@ -785,6 +785,38 @@ void ActivityManager::RegisterResourceTitle(const QString & uri, const QString &
     d->resources[kuri].title = title;
 }
 
+void ActivityManager::LinkResourceToActivity(const QString & uri, const QString & activity)
+{
+#ifdef HAVE_NEPOMUK
+    if (!d->nepomukInitialized()) return;
+
+    kDebug() << "Linking" << uri << "to" << activity << CurrentActivity();
+
+    Nepomuk::Resource(KUrl(uri)).
+        addIsRelated(d->activityResource(
+            activity.isEmpty() ?
+                CurrentActivity() : activity
+            )
+        );
+
+#endif
+}
+
+// void ActivityManager::UnlinkResourceFromActivity(const QString & uri, const QString & activity)
+// {
+// #ifdef HAVE_NEPOMUK
+//     if (!d->nepomukInitialized()) return;
+//
+//     Nepomuk::Resource(KUrl(uri)).
+//         addIsRelated(d->activityResource(
+//             activity.isEmpty() ?
+//                 CurrentActivity() : activity
+//             )
+//         );
+//
+// #endif
+// }
+
 // static
 ActivityManager * ActivityManager::self()
 {
