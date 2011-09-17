@@ -105,7 +105,7 @@ namespace {
     enum BackupFrequency {
         DisableAutomaticBackups = 0,
         DailyBackup = 1,
-        WeeklyBackup = 2,
+        WeeklyBackup = 2
     };
 
 
@@ -168,6 +168,8 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
         connect( m_checkEnableFileIndexer, SIGNAL( toggled(bool) ),
                  this, SLOT( changed() ) );
         connect( m_checkEnableNepomuk, SIGNAL( toggled(bool) ),
+                 this, SLOT( changed() ) );
+        connect( m_checkEnableEmailIndexer, SIGNAL( toggled(bool) ),
                  this, SLOT( changed() ) );
         connect( m_sliderMemoryUsage, SIGNAL( valueChanged(int) ),
                  this, SLOT( changed() ) );
@@ -250,6 +252,10 @@ void Nepomuk::ServerConfigModule::load()
     m_checkEnableNepomuk->setChecked( config.group( "Basic Settings" ).readEntry( "Start Nepomuk", true ) );
     m_checkEnableFileIndexer->setChecked( config.group( "Service-nepomukfileindexer" ).readEntry( "autostart", true ) );
 
+    const QString akonadiCtlExe = KStandardDirs::findExe( "akonadictl" );
+    m_emailIndexingBox->setVisible( !akonadiCtlExe.isEmpty() );
+    KConfig akonadiConfig( "akonadi_nepomuk_feederrc" );
+    m_checkEnableEmailIndexer->setChecked( akonadiConfig.group( "akonadi_nepomuk_email_feeder" ).readEntry( "Enabled", true ) );
 
     // 2. file indexer settings
     KConfig fileIndexerConfig( "nepomukstrigirc" );
@@ -325,6 +331,11 @@ void Nepomuk::ServerConfigModule::save()
     config.group( "Service-nepomukfileindexer" ).writeEntry( "autostart", m_checkEnableFileIndexer->isChecked() );
     config.group( "main Settings" ).writeEntry( "Maximum memory", m_sliderMemoryUsage->value() );
 
+    KConfig akonadiConfig( "akonadi_nepomuk_feederrc" );
+    akonadiConfig.group( "akonadi_nepomuk_email_feeder" ).writeEntry( "Enabled", m_checkEnableEmailIndexer->isChecked() );
+    akonadiConfig.sync();
+    QDBusInterface akonadiIface( "org.freedesktop.Akonadi.Agent.akonadi_nepomuk_email_feeder", "/", "org.freedesktop.Akonadi.Agent.Control" );
+    akonadiIface.asyncCall( "reconfigure" );
 
     // 2. update file indexer config
     KConfig fileIndexerConfig( "nepomukstrigirc" );
@@ -387,6 +398,7 @@ void Nepomuk::ServerConfigModule::defaults()
 
     m_checkEnableFileIndexer->setChecked( true );
     m_checkEnableNepomuk->setChecked( true );
+    m_checkEnableEmailIndexer->setChecked( true );
     m_indexFolderSelectionDialog->setIndexHiddenFolders( false );
     m_indexFolderSelectionDialog->setExcludeFilters( Nepomuk::defaultExcludeFilterList() );
     m_indexFolderSelectionDialog->setFolders( defaultFolders(), QStringList() );

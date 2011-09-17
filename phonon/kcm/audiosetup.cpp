@@ -300,19 +300,35 @@ AudioSetup::AudioSetup(QWidget *parent)
         return;
     }
 
-    s_mainloop = pa_glib_mainloop_new(NULL);
-    Q_ASSERT(s_mainloop);
+    int ret = ca_context_create(&m_Canberra);
+    if (ret < 0) {
+        kDebug() << "Disabling PulseAudio integration. Canberra context failed.";
+        return;
+    }
 
+    s_mainloop = pa_glib_mainloop_new(NULL);
+    if (!s_mainloop) {
+        kDebug() << "Disabling PulseAudio integration for lack of working GLib event loop.";
+        ca_context_destroy(m_Canberra);
+        m_Canberra = 0;
+        return;
+    }
     pa_mainloop_api *api = pa_glib_mainloop_get_api(s_mainloop);
 
     s_context = pa_context_new(api, i18n("KDE Audio Hardware Setup").toUtf8().constData());
-    int ret = pa_context_connect(s_context, NULL, PA_CONTEXT_NOFAIL, 0);
-    Q_ASSERT(ret >= 0);
+    ret = pa_context_connect(s_context, NULL, PA_CONTEXT_NOFAIL, 0);
+    if (ret < 0) {
+        kDebug() << "Disabling PulseAudio integration. Context connection failed: " << pa_strerror(pa_context_errno(s_context));
+        pa_context_unref(s_context);
+        s_context = 0;
+        pa_glib_mainloop_free(s_mainloop);
+        s_mainloop = 0;
+        ca_context_destroy(m_Canberra);
+        m_Canberra = 0;
+        return;
+    }
 
     pa_context_set_state_callback(s_context, &context_state_callback, this);
-
-    ret = ca_context_create(&m_Canberra);
-    Q_ASSERT(ret >= 0);
 }
 
 AudioSetup::~AudioSetup()
