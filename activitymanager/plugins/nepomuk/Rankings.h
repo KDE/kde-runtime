@@ -24,6 +24,8 @@
 #include <QStringList>
 #include <QUrl>
 
+#include <Nepomuk/Resource>
+
 class Rankings: public QObject
 {
     Q_OBJECT
@@ -65,6 +67,9 @@ private Q_SLOTS:
 
 private:
     Rankings(QObject * parent = 0);
+    void updateScoreTrashold(const QString & activity);
+
+    static QUrl urlFor(const Nepomuk::Resource & resource);
 
     static Rankings * s_instance;
 
@@ -93,6 +98,7 @@ private:
 
     QHash < Activity, QStringList > m_clients;
     QHash < Activity, QList < ResultItem > > m_results;
+    QHash < Activity, qreal > m_resultScoreTreshold;
 };
 
 #endif

@@ -34,6 +34,8 @@
 #ifdef HAVE_NEPOMUK
     #include <Nepomuk/ResourceManager>
     #include <Nepomuk/Resource>
+    #include <Nepomuk/Variant>
+    #include "nie.h"
 #endif
 
 #include "activitymanageradaptor.h"
@@ -730,12 +732,25 @@ void ActivityManager::RegisterResourceEvent(const QString & application, uint _w
     if (event > Event::LastEventType || reason > Event::LastEventReason)
         return;
 
+    KUrl kuri(uri);
     WId windowId = (WId) _windowId;
 
     kDebug() << "New event on the horizon" << application << _windowId << windowId << event << Event::Opened;
-    if (event == Event::Opened) {
 
-        KUrl kuri(uri);
+#ifdef HAVE_NEPOMUK
+    if (uri.startsWith("nepomuk:")) {
+        Nepomuk::Resource resource(kuri);
+
+        if (resource.hasProperty(Nepomuk::Vocabulary::NIE::url())) {
+            kuri = resource.property(Nepomuk::Vocabulary::NIE::url()).toUrl();
+            kDebug() << "Passing real url" << kuri;
+        } else {
+            kWarning() << "Passing nepomuk:// url" << kuri;
+        }
+    }
+#endif
+
+    if (event == Event::Opened) {
 
         kDebug() << "Saving the open event for the window" << windowId;
 
@@ -752,7 +767,7 @@ void ActivityManager::RegisterResourceEvent(const QString & application, uint _w
     }
 
     EventProcessor::self()->addEvent(application, windowId,
-            uri, (Event::Type) event, (Event::Reason) reason);
+            kuri.url(), (Event::Type) event, (Event::Reason) reason);
 
 }
 

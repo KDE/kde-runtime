@@ -81,42 +81,6 @@ Rankings::~Rankings()
 {
 }
 
-void Rankings::resourceScoreUpdated(const QString & activity,
-        const QString & application, const QUrl & uri, qreal score)
-{
-    kDebug() << activity << application << uri << score;
-
-    QList < ResultItem > & list = m_results[activity];
-
-    for (int i = 0; i < list.size(); i++) {
-        if (list[i].uri == uri) {
-            list.removeAt(i);
-            break;
-        }
-    }
-
-    int i = list.size() - 1;
-
-    if (i < 0) {
-        list << ResultItem(uri, score);
-
-    } else {
-        while (list[i].score < score && i > 0) {
-            --i;
-        }
-
-        if (i + 1 < RESULT_COUNT_LIMIT) {
-            list.insert(i + 1, ResultItem(uri, score));
-        }
-
-        while (list.size() > RESULT_COUNT_LIMIT) {
-            list.removeLast();
-        }
-    }
-
-    notifyResultsUpdated(activity);
-}
-
 void Rankings::registerClient(const QString & client,
         const QString & activity, const QString & type)
 {
@@ -157,11 +121,23 @@ void Rankings::setCurrentActivity(const QString & activity)
     initResults(activity);
 }
 
+QUrl Rankings::urlFor(const Nepomuk::Resource & resource)
+{
+    if (resource.hasProperty(NIE::url())) {
+        kDebug() << "Returning URI" << resource.property(NIE::url()).toUrl();
+        return resource.property(NIE::url()).toUrl();
+    } else {
+        kWarning() << "Returning nepomuk URI" << resource.resourceUri();
+        return resource.resourceUri();
+    }
+}
+
 void Rankings::initResults(const QString & _activity)
 {
     const QString & activity = COALESCE_ACTIVITY(_activity);
 
     m_results[activity].clear();
+    updateScoreTrashold(activity);
 
 #define QUERY_DEBUGGING
 #ifndef QUERY_DEBUGGING
@@ -243,9 +219,12 @@ void Rankings::initResults(const QString & _activity)
             << " Type:" << result.types() << "\n"
         ;
 
-        m_results[activity] << ResultItem(
-                result.property(NIE::url()).toUrl(),
-                it[1].literal().toDouble());
+        qreal score = it[1].literal().toDouble();
+
+        if (score > m_resultScoreTreshold[activity]) {
+            m_results[activity] << ResultItem(
+                    urlFor(result), score);
+        }
     }
 
     it.close();
@@ -253,9 +232,70 @@ void Rankings::initResults(const QString & _activity)
     notifyResultsUpdated(activity);
 }
 
+void Rankings::resourceScoreUpdated(const QString & activity,
+        const QString & application, const QUrl & uri, qreal score)
+{
+    kDebug() << activity << application << uri << score;
+
+    if (score <= m_resultScoreTreshold[activity]) {
+        kDebug() << "This one didn't even qualify";
+        return;
+    }
+
+    QList < ResultItem > & list = m_results[activity];
+
+    // Removing the item from the list if it is already in it
+
+    for (int i = 0; i < list.size(); i++) {
+        if (list[i].uri == uri) {
+            list.removeAt(i);
+            break;
+        }
+    }
+
+    // Adding the item
+
+    ResultItem item(uri, score);
+
+    if (list.size() == 0) {
+        list << item;
+
+    } else {
+        int i;
+
+        for (i = 0; i < list.size(); i++) {
+            if (list[i].score < score) {
+                list.insert(i, item);
+                break;
+            }
+        }
+
+        if (i == list.size()) {
+            list << item;
+        }
+    }
+
+    while (list.size() > RESULT_COUNT_LIMIT) {
+        list.removeLast();
+    }
+
+    notifyResultsUpdated(activity);
+}
+
+void Rankings::updateScoreTrashold(const QString & activity)
+{
+    if (m_results[activity].size() >= RESULT_COUNT_LIMIT) {
+        m_resultScoreTreshold[activity] = m_results[activity].last().score;
+    } else {
+        m_resultScoreTreshold[activity] = 0;
+    }
+}
+
 void Rankings::notifyResultsUpdated(const QString & _activity, QStringList clients)
 {
     const QString & activity = COALESCE_ACTIVITY(_activity);
+
+    updateScoreTrashold(activity);
 
     QVariantList data;
     foreach (const ResultItem & item, m_results[activity]) {

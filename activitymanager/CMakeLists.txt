@@ -14,6 +14,8 @@ macro_log_feature(
         "Nepomuk" "Nepomuk" "http://www.kde.org" FALSE ""
         "STRONGLY_RECOMMENDED: Nepomuk is needed for some activity-related info")
 
+set(sdo_SRCS "")
+
 if(Nepomuk_FOUND)
     set(HAVE_NEPOMUK 1)
     set(ADDITIONAL_LINK_LIBS
@@ -22,6 +24,13 @@ if(Nepomuk_FOUND)
         ${NEPOMUK_QUERY_LIBRARIES}
         ${SOPRANO_LIBRARIES}
     )
+
+    soprano_add_ontology(
+        sdo_SRCS
+        ${SHAREDDESKTOPONTOLOGIES_ROOT_DIR}/nie/nie.trig
+        "NIE" "Nepomuk::Vocabulary" "trig"
+    )
+
 endif(Nepomuk_FOUND)
 
 # config file
@@ -43,6 +52,7 @@ set(activity_manager_SRCS
     Event.cpp
     SharedInfo.cpp
     main.cpp
+    ${sdo_SRCS}
     )
 
 qt4_add_dbus_adaptor(
