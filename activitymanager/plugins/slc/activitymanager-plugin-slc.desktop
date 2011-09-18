@@ -18,6 +18,7 @@ Name[x-test]=xxShare-Like-Connect Pluginxx
 Name[zh_TW]=Share-Like-Connect 外掛程式
 Comment=Plugin to provide data to the SLC system
 Comment[de]=Modul, um dem SLC-System Daten bereitzustellen.
+Comment[el]=Πρόσθετο για παροχή δεδομένων στο σύστημα SLC
 Comment[et]=Plugin andmete pakkumiseks SLC süsteemile
 Comment[eu]=SLC sistemari datuak hornitzeko plugina
 Comment[hu]=Bővítmény adatok küldésére az SLC rendszerbe
