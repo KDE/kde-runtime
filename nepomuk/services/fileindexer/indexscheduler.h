@@ -38,6 +38,8 @@ class QByteArray;
 namespace Nepomuk {
 
     class IndexCleaner;
+    class Indexer;
+
     /**
      * The IndexScheduler performs the normal indexing,
      * ie. the initial indexing and the timed updates
@@ -237,6 +239,8 @@ namespace Nepomuk {
 
         int m_indexingDelay;
         IndexCleaner* m_cleaner;
+
+        Indexer* m_currentIndexerJob;
     };
 
     QDebug operator<<( QDebug dbg, IndexScheduler::IndexingSpeed speed );
