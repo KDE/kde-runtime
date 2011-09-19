@@ -704,10 +704,12 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
                                         Soprano::Node::resourceToN3( propUri ),
                                         filterStringList.join( QLatin1String(" && ") ) );
 
-            int existingCardinality = m_model->executeQuery( query,
-                                                            Soprano::Query::QueryLanguageSparql )
-                                      .iterateBindings(0)
-                                      .allNodes().first().literal().toInt();
+            int existingCardinality = 0;
+            Soprano::QueryResultIterator exCarIt
+                    = m_model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+            if( exCarIt.next() ) {
+                existingCardinality = exCarIt[0].literal().toInt();
+            }
 
             const int newCardinality = objectValues.size() + existingCardinality;
 
