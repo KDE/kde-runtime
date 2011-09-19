@@ -65,6 +65,15 @@ void Nepomuk::insertOntologies(Soprano::Model* _model, const QUrl& graph)
     model.addStatement( QUrl("prop:/string"), RDF::type(), RDF::Property(), graph );
     model.addStatement( QUrl("prop:/string"), RDFS::range(), XMLSchema::string(), graph );
 
+    model.addStatement( QUrl("prop:/date"), RDF::type(), RDF::Property(), graph );
+    model.addStatement( QUrl("prop:/date"), RDFS::range(), XMLSchema::date(), graph );
+
+    model.addStatement( QUrl("prop:/time"), RDF::type(), RDF::Property(), graph );
+    model.addStatement( QUrl("prop:/time"), RDFS::range(), XMLSchema::time(), graph );
+
+    model.addStatement( QUrl("prop:/dateTime"), RDF::type(), RDF::Property(), graph );
+    model.addStatement( QUrl("prop:/dateTime"), RDFS::range(), XMLSchema::dateTime(), graph );
+
     model.addStatement( QUrl("prop:/res"), RDF::type(), RDF::Property(), graph );
     model.addStatement( QUrl("prop:/res"), RDFS::range(), RDFS::Resource(), graph );
 
