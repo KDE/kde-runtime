@@ -164,7 +164,8 @@ Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
     : QObject( parent ),
       m_suspended( false ),
       m_indexing( false ),
-      m_indexingDelay( 0 )
+      m_indexingDelay( 0 ),
+      m_currentIndexerJob( 0 )
 {
     m_cleaner = new IndexCleaner(this);
     connect( m_cleaner, SIGNAL(finished(KJob*)), this, SLOT(slotCleaningDone()) );
@@ -312,9 +313,14 @@ void Nepomuk::IndexScheduler::doIndexing()
         m_currentMutex.unlock();
         emit indexingFile( currentFile() );
 
-        KJob * indexer = new Indexer( file );
-        connect( indexer, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
-        indexer->start();
+        if(m_currentIndexerJob) {
+            kError() << "Already running an indexer job on URL" << m_currentIndexerJob->url() << "This is a scheduling bug!";
+        }
+        else {
+            m_currentIndexerJob = new Indexer( file );
+            connect( m_currentIndexerJob, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
+            m_currentIndexerJob->start();
+        }
     }
 
     // get the next folder
@@ -343,6 +349,8 @@ void Nepomuk::IndexScheduler::slotIndexingDone(KJob* job)
 {
     kDebug() << job;
     Q_UNUSED( job );
+
+    m_currentIndexerJob = 0;
 
     m_currentMutex.lock();
     m_currentUrl.clear();
