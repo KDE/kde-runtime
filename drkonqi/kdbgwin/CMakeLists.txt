@@ -16,8 +16,10 @@ set(kdbgwin_SRCS
 set(COMMON_LIBS ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} dbghelp psapi shlwapi)
 
 if ( MINGW )
+    # FIXME this should be handled in a higher level cmake with proper find
+    # scripts and configuration
     kde4_add_executable(kdbgwin ${kdbgwin_SRCS} mingw_generator.h mingw_generator.cpp)
-    target_link_libraries(kdbgwin ${COMMON_LIBS} bfd iberty intl)
+    target_link_libraries(kdbgwin ${COMMON_LIBS} bfd iberty intl z)
 endif ( MINGW )
 if ( MSVC )
     kde4_add_executable(kdbgwin ${kdbgwin_SRCS} msvc_generator.h msvc_generator.cpp)
