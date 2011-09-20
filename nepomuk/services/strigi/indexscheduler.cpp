@@ -318,7 +318,7 @@ void Nepomuk::IndexScheduler::doIndexing()
         }
         else {
             m_currentIndexerJob = new Indexer( file );
-            connect( m_currentIndexerJob, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
+            connect( m_currentIndexerJob, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)), Qt::DirectConnection );
             m_currentIndexerJob->start();
         }
     }
