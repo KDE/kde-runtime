@@ -202,16 +202,14 @@ void NetworkStatusModule::unregisterNetwork( const QString & networkName )
 void NetworkStatusModule::backendRegistered()
 {
     // we need to reset backend objects to make them connect to the appearing service.
-    if (!backends.isEmpty()) {
-        qDeleteAll(backends);
-        backends.clear();
+    qDeleteAll(backends);
+    backends.clear();
 
-        delete d->backendAppearedWatcher;
-        d->backendAppearedWatcher = 0;
+    delete d->backendAppearedWatcher;
+    d->backendAppearedWatcher = 0;
 
-        delete d->backendDisappearedWatcher;
-        d->backendDisappearedWatcher = 0;
-    }
+    delete d->backendDisappearedWatcher;
+    d->backendDisappearedWatcher = 0;
     init();
 }
 
