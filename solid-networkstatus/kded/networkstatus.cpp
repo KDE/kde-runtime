@@ -56,7 +56,8 @@ typedef QMap< QString, Network * > NetworkMap;
 class NetworkStatusModule::Private
 {
 public:
-    Private() : status( Solid::Networking::Unknown ), backend( 0 ), serviceWatcher( 0 )
+    Private() : status( Solid::Networking::Unknown ), backend( 0 ), serviceWatcher( 0 ),
+                backendAppearedWatcher( 0 ), backendDisappearedWatcher ( 0 )
     {
 
     }
@@ -68,6 +69,8 @@ public:
     Solid::Networking::Status status;
     SystemStatusInterface *backend;
     QDBusServiceWatcher *serviceWatcher;
+    QDBusServiceWatcher *backendAppearedWatcher;
+    QDBusServiceWatcher *backendDisappearedWatcher;
 };
 
 // CTORS/DTORS
@@ -196,26 +199,74 @@ void NetworkStatusModule::unregisterNetwork( const QString & networkName )
     }
 }
 
+void NetworkStatusModule::backendRegistered()
+{
+    // we need to reset backend objects to make them connect to the appearing service.
+    if (!backends.isEmpty()) {
+        qDeleteAll(backends);
+        backends.clear();
+
+        delete d->backendAppearedWatcher;
+        d->backendAppearedWatcher = 0;
+
+        delete d->backendDisappearedWatcher;
+        d->backendDisappearedWatcher = 0;
+    }
+    init();
+}
+
+void NetworkStatusModule::backendUnregistered()
+{
+    solidNetworkingStatusChanged(Solid::Networking::Unknown);
+}
+
 void NetworkStatusModule::init()
 {
-    QList<SystemStatusInterface*> backends;
+    if (backends.isEmpty()) {
 #ifdef NM_BACKEND_ENABLED
-    backends << new NetworkManagerStatus( this );
+        backends << new NetworkManagerStatus( this );
 #endif
-    backends << new WicdStatus( this );
+        backends << new WicdStatus( this );
+    }
 
-    while ( !backends.isEmpty() ) {
-        d->backend = backends.takeFirst();
-        if ( d->backend->isSupported() ) {
+    for ( int i = 0; i < backends.count(); i++ ) {
+        if ( backends.value(i)->isSupported() ) {
+            // select our backend...
+            d->backend = backends.takeAt(i);
+            // and delete the rest.
             qDeleteAll(backends);
             backends.clear();
-        } else {
-            delete d->backend;
-            d->backend = 0;
+            break;
         }
     }
 
-    if ( d->backend != 0 ) {
+    if (d->backendAppearedWatcher == 0) {
+        d->backendAppearedWatcher = new QDBusServiceWatcher(this);
+        d->backendAppearedWatcher->setConnection(QDBusConnection::systemBus());
+        d->backendAppearedWatcher->setWatchMode(QDBusServiceWatcher::WatchForRegistration);
+    }
+ 
+    if ( d->backend == 0 ) {
+        // if none found watch for all backends registration.
+        for ( int i = 0; i < backends.count(); i++ ) {
+            d->backendAppearedWatcher->addWatchedService(backends.value(i)->serviceName());
+        }
+        connect(d->backendAppearedWatcher, SIGNAL(serviceRegistered(const QString &)), SLOT(backendRegistered()));
+        return;
+    } else {
+        // watch for the selected backend re-registration only.
+        d->backendAppearedWatcher->addWatchedService(d->backend->serviceName());
+        connect(d->backendAppearedWatcher, SIGNAL(serviceRegistered(const QString &)), SLOT(backendRegistered()));
+
+        // watch for the selected bakend unregistration.
+        if (d->backendDisappearedWatcher == 0) {
+            d->backendDisappearedWatcher = new QDBusServiceWatcher(this);
+            d->backendDisappearedWatcher->setConnection(QDBusConnection::systemBus());
+            d->backendDisappearedWatcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
+            d->backendDisappearedWatcher->addWatchedService(d->backend->serviceName());
+            connect(d->backendDisappearedWatcher, SIGNAL(serviceUnregistered(const QString &)), SLOT(backendUnregistered()));
+        }
+ 
         connect( d->backend, SIGNAL(statusChanged(Solid::Networking::Status)),
                  this, SLOT(solidNetworkingStatusChanged(Solid::Networking::Status)));
         Solid::Networking::Status status = d->backend->status();
