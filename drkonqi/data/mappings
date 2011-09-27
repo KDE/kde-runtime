@@ -113,8 +113,11 @@ nspluginviewer=konqueror|nspluginviewer
 
 # KDE Telepathy
 telepathy-kde-contactlist=telepathy|contactlist
-telepathy-kde-text-ui=telepathy|text-chat-ui
+telepathy-kde-send-file=telepathy|send-file
+telepathy-kde-text-ui=telepathy|text-ui
 telepathy-kde-call-ui=telepathy|call-ui
+telepathy-kde-filetransfer-handler=telepathy|filetransfer-handler
+telepathy-kde-auth-handler=telepathy|auth-handler
 
 #Other KDE Applications and Technologies
 ksysguardd=ksysguard|ksysguardd
