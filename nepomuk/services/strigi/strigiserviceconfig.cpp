@@ -46,11 +46,16 @@ namespace {
     }
 }
 
+Nepomuk::StrigiServiceConfig* Nepomuk::StrigiServiceConfig::s_self = 0;
 
-Nepomuk::StrigiServiceConfig::StrigiServiceConfig()
-    : QObject(),
+Nepomuk::StrigiServiceConfig::StrigiServiceConfig(QObject* parent)
+    : QObject(parent),
       m_config( "nepomukstrigirc" )
 {
+    if(!s_self) {
+        s_self = this;
+    }
+
     KDirWatch* dirWatch = KDirWatch::self();
     connect( dirWatch, SIGNAL( dirty( const QString& ) ),
              this, SLOT( slotConfigDirty() ) );
@@ -70,8 +75,7 @@ Nepomuk::StrigiServiceConfig::~StrigiServiceConfig()
 
 Nepomuk::StrigiServiceConfig* Nepomuk::StrigiServiceConfig::self()
 {
-    K_GLOBAL_STATIC( StrigiServiceConfig, _self );
-    return _self;
+    return s_self;
 }
 
 

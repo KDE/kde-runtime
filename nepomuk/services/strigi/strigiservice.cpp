@@ -38,6 +38,10 @@
 Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
     : Service( parent )
 {
+    // Create the configuration instance singleton (for thread-safety)
+    // ==============================================================
+    (void)new StrigiServiceConfig(this);
+
     // setup the actual index scheduler including strigi stuff
     // ==============================================================
     m_schedulingThread = new QThread( this );
