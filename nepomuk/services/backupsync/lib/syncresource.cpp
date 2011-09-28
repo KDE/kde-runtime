@@ -234,3 +234,19 @@ bool Nepomuk::Sync::SyncResource::isValid() const
 {
     return !d->uri.isEmpty() && !isEmpty();
 }
+
+uint Nepomuk::Sync::qHash(const Nepomuk::Sync::SyncResource& res)
+{
+    // WARNING: Do not use the uri to generate the hash.
+    // StoreResources depends on the fact that the uri is not used while generating the hash
+
+    uint hash = 0;
+    QHashIterator<KUrl, Soprano::Node> it( res );
+    while( it.hasNext() ) {
+        it.next();
+
+        hash ^= qHash( it.key() ) & qHash( it.value() );
+    }
+
+    return hash;
+}
