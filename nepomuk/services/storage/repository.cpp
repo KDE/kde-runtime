@@ -82,6 +82,13 @@ void Nepomuk::Repository::close()
 
     delete m_graphMaintainer;
 
+    // delete DMS adaptor before anything else so we do not get requests while deleting the DMS
+    delete m_dataManagementAdaptor;
+    m_dataManagementAdaptor = 0;
+
+    delete m_dataManagementModel;
+    m_dataManagementModel = 0;
+
     delete m_inferencer;
     m_inferencer = 0;
 
