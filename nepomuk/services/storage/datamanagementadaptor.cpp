@@ -61,6 +61,8 @@ Nepomuk::DataManagementAdaptor::DataManagementAdaptor(Nepomuk::DataManagementMod
 
 Nepomuk::DataManagementAdaptor::~DataManagementAdaptor()
 {
+    // make sure all commands are done before letting deletion continue
+    m_threadPool->waitForDone();
 }
 
 void Nepomuk::DataManagementAdaptor::addProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app)
