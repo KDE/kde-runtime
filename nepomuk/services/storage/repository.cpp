@@ -80,6 +80,8 @@ void Nepomuk::Repository::close()
 {
     kDebug() << m_name;
 
+    delete m_graphMaintainer;
+
     delete m_inferencer;
     m_inferencer = 0;
 
@@ -180,9 +182,9 @@ void Nepomuk::Repository::open()
 
     // Fire up the graph maintainer on the pure data model.
     // =================================
-    GraphMaintainer* graphMaintainer = new GraphMaintainer(m_model);
-    connect(graphMaintainer, SIGNAL(finished()), graphMaintainer, SLOT(deleteLater()));
-    graphMaintainer->start();
+    m_graphMaintainer = new GraphMaintainer(m_model);
+    connect(m_graphMaintainer, SIGNAL(finished()), m_graphMaintainer, SLOT(deleteLater()));
+    m_graphMaintainer->start();
 
     // create the one class and property tree to be used in the crappy inferencer 2 and in DMS
     // =================================
