@@ -223,6 +223,9 @@ QList<QAction*> AppletInterface::contextualActions() const
 {
     QList<QAction*> actions;
     Plasma::Applet *a = applet();
+    if (a->hasFailedToLaunch()) {
+        return actions;
+    }
 
     foreach (const QString &name, m_actions) {
         QAction *action = a->action(name);
@@ -257,7 +260,7 @@ void AppletInterface::setAction(const QString &name, const QString &text, const 
         a->addAction(name, action);
 
         Q_ASSERT(!m_actions.contains(name));
-        m_actions.insert(name);
+        m_actions.append(name);
 
         if (!m_actionSignals) {
             m_actionSignals = new QSignalMapper(this);
@@ -293,7 +296,7 @@ void AppletInterface::removeAction(const QString &name)
         delete action;
     }
 
-    m_actions.remove(name);
+    m_actions.removeAll(name);
 }
 
 QAction *AppletInterface::action(QString name) const

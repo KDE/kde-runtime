@@ -11,6 +11,7 @@ set(datamanagement_SRC
   resourcewatcher.cpp
   abstracttimeoutdbusinterface.cpp
   datamanagementinterface.cpp
+  kdbusconnectionpool.cpp
 )
 
 qt4_add_dbus_interface(datamanagement_SRC

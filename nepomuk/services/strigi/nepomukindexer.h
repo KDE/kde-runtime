@@ -55,6 +55,8 @@ namespace Nepomuk {
         Indexer( const QFileInfo& info, QObject* parent = 0 );
         Indexer( const KUrl& localUrl, QObject* parent = 0 );
 
+        KUrl url() const { return m_url; }
+
         virtual void start();
 
     Q_SIGNALS:

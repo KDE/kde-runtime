@@ -55,6 +55,11 @@ bool WicdStatus::isSupported() const
     return m_wicd.isValid();
 }
 
+QString WicdStatus::serviceName() const
+{
+    return QString(WICD_DBUS_SERVICE);
+}
+
 void WicdStatus::wicdStateChanged()
 {
     Solid::Networking::Status status = Solid::Networking::Unknown;
