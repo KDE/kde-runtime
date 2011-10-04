@@ -254,8 +254,8 @@ QString Nepomuk::RemovableMediaCache::Entry::constructLocalPath( const KUrl& fil
             QString path( sa->filePath() );
             if ( path.endsWith( QLatin1String( "/" ) ) )
                 path.truncate( path.length()-1 );
-
-            return path + filexUrl.url().mid(m_urlPrefix.count());
+            // We use QUrl::toString instead of KUrl::url to resolve any encoded chars
+            return path + QUrl(filexUrl).toString().mid(m_urlPrefix.count());
         }
     }
 
