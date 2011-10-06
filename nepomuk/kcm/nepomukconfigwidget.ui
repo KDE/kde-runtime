@@ -166,6 +166,9 @@
        </item>
        <item>
         <widget class="QGroupBox" name="m_emailIndexingBox">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="title">
           <string>Email Indexing</string>
          </property>
@@ -778,12 +781,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>122</x>
-     <y>143</y>
+     <x>107</x>
+     <y>57</y>
     </hint>
     <hint type="destinationlabel">
-     <x>696</x>
-     <y>140</y>
+     <x>107</x>
+     <y>57</y>
     </hint>
    </hints>
   </connection>
@@ -794,12 +797,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>696</x>
-     <y>140</y>
+     <x>107</x>
+     <y>57</y>
     </hint>
     <hint type="destinationlabel">
-     <x>122</x>
-     <y>143</y>
+     <x>107</x>
+     <y>57</y>
     </hint>
    </hints>
   </connection>
@@ -810,12 +813,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>95</x>
-     <y>192</y>
+     <x>99</x>
+     <y>68</y>
     </hint>
     <hint type="destinationlabel">
-     <x>197</x>
-     <y>194</y>
+     <x>107</x>
+     <y>68</y>
     </hint>
    </hints>
   </connection>
@@ -826,12 +829,28 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>43</x>
-     <y>193</y>
+     <x>47</x>
+     <y>68</y>
     </hint>
     <hint type="destinationlabel">
-     <x>230</x>
-     <y>190</y>
+     <x>107</x>
+     <y>68</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_checkEnableNepomuk</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_emailIndexingBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>206</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>228</x>
+     <y>269</y>
     </hint>
    </hints>
   </connection>
