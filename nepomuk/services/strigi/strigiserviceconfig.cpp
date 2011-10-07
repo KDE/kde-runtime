@@ -25,6 +25,26 @@
 #include <KDirWatch>
 #include <KStandardDirs>
 #include <KConfigGroup>
+#include <KDebug>
+
+
+namespace {
+    /// recursively check if a folder is hidden
+    bool isDirHidden( QDir& dir ) {
+        kDebug() << dir.path() << QFileInfo( dir.path() ).isHidden();
+        if ( QFileInfo( dir.path() ).isHidden() )
+            return true;
+        else if ( dir.cdUp() )
+            return isDirHidden( dir );
+        else
+            return false;
+    }
+
+    bool isDirHidden(const QString& path) {
+        QDir dir(path);
+        return isDirHidden(dir);
+    }
+}
 
 
 Nepomuk::StrigiServiceConfig::StrigiServiceConfig()
@@ -132,18 +152,6 @@ bool Nepomuk::StrigiServiceConfig::shouldBeIndexed( const QString& path ) const
 }
 
 
-namespace {
-    /// recursively check if a folder is hidden
-    bool isDirHidden( QDir& dir ) {
-        if ( QFileInfo( dir.path() ).isHidden() )
-            return true;
-        else if ( dir.cdUp() )
-            return isDirHidden( dir );
-        else
-            return false;
-    }
-}
-
 bool Nepomuk::StrigiServiceConfig::shouldFolderBeIndexed( const QString& path ) const
 {
     bool exact = false;
@@ -202,15 +210,19 @@ bool Nepomuk::StrigiServiceConfig::folderInFolderList( const QString& path, bool
 namespace {
     /**
      * Returns true if the specified folder f would already be included or excluded using the list
-     * folders
+     * folders. Hidden folders are a special case because of the index hidden files setting.
+     * We always keep hidden folders in the list if they are forced to be indexed.
      */
     bool alreadyInList( const QList<QPair<QString, bool> >& folders, const QString& f, bool include )
     {
         bool included = false;
+        const bool hidden = isDirHidden(f);
         for ( int i = 0; i < folders.count(); ++i ) {
             if ( f != folders[i].first &&
-                 f.startsWith( KUrl( folders[i].first ).path( KUrl::AddTrailingSlash ) ) )
+                 f.startsWith( KUrl( folders[i].first ).path( KUrl::AddTrailingSlash ) ) &&
+                 !hidden ) {
                 included = folders[i].second;
+            }
         }
         return included == include;
     }
