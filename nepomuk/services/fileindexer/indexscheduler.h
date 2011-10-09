@@ -227,8 +227,21 @@ namespace Nepomuk {
         // queue of folders to update (+flags defined in the source file) - changed by updateDir
         UpdateDirQueue m_dirsToUpdate;
 
+        /// A specialized queue that gives priority to folders over files
+        class FileQueue : public QQueue<QFileInfo>
+        {
+        public:
+            FileQueue();
+            void enqueue(const QFileInfo& t);
+            void enqueue(const QList<QFileInfo>& infos);
+            QFileInfo dequeue();
+
+        private:
+            int m_folderOffset;
+        };
+
         // queue of files to update. This is filled from the dirs queue and manual methods like analyzeFile
-        QQueue<QFileInfo> m_filesToUpdate;
+        FileQueue m_filesToUpdate;
 
         QMutex m_dirsToUpdateMutex;
         QMutex m_filesToUpdateMutex;

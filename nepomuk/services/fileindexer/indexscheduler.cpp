@@ -160,6 +160,62 @@ void Nepomuk::IndexScheduler::UpdateDirQueue::clearByFlags( UpdateDirFlags mask 
 
 
 
+Nepomuk::IndexScheduler::FileQueue::FileQueue()
+    : m_folderOffset(0)
+{
+}
+
+void Nepomuk::IndexScheduler::FileQueue::enqueue(const QFileInfo &t)
+{
+    // we prepend the file to give preference to newly created and changed files over
+    // the initial indexing. Sadly operator== cannot be relied on for QFileInfo. Thus
+    // we need to do a dumb search
+    const QString path = t.absoluteFilePath();
+    QMutableListIterator<QFileInfo> it(*this);
+    while(it.hasNext()) {
+        if(it.next().absoluteFilePath() == path) {
+            if(t.isDir()) {
+                kDebug() << "Folder already queued:" << path;
+                // we do not change the order of folders.
+                // indexing folders is fast and we need to make sure that super-folders
+                // are always indexed before their children.
+                return;
+            }
+            else {
+                kDebug() << "Already queued:" << path << "Moving to front of queue.";
+                it.remove();
+                break;
+            }
+        }
+    }
+
+//    kDebug() << "Queuing:" << path;
+
+    if(t.isDir()) {
+        insert(m_folderOffset++, t);
+    }
+    else {
+        QQueue<QFileInfo>::enqueue(t);
+    }
+}
+
+void Nepomuk::IndexScheduler::FileQueue::enqueue(const QList<QFileInfo> &infos)
+{
+    foreach(const QFileInfo& fi, infos) {
+        enqueue(fi);
+    }
+}
+
+QFileInfo Nepomuk::IndexScheduler::FileQueue::dequeue()
+{
+    QFileInfo info = QQueue<QFileInfo>::dequeue();
+    if(info.isDir()) {
+        --m_folderOffset;
+    }
+    return info;
+}
+
+
 Nepomuk::IndexScheduler::IndexScheduler( QObject* parent )
     : QObject( parent ),
       m_suspended( false ),
@@ -392,9 +448,9 @@ void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
     QFileInfo dirInfo( dir );
     KUrl dirUrl( dir );
     if ( !compareIndexedMTime(dirUrl, dirInfo.lastModified()) ) {
-        KJob * indexer = new Indexer( dirInfo );
-        connect( indexer, SIGNAL(finished(KJob*)), this, SLOT(slotIndexingDone(KJob*)) );
-        indexer->start();
+        m_filesToUpdateMutex.lock();
+        m_filesToUpdate.enqueue(dirInfo);
+        m_filesToUpdateMutex.unlock();
     }
 
     // get a map of all indexed files from the dir including their stored mtime
@@ -464,7 +520,7 @@ void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
 
     // analyze all files that are new or need updating
     m_filesToUpdateMutex.lock();
-    m_filesToUpdate.append( filesToIndex );
+    m_filesToUpdate.enqueue( filesToIndex );
     m_filesToUpdateMutex.unlock();
 
     // reset status
@@ -543,20 +599,7 @@ void Nepomuk::IndexScheduler::analyzeFile( const QString& path )
 {
     kDebug() << path;
     QMutexLocker fileLock(&m_filesToUpdateMutex);
-
-    // we prepend the file to give preference to newly created and changed files over
-    // the initial indexing. Sadly operator== cannot be relied on for QFileInfo. Thus
-    // we need to do a dumb search
-    QMutableListIterator<QFileInfo> it(m_filesToUpdate);
-    while(it.hasNext()) {
-        if(it.next().filePath() == path) {
-            kDebug() << "Already queued:" << path << "Moving to front of queue.";
-            it.remove();
-            break;
-        }
-    }
-    kDebug() << "Queuing" << path;
-    m_filesToUpdate.prepend(path);
+    m_filesToUpdate.enqueue(path);
 
     // continue indexing without any delay. We want changes reflected as soon as possible
     QMutexLocker statusLock(&m_indexingMutex);
