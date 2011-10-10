@@ -397,8 +397,6 @@ void BugzillaInformationPage::aboutToShow()
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Unspecified"),"unspecified");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
-                                                   "Arch Linux"),"Arch Linux");
-            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Debian stable"), "Debian stable");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Debian testing"), "Debian testing");
