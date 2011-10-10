@@ -22,19 +22,40 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 
 DualStateButton {
     id: switchItem
+
     view: PlasmaCore.FrameSvgItem {
         imagePath: "widgets/frame"
         prefix: "sunken"
-        width: 32
-        height: 16
+        width: height * 2
+        height: fontMetricText.height + margins.top
+        //FIXME: an hack to have font metrics: can we have a proper binding?
+        Text {
+            id: fontMetricText
+            text: "M"
+            visible: false
+        }
+
         PlasmaCore.FrameSvgItem {
+            imagePath: "widgets/button"
+            prefix: "shadow"
+            anchors {
+                fill: button
+                leftMargin: -margins.left
+                topMargin: -margins.top
+                rightMargin: -margins.right
+                bottomMargin: -margins.bottom
+            }
+        }
+        
+        PlasmaCore.FrameSvgItem {
+            id: button
             imagePath: "widgets/button"
             prefix: "normal"
             anchors {
                 top: parent.top
                 bottom: parent.bottom
             }
-            width: parent.width / 2
+            width: height
             x: checked ? width : 0
             Behavior on x {
                 PropertyAnimation { duration: 100 }
