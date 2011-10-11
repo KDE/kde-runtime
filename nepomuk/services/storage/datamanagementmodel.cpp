@@ -1063,16 +1063,17 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     //
     // Gather the resources that we actually change, ie. those which have non-metadata props in the removed graphs
     //
-    Soprano::QueryResultIterator mResIt
-            = executeQuery(QString::fromLatin1("select ?r where { graph ?g { ?r ?p ?o . FILTER(?r in (%1)) . FILTER(%2) . } . FILTER(?g in (%3)) . }")
-                                        .arg(resourcesToN3(resolvedResources).join(QLatin1String(",")),
-                                             createResourceMetadataPropertyFilter(QLatin1String("?p"), true),
-                                             resourcesToN3(graphsToRemove).join(QLatin1String(","))),
-                                        Soprano::Query::QueryLanguageSparql);
-    while(mResIt.next()) {
-        modifiedResources.insert(mResIt[0].uri());
+    if( !graphsToRemove.isEmpty() ) {
+        Soprano::QueryResultIterator mResIt
+                = executeQuery(QString::fromLatin1("select ?r where { graph ?g { ?r ?p ?o . FILTER(?r in (%1)) . FILTER(%2) . } . FILTER(?g in (%3)) . }")
+                                            .arg(resourcesToN3(resolvedResources).join(QLatin1String(",")),
+                                                createResourceMetadataPropertyFilter(QLatin1String("?p"), true),
+                                                resourcesToN3(graphsToRemove).join(QLatin1String(","))),
+                                            Soprano::Query::QueryLanguageSparql);
+        while(mResIt.next()) {
+            modifiedResources.insert(mResIt[0].uri());
+        }
     }
-
 
     //
     // Remove the actual data. This has to be done using removeAllStatements. Otherwise the crappy inferencer cannot follow the changes.
