@@ -171,6 +171,9 @@ namespace Nepomuk {
         void indexingFile( const QString & );
         void indexingSuspended( bool suspended );
 
+        /// emitted once the indexing is done and the queue is empty
+        void indexingDone();
+
     private Q_SLOTS:
         void slotConfigChanged();
         void slotCleaningDone();

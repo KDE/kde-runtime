@@ -65,7 +65,6 @@ Nepomuk::StrigiServiceConfig::StrigiServiceConfig()
 
 Nepomuk::StrigiServiceConfig::~StrigiServiceConfig()
 {
-    m_config.group( "General" ).writeEntry( "first run", false );
 }
 
 
@@ -296,6 +295,16 @@ void Nepomuk::StrigiServiceConfig::buildExcludeFilterRegExpCache()
 {
     QMutexLocker lock( &m_folderCacheMutex );
     m_excludeFilterRegExpCache.rebuildCacheFromFilterList( excludeFilters() );
+}
+
+void Nepomuk::StrigiServiceConfig::setInitialRun(bool isInitialRun)
+{
+    m_config.group( "General" ).writeEntry( "first run", isInitialRun );
+}
+
+bool Nepomuk::StrigiServiceConfig::initialUpdateDisabled() const
+{
+    return m_config.group( "General" ).readEntry( "disable initial update", false );
 }
 
 #include "strigiserviceconfig.moc"
