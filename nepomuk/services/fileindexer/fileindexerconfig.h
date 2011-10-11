@@ -130,7 +130,7 @@ namespace Nepomuk {
         void buildFolderCache();
         void buildExcludeFilterRegExpCache();
 
-        KConfig m_config;
+        mutable KConfig m_config;
 
         /// Caching cleaned up list (no duplicates, no useless entries, etc.)
         QList<QPair<QString, bool> > m_folderCache;

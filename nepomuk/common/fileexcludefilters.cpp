@@ -59,10 +59,13 @@ namespace {
         "litmain.sh",
         "*.orig",
         ".histfile.*",
+        ".xsession-errors*",
 
         // end of list
         0
     };
+
+    const int s_defaultFileExcludeFiltersVersion = 2;
 
     const char* s_defaultFolderExcludeFilters[] = {
         "po",
@@ -87,6 +90,8 @@ namespace {
         // end of list
         0
     };
+
+    const int s_defaultFolderExcludeFiltersVersion = 1;
 }
 
 
@@ -98,4 +103,9 @@ QStringList Nepomuk::defaultExcludeFilterList()
     for ( int i = 0; s_defaultFolderExcludeFilters[i]; ++i )
         l << QLatin1String( s_defaultFolderExcludeFilters[i] );
     return l;
+}
+
+int Nepomuk::defaultExcludeFilterListVersion()
+{
+    return qMax(s_defaultFileExcludeFiltersVersion, s_defaultFolderExcludeFiltersVersion);
 }
