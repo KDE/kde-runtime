@@ -77,6 +77,15 @@ namespace Nepomuk {
         bool isInitialRun() const;
 
         /**
+         * A "hidden" config option which allows to disable the initial
+         * update of all indexed folders.
+         *
+         * This should be used in combination with isInitialRun() to make
+         * sure all folders are at least indexed once.
+         */
+        bool initialUpdateDisabled() const;
+
+        /**
          * Check if \p path should be indexed taking into account
          * the includeFolders(), the excludeFolders(), and the
          * excludeFilters().
@@ -113,6 +122,13 @@ namespace Nepomuk {
 
     Q_SIGNALS:
         void configChanged();
+
+    public Q_SLOTS:
+        /**
+         * Should be called once the initial indexing is done, ie. all folders
+         * have been indexed.
+         */
+        void setInitialRun(bool isInitialRun);
 
     private Q_SLOTS:
         void slotConfigDirty();

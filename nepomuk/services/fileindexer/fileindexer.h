@@ -97,6 +97,7 @@ namespace Nepomuk {
         void updateWatches();
         void slotIdleTimeoutReached();
         void slotIdleTimerResume();
+        void slotIndexingDone();
 
     private:
         void updateStrigiConfig();

@@ -61,6 +61,8 @@ Nepomuk::FileIndexer::FileIndexer( QObject* parent, const QList<QVariant>& )
              this, SIGNAL( statusStringChanged() ) );
     connect( m_indexScheduler, SIGNAL( indexingStopped() ),
              this, SIGNAL( statusStringChanged() ) );
+    connect( m_indexScheduler, SIGNAL( indexingDone() ),
+             this, SLOT( slotIndexingDone() ) );
     connect( m_indexScheduler, SIGNAL( indexingFolder(QString) ),
              this, SIGNAL( statusStringChanged() ) );
     connect( m_indexScheduler, SIGNAL( indexingFile(QString) ),
@@ -71,6 +73,12 @@ Nepomuk::FileIndexer::FileIndexer( QObject* parent, const QList<QVariant>& )
     // setup the indexer to index at snail speed for the first two minutes
     // this is done for KDE startup - to not slow that down too much
     m_indexScheduler->setIndexingSpeed( IndexScheduler::SnailPace );
+
+    // start initial indexing honoring the hidden config option to disable it
+    if(FileIndexerConfig::self()->isInitialRun() ||
+       !FileIndexerConfig::self()->initialUpdateDisabled()) {
+        m_indexScheduler->updateAll();
+    }
 
     // delayed init for the rest which uses IO and CPU
     // FIXME: do not use a random delay value but wait for KDE to be started completely (using the session manager)
@@ -123,6 +131,12 @@ void Nepomuk::FileIndexer::slotIdleTimeoutReached()
 void Nepomuk::FileIndexer::slotIdleTimerResume()
 {
     m_indexScheduler->setIndexingSpeed( IndexScheduler::ReducedSpeed );
+}
+
+
+void Nepomuk::FileIndexer::slotIndexingDone()
+{
+    FileIndexerConfig::self()->setInitialRun(true);
 }
 
 

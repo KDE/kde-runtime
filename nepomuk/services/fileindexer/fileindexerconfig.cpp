@@ -65,7 +65,6 @@ Nepomuk::FileIndexerConfig::FileIndexerConfig()
 
 Nepomuk::FileIndexerConfig::~FileIndexerConfig()
 {
-    m_config.group( "General" ).writeEntry( "first run", false );
 }
 
 
@@ -296,6 +295,16 @@ void Nepomuk::FileIndexerConfig::buildExcludeFilterRegExpCache()
 {
     QMutexLocker lock( &m_folderCacheMutex );
     m_excludeFilterRegExpCache.rebuildCacheFromFilterList( excludeFilters() );
+}
+
+void Nepomuk::FileIndexerConfig::setInitialRun(bool isInitialRun)
+{
+    m_config.group( "General" ).writeEntry( "first run", isInitialRun );
+}
+
+bool Nepomuk::FileIndexerConfig::initialUpdateDisabled() const
+{
+    return m_config.group( "General" ).readEntry( "disable initial update", false );
 }
 
 #include "fileindexerconfig.moc"
