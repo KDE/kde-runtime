@@ -152,7 +152,7 @@ public Q_SLOTS:
      * such as int, string, or url are supported.
      * \param app The calling application
      */
-    void storeResources(const SimpleResourceGraph& resources,
+    QHash<QUrl,QUrl> storeResources(const SimpleResourceGraph& resources,
                         const QString& app,
                         Nepomuk::StoreIdentificationMode identificationMode = Nepomuk::IdentifyNew,
                         Nepomuk::StoreResourcesFlags flags = Nepomuk::NoStoreResourcesFlags,
@@ -303,7 +303,7 @@ private:
     bool updateNieUrlOnLocalFile(const QUrl& resource, const QUrl& nieUrl);
 
     ClassAndPropertyTree * classAndPropertyTree();
-    
+
     enum UriType {
         GraphUri,
         ResourceUri

@@ -1346,7 +1346,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(RemovalFlags flags, c
 
 
 //// TODO: do not allow to create properties or classes this way
-void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceGraph &resources,
+QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceGraph &resources,
                                                   const QString &app,
                                                   Nepomuk::StoreIdentificationMode identificationMode,
                                                   Nepomuk::StoreResourcesFlags flags,
@@ -1354,11 +1354,11 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 {
     if(app.isEmpty()) {
         setError(QLatin1String("storeResources: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
-        return;
+        return QHash<QUrl, QUrl>();
     }
     if(resources.isEmpty()) {
         clearError();
-        return;
+        return QHash<QUrl, QUrl>();
     }
 
     /// Holds the mapping of <file://url> to <nepomuk:/res/> uris
@@ -1378,7 +1378,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             QString error = QString::fromLatin1("The resource with URI %1 is invalid.")
                             .arg( res.uri().toString() );
             setError(error, Soprano::Error::ErrorInvalidArgument);
-            return;
+            return QHash<QUrl, QUrl>();
         }
 
         const UriState state = uriState(res.uri());
@@ -1388,13 +1388,13 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         // Handle nie urls
         else if(state == NonExistingFileUrl) {
             setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(res.uri().toLocalFile()), Soprano::Error::ErrorInvalidArgument);
-            return;
+            return QHash<QUrl, QUrl>();
         }
         else if(state == ExistingFileUrl || state == SupportedUrl) {
             const QUrl nieUrl = res.uri();
             QUrl newResUri = resolveUrl( nieUrl );
             if( lastError() )
-                return;
+                return QHash<QUrl, QUrl>();
 
             if( newResUri.isEmpty() ) {
                 // Resolution of one url failed. Assign it a random blank uri
@@ -1416,13 +1416,13 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             // Legacy support - Sucks but we need it
             const QUrl legacyUri = resolveUrl( res.uri() );
             if( lastError() )
-                return;
+                return QHash<QUrl, QUrl>();
 
             allNonFileResources << legacyUri;
         }
         else if( state == OntologyUri ) {
             setError(QLatin1String("It is not allowed to add classes or properties through this API."), Soprano::Error::ErrorInvalidArgument);
-            return;
+            return QHash<QUrl, QUrl>();
         }
     }
     resGraph = resGraphList;
@@ -1433,7 +1433,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     //
     if(!allNonFileResources.isEmpty() &&
             containsResourceWithProtectedType(allNonFileResources)) {
-        return;
+        return QHash<QUrl, QUrl>();
     }
 
 
@@ -1462,7 +1462,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             const Soprano::Error::Error error = d->m_classAndPropertyTree->lastError();
             if( error ) {
                 setError( error.message(), error.code() );
-                return;
+                return QHash<QUrl, QUrl>();
             }
             syncRes.insert( hit.key(), n );
         }
@@ -1484,7 +1484,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                                           it.key().url(),
                                           it.value().toN3() );
                     setError( error, Soprano::Error::ErrorInvalidArgument );
-                    return;
+                    return QHash<QUrl, QUrl>();
                 }
                 else {
                     continue;
@@ -1500,7 +1500,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                 else if(state == NonExistingFileUrl) {
                     setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(object.uri().toLocalFile()),
                              Soprano::Error::ErrorInvalidArgument);
-                    return;
+                    return QHash<QUrl, QUrl>();
                 }
                 else if(state == ExistingFileUrl || state==SupportedUrl) {
                     const QUrl nieUrl = object.uri();
@@ -1537,7 +1537,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                     // then resolveUrl which set the last error
                     const QUrl legacyUri = resolveUrl( object.uri() );
                     if( lastError() )
-                        return;
+                        return QHash<QUrl, QUrl>();
 
                     // It apparently exists, so we must support it
                 }
@@ -1606,12 +1606,12 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 
         if(stList.isEmpty()) {
             setError(d->m_classAndPropertyTree->lastError());
-            return;
+            return QHash<QUrl, QUrl>();
         }
 
         if( !syncRes.isValid() ) {
             setError(QLatin1String("storeResources: Contains invalid resources."), Soprano::Error::ErrorParsingFailed);
-            return;
+            return QHash<QUrl, QUrl>();
         }
         resIdent.addSyncResource( syncRes );
     }
@@ -1623,7 +1623,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         if(!s.isValid()) {
             kDebug() << "Invalid statement after resource conversion:" << s;
             setError(QLatin1String("storeResources: Encountered invalid statement after resource conversion."), Soprano::Error::ErrorInvalidArgument);
-            return;
+            return QHash<QUrl, QUrl>();
         }
     }
 
@@ -1672,7 +1672,10 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         kDebug() << " MERGING FAILED! ";
         kDebug() << "Setting error!" << merger.lastError();
         setError( merger.lastError() );
+        return QHash<QUrl, QUrl>();
     }
+
+    return merger.mappings();
 }
 
 void Nepomuk::DataManagementModel::importResources(const QUrl &url,

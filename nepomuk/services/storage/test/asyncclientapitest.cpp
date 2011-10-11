@@ -28,6 +28,7 @@
 #include "datamanagement.h"
 #include "createresourcejob.h"
 #include "describeresourcesjob.h"
+#include "storeresourcesjob.h"
 #include "nepomuk_dms_test_config.h"
 #include "qtest_dms.h"
 

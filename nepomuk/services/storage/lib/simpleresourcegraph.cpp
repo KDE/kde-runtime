@@ -22,6 +22,7 @@
 #include "simpleresourcegraph.h"
 #include "simpleresource.h"
 #include "datamanagement.h"
+#include "storeresourcesjob.h"
 
 #include <QtCore/QSharedData>
 #include <QtCore/QHash>
@@ -256,7 +257,7 @@ void Nepomuk::SimpleResourceGraph::addStatement(const Soprano::Node& subject, co
     addStatement( Soprano::Statement( subject, predicate, object ) );
 }
 
-KJob* Nepomuk::SimpleResourceGraph::save(const KComponentData& component) const
+Nepomuk::StoreResourcesJob* Nepomuk::SimpleResourceGraph::save(const KComponentData& component) const
 {
     return Nepomuk::storeResources(*this, Nepomuk::IdentifyNew, Nepomuk::NoStoreResourcesFlags, QHash<QUrl, QVariant>(), component);
 }

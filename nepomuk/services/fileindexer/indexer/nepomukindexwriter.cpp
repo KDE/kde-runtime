@@ -22,6 +22,7 @@
 #include "../util.h"
 #include "kext.h"
 #include "datamanagement.h"
+#include "storeresourcesjob.h"
 #include "simpleresource.h"
 #include "simpleresourcegraph.h"
 

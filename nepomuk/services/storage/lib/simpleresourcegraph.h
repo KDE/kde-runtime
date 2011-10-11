@@ -42,6 +42,7 @@ class Node;
 }
 namespace Nepomuk {
 class SimpleResource;
+class StoreResourcesJob;
 
 class NEPOMUK_DATA_MANAGEMENT_EXPORT SimpleResourceGraph
 {
@@ -123,7 +124,7 @@ public:
      *
      * \sa Nepomuk::storeResources()
      */
-    KJob* save(const KComponentData& component = KGlobal::mainComponent()) const;
+    StoreResourcesJob* save(const KComponentData& component = KGlobal::mainComponent()) const;
 
     bool operator==( const SimpleResourceGraph & rhs) const;
     bool operator!=( const SimpleResourceGraph & rhs) const;

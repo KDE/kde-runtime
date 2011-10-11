@@ -54,6 +54,8 @@
       <arg name="additionalMetadata" type="a{sv}" direction="in"/>
       <annotation name="com.trolltech.QtDBus.QtTypeName.In3" value="Nepomuk::PropertyHash"/>
       <arg name="app" type="s" direction="in"/>
+      <arg type="a{ss}" direction="out"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QHash&lt;QString, QString&gt;"/>
     </method>
     <method name="importResources">
       <arg name="url" type="s" direction="in"/>

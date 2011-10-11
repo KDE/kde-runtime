@@ -47,6 +47,7 @@ class KUrl;
 
 namespace Nepomuk {
     class DescribeResourcesJob;
+    class StoreResourcesJob;
     class CreateResourceJob;
     class SimpleResourceGraph;
 
@@ -465,7 +466,7 @@ namespace Nepomuk {
      *
      * See \ref nepomuk_dms_resource_identification for details on how resources are identified.
      */
-    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* storeResources(const Nepomuk::SimpleResourceGraph& resources,
+    NEPOMUK_DATA_MANAGEMENT_EXPORT StoreResourcesJob* storeResources(const Nepomuk::SimpleResourceGraph& resources,
                                                         Nepomuk::StoreIdentificationMode identificationMode = Nepomuk::IdentifyNew,
                                                         Nepomuk::StoreResourcesFlags flags = Nepomuk::NoStoreResourcesFlags,
                                                         const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>(),

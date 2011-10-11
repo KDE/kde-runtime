@@ -100,11 +100,13 @@ QList<Nepomuk::SimpleResource> Nepomuk::DataManagementAdaptor::describeResources
     return QList<SimpleResource>();
 }
 
-void Nepomuk::DataManagementAdaptor::storeResources(const QList<Nepomuk::SimpleResource>& resources, int identificationMode, int flags, const Nepomuk::PropertyHash &additionalMetadata, const QString &app)
+QHash< QString, QString > Nepomuk::DataManagementAdaptor::storeResources(const QList< Nepomuk::SimpleResource >& resources, int identificationMode, int flags, const Nepomuk::PropertyHash& additionalMetadata, const QString& app)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new StoreResourcesCommand(resources, app, identificationMode, flags, additionalMetadata, m_model, message()));
+    // QtDBus will ignore this return value
+    return QHash<QString, QString>();
 }
 
 void Nepomuk::DataManagementAdaptor::mergeResources(const QString &resource1, const QString &resource2, const QString &app)

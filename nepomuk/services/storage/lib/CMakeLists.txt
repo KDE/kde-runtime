@@ -6,6 +6,7 @@ set(datamanagement_SRC
   genericdatamanagementjob.cpp
   createresourcejob.cpp
   describeresourcesjob.cpp
+  storeresourcesjob.cpp
   dbustypes.cpp
   datamanagement.cpp
   resourcewatcher.cpp
@@ -40,6 +41,7 @@ install(FILES
   datamanagement.h
   createresourcejob.h
   describeresourcesjob.h
+  storeresourcesjob.h
   resourcewatcher.h
   nepomukdatamanagement_export.h
   DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk
