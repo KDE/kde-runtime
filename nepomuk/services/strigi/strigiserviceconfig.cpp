@@ -106,7 +106,24 @@ QStringList Nepomuk::StrigiServiceConfig::excludeFolders() const
 
 QStringList Nepomuk::StrigiServiceConfig::excludeFilters() const
 {
-    return m_config.group( "General" ).readEntry( "exclude filters", defaultExcludeFilterList() );
+    KConfigGroup cfg = m_config.group( "General" );
+
+    // read configured exclude filters
+    QSet<QString> filters = cfg.readEntry( "exclude filters", defaultExcludeFilterList() ).toSet();
+
+    // make sure we always keep the latest default exclude filters
+    // TODO: there is one problem here. What if the user removed some of the default filters?
+    if(cfg.readEntry("exclude filters version", 0) < defaultExcludeFilterListVersion()) {
+        filters += defaultExcludeFilterList().toSet();
+
+        // write the config directly since the KCM does not have support for the version yet
+        // TODO: make this class public and use it in the KCM
+        cfg.writeEntry("exclude filters", QStringList::fromSet(filters));
+        cfg.writeEntry("exclude filters version", defaultExcludeFilterListVersion());
+    }
+
+    // remove duplicates
+    return QStringList::fromSet(filters);
 }
 
 
