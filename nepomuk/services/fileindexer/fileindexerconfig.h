@@ -87,6 +87,16 @@ namespace Nepomuk {
         bool initialUpdateDisabled() const;
 
         /**
+         * A "hidden" config option which allows to disable the feature
+         * where the file indexing is suspended when in powersave mode.
+         * This is especially useful for mobile devices which always run
+         * on battery.
+         *
+         * At some point this should be a finer grained configuration.
+         */
+        bool suspendOnPowerSaveDisabled() const;
+
+        /**
          * Check if \p path should be indexed taking into account
          * the includeFolders(), the excludeFolders(), and the
          * excludeFilters().

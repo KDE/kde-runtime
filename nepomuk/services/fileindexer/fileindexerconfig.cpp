@@ -311,4 +311,9 @@ bool Nepomuk::FileIndexerConfig::initialUpdateDisabled() const
     return m_config.group( "General" ).readEntry( "disable initial update", false );
 }
 
+bool Nepomuk::FileIndexerConfig::suspendOnPowerSaveDisabled() const
+{
+    return m_config.group( "General" ).readEntry( "disable suspend on powersave", false );
+}
+
 #include "fileindexerconfig.moc"
