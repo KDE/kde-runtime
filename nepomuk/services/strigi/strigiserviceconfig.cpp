@@ -311,4 +311,9 @@ bool Nepomuk::StrigiServiceConfig::initialUpdateDisabled() const
     return m_config.group( "General" ).readEntry( "disable initial update", false );
 }
 
+bool Nepomuk::StrigiServiceConfig::suspendOnPowerSaveDisabled() const
+{
+    return m_config.group( "General" ).readEntry( "disable suspend on powersave", false );
+}
+
 #include "strigiserviceconfig.moc"
