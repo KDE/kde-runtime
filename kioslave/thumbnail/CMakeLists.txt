@@ -154,6 +154,17 @@ if (UNIX)
 endif (UNIX)
 install(TARGETS comicbookthumbnail DESTINATION ${PLUGIN_INSTALL_DIR})
 
+########### next target ###############
+
+set(webthumbnail_SRCS webcreator.cpp)
+kde4_add_plugin(webthumbnail ${webthumbnail_SRCS})
+target_link_libraries(webthumbnail ${KDE4_KIO_LIBS} ${QT_QTWEBKIT_LIBRARY}
+)
+#if (UNIX)
+#   target_link_libraries(webthumbnail ${KDE4_KPTY_LIBRARY})
+#endif (UNIX)
+install(TARGETS webthumbnail DESTINATION ${PLUGIN_INSTALL_DIR})
+
 ########### install files ###############
 
 install(FILES thumbcreator.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR})
@@ -167,4 +178,5 @@ install(FILES
     djvuthumbnail.desktop
     desktopthumbnail.desktop
     comicbookthumbnail.desktop
+    webthumbnail.desktop
     DESTINATION ${SERVICES_INSTALL_DIR})

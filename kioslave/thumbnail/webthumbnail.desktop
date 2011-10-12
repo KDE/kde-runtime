@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Service
+Name=Web pages
+X-KDE-ServiceTypes=ThumbCreator
+MimeType=text/html;
+Protocol=http;https;
+X-KDE-Library=webthumbnail
+CacheThumbnail=false
