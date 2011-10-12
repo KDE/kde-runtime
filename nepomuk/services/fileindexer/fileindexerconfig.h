@@ -39,6 +39,7 @@ namespace Nepomuk {
         Q_OBJECT
 
     public:
+        FileIndexerConfig(QObject* parent = 0);
         ~FileIndexerConfig();
         static FileIndexerConfig* self();
 
@@ -134,8 +135,6 @@ namespace Nepomuk {
         void slotConfigDirty();
 
     private:
-        FileIndexerConfig();
-
         /**
          * Check if \p path is in the list of folders to be indexed taking
          * include and exclude folders into account.
@@ -156,6 +155,8 @@ namespace Nepomuk {
         RegExpCache m_excludeFilterRegExpCache;
 
         mutable QMutex m_folderCacheMutex;
+
+        static FileIndexerConfig* s_self;
     };
 }
 

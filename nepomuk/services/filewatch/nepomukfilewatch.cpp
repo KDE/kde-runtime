@@ -113,6 +113,10 @@ namespace {
 Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
     : Service( parent )
 {
+    // Create the configuration instance singleton (for thread-safety)
+    // ==============================================================
+    (void)new FileIndexerConfig(this);
+
     // the list of default exclude filters we use here differs from those
     // that can be configured for the file indexer service
     // the default list should only contain files and folders that users are
