@@ -20,6 +20,7 @@
 #define _NEPOMUK_CONTROLLER_SYSTRAY_H_
 
 #include <KStatusNotifierItem>
+#include <QtCore/QTimer>
 #include "fileindexerinterface.h"
 #include "servicecontrol.h"
 
@@ -27,36 +28,39 @@ class KToggleAction;
 
 namespace Nepomuk {
 
-    class FileIndexer;
-    class StatusWidget;
+class FileIndexer;
+class StatusWidget;
 
-    class SystemTray : public KStatusNotifierItem
-    {
-        Q_OBJECT
+class SystemTray : public KStatusNotifierItem
+{
+    Q_OBJECT
 
-    public:
-        SystemTray( QObject* parent );
-        ~SystemTray();
+public:
+    SystemTray( QObject* parent );
+    ~SystemTray();
 
-    private Q_SLOTS:
-        void slotUpdateFileIndexerStatus();
-        void slotConfigure();
-        void slotSuspend( bool suspended );
+private Q_SLOTS:
+    void slotUpdateFileIndexerStatus();
+    void slotConfigure();
+    void slotSuspend( bool suspended );
 
-        void slotActivateRequested();
+    void slotActivateRequested();
+    void slotActiveStatusTimeout();
 
-    private:
-        KToggleAction* m_suspendResumeAction;
+private:
+    KToggleAction* m_suspendResumeAction;
 
-        org::kde::nepomuk::FileIndexer* m_service;
-        org::kde::nepomuk::ServiceControl* m_serviceControl;
-        bool m_suspendedManually;
+    org::kde::nepomuk::FileIndexer* m_service;
+    org::kde::nepomuk::ServiceControl* m_serviceControl;
+    bool m_suspendedManually;
 
-        StatusWidget* m_statusWidget;
+    StatusWidget* m_statusWidget;
 
-        // used to prevent endless status updates
-        QString m_prevStatus;
-    };
+    // used to prevent endless status updates
+    QString m_prevStatus;
+    QTimer m_updateTimer;
+
+};
 }
 
 #endif
