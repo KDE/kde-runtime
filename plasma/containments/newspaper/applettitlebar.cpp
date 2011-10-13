@@ -36,39 +36,6 @@
 #include <plasma/theme.h>
 #include <Plasma/PaintUtils>
 
-class AppletActivationOverlay : public QGraphicsWidget
-{
-public:
-    AppletActivationOverlay(QGraphicsItem *parent = 0)
-        : QGraphicsWidget(parent)
-    {
-        setFlag(QGraphicsItem::ItemHasNoContents);
-    }
-    ~AppletActivationOverlay()
-    {}
-
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-    {
-        Q_UNUSED(widget);
-        painter->save();
-
-        QColor c(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
-        c.setAlphaF(0.3);
-        painter->setBrush(c);
-        painter->setRenderHint(QPainter::Antialiasing);
-        painter->setPen(Qt::NoPen);
-        painter->drawPath(Plasma::PaintUtils::roundedRectangle(option->rect, 8));
-
-        painter->restore();
-    }
-
-protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event)
-    {
-        event->ignore();
-    }
-};
-
 AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
        : QGraphicsWidget(applet),
          m_applet(applet),
@@ -79,14 +46,12 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
          m_underMouse(false),
          m_buttonsVisible(false),
          m_appletHasBackground(false),
-         m_active(false),
-         m_overlayVisible(true)
+         m_active(false)
 {
     setObjectName( QLatin1String("TitleBar" ));
 
     setZValue(10000);
-    m_appletOverlay = new AppletActivationOverlay(this);
-    m_appletOverlay->show();
+
 
     m_pulse =
     Plasma::Animator::create(Plasma::Animator::PulseAnimation);
@@ -100,8 +65,6 @@ AppletTitleBar::AppletTitleBar(Plasma::Applet *applet)
 
     if (applet->backgroundHints() != Plasma::Applet::NoBackground) {
         m_appletHasBackground = true;
-    } else {
-        m_appletOverlay->setFlag(QGraphicsItem::ItemHasNoContents);
     }
 
     if (applet->backgroundHints() & Plasma::Applet::StandardBackground ||
@@ -173,28 +136,12 @@ void AppletTitleBar::setActive(bool visible)
     }
 
     setButtonsVisible(visible);
-    m_appletOverlay->setVisible(!visible && m_overlayVisible);
     m_active = visible;
 }
 
 bool AppletTitleBar::isActive() const
 {
     return m_active;
-}
-
-void AppletTitleBar::setOverlayVisible(bool visible)
-{
-    if (visible == m_overlayVisible) {
-        return;
-    }
-
-    m_appletOverlay->setVisible(visible);
-    m_overlayVisible = visible;
-}
-
-bool AppletTitleBar::overlayVisible() const
-{
-    return m_overlayVisible;
 }
 
 void AppletTitleBar::initAnimations()
@@ -259,8 +206,6 @@ void AppletTitleBar::syncSize()
                 QSizeF(m_applet->contentsRect().size().width(),
                 size().height())));
 
-    m_appletOverlay->setGeometry(QRectF(mapFromScene(m_applet->mapToScene(m_applet->contentsRect().topLeft())),
-                                    m_applet->contentsRect().size()));
 
     //sometimes the background of applets change on the go...
     if (m_separator) {
@@ -322,7 +267,7 @@ bool AppletTitleBar::eventFilter(QObject *watched, QEvent *event)
 
 void AppletTitleBar::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (!m_active && m_overlayVisible) {
+    if (!m_active) {
         event->setAccepted(false);
     } else if (m_applet->hasValidAssociatedApplication() &&
         m_maximizeButtonRect.contains(event->pos())) {

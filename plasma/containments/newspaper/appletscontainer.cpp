@@ -204,7 +204,6 @@ void AppletsContainer::setExpandAll(const bool expand)
 
             if (!titles.isEmpty()) {
                 titles.first()->setActive(false);
-                titles.first()->setOverlayVisible(true);
             }
         }
 
@@ -225,7 +224,6 @@ void AppletsContainer::setExpandAll(const bool expand)
 
             if (!titles.isEmpty()) {
                 titles.first()->setActive(applet == m_currentApplet.data());
-                titles.first()->setOverlayVisible(false);
             }
         }
     }
@@ -434,7 +432,6 @@ void AppletsContainer::createAppletTitle(Plasma::Applet *applet)
     }
 
     AppletTitleBar *appletTitleBar = new AppletTitleBar(applet);
-    appletTitleBar->setOverlayVisible(m_orientation == Qt::Horizontal || !m_expandAll);
 
     appletTitleBar->setParent(applet);
     appletTitleBar->show();

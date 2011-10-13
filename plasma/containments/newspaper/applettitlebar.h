@@ -33,8 +33,6 @@ namespace Plasma
     class Svg;
 }
 
-class AppletActivationOverlay;
-
 class AppletTitleBar : public QGraphicsWidget
 {
     Q_OBJECT
@@ -48,9 +46,6 @@ public:
 
     void setActive(bool force);
     bool isActive() const;
-
-    void setOverlayVisible(bool visible);
-    bool overlayVisible() const;
 
 protected:
     void syncSize();
@@ -80,8 +75,6 @@ private:
 
     Plasma::Applet *m_applet;
 
-    AppletActivationOverlay *m_appletOverlay;
-
     PressedButton m_pressedButton;
     QRectF m_maximizeButtonRect;
     QRectF m_configureButtonRect;
@@ -99,7 +92,6 @@ private:
     bool m_buttonsVisible;
     bool m_appletHasBackground;
     bool m_active;
-    bool m_overlayVisible;
 };
 
 #endif
