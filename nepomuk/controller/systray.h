@@ -35,6 +35,7 @@ class StrigiService;
 class StatusWidget;
 
 
+
 class SystemTray : public KStatusNotifierItem
 {
     Q_OBJECT
