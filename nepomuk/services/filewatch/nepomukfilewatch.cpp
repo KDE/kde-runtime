@@ -24,6 +24,7 @@
 #include "removabledeviceindexnotification.h"
 #include "removablemediacache.h"
 #include "../strigi/strigiserviceconfig.h"
+#include "activefilequeue.h"
 
 #ifdef BUILD_KINOTIFY
 #include "kinotify.h"
@@ -98,10 +99,12 @@ namespace {
         if( Nepomuk::StrigiServiceConfig::self()->shouldFolderBeIndexed( path ) ) {
             modes |= KInotify::EventCreate;
             modes |= KInotify::EventModify;
+            modes |= KInotify::EventCloseWrite;
         }
         else {
             modes &= (~KInotify::EventCreate);
             modes &= (~KInotify::EventModify);
+            modes &= (~KInotify::EventCloseWrite);
         }
 
         return true;
@@ -133,6 +136,10 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
              Qt::QueuedConnection );
     m_metadataMover->start();
 
+    m_fileModificationQueue = new ActiveFileQueue(this);
+    connect(m_fileModificationQueue, SIGNAL(urlTimeout(KUrl)),
+            this, SLOT(slotActiveFileQueueTimeout(KUrl)));
+
 #ifdef BUILD_KINOTIFY
     // monitor the file system for changes (restricted by the inotify limit)
     m_dirWatch = new IgnoringKInotify( m_pathExcludeRegExpCache, this );
@@ -145,6 +152,8 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
              this, SLOT( slotFileCreated( QString ) ) );
     connect( m_dirWatch, SIGNAL( modified( QString ) ),
              this, SLOT( slotFileModified( QString ) ) );
+    connect( m_dirWatch, SIGNAL( closedWrite( QString ) ),
+             this, SLOT( slotFileClosedAfterWrite( QString ) ) );
     connect( m_dirWatch, SIGNAL( watchUserLimitReached() ),
              this, SLOT( slotInotifyWatchUserLimitReached() ) );
 
@@ -189,7 +198,7 @@ void Nepomuk::FileWatch::watchFolder( const QString& path )
 #ifdef BUILD_KINOTIFY
     if ( m_dirWatch && !m_dirWatch->watchingPath( path ) )
         m_dirWatch->addWatch( path,
-                              KInotify::WatchEvents( KInotify::EventMove|KInotify::EventDelete|KInotify::EventDeleteSelf|KInotify::EventCreate|KInotify::EventModify ),
+                              KInotify::WatchEvents( KInotify::EventMove|KInotify::EventDelete|KInotify::EventDeleteSelf|KInotify::EventCreate|KInotify::EventModify|KInotify::EventCloseWrite ),
                               KInotify::WatchFlags() );
 #endif
 }
@@ -197,7 +206,7 @@ void Nepomuk::FileWatch::watchFolder( const QString& path )
 
 void Nepomuk::FileWatch::slotFileMoved( const QString& urlFrom, const QString& urlTo )
 {
-    if( !ignorePath( urlFrom ) ) {
+    if( !ignorePath( urlFrom ) || !ignorePath( urlTo ) ) {
         KUrl from( urlFrom );
         KUrl to( urlTo );
 
@@ -237,20 +246,36 @@ void Nepomuk::FileWatch::slotFileDeleted( const QString& urlString, bool isDir )
 
 void Nepomuk::FileWatch::slotFileCreated( const QString& path )
 {
-    kDebug() << path;
-    updateFileViaStrigi( path );
+    if( StrigiServiceConfig::self()->shouldBeIndexed(path) ) {
+        // we only cache the file and wait until it has been closed, ie. the writing has been finished
+        m_modifiedFilesCache.insert(path);
+    }
 }
 
 
 void Nepomuk::FileWatch::slotFileModified( const QString& path )
 {
-    updateFileViaStrigi( path );
+    if( StrigiServiceConfig::self()->shouldBeIndexed(path) ) {
+        // we only cache the file and wait until it has been closed, ie. the writing has been finished
+        m_modifiedFilesCache.insert(path);
+    }
 }
 
 
+void Nepomuk::FileWatch::slotFileClosedAfterWrite( const QString& path )
+{
+    // we only need to update the file if it has actually been modified
+    QSet<KUrl>::iterator it = m_modifiedFilesCache.find(path);
+    if(it != m_modifiedFilesCache.end()) {
+        // we do not tell the file indexer right away but wait a short while in case the file is modified very often (irc logs for example)
+        m_fileModificationQueue->enqueueUrl( path );
+        m_modifiedFilesCache.erase(it);
+    }
+}
+
 void Nepomuk::FileWatch::slotMovedWithoutData( const QString& path )
 {
-    updateFolderViaStrigi( path );
+    updateFileViaStrigi( path );
 }
 
 
@@ -380,6 +405,11 @@ void Nepomuk::FileWatch::slotDeviceMounted(const Nepomuk::RemovableMediaCache::E
 
     kDebug() << "Installing watch for removable storage at mount point" << entry->mountPath();
     watchFolder(entry->mountPath());
+}
+
+void Nepomuk::FileWatch::slotActiveFileQueueTimeout(const KUrl &url)
+{
+    updateFileViaStrigi(url.toLocalFile());
 }
 
 #include "nepomukfilewatch.moc"
