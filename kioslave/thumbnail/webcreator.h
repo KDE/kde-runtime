@@ -21,10 +21,13 @@
 #ifndef WEBCREATOR_H
 #define WEBCREATOR_H
 
+#include <QEventLoop>
 #include <QObject>
 #include <kio/thumbcreator.h>
 #include <QTimerEvent>
+#include <QUrl>
 
+class QWebPage;
 class WebCreatorPrivate;
 
 class WebCreator : public QObject, public ThumbCreator
@@ -43,7 +46,14 @@ private Q_SLOTS:
     void completed(bool);
 
 private:
-    WebCreatorPrivate* d;
+    //WebCreatorPrivate* d;
+    QWebPage *m_page;
+    //QImage thumbnail;
+    //QSize size;
+    QUrl m_url;
+    QEventLoop m_eventLoop;
+    bool m_failed;
+
 };
 
 #endif

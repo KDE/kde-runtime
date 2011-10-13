@@ -29,15 +29,18 @@
 #include <QPixmap>
 #include <QImage>
 #include <QPainter>
-#include <QEventLoop>
+#include <QTimer>
 #include <QUrl>
 #include <QWebPage>
 #include <QWebFrame>
-
+/*
 class WebCreatorPrivate
 {
 public:
-    WebCreatorPrivate() : page(0) {
+    WebCreatorPrivate() :
+        page(0)
+    {
+        kDebug() << " === PRIVATE";
     }
 
     QWebPage *page;
@@ -47,7 +50,7 @@ public:
     QEventLoop eventLoop;
 
 };
-
+*/
 extern "C"
 {
     KDE_EXPORT ThumbCreator *new_creator()
@@ -57,27 +60,33 @@ extern "C"
 }
 
 WebCreator::WebCreator()
-    : d(0)
+    : m_page(0)
 {
 }
 
 WebCreator::~WebCreator()
 {
-    delete d;
+    delete m_page;
 }
 
 bool WebCreator::create(const QString &path, int width, int height, QImage &img)
 {
     kDebug() << "WEBCREATOR URL: " << path << width << "x" << height;
-    if (!d) {
-        d = new WebCreatorPrivate();
-        d->page = new QWebPage( this );
-        d->page->setViewportSize(QSize(1024, 768));
-        d->page->mainFrame()->setScrollBarPolicy( Qt::Horizontal, Qt::ScrollBarAlwaysOff );
-        d->page->mainFrame()->setScrollBarPolicy( Qt::Vertical, Qt::ScrollBarAlwaysOff );
-        d->page->mainFrame()->load( d->url );
-
-        connect(d->page, SIGNAL(loadFinished(bool)), this, SLOT(completed(bool)));
+    if (!m_page) {
+        //m_url = QUrl("http://lwn.net");
+        m_url = QUrl(path);
+        kDebug() << " === NEW PAGE";
+        m_page = new QWebPage();
+        kDebug() << " === SIZE";
+        m_page->setViewportSize(QSize(width, height));
+        m_page->mainFrame()->setScrollBarPolicy( Qt::Horizontal, Qt::ScrollBarAlwaysOff );
+        m_page->mainFrame()->setScrollBarPolicy( Qt::Vertical, Qt::ScrollBarAlwaysOff );
+        qreal zoomFactor = (qreal)width / 800.0; // assume pages render well enough at 600px width
+        kDebug() << "ZoOOOMFACTOR: " << zoomFactor;
+        m_page->mainFrame()->setZoomFactor(zoomFactor);
+        kDebug() << " === LOAD:  " << m_url;
+        m_page->mainFrame()->load( m_url );
+        connect(m_page, SIGNAL(loadFinished(bool)), this, SLOT(completed(bool)));
 
         /*
         m_html = new KHTMLPart;
@@ -89,35 +98,32 @@ bool WebCreator::create(const QString &path, int width, int height, QImage &img)
         m_html->setOnlyLocalReferences(true);
         */
     }
-    KUrl url(path);
-    //url(path);
-    //m_html->openUrl(url);
 
     // 30 sec timeout
     int t = startTimer(30000);
+    m_failed = false;
 
-    d->eventLoop.exec(QEventLoop::ExcludeUserInputEvents);
+    // The event loop will either be terminated by the page loadFinished(),
+    // or by the timeout
+    m_eventLoop.exec(QEventLoop::ExcludeUserInputEvents);
 
     killTimer(t);
 
-    //pix.fill( QColor( 245, 245, 245 ) );
-    // Render QImage from WebPage
-    // find proper size, we stick to sensible aspect ratio
-    QSize size = d->page->mainFrame()->contentsSize();
-    size.setHeight( size.width() * d->size.height() / d->size.width() );
-    QPixmap pix(size);
+    if (m_failed) {
+        return false;
+    }
 
-    // create the target surface
-    //d->thumbnail = QImage(size, QImage::Format_ARGB32_Premultiplied ); // clip here
+    // Render QImage from WebPage
+    QPixmap pix(width, height);
     pix.fill( Qt::transparent );
 
-    kDebug() <<  " ++++++++++++++ NOW PAINTING ++++++++++++" << d->page->mainFrame()->contentsSize();
+    kDebug() <<  " ++++++++++++++ NOW PAINTING ++++++++++++" << m_page->mainFrame()->contentsSize() << pix.size();
     // render and rescale
     QPainter p;
     p.begin(&pix);
 
-    d->page->setViewportSize(d->page->mainFrame()->contentsSize());
-    d->page->mainFrame()->render(&p);
+    m_page->setViewportSize(m_page->mainFrame()->contentsSize());
+    m_page->mainFrame()->render(&p);
 
     //p.setPen(Qt::blue);
     //p.setFont(QFont("Arial", 30));
@@ -125,8 +131,9 @@ bool WebCreator::create(const QString &path, int width, int height, QImage &img)
     p.end();
 
     kDebug() <<  " ++++++++++++++ DONE PAINTING ++++++++++++";
-    //delete d->page;
-    //d->page = 0;
+
+    delete m_page;
+    m_page = 0;
     //delete d;
     //d = 0;
 
@@ -175,13 +182,15 @@ bool WebCreator::create(const QString &path, int width, int height, QImage &img)
 void WebCreator::timerEvent(QTimerEvent *)
 {
     kDebug() << " WEBCREATOR:timerEvent";
-    d->eventLoop.quit();
+    m_failed = true;
+    m_eventLoop.quit();
 }
 
 void WebCreator::completed(bool sucess)
 {
     kDebug() << " WEBCREATOR:completed" << sucess;
-    d->eventLoop.quit();
+    m_failed = !sucess;
+    m_eventLoop.quit();
 }
 
 ThumbCreator::Flags WebCreator::flags() const
