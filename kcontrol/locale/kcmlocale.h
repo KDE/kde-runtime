@@ -138,6 +138,10 @@ private:
     void initSeparatorCombo( KComboBox *separatorCombo );
     void initWeekDayCombo( KComboBox *dayCombo );
     void initDigitSetCombo( KComboBox *digitSetCombo );
+    void initDigitGroupingCombo( KComboBox *digitGroupingCombo, const QString &digitGroupingKey);
+    void insertDigitGroupingItem( KComboBox *digitGroupingCombo,
+                                  KSharedConfigPtr groupingConfig, KConfigGroup *groupingSettings,
+                                  const QString &digitGroupingKey, const QString &digitGroupingFormat);
     void insertMonetaryPositiveFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition );
     void insertMonetaryNegativeFormat( bool prefixCurrencySymbol, KLocale::SignPosition signPosition );
 
@@ -164,6 +168,9 @@ private:
 
     //Numeric tab
 
+    void initNumericDigitGrouping();
+    void setNumericDigitGrouping( const QString &newValue );
+
     void initNumericThousandsSeparator();
     void setNumericThousandsSeparator( const QString &newValue );
 
@@ -189,6 +196,9 @@ private:
 
     void initCurrencySymbol();
     void setCurrencySymbol( const QString &newValue );
+
+    void initMonetaryDigitGrouping();
+    void setMonetaryDigitGrouping( const QString &newValue );
 
     void initMonetaryThousandsSeparator();
     void setMonetaryThousandsSeparator( const QString &newValue );
@@ -218,6 +228,9 @@ private:
 
     void initShortYearWindow();
     void setShortYearWindow( int newValue );
+
+    void initWeekNumberSystem();
+    void setWeekNumberSystem( int newValue );
 
     void initWeekStartDay();
     void setWeekStartDay( int newValue );
@@ -285,6 +298,9 @@ private Q_SLOTS:
 
     //Numeric tab
 
+    void defaultNumericDigitGrouping();
+    void changedNumericDigitGroupingIndex( int index );
+
     void defaultNumericThousandsSeparator();
     void changedNumericThousandsSeparator( const QString &newValue );
 
@@ -310,6 +326,9 @@ private Q_SLOTS:
 
     void defaultCurrencySymbol();
     void changedCurrencySymbolIndex( int index );
+
+    void defaultMonetaryDigitGrouping();
+    void changedMonetaryDigitGroupingIndex( int index );
 
     void defaultMonetaryThousandsSeparator();
     void changedMonetaryThousandsSeparator( const QString &newValue );
@@ -339,6 +358,9 @@ private Q_SLOTS:
 
     void defaultShortYearWindow();
     void changedShortYearWindow( int newValue );
+
+    void defaultWeekNumberSystem();
+    void changedWeekNumberSystemIndex( int index );
 
     void defaultWeekStartDay();
     void changedWeekStartDayIndex( int index );

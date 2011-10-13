@@ -142,13 +142,13 @@ bool Nepomuk::SearchProtocol::ensureNepomukRunning( bool emitError )
     if ( Nepomuk::ResourceManager::instance()->init() ) {
         kDebug() << "Failed to init Nepomuk";
         if ( emitError )
-            error( KIO::ERR_SLAVE_DEFINED, i18n( "The Nepomuk system is not activated. Unable to answer queries without it." ) );
+            error( KIO::ERR_SLAVE_DEFINED, i18n( "The desktop search service is not activated. Unable to answer queries without it." ) );
         return false;
     }
     else if ( !Nepomuk::Query::QueryServiceClient::serviceAvailable() ) {
         kDebug() << "Nepomuk Query service is not running.";
         if ( emitError )
-            error( KIO::ERR_SLAVE_DEFINED, i18n( "The Nepomuk query service is not running. Unable to answer queries without it." ) );
+            error( KIO::ERR_SLAVE_DEFINED, i18n( "The desktop search query service is not running. Unable to answer queries without it." ) );
         return false;
     }
     else {

@@ -19,8 +19,9 @@
 
 #include <shellEdit.h>
 #include <QDebug>
+#include <KLocale>
 
-ShellEdit::ShellEdit(QString shellName = "Custom desktop shell", QString shellDescription = "This shell is reserved for user's custom shell. Press \"Setup\" button to setup your favourite shell.", QString shellCmd = "myshell_cmd.exe")
+ShellEdit::ShellEdit(const QString &shellName = i18n("Custom desktop shell"), const QString& shellDescription = i18n("This shell is reserved for user's custom shell. Press \"Setup\" button to setup your favourite shell."), const QString& shellCmd = "myshell_cmd.exe")
 {
 	setupUi(this);
 	

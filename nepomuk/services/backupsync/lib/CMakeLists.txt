@@ -20,14 +20,13 @@ add_definitions(-DDISABLE_NEPOMUK_LEGACY=1)
 set(nepomuksync_SRCS
     resourcemerger.cpp
     resourceidentifier.cpp
-    resourceidentifier_p.cpp
     identificationsetgenerator.cpp
-    simpleresource.cpp
+    syncresource.cpp
 )
 
 soprano_add_ontology(nepomuksync_SRCS
    ${CMAKE_CURRENT_SOURCE_DIR}/../../../ontologies/nrio.trig
-  "backupsync"
+  "NRIO"
   "Nepomuk::Vocabulary"
   "trig")
 
@@ -45,11 +44,11 @@ target_link_libraries(nepomuksync
   )
 
 install(TARGETS nepomuksync EXPORT kdelibsLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS})
-
-install(FILES
-    resourceidentifier.h
-    resourcemerger.h
-    simpleresource.h
-    nepomuksync_export.h
-    DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk COMPONENT Devel
-)
+#
+# install(FILES
+#     resourceidentifier.h
+#     resourcemerger.h
+#     syncresource.h
+#     nepomuksync_export.h
+#     DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk COMPONENT Devel
+# )

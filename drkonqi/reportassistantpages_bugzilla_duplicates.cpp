@@ -622,17 +622,28 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
             }
 
             //Generate html for comments (with proper numbering)
+            QLatin1String duplicatesMark = QLatin1String("has been marked as a duplicate of this bug.");
+
             QString comments;
             QStringList commentList = report.comments();
             for (int i = 0; i < commentList.count(); i++) {
                 QString comment = commentList.at(i);
-                comment.replace('\n', "<br />");
-                comments += i18nc("comment $number to use as subtitle", "<h4>Comment %1:</h4>", (i+1))
-                                  + "<p>" + comment + "</p><hr />";
+                //Don't add duplicates mark comments
+                if (!comment.contains(duplicatesMark)) {
+                    comment.replace('\n', "<br />");
+                    comments += i18nc("comment $number to use as subtitle", "<h4>Comment %1:</h4>", (i+1))
+                                    + "<p>" + comment + "</p><hr />";
+                    //Count the inline attached crashes (DrKonqi feature)
+                    QLatin1String attachedCrashMark =
+                        QLatin1String("New crash information added by DrKonqi");
+                    if (comment.contains(attachedCrashMark)) {
+                        m_duplicatesCount++;
+                    }
+                } else {
+                    //Count duplicate
+                    m_duplicatesCount++;
+                }
             }
-
-            //Count duplicates (simple check)
-            m_duplicatesCount = comments.count("has been marked as a duplicate of this bug.");
 
             //Generate a non-geek readable status
             QString customStatusString;
@@ -647,8 +658,17 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                 || report.bugStatus() == QLatin1String("CLOSED")) {
                 QString customResolutionString;
                 if (report.resolution() == QLatin1String("FIXED")) {
-                    customResolutionString = i18nc("@info bug resolution", "Fixed");
-                    m_closedStateString = i18nc("@info bug resolution", "the bug was fixed by KDE developers");
+                    if (!report.versionFixedIn().isEmpty()) {
+                        customResolutionString = i18nc("@info bug resolution, fixed in version",
+                                                       "Fixed in version \"%1\"",
+                                                       report.versionFixedIn());
+                        m_closedStateString = i18nc("@info bug resolution, fixed by kde devs in version",
+                                                    "the bug was fixed by KDE developers in version \"%1\"",
+                                                    report.versionFixedIn());
+                    } else {
+                        customResolutionString = i18nc("@info bug resolution", "Fixed");
+                        m_closedStateString = i18nc("@info bug resolution", "the bug was fixed by KDE developers");
+                    }
                 } else if (report.resolution() == QLatin1String("WORKSFORME")) {
                     customResolutionString = i18nc("@info bug resolution", "Non-reproducible");
                 } else if (report.resolution() == QLatin1String("DUPLICATE")) {

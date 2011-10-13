@@ -3,6 +3,19 @@
 # % cmake -DKDEBASE_DISABLE_MULTIMEDIA=ON
 #
 
+project(PHONON-KDE-RUNTIME)
+find_package(KDE4 REQUIRED)
+
+include(KDE4Defaults)
+include(MacroLibrary)
+include(CheckFunctionExists)
+include(CheckIncludeFiles)
+
+add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
+
+include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES})
+
 option(KDEBASE_DISABLE_MULTIMEDIA "Disable multimedia support (default: off)" OFF)
 
 # print a message for backward compatibility:
@@ -14,9 +27,9 @@ endif(KDE4_DISABLE_MULTIMEDIA)
 if(KDEBASE_DISABLE_MULTIMEDIA)
    message(STATUS "NOTICE: Multimedia support DISABLED (KDEBASE_DISABLE_MULTIMEDIA == ON)")
 else(KDEBASE_DISABLE_MULTIMEDIA)
-   set(PHONON_MIN_VERSION "4.4.3")
+   set(PHONON_MIN_VERSION "4.4.57")
    macro_ensure_version("${PHONON_MIN_VERSION}" "${PHONON_VERSION}" _phonon_version_ok)
-   macro_log_feature(_phonon_version_ok "Phonon" "Phonon library" "git://gitorious.org/phonon/phonon.git" TRUE "${PHONON_MIN_VERSION}" "STRONGLY RECOMMENDED: Required for playing audio and video throughout KDE")
+   macro_log_feature(_phonon_version_ok "Phonon" "Phonon library" "git://anongit.kde.org/phonon.git" TRUE "${PHONON_MIN_VERSION}" "STRONGLY RECOMMENDED: Required for playing audio and video throughout KDE")
 
    find_package(Alsa)
    option(WITH_ALSA "Use ALSA, if found" ON)
@@ -47,6 +60,6 @@ else(KDEBASE_DISABLE_MULTIMEDIA)
    add_subdirectory(kded-module)
    add_subdirectory(platform_kde)
    macro_optional_add_subdirectory(tests)
-   add_subdirectory(kcm)
+   macro_optional_add_subdirectory(kcm)
    #macro_optional_add_subdirectory(libkaudiodevicelist)
 endif(KDEBASE_DISABLE_MULTIMEDIA)

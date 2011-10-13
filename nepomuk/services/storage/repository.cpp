@@ -14,6 +14,12 @@
 
 #include "repository.h"
 #include "modelcopyjob.h"
+#include "crappyinferencer2.h"
+#include "removablemediamodel.h"
+#include "datamanagementmodel.h"
+#include "datamanagementadaptor.h"
+#include "classandpropertytree.h"
+#include "graphmaintainer.h"
 
 #include <Soprano/Backend>
 #include <Soprano/PluginManager>
@@ -23,6 +29,8 @@
 #include <Soprano/Error/Error>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Util/SignalCacheModel>
+#define USING_SOPRANO_NRLMODEL_UNSTABLE_API
+#include <Soprano/NRLModel>
 
 #include <KStandardDirs>
 #include <KDebug>
@@ -37,6 +45,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QThread>
 #include <QtCore/QCoreApplication>
+#include <QtDBus/QDBusConnection>
 
 
 namespace {
@@ -51,6 +60,11 @@ Nepomuk::Repository::Repository( const QString& name )
     : m_name( name ),
       m_state( CLOSED ),
       m_model( 0 ),
+      m_inferencer( 0 ),
+      m_removableStorageModel( 0 ),
+      m_dataManagementModel( 0 ),
+      m_dataManagementAdaptor( 0 ),
+      m_nrlModel( 0 ),
       m_backend( 0 ),
       m_modelCopyJob( 0 ),
       m_oldStorageBackend( 0 )
@@ -68,6 +82,21 @@ Nepomuk::Repository::~Repository()
 void Nepomuk::Repository::close()
 {
     kDebug() << m_name;
+
+    delete m_graphMaintainer;
+
+    // delete DMS adaptor before anything else so we do not get requests while deleting the DMS
+    delete m_dataManagementAdaptor;
+    m_dataManagementAdaptor = 0;
+
+    delete m_dataManagementModel;
+    m_dataManagementModel = 0;
+
+    delete m_inferencer;
+    m_inferencer = 0;
+
+    delete m_removableStorageModel;
+    m_removableStorageModel = 0;
 
     delete m_modelCopyJob;
     m_modelCopyJob = 0;
@@ -145,7 +174,7 @@ void Nepomuk::Repository::open()
     // remove old pre 4.4 clucene index
     // =================================
     if ( QFile::exists( m_basePath + QLatin1String( "index" ) ) ) {
-        KIO::del( m_basePath + QLatin1String( "index" ) );
+        KIO::del( QString( m_basePath + QLatin1String( "index" ) ) );
     }
 
     // open storage
@@ -161,12 +190,40 @@ void Nepomuk::Repository::open()
 
     kDebug() << "Successfully created new model for repository" << name();
 
+    // Fire up the graph maintainer on the pure data model.
+    // =================================
+    m_graphMaintainer = new GraphMaintainer(m_model);
+    connect(m_graphMaintainer, SIGNAL(finished()), m_graphMaintainer, SLOT(deleteLater()));
+    m_graphMaintainer->start();
+
+    // create the one class and property tree to be used in the crappy inferencer 2 and in DMS
+    // =================================
+    m_classAndPropertyTree = new Nepomuk::ClassAndPropertyTree(this);
+
+    // create the crappy inference model which handles rdfs:subClassOf only -> we only use this to improve performance of ResourceTypeTerms
+    // =================================
+    m_inferencer = new CrappyInferencer2( m_classAndPropertyTree, m_model );
+
+    // create the RemovableMediaModel which does the transparent handling of removable mounts
+    // =================================
+    m_removableStorageModel = new Nepomuk::RemovableMediaModel(m_inferencer);
+
     // create a SignalCacheModel to make sure no client slows us down by listening to the stupid signals
     // =================================
-    Soprano::Util::SignalCacheModel* scm = new Soprano::Util::SignalCacheModel( m_model );
+    Soprano::Util::SignalCacheModel* scm = new Soprano::Util::SignalCacheModel( m_removableStorageModel );
     scm->setParent(this); // memory management
 
-    setParentModel( scm );
+    // Create the NRLModel which is required by the DMM below
+    // =================================
+    m_nrlModel = new Soprano::NRLModel(scm);
+    m_nrlModel->setParent(this); // memory management
+
+    // create the DataManagementModel on top of everything
+    // =================================
+    m_dataManagementModel = new DataManagementModel(m_classAndPropertyTree, m_nrlModel, this);
+    m_dataManagementAdaptor = new Nepomuk::DataManagementAdaptor(m_dataManagementModel);
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/datamanagement"), m_dataManagementAdaptor, QDBusConnection::ExportScriptableContents);
+    setParentModel(m_dataManagementModel);
 
     // check if we have to convert
     // =================================
@@ -337,7 +394,33 @@ Soprano::BackendSettings Nepomuk::Repository::readVirtuosoSettings() const
     // needs to be addressed as well
     settings << Soprano::BackendSetting( "ServerThreads", 100 );
 
+    // Never take more than 5 minutes to answer a query (this is to filter out broken queries and bugs in Virtuoso's query optimizer)
+    // trueg: We cannot activate this yet. 1. Virtuoso < 6.3 crashes and 2. even open cursors are subject to the timeout which is really
+    //        not what we want!
+//    settings << Soprano::BackendSetting( "QueryTimeout", 5*60000 );
+
     return settings;
+}
+
+void Nepomuk::Repository::updateInference()
+{
+    // the funny way to update the query prefix cache
+    m_nrlModel->setEnableQueryPrefixExpansion(false);
+    m_nrlModel->setEnableQueryPrefixExpansion(true);
+
+    // update the prefixes in the DMS adaptor for script convenience
+    QHash<QString, QString> prefixes;
+    const QHash<QString, QUrl> namespaces = m_nrlModel->queryPrefixes();
+    for(QHash<QString, QUrl>::const_iterator it = namespaces.constBegin();
+        it != namespaces.constEnd(); ++it) {
+        prefixes.insert(it.key(), QString::fromAscii(it.value().toEncoded()));
+    }
+    m_dataManagementAdaptor->setPrefixes(prefixes);
+
+    // update the rest
+    m_classAndPropertyTree->rebuildTree(this);
+    m_inferencer->updateInferenceIndex();
+    m_inferencer->updateAllResources();
 }
 
 #include "repository.moc"

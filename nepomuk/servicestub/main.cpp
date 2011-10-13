@@ -38,6 +38,8 @@
 #include "priority.h"
 
 namespace {
+    Nepomuk::ServiceControl* s_control = 0;
+
 #ifndef Q_OS_WIN
     void signalHandler( int signal )
     {
@@ -45,6 +47,7 @@ namespace {
         case SIGHUP:
         case SIGQUIT:
         case SIGINT:
+            delete s_control;
             QCoreApplication::exit( 0 );
         }
     }
@@ -65,7 +68,8 @@ namespace {
 
 int main( int argc, char** argv )
 {
-    KAboutData aboutData( "nepomukservicestub", "nepomuk",
+    KAboutData aboutData( "nepomukservicestub",
+                          "nepomukservicestub",
                           ki18n("Nepomuk Service Stub"),
                           "0.2",
                           ki18n("Nepomuk Service Stub"),
@@ -102,6 +106,7 @@ int main( int argc, char** argv )
     app.disableSessionManagement();
     installSignalHandler();
     QApplication::setQuitOnLastWindowClosed( false );
+    KGlobal::locale()->insertCatalog( serviceName );
 
 
     // check if NepomukServer is running
@@ -155,12 +160,12 @@ int main( int argc, char** argv )
 
     // register the service control
     // ====================================
-    Nepomuk::ServiceControl* control = new Nepomuk::ServiceControl( serviceName, service, &app );
+    s_control = new Nepomuk::ServiceControl( serviceName, service, &app );
 
 
     // start the service (queued since we need an event loop)
     // ====================================
-    QTimer::singleShot( 0, control, SLOT( start() ) );
+    QTimer::singleShot( 0, s_control, SLOT( start() ) );
 
     return app.exec();
 }

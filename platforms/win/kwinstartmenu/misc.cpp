@@ -108,7 +108,7 @@ QString getKDEStartMenuRootEntry()
 {
     QString version = KDE::versionString();
     QStringList versions = version.split(' '); 
-    QString addOn = !globalOptions.rootCustomString.isEmpty() ?  globalOptions.rootCustomString + ' ' : "";
+    QString addOn = !globalOptions.rootCustomString.isEmpty() ? globalOptions.rootCustomString + QString(" ") : QString("");
 #ifdef QT_NO_DEBUG
     QString compileMode = "Release"; 
 #else
@@ -248,7 +248,7 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
                 }
             }
             QString workingDir = getWorkingDir();
-            QString description = s->genericName();
+            QString description = s->comment();
 
             files.append(LinkFile(QStringList() << execPath << arguments,linkFilePath,description,workingDir));
         }

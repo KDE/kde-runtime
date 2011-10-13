@@ -23,6 +23,7 @@
 
 #include <QtCore/QList>
 #include <QtCore/QFile>
+#include <QtCore/QTimer>
 
 #include <Soprano/Node>
 #include <Soprano/Model>
@@ -52,40 +53,31 @@ Nepomuk::InvalidFileResourceCleaner::~InvalidFileResourceCleaner()
     wait();
 }
 
-namespace {
-
-    /* BUG: This is a workaround to "Removable Storage" or "Network Storage" bug, where the metadata of all
-     * the files in the NAS would be deleted if the NAS was unmounted and Nepomuk was restarted.
-     *
-     * FIXME: This is NOT a permanent fix and should be removed in 4.7
-     */ 
-    QString deletionBlacklistFilter() {
-        KConfig config("nepomukserverrc");
-        QStringList directories = config.group("Service-nepomukfilewatch").readPathEntry("Deletion Blacklist", QStringList());
-        
-        QString filter;
-        Q_FOREACH( const QString & dir, directories ) {
-            filter += QString::fromLatin1( " && !regex(str(?url), '^%1') " )
-                      .arg( KUrl(dir).url( KUrl::AddTrailingSlash ) );
-        }
-        return filter;
-    }
-}
 
 void Nepomuk::InvalidFileResourceCleaner::run()
 {
     kDebug() << "Searching for invalid local file entries";
+#ifndef NDEBUG
+    QTime timer;
+    timer.start();
+#endif
     //
     // Since the removal of the graphs could intefere with the iterator and result
-    // in jumping of rows (worst case) we cache all graphs to remove
+    // in jumping of rows (worst case) we cache all resources to remove
     //
     QList<Soprano::Node> resourcesToRemove;
-    QString query = QString::fromLatin1( "select distinct ?r ?url where { "
-                                         "?r %1 ?url. "
-                                         "FILTER(regex(str(?url), 'file://') %2 ). }" )
-                    .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                          deletionBlacklistFilter() );
-    Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    QString basePathFilter;
+    if(!m_basePath.isEmpty()) {
+        basePathFilter = QString::fromLatin1("FILTER(REGEX(STR(?url), '^%1')) . ")
+                .arg(KUrl(m_basePath).url(KUrl::AddTrailingSlash));
+    }
+    const QString query
+            = QString::fromLatin1( "select distinct ?r ?url where { "
+                                   "?r %1 ?url . %2}" )
+            .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                  basePathFilter );
+    Soprano::QueryResultIterator it
+            = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 
     while( it.next() && !m_stopped ) {
         QUrl url( it["url"].uri() );
@@ -100,10 +92,20 @@ void Nepomuk::InvalidFileResourceCleaner::run()
     Q_FOREACH( const Soprano::Node& r, resourcesToRemove ) {
         if ( m_stopped )
             break;
+        // TODO: use DMS here instead of Soprano
         Nepomuk::ResourceManager::instance()->mainModel()->removeAllStatements( r, Soprano::Node(), Soprano::Node() );
         Nepomuk::ResourceManager::instance()->mainModel()->removeAllStatements( Soprano::Node(), Soprano::Node(), r );
     }
     kDebug() << "Done searching for invalid local file entries";
+#ifndef NDEBUG
+    kDebug() << "Time elapsed: " << timer.elapsed()/1000.0 << "sec";
+#endif
+}
+
+void Nepomuk::InvalidFileResourceCleaner::start(const QString &basePath)
+{
+    m_basePath = basePath;
+    start();
 }
 
 #include "invalidfileresourcecleaner.moc"

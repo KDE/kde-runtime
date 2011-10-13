@@ -37,9 +37,11 @@ namespace Nepomuk {
      * Saves a changeLog with the list of all the statements that should be backed up.
      * It's useful in when doing a first sync or first backup.
      *
+     * \param uniqueUris After execution, it will contain a list of unique uris
+     * 
      * Returns the numbers of records in the changelog
      */
-    int saveBackupChangeLog( const QUrl& url );
+    int saveBackupChangeLog( const QUrl& url, QSet<QUrl> & uniqueUris );
 
     bool saveBackupSyncFile( const QUrl& url );
 }

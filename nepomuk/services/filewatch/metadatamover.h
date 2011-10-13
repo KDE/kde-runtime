@@ -53,7 +53,7 @@ namespace Nepomuk {
     Q_SIGNALS:
         /**
          * Emitted for files (and folders) that have been moved but
-         * do not have metadata to be moved. This allows the strigi
+         * do not have metadata to be moved. This allows the file indexer
          * service to pick them up in case they are of interest. The
          * typical example would be moving a file from a non-indexed into
          * an indexed folder.
@@ -74,20 +74,8 @@ namespace Nepomuk {
         /**
          * Recursively update the nie:url and nie:isPartOf properties
          * of the resource describing \p from.
-         *
-         * If old pre-KDE 4.4 file:/ resource URIs are used these are
-         * updated to the new nepomuk:/res/<UUID> scheme
          */
-        void updateMetadata( const KUrl& from, const KUrl& to, bool includeChildren = true );
-
-        /**
-         * Convert old pre-KDE 4.4 style file:/ resource URIs to the
-         * new nepomuk:/res/<UUID> scheme.
-         *
-         * \return The new resource URI. This resource does not have
-         * nie:url or nie:isPartOf properties yet.
-         */
-        QUrl updateLegacyMetadata( const QUrl& oldResourceUri );
+        void updateMetadata( const KUrl& from, const KUrl& to );
 
         // if the second url is empty, just delete the metadata
         QQueue<UpdateRequest> m_updateQueue;
@@ -105,8 +93,6 @@ namespace Nepomuk {
         bool m_stopped;
 
         Soprano::Model* m_model;
-
-        const QUrl m_strigiParentUrlUri;
     };
 }
 

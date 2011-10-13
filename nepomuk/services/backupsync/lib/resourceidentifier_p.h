@@ -31,7 +31,7 @@
 #include <KUrl>
 
 #include "resourceidentifier.h"
-#include "simpleresource.h"
+#include "syncresource.h"
 #include <Nepomuk/ResourceManager>
 
 
@@ -43,7 +43,7 @@ namespace Soprano {
 
 namespace Nepomuk {
     namespace Sync {
-        
+
         class ResourceIdentifier::Private
         {
         public:
@@ -53,63 +53,33 @@ namespace Nepomuk {
              * has a incorrect value with this value.
              */
             Private( Nepomuk::Sync::ResourceIdentifier* parent );
-            void init( Soprano::Model* model );
-            
+
             ResourceIdentifier * q;
-            
+
             Soprano::Model * m_model;
-            
+
             /**
              * The main identification hash which maps external ResourceUris
              * with the internal ones
              */
-            QHash<KUrl, KUrl> m_hash;
-            
+            QHash<QUrl, QUrl> m_hash;
+
             QSet<KUrl> m_notIdentified;
-            
+
             /// Used to store all the identification statements
             ResourceHash m_resourceHash;
 
             //
             // Properties
             //
-            KUrl::List m_vitalProperties;
             KUrl::List m_optionalProperties;
-            
+
             /**
              * This contains all the urls that are being identified, at any moment.
              * It is used to avoid infinite recursion while generating the sparql
              * query.
              */
             QSet<KUrl> m_beingIdentified;
-            
-            float m_minScore;
-            
-            //
-            // Identification Procedures
-            //
-            
-
-            bool identify( const KUrl & uri );
-            
-            /**
-             * Checks if the @p oldUri is already in the process of being identified.
-             * The function returns false if it is being identified otherwise it
-             * returns the value of identify( const KUrl & )
-             *
-             * \sa identify
-             */
-            bool queryIdentify( const KUrl & oldUri );
-            
-            /**
-             * Finds the best possible match for \p rs from the internal model. It uses
-             * constructIdentificationQuery to create the query
-             *
-             * \param minScore dictates the min number of properties that should match
-             *
-             * \sa queryIdentify
-             */
-            KUrl findMatch( const Nepomuk::Sync::SimpleResource& simpleRes );
         };
     }
 }

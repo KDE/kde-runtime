@@ -10,17 +10,21 @@ if(WINCE)
 endif(WINCE)
 
 #search packages used by KDE
-set(KDE_MIN_VERSION "4.6.40")  # for the < 4.2 macro
-find_package(KDE4 4.6.40 REQUIRED)
-find_package(Strigi REQUIRED)
+set(KDE_MIN_VERSION "4.6.80")  # for the < 4.2 macro
+find_package(KDE4 4.6.80 REQUIRED)
+if (WIN32)
+    find_package(Strigi)
+else ()
+    find_package(Strigi REQUIRED)
+endif ()
 
 include(KDE4Defaults)
 include(MacroLibrary)
 include(CheckFunctionExists)
 include(CheckIncludeFiles)
 
-set(SOPRANO_MIN_VERSION "2.5.63")
-set(SDO_MIN_VERSION "0.5.0")
+set(SOPRANO_MIN_VERSION "2.6.50")
+set(SDO_MIN_VERSION "0.6.50")
 macro_optional_find_package(SharedDesktopOntologies ${SDO_MIN_VERSION})
 macro_optional_find_package(Nepomuk)
 macro_log_feature(SHAREDDESKTOPONTOLOGIES_FOUND "Shared desktop ontologies" "Desktop ontologies" "http://oscaf.sourceforge.net" FALSE ${SDO_MIN_VERSION} "Ontologies necessary for the Nepomuk semantic desktop.")
@@ -46,6 +50,7 @@ check_include_files(sys/time.h HAVE_SYS_TIME_H)
 configure_file (config-runtime.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-runtime.h )
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
 
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES})
 
@@ -64,16 +69,15 @@ if(NOT WINCE)
 add_subdirectory(kuiserver)
 endif(NOT WINCE)
 add_subdirectory(kwalletd)
-add_subdirectory(activitymanager)
 if ( UNIX )
    add_subdirectory(soliduiserver)
    add_subdirectory(solidautoeject)
    add_subdirectory(solid-device-automounter)
    add_subdirectory(solid-networkstatus)
 endif ( UNIX )
-if(SHAREDDESKTOPONTOLOGIES_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY AND SOPRANO_PLUGIN_REDLANDBACKEND_FOUND AND SOPRANO_PLUGIN_VIRTUOSOBACKEND_FOUND AND SOPRANO_PLUGIN_RAPTORPARSER_FOUND)
+if(NOT WIN32 AND SHAREDDESKTOPONTOLOGIES_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY AND SOPRANO_PLUGIN_REDLANDBACKEND_FOUND AND SOPRANO_PLUGIN_VIRTUOSOBACKEND_FOUND AND SOPRANO_PLUGIN_RAPTORPARSER_FOUND)
   macro_optional_add_subdirectory(nepomuk)
-endif(SHAREDDESKTOPONTOLOGIES_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY AND SOPRANO_PLUGIN_REDLANDBACKEND_FOUND AND SOPRANO_PLUGIN_VIRTUOSOBACKEND_FOUND AND SOPRANO_PLUGIN_RAPTORPARSER_FOUND)
+endif(NOT WIN32 AND SHAREDDESKTOPONTOLOGIES_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY AND SOPRANO_PLUGIN_REDLANDBACKEND_FOUND AND SOPRANO_PLUGIN_VIRTUOSOBACKEND_FOUND AND SOPRANO_PLUGIN_RAPTORPARSER_FOUND)
 
 # Plugins/components required for basic utility
 if ( NOT WINCE )

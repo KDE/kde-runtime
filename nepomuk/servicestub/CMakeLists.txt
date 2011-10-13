@@ -25,7 +25,7 @@ kde4_add_executable(nepomukservicestub
 )
 
 if (Q_WS_MAC)
-    set_target_properties(nepomukservicestub PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/runtime/Info.plist.template)
+    set_target_properties(nepomukservicestub PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/Info.plist.template)
     set_target_properties(nepomukservicestub PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "org.kde.nepomuk.servicestub")
     set_target_properties(nepomukservicestub PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "KDE Nepomuk Service Stub")
 endif (Q_WS_MAC)

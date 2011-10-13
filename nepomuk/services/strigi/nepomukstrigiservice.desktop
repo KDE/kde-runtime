@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Service
-X-KDE-ServiceTypes=NepomukService
-X-KDE-Library=nepomukstrigiservice
-X-KDE-Nepomuk-autostart=true
-X-KDE-Nepomuk-start-on-demand=false
-Name=Nepomuk Strigi Service
-Comment=Nepomuk Service which controls the strigidaemon, i.e. indexes files on the desktop

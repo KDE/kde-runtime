@@ -478,6 +478,7 @@ void AppletsView::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 
 void AppletsView::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 {
+    Q_UNUSED(event);
     m_scrollTimer->stop();
 }
 

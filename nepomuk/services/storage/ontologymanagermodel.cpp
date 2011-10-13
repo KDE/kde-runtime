@@ -21,6 +21,7 @@
 
 #include <QtCore/QUrl>
 #include <QtCore/QDateTime>
+#include <QtCore/QScopedPointer>
 
 #include <Soprano/Backend>
 #include <Soprano/Version>
@@ -225,23 +226,6 @@ namespace {
         tmpModel->addStatement( Soprano::Statement( dataGraphUri, Soprano::Vocabulary::NAO::hasDefaultNamespace(), LiteralValue( ns.toString() ), metaDataGraphUri ) );
 #endif
     }
-
-    /**
-     * Simple garbage collection class.
-     */
-    class ObjectGarbageCollector
-    {
-    public:
-        ObjectGarbageCollector( QObject* o )
-            : m_object( o ) {
-        }
-        ~ObjectGarbageCollector() {
-            delete m_object;
-        }
-
-    private:
-        QObject* m_object;
-    };
 }
 
 
@@ -308,7 +292,7 @@ bool Nepomuk::OntologyManagerModel::updateOntology( Soprano::StatementIterator d
     }
 
     // so we do not have to care about deleting out tmpModel anymore.
-    ObjectGarbageCollector modelGarbageCollector( tmpModel );
+    QScopedPointer<Soprano::Model> modelGarbageCollector( tmpModel );
 
     // import the data into our tmp model
     while ( data.next() ) {
@@ -403,6 +387,8 @@ bool Nepomuk::OntologyManagerModel::removeOntology( const QUrl& ns )
         // now removing the ontology is simple
         removeContext( dataGraphUri );
         removeContext( metadataGraphUri );
+        // be sure we remove any junk from buggy versions
+        removeAllStatements( dataGraphUri, Soprano::Node(), Soprano::Node() );
         return true;
     }
     else {
@@ -420,14 +406,14 @@ QDateTime Nepomuk::OntologyManagerModel::ontoModificationDate( const QUrl& uri )
                              "?onto <%1> ?ns . "
                              "?onto <%3> ?date . "
                              "FILTER(STR(?ns) = \"%2\") . "
-                             "FILTER(DATATYPE(?date) = <%4>) . }" )
+                             "FILTER(DATATYPE(?date) = <%4>) . } LIMIT 1" )
                     .arg( Soprano::Vocabulary::NAO::hasDefaultNamespace().toString() )
                     .arg( uri.toString() )
                     .arg( Soprano::Vocabulary::NAO::lastModified().toString() )
                     .arg( Soprano::Vocabulary::XMLSchema::dateTime().toString() );
     QueryResultIterator it = executeQuery( query, Soprano::Query::QueryLanguageSparql );
     if ( it.next() ) {
-        kDebug() << "Found modification date for" << uri << it.binding( "date" ).literal().toDateTime();
+        //kDebug() << "Found modification date for" << uri << it.binding( "date" ).literal().toDateTime();
         return it.binding( "date" ).literal().toDateTime();
     }
     else {

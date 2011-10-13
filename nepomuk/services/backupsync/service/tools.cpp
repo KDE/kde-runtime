@@ -33,15 +33,20 @@
 
 #include <KTemporaryFile>
 #include <KDebug>
+#include "identificationset.h"
 
 
-int Nepomuk::saveBackupChangeLog(const QUrl& url)
+int Nepomuk::saveBackupChangeLog(const QUrl& url, QSet<QUrl> & uniqueUris )
 {
-    const int step = 100;
-    const QString query = QString::fromLatin1("select ?r ?p ?o ?g where { graph ?g { ?r ?p ?o. } ?g a nrl:InstanceBase . FILTER(!bif:exists( ( select (1) where { ?g a nrl:DiscardableInstanceBase . } ) )) . }");
-    
+    const int step = 1000;
+    const QString query = QString::fromLatin1("select ?r ?p ?o ?g where { "
+                                              "graph ?g { ?r ?p ?o. } "
+                                              "?g a nrl:InstanceBase . "
+                                              "FILTER(!bif:exists( ( select (1) where { ?g a nrl:DiscardableInstanceBase . } ) )) ."
+                                              "FILTER(regex(str(?r), '^nepomuk:/res/')). "
+                                              "}");
+
     Soprano::Model * model = Nepomuk::ResourceManager::instance()->mainModel();
-    
     Soprano::QueryResultIterator iter= model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 
     int totalNumRecords = 0;
@@ -49,12 +54,16 @@ int Nepomuk::saveBackupChangeLog(const QUrl& url)
     ChangeLog changeLog;
     while( iter.next() ) {
         Soprano::Statement st( iter["r"], iter["p"], iter["o"], iter["g"] );
-         //kDebug() << st;
+
         changeLog += ChangeLogRecord( st );
         totalNumRecords++;
-        
+
+        uniqueUris.insert( st.subject().uri() );
+        if( st.object().isResource() && st.object().uri().scheme() == QLatin1String("nepomuk") )
+            uniqueUris.insert( st.object().uri() );
+
         if( ++i >= step ) {
-            //kDebug() << "Saving .. " << changeLog.size();
+            kDebug() << "Saving .. " << changeLog.size();
             changeLog.save( url );
             changeLog.clear();
             i = 0;
@@ -66,26 +75,19 @@ int Nepomuk::saveBackupChangeLog(const QUrl& url)
     return totalNumRecords;
 }
 
-//TODO: This doesn't really solve the problem that the backup maybe huge and
-//      large parts of the memory may get used. The proper solution would be
-//      to re-implement ChangeLog and IdentSet so that they don't load everything
-//      in one go.
-
 bool Nepomuk::saveBackupSyncFile(const QUrl& url)
 {
-    KTemporaryFile file;
-    file.open();
+    kDebug() << url;
+    KTemporaryFile logFile;
+    logFile.open();
 
-    int numRecords = saveBackupChangeLog( file.fileName() );
-    ChangeLog log = ChangeLog::fromUrl( file.fileName() );
-    kDebug() << "Log size: " << log.size();
-    Q_ASSERT( numRecords == log.size() );
+    QSet<QUrl> uniqueUris;
+    saveBackupChangeLog( logFile.fileName(), uniqueUris );
 
-    if( log.empty() ) {
-        kDebug() << "Nothing to save..";
-        return false;
-    }
-    
-    SyncFile syncFile( log );
-    return syncFile.save( url );
+    KTemporaryFile identificationFile;
+    identificationFile.open();
+    const QUrl identUrl( identificationFile.fileName() );
+
+    IdentificationSet::createIdentificationSet( uniqueUris, identUrl );
+    return SyncFile::createSyncFile( logFile.fileName(), identUrl, url );
 }

@@ -31,6 +31,8 @@ Nepomuk::ServiceControl::ServiceControl( const QString& serviceName, const KServ
       m_service( service ),
       m_initialized( false )
 {
+    m_description = service->comment();
+    m_readableName = service->name();
 }
 
 
@@ -51,6 +53,15 @@ bool Nepomuk::ServiceControl::isInitialized() const
     return m_initialized;
 }
 
+QString Nepomuk::ServiceControl::description() const
+{
+    return m_description;
+}
+
+QString Nepomuk::ServiceControl::name() const
+{
+    return m_readableName;
+}
 
 void Nepomuk::ServiceControl::start()
 {
@@ -76,9 +87,10 @@ void Nepomuk::ServiceControl::start()
 
     // start the service
     // ====================================
-    Nepomuk::Service* module = m_service->createInstance<Nepomuk::Service>( this );
+    QString startErrorDescription;
+    Nepomuk::Service* module = m_service->createInstance<Nepomuk::Service>( this, QVariantList(), &startErrorDescription);
     if( !module ) {
-        s << "Failed to start service " << m_serviceName << "." << endl;
+        s << "Failed to start service " << m_serviceName << " ("<< startErrorDescription << ")." << endl;
         qApp->exit( ErrorFailedToStart );
         return;
     }

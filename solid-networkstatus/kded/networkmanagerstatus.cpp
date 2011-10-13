@@ -4,6 +4,8 @@
                        a KDAB Group company <info@kdab.com>
     Author: Kevin Ottens <kevin.ottens@kdab.com>
 
+    Copyright (c) 2011 Lukas Tinkl <ltinkl@redhat.com>
+
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
     License as published by the Free Software Foundation; either
@@ -27,11 +29,15 @@
 
 #include <NetworkManager.h>
 
+#if !defined(NM_CHECK_VERSION)
+    #define NM_CHECK_VERSION(x,y,z) 0
+#endif
+
 NetworkManagerStatus::NetworkManagerStatus( QObject *parent )
     : SystemStatusInterface( parent ),
-      m_manager( "org.freedesktop.NetworkManager",
-                 "/org/freedesktop/NetworkManager",
-                 "org.freedesktop.NetworkManager",
+      m_manager( NM_DBUS_SERVICE,
+                 NM_DBUS_PATH,
+                 NM_DBUS_INTERFACE,
                  QDBusConnection::systemBus() )
 {
     connect( &m_manager, SIGNAL(StateChanged(uint)),
@@ -54,6 +60,11 @@ bool NetworkManagerStatus::isSupported() const
     return m_manager.isValid();
 }
 
+QString NetworkManagerStatus::serviceName() const
+{
+    return QString(NM_DBUS_SERVICE);
+}
+
 void NetworkManagerStatus::nmStateChanged( uint nmState )
 {
     emit statusChanged( convertNmState( nmState ) );
@@ -70,12 +81,23 @@ Solid::Networking::Status NetworkManagerStatus::convertNmState( uint nmState )
     case NM_STATE_CONNECTING:
         status = Solid::Networking::Connecting;
         break;
+#if NM_CHECK_VERSION(0,8,992)
+    case NM_STATE_CONNECTED_LOCAL:
+    case NM_STATE_CONNECTED_SITE:
+    case NM_STATE_CONNECTED_GLOBAL:
+#else
     case NM_STATE_CONNECTED:
+#endif
         status = Solid::Networking::Connected;
         break;
     case NM_STATE_DISCONNECTED:
         status = Solid::Networking::Unconnected;
         break;
+#if NM_CHECK_VERSION(0,8,992)
+    case NM_STATE_DISCONNECTING:
+        status = Solid::Networking::Disconnecting;
+        break;
+#endif
     }
 
     return status;

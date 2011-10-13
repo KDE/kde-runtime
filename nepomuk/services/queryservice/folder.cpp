@@ -30,6 +30,7 @@
 #include <KDebug>
 
 #include <QtCore/QThreadPool>
+#include <QtCore/QMutexLocker>
 
 
 Nepomuk::Query::Folder::Folder( const Query& query, QObject* parent )
@@ -37,7 +38,8 @@ Nepomuk::Query::Folder::Folder( const Query& query, QObject* parent )
       m_isSparqlQueryFolder( false ),
       m_query( query ),
       m_currentSearchRunnable( 0 ),
-      m_currentCountQueryRunnable( 0 )
+      m_currentCountQueryRunnable( 0 ),
+      m_runnableMutex(QMutex::Recursive)
 {
     init();
 }
@@ -49,7 +51,8 @@ Nepomuk::Query::Folder::Folder( const QString& query, const RequestPropertyMap& 
       m_sparqlQuery( query ),
       m_requestProperties( requestProps ),
       m_currentSearchRunnable( 0 ),
-      m_currentCountQueryRunnable( 0 )
+      m_currentCountQueryRunnable( 0 ),
+      m_runnableMutex(QMutex::Recursive)
 {
     init();
 }
@@ -75,6 +78,7 @@ void Nepomuk::Query::Folder::init()
 
 Nepomuk::Query::Folder::~Folder()
 {
+    QMutexLocker lock(&m_runnableMutex);
     if( m_currentSearchRunnable )
         m_currentSearchRunnable->cancel();
     if( m_currentCountQueryRunnable )
@@ -88,6 +92,7 @@ Nepomuk::Query::Folder::~Folder()
 
 void Nepomuk::Query::Folder::update()
 {
+    QMutexLocker lock(&m_runnableMutex);
     if ( !m_currentSearchRunnable ) {
         m_currentSearchRunnable = new SearchRunnable( this );
         QueryService::searchThreadPool()->start( m_currentSearchRunnable, 1 );
@@ -106,12 +111,14 @@ void Nepomuk::Query::Folder::update()
 
 QList<Nepomuk::Query::Result> Nepomuk::Query::Folder::entries() const
 {
-    return m_results.toList();
+    QMutexLocker lock(&m_runnableMutex);
+    return m_results.values();
 }
 
 
 bool Nepomuk::Query::Folder::initialListingDone() const
 {
+    QMutexLocker lock(&m_runnableMutex);
     return m_initialListingDone;
 }
 
@@ -137,17 +144,23 @@ Nepomuk::Query::RequestPropertyMap Nepomuk::Query::Folder::requestPropertyMap() 
 // called from SearchRunnable in the search thread
 void Nepomuk::Query::Folder::addResults( const QList<Nepomuk::Query::Result>& results )
 {
+    QMutexLocker lock(&m_runnableMutex);
+
     QSet<Result> newResults;
     Q_FOREACH( const Result& result, results ) {
-        if ( !m_results.contains( result ) ) {
+        if ( !m_results.contains( result.resource().resourceUri() ) ) {
             newResults.insert( result );
         }
     }
 
-    m_newResults += newResults;
+    Q_FOREACH(const Result& result, results) {
+        if ( !m_newResults.contains( result.resource().resourceUri() ) ) {
+            m_newResults.insert(result.resource().resourceUri(), result);
+        }
+    }
 
     if( !newResults.isEmpty() ) {
-        emit newEntries( newResults.toList() );
+        emit newEntries( newResults.values() );
     }
 }
 
@@ -155,6 +168,8 @@ void Nepomuk::Query::Folder::addResults( const QList<Nepomuk::Query::Result>& re
 // called from SearchRunnable in the search thread
 void Nepomuk::Query::Folder::listingFinished()
 {
+    QMutexLocker lock(&m_runnableMutex);
+
     m_currentSearchRunnable = 0;
 
     // inform about removed items
@@ -162,7 +177,7 @@ void Nepomuk::Query::Folder::listingFinished()
 
     // legacy removed results
     foreach( const Result& result, m_results ) {
-        if ( !m_newResults.contains( result ) ) {
+        if ( !m_newResults.contains( result.resource().resourceUri() ) ) {
             removedResults << result;
             emit entriesRemoved( QList<QUrl>() << KUrl(result.resource().resourceUri()).url() );
         }
@@ -192,6 +207,7 @@ void Nepomuk::Query::Folder::listingFinished()
 
 void Nepomuk::Query::Folder::slotStorageChanged()
 {
+    QMutexLocker lock(&m_runnableMutex);
     if ( !m_updateTimer.isActive() && !m_currentSearchRunnable ) {
         update();
     }
@@ -204,6 +220,7 @@ void Nepomuk::Query::Folder::slotStorageChanged()
 // if there was a change in the nepomuk store we update
 void Nepomuk::Query::Folder::slotUpdateTimeout()
 {
+    QMutexLocker lock(&m_runnableMutex);
     if ( m_storageChanged && !m_currentSearchRunnable ) {
         m_storageChanged = false;
         update();
@@ -214,6 +231,8 @@ void Nepomuk::Query::Folder::slotUpdateTimeout()
 // called from CountQueryRunnable in the search thread
 void Nepomuk::Query::Folder::countQueryFinished( int count )
 {
+    QMutexLocker lock(&m_runnableMutex);
+
     m_currentCountQueryRunnable = 0;
 
     m_resultCount = count;

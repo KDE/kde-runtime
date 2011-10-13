@@ -6,6 +6,8 @@ include_directories(
   ${SOPRANO_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
   ${NEPOMUK_INCLUDE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/lib
+  ${CMAKE_CURRENT_SOURCE_DIR}/../backupsync/lib
   )
 
 set(storage_SRCS
@@ -17,18 +19,28 @@ set(storage_SRCS
   ontologymanagermodel.cpp
   graphretriever.cpp
   crappyinferencer.cpp
+  crappyinferencer2.cpp
+  removablemediamodel.cpp
+  datamanagementmodel.cpp
+  datamanagementadaptor.cpp
+  datamanagementcommand.cpp
+  classandpropertytree.cpp
+  resourcemerger.cpp
+  resourceidentifier.cpp
+  resourcewatchermanager.cpp
+  resourcewatcherconnection.cpp
+  graphmaintainer.cpp
   )
-
-soprano_add_ontology(storage_SRCS
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../ontologies/kuvo.trig
-  "KUVO"
-  "Nepomuk::Vocabulary"
-  "trig")
 
 qt4_add_dbus_adaptor(storage_SRCS
   ../../interfaces/org.kde.nepomuk.OntologyManager.xml
   ontologyloader.h
   Nepomuk::OntologyLoader)
+
+qt4_add_dbus_adaptor(storage_SRCS
+  ../../interfaces/org.kde.nepomuk.ResourceWatcherConnection.xml
+  resourcewatcherconnection.h
+  Nepomuk::ResourceWatcherConnection)
 
 set(HAVE_SOPRANO_INDEX ${SopranoIndex_FOUND})
 
@@ -39,7 +51,11 @@ target_link_libraries(nepomukstorage
   ${SOPRANO_SERVER_LIBRARIES}
   ${KDE4_KDECORE_LIBS}
   ${KDE4_KIO_LIBS}
+  ${KDE4_SOLID_LIBS}
   ${NEPOMUK_LIBRARIES}
+  nepomuksync
+  nepomukdatamanagement
+  nepomukcommon
   )
 
 install(
@@ -54,3 +70,7 @@ install(
   TARGETS nepomukstorage
   DESTINATION ${PLUGIN_INSTALL_DIR})
 # -----------------------------
+
+add_subdirectory(lib)
+add_subdirectory(rcgen)
+add_subdirectory(test)

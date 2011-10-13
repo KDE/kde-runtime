@@ -44,7 +44,7 @@ void BacktraceParserTest::fetchData(const QString & group)
 
     foreach(const QString & key, keys) {
         QTest::newRow(key.toLocal8Bit())
-            << DATA_DIR"/" + key
+            << QString(DATA_DIR"/" + key)
             << m_settings.value(group + "/" + key).toString()
             << m_settings.value("debugger/" + key).toString();
     }
@@ -106,7 +106,7 @@ void BacktraceParserTest::btParserBenchmark_data()
     QStringList keys = m_settings.allKeys();
     foreach(const QString & key, keys) {
         QTest::newRow(key.toLocal8Bit())
-            << DATA_DIR"/" + key
+            << QString(DATA_DIR"/" + key)
             << m_settings.value(key).toString();
     }
     m_settings.endGroup();

@@ -32,6 +32,7 @@
 #include <QHBoxLayout>
 #include <QTreeWidget>
 #include <QPainter>
+#include <QSvgRenderer>
 
 #include <kdebug.h>
 #include <kapplication.h>
@@ -39,7 +40,6 @@
 #include <klocale.h>
 #include <kshareddatacache.h>
 #include <kpushbutton.h>
-#include <ksvgrenderer.h>
 #include <kstandarddirs.h>
 #include <kservice.h>
 #include <kconfig.h>
@@ -411,16 +411,17 @@ void IconThemesConfig::updateRemoveButton()
 void loadPreview(QLabel *label, KIconTheme& icontheme, const QStringList& iconnames)
 {
     const int size = qMin(48, icontheme.defaultSize(KIconLoader::Desktop));
-    KSvgRenderer renderer;
-    foreach(const QString &name, iconnames) {
-        K3Icon icon = icontheme.iconPath(QString("%1.png").arg(name), size, KIconLoader::MatchBest);
+    QSvgRenderer renderer;
+    foreach(const QString &iconthemename, QStringList() << icontheme.internalName() << icontheme.inherits()) {
+      foreach(const QString &name, iconnames) {
+        K3Icon icon = KIconTheme(iconthemename).iconPath(QString("%1.png").arg(name), size, KIconLoader::MatchBest);
         if (icon.isValid()) {
             label->setPixmap(QPixmap(icon.path).scaled(size, size));
             return;
         }
-        icon = icontheme.iconPath(QString("%1.svg").arg(name), size, KIconLoader::MatchBest);
+        icon = KIconTheme(iconthemename).iconPath(QString("%1.svg").arg(name), size, KIconLoader::MatchBest);
         if( ! icon.isValid() ) {
-            icon = icontheme.iconPath(QString("%1.svgz").arg(name), size, KIconLoader::MatchBest);
+            icon = KIconTheme(iconthemename).iconPath(QString("%1.svgz").arg(name), size, KIconLoader::MatchBest);
             if( ! icon.isValid() ) {
                 continue;
             }
@@ -434,6 +435,7 @@ void loadPreview(QLabel *label, KIconTheme& icontheme, const QStringList& iconna
             label->setPixmap(pix.scaled(size, size));
             return;
         }
+      }
     }
     label->setPixmap(QPixmap());
 }

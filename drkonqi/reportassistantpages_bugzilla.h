@@ -1,6 +1,6 @@
 /*******************************************************************
 * reportassistantpages_bugzilla.h
-* Copyright 2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009, 2011    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -48,7 +48,7 @@ public:
 private Q_SLOTS:
     void loginClicked();
     void loginFinished(bool);
-    void loginError(QString);
+    void loginError(const QString &, const QString &);
 
     void walletLogin();
 
@@ -125,7 +125,7 @@ public:
 
 private Q_SLOTS:
     void sent(int);
-    void sendError(QString);
+    void sendError(const QString &, const QString &);
 
     void retryClicked();
     void finishClicked();
@@ -141,6 +141,20 @@ private:
 Q_SIGNALS:
     void finished(bool);
 
+};
+
+class UnhandledErrorDialog: public KDialog
+{
+    Q_OBJECT
+
+public:
+    UnhandledErrorDialog(QWidget * parent, const QString &, const QString &);
+
+private Q_SLOTS:
+    void saveErrorMessage();
+
+private:
+    QString    m_extendedHTMLError;
 };
 
 #endif

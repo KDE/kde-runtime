@@ -38,7 +38,7 @@ Nepomuk::Server* Nepomuk::Server::s_self = 0;
 Nepomuk::Server::Server( QObject* parent )
     : QObject( parent ),
       m_enabled( false ),
-      m_strigiServiceName( "nepomukstrigiservice" )
+      m_fileIndexerServiceName( "nepomukfileindexer" )
 {
     s_self = this;
 
@@ -69,7 +69,7 @@ Nepomuk::Server::~Server()
 
 void Nepomuk::Server::init()
 {
-    // no need to start strigi explicetely. it is done in enableNepomuk
+    // no need to start the file indexer explicetely. it is done in enableNepomuk
     enableNepomuk( NepomukServerSettings::self()->startNepomuk() );
 }
 
@@ -97,19 +97,19 @@ void Nepomuk::Server::enableNepomuk( bool enabled )
 }
 
 
-void Nepomuk::Server::enableStrigi( bool enabled )
+void Nepomuk::Server::enableFileIndexer( bool enabled )
 {
     kDebug() << enabled;
     if ( isNepomukEnabled() ) {
         if ( enabled ) {
-            m_serviceManager->startService( m_strigiServiceName );
+            m_serviceManager->startService( m_fileIndexerServiceName );
         }
         else {
-            m_serviceManager->stopService( m_strigiServiceName );
+            m_serviceManager->stopService( m_fileIndexerServiceName );
         }
     }
 
-    KConfigGroup config( m_config, QString("Service-%1").arg(m_strigiServiceName) );
+    KConfigGroup config( m_config, QString("Service-%1").arg(m_fileIndexerServiceName) );
     config.writeEntry( "autostart", enabled );
 }
 
@@ -120,9 +120,9 @@ bool Nepomuk::Server::isNepomukEnabled() const
 }
 
 
-bool Nepomuk::Server::isStrigiEnabled() const
+bool Nepomuk::Server::isFileIndexerEnabled() const
 {
-    return m_serviceManager->runningServices().contains( m_strigiServiceName );
+    return m_serviceManager->runningServices().contains( m_fileIndexerServiceName );
 }
 
 

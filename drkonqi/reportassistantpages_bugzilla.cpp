@@ -1,6 +1,6 @@
 /*******************************************************************
 * reportassistantpages_bugzilla.cpp
-* Copyright 2009, 2010    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright 2009, 2010, 2011    Dario Andres Rodriguez <andresbajotierra@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -44,6 +44,13 @@
 #include <KWallet/Wallet>
 #include <kcapacitybar.h>
 
+/* Unhandled error dialog includes */
+#include <KFileDialog>
+#include <KWebView>
+#include <KIO/Job>
+#include <KIO/NetAccess>
+#include <KTemporaryFile>
+
 static const char kWalletEntryName[] = "drkonqi_bugzilla";
 static const char kWalletEntryUsername[] = "username";
 static const char kWalletEntryPassword[] = "password";
@@ -59,7 +66,7 @@ BugzillaLoginPage::BugzillaLoginPage(ReportAssistantDialog * parent) :
         m_wallet(0), m_walletWasOpenedBefore(false)
 {
     connect(bugzillaManager(), SIGNAL(loginFinished(bool)), this, SLOT(loginFinished(bool)));
-    connect(bugzillaManager(), SIGNAL(loginError(QString)), this, SLOT(loginError(QString)));
+    connect(bugzillaManager(), SIGNAL(loginError(QString, QString)), this, SLOT(loginError(QString, QString)));
 
     ui.setupUi(this);
     ui.m_statusWidget->setIdle(i18nc("@info:status '1' is replaced with \"bugs.kde.org\"",
@@ -92,11 +99,14 @@ bool BugzillaLoginPage::isComplete()
     return bugzillaManager()->getLogged();
 }
 
-void BugzillaLoginPage::loginError(QString err)
+void BugzillaLoginPage::loginError(const QString & err, const QString & extendedMessage)
 {
     loginFinished(false);
     ui.m_statusWidget->setIdle(i18nc("@info:status","Error when trying to login: "
                                                  "<message>%1.</message>", err));
+    if (!extendedMessage.isEmpty()) {
+        new UnhandledErrorDialog(this, err, extendedMessage);
+    }
 }
 
 void BugzillaLoginPage::aboutToShow()
@@ -399,6 +409,8 @@ void BugzillaInformationPage::aboutToShow()
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Mandriva"), "Mandriva RPMs");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Mageia"), "Mageia RPMs");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Slackware"), "Slackware Packages");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "SuSE/OpenSUSE"), "openSUSE RPMs");
@@ -411,6 +423,8 @@ void BugzillaInformationPage::aboutToShow()
                                                    "Ubuntu Packages");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Pardus"), "Pardus Packages");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Chakra"), "Chakra");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Archlinux"), "Archlinux Packages");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
@@ -515,8 +529,22 @@ bool BugzillaInformationPage::showNextPage()
         if (detailsShort) {
             //The user input is less than we want.... encourage to write more
             QString message = i18nc("@info","The description about the crash details does not provide "
-                                        "enough information.");
-            message += ' ' + i18nc("@info","If you cannot provide enough information, your report "
+                                        "enough information yet.<br /><br />");
+
+            message += ' ' + i18nc("@info","The amount of required information is proportional to "
+                                        "the quality of the other information like the backtrace "
+                                        "or the reproducibility rate."
+                                        "<br /><br />");
+
+            if (reportInterface()->userCanProvideActionsAppDesktop()
+                || reportInterface()->userCanProvideUnusualBehavior()
+                || reportInterface()->userCanProvideApplicationConfigDetails()) {
+                message += ' ' + i18nc("@info","Previously, you told DrKonqi that you could provide some "
+                                        "contextual information. Try writing more details about your situation. "
+                                        "(even little ones could help us.)<br /><br />");
+            }
+
+            message += ' ' + i18nc("@info","If you cannot provide more information, your report "
                                     "will probably waste developers' time. Can you tell us more?");
 
             KGuiItem yesItem = KStandardGuiItem::yes();
@@ -631,7 +659,7 @@ BugzillaSendPage::BugzillaSendPage(ReportAssistantDialog * parent)
         m_contentsDialog(0)
 {
     connect(reportInterface(), SIGNAL(reportSent(int)), this, SLOT(sent(int)));
-    connect(reportInterface(), SIGNAL(sendReportError(QString)), this, SLOT(sendError(QString)));
+    connect(reportInterface(), SIGNAL(sendReportError(QString,QString)), this, SLOT(sendError(QString,QString)));
 
     ui.setupUi(this);
     
@@ -689,13 +717,17 @@ void BugzillaSendPage::sent(int bug_id)
     emit finished(false);
 }
 
-void BugzillaSendPage::sendError(QString errorString)
+void BugzillaSendPage::sendError(const QString & errorString, const QString & extendedMessage)
 {
     ui.m_statusWidget->setIdle(i18nc("@info:status","Error sending the crash report:  "
                                   "<message>%1.</message>", errorString));
 
     ui.m_retryButton->setEnabled(true);
     ui.m_retryButton->setVisible(true);
+
+    if (!extendedMessage.isEmpty()) {
+        new UnhandledErrorDialog(this,errorString, extendedMessage);
+    }
 }
 
 void BugzillaSendPage::finishClicked()
@@ -723,3 +755,101 @@ void BugzillaSendPage::openReportContents()
 }
 
 //END BugzillaSendPage
+
+/* Dialog for Unhandled Bugzilla Errors */
+/* The user can save the bugzilla html output to check the error and/or to report this as a DrKonqi bug */
+
+//BEGIN UnhandledErrorDialog
+
+UnhandledErrorDialog::UnhandledErrorDialog(QWidget * parent, const QString & error, const QString & extendedMessage)
+    : KDialog(parent)
+{
+    setWindowTitle(KDialog::makeStandardCaption(i18nc("@title:window", "Unhandled Bugzilla Error")));
+    setWindowModality(Qt::ApplicationModal);
+
+    setButtons(KDialog::Close | KDialog::User1);
+    setButtonText(KDialog::User1, i18nc("@action:button save html to a file","Save to a file"));
+    setButtonIcon(KDialog::User1, KIcon("document-save"));
+    connect(this, SIGNAL(user1Clicked()), this, SLOT(saveErrorMessage()));
+
+    setAttribute(Qt::WA_DeleteOnClose);
+
+    KWebView * htmlView = new KWebView(this);
+
+    QLabel * iconLabel = new QLabel(this);
+    iconLabel->setFixedSize(32, 32);
+    iconLabel->setPixmap(KIcon("dialog-warning").pixmap(32, 32));
+
+    QLabel * mainLabel = new QLabel(this);
+    mainLabel->setWordWrap(true);
+    mainLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+
+    QHBoxLayout * titleLayout = new QHBoxLayout();
+    titleLayout->setContentsMargins(5,2,5,2);
+    titleLayout->setSpacing(5);
+    titleLayout->addWidget(iconLabel);
+    titleLayout->addWidget(mainLabel);
+
+    QVBoxLayout * layout = new QVBoxLayout();
+    layout->addLayout(titleLayout);
+    layout->addWidget(htmlView);
+
+    QWidget * mainWidget = new QWidget(this);
+    mainWidget->setLayout(layout);
+    setMainWidget(mainWidget);
+
+    m_extendedHTMLError = extendedMessage;
+    mainLabel->setText(i18nc("@label", "There was an unhandled Bugzilla error: %1.<br />"
+                              "Below is the HTML that DrKonqi received. "
+                              "Try to perform the action again or save this error page "
+                              "to submit a bug against DrKonqi.").arg(error));
+    htmlView->setHtml(extendedMessage);
+
+    setMinimumSize(QSize(550, 350));
+    resize(QSize(550, 350));
+
+    show();
+}
+
+void UnhandledErrorDialog::saveErrorMessage()
+{
+    QString defaultName = QLatin1String("drkonqi-unhandled-bugzilla-error.html");
+    QWeakPointer<KFileDialog> dlg = new KFileDialog(defaultName, QString(), this);
+    dlg.data()->setSelection(defaultName);
+    dlg.data()->setCaption(i18nc("@title:window","Select Filename"));
+    dlg.data()->setOperationMode(KFileDialog::Saving);
+    dlg.data()->setMode(KFile::File);
+    dlg.data()->setConfirmOverwrite(true);
+    if ( dlg.data()->exec() )
+    {
+        if (dlg.isNull()) {
+            //Dialog closed externally (ex. via DBus)
+            return;
+        }
+
+        KUrl fileUrl = dlg.data()->selectedUrl();
+        delete dlg.data();
+
+        if (fileUrl.isValid()) {
+            KTemporaryFile tf;
+            if (tf.open()) {
+                QTextStream ts(&tf);
+                ts << m_extendedHTMLError;
+                ts.flush();
+            } else {
+                KMessageBox::sorry(this, i18nc("@info","Cannot open file <filename>%1</filename> "
+                                               "for writing.", tf.fileName()));
+                return;
+            }
+
+            if (!KIO::NetAccess::upload(tf.fileName(), fileUrl, this)) {
+                KMessageBox::sorry(this, KIO::NetAccess::lastErrorString());
+            }
+        }
+    }
+    else
+        delete dlg.data();
+
+}
+
+//END UnhandledErrorDialog

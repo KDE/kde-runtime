@@ -129,6 +129,15 @@ public Q_SLOTS:
     */
     bool requiresJobTracker();
 
+    /**
+     * Only used over D-BUS merely for debugging purposes.
+     * Lets us know which services and at which paths kuiserver
+     * thinks should be informed. e.g. Plasma
+     * (the applicationjobs dataengine), Dolphin, etc.
+     * @return list of currently registered services
+     */
+    QStringList registeredJobContacts();
+
 private Q_SLOTS:
 
     void jobFinished(JobView *jobView);

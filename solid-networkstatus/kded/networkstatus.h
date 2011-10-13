@@ -27,6 +27,8 @@
 
 #include "network.h"
 
+class SystemStatusInterface;
+
 class NetworkStatusModule : public KDEDModule
 {
 Q_OBJECT
@@ -52,6 +54,8 @@ Q_SIGNALS:
 protected Q_SLOTS:
     void serviceUnregistered( const QString & name );
     void solidNetworkingStatusChanged( Solid::Networking::Status status );
+    void backendRegistered();
+    void backendUnregistered();
 protected:
     // set up embedded backend
     void init();
@@ -59,6 +63,7 @@ protected:
     void updateStatus();
 
 private:
+    QList<SystemStatusInterface*> backends;
     class Private;
     Private *d;
 };

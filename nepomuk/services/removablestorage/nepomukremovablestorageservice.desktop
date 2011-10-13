@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Service
-ServiceTypes=NepomukService
-X-KDE-Library=nepomukremovablestorageservice
-X-KDE-Nepomuk-autostart=true
-X-KDE-Nepomuk-start-on-demand=false
-Name=Nepomuk Removable Storage Service
-Comment=The Nepomuk removable storage service, providing access to Nepomuk metadata on removable storage devices.

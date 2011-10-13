@@ -38,13 +38,9 @@ namespace Nepomuk {
 
     class Resource;
 
-    namespace Types {
-        class Property;
-    }
-    
     namespace Sync {
 
-        class SimpleResource;
+        class SyncResource;
 
         /**
          * \class ResourceIdentifier resourceidentifier.h
@@ -52,7 +48,7 @@ namespace Nepomuk {
          * This class is used to identify already existing resources from a set of
          * properties and objects. It identifies the resources on the basis of the
          * identifying statements provided.
-         * 
+         *
          * \author Vishesh Handa <handa.vish@gmail.com>
          */
         class NEPOMUKSYNC_EXPORT ResourceIdentifier
@@ -67,15 +63,15 @@ namespace Nepomuk {
             //
             // Processing
             //
-            virtual void identifyAll();
+            void identifyAll();
 
-            virtual bool identify( const KUrl & uri );
+            bool identify( const KUrl & uri );
 
             /**
              * Identifies all the resources present in the \p uriList.
              */
-            virtual void identify( const KUrl::List & uriList );
-            
+            void identify( const KUrl::List & uriList );
+
             /**
              * This returns true if ALL the external ResourceUris have been identified.
              * If this is false, you should manually identify some of the resources by
@@ -88,28 +84,30 @@ namespace Nepomuk {
             virtual void addStatement( const Soprano::Statement & st );
             virtual void addStatements( const Soprano::Graph& graph );
             virtual void addStatements( const QList<Soprano::Statement> & stList );
-            virtual void addSimpleResource( const SimpleResource & res );
-            
+            virtual void addSyncResource( const SyncResource & res );
+
             //
             // Getting the info
             //
             /**
              * Returns the detected uri for the given resourceUri.
-             * This method usefull only after identifyAll() method was called
+             * This method useful only after identifyAll() method was called
              */
             KUrl mappedUri( const KUrl & resourceUri ) const;
 
             KUrl::List mappedUris() const;
-            
+
             /**
              * Returns mappings of the identified uri
              */
-            QHash<KUrl, KUrl> mappings() const;
+            QHash<QUrl, QUrl> mappings() const;
 
             /**
              * Returns urls that were not successfully identified
              */
             QSet<KUrl> unidentified() const;
+
+            QSet< QUrl > identified() const;
 
             /**
              * Returns all the statements that are being used to identify \p uri
@@ -118,20 +116,7 @@ namespace Nepomuk {
 
             QList<Soprano::Statement> identifyingStatements() const;
 
-            SimpleResource simpleResource( const KUrl & uri );
-            //
-            // Score
-            //
-            /**
-             * Returns the min % of the number of statements that should match during identification
-             * in order for a resource to be successfully identified.
-             *
-             * Returns a value between [0,1]
-             */
-            float minScore() const;
-
-            void setMinScore( float score );
-
+            SyncResource simpleResource( const KUrl & uri );
             //
             // Property Settings
             //
@@ -139,23 +124,11 @@ namespace Nepomuk {
              * The property \p prop will be matched during identification, but it will
              * not contribute to the actual score if it cannot be matched.
              */
-            void addOptionalProperty( const Types::Property & property );
+            void addOptionalProperty( const QUrl & property );
 
             void clearOptionalProperties();
-            
+
             KUrl::List optionalProperties() const;
-
-            /**
-            * If the property \p prop cannot be matched during identification then the
-            * identification for that resource will fail.
-            *
-            * By default - rdf:type is the only vital property
-            */
-            void addVitalProperty( const Types::Property & property );
-
-            void clearVitalProperties();
-            
-            KUrl::List vitalProperties() const;
 
             //
             // Manual Identification
@@ -184,12 +157,13 @@ namespace Nepomuk {
              * contain \p uri as the object.
              */
             bool ignore( const KUrl& uri, bool ignoreSub = false );
-            
+
             //
             // Identification Statement generator
             //
             static Soprano::Graph createIdentifyingStatements( const KUrl::List & uriList );
 
+            virtual bool isIdentifyingProperty( const QUrl & uri );
         private:
             class Private;
             Private * d;
@@ -200,13 +174,20 @@ namespace Nepomuk {
             *
             * The default behavior is to return an empty uri, which depicts identification failure
             */
-            virtual KUrl duplicateMatch( const KUrl & uri, const QSet<KUrl> & matchedUris, float score );
+            virtual KUrl duplicateMatch( const KUrl & uri, const QSet<KUrl> & matchedUris );
 
             /**
-             * In case identification fails for \p uri this method would be called. Derived classes
-             * can implement their own identification mechanisms over here.
+             * This function returns true if identification was successful, and false if it was not.
+             * If you need to customize the identification process, you will need to overload this
+             * function.
              */
-            virtual Nepomuk::Resource additionalIdentification( const KUrl & uri );
+            virtual bool runIdentification( const KUrl& uri );
+
+            /**
+             * Sets oldUri -> newUri in the mappings.
+             * This is useful when runIdentification has been reimplemented.
+             */
+            void manualIdentification( const KUrl & oldUri, const KUrl & newUri );
         };
     }
 }

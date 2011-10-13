@@ -5,7 +5,7 @@ add_subdirectory( emoticons )
 
 set(ksvgtopng_SRCS ksvgtopng.cpp )
 kde4_add_executable(ksvgtopng NOGUI ${ksvgtopng_SRCS})
-target_link_libraries(ksvgtopng ${KDE4_KDEUI_LIBS})
+target_link_libraries(ksvgtopng ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTSVG_LIBRARY})
 install(TARGETS ksvgtopng ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 # create a symlink for the default icon theme,

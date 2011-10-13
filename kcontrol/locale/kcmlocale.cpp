@@ -103,6 +103,11 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
 
     // Numbers tab
 
+    connect( m_ui->m_comboNumericDigitGrouping,         SIGNAL( currentIndexChanged( int ) ),
+             this,                                      SLOT(   changedNumericDigitGroupingIndex( int ) ) );
+    connect( m_ui->m_buttonDefaultNumericDigitGrouping, SIGNAL( clicked() ),
+             this,                                      SLOT(   defaultNumericDigitGrouping() ) );
+
     connect( m_ui->m_comboThousandsSeparator,       SIGNAL( editTextChanged( const QString & ) ),
              this,                                  SLOT( changedNumericThousandsSeparator( const QString & ) ) );
     connect( m_ui->m_buttonDefaultThousandsSeparator, SIGNAL( clicked() ),
@@ -144,6 +149,11 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
              this,                              SLOT( changedCurrencySymbolIndex( int ) ) );
     connect( m_ui->m_buttonDefaultCurrencySymbol, SIGNAL( clicked() ),
              this,                              SLOT( defaultCurrencySymbol() ) );
+
+    connect( m_ui->m_comboMonetaryDigitGrouping,         SIGNAL( currentIndexChanged( int ) ),
+             this,                                       SLOT(   changedMonetaryDigitGroupingIndex( int ) ) );
+    connect( m_ui->m_buttonDefaultMonetaryDigitGrouping, SIGNAL( clicked() ),
+             this,                                       SLOT(   defaultMonetaryDigitGrouping() ) );
 
     connect( m_ui->m_comboMonetaryThousandsSeparator,       SIGNAL( editTextChanged( const QString & ) ),
              this,                                          SLOT( changedMonetaryThousandsSeparator( const QString & ) ) );
@@ -191,6 +201,11 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
              this,                                SLOT( changedShortYearWindow( int ) ) );
     connect( m_ui->m_buttonDefaultShortYearWindow,  SIGNAL( clicked() ),
              this,                                SLOT( defaultShortYearWindow() ) );
+
+    connect( m_ui->m_comboWeekNumberSystem,         SIGNAL( currentIndexChanged( int ) ),
+             this,                                  SLOT(   changedWeekNumberSystemIndex( int ) ) );
+    connect( m_ui->m_buttonDefaultWeekNumberSystem, SIGNAL( clicked() ),
+             this,                                  SLOT(   defaultWeekNumberSystem() ) );
 
     connect( m_ui->m_comboWeekStartDay,       SIGNAL( currentIndexChanged( int ) ),
              this,                            SLOT( changedWeekStartDayIndex( int ) ) );
@@ -410,26 +425,55 @@ void KCMLocale::load()
     // Throw away any unsaved changes then reload from file
     m_userConfig->markAsClean();
     m_userConfig->reparseConfiguration();
-    m_currentConfig->reparseConfiguration();
+
+    // Get the currently installed translations
+    m_installedTranslations.clear();
+    m_installedTranslations = m_kcmLocale->installedLanguages();
+
+    // Check if any of the user requested translations are no longer installed
+    // If any missing remove them and save the settings, we'll tell the user later
     m_kcmTranslations.clear();
+    QStringList missingLanguages;
+    QStringList userTranslations = m_userSettings.readEntry( "Language", QString() ).split( ':', QString::SkipEmptyParts );
+    foreach ( const QString &languageCode, userTranslations ) {
+        if ( m_installedTranslations.contains( languageCode ) ) {
+            m_kcmTranslations.append( languageCode );
+        } else {
+            missingLanguages.append( languageCode );
+        }
+    }
+    if (!missingLanguages.isEmpty()) {
+        m_userSettings.writeEntry( "Language", m_kcmTranslations.join( ":" ), KConfig::Persistent | KConfig::Global );
+        m_userConfig->sync();
+    }
+
+    // Now load the new current settings
+    m_currentConfig->reparseConfiguration();
     m_currentTranslations = m_userSettings.readEntry( "Language", QString() );
-    m_kcmTranslations = m_currentTranslations.split( ':', QString::SkipEmptyParts );
 
     // Then create the new settings using the default, include user settings
     mergeSettings();
 
-    // Save the current translations for checking later
-    m_currentTranslations = m_kcmSettings.readEntry( "Language", QString() );
-
     // The update all the widgets to use the new settings
     initAllWidgets();
+
+    // Now we have a ui built tell the user about the missing languages
+    foreach ( const QString &languageCode, missingLanguages ) {
+        KMessageBox::information(this, ki18n("You have the language with code '%1' in your list "
+                                             "of languages to use for translation but the "
+                                             "localization files for it could not be found. The "
+                                             "language has been removed from your configuration. "
+                                             "If you want to add it again please install the "
+                                             "localization files for it and add the language again.")
+                                             .subs( languageCode ).toString( m_kcmLocale ) );
+    }
 }
 
 // Defaults == User has clicked on Defaults to load default settings
 // We interpret this to mean the defaults for the system country and language
 void KCMLocale::defaults()
 {
-    // Clear out the user config but dont sync or reparse as we want to ignore the user settings
+    // Clear out the user config but don't sync or reparse as we want to ignore the user settings
     m_userCalendarSettings.deleteGroup( KConfig::Persistent | KConfig::Global );
     m_userSettings.deleteGroup( KConfig::Persistent | KConfig::Global );
     m_kcmTranslations.clear();
@@ -457,6 +501,7 @@ void KCMLocale::copySettings( KConfigGroup *fromGroup, KConfigGroup *toGroup, KC
     copySetting( fromGroup, toGroup, "Language", flags );
     copySetting( fromGroup, toGroup, "DecimalPlaces", flags );
     copySetting( fromGroup, toGroup, "DecimalSymbol", flags );
+    copySetting( fromGroup, toGroup, "DigitGroupFormat", flags );
     copySetting( fromGroup, toGroup, "ThousandsSeparator", flags );
     copySetting( fromGroup, toGroup, "PositiveSign", flags );
     copySetting( fromGroup, toGroup, "NegativeSign", flags );
@@ -465,6 +510,7 @@ void KCMLocale::copySettings( KConfigGroup *fromGroup, KConfigGroup *toGroup, KC
     copySetting( fromGroup, toGroup, "CurrencySymbol", flags );
     copySetting( fromGroup, toGroup, "MonetaryDecimalPlaces", flags );
     copySetting( fromGroup, toGroup, "MonetaryDecimalSymbol", flags );
+    copySetting( fromGroup, toGroup, "MonetaryDigitGroupFormat", flags );
     copySetting( fromGroup, toGroup, "MonetaryThousandsSeparator", flags );
     copySetting( fromGroup, toGroup, "PositivePrefixCurrencySymbol", flags );
     copySetting( fromGroup, toGroup, "NegativePrefixCurrencySymbol", flags );
@@ -483,6 +529,7 @@ void KCMLocale::copySettings( KConfigGroup *fromGroup, KConfigGroup *toGroup, KC
     copySetting( fromGroup, toGroup, "DateFormat", flags );
     copySetting( fromGroup, toGroup, "DateFormatShort", flags );
     copySetting( fromGroup, toGroup, "DateMonthNamePossessive", flags );
+    copySetting( fromGroup, toGroup, "WeekNumberSystem", flags );
     copySetting( fromGroup, toGroup, "WeekStartDay", flags );
     copySetting( fromGroup, toGroup, "WorkingWeekStartDay", flags );
     copySetting( fromGroup, toGroup, "WorkingWeekEndDay", flags );
@@ -649,6 +696,7 @@ void KCMLocale::initSettingsWidgets()
     // Initialise the settings widgets with the default values whenever the country or language changes
 
     //Numeric tab
+    initNumericDigitGrouping();
     initNumericThousandsSeparator();
     initNumericDecimalSymbol();
     initNumericDecimalPlaces();
@@ -658,6 +706,7 @@ void KCMLocale::initSettingsWidgets()
 
     //Monetary tab
     initCurrencyCode();  // Also inits CurrencySymbol
+    initMonetaryDigitGrouping();
     initMonetaryThousandsSeparator();
     initMonetaryDecimalSymbol();
     initMonetaryDecimalPlaces();
@@ -697,6 +746,7 @@ void KCMLocale::initResetButtons()
     m_ui->m_buttonDefaultTranslations->setGuiItem( defaultItem );
 
     //Numeric tab
+    m_ui->m_buttonDefaultNumericDigitGrouping->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultThousandsSeparator->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultDecimalSymbol->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultDecimalPlaces->setGuiItem( defaultItem );
@@ -707,6 +757,7 @@ void KCMLocale::initResetButtons()
     //Monetary tab
     m_ui->m_buttonDefaultCurrencyCode->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultCurrencySymbol->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultMonetaryDigitGrouping->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultMonetaryThousandsSeparator->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultMonetaryDecimalSymbol->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultMonetaryDecimalPlaces->setGuiItem( defaultItem );
@@ -718,6 +769,7 @@ void KCMLocale::initResetButtons()
     m_ui->m_buttonDefaultCalendarSystem->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultCalendarGregorianUseCommonEra->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultShortYearWindow->setGuiItem( defaultItem );
+    m_ui->m_buttonDefaultWeekNumberSystem->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultWeekStartDay->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultWorkingWeekStartDay->setGuiItem( defaultItem );
     m_ui->m_buttonDefaultWorkingWeekEndDay->setGuiItem( defaultItem );
@@ -899,7 +951,7 @@ void KCMLocale::initWeekDayCombo( KComboBox *dayCombo )
     }
 }
 
-// Add standard seperator symbols to a combo
+// Add standard separator symbols to a combo
 void KCMLocale::initSeparatorCombo( KComboBox *seperatorCombo )
 {
     seperatorCombo->clear();
@@ -918,6 +970,34 @@ void KCMLocale::initDigitSetCombo( KComboBox *digitSetCombo )
     {
         digitSetCombo->addItem( m_kcmLocale->digitSetToName( digitSet, true ), QVariant( digitSet ) );
     }
+}
+
+void KCMLocale::insertDigitGroupingItem( KComboBox *digitGroupingCombo,
+                                         KSharedConfigPtr groupingConfig, KConfigGroup *groupingSettings,
+                                         const QString &digitGroupingKey, const QString &digitGroupingFormat)
+{
+    groupingSettings->writeEntry( digitGroupingKey, digitGroupingFormat );
+    KLocale *customLocale = new KLocale( QLatin1String("kcmlocale"), groupingConfig );
+    if ( digitGroupingKey == "DigitGroupFormat" ) {
+        digitGroupingCombo->addItem( customLocale->formatNumber( 123456789.12 ), digitGroupingFormat );
+    } else {
+        digitGroupingCombo->addItem( customLocale->formatMoney( 123456789.12 ), digitGroupingFormat );
+    }
+    groupingConfig->markAsClean();
+    delete customLocale;
+}
+
+// Generic utility to set up a Digit Grouping combo, used for numbers and money
+void KCMLocale::initDigitGroupingCombo( KComboBox *digitGroupingCombo, const QString &digitGroupingKey)
+{
+    digitGroupingCombo->clear();
+    KSharedConfigPtr groupingConfig = KSharedConfig::openConfig( "kcmlocale-grouping", KConfig::SimpleConfig );
+    KConfigGroup groupingSettings = KConfigGroup( groupingConfig, "Locale" );
+    copySettings( &m_kcmSettings, &groupingSettings );
+    insertDigitGroupingItem( digitGroupingCombo, groupingConfig, &groupingSettings, digitGroupingKey, "3" );
+    insertDigitGroupingItem( digitGroupingCombo, groupingConfig, &groupingSettings, digitGroupingKey, "3;2" );
+    insertDigitGroupingItem( digitGroupingCombo, groupingConfig, &groupingSettings, digitGroupingKey, "4" );
+    insertDigitGroupingItem( digitGroupingCombo, groupingConfig, &groupingSettings, digitGroupingKey, "-1" );
 }
 
 void KCMLocale::initTabs()
@@ -972,11 +1052,11 @@ void KCMLocale::initSample()
 
 void KCMLocale::updateSample()
 {
-    m_ui->m_textNumbersPositiveSample->setText( m_kcmLocale->formatNumber( 123456.78 ) );
-    m_ui->m_textNumbersNegativeSample->setText( m_kcmLocale->formatNumber( -123456.78 ) );
+    m_ui->m_textNumbersPositiveSample->setText( m_kcmLocale->formatNumber( 123456789.12 ) );
+    m_ui->m_textNumbersNegativeSample->setText( m_kcmLocale->formatNumber( -123456789.12 ) );
 
-    m_ui->m_textMoneyPositiveSample->setText( m_kcmLocale->formatMoney( 123456.78 ) );
-    m_ui->m_textMoneyNegativeSample->setText( m_kcmLocale->formatMoney( -123456.78 ) );
+    m_ui->m_textMoneyPositiveSample->setText( m_kcmLocale->formatMoney( 123456789.12 ) );
+    m_ui->m_textMoneyNegativeSample->setText( m_kcmLocale->formatMoney( -123456789.12 ) );
 
     KDateTime dateTime = KDateTime::currentLocalDateTime();
     m_ui->m_textDateSample->setText( m_kcmLocale->formatDate( dateTime.date(), KLocale::LongDate ) );
@@ -1109,25 +1189,6 @@ void KCMLocale::initTranslations()
     QString enUS;
     QString defaultLang = ki18nc( "%1 = default language name", "%1 (Default)" ).subs( enUS ).toString( m_kcmLocale );
 
-    // Get the installed translations
-    m_installedTranslations.clear();
-    m_installedTranslations = m_kcmLocale->installedLanguages();
-    // Get the users choice of languages
-    m_kcmTranslations.clear();
-    m_kcmTranslations = m_kcmSettings.readEntry( "Language" ).split( ':', QString::SkipEmptyParts );
-    // Set up the locale, note it will throw away invalid langauges
-    m_kcmLocale->setLanguage( m_kcmTranslations );
-
-    // Check if any of the user requested translations are no longer installed
-    // If any missing remove them, we'll tell the user later
-    QStringList missingLanguages;
-    foreach ( const QString &languageCode, m_kcmTranslations ) {
-        if ( !m_installedTranslations.contains( languageCode ) ) {
-            missingLanguages.append( languageCode );
-            m_kcmTranslations.removeAll( languageCode );
-        }
-    }
-
     // Clear the selector before reloading
     m_ui->m_selectTranslations->availableListWidget()->clear();
     m_ui->m_selectTranslations->selectedListWidget()->clear();
@@ -1167,17 +1228,6 @@ void KCMLocale::initTranslations()
                        m_ui->m_selectTranslations, m_ui->m_buttonDefaultTranslations );
 
     m_ui->m_selectTranslations->blockSignals( false );
-
-    // Now tell the user about the missing languages
-    foreach ( const QString &languageCode, missingLanguages ) {
-        KMessageBox::information(this, ki18n("You have the language with code '%1' in your list "
-                                             "of languages to use for translation but the "
-                                             "localization files for it could not be found. The "
-                                             "language has been removed from your configuration. "
-                                             "If you want to add it again please install the "
-                                             "localization files for it and add the language again.")
-                                             .subs( languageCode ).toString( m_kcmLocale ) );
-    }
 }
 
 void KCMLocale::defaultTranslations()
@@ -1243,6 +1293,44 @@ void KCMLocale::installTranslations()
     // User has clicked Install Languages button, trigger distro specific install routine
 }
 
+void KCMLocale::initNumericDigitGrouping()
+{
+    m_ui->m_comboNumericDigitGrouping->blockSignals( true );
+
+    m_ui->m_labelNumericDigitGrouping->setText( ki18n( "Digit grouping:" ).toString( m_kcmLocale ) );
+    QString helpText = ki18n( "<p>Here you can define the digit grouping used to display "
+                              "numbers.</p><p>Note that the digit grouping used to display "
+                              "monetary values has to be set separately (see the 'Money' tab).</p>" ).toString( m_kcmLocale );
+    m_ui->m_comboNumericDigitGrouping->setToolTip( helpText );
+    m_ui->m_comboNumericDigitGrouping->setWhatsThis( helpText );
+
+    initDigitGroupingCombo( m_ui->m_comboNumericDigitGrouping, "DigitGroupFormat" );
+
+    setNumericDigitGrouping( m_kcmSettings.readEntry( "DigitGroupFormat", "3" ) );
+
+    m_ui->m_comboNumericDigitGrouping->blockSignals( false );
+}
+
+void KCMLocale::defaultNumericDigitGrouping()
+{
+    setNumericDigitGrouping( m_defaultSettings.readEntry( "DigitGroupFormat", "3" ) );
+}
+
+void KCMLocale::changedNumericDigitGroupingIndex( int index )
+{
+    setNumericDigitGrouping( m_ui->m_comboNumericDigitGrouping->itemData( index ).toString() );
+}
+
+void KCMLocale::setNumericDigitGrouping( const QString &newValue )
+{
+    setComboItem( "DigitGroupFormat", newValue,
+                  m_ui->m_comboNumericDigitGrouping, m_ui->m_buttonDefaultNumericDigitGrouping );
+
+    // No api to set, so need to force reload the locale
+    m_kcmConfig->markAsClean();
+    m_kcmLocale->setCountry( m_kcmSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
+}
+
 void KCMLocale::initNumericThousandsSeparator()
 {
     m_ui->m_comboThousandsSeparator->blockSignals( true );
@@ -1284,6 +1372,9 @@ void KCMLocale::changedNumericThousandsSeparator( const QString &newValue )
              m_ui->m_comboThousandsSeparator, m_ui->m_buttonDefaultThousandsSeparator );
     m_kcmLocale->setThousandsSeparator( m_kcmSettings.readEntry( "ThousandsSeparator", QString() )
                                                      .remove( QString::fromLatin1("$0") ) );
+
+    // Update the numeric format samples to relect new setting
+    initNumericDigitGrouping();
 }
 
 // Change programatically, does set edit text so user can see it
@@ -1292,6 +1383,9 @@ void KCMLocale::setNumericThousandsSeparator( const QString &newValue )
     changedNumericThousandsSeparator( newValue );
     m_ui->m_comboThousandsSeparator->setEditText( m_kcmSettings.readEntry( "ThousandsSeparator", QString() )
                                                                .remove( QString::fromLatin1("$0") ) );
+
+    // Update the numeric format samples to relect new setting
+    initNumericDigitGrouping();
 }
 
 void KCMLocale::initNumericDecimalSymbol()
@@ -1329,6 +1423,9 @@ void KCMLocale::changedNumericDecimalSymbol( const QString &newValue )
     setItem( "DecimalSymbol", useValue,
              m_ui->m_comboDecimalSymbol, m_ui->m_buttonDefaultDecimalSymbol );
     m_kcmLocale->setDecimalSymbol( m_kcmSettings.readEntry( "DecimalSymbol", QString() ) );
+
+    // Update the numeric format samples to relect new setting
+    initNumericDigitGrouping();
 }
 
 // Change programatically, does set edit text so user can see it
@@ -1337,6 +1434,9 @@ void KCMLocale::setNumericDecimalSymbol( const QString &newValue )
     setEditComboItem( "DecimalSymbol", newValue,
                       m_ui->m_comboDecimalSymbol, m_ui->m_buttonDefaultDecimalSymbol );
     m_kcmLocale->setDecimalSymbol( m_kcmSettings.readEntry( "DecimalSymbol", QString() ) );
+
+    // Update the numeric format samples to relect new setting
+    initNumericDigitGrouping();
 }
 
 void KCMLocale::initNumericDecimalPlaces()
@@ -1372,6 +1472,9 @@ void KCMLocale::setNumericDecimalPlaces( int newValue )
     setIntItem( "DecimalPlaces", newValue,
                 m_ui->m_intDecimalPlaces, m_ui->m_buttonDefaultDecimalPlaces );
     m_kcmLocale->setDecimalPlaces( m_kcmSettings.readEntry( "DecimalPlaces", 0 ) );
+
+    // Update the numeric format samples to relect new setting
+    initNumericDigitGrouping();
 }
 
 void KCMLocale::initNumericPositiveSign()
@@ -1412,7 +1515,9 @@ void KCMLocale::changedNumericPositiveSign( const QString &newValue )
              m_ui->m_comboPositiveSign, m_ui->m_buttonDefaultPositiveSign );
     m_kcmLocale->setPositiveSign( m_kcmSettings.readEntry( "PositiveSign", QString() ) );
 
-    // Update the monetary format samples to relect new setting
+    // Update the format samples to relect new setting
+    initNumericDigitGrouping();
+    initMonetaryDigitGrouping();
     initMonetaryPositiveFormat();
 }
 
@@ -1423,7 +1528,9 @@ void KCMLocale::setNumericPositiveSign( const QString &newValue )
                       m_ui->m_comboPositiveSign, m_ui->m_buttonDefaultPositiveSign );
     m_kcmLocale->setPositiveSign( m_kcmSettings.readEntry( "PositiveSign", QString() ) );
 
-    // Update the monetary format samples to relect new setting
+    // Update the format samples to relect new setting
+    initNumericDigitGrouping();
+    initMonetaryDigitGrouping();
     initMonetaryPositiveFormat();
 }
 
@@ -1517,6 +1624,9 @@ void KCMLocale::setNumericDigitSet( int newValue )
     setComboItem( "DigitSet", newValue,
                   m_ui->m_comboDigitSet, m_ui->m_buttonDefaultDigitSet );
     m_kcmLocale->setDigitSet( (KLocale::DigitSet) m_kcmSettings.readEntry( "DigitSet", 0 ) );
+
+    // Update the numeric format samples to relect new setting
+    initNumericDigitGrouping();
 }
 
 void KCMLocale::initCurrencyCode()
@@ -1632,8 +1742,48 @@ void KCMLocale::setCurrencySymbol( const QString &newValue )
     }
 
     // Update the monetary format samples to relect new setting
+    initMonetaryDigitGrouping();
     initMonetaryPositiveFormat();
     initMonetaryNegativeFormat();
+}
+
+void KCMLocale::initMonetaryDigitGrouping()
+{
+    m_ui->m_comboMonetaryDigitGrouping->blockSignals( true );
+
+    m_ui->m_labelMonetaryDigitGrouping->setText( ki18n( "Digit grouping:" ).toString( m_kcmLocale ) );
+    QString helpText = ki18n( "<p>Here you can define the digit grouping used to display monetary "
+                              "values.</p><p>Note that the digit grouping used to display "
+                              "other numbers has to be defined separately (see the 'Numbers' tab)."
+                              "</p>" ).toString( m_kcmLocale );
+    m_ui->m_comboMonetaryDigitGrouping->setToolTip( helpText );
+    m_ui->m_comboMonetaryDigitGrouping->setWhatsThis( helpText );
+
+    initDigitGroupingCombo( m_ui->m_comboMonetaryDigitGrouping, "MonetaryDigitGroupFormat" );
+
+    setMonetaryDigitGrouping( m_kcmSettings.readEntry( "MonetaryDigitGroupFormat", "3" ) );
+
+    m_ui->m_comboMonetaryDigitGrouping->blockSignals( false );
+}
+
+void KCMLocale::defaultMonetaryDigitGrouping()
+{
+    setMonetaryDigitGrouping( m_defaultSettings.readEntry( "MonetaryDigitGroupFormat", "3" ) );
+}
+
+void KCMLocale::changedMonetaryDigitGroupingIndex( int index )
+{
+    setMonetaryDigitGrouping( m_ui->m_comboMonetaryDigitGrouping->itemData( index ).toString() );
+}
+
+void KCMLocale::setMonetaryDigitGrouping( const QString &newValue )
+{
+    setComboItem( "MonetaryDigitGroupFormat", newValue,
+                  m_ui->m_comboMonetaryDigitGrouping, m_ui->m_buttonDefaultMonetaryDigitGrouping );
+
+    // No api to set, so need to force reload the locale
+    m_kcmConfig->markAsClean();
+    m_kcmLocale->setCountry( m_kcmSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
 }
 
 void KCMLocale::initMonetaryThousandsSeparator()
@@ -1679,6 +1829,7 @@ void KCMLocale::changedMonetaryThousandsSeparator( const QString &newValue )
                                                              .remove( QString::fromLatin1("$0") ) );
 
     // Update the monetary format samples to relect new setting
+    initMonetaryDigitGrouping();
     initMonetaryPositiveFormat();
     initMonetaryNegativeFormat();
 }
@@ -1726,6 +1877,7 @@ void KCMLocale::changedMonetaryDecimalSymbol( const QString &newValue )
     m_kcmLocale->setMonetaryDecimalSymbol( m_kcmSettings.readEntry( "MonetaryDecimalSymbol", QString() ) );
 
     // Update the monetary format samples to relect new setting
+    initMonetaryDigitGrouping();
     initMonetaryPositiveFormat();
     initMonetaryNegativeFormat();
 }
@@ -1737,6 +1889,7 @@ void KCMLocale::setMonetaryDecimalSymbol( const QString &newValue )
     m_kcmLocale->setMonetaryDecimalSymbol( m_kcmSettings.readEntry( "MonetaryDecimalSymbol", QString() ) );
 
     // Update the monetary format samples to relect new setting
+    initMonetaryDigitGrouping();
     initMonetaryPositiveFormat();
     initMonetaryNegativeFormat();
 }
@@ -1776,6 +1929,7 @@ void KCMLocale::setMonetaryDecimalPlaces( int newValue )
     m_kcmLocale->setMonetaryDecimalPlaces( m_kcmSettings.readEntry( "MonetaryDecimalPlaces", 0 ) );
 
     // Update the monetary format samples to relect new setting
+    initMonetaryDigitGrouping();
     initMonetaryPositiveFormat();
     initMonetaryNegativeFormat();
 }
@@ -2089,6 +2243,11 @@ void KCMLocale::setMonetaryDigitSet( int newValue )
     setComboItem( "MonetaryDigitSet", newValue,
                   m_ui->m_comboMonetaryDigitSet, m_ui->m_buttonDefaultMonetaryDigitSet );
     m_kcmLocale->setMonetaryDigitSet( (KLocale::DigitSet) m_kcmSettings.readEntry( "MonetaryDigitSet", 0 ) );
+
+    // Update the monetary format samples to relect new setting
+    initMonetaryDigitGrouping();
+    initMonetaryPositiveFormat();
+    initMonetaryNegativeFormat();
 }
 
 void KCMLocale::initCalendarSystem()
@@ -2140,6 +2299,7 @@ void KCMLocale::setCalendarSystem( const QString &newValue )
     // Update the Calendar dependent widgets with the new Calendar System details
     initUseCommonEra();
     initShortYearWindow();
+    initWeekNumberSystem();
     initWeekStartDay();
     initWorkingWeekStartDay();
     initWorkingWeekEndDay();
@@ -2234,13 +2394,73 @@ void KCMLocale::setShortYearWindow( int newValue )
     m_kcmLocale->setCalendar( m_kcmSettings.readEntry( "CalendarSystem", QString() ) );
 }
 
+void KCMLocale::initWeekNumberSystem()
+{
+    m_ui->m_comboWeekNumberSystem->blockSignals( true );
+
+    m_ui->m_labelWeekNumberSystem->setText( ki18n( "Week number system:" ).toString( m_kcmLocale ) );
+    QString helpText = ki18n( "<p>This option determines how the Week Number will be calculated. "
+                              "There are four options available:</p> "
+                              "<ul>"
+                              "<li><b>ISO Week</b> Use the ISO standard Week Number. This will always "
+                              "use Monday as the first day of the ISO week. This is the most commonly "
+                              "used system.</li>"
+                              "<li><b>Full First Week</b> The first week of the year starts on the "
+                              "first occurrence of the <i>First day of the week</i>, and lasts for "
+                              "seven days.  Any days before Week 1 are considered part of the last "
+                              "week of the previous year. This system is most commonly used in the "
+                              "USA.</li>"
+                              "<li><b>Partial First Week</b> The first week starts on the first day "
+                              "of the year. The second week of the year starts on the first "
+                              "occurrence of the <i>First day of the week</i>, and lasts for "
+                              "seven days. The first week may not contain seven days.</li>"
+                              "<li><b>Simple Week</b> The first week starts on the first day of the "
+                              "year and lasts seven days, with all new weeks starting on the same "
+                              "weekday as the first day of the year.</li>"
+                              "</ul>"
+                            ).toString( m_kcmLocale );
+    m_ui->m_comboWeekNumberSystem->setToolTip( helpText );
+    m_ui->m_comboWeekNumberSystem->setWhatsThis( helpText );
+
+    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "ISO Week" ).toString( m_kcmLocale ),
+                                            QVariant( KLocale::IsoWeekNumber ) );
+    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "Full First Week" ).toString( m_kcmLocale ),
+                                            QVariant( KLocale::FirstFullWeek ) );
+    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "Partial First Week" ).toString( m_kcmLocale ),
+                                            QVariant( KLocale::FirstPartialWeek ) );
+    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "Simple Week" ).toString( m_kcmLocale ),
+                                            QVariant( KLocale::SimpleWeek ) );
+
+    setWeekNumberSystem( (KLocale::WeekNumberSystem) m_kcmSettings.readEntry( "WeekNumberSystem", 0 ) );
+
+    m_ui->m_comboWeekNumberSystem->blockSignals( false );
+}
+
+void KCMLocale::defaultWeekNumberSystem()
+{
+    setWeekNumberSystem( m_defaultSettings.readEntry( "WeekNumberSystem", 0 ) );
+}
+
+void KCMLocale::changedWeekNumberSystemIndex( int index )
+{
+    setWeekNumberSystem( m_ui->m_comboWeekNumberSystem->itemData( index ).toInt() );
+}
+
+void KCMLocale::setWeekNumberSystem( int newValue )
+{
+    setComboItem( "WeekNumberSystem", newValue,
+                  m_ui->m_comboWeekNumberSystem, m_ui->m_buttonDefaultWeekNumberSystem );
+    m_kcmLocale->setWeekNumberSystem( (KLocale::WeekNumberSystem) m_kcmSettings.readEntry( "WeekNumberSystem", 0 ) );
+}
+
 void KCMLocale::initWeekStartDay()
 {
     m_ui->m_comboWeekStartDay->blockSignals( true );
 
     m_ui->m_labelWeekStartDay->setText( ki18n( "First day of week:" ).toString( m_kcmLocale ) );
     QString helpText = ki18n( "<p>This option determines which day will be considered as the first "
-                              "one of the week.</p> " ).toString( m_kcmLocale );
+                              "one of the week.  This value may affect the Week Number System.</p> "
+                            ).toString( m_kcmLocale );
     m_ui->m_comboWeekStartDay->setToolTip( helpText );
     m_ui->m_comboWeekStartDay->setWhatsThis( helpText );
 

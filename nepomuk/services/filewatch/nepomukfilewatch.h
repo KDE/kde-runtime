@@ -25,6 +25,8 @@
 #include <QtCore/QVariant>
 #include <QtCore/QSet>
 
+#include "removablemediacache.h"
+
 namespace Soprano {
     class Model;
     namespace Client {
@@ -50,10 +52,16 @@ namespace Nepomuk {
         ~FileWatch();
 
         /**
-         * Tells strigi to update the folder at \p path or the folder
+         * Tells the file indexer to update the file (it can also be a folder but
+         * then updating will not be recursive) at \p path.
+         */
+        static void updateFileViaFileIndexer( const QString& path );
+
+        /**
+         * Tells the file indexer to update the folder at \p path or the folder
          * containing \p path in case it is a file.
          */
-        static void updateFolderViaStrigi( const QString& path );
+        static void updateFolderViaFileIndexer( const QString& path );
 
     public Q_SLOTS:
         Q_SCRIPTABLE void watchFolder( const QString& path );
@@ -76,7 +84,19 @@ namespace Nepomuk {
          */
         void updateIndexedFoldersWatches();
 
+        /**
+         * Connected to each removable media. Adds a watch for the mount point,
+         * cleans up the index with respect to removed files, and optionally
+         * tells the indexer service to run on the mount path.
+         */
+        void slotDeviceMounted( const Nepomuk::RemovableMediaCache::Entry* );
+
     private:
+        /**
+         * Adds watches for all mounted removable media.
+         */
+        void addWatchesForMountedRemovableMedia();
+
         /**
          * Returns true if the path is one that should be always ignored.
          * This includes such things like temporary files and folders as
@@ -91,6 +111,7 @@ namespace Nepomuk {
 #endif
 
         RegExpCache* m_pathExcludeRegExpCache;
+        RemovableMediaCache* m_removableMediaCache;
     };
 }
 

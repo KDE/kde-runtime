@@ -2,7 +2,7 @@
     This file is part of the Nepomuk KDE project.
     Copyright (C) 2010  Vishesh Handa <handa.vish@gmail.com>
     Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
-    
+
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
     License as published by the Free Software Foundation; either
@@ -10,12 +10,12 @@
     later version accepted by the membership of KDE e.V. (or its
     successor approved by the membership of KDE e.V.), which shall
     act as a proxy defined in Section 6 of version 3 of the license.
-    
+
     This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
     Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public
     License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -30,8 +30,8 @@
 #include <QtGui/QListWidget>
 
 #include "backupmanagerinterface.h"
-#include "mergerinterface.h"
-#include "identifierinterface.h"
+#include "merger.h"
+#include "identifier.h"
 
 #include "ui_intropage.h"
 #include "ui_backuppage.h"
@@ -43,11 +43,9 @@
 namespace Nepomuk {
 
     class BackupWizard;
-    
+
     typedef org::kde::nepomuk::services::nepomukbackupsync::BackupManager BackupManager;
-    typedef org::kde::nepomuk::services::nepomukbackupsync::Merger Merger;
-    typedef org::kde::nepomuk::services::nepomukbackupsync::Identifier Identifier;
-    
+
     class IntroPage : public QWizardPage, public Ui::IntroPage {
         Q_OBJECT
 
@@ -80,7 +78,7 @@ namespace Nepomuk {
         bool isComplete() const;
         int nextId() const;
 
-    private:        
+    private:
         BackupManager* m_backupManager;
         bool m_backupDone;
 
@@ -104,13 +102,13 @@ namespace Nepomuk {
     private slots:
         void slotSelectionChanged();
         void slotCustomBackupUrl();
-        
+
     private:
         QString m_backupFilePath;
     };
-    
+
     class IdentifierWidget;
-    
+
     class RestorePage : public QWizardPage {
         Q_OBJECT
 
@@ -123,7 +121,7 @@ namespace Nepomuk {
 
     private slots:
         void slotIdentificationDone( int id, int unidentified );
-        
+
     private:
         IdentifierWidget* m_identifierWidget;
         Identifier * m_identifier;

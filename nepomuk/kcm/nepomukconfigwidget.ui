@@ -8,7 +8,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="KTabWidget" name="tabWidget">
+    <widget class="KTabWidget" name="m_mainTabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -16,7 +16,7 @@
       <attribute name="title">
        <string>Basic Settings</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_11">
+      <layout class="QVBoxLayout" name="verticalLayout_13">
        <item>
         <widget class="QGroupBox" name="groupBox_2">
          <property name="title">
@@ -77,6 +77,9 @@
                     <bold>true</bold>
                    </font>
                   </property>
+                  <property name="text">
+                   <string notr="true">KSqueezedTextLabel</string>
+                  </property>
                  </widget>
                 </item>
                </layout>
@@ -98,13 +101,13 @@
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>Strigi Desktop File Indexer</string>
+          <string>Nepomuk Desktop File Indexer</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <widget class="QLabel" name="label_2">
             <property name="text">
-             <string>Strigi desktop search allows searching for files by content instead of just by name.</string>
+             <string>Nepomuk desktop search allows searching for files by content instead of just by name.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -112,9 +115,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="m_checkEnableStrigi">
+           <widget class="QCheckBox" name="m_checkEnableFileIndexer">
             <property name="text">
-             <string>Enable Strigi Desktop File Indexer</string>
+             <string>Enable Nepomuk File Indexer</string>
             </property>
            </widget>
           </item>
@@ -137,7 +140,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="KSqueezedTextLabel" name="m_labelStrigiStatus">
+             <widget class="KSqueezedTextLabel" name="m_labelFileIndexerStatus">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                 <horstretch>1</horstretch>
@@ -151,9 +154,38 @@
                 <bold>true</bold>
                </font>
               </property>
+              <property name="text">
+               <string notr="true">KSqueezedTextLabel</string>
+              </property>
              </widget>
             </item>
            </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="m_emailIndexingBox">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="title">
+          <string>Email Indexing</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <item>
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Email indexing allows full text search in email and their attachments.</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="m_checkEnableEmailIndexer">
+            <property name="text">
+             <string>Enable Email Indexer</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -207,7 +239,7 @@
                </font>
               </property>
               <property name="text">
-               <string/>
+               <string notr="true"/>
               </property>
              </widget>
             </item>
@@ -221,14 +253,52 @@
            </layout>
           </item>
           <item>
-           <widget class="QCheckBox" name="m_checkIndexRemovableMedia">
-            <property name="toolTip">
-             <string>Index the files on removable media like USB sticks when they are mounted</string>
-            </property>
-            <property name="text">
-             <string>Index files on removable media</string>
-            </property>
-           </widget>
+           <layout class="QFormLayout" name="formLayout_3">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Removable media handling:</string>
+              </property>
+              <property name="buddy">
+               <cstring>m_comboRemovableMediaHandling</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="KComboBox" name="m_comboRemovableMediaHandling">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>1</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string comment="@info:tooltip">Indexing of files on removable media</string>
+              </property>
+              <property name="whatsThis">
+               <string comment="@info:whatsthis">&lt;para&gt;Nepomuk can index files on removable devices like USB keys or external hard-disks for fast desktop searches.&lt;/para&gt;
+&lt;para&gt;By default no files are indexed. Here this behaviour can be changed to one of two options:&lt;/para&gt;
+&lt;para&gt;&lt;list&gt;&lt;item&gt;&lt;interface&gt;Index files on all removable devices&lt;/interface&gt; - Files on removable media are indexed as soon as the medium is mounted. Caution: this does not include media which have been rejected via the second option.&lt;/item&gt;
+&lt;item&gt;&lt;interface&gt;Ask individually when newly mounted&lt;/interface&gt; - The user will be asked to decide if files on the newly mounted medium should be indexed or not. Once decided Nepomuk will not ask again.&lt;/item&gt;&lt;/list&gt;&lt;/para&gt;</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>Ignore all removable media</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Index files on all removable devices</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Ask individually when newly mounted</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -322,7 +392,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string/>
+                 <string notr="true"/>
                 </property>
                </widget>
               </item>
@@ -428,7 +498,7 @@
           <item>
            <widget class="QLabel" name="label">
             <property name="text">
-             <string extracomment="@info">Nepomuk can perform regular automatic backups of all data that could not be restored otherwise. This includes manually created tags, ratings, but also statistical data.</string>
+             <string comment="@info">Nepomuk can perform regular automatic backups of all data that could not be restored otherwise. This includes manually created tags, ratings, but also statistical data.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -652,14 +722,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KSqueezedTextLabel</class>
-   <extends>QLabel</extends>
-   <header>ksqueezedtextlabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>KUrlLabel</class>
@@ -667,9 +732,14 @@
    <header>kurllabel.h</header>
   </customwidget>
   <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KIntNumInput</class>
+   <extends>QWidget</extends>
+   <header>knuminput.h</header>
   </customwidget>
   <customwidget>
    <class>KTabWidget</class>
@@ -678,9 +748,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>KIntNumInput</class>
-   <extends>QWidget</extends>
-   <header>knuminput.h</header>
+   <class>KSqueezedTextLabel</class>
+   <extends>QLabel</extends>
+   <header>ksqueezedtextlabel.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -711,12 +781,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>122</x>
-     <y>143</y>
+     <x>107</x>
+     <y>57</y>
     </hint>
     <hint type="destinationlabel">
-     <x>696</x>
-     <y>140</y>
+     <x>107</x>
+     <y>57</y>
     </hint>
    </hints>
   </connection>
@@ -727,12 +797,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>696</x>
-     <y>140</y>
+     <x>107</x>
+     <y>57</y>
     </hint>
     <hint type="destinationlabel">
-     <x>122</x>
-     <y>143</y>
+     <x>107</x>
+     <y>57</y>
     </hint>
    </hints>
   </connection>
@@ -743,12 +813,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>95</x>
-     <y>192</y>
+     <x>99</x>
+     <y>68</y>
     </hint>
     <hint type="destinationlabel">
-     <x>197</x>
-     <y>194</y>
+     <x>107</x>
+     <y>68</y>
     </hint>
    </hints>
   </connection>
@@ -759,12 +829,28 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>43</x>
-     <y>193</y>
+     <x>47</x>
+     <y>68</y>
     </hint>
     <hint type="destinationlabel">
-     <x>230</x>
-     <y>190</y>
+     <x>107</x>
+     <y>68</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_checkEnableNepomuk</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_emailIndexingBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>206</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>228</x>
+     <y>269</y>
     </hint>
    </hints>
   </connection>

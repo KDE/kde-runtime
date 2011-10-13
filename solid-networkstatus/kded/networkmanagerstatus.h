@@ -36,6 +36,7 @@ public:
 
     /* reimp */ Solid::Networking::Status status() const;
     /* reimp */ bool isSupported() const;
+    /* reimp */ QString serviceName() const;
 
 private slots:
     void nmStateChanged( uint nmState );

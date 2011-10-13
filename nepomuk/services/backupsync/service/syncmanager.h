@@ -28,29 +28,24 @@
 
 namespace Nepomuk {
 
-    class Identifier;
     class SyncFile;
-    
+
     class SyncManager : public QObject
     {
         Q_OBJECT
         Q_CLASSINFO("D-Bus Interface", "org.kde.nepomuk.services.nepomukbackupsync.SyncManager")
-        
+
     public :
-        SyncManager(Identifier * ident, QObject * parent = 0);
+        SyncManager(QObject * parent = 0);
         virtual ~SyncManager();
 
     public slots:
-        int sync( const QString & url );
-        int sync( const QUrl & url );
-
         void createSyncFile( const QString & url, const QString& startTime );
         void createSyncFile( const QUrl& outputUrl, const QList<QString> & nieUrls );
         void createSyncFile( const QUrl& outputUrl, QSet<QUrl>& nepomukUris, const QDateTime & min );
         void createFirstSyncFile( const QUrl& outputUrl ) const;
 
     private :
-        Identifier * m_identifier;
     };
 }
 
