@@ -162,8 +162,17 @@ public:
 
 private:
     QVariant runCommand() {
-        model()->storeResources(m_resources, m_app, m_identificationMode, m_flags, m_additionalMetadata);
-        return QVariant();
+        QHash<QUrl,QUrl> uriMappings
+            = model()->storeResources(m_resources, m_app, m_identificationMode, m_flags, m_additionalMetadata);
+
+        QHash<QString, QString> mappings;
+        QHash<QUrl, QUrl>::const_iterator it = uriMappings.constBegin();
+        for( ; it != uriMappings.constEnd(); it++ ) {
+            mappings.insert( DBus::convertUri( it.key() ),
+                             DBus::convertUri( it.value() ) );
+        }
+
+        return QVariant::fromValue(mappings);
     }
 
     SimpleResourceGraph m_resources;
@@ -321,20 +330,23 @@ class DescribeResourcesCommand : public DataManagementCommand
 {
 public:
     DescribeResourcesCommand(const QList<QUrl>& res,
-                             bool includeSubResources,
+                             Nepomuk::DescribeResourcesFlags flags,
+                             const QList<QUrl>& targetParties,
                              Nepomuk::DataManagementModel* model,
                              const QDBusMessage& msg)
         : DataManagementCommand(model, msg),
           m_resources(res),
-          m_includeSubResources(includeSubResources) {}
+          m_flags(flags),
+          m_targetParties(targetParties) {}
 
 private:
     QVariant runCommand() {
-        return QVariant::fromValue(model()->describeResources(m_resources, m_includeSubResources).toList());
+        return QVariant::fromValue(model()->describeResources(m_resources, m_flags, m_targetParties).toList());
     }
 
     QList<QUrl> m_resources;
-    bool m_includeSubResources;
+    Nepomuk::DescribeResourcesFlags m_flags;
+    QList<QUrl> m_targetParties;
 };
 
 class ImportResourcesCommand : public DataManagementCommand

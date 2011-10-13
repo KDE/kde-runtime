@@ -115,29 +115,10 @@ QString KdePlatformPlugin::applicationName() const
     return KGlobal::mainComponent().componentName();
 }
 
-#undef PHONON_LOAD_BACKEND_GLOBAL
-
 QObject *KdePlatformPlugin::createBackend(KService::Ptr newService)
 {
     QString errorReason;
-#ifdef PHONON_LOAD_BACKEND_GLOBAL
-    KLibFactory *factory = 0;
-    // This code is in here temporarily until NMM gets fixed.
-    // Currently the NMM backend will fail with undefined symbols if
-    // the backend is not loaded with global symbol resolution
-    QObject *backend = 0;
-    factory = KLibLoader::self()->factory(newService->library(), QLibrary::ExportExternalSymbolsHint);
-    if (!factory) {
-        errorReason = KLibLoader::self()->lastErrorMessage();
-    } else {
-        QObject *backend = factory->create<QObject>();
-        if (!backend) {
-            errorReason = i18n("create method returned 0");
-        }
-    }
-#else
     QObject *backend = newService->createInstance<QObject>(0, QVariantList(), &errorReason);
-#endif
     if (!backend) {
         const QLatin1String suffix("/phonon_backend/");
         const QStringList libFilter(newService->library() + QLatin1String(".*"));

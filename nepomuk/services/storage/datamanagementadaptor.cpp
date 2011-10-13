@@ -61,6 +61,8 @@ Nepomuk::DataManagementAdaptor::DataManagementAdaptor(Nepomuk::DataManagementMod
 
 Nepomuk::DataManagementAdaptor::~DataManagementAdaptor()
 {
+    // make sure all commands are done before letting deletion continue
+    m_threadPool->waitForDone();
 }
 
 void Nepomuk::DataManagementAdaptor::addProperty(const QStringList &resources, const QString &property, const QVariantList &values, const QString &app)
@@ -89,20 +91,22 @@ QString Nepomuk::DataManagementAdaptor::createResource(const QString &type, cons
     return createResource(QStringList() << type, label, description, app);
 }
 
-QList<Nepomuk::SimpleResource> Nepomuk::DataManagementAdaptor::describeResources(const QStringList &resources, bool includeSubResources)
+QList<Nepomuk::SimpleResource> Nepomuk::DataManagementAdaptor::describeResources(const QStringList &resources, int flags, const QStringList& targetParties)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
-    enqueueCommand(new DescribeResourcesCommand(decodeUris(resources), includeSubResources, m_model, message()));
+    enqueueCommand(new DescribeResourcesCommand(decodeUris(resources), Nepomuk::DescribeResourcesFlags(flags), decodeUris(targetParties), m_model, message()));
     // QtDBus will ignore this return value
     return QList<SimpleResource>();
 }
 
-void Nepomuk::DataManagementAdaptor::storeResources(const QList<Nepomuk::SimpleResource>& resources, int identificationMode, int flags, const Nepomuk::PropertyHash &additionalMetadata, const QString &app)
+QHash< QString, QString > Nepomuk::DataManagementAdaptor::storeResources(const QList< Nepomuk::SimpleResource >& resources, int identificationMode, int flags, const Nepomuk::PropertyHash& additionalMetadata, const QString& app)
 {
     Q_ASSERT(calledFromDBus());
     setDelayedReply(true);
     enqueueCommand(new StoreResourcesCommand(resources, app, identificationMode, flags, additionalMetadata, m_model, message()));
+    // QtDBus will ignore this return value
+    return QHash<QString, QString>();
 }
 
 void Nepomuk::DataManagementAdaptor::mergeResources(const QString &resource1, const QString &resource2, const QString &app)

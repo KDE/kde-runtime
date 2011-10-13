@@ -34,6 +34,7 @@
 #include <Soprano/LiteralValue>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Model>
+#include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/NRL>
@@ -520,6 +521,15 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
             m_tree[p]->identifying = -1;
         }
     }
+
+    // rdf:type is identifying by default
+    if(m_tree.contains(RDF::type()))
+        m_tree[RDF::type()]->identifying = 1;
+
+    // nao:hasSubResource is identifying by default
+    if(m_tree.contains(NAO::hasSubResource()))
+        m_tree[NAO::hasSubResource()]->identifying = 1;
+
     for ( QHash<QUrl, ClassOrProperty*>::iterator it = m_tree.begin();
           it != m_tree.end(); ++it ) {
         if(it.value()->isProperty) {

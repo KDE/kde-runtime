@@ -19,6 +19,7 @@
 #include "datamanagementmodel.h"
 #include "datamanagementadaptor.h"
 #include "classandpropertytree.h"
+#include "graphmaintainer.h"
 
 #include <Soprano/Backend>
 #include <Soprano/PluginManager>
@@ -61,6 +62,9 @@ Nepomuk::Repository::Repository( const QString& name )
       m_model( 0 ),
       m_inferencer( 0 ),
       m_removableStorageModel( 0 ),
+      m_dataManagementModel( 0 ),
+      m_dataManagementAdaptor( 0 ),
+      m_nrlModel( 0 ),
       m_backend( 0 ),
       m_modelCopyJob( 0 ),
       m_oldStorageBackend( 0 )
@@ -78,6 +82,15 @@ Nepomuk::Repository::~Repository()
 void Nepomuk::Repository::close()
 {
     kDebug() << m_name;
+
+    delete m_graphMaintainer;
+
+    // delete DMS adaptor before anything else so we do not get requests while deleting the DMS
+    delete m_dataManagementAdaptor;
+    m_dataManagementAdaptor = 0;
+
+    delete m_dataManagementModel;
+    m_dataManagementModel = 0;
 
     delete m_inferencer;
     m_inferencer = 0;
@@ -176,6 +189,12 @@ void Nepomuk::Repository::open()
     }
 
     kDebug() << "Successfully created new model for repository" << name();
+
+    // Fire up the graph maintainer on the pure data model.
+    // =================================
+    m_graphMaintainer = new GraphMaintainer(m_model);
+    connect(m_graphMaintainer, SIGNAL(finished()), m_graphMaintainer, SLOT(deleteLater()));
+    m_graphMaintainer->start();
 
     // create the one class and property tree to be used in the crappy inferencer 2 and in DMS
     // =================================

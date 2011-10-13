@@ -69,10 +69,14 @@ private Q_SLOTS:
     void testRemoveProperty_file();
     void testRemoveProperty_invalid_args();
     void testRemoveProperty_protectedTypes();
+    void testRemoveProperty_subResource();
+    void testRemoveProperty_subResource2();
 
     void testRemoveProperties();
     void testRemoveProperties_invalid_args();
     void testRemoveProperties_protectedTypes();
+    void testRemoveProperties_subResource();
+    void testRemoveProperties_subResource2();
 
     void testRemoveResources();
     void testRemoveResources_subresources();
@@ -98,6 +102,7 @@ private Q_SLOTS:
     void testRemoveDataByApplication_subResourcesOfSubResources();
     void testRemoveDataByApplication_realLife();
     void testRemoveDataByApplication_nieUrl();
+    void testRemoveDataByApplication_nieUrlRelated();
     void testRemoveDataByApplication_mtime();
     void testRemoveDataByApplication_mtimeRelated();
     void testRemoveDataByApplication_related();
@@ -154,6 +159,8 @@ private Q_SLOTS:
     void testMergeResources_protectedTypes();
 
     void testDescribeResources();
+    void testDescribeResources_relatedResources();
+    void testDescribeResources_excludeDiscardableData();
 
     void testImportResources();
 
@@ -162,6 +169,7 @@ private:
 
     void resetModel();
     bool haveTrailingGraphs() const;
+    bool haveDataInDefaultGraph() const;
 
     KTempDir* m_storageDir;
     Soprano::Model* m_model;

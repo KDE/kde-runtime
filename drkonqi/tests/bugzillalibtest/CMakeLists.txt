@@ -6,6 +6,7 @@ set(bugzillalibtest_SRCS
     bugzillalibtest.cpp 
     ../../bugzillalib.cpp
     ../../debugpackageinstaller.h
+    ../../findconfigdatajob.cpp
 )
 
 kde4_add_executable(bugzillalibtest TEST ${bugzillalibtest_SRCS})

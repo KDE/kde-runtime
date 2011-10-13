@@ -54,6 +54,8 @@
       <arg name="additionalMetadata" type="a{sv}" direction="in"/>
       <annotation name="com.trolltech.QtDBus.QtTypeName.In3" value="Nepomuk::PropertyHash"/>
       <arg name="app" type="s" direction="in"/>
+      <arg type="a{ss}" direction="out"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QHash&lt;QString, QString&gt;"/>
     </method>
     <method name="importResources">
       <arg name="url" type="s" direction="in"/>
@@ -78,7 +80,8 @@
     </method>
     <method name="describeResources">
       <arg name="resources" type="as" direction="in"/>
-      <arg name="includeSubResources" type="b" direction="in"/>
+      <arg name="flags" type="i" direction="in"/>
+      <arg name="targetGroups" type="as" direction="in"/>
       <arg type="a(sa{sv})" direction="out"/>
       <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QList&lt;Nepomuk::SimpleResource&gt;"/>
     </method>

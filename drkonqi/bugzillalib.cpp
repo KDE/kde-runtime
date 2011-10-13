@@ -24,6 +24,8 @@
 
 #include "bugzillalib.h"
 
+#include "findconfigdatajob.h"
+
 #include <QtCore/QTextStream>
 #include <QtCore/QByteArray>
 #include <QtCore/QString>
@@ -62,8 +64,6 @@ static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
 static const char sendReportUrl[] = "post_bug.cgi";
 static const char attachDataUrl[] = "attachment.cgi";
 static const char addInformationUrl[] = "process_bug.cgi";
-static const char checkLegalVersionUrl[] = "query.cgi?format=advanced&product=%1";
-static const char delayedCheckLegalVersionUrl[]  = "enter_bug.cgi?product=%1";
 
 //BEGIN BugzillaManager
 
@@ -199,18 +199,9 @@ void BugzillaManager::addMeToCC(int bugNumber)
 
 void BugzillaManager::checkVersionsForProduct(const QString & product)
 {
-    KUrl checkVersionUrl = KUrl(QString(m_bugTrackerUrl) +
-                                                        QString(checkLegalVersionUrl).arg(product));
-    KIO::Job * checkVersionJob = KIO::storedGet(checkVersionUrl, KIO::Reload, KIO::HideProgressInfo);
-    connect(checkVersionJob, SIGNAL(finished(KJob*)) , this, SLOT(checkVersionJobFinished(KJob*)));
-}
-
-void BugzillaManager::delayedCheckVersionsForProduct(const QString & product)
-{
-    KUrl checkVersionUrl = KUrl(QString(m_bugTrackerUrl) +
-                                                QString(delayedCheckLegalVersionUrl).arg(product));
-    KIO::Job * checkVersionJob = KIO::storedGet(checkVersionUrl, KIO::Reload, KIO::HideProgressInfo);
-    connect(checkVersionJob, SIGNAL(finished(KJob*)) , this, SLOT(delayedCheckVersionJobFinished(KJob*)));
+    FindConfigDataJob *job = new FindConfigDataJob(product, KUrl(m_bugTrackerUrl));
+    connect(job, SIGNAL(finished(KJob*)) , this, SLOT(checkVersionJobFinished(KJob*)));
+    job->start();
 }
 
 //END Bugzilla Action methods
@@ -240,7 +231,7 @@ void BugzillaManager::stopCurrentSearch()
 void BugzillaManager::loginJobFinished(KJob* job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * loginJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * loginJob = static_cast<KIO::StoredTransferJob*>(job);
         QByteArray response = loginJob->data();
 
         bool error = false;
@@ -269,7 +260,7 @@ void BugzillaManager::loginJobFinished(KJob* job)
 void BugzillaManager::fetchBugJobFinished(KJob* job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * fetchBugJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * fetchBugJob = static_cast<KIO::StoredTransferJob*>(job);
 
         BugReportXMLParser * parser = new BugReportXMLParser(fetchBugJob->data());
         BugReport report = parser->parse();
@@ -291,7 +282,7 @@ void BugzillaManager::fetchBugJobFinished(KJob* job)
 void BugzillaManager::searchBugsJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * searchBugsJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * searchBugsJob = static_cast<KIO::StoredTransferJob*>(job);
 
         BugListCSVParser * parser = new BugListCSVParser(searchBugsJob->data());
         BugMapList list = parser->parse();
@@ -313,7 +304,7 @@ void BugzillaManager::searchBugsJobFinished(KJob * job)
 void BugzillaManager::sendReportJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * sendJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * sendJob = static_cast<KIO::StoredTransferJob*>(job);
         QString response = sendJob->data();
         response.remove('\r'); response.remove('\n');
 
@@ -358,7 +349,7 @@ void BugzillaManager::sendReportJobFinished(KJob * job)
 void BugzillaManager::attachToReportJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * sendJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * sendJob = static_cast<KIO::StoredTransferJob*>(job);
         QString response = sendJob->data();
         response.remove('\r'); response.remove('\n');
         
@@ -383,7 +374,7 @@ void BugzillaManager::attachToReportJobFinished(KJob * job)
 void BugzillaManager::addCommentSubJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * checkJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * checkJob = static_cast<KIO::StoredTransferJob*>(job);
         QString response = checkJob->data();
         response.remove('\r'); response.remove('\n');
 
@@ -422,7 +413,7 @@ void BugzillaManager::addCommentSubJobFinished(KJob * job)
 void BugzillaManager::addCommentJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * addCommentJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * addCommentJob = static_cast<KIO::StoredTransferJob*>(job);
         QString response = addCommentJob->data();
         response.remove('\r'); response.remove('\n');
 
@@ -452,7 +443,7 @@ void BugzillaManager::addCommentJobFinished(KJob * job)
 void BugzillaManager::addMeToCCSubJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * checkJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * checkJob = static_cast<KIO::StoredTransferJob*>(job);
         QString response = checkJob->data();
         response.remove('\r'); response.remove('\n');
 
@@ -486,7 +477,7 @@ void BugzillaManager::addMeToCCSubJobFinished(KJob * job)
 void BugzillaManager::addMeToCCJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * addCCJob = (KIO::StoredTransferJob *)job;
+        KIO::StoredTransferJob * addCCJob = static_cast<KIO::StoredTransferJob*>(job);
         QString response = addCCJob->data();
         response.remove('\r'); response.remove('\n');
         
@@ -511,108 +502,13 @@ void BugzillaManager::addMeToCCJobFinished(KJob * job)
 void BugzillaManager::checkVersionJobFinished(KJob * job)
 {
     if (!job->error()) {
-        KIO::StoredTransferJob * checkVersionJob = (KIO::StoredTransferJob *)job;
-
-        QString response = checkVersionJob->data();
-
-        const QString product = checkVersionJob->url().queryItem("product");
-        if (product.isEmpty()) {
-            emit checkVersionsForProductError();
-            return;
-        }
-
-        //Warning!: Quick'n'dirty HTML parsing ....
-
-        const QString firstSelect = "<select name=\"product\"";
-        const QString searchString = "<option value=\"" + product;
-
-        //Determine the index of the product in the select combobox
-        int indexOfFirstSelect = response.indexOf(firstSelect);
-        if (indexOfFirstSelect == -1) {
-            emit checkVersionsForProductError();
-            return;
-        }
-
-        int indexOfProduct = response.indexOf(searchString, indexOfFirstSelect);
-
-        if (indexOfProduct == -1) {
-            emit checkVersionsForProductError();
-            return;
-        }
-        const QString subString = response.mid(indexOfFirstSelect, indexOfProduct-indexOfFirstSelect);
-
-        int productIndex = subString.count("<option value=");
-
-        //Retrieve the versions array (vers[productID])
-        const QString versionSearchString = "vers[" + QString::number(productIndex) + ']';
-        int indexVersion = response.indexOf(versionSearchString);
-        if (indexVersion == -1) {
-            emit checkVersionsForProductError();
-            return;
-        }
-        int indexEnd = response.indexOf("\n", indexVersion);
-
-        const QString versionString = response.mid(indexVersion, indexEnd-indexVersion);
-
-        int index1 = versionSearchString.length()+4;
-        int len = versionString.length()-3-index1;
-        const QString versions = versionString.mid(index1, len);
-
-        const QStringList list = versions.split(',');
-
-        QStringList versionList;
-
-        //Clean the values
-        QList<QString>::const_iterator it;
-        for (it = list.constBegin(); it != list.constEnd(); ++it) {
-            QString tempString = *it;
-            tempString = tempString.trimmed();
-            tempString = tempString.mid(1, tempString.length()-2);
-            versionList.append(tempString);
-        }
-
-        emit checkVersionsForProductFinished(versionList);
+        FindConfigDataJob *checkVersionJob = static_cast<FindConfigDataJob*>(job);
+        emit checkVersionsForProductFinished(checkVersionJob->data(FindConfigDataJob::Version));
     } else {
         emit checkVersionsForProductError();
     }
 }
-void BugzillaManager::delayedCheckVersionJobFinished(KJob * job)
-{
-    if (!job->error()) {
-        KIO::StoredTransferJob * checkVersionJob = (KIO::StoredTransferJob *)job;
 
-        QString response = checkVersionJob->data();
-
-        const QString product = checkVersionJob->url().queryItem("product");
-        if (product.isEmpty()) {
-            emit checkVersionsForProductError();
-            return;
-        }
-
-        //HTML parsing
-        int index1 = response.indexOf("<select name=\"version\"");
-        int index2 = response.indexOf("</select>", index1);
-
-        QString selectString = response.mid(index1, index2-index1);
-        selectString.remove(" selected=\"selected\"");
-
-        int versionStringsCount = selectString.count("<option value=\"");
-        int lastIndex = 0;
-
-        QStringList versionList;
-        for(int i = 0; i< versionStringsCount; i++) {
-            index1 = selectString.indexOf("<option value=\"", lastIndex);
-            index1 += 15;
-            index2 = selectString.indexOf("\">", index1);
-            versionList.append(selectString.mid(index1, index2-index1).trimmed());
-            lastIndex = index2+3;
-        }
-
-        emit checkVersionsForProductFinished(versionList);
-    } else {
-        emit checkVersionsForProductError();
-    }
-}
 //END Slots to handle KJob::finished
 
 //BEGIN Private helper methods

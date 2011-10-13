@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2004-2007 Matthias Kretz <kretz@kde.org>
+    Copyright (C) 2011 Harald Sitter <sitter@kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -15,28 +16,35 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
-
 */
 
 #include "backendselection.h"
 
-#include <krun.h>
-#include <kservicetypeprofile.h>
-#include <kservicetypetrader.h>
-#include <kconfig.h>
+#include <QtCore/QList>
 #include <QtCore/QStringList>
 #include <QtGui/QListWidget>
-#include <kapplication.h>
-#include <kicon.h>
-#include <kiconloader.h>
-#include <QtCore/QList>
-#include <QtDBus/QtDBus>
-#include <kcmoduleproxy.h>
+
+#include <KDE/KApplication>
+#include <KDE/KCModuleProxy>
+#include <KDE/KConfig>
+#include <KDE/KIcon>
+#include <KDE/KIconLoader>
+#include <KDE/KRun>
+#include <KDE/KServiceTypeProfile>
+#include <KDE/KServiceTypeTrader>
 
 BackendSelection::BackendSelection(QWidget *parent)
     : QWidget(parent)
 {
     setupUi(this);
+
+    m_messageWidget->setShown(false);
+    m_messageWidget->setCloseButtonVisible(false);
+    m_messageWidget->setMessageType(KMessageWidget::Information);
+    m_messageWidget->setText(i18nc("@info User changed Phonon backend",
+                                   "To apply the backend change you will have "
+                                   "to log out and back in again."));
+
     m_down->setIcon(KIcon("go-down"));
     m_up->setIcon(KIcon("go-up"));
     m_comment->setWordWrap(true);
@@ -115,8 +123,7 @@ void BackendSelection::save()
     // save to servicetype profile
     KService::List services;
     unsigned int count = m_select->count();
-    for (unsigned int i = 0; i < count; ++i)
-    {
+    for (unsigned int i = 0; i < count; ++i) {
         QListWidgetItem *item = m_select->item(i);
         KService::Ptr service = m_services[item->text()];
         services.append(service);
@@ -141,12 +148,14 @@ void BackendSelection::save()
         }
     }
 
-    // be very conservative with this signal as it interrupts all playback:
     if (offers != services) {
         KServiceTypeProfile::writeServiceTypeProfile("PhononBackend", services);
 
-        QDBusMessage signal = QDBusMessage::createSignal("/", "org.kde.Phonon.Factory", "phononBackendChanged");
-        QDBusConnection::sessionBus().send(signal);
+        // If the user changed the backend order, show a message that they need to
+        // log out and back in again to apply the change. This is because runtime
+        // backend switching was considered not worth the effort to actually
+        // maintain it (across backends).
+        m_messageWidget->animatedShow();
     }
 }
 
@@ -178,7 +187,7 @@ void BackendSelection::selectionChanged()
         QPixmap iconPixmap = KIconLoader::global()->loadIcon(service->icon(), KIconLoader::NoGroup, 128,
                                                              KIconLoader::DefaultState, QStringList(), 0L,
                                                              true /* return null */);
-        if(iconPixmap.isNull())
+        if (iconPixmap.isNull())
             iconPixmap = KIconLoader::global()->loadIcon("preferences-desktop-sound", KIconLoader::NoGroup, 128);
 
         m_icon->setPixmap(iconPixmap);
@@ -200,11 +209,9 @@ void BackendSelection::openWebsite(const QString &url)
 void BackendSelection::up()
 {
     QList<QListWidgetItem *> selectedList = m_select->selectedItems();
-    foreach (QListWidgetItem *selected, selectedList)
-    {
+    foreach (QListWidgetItem *selected, selectedList) {
         const int row = m_select->row(selected);
-        if (row > 0)
-        {
+        if (row > 0) {
             QListWidgetItem *taken = m_select->takeItem(row - 1);
             m_select->insertItem(row, taken);
             emit changed();
@@ -216,11 +223,9 @@ void BackendSelection::up()
 void BackendSelection::down()
 {
     QList<QListWidgetItem *> selectedList = m_select->selectedItems();
-    foreach (QListWidgetItem *selected, selectedList)
-    {
+    foreach (QListWidgetItem *selected, selectedList) {
         const int row = m_select->row(selected);
-        if (row + 1 < m_select->count())
-        {
+        if (row + 1 < m_select->count()) {
             QListWidgetItem *taken = m_select->takeItem(row + 1);
             m_select->insertItem(row, taken);
             emit changed();

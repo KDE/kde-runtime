@@ -15,7 +15,7 @@
     <widget class="QLabel" name="m_previewDescriptionLabel">
      <property name="text">
       <string comment="@label">This is a preview of the report's contents which will be sent. &lt;nl /&gt;
-If you want to modify it go the previous pages.</string>
+If you want to modify it go to the previous pages.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

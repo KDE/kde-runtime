@@ -62,6 +62,8 @@
 
 #include <KIO/NetAccess>
 
+#define STRIGI_INDEX_GRAPH_FOR "http://www.strigi.org/fields#indexGraphFor"
+
 using namespace Nepomuk::Vocabulary;
 using namespace Soprano::Vocabulary;
 
@@ -846,7 +848,7 @@ void Nepomuk::DataManagementModel::removeResources(const QList<QUrl> &resources,
     //
     // Resolve file URLs, we can simply ignore the non-existing file resources which are reflected by empty resolved URIs
     //
-    QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources).values());
+    QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources, false).values());
     resolvedResources.remove(QUrl());
     if(resolvedResources.isEmpty() || lastError()) {
         return;
@@ -900,7 +902,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     //
     // Resolve file URLs, we can simply ignore the non-existing file resources which are reflected by empty resolved URIs
     //
-    QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources).values());
+    QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources, false).values());
     resolvedResources.remove(QUrl());
     if(resolvedResources.isEmpty() || lastError()) {
         return;
@@ -984,7 +986,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     //
     if(app == QLatin1String("nepomukindexer")) {
         graphRemovalCandidates += executeQuery(QString::fromLatin1("select distinct ?g (0) as ?c where { "
-                                                                   "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
+                                                                   "?g <"STRIGI_INDEX_GRAPH_FOR"> ?r . "
                                                                    "FILTER(?r in (%1)) . }")
                                                .arg(Nepomuk::resourcesToN3(resolvedResources).join(QLatin1String(","))),
                                                Soprano::Query::QueryLanguageSparql).allElements();
@@ -1061,16 +1063,17 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     //
     // Gather the resources that we actually change, ie. those which have non-metadata props in the removed graphs
     //
-    Soprano::QueryResultIterator mResIt
-            = executeQuery(QString::fromLatin1("select ?r where { graph ?g { ?r ?p ?o . FILTER(?r in (%1)) . FILTER(%2) . } . FILTER(?g in (%3)) . }")
-                                        .arg(resourcesToN3(resolvedResources).join(QLatin1String(",")),
-                                             createResourceMetadataPropertyFilter(QLatin1String("?p"), true),
-                                             resourcesToN3(graphsToRemove).join(QLatin1String(","))),
-                                        Soprano::Query::QueryLanguageSparql);
-    while(mResIt.next()) {
-        modifiedResources.insert(mResIt[0].uri());
+    if( !graphsToRemove.isEmpty() ) {
+        Soprano::QueryResultIterator mResIt
+                = executeQuery(QString::fromLatin1("select ?r where { graph ?g { ?r ?p ?o . FILTER(?r in (%1)) . FILTER(%2) . } . FILTER(?g in (%3)) . }")
+                                            .arg(resourcesToN3(resolvedResources).join(QLatin1String(",")),
+                                                createResourceMetadataPropertyFilter(QLatin1String("?p"), true),
+                                                resourcesToN3(graphsToRemove).join(QLatin1String(","))),
+                                            Soprano::Query::QueryLanguageSparql);
+        while(mResIt.next()) {
+            modifiedResources.insert(mResIt[0].uri());
+        }
     }
-
 
     //
     // Remove the actual data. This has to be done using removeAllStatements. Otherwise the crappy inferencer cannot follow the changes.
@@ -1133,6 +1136,12 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
 
     //
     // Determine the resources we did not remove completely.
+    // This includes resource that have still other properties than the metadata ones defined
+    // and those that have relations from other resources created by other applications and have a nie:url.
+    // The latter is a special case which has two reasons:
+    // 1. A nie:url identifies the resource even outside of Nepomuk
+    // 2. The indexers use this method to update indexed data. If the resource has incoming relations
+    //    they should be kept between updates. (The only exception is the legacy index graph relation.)
     //
     QSet<QUrl> resourcesToRemoveCompletely(resolvedResources);
     Soprano::QueryResultIterator resComplIt
@@ -1142,6 +1151,15 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                            Soprano::Query::QueryLanguageSparql);
     while(resComplIt.next()) {
         resourcesToRemoveCompletely.remove(resComplIt[0].uri());
+    }
+    resComplIt = executeQuery(QString::fromLatin1("select ?r where { ?o ?p ?r . FILTER(?r in (%1)) . FILTER(?p != <"STRIGI_INDEX_GRAPH_FOR">) . }")
+                              .arg(resourcesToN3(resolvedResources).join(QLatin1String(","))),
+                              Soprano::Query::QueryLanguageSparql);
+    while(resComplIt.next()) {
+        const QUrl r = resComplIt[0].uri();
+        if(metadata.containsAnyStatement(r, NIE::url(), Soprano::Node())) {
+            resourcesToRemoveCompletely.remove(resComplIt[0].uri());
+        }
     }
 
     // no need to update metadata on resource we remove completely
@@ -1328,7 +1346,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(RemovalFlags flags, c
 
 
 //// TODO: do not allow to create properties or classes this way
-void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceGraph &resources,
+QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceGraph &resources,
                                                   const QString &app,
                                                   Nepomuk::StoreIdentificationMode identificationMode,
                                                   Nepomuk::StoreResourcesFlags flags,
@@ -1336,11 +1354,11 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
 {
     if(app.isEmpty()) {
         setError(QLatin1String("storeResources: Empty application specified. This is not supported."), Soprano::Error::ErrorInvalidArgument);
-        return;
+        return QHash<QUrl, QUrl>();
     }
     if(resources.isEmpty()) {
         clearError();
-        return;
+        return QHash<QUrl, QUrl>();
     }
 
     /// Holds the mapping of <file://url> to <nepomuk:/res/> uris
@@ -1360,7 +1378,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             QString error = QString::fromLatin1("The resource with URI %1 is invalid.")
                             .arg( res.uri().toString() );
             setError(error, Soprano::Error::ErrorInvalidArgument);
-            return;
+            return QHash<QUrl, QUrl>();
         }
 
         const UriState state = uriState(res.uri());
@@ -1370,13 +1388,13 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         // Handle nie urls
         else if(state == NonExistingFileUrl) {
             setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(res.uri().toLocalFile()), Soprano::Error::ErrorInvalidArgument);
-            return;
+            return QHash<QUrl, QUrl>();
         }
         else if(state == ExistingFileUrl || state == SupportedUrl) {
             const QUrl nieUrl = res.uri();
             QUrl newResUri = resolveUrl( nieUrl );
             if( lastError() )
-                return;
+                return QHash<QUrl, QUrl>();
 
             if( newResUri.isEmpty() ) {
                 // Resolution of one url failed. Assign it a random blank uri
@@ -1398,13 +1416,13 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             // Legacy support - Sucks but we need it
             const QUrl legacyUri = resolveUrl( res.uri() );
             if( lastError() )
-                return;
+                return QHash<QUrl, QUrl>();
 
             allNonFileResources << legacyUri;
         }
         else if( state == OntologyUri ) {
             setError(QLatin1String("It is not allowed to add classes or properties through this API."), Soprano::Error::ErrorInvalidArgument);
-            return;
+            return QHash<QUrl, QUrl>();
         }
     }
     resGraph = resGraphList;
@@ -1415,14 +1433,13 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
     //
     if(!allNonFileResources.isEmpty() &&
             containsResourceWithProtectedType(allNonFileResources)) {
-        return;
+        return QHash<QUrl, QUrl>();
     }
 
 
     ResourceIdentifier resIdent( identificationMode, this );
     QList<Soprano::Statement> allStatements;
-    QList<Sync::SyncResource> extraResources;
-
+    QList<Sync::SyncResource> syncResources;
 
     //
     // Resolve URLs in property values and prepare the resource identifier
@@ -1445,7 +1462,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
             const Soprano::Error::Error error = d->m_classAndPropertyTree->lastError();
             if( error ) {
                 setError( error.message(), error.code() );
-                return;
+                return QHash<QUrl, QUrl>();
             }
             syncRes.insert( hit.key(), n );
         }
@@ -1467,7 +1484,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                                           it.key().url(),
                                           it.value().toN3() );
                     setError( error, Soprano::Error::ErrorInvalidArgument );
-                    return;
+                    return QHash<QUrl, QUrl>();
                 }
                 else {
                     continue;
@@ -1483,7 +1500,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                 else if(state == NonExistingFileUrl) {
                     setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(object.uri().toLocalFile()),
                              Soprano::Error::ErrorInvalidArgument);
-                    return;
+                    return QHash<QUrl, QUrl>();
                 }
                 else if(state == ExistingFileUrl || state==SupportedUrl) {
                     const QUrl nieUrl = object.uri();
@@ -1509,7 +1526,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                         }
 
                         newRes.setUri( resolvedUri );
-                        extraResources.append( newRes );
+                        syncResources << newRes;
 
                         resolvedNodes.insert( nieUrl, resolvedUri );
                         it.setValue( convertIfBlankUri(resolvedUri) );
@@ -1520,7 +1537,7 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
                     // then resolveUrl which set the last error
                     const QUrl legacyUri = resolveUrl( object.uri() );
                     if( lastError() )
-                        return;
+                        return QHash<QUrl, QUrl>();
 
                     // It apparently exists, so we must support it
                 }
@@ -1528,22 +1545,76 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         } // while( it.hasNext() )
 
         // The resource is now ready.
-        // Push it into the Resource Identifier
+        syncResources << syncRes;
+    }
+
+    // Look for duplicates in the syncResources and merge them
+    QList<Sync::SyncResource> finalList;
+    QHash< uint, const Sync::SyncResource* > syncResHash;
+    QHash<Soprano::Node, Soprano::Node> duplicateResources;
+    foreach( const Sync::SyncResource& syncRes, syncResources ) {
+
+        //WARNING: The SyncResource qHash function does not use the uri while preparing the hash.
+        // If it did, then this would fail miserably.
+        uint hash = qHash( syncRes );
+        QHash< uint, const Sync::SyncResource* >::iterator it = syncResHash.find( hash );
+        if( it != syncResHash.end() ) {
+            // hash collision : Check the entire contents
+            const Sync::SyncResource r = *it.value();
+
+            // We can't use SyncResource::operator== cause that would check the uri as well
+            // and we don't care about the uri
+            if( r.QHash<KUrl,Soprano::Node>::operator==(syncRes) ) {
+                kDebug() << "Adding: " << syncRes.uri() << " " << it.value()->uri();
+                duplicateResources.insert( convertIfBlankUri( syncRes.uri() ),
+                                           convertIfBlankUri( it.value()->uri() ) );
+                continue;
+            }
+        }
+
+        syncResHash.insert( hash, &syncRes );
+        finalList << syncRes;
+    }
+
+    // Resolve all duplicates in the finalList
+    QMutableListIterator<Sync::SyncResource> it( finalList );
+    while( it.hasNext() ) {
+        it.next();
+
+        QMutableHashIterator<KUrl, Soprano::Node> iter( it.value() );
+        while( iter.hasNext() ) {
+            iter.next();
+
+            const Soprano::Node node = iter.value();
+            if( node.isLiteral() || node.isEmpty() )
+                continue;
+            QHash< Soprano::Node, Soprano::Node >::const_iterator fit = duplicateResources.constFind( node );
+            if( fit != duplicateResources.constEnd() ) {
+                iter.setValue( fit.value() );
+            }
+        }
+    }
+
+    // Free up some memory
+    duplicateResources.clear();
+    syncResHash.clear();
+
+    // Push it into the Resource Identifier
+    foreach( const Sync::SyncResource& syncRes, finalList ) {
         QList< Soprano::Statement > stList = syncRes.toStatementList();
         allStatements << stList;
 
         if(stList.isEmpty()) {
             setError(d->m_classAndPropertyTree->lastError());
-            return;
+            return QHash<QUrl, QUrl>();
         }
 
         if( !syncRes.isValid() ) {
             setError(QLatin1String("storeResources: Contains invalid resources."), Soprano::Error::ErrorParsingFailed);
-            return;
+            return QHash<QUrl, QUrl>();
         }
         resIdent.addSyncResource( syncRes );
     }
-
 
     //
     // Check the created statements
@@ -1552,19 +1623,19 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         if(!s.isValid()) {
             kDebug() << "Invalid statement after resource conversion:" << s;
             setError(QLatin1String("storeResources: Encountered invalid statement after resource conversion."), Soprano::Error::ErrorInvalidArgument);
-            return;
+            return QHash<QUrl, QUrl>();
         }
     }
 
     //
     // For better identification add rdf:type and nie:url to resolvedNodes
     //
-    QHashIterator<QUrl, QUrl> it( resolvedNodes );
-    while( it.hasNext() ) {
-        it.next();
+    QHashIterator<QUrl, QUrl> it2( resolvedNodes );
+    while( it2.hasNext() ) {
+        it2.next();
 
-        const QUrl fileUrl = it.key();
-        const QUrl uri = it.value();
+        const QUrl fileUrl = it2.key();
+        const QUrl uri = it2.value();
 
         const Sync::SyncResource existingRes = resIdent.simpleResource( uri );
 
@@ -1595,17 +1666,16 @@ void Nepomuk::DataManagementModel::storeResources(const Nepomuk::SimpleResourceG
         kDebug() << "Nothing was mapped merging everything as it is.";
     }
 
-    foreach( const Sync::SyncResource & res, extraResources ) {
-        allStatements << res.toStatementList();
-    }
-
     ResourceMerger merger( this, app, additionalMetadata, flags );
     merger.setMappings( resIdent.mappings() );
     if( !merger.merge( Soprano::Graph(allStatements) ) ) {
         kDebug() << " MERGING FAILED! ";
         kDebug() << "Setting error!" << merger.lastError();
         setError( merger.lastError() );
+        return QHash<QUrl, QUrl>();
     }
+
+    return merger.mappings();
 }
 
 void Nepomuk::DataManagementModel::importResources(const QUrl &url,
@@ -1738,17 +1808,13 @@ QVariant nodeToVariant(const Soprano::Node& node) {
 }
 }
 
-Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(const QList<QUrl> &resources, bool includeSubResources) const
+Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(const QList<QUrl> &resources,
+                                                                             DescribeResourcesFlags flags,
+                                                                             const QList<QUrl>& targetParties) const
 {
-    kDebug() << resources << includeSubResources;
-
     //
     // check parameters
     //
-    if(resources.isEmpty()) {
-        setError(QLatin1String("describeResources: No resource specified."), Soprano::Error::ErrorInvalidArgument);
-        return SimpleResourceGraph();
-    }
     foreach( const QUrl & res, resources ) {
         if(res.isEmpty()) {
             setError(QLatin1String("describeResources: Encountered empty resource URI."), Soprano::Error::ErrorInvalidArgument);
@@ -1756,87 +1822,194 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
         }
     }
 
+    if(!targetParties.isEmpty()) {
+        setError(QLatin1String("Permission handling has not been implemented yet."));
+        return SimpleResourceGraph();
+    }
+
 
     clearError();
 
 
     //
-    // Split into nie:urls and URIs so we can get all data in one query
+    // Resolve all URLs - for now we ignore non-existing resources
     //
-    QSet<QUrl> nieUrls;
-    QSet<QUrl> resUris;
-    foreach( const QUrl & res, resources ) {
-        const UriState state = uriState(res);
-        if(state == NonExistingFileUrl) {
-            setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(res.toLocalFile()),
-                     Soprano::Error::ErrorInvalidArgument);
-            return SimpleResourceGraph();
-        }
-        else if(state == ExistingFileUrl || state == SupportedUrl) {
-            nieUrls.insert(res);
-        }
-        else if(state == NepomukUri || state == OtherUri){
-            resUris.insert(res);
-        }
-        else if(state == BlankUri) {
-            setError(QString::fromLatin1("Cannot give information about blank uris. '%1' does not exist").arg(res.toString()),
-                     Soprano::Error::ErrorInvalidArgument);
-            return SimpleResourceGraph();
-        }
-    }
-
-
-    //
-    // Build the query
-    //
-    QStringList terms;
-    if(!nieUrls.isEmpty()) {
-        terms << QString::fromLatin1("?s ?p ?o . ?s %1 ?u . FILTER(?u in (%2)) . ")
-                 .arg(Soprano::Node::resourceToN3(Vocabulary::NIE::url()),
-                      resourcesToN3(nieUrls).join(QLatin1String(",")));
-        if(includeSubResources) {
-            terms << QString::fromLatin1("?s ?p ?o . ?r %1 ?s . ?r %2 ?u . FILTER(?u in (%3)) . ")
-                     .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
-                          Soprano::Node::resourceToN3(Vocabulary::NIE::url()),
-                          resourcesToN3(nieUrls).join(QLatin1String(",")));
-        }
-    }
-    if(!resUris.isEmpty()) {
-        terms << QString::fromLatin1("?s ?p ?o . FILTER(?s in (%1)) . ")
-                 .arg(resourcesToN3(resUris).join(QLatin1String(",")));
-        if(includeSubResources) {
-            terms << QString::fromLatin1("?s ?p ?o . ?r %1 ?s . FILTER(?r in (%2)) . ")
-                     .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
-                          resourcesToN3(resUris).join(QLatin1String(",")));
-        }
-    }
-
-    QString query = QLatin1String("select distinct ?s ?p ?o where { ");
-    if(terms.count() == 1) {
-        query += terms.first();
-    }
-    else {
-        query += QLatin1String("{ ") + terms.join(QLatin1String("} UNION { ")) + QLatin1String("}");
-    }
-    query += QLatin1String(" }");
-
-
-    //
-    // Build the graph
-    //
-    QHash<QUrl, SimpleResource> graph;
-    Soprano::QueryResultIterator it = executeQuery(query, Soprano::Query::QueryLanguageSparql);
-    while(it.next()) {
-        const QUrl r = it["s"].uri();
-        graph[r].setUri(r);
-        graph[r].addProperty(it["p"].uri(), nodeToVariant(it["o"]));
-    }
-    if(it.lastError()) {
-        setError(it.lastError());
+    QSet<QUrl> resolvedResources(QSet<QUrl>::fromList(resolveUrls(resources, false /* do not stat local files - it would be a waste of resources */).values()));
+    if(resolvedResources.isEmpty()) {
+        setError(QLatin1String("describeResources: No useful resource specified."), Soprano::Error::ErrorInvalidArgument);
         return SimpleResourceGraph();
     }
 
-    return graph.values();
+
+    //
+    // In case we need to exclude discardable data we make sure that metadata properties are
+    // exported in any case as those are maintained by us and are only in the specific graph
+    // "by chance".
+    //
+    const QString discardableDataExcludeFilter
+            = (flags & ExcludeDiscardableData
+               ? QString::fromLatin1("FILTER(!bif:exists((select (1) where { ?g a %1 . })) || %2) . ")
+                 .arg(Soprano::Node::resourceToN3(NRL::DiscardableInstanceBase()),
+                      createResourceMetadataPropertyFilter(QLatin1String("?p"), false))
+               : QString());
+
+    //
+    // Get all sub-resources and add them to the list of resources to describe
+    //
+    {
+        QSet<QUrl> subResources = resolvedResources;
+        int resCount = 0;
+        do {
+            resCount = resolvedResources.count();
+            // FIXME: as soon as the issue with the empty result list is fixed change this loop back into a single query
+            // (email sent to Virtuoso ml: http://sourceforge.net/mailarchive/forum.php?thread_name=4E36D5ED.9020904%40kde.org&forum_name=virtuoso-users)
+            QSet<QUrl> tmp(subResources);
+            subResources.clear();
+            foreach(const QUrl& res, tmp) {
+                Soprano::QueryResultIterator it
+                        = executeQuery(QString::fromLatin1("select ?r where { "
+                                                           "graph ?g { ?parent ?p ?r . "
+                                                           "FILTER(?parent in (%1)) . } . "
+                                                           "?p %2 %3 . "
+                                                           "%4"
+                                                           "}")
+                                       .arg(/*resourcesToN3(subResources).join(QLatin1String(","))*/Soprano::Node::resourceToN3(res),
+                                            Soprano::Node::resourceToN3(RDFS::subPropertyOf()),
+                                            Soprano::Node::resourceToN3(NAO::hasSubResource()),
+                                            discardableDataExcludeFilter),
+                                       Soprano::Query::QueryLanguageSparql);
+                subResources.clear();
+                while(it.next()) {
+                    subResources << it[0].uri();
+                }
+                resolvedResources += subResources;
+            }
+        } while(resCount < resolvedResources.count());
+    }
+
+    //
+    // Build the basic graph consisting of the requested resources and all sub-resources
+    // The query excludes all our inferred triples by excluding the crappy inferencer graphs.
+    //
+    SimpleResourceGraph graph;
+    QSet<QUrl> relatedResourcesToFetch;
+    // FIXME: as soon as the issue with the empty result list is fixed change this loop back into a single query
+    // (email sent to Virtuoso ml: http://sourceforge.net/mailarchive/forum.php?thread_name=4E36D5ED.9020904%40kde.org&forum_name=virtuoso-users)
+    foreach(const QUrl& res, resolvedResources) {
+        Soprano::QueryResultIterator it
+                = executeQuery(QString::fromLatin1("select distinct ?s ?p ?o where { "
+                                                   "graph ?g { ?s ?p ?o . "
+                                                   "FILTER(?s in (%1)) . } . "
+                                                   "FILTER(!(?g in (<urn:crappyinference:inferredtriples>,<urn:crappyinference2:inferredtriples>))) . "
+                                                   "%2"
+                                                   "}")
+                               .arg(/*resourcesToN3(resolvedResources).join(QLatin1String(","))*/Soprano::Node::resourceToN3(res),
+                                    discardableDataExcludeFilter),
+                               Soprano::Query::QueryLanguageSparql);
+        while(it.next()) {
+            const Soprano::Node r = it["s"];
+            const Soprano::Node p = it["p"];
+            const Soprano::Node o = it["o"];
+
+            if(!o.isResource() ||
+                    !(flags & ExcludeRelatedResources) ||
+                    d->m_classAndPropertyTree->isIdentifyingProperty(p.uri()) ||
+                    p == NIE::url()) {
+                graph.addStatement(r, p, o);
+            }
+
+            if(o.isResource() &&
+                    (!(flags & ExcludeRelatedResources) ||
+                     d->m_classAndPropertyTree->isIdentifyingProperty(p.uri())) &&
+                    !d->m_classAndPropertyTree->isChildOf(p.uri(), NAO::hasSubResource()) &&
+                    p != NIE::url() &&
+                    p != RDF::type()) {
+                relatedResourcesToFetch << o.uri();
+            }
+        }
+        if(it.lastError()) {
+            setError(it.lastError());
+            return SimpleResourceGraph();
+        }
+    }
+
+
+    //
+    // Now fetch related resources and their identifying properties,
+    // ignoring anything that comes from an ontology.
+    //
+    // For related resources we only take the identifying properties since
+    // that is all that is required to describe them.
+    //
+    QSet<QUrl> currentRelatedResources(relatedResourcesToFetch);
+    while(!currentRelatedResources.isEmpty()) {
+        // FIXME: as soon as the issue with the empty result list is fixed change this loop back into a single query
+        // (email sent to Virtuoso ml: http://sourceforge.net/mailarchive/forum.php?thread_name=4E36D5ED.9020904%40kde.org&forum_name=virtuoso-users)
+        QSet<QUrl> tmp(currentRelatedResources);
+        currentRelatedResources.clear();
+        foreach(const QUrl& res, tmp) {
+            Soprano::QueryResultIterator it
+                    = executeQuery(QString::fromLatin1("select distinct ?s ?p ?o where { "
+                                                       "graph ?g { ?s ?p ?o . "
+                                                       "FILTER(?s in (%1)) . "
+                                                       "FILTER(!(?o in (%2))) . } . "
+                                                       "FILTER(!bif:exists((select (1) where { ?g a %3 }))) . "
+                                                       "%4"
+                                                       "}")
+                                   .arg(/*resourcesToN3(currentRelatedResources).join(QLatin1String(","))*/Soprano::Node::resourceToN3(res),
+                                        resourcesToN3(graph.allResourceUris()).join(QLatin1String(",")),
+                                        Soprano::Node::resourceToN3(NRL::Ontology()),
+                                        discardableDataExcludeFilter),
+                                   Soprano::Query::QueryLanguageSparql);
+            //currentRelatedResources.clear();
+            while(it.next()) {
+                const Soprano::Node r = it["s"];
+                const Soprano::Node p = it["p"];
+                const Soprano::Node o = it["o"];
+                if(d->m_classAndPropertyTree->isIdentifyingProperty(p.uri())) {
+                    graph.addStatement(r, p, o);
+                    if(o.isResource()) {
+                        currentRelatedResources << o.uri();
+                    }
+                }
+            }
+            if(it.lastError()) {
+                setError(it.lastError());
+                return SimpleResourceGraph();
+            }
+        }
+    }
+
+
+    //
+    // Throw out all relations to related resources which were not fetched.
+    // FIXME: do we really want this??
+    //
+    foreach(const QUrl& res, relatedResourcesToFetch + resolvedResources) {
+        if(!graph.contains(res)) {
+            graph.removeAll(QUrl(), QUrl(), res);
+        }
+    }
+
+
+    //
+    // Final cleanup: remove all resources that do only have metadata defined.
+    //
+    foreach(const QUrl& res, graph.allResourceUris()) {
+        bool hasNonMetadataProps = false;
+        foreach(const QUrl& prop, graph[res].properties().keys()) {
+            if(!d->m_protectedProperties.contains(prop)) {
+                hasNonMetadataProps = true;
+                break;
+            }
+        }
+        if(!hasNonMetadataProps) {
+            graph.remove(res);
+        }
+    }
+
+
+    return graph;
 }
 
 
@@ -2105,8 +2278,11 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
                     return;
                 }
             }
-            QUrl uri = createUri(ResourceUri);
-            addStatement(uri, Vocabulary::NIE::url(), it.key().uri(), graph);
+            const QUrl uri = createUri(ResourceUri);
+            addStatement(uri, Vocabulary::NIE::url(), it.key(), graph);
+            if(it.key().uri().scheme() == QLatin1String("file")) {
+                addStatement(uri, RDF::type(), NFO::FileDataObject(), graph);
+            }
             resolvedNodes.insert(uri);
         }
         else {
@@ -2129,6 +2305,9 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
             }
             uri = createUri(ResourceUri);
             addStatement(uri, Vocabulary::NIE::url(), it.key(), graph);
+            if(it.key().scheme() == QLatin1String("file")) {
+                addStatement(uri, RDF::type(), NFO::FileDataObject(), graph);
+            }
         }
         else {
             knownResources << uri;
@@ -2208,8 +2387,11 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
         QSet<QUrl> finalResources;
         for(QSet<QPair<QUrl, Soprano::Node> >::const_iterator it = finalProperties.constBegin(); it != finalProperties.constEnd(); ++it) {
             addStatement(it->first, property, it->second, graph);
+            if(property == NIE::url() && it->second.uri().scheme() == QLatin1String("file")) {
+                addStatement(it->first, RDF::type(), NFO::FileDataObject(), graph);
+            }
             finalResources.insert(it->first);
-            d->m_watchManager->addProperty( it->first, property, it->second);
+            d->m_watchManager->addProperty(it->first, property, it->second);
         }
 
         // update modification date
@@ -2236,11 +2418,11 @@ bool Nepomuk::DataManagementModel::doesResourceExist(const QUrl &res, const QUrl
     }
 }
 
-QHash<QUrl, QUrl> Nepomuk::DataManagementModel::resolveUrls(const QList<QUrl> &urls) const
+QHash<QUrl, QUrl> Nepomuk::DataManagementModel::resolveUrls(const QList<QUrl> &urls, bool statLocalFiles) const
 {
     QHash<QUrl, QUrl> uriHash;
     Q_FOREACH(const QUrl& url, urls) {
-        const QUrl resolved = resolveUrl(url, true);
+        const QUrl resolved = resolveUrl(url, statLocalFiles);
         if(url.isEmpty() && lastError()) {
             break;
         }
@@ -2286,8 +2468,9 @@ QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFil
 
         // non-existing unsupported URL
         else if( state == OtherUri ) {
-            setError(QString::fromLatin1("Unknown protocol '%1' encountered.").arg(url.scheme()),
-                     Soprano::Error::ErrorInvalidArgument);
+            QString error = QString::fromLatin1("Unknown protocol '%1' encountered in '%2'.")
+                            .arg(url.scheme(), url.toString());
+            setError(error, Soprano::Error::ErrorInvalidArgument);
             return QUrl();
         }
 
