@@ -68,10 +68,12 @@ Nepomuk::SystemTray::SystemTray( QObject* parent )
                                                QLatin1String("/nepomukstrigiservice"),
                                                QDBusConnection::sessionBus(),
                                                this );
+
     m_serviceControl = new org::kde::nepomuk::ServiceControl( QLatin1String("org.kde.nepomuk.services.nepomukstrigiservice"),
                                                               QLatin1String("/servicecontrol"),
                                                               QDBusConnection::sessionBus(),
                                                               this );
+
     connect( m_service, SIGNAL( statusChanged() ), this, SLOT( slotUpdateStrigiStatus() ) );
 
     // watch for the strigi service to come up and go down
@@ -84,7 +86,12 @@ Nepomuk::SystemTray::SystemTray( QObject* parent )
     connect( dbusServiceWatcher, SIGNAL( serviceUnregistered( QString ) ),
              this, SLOT( slotUpdateStrigiStatus()) );
 
+    connect( &m_updateTimer, SIGNAL( timeout() ),
+             this, SLOT( slotActiveStatusTimeout()) );
+
     slotUpdateStrigiStatus();
+    m_updateTimer.setSingleShot(true);
+
 }
 
 
@@ -95,16 +102,26 @@ Nepomuk::SystemTray::~SystemTray()
 
 void Nepomuk::SystemTray::slotUpdateStrigiStatus()
 {
-    // make sure we do not update the systray icon all the time
-
     ItemStatus newStatus = status();
+
+    // make sure we do not update the systray icon all the time
     const bool strigiServiceInitialized =
             QDBusConnection::sessionBus().interface()->isServiceRegistered(m_service->service()) &&
             m_serviceControl->isInitialized();
 
     // a manually suspended service should not be passive
-    if( strigiServiceInitialized )
-        newStatus = m_service->isIndexing() || m_suspendedManually ? Active : Passive;
+
+    if ( strigiServiceInitialized ) {
+        if ( m_service->isIndexing() || m_suspendedManually) {
+            if (!m_updateTimer.isActive()) {
+                m_updateTimer.start(3000);
+            }
+        }
+        else {
+            m_updateTimer.stop();
+            newStatus = Passive;
+        }
+    }
     else
         newStatus = Passive;
     if ( newStatus != status() ) {
@@ -185,4 +202,8 @@ void Nepomuk::SystemTray::slotActivateRequested()
     }
 }
 
+void Nepomuk::SystemTray::slotActiveStatusTimeout()
+{
+    setStatus(Active);
+} 
 #include "systray.moc"

@@ -20,43 +20,51 @@
 #define _NEPOMUK_STRIGI_SYSTRAY_H_
 
 #include <KStatusNotifierItem>
-#include "strigiserviceinterface.h"
+
+#include <QtCore/QTimer>
+
 #include "servicecontrol.h"
+#include "strigiserviceinterface.h"
+
 
 class KToggleAction;
 
 namespace Nepomuk {
 
-    class StrigiService;
-    class StatusWidget;
+class StrigiService;
+class StatusWidget;
 
-    class SystemTray : public KStatusNotifierItem
-    {
-        Q_OBJECT
 
-    public:
-        SystemTray( QObject* parent );
-        ~SystemTray();
+class SystemTray : public KStatusNotifierItem
+{
+    Q_OBJECT
 
-    private Q_SLOTS:
-        void slotUpdateStrigiStatus();
-        void slotConfigure();
-        void slotSuspend( bool suspended );
+public:
+    SystemTray( QObject* parent );
+    ~SystemTray();
 
-        void slotActivateRequested();
+private Q_SLOTS:
+    void slotUpdateStrigiStatus();
+    void slotConfigure();
+    void slotSuspend( bool suspended );
 
-    private:
-        KToggleAction* m_suspendResumeAction;
+    void slotActivateRequested();
+    void slotActiveStatusTimeout();
 
-        org::kde::nepomuk::Strigi* m_service;
-        org::kde::nepomuk::ServiceControl* m_serviceControl;
-        bool m_suspendedManually;
+private:
+    KToggleAction* m_suspendResumeAction;
 
-        StatusWidget* m_statusWidget;
+    org::kde::nepomuk::Strigi* m_service;
+    org::kde::nepomuk::ServiceControl* m_serviceControl;
+    bool m_suspendedManually;
 
-        // used to prevent endless status updates
-        QString m_prevStatus;
-    };
+    StatusWidget* m_statusWidget;
+
+    // used to prevent endless status updates
+    QString m_prevStatus;
+    QTimer m_updateTimer;
+
+};
 }
 
 #endif
