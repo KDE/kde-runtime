@@ -27,7 +27,7 @@
 #include <QTimerEvent>
 #include <QUrl>
 
-class QWebPage;
+class KWebPage;
 class WebCreatorPrivate;
 
 class WebCreator : public QObject, public ThumbCreator
@@ -47,7 +47,7 @@ private Q_SLOTS:
 
 private:
     //WebCreatorPrivate* d;
-    QWebPage *m_page;
+    KWebPage *m_page;
     //QImage thumbnail;
     //QSize size;
     QUrl m_url;

@@ -76,7 +76,7 @@ bool WebCreator::create(const QString &path, int width, int height, QImage &img)
         //m_url = QUrl("http://lwn.net");
         m_url = QUrl(path);
         kDebug() << " === NEW PAGE";
-        m_page = new QWebPage();
+        m_page = new KWebPage(this);
         kDebug() << " === SIZE";
         m_page->setViewportSize(QSize(width, height));
         m_page->mainFrame()->setScrollBarPolicy( Qt::Horizontal, Qt::ScrollBarAlwaysOff );

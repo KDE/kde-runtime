@@ -158,7 +158,10 @@ install(TARGETS comicbookthumbnail DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(webthumbnail_SRCS webcreator.cpp)
 kde4_add_plugin(webthumbnail ${webthumbnail_SRCS})
-target_link_libraries(webthumbnail ${KDE4_KIO_LIBS} ${QT_QTWEBKIT_LIBRARY}
+target_link_libraries(webthumbnail
+    ${KDE4_KIO_LIBS}
+    ${QT_QTWEBKIT_LIBRARY}
+    ${KDE4_KDEWEBKIT_LIBRARY}
 )
 #if (UNIX)
 #   target_link_libraries(webthumbnail ${KDE4_KPTY_LIBRARY})
