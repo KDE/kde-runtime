@@ -31,7 +31,6 @@
 namespace {
     /// recursively check if a folder is hidden
     bool isDirHidden( QDir& dir ) {
-        kDebug() << dir.path() << QFileInfo( dir.path() ).isHidden();
         if ( QFileInfo( dir.path() ).isHidden() )
             return true;
         else if ( dir.cdUp() )
