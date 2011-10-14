@@ -30,40 +30,55 @@
 #include <KStandardDirs>
 
 #include <QtCore/QFileInfo>
+#include <QtCore/QTimer>
 
-
-Nepomuk::Indexer::Indexer(const KUrl& localUrl, QObject* parent)
-    : KJob(parent),
-      m_url( localUrl ),
-      m_exitCode( -1 )
-{
-}
 
 Nepomuk::Indexer::Indexer(const QFileInfo& info, QObject* parent)
     : KJob(parent),
       m_url( info.absoluteFilePath() ),
       m_exitCode( -1 )
 {
+    // setup the timer used to kill the indexer process if it seems to get stuck
+    m_processTimer = new QTimer(this);
+    m_processTimer->setSingleShot(true);
+    connect(m_processTimer, SIGNAL(timeout()),
+            this, SLOT(slotProcessTimerTimeout()));
 }
 
 void Nepomuk::Indexer::start()
 {
+    // setup the external process which does the actual indexing
     const QString exe = KStandardDirs::findExe(QLatin1String("nepomukindexer"));
     m_process = new KProcess( this );
     m_process->setProgram( exe, QStringList() << m_url.toLocalFile() );
 
+    // start the process
     kDebug() << "Running" << exe << m_url.toLocalFile();
-
     connect( m_process, SIGNAL(finished(int)), this, SLOT(slotIndexedFile(int)) );
     m_process->start();
+
+    // start the timer which will kill the process if it does not terminate after 5 minutes
+    m_processTimer->start(5*60*1000);
 }
 
 
 void Nepomuk::Indexer::slotIndexedFile(int exitCode)
 {
+    // stop the timer since there is no need to kill the process anymore
+    m_processTimer->stop();
+
     kDebug() << "Indexing of " << m_url.toLocalFile() << "finished with exit code" << exitCode;
     m_exitCode = exitCode;
 
+    emitResult();
+}
+
+void Nepomuk::Indexer::slotProcessTimerTimeout()
+{
+    kDebug() << "Killing the indexer process which seems stuck for" << m_url;
+    m_process->disconnect(this);
+    m_process->kill();
+    m_process->waitForFinished();
     emitResult();
 }
 
