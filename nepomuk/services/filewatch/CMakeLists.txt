@@ -20,6 +20,7 @@ set(SRCS
   invalidfileresourcecleaner.cpp
   ../strigi/strigiserviceconfig.cpp
   removabledeviceindexnotification.cpp
+  activefilequeue.cpp
   )
 
 qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.Strigi.xml strigiserviceinterface)

@@ -98,6 +98,7 @@ void Nepomuk::EventMonitor::slotPowerManagementStatusChanged( bool conserveResou
             sendEvent( "indexingResumed", i18n("Resuming indexing of files for fast searching."), "battery-charging" );
     }
     else if ( conserveResources &&
+              !StrigiServiceConfig::self()->suspendOnPowerSaveDisabled() &&
               !m_indexScheduler->isSuspended() ) {
         kDebug() << "Pausing indexer due to power management";
         m_wasIndexingWhenPaused = m_indexScheduler->isIndexing();

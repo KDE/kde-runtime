@@ -38,6 +38,10 @@
 Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
     : Service( parent )
 {
+    // Create the configuration instance singleton (for thread-safety)
+    // ==============================================================
+    (void)new StrigiServiceConfig(this);
+
     // setup the actual index scheduler including strigi stuff
     // ==============================================================
     m_schedulingThread = new QThread( this );
@@ -61,6 +65,8 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
              this, SIGNAL( statusStringChanged() ) );
     connect( m_indexScheduler, SIGNAL( indexingStopped() ),
              this, SIGNAL( statusStringChanged() ) );
+    connect( m_indexScheduler, SIGNAL( indexingDone() ),
+             this, SLOT( slotIndexingDone() ) );
     connect( m_indexScheduler, SIGNAL( indexingFolder(QString) ),
              this, SIGNAL( statusStringChanged() ) );
     connect( m_indexScheduler, SIGNAL( indexingFile(QString) ),
@@ -71,6 +77,12 @@ Nepomuk::StrigiService::StrigiService( QObject* parent, const QList<QVariant>& )
     // setup the indexer to index at snail speed for the first two minutes
     // this is done for KDE startup - to not slow that down too much
     m_indexScheduler->setIndexingSpeed( IndexScheduler::SnailPace );
+
+    // start initial indexing honoring the hidden config option to disable it
+    if(StrigiServiceConfig::self()->isInitialRun() ||
+       !StrigiServiceConfig::self()->initialUpdateDisabled()) {
+        m_indexScheduler->updateAll();
+    }
 
     // delayed init for the rest which uses IO and CPU
     // FIXME: do not use a random delay value but wait for KDE to be started completely (using the session manager)
@@ -123,6 +135,12 @@ void Nepomuk::StrigiService::slotIdleTimeoutReached()
 void Nepomuk::StrigiService::slotIdleTimerResume()
 {
     m_indexScheduler->setIndexingSpeed( IndexScheduler::ReducedSpeed );
+}
+
+
+void Nepomuk::StrigiService::slotIndexingDone()
+{
+    StrigiServiceConfig::self()->setInitialRun(true);
 }
 
 

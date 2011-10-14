@@ -122,6 +122,14 @@ void RemovableMediaModelTest::testConvertFileUrlsInStatement_data()
     const Statement convertableFileObjectWithNieUrl4_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/nfs"));
     const Statement convertableFileObjectWithNieUrl4_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("nfs://thehost/solid-path"));
     QTest::newRow("convertableFileUrlInObjectWithNieUrl4") << convertableFileObjectWithNieUrl4_original << convertableFileObjectWithNieUrl4_converted;
+
+    const Statement convertableFileObjectWithNieUrl5_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/XO-Y4/file with spaces.txt"));
+    const Statement convertableFileObjectWithNieUrl5_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("filex://xyz-123/file with spaces.txt"));
+    QTest::newRow("convertableFileUrlInObjectWithNieUrl5") << convertableFileObjectWithNieUrl5_original << convertableFileObjectWithNieUrl5_converted;
+
+    const Statement convertableFileObjectWithNieUrl6_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/whatever with spaces/file with spaces.txt"));
+    const Statement convertableFileObjectWithNieUrl6_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("filex://whatever/file with spaces.txt"));
+    QTest::newRow("convertableFileUrlInObjectWithNieUrl6") << convertableFileObjectWithNieUrl6_original << convertableFileObjectWithNieUrl6_converted;
 }
 
 
@@ -180,6 +188,12 @@ void RemovableMediaModelTest::testConvertFilxUrl_data()
     const Node convertFilex2(QUrl("filex://xyz-123"));
     QTest::newRow("convertFilex2") << convertFilex2 << Node(QUrl("file:///media/XO-Y4"));
 
+    const Node convertFilex3(QUrl("filex://xyz-123/hello world"));
+    QTest::newRow("convertFilex3") << convertFilex3 << Node(QUrl("file:///media/XO-Y4/hello world"));
+
+    const Node convertFilex4(QUrl("filex://whatever/hello world"));
+    QTest::newRow("convertFilex4") << convertFilex4 << Node(QUrl("file:///media/whatever with spaces/hello world"));
+
     const Node convertnfs(QUrl("nfs://thehost/solid-path"));
     QTest::newRow("convertnfs") << convertnfs << Node(QUrl("file:///media/nfs"));
 }
@@ -224,6 +238,14 @@ void RemovableMediaModelTest::testConvertFilxUrls_data()
     const Statement convertableFilexObjectWithNieUrl4_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("nfs://thehost/solid-path"));
     const Statement convertableFilexObjectWithNieUrl4_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/nfs"));
     QTest::newRow("convertableFileUrlInObjectWithNieUrl4") << convertableFilexObjectWithNieUrl4_original << convertableFilexObjectWithNieUrl4_converted;
+
+    const Statement convertableFilexObjectWithNieUrl5_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("filex://xyz-123/file with spaces.txt"));
+    const Statement convertableFilexObjectWithNieUrl5_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/XO-Y4/file with spaces.txt"));
+    QTest::newRow("convertableFileUrlInObjectWithNieUrl5") << convertableFilexObjectWithNieUrl5_original << convertableFilexObjectWithNieUrl5_converted;
+
+    const Statement convertableFileObjectWithNieUrl6_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("filex://whatever/file with spaces.txt"));
+    const Statement convertableFileObjectWithNieUrl6_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/whatever with spaces/file with spaces.txt"));
+    QTest::newRow("convertableFileUrlInObjectWithNieUrl6") << convertableFileObjectWithNieUrl6_original << convertableFileObjectWithNieUrl6_converted;
 }
 
 void RemovableMediaModelTest::testConvertFilxUrls()

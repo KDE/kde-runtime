@@ -31,6 +31,12 @@ namespace Nepomuk {
      * user configurable exclude filters in the strigi service.
      */
     NEPOMUKCOMMON_EXPORT QStringList defaultExcludeFilterList();
+
+    /**
+     * \return The version of the default exclude filter list.
+     * This is increased whenever the list changes.
+     */
+    NEPOMUKCOMMON_EXPORT int defaultExcludeFilterListVersion();
 }
 
 #endif

@@ -62,6 +62,9 @@ Nepomuk::Repository::Repository( const QString& name )
       m_model( 0 ),
       m_inferencer( 0 ),
       m_removableStorageModel( 0 ),
+      m_dataManagementModel( 0 ),
+      m_dataManagementAdaptor( 0 ),
+      m_nrlModel( 0 ),
       m_backend( 0 ),
       m_modelCopyJob( 0 ),
       m_oldStorageBackend( 0 )

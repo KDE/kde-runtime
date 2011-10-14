@@ -39,7 +39,16 @@ namespace Nepomuk {
         Q_OBJECT
 
     public:
+        /**
+         * Create a new file indexr config. The first instance to be
+         * created will be accessible via self().
+         */
+        StrigiServiceConfig(QObject* parent = 0);
         ~StrigiServiceConfig();
+
+        /**
+         * Get the first created instance of StrigiServiceConfig
+         */
         static StrigiServiceConfig* self();
 
         /**
@@ -75,6 +84,25 @@ namespace Nepomuk {
          * tampering with the config.
          */
         bool isInitialRun() const;
+
+        /**
+         * A "hidden" config option which allows to disable the initial
+         * update of all indexed folders.
+         *
+         * This should be used in combination with isInitialRun() to make
+         * sure all folders are at least indexed once.
+         */
+        bool initialUpdateDisabled() const;
+
+        /**
+         * A "hidden" config option which allows to disable the feature
+         * where the file indexing is suspended when in powersave mode.
+         * This is especially useful for mobile devices which always run
+         * on battery.
+         *
+         * At some point this should be a finer grained configuration.
+         */
+        bool suspendOnPowerSaveDisabled() const;
 
         /**
          * Check if \p path should be indexed taking into account
@@ -114,12 +142,17 @@ namespace Nepomuk {
     Q_SIGNALS:
         void configChanged();
 
+    public Q_SLOTS:
+        /**
+         * Should be called once the initial indexing is done, ie. all folders
+         * have been indexed.
+         */
+        void setInitialRun(bool isInitialRun);
+
     private Q_SLOTS:
         void slotConfigDirty();
 
     private:
-        StrigiServiceConfig();
-
         /**
          * Check if \p path is in the list of folders to be indexed taking
          * include and exclude folders into account.
@@ -130,7 +163,7 @@ namespace Nepomuk {
         void buildFolderCache();
         void buildExcludeFilterRegExpCache();
 
-        KConfig m_config;
+        mutable KConfig m_config;
 
         /// Caching cleaned up list (no duplicates, no useless entries, etc.)
         QList<QPair<QString, bool> > m_folderCache;
@@ -140,6 +173,8 @@ namespace Nepomuk {
         RegExpCache m_excludeFilterRegExpCache;
 
         mutable QMutex m_folderCacheMutex;
+
+        static StrigiServiceConfig* s_self;
     };
 }
 

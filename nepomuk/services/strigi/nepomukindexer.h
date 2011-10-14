@@ -27,6 +27,7 @@
 
 class KProcess;
 class QFileInfo;
+class QTimer;
 
 namespace Nepomuk {
 
@@ -53,7 +54,6 @@ namespace Nepomuk {
 
     public:
         Indexer( const QFileInfo& info, QObject* parent = 0 );
-        Indexer( const KUrl& localUrl, QObject* parent = 0 );
 
         KUrl url() const { return m_url; }
 
@@ -74,11 +74,13 @@ namespace Nepomuk {
 
     private slots:
         void slotIndexedFile(int exitCode);
+        void slotProcessTimerTimeout();
 
     private:
         KUrl m_url;
         KProcess* m_process;
         int m_exitCode;
+        QTimer* m_processTimer;
     };
 }
 
