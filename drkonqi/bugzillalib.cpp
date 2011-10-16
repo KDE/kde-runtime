@@ -780,3 +780,75 @@ QByteArray BugzillaUploadData::boundary() const
 }
 
 //END BugzillaUploadData
+
+void BugReport::setBugStatus(const QString &stat)
+{
+    setData("bug_status", stat);
+
+    m_status = parseStatus(stat);
+}
+
+void BugReport::setResolution(const QString &res)
+{
+    setData("resolution", res);
+
+    m_resolution = parseResolution(res);
+}
+
+BugReport::Status BugReport::parseStatus(const QString &stat)
+{
+    if (stat == QLatin1String("UNCONFIRMED")) {
+        return Unconfirmed;
+    } else if (stat == QLatin1String("NEW")) {
+        return New;
+    } else if (stat == QLatin1String("ASSIGNED")) {
+        return Assigned;
+    } else if (stat == QLatin1String("REOPENED")) {
+        return Reopened;
+    } else if (stat == QLatin1String("RESOLVED")) {
+        return Resolved;
+    } else if (stat == QLatin1String("NEEDSINFO")) {
+        return NeedsInfo;
+    } else if (stat == QLatin1String("VERIFIED")) {
+        return Verified;
+    } else if (stat == QLatin1String("CLOSED")) {
+        return Closed;
+    } else {
+        return UnknownStatus;
+    }
+}
+
+BugReport::Resolution BugReport::parseResolution(const QString &res)
+{
+    if (res.isEmpty()) {
+        return NotResolved;
+    } else if (res == QLatin1String("FIXED")) {
+        return Fixed;
+    } else if (res == QLatin1String("INVALID")) {
+        return Invalid;
+    } else if (res == QLatin1String("WONTFIX")) {
+        return WontFix;
+    } else if (res == QLatin1String("LATER")) {
+        return Later;
+    } else if (res == QLatin1String("REMIND")) {
+        return Remind;
+    } else if (res == QLatin1String("DUPLICATE")) {
+        return Duplicate;
+    } else if (res == QLatin1String("WORKSFORME")) {
+        return WorksForMe;
+    } else if (res == QLatin1String("MOVED")) {
+        return Moved;
+    } else if (res == QLatin1String("UPSTREAM")) {
+        return Upstream;
+    } else if (res == QLatin1String("DOWNSTREAM")) {
+        return Downstream;
+    } else if (res == QLatin1String("WAITINGFORINFO")) {
+        return WaitingForInfo;
+    } else if (res == QLatin1String("BACKTRACE")) {
+        return Backtrace;
+    } else if (res == QLatin1String("UNMAINTAINED")) {
+        return Unmaintained;
+    } else {
+        return UnknownResolution;
+    }
+}
