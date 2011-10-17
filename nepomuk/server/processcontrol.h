@@ -62,13 +62,16 @@ public:
     /**
      * Starts the @p application with the given list of @p arguments.
      */
-    bool start( const QString &application, const QStringList &arguments = QStringList(),
+    void start( const QString &application, const QStringList &arguments = QStringList(),
                 CrashPolicy policy = RestartOnCrash, int maxCrashes = 5 );
 
     /**
-     * Stops the currently running application.
+     * Sends the term signal to the process.
+     * \param waitAndKill If \p true does wait for the process to finish
+     * and if it does not kills the process after a timeout. If \p false
+     * a timer is used instead.
      */
-    void waitForFinishedAndTerminate();
+    void terminate( bool waitAndKill = false );
 
     /**
      * Sets the crash policy.
@@ -95,7 +98,7 @@ private Q_SLOTS:
     void slotStdoutMessages();
 
 private:
-    bool start();
+    void start();
 
     QString commandLine() const;
 

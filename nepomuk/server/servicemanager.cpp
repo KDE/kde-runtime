@@ -326,8 +326,6 @@ void Nepomuk::ServiceManager::Private::_k_serviceStopped( ServiceController* sc 
             pendingServices.insert( depsc );
         }
     }
-
-
 }
 
 
@@ -342,7 +340,7 @@ Nepomuk::ServiceManager::ServiceManager( QObject* parent )
 
 Nepomuk::ServiceManager::~ServiceManager()
 {
-    stopAllServices();
+    qDeleteAll(d->services);
     delete d;
 }
 
@@ -377,7 +375,7 @@ bool Nepomuk::ServiceManager::startService( const QString& name )
 {
     if( ServiceController* sc = d->findService( name ) ) {
         d->startService( sc );
-        return sc->waitForInitialized();
+        return true;
     }
     else {
         // could not find service
@@ -390,7 +388,6 @@ bool Nepomuk::ServiceManager::stopService( const QString& name )
 {
     if( ServiceController* sc = d->findService( name ) ) {
         d->stopService( sc );
-        sc->waitForStoppedAndTerminate();
         return true;
     }
     return false;

@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2006 by Tobias Koenig <tokoe@kde.org>                   *
- *   Copyright (C) 2008-2010 by Sebastian Trueg <trueg@kde.org>            *
+ *   Copyright (C) 2008-2011 by Sebastian Trueg <trueg@kde.org>            *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -22,6 +22,7 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QTimer>
+#include <QtCore/QCoreApplication>
 
 
 ProcessControl::ProcessControl( QObject *parent )
@@ -39,10 +40,13 @@ ProcessControl::ProcessControl( QObject *parent )
 
 ProcessControl::~ProcessControl()
 {
-    waitForFinishedAndTerminate();
+    mProcess.disconnect(this);
+    if(mProcess.state() != QProcess::NotRunning) {
+        terminate(true);
+    }
 }
 
-bool ProcessControl::start( const QString &application, const QStringList &arguments, CrashPolicy policy, int maxCrash )
+void ProcessControl::start( const QString &application, const QStringList &arguments, CrashPolicy policy, int maxCrash )
 {
     mFailedToStart = false;
 
@@ -51,21 +55,12 @@ bool ProcessControl::start( const QString &application, const QStringList &argum
     mPolicy = policy;
     mCrashCount = maxCrash;
 
-    return start();
+    start();
 }
 
 void ProcessControl::setCrashPolicy( CrashPolicy policy )
 {
     mPolicy = policy;
-}
-
-void ProcessControl::waitForFinishedAndTerminate()
-{
-    if ( mProcess.state() != QProcess::NotRunning ) {
-        if ( !mProcess.waitForFinished( 60*1000 ) ) {
-            mProcess.terminate();
-        }
-    }
 }
 
 void ProcessControl::slotError( QProcess::ProcessError error )
@@ -86,29 +81,34 @@ void ProcessControl::slotError( QProcess::ProcessError error )
 
 void ProcessControl::slotFinished( int exitCode, QProcess::ExitStatus exitStatus )
 {
+    // the process went down -> inform clients
+    emit finished(false);
+
     // Since Nepomuk services are KApplications and, thus, use DrKonqi QProcess does not
     // see a crash as an actual CrashExit but as a normal exit with an exit code != 0
     if ( exitStatus == QProcess::CrashExit ||
-            exitCode != 0 ) {
+         exitCode != 0 ) {
         if ( mPolicy == RestartOnCrash ) {
-             // don't try to start an unstartable application
+            // don't try to start an unstartable application
             if ( !mFailedToStart && --mCrashCount >= 0 ) {
                 qDebug( "Application '%s' crashed! %d restarts left.", qPrintable( commandLine() ), mCrashCount );
                 start();
-            } else {
+            }
+            else {
                 if ( mFailedToStart ) {
                     qDebug( "Application '%s' failed to start!", qPrintable( commandLine() ) );
-                } else {
+                }
+                else {
                     qDebug( "Application '%s' crashed to often. Giving up!", qPrintable( commandLine() ) );
                 }
-                emit finished(false);
             }
-        } else {
+        }
+        else {
             qDebug( "Application '%s' crashed. No restart!", qPrintable( commandLine() ) );
         }
-    } else {
+    }
+    else {
         qDebug( "Application '%s' exited normally...", qPrintable( commandLine() ) );
-        emit finished(true);
     }
 }
 
@@ -119,15 +119,9 @@ void ProcessControl::slotErrorMessages()
     qDebug( "[%s] %s", qPrintable( mApplication ), qPrintable( message.trimmed() ) );
 }
 
-bool ProcessControl::start()
+void ProcessControl::start()
 {
     mProcess.start( mApplication, mArguments );
-    if ( !mProcess.waitForStarted( ) ) {
-        qDebug( "ProcessControl: Unable to start application '%s' (%s)",
-                qPrintable( mApplication ), qPrintable( mProcess.errorString() ) );
-        return false;
-    }
-    return true;
 }
 
 void ProcessControl::slotStdoutMessages()
@@ -138,12 +132,27 @@ void ProcessControl::slotStdoutMessages()
 
 bool ProcessControl::isRunning() const
 {
-    return mProcess.state() == QProcess::Running;
+    return mProcess.state() != QProcess::NotRunning;
 }
 
 QString ProcessControl::commandLine() const
 {
     return mApplication + QLatin1String(" ") + mArguments.join(QLatin1String(" "));
+}
+
+void ProcessControl::terminate( bool waitAndKill )
+{
+    mProcess.terminate();
+    // kill if not stopped after timeout
+    if(waitAndKill ||
+       QCoreApplication::instance()->closingDown()) {
+        if(!mProcess.waitForFinished(20000)) {
+            mProcess.kill();
+        }
+    }
+    else {
+        QTimer::singleShot(20000, &mProcess, SLOT(kill()));
+    }
 }
 
 #include "processcontrol.moc"

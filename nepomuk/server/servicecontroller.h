@@ -51,27 +51,14 @@ namespace Nepomuk {
         void setAutostart( bool enable );
 
         /**
-         * Make sure the service is running. This will attach to an already running
-         * instance or simple return \p true in case the service has been started
-         * already.
+         * Make sure the service is running. This is done by either starting the service
+         * asynchronical or by attaching to an already running.
          */
-        bool start();
+        void start();
         void stop();
 
         bool isRunning() const;
         bool isInitialized() const;
-
-        /**
-         * Wait for the service to become initialized.
-         * Will return immeadetely if the service has
-         * not been started or is already initialized.
-         *
-         * A service is initialized once it is registered
-         * with D-Bus.
-         */
-        bool waitForInitialized( int timeout = 30000 );
-
-        void waitForStoppedAndTerminate();
 
     Q_SIGNALS:
         /**
@@ -91,7 +78,6 @@ namespace Nepomuk {
         void slotServiceRegistered( const QString& serviceName );
         void slotServiceUnregistered( const QString& serviceName );
         void slotServiceInitialized( bool success );
-        void slotStopTimeout();
 
         void createServiceControlInterface();
 
