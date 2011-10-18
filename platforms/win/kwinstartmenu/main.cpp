@@ -24,8 +24,6 @@
 #include <QFileInfo>
 
 #include <KAboutData>
-#include <KConfig>
-#include <KConfigGroup>
 #include <kapplication.h>
 #include <kcmdlineargs.h>
 #include <kconfig.h>
@@ -33,7 +31,6 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <kstandarddirs.h>
 
 //void listAllGroups(const QString &groupName=QString());
 
@@ -57,11 +54,19 @@ int main(int argc, char **argv)
     options.add("disable-categories", ki18n("don't use categories for start menu entries"));
     options.add("categories", ki18n("query current value of categories in start menu"));
     
-    options.add("set-root-custom-string <argument>", ki18n("set custom string for root start menu entry"));
-    // @TODO unset-root-custom-string is required because args->isSet("set-root-custom-string") do not 
-    // detect --set-root-custom-string ""  as present set-root-custom-string option and 
-    options.add("unset-root-custom-string", ki18n("remove custom string from root start menu entry"));
-    options.add("root-custom-string", ki18n("query current value of root start menu entry custom string"));
+    options.add("set-custom-string <argument>", ki18n("set custom string for root start menu entry"));
+    // @TODO unset-custom-string is required because args->isSet("set-root-custom-string") do not
+    // detect --set-custom-string ""  as present set-root-custom-string option and
+    options.add("unset-custom-string", ki18n("remove custom string from root start menu entry"));
+    options.add("custom-string", ki18n("query current value of root start menu entry custom string"));
+
+    options.add("set-name-string <argument>", ki18n("set custom name string for root start menu entry"));
+    options.add("unset-name-string", ki18n("remove custom name string from root start menu entry"));
+    options.add("name-string", ki18n("query current value of start menu entry custom name string"));
+
+    options.add("set-version-string <argument>", ki18n("set custom version string for root start menu entry"));
+    options.add("unset-version-string", ki18n("remove custom version string from root start menu entry"));
+    options.add("version-string", ki18n("query current value of root start menu entry version string"));
     KCmdLineArgs::addCmdLineOptions( options ); // Add my own options.
 
     KComponentData a(&about);
@@ -70,41 +75,72 @@ int main(int argc, char **argv)
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     KApplication app(false);
-    
-    // set global options from config file
-    // @todo merge with related stuff in kwinstartmenu.cpp 
-    KConfig config("kwinstartmenurc");
-    KConfigGroup group( &config, "General" );
-    globalOptions.useCategories = group.readEntry("useCategories", true);
-    globalOptions.rootCustomString = group.readEntry("rootCustomString", "");
-    
+
     // override global settings from command line 
     if (args->isSet("categories"))
-        fprintf(stdout,"%s",globalOptions.useCategories ? "on" : "off");
+        fprintf(stdout,"%s",settings.useCategories() ? "on" : "off");
     else if (args->isSet("enable-categories"))
     {
-        globalOptions.useCategories = true;
-        group.writeEntry("useCategories",globalOptions.useCategories);
+        settings.setUseCategories(true);
     }
     else if (args->isSet("disable-categories"))
     {
-        globalOptions.useCategories = false;
-        group.writeEntry("useCategories",globalOptions.useCategories);
+        settings.setUseCategories(false);
     }
 
-    if (args->isSet("root-custom-string"))
-        fprintf(stdout,"%s",qPrintable(globalOptions.rootCustomString));
-    else if (args->isSet("unset-root-custom-string"))
+    if (args->isSet("custom-string"))
+        fprintf(stdout,"%s",qPrintable(settings.customString()));
+    else if (args->isSet("unset-custom-string"))
     {
-        globalOptions.rootCustomString = "";
-        group.writeEntry("rootCustomString",globalOptions.rootCustomString);
+        settings.setCustomString("");
     }
-    else if (args->isSet("set-root-custom-string"))
+    else if (args->isSet("set-custom-string"))
     {
-        QString rootCustomString = args->getOption("set-root-custom-string");
-        globalOptions.rootCustomString = rootCustomString;
-        group.writeEntry("rootCustomString",rootCustomString);
+        settings.setCustomString(args->getOption("set-custom-string"));
     }
+
+    if (args->isSet("name-string"))
+        fprintf(stdout,"%s",qPrintable(settings.nameString()));
+    else if (args->isSet("unset-name-string"))
+    {
+        settings.setNameString("");
+    }
+    else if (args->isSet("set-name-string"))
+    {
+        settings.setNameString(args->getOption("set-name-string"));
+    }
+
+    if (args->isSet("version-string"))
+        fprintf(stdout,"%s",qPrintable(settings.versionString()));
+    else if (args->isSet("unset-version-string"))
+    {
+        settings.setVersionString("");
+    }
+    else if (args->isSet("set-version-string"))
+    {
+        settings.setVersionString(args->getOption("set-version-string"));
+    }
+
+    // determine initial values on fresh install or remove
+    if (settings.nameString().isEmpty() && settings.versionString().isEmpty() &&  settings.customString().isEmpty())
+    {
+        if (args->isSet("install"))
+        {
+            QString version = KDE::versionString();
+            QStringList versions = version.split(' ');
+            settings.setVersionString(versions[0]);
+            settings.setNameString("KDE");
+            kWarning() << "no name, version or custom string set, using default values for install" << settings.nameString() << settings.versionString();
+        }
+        else if (args->isSet("remove") || args->isSet("update"))
+        {
+            kError() << "cannot remove/update start menu entries: no name, version or custom string set";
+            return 1;
+        }
+    /**
+      @TODO how to solve the case if any --set-... option is used and the start menu entries are not removed before
+      should we remove them before, to have a clean state or better something else ?
+    */
     
     if (args->isSet("query-path"))
         fprintf(stdout,"%s",qPrintable(QDir::toNativeSeparators(getKDEStartMenuPath())));
@@ -119,5 +155,5 @@ int main(int argc, char **argv)
 
     return 0;
 }
-   
-// vim: ts=4 sw=4 et
+
+// vim: ts=4 sw4 et
