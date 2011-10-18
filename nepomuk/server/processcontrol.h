@@ -80,6 +80,8 @@ public:
 
     bool isRunning() const;
 
+    bool waitForStarted();
+
 Q_SIGNALS:
     /**
      * This signal is emitted whenever the observed application

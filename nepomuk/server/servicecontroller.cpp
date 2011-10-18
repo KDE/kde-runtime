@@ -226,6 +226,9 @@ void Nepomuk::ServiceController::stop()
             d->serviceControlInterface->shutdown();
         }
         else if( d->processControl ) {
+            // make sure we do not stop a process which has not been started properly yet.
+            // that would result in crashes
+            d->processControl->waitForStarted();
             d->processControl->setCrashPolicy( ProcessControl::StopOnCrash );
             d->processControl->terminate();
         }

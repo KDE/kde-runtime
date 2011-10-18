@@ -156,4 +156,9 @@ void ProcessControl::terminate( bool waitAndKill )
     }
 }
 
+bool ProcessControl::waitForStarted()
+{
+    return mProcess.waitForStarted();
+}
+
 #include "processcontrol.moc"
