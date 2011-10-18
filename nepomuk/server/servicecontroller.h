@@ -22,6 +22,8 @@
 #include <QtCore/QObject>
 #include <KService>
 
+class QDBusPendingCallWatcher;
+
 namespace Nepomuk {
     class ServiceController : public QObject
     {
@@ -60,6 +62,15 @@ namespace Nepomuk {
         bool isRunning() const;
         bool isInitialized() const;
 
+        enum State {
+            StateStopped,
+            StateRunning,
+            StateStarting,
+            StateStopping
+        };
+
+        State state() const;
+
     Q_SIGNALS:
         /**
          * Emitted once the service has been initialized
@@ -80,6 +91,7 @@ namespace Nepomuk {
         void slotServiceInitialized( bool success );
 
         void createServiceControlInterface();
+        void slotIsInitializedDBusCallFinished(QDBusPendingCallWatcher*);
 
     private:
         class Private;

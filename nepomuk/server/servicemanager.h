@@ -52,6 +52,12 @@ namespace Nepomuk {
         QStringList runningServices() const;
 
         /**
+         * The services that are scheduled to be started but are
+         * waiting for dependancies to get initialized.
+         */
+        QStringList pendingServices() const;
+
+        /**
          * All services that are available in the system. Started
          * and not started. This list does only include valid
          * services, i.e. those that have a proper dependency tree.
@@ -82,6 +88,11 @@ namespace Nepomuk {
          * is ready for use.
          */
         void serviceInitialized( const QString& name );
+
+        /**
+         * Emitted once a service has been stopped.
+         */
+        void serviceStopped( const QString& name );
 
     public Q_SLOTS:
         /**

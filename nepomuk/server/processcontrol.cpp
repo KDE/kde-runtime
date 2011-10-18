@@ -24,6 +24,7 @@
 #include <QtCore/QTimer>
 #include <QtCore/QCoreApplication>
 
+#include <KDebug>
 
 ProcessControl::ProcessControl( QObject *parent )
     : QObject( parent ), mFailedToStart( false ), mCrashCount( 0 )
@@ -41,9 +42,7 @@ ProcessControl::ProcessControl( QObject *parent )
 ProcessControl::~ProcessControl()
 {
     mProcess.disconnect(this);
-    if(mProcess.state() != QProcess::NotRunning) {
-        terminate(true);
-    }
+    terminate(true);
 }
 
 void ProcessControl::start( const QString &application, const QStringList &arguments, CrashPolicy policy, int maxCrash )
@@ -142,16 +141,18 @@ QString ProcessControl::commandLine() const
 
 void ProcessControl::terminate( bool waitAndKill )
 {
-    mProcess.terminate();
-    // kill if not stopped after timeout
-    if(waitAndKill ||
-       QCoreApplication::instance()->closingDown()) {
-        if(!mProcess.waitForFinished(20000)) {
-            mProcess.kill();
+    if(isRunning()) {
+        mProcess.terminate();
+        // kill if not stopped after timeout
+        if(waitAndKill ||
+           QCoreApplication::instance()->closingDown()) {
+            if(!mProcess.waitForFinished(20000)) {
+                mProcess.kill();
+            }
         }
-    }
-    else {
-        QTimer::singleShot(20000, &mProcess, SLOT(kill()));
+        else {
+            QTimer::singleShot(20000, &mProcess, SLOT(kill()));
+        }
     }
 }
 

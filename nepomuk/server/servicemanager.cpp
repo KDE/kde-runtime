@@ -303,6 +303,8 @@ void Nepomuk::ServiceManager::Private::_k_serviceStopped( ServiceController* sc 
 {
     kDebug() << "Service stopped:" << sc->name();
 
+    emit q->serviceStopped( sc->name() );
+
     // 1. The standard case: we stopped a service and waited for the rev deps to go down
     //
     // try to stop all stopped services that are still waiting for reverse deps to shut down
@@ -407,6 +409,15 @@ QStringList Nepomuk::ServiceManager::runningServices() const
     return sl;
 }
 
+
+QStringList Nepomuk::ServiceManager::pendingServices() const
+{
+    QStringList sl;
+    foreach(ServiceController* sc, d->pendingServices) {
+        sl.append(sc->name());
+    }
+    return sl;
+}
 
 QStringList Nepomuk::ServiceManager::availableServices() const
 {

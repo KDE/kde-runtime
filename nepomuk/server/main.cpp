@@ -29,7 +29,40 @@
 #include <kconfiggroup.h>
 #include <kdebug.h>
 
+#include <QtDBus/QDBusConnection>
+
 #include <signal.h>
+
+namespace Nepomuk {
+    class ServerApplication : public KUniqueApplication
+    {
+    public:
+        ServerApplication()
+            : KUniqueApplication(false /* no gui */),
+              m_server( 0 ) {
+        }
+
+        int newInstance() {
+            if ( !m_server ) {
+                m_server = new Server( this );
+            }
+            return 0;
+        }
+
+        void shutdown() {
+            if( m_server ) {
+                m_server->quit();
+            }
+            else {
+                KUniqueApplication::quit();
+            }
+        }
+
+    private:
+        Server* m_server;
+    };
+}
+
 
 namespace {
 #ifndef Q_OS_WIN
@@ -41,7 +74,7 @@ namespace {
         case SIGTERM:
         case SIGINT:
             if ( qApp ) {
-                qApp->quit();
+                static_cast<Nepomuk::ServerApplication*>(qApp)->shutdown();
             }
         }
     }
@@ -61,28 +94,6 @@ namespace {
 }
 
 
-namespace Nepomuk {
-    class ServerApplication : public KUniqueApplication
-    {
-    public:
-        ServerApplication()
-            : KUniqueApplication(false /* no gui */),
-              m_server( 0 ) {
-        }
-
-        int newInstance() {
-            if ( !m_server ) {
-                m_server = new Server( this );
-            }
-            return 0;
-        }
-
-    private:
-        Server* m_server;
-    };
-}
-
-
 extern "C" NEPOMUK_SERVER_EXPORT int kdemain( int argc, char** argv )
 {
     KAboutData aboutData( "NepomukServer", "nepomukserver",
@@ -90,7 +101,7 @@ extern "C" NEPOMUK_SERVER_EXPORT int kdemain( int argc, char** argv )
                           "0.2",
                           ki18n("Nepomuk Server - Manages Nepomuk storage and services"),
                           KAboutData::License_GPL,
-                          ki18n("(c) 2008, Sebastian Trüg"),
+                          ki18n("(c) 2008-2011, Sebastian Trüg"),
                           KLocalizedString(),
                           "http://nepomuk.kde.org" );
     aboutData.addAuthor(ki18n("Sebastian Trüg"),ki18n("Maintainer"), "trueg@kde.org");
@@ -111,5 +122,6 @@ extern "C" NEPOMUK_SERVER_EXPORT int kdemain( int argc, char** argv )
     Nepomuk::ServerApplication app;
     app.disableSessionManagement();
     app.setQuitOnLastWindowClosed( false );
+    QDBusConnection::sessionBus().unregisterObject(QLatin1String("/MainApplication"));
     return app.exec();
 }
