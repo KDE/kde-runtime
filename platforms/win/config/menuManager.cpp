@@ -22,6 +22,7 @@
 #include <kconfig.h>
 #include <kconfiggroup.h>
 #include <kdebug.h>
+#include <KStandardDirs>
 
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusInterface>
@@ -29,7 +30,7 @@
 class MenuManagerPrivate 
 {
     public:
-        MenuManagerPrivate() : config(new KConfig("kwinstartmenurc"))
+        MenuManagerPrivate() : config(new KConfig(KStandardDirs::installPath("config") + "kwinstartmenurc"))
         {
             kDebug() << "kwinstartmenu's configuration is writable:" 
                      << config->isConfigWritable(true);
