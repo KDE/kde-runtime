@@ -25,20 +25,92 @@
 #include <QString>
 class QDir;
 
+#include <KApplication>
 #include <KUrl>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KStandardDirs>
 
 /** 
  contains global options 
 */
-class GlobalOptions {
+class KWinStartMenuSettings {
 public: 
-    GlobalOptions() : useCategories(true) {}
+    KWinStartMenuSettings()
+    {
+        // we use global config, not user specific
+        QString installRoot = KStandardDirs::installPath("config");
+        m_config = new KConfig(installRoot + "kwinstartmenurc", KConfig::SimpleConfig);
+        m_group = new KConfigGroup(m_config, "General");
+    }
 
-    bool useCategories;
-    QString rootCustomString;
+    ~KWinStartMenuSettings()
+    {
+        delete m_config;
+        delete m_group;
+    }
+
+    bool useCategories()
+    {
+        return m_group->readEntry("UseCategories", true);
+    }
+
+    void setUseCategories(bool mode)
+    {
+        m_group->writeEntry("UseCategories", mode);
+        m_config->sync();
+    }
+
+    QString customString() const
+    {
+        return m_group->readEntry("CustomString", "");
+    }
+
+    void setCustomString(const QString &s)
+    {
+        m_group->writeEntry("CustomString", s);
+        m_config->sync();
+    }
+
+    QString nameString() const
+    {
+        return m_group->readEntry("NameString","KDE");
+    }
+
+    void setNameString(const QString &s)
+    {
+        m_group->writeEntry("NameString", s);
+        m_config->sync();
+    }
+
+    QString versionString() const
+    {
+        return m_group->readEntry("VersionString", "");
+    }
+
+    void setVersionString(const QString &s)
+    {
+        m_group->writeEntry("VersionString", s);
+        m_config->sync();
+    }
+
+    bool enabled()
+    {
+        return m_group->readEntry("Enabled", true);
+    }
+
+    void setEnabled(bool mode)
+    {
+        m_group->writeEntry("Enabled", mode);
+        m_config->sync();
+    }
+
+protected:
+    KConfig *m_config;
+    KConfigGroup *m_group;
 };
 
-extern GlobalOptions globalOptions;
+extern KWinStartMenuSettings settings;
 
 bool removeDirectory(const QString& aDir);
 QString getStartMenuPath(bool bAllUsers=false);
