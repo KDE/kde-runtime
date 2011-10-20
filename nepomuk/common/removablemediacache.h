@@ -74,6 +74,14 @@ public:
     const Entry* findEntryByFilePath( const QString& path ) const;
     const Entry* findEntryByUrl(const KUrl& url) const;
 
+    /**
+     * Searches for entries which are mounted at a path which starts with
+     * the given one. Example: a \p path \p /media will result in all
+     * entries which are mounted under \p /media like \p /media/disk1 or
+     * \p /media/cdrom.
+     */
+    QList<const Entry*> findEntriesByMountPath(const QString& path) const;
+
     QList<const Entry*> allMedia() const;
 
     /**

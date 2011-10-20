@@ -193,14 +193,15 @@ Soprano::QueryResultIterator Nepomuk::RemovableMediaModel::executeQuery(const QS
     return new QueryResultIteratorBackend(this, FilterModel::executeQuery(convertFileUrls(query), language, userQueryLanguage));
 }
 
-Soprano::Node Nepomuk::RemovableMediaModel::convertFileUrl(const Soprano::Node &node) const
+Soprano::Node Nepomuk::RemovableMediaModel::convertFileUrl(const Soprano::Node &node, bool forRegEx) const
 {
     if(node.isResource()) {
         const QUrl url = node.uri();
         if(url.scheme() == QLatin1String("file")) {
             const QString localFilePath = url.toLocalFile();
             if(const RemovableMediaCache::Entry* entry = m_removableMediaCache->findEntryByFilePath(localFilePath)) {
-                if(entry->isMounted()) {
+                if(entry->isMounted() &&
+                   (!forRegEx || entry->mountPath().length() < localFilePath.length())) {
                     return entry->constructRelativeUrl(localFilePath);
                 }
             }
@@ -270,11 +271,28 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
 
     // is 0, 1, or 3 - nothing else
     int quoteCnt = 0;
+
+    // if quoteCnt > 0, ie. we are in a literal this is the first char of it
     int literalStartPos = 0;
+
+    // true if we are in a regex filter
     bool inRegEx = false;
+
+    // if inRegEx is true this is the position where the regex starts in the new query
+    int newQueryRegExStart = 0;
+
+    // if inRegEx is true this is the variable used in the regex (including any functions)
+    QString variable;
+
+    // true if we are in a resource URI like: <....>
     bool inRes = false;
+
+    // the char used for quote ' or "
     QChar quote;
+
+    // the new query we construct
     QString newQuery;
+
     for(int i = 0; i < query.length(); ++i) {
         const QChar c = query[i];
 
@@ -359,7 +377,21 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
                     query[i+2].toLower() == 'g' &&
                     query[i+3].toLower() == 'e' &&
                     query[i+4].toLower() == 'x') {
-                inRegEx = true;
+                // determine the variable
+                int pos = query.indexOf('(', i+4);
+                if(pos > i+4) {
+                    int endPos = query.indexOf(',', pos+1);
+                    if(endPos > pos+1) {
+                        inRegEx = true;
+                        variable = query.mid(pos+1, endPos-pos-1).trimmed();
+                        newQueryRegExStart = newQuery.length();
+                        // we already copy the entire start of the REGEX since our REGEX end check is way too simple
+                        // It would not handle function calls like REGEX(STR(?var)),...
+                        newQuery.append(query.mid(i, endPos-i+1));
+                        i = endPos;
+                        continue;
+                    }
+                }
             }
         }
 
@@ -401,10 +433,44 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
                 if(pos > 0) {
                     // convert the file URL into a filex URL (if necessary)
                     const KUrl fileUrl = query.mid(i, pos-i);
-                    newQuery += KUrl(convertFileUrl(fileUrl).uri()).url();
-                    // set i to last char we handled and let the loop continue with the end of the quote
-                    i = pos-1;
-                    continue;
+                    KUrl convertedUrl = KUrl(convertFileUrl(fileUrl, true).uri());
+
+                    // 1. Case: we have an exact match with one of the removable media (this always includes a trailing slash)
+                    if(fileUrl != convertedUrl) {
+                        newQuery += convertedUrl.url();
+                        // set i to last char we handled and let the loop continue with the end of the quote
+                        i = pos-1;
+                        continue;
+                    }
+
+                    // 2. Case The query tries to match a super-folder of one of the removable media. In that case we need
+                    //    to add additional regex filters which match all candidates
+                    else {
+                        // create regex filters for all of them
+                        // We need to append a slash since we do not want to include a possibly unmounted medium "foobar" if only "foo" is mounted.
+                        QStringList filters;
+                        foreach(const RemovableMediaCache::Entry* entry, m_removableMediaCache->findEntriesByMountPath(fileUrl.toLocalFile())) {
+                            filters << QString::fromLatin1("REGEX(%1, '^%2/')").arg(variable, entry->constructRelativeUrl(QString()).url());
+                        }
+                        if(!filters.isEmpty()) {
+                            // 1. copy the original regex
+                            filters.prepend(QString::fromLatin1("REGEX(%1, '^%2')").arg(variable, query.mid(i, pos-i)));
+
+                            // 2. Strip away the previsouly copied REGEX term
+                            newQuery.truncate(newQueryRegExStart);
+
+                            // 3. append the new ones and add new parethesis
+                            newQuery.append('(');
+                            newQuery.append(filters.join(QLatin1String(" || ")));
+                            newQuery.append(')');
+
+                            // 4. update i:
+                            //    if we find a closing parenthesis, that is the last char we handled
+                            //    otherwise it is just pos+quoteCnt-1 since the last quote is what we handled
+                            i = qMax(pos+quoteCnt-1, query.indexOf(')', pos+1));
+                            continue;
+                        }
+                    }
                 }
             }
         }

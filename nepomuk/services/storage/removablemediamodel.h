@@ -93,7 +93,13 @@ private:
      */
     Soprano::Statement convertFileUrls(const Soprano::Statement& s) const;
 
-    Soprano::Node convertFileUrl(const Soprano::Node& node) const;
+    /**
+     * Convert a local file URL into its internal counterpart or return the
+     * given URL if it does not need to be converted.
+     * \param forRegEx If true the base path of the storage medium will not
+     * be converted.
+     */
+    Soprano::Node convertFileUrl(const Soprano::Node& node, bool forRegEx = false) const;
 
     /**
      * Converts file:/ URLs into their filex:/ counterpart if necessary.
