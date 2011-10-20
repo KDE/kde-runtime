@@ -68,6 +68,10 @@ NotifyByPopup::NotifyByPopup(QObject *parent)
 	watcher->addWatchedService(dbusServiceName);
 	connect(watcher, SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
 			SLOT(slotServiceOwnerChanged(const QString&, const QString&, const QString&)));
+#ifdef Q_WS_WIN
+        if(!m_dbusServiceExists)
+            QDBusConnection::sessionBus().interface()->startService("org.freedesktop.Notifications");
+#endif
 }
 
 
