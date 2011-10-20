@@ -270,6 +270,7 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
 
     // is 0, 1, or 3 - nothing else
     int quoteCnt = 0;
+    int literalStartPos = 0;
     bool inRegEx = false;
     bool inRes = false;
     QChar quote;
@@ -293,6 +294,7 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
                    newQuery.append(c);
                    newQuery.append(c);
                }
+               literalStartPos = i+1;
                continue;
            }
            else if(c == quote) {
@@ -379,12 +381,16 @@ QString Nepomuk::RemovableMediaModel::convertFileUrls(const QString &query) cons
         //
         else if(inRegEx && quoteCnt && c == 'f') {
             // peek forward to see if its a file URL
-            if(i+5 < query.length() &&
-                    query[i+1] == 'i' &&
-                    query[i+2] == 'l' &&
-                    query[i+3] == 'e' &&
-                    query[i+4] == ':' &&
-                    query[i+5] == '/') {
+            // file URLs in regexps only make sense if they appear at the beginning or following a '^'
+            if((i == literalStartPos ||
+                (query[literalStartPos] == '^' &&
+                 i == literalStartPos+1)) &&
+               i+5 < query.length() &&
+               query[i+1] == 'i' &&
+               query[i+2] == 'l' &&
+               query[i+3] == 'e' &&
+               query[i+4] == ':' &&
+               query[i+5] == '/') {
                 // find end of regex
                 QString quoteEnd = quote;
                 if(quoteCnt == 3) {
