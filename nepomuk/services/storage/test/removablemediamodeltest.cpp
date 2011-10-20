@@ -153,6 +153,10 @@ void RemovableMediaModelTest::testConvertFileUrlsInQuery_data()
             << QString::fromLatin1("select ?r where { ?r ?p <file:///media/XO-Y4/test.txt> . }")
             << QString::fromLatin1("select ?r where { ?r ?p <filex://xyz-123/test.txt> . }");
 
+    QTest::newRow("queryWithConvertableFileUrl1WeirdFormatting")
+            << QString::fromLatin1("select ?r where { ?r ?p      <file:///media/XO-Y4/test.txt>      . }")
+            << QString::fromLatin1("select ?r where { ?r ?p      <filex://xyz-123/test.txt>      . }");
+
     QTest::newRow("queryWithConvertableFileUrl2")
             << QString::fromLatin1("select ?r where { ?r ?p <file:///media/nfs/test.txt> . }")
             << QString::fromLatin1("select ?r where { ?r ?p <nfs://thehost/solid-path/test.txt> . }");
@@ -161,14 +165,48 @@ void RemovableMediaModelTest::testConvertFileUrlsInQuery_data()
             << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^file:///media/XO-Y4/test')) . }")
             << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^filex://xyz-123/test')) . }");
 
+    QTest::newRow("queryWithConvertableRegex1WithWeirdFormatting")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . filter(reGEx(  STR(?u)  ,  'file:///media/XO-Y4/test'  ) ) . }")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . filter(reGEx(  STR(?u)  ,  'filex://xyz-123/test'  ) ) . }");
+
     QTest::newRow("queryWithConvertableRegex2")
             << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^file:///media/nfs/')) . }")
             << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^nfs://thehost/solid-path/')) . }");
 
+    QTest::newRow("queryWithConvertableRegex3")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '''^file:///media/nfs/''')) . }")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '''^nfs://thehost/solid-path/''')) . }");
+
+    // looking for anything in /media includes files from any storage mounted somewhere under /media
+    QTest::newRow("queryWithConvertableRegex4")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^file:///media')) . }")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . "
+                                   "FILTER(("
+                                   "REGEX(?u, '^file:///media') || "
+                                   "REGEX(?u, '^optical://solidman_begins/') || "
+                                   "REGEX(?u, '^filex://whatever/') || "
+                                   "REGEX(?u, '^nfs://thehost/solid-path/') || "
+                                   "REGEX(?u, '^filex://xyz-123/'))"
+                                   ") . }");
+
+    QTest::newRow("queryWithConvertableRegex4WithWeirdFormatting")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . filter   (  reGEX(  str( ?u)  , '^file:///media'  ) ) . }")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . "
+                                   "filter   (  ("
+                                   "REGEX(str( ?u), '^file:///media') || "
+                                   "REGEX(str( ?u), '^optical://solidman_begins/') || "
+                                   "REGEX(str( ?u), '^filex://whatever/') || "
+                                   "REGEX(str( ?u), '^nfs://thehost/solid-path/') || "
+                                   "REGEX(str( ?u), '^filex://xyz-123/'))"
+                                   " ) . }");
+
+    QTest::newRow("queryWithConvertableRegex4")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^file:///media/nfs')) . }")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER((REGEX(?u, '^file:///media/nfs') || REGEX(?u, '^nfs://thehost/solid-path/'))) . }");
+
     QTest::newRow("queryWithNotReallyAFileUrl")
             << QString::fromLatin1("select ?r where { ?r ?p ?u . FILTER(REGEX(?u, 'ffile:///media/nfs/')) . }")
             << QString::fromLatin1("select ?r where { ?r ?p ?u . FILTER(REGEX(?u, 'ffile:///media/nfs/')) . }");
-    // TODO: add queries that should NOT be converted
 }
 
 void RemovableMediaModelTest::testConvertFileUrlsInQuery()

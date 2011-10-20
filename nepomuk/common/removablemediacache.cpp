@@ -165,6 +165,21 @@ const Nepomuk::RemovableMediaCache::Entry* Nepomuk::RemovableMediaCache::findEnt
 }
 
 
+QList<const Nepomuk::RemovableMediaCache::Entry*> Nepomuk::RemovableMediaCache::findEntriesByMountPath(const QString &path) const
+{
+    QList<const Entry*> entries;
+    for( QHash<QString, Entry>::const_iterator it = m_metadataCache.constBegin();
+        it != m_metadataCache.constEnd(); ++it ) {
+        const Entry& entry = *it;
+        if(entry.isMounted() &&
+           entry.mountPath().startsWith(path)) {
+            entries.append(&entry);
+        }
+    }
+    return entries;
+}
+
+
 bool Nepomuk::RemovableMediaCache::hasRemovableSchema(const KUrl &url) const
 {
     return m_usedSchemas.contains(url.scheme());
