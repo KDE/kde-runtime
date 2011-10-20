@@ -164,6 +164,11 @@ void RemovableMediaModelTest::testConvertFileUrlsInQuery_data()
     QTest::newRow("queryWithConvertableRegex2")
             << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^file:///media/nfs/')) . }")
             << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^nfs://thehost/solid-path/')) . }");
+
+    QTest::newRow("queryWithNotReallyAFileUrl")
+            << QString::fromLatin1("select ?r where { ?r ?p ?u . FILTER(REGEX(?u, 'ffile:///media/nfs/')) . }")
+            << QString::fromLatin1("select ?r where { ?r ?p ?u . FILTER(REGEX(?u, 'ffile:///media/nfs/')) . }");
+    // TODO: add queries that should NOT be converted
 }
 
 void RemovableMediaModelTest::testConvertFileUrlsInQuery()
