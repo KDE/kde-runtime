@@ -36,7 +36,7 @@
 
 int main(int argc, char **argv)
 {
-    KAboutData about("kwinstartmenu", 0, ki18n("kwinstartmenu"), "1.3",
+    KAboutData about("kwinstartmenu", 0, ki18n("kwinstartmenu"), "1.4",
                      ki18n("An application to create/update or remove Windows Start Menu entries"),
                      KAboutData::License_GPL,
                      ki18n("(C) 2008-2011 Ralf Habacker"));
