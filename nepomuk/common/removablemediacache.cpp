@@ -139,8 +139,10 @@ const Nepomuk::RemovableMediaCache::Entry* Nepomuk::RemovableMediaCache::findEnt
     for( QHash<QString, Entry>::const_iterator it = m_metadataCache.begin();
          it != m_metadataCache.end(); ++it ) {
         const Entry& entry = *it;
-        if ( entry.device().as<Solid::StorageAccess>()->isAccessible() &&
-             path.startsWith( entry.device().as<Solid::StorageAccess>()->filePath() ) )
+        const Solid::StorageAccess* storage = entry.device().as<Solid::StorageAccess>();
+        if ( storage &&
+             storage->isAccessible() &&
+             path.startsWith( storage->filePath() ) )
             return &entry;
     }
 
