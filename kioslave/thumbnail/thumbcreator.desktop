@@ -96,5 +96,5 @@ Type=bool
 [PropertyDef::IgnoreMaximumSize]
 Type=bool
 
-[PropertyDef::Protocol]
+[PropertyDef::X-KDE-Protocol]
 Type=QStringList
