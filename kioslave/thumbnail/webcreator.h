@@ -46,10 +46,7 @@ private Q_SLOTS:
     void completed(bool);
 
 private:
-    //WebCreatorPrivate* d;
     KWebPage *m_page;
-    //QImage thumbnail;
-    //QSize size;
     QUrl m_url;
     QEventLoop m_eventLoop;
     bool m_failed;
