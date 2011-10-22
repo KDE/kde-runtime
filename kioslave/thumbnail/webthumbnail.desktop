@@ -5,4 +5,4 @@ X-KDE-ServiceTypes=ThumbCreator
 MimeType=text/html;
 X-KDE-Protocol=http,https
 X-KDE-Library=webthumbnail
-CacheThumbnail=false
+CacheThumbnail=true
