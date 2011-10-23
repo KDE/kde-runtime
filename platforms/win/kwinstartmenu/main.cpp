@@ -137,11 +137,11 @@ int main(int argc, char **argv)
             kError() << "cannot remove/update start menu entries: no name, version or custom string set";
             return 1;
         }
+    }
     /**
       @TODO how to solve the case if any --set-... option is used and the start menu entries are not removed before
       should we remove them before, to have a clean state or better something else ?
     */
-    
     if (args->isSet("query-path"))
         fprintf(stdout,"%s",qPrintable(QDir::toNativeSeparators(getKDEStartMenuPath())));
     else if (args->isSet("remove"))
