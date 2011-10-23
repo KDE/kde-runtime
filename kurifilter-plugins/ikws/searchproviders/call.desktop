@@ -94,6 +94,7 @@ Query=http://www.qrz.com/db/\\{@}
 Query[ca]=http://www.qrz.com/db/\\{@}
 Query[ia]=http://www.qrz.com/db/\\{@}
 Query[kk]=http://www.qrz.com/db/\\{@}
+Query[nds]=http://www.qrz.com/db/\\{@}
 Query[nl]=http://www.qrz.com/db/\\{@}
 Query[pt]=http://www.qrz.com/db/\\{@}
 Query[pt_BR]=http://www.qrz.com/db/\\{@}
