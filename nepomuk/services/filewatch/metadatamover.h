@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2009 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2009-2011 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -19,9 +19,7 @@
 #ifndef _NEPOMUK_METADATA_MOVER_H_
 #define _NEPOMUK_METADATA_MOVER_H_
 
-#include <QtCore/QThread>
 #include <QtCore/QMutex>
-#include <QtCore/QWaitCondition>
 #include <QtCore/QQueue>
 #include <QtCore/QSet>
 #include <QtCore/QDateTime>
@@ -30,12 +28,14 @@
 
 #include "updaterequest.h"
 
+class QTimer;
+
 namespace Soprano {
     class Model;
 }
 
 namespace Nepomuk {
-    class MetadataMover : public QThread
+    class MetadataMover : public QObject
     {
         Q_OBJECT
 
@@ -47,8 +47,6 @@ namespace Nepomuk {
         void moveFileMetadata( const KUrl& from, const KUrl& to );
         void removeFileMetadata( const KUrl& file );
         void removeFileMetadata( const KUrl::List& files );
-
-        void stop();
 
     Q_SIGNALS:
         /**
@@ -62,10 +60,14 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void slotClearRecentlyFinishedRequests();
+        void slotWorkUpdateQueue();
+
+        /**
+         * Start the update queue from the main thread.
+         */
+        void slotStartUpdateTimer();
 
     private:
-        void run();
-
         /**
          * Remove the metadata for file \p url
          */
@@ -89,8 +91,9 @@ namespace Nepomuk {
         QSet<UpdateRequest> m_recentlyFinishedRequests;
 
         QMutex m_queueMutex;
-        QWaitCondition m_queueWaiter;
-        bool m_stopped;
+
+        QTimer* m_queueTimer;
+        QTimer* m_recentlyFinishedRequestsTimer;
 
         Soprano::Model* m_model;
     };
