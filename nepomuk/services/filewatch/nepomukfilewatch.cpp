@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2007-2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2007-2011 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -130,11 +130,13 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
     m_pathExcludeRegExpCache->rebuildCacheFromFilterList( defaultExcludeFilterList() );
 
     // start the mover thread
-    m_metadataMover = new MetadataMover( mainModel(), this );
+    m_metadataMoverThread = new QThread(this);
+    m_metadataMoverThread->start();
+    m_metadataMover = new MetadataMover( mainModel() );
     connect( m_metadataMover, SIGNAL(movedWithoutData(QString)),
              this, SLOT(slotMovedWithoutData(QString)),
              Qt::QueuedConnection );
-    m_metadataMover->start();
+    m_metadataMover->moveToThread(m_metadataMoverThread);
 
     m_fileModificationQueue = new ActiveFileQueue(this);
     connect(m_fileModificationQueue, SIGNAL(urlTimeout(KUrl)),
@@ -187,8 +189,8 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
 Nepomuk::FileWatch::~FileWatch()
 {
     kDebug();
-    m_metadataMover->stop();
-    m_metadataMover->wait();
+    m_metadataMoverThread->quit();
+    m_metadataMoverThread->wait();
 }
 
 
@@ -207,11 +209,8 @@ void Nepomuk::FileWatch::watchFolder( const QString& path )
 void Nepomuk::FileWatch::slotFileMoved( const QString& urlFrom, const QString& urlTo )
 {
     if( !ignorePath( urlFrom ) || !ignorePath( urlTo ) ) {
-        KUrl from( urlFrom );
-        KUrl to( urlTo );
-
-        kDebug() << from << to;
-
+        const KUrl from( urlFrom );
+        const KUrl to( urlTo );
         m_metadataMover->moveFileMetadata( from, to );
     }
 }
