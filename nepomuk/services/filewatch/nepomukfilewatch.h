@@ -72,8 +72,6 @@ namespace Nepomuk {
         void slotFileMoved( const QString& from, const QString& to );
         void slotFileDeleted( const QString& urlString, bool isDir );
         void slotFilesDeleted( const QStringList& path );
-        void slotFileCreated( const QString& );
-        void slotFileModified( const QString& );
         void slotFileClosedAfterWrite( const QString& );
         void slotMovedWithoutData( const QString& );
         void connectToKDirWatch();
@@ -118,9 +116,6 @@ namespace Nepomuk {
 
         RegExpCache* m_pathExcludeRegExpCache;
         RemovableMediaCache* m_removableMediaCache;
-
-        /// stores all the file URLs that have been modified but not closed yet
-        QSet<KUrl> m_modifiedFilesCache;
 
         /// queue used to "compress" constant file modifications like downloads
         ActiveFileQueue* m_fileModificationQueue;

@@ -97,13 +97,9 @@ namespace {
 
         //Only watch the strigi index folders for file creation and change.
         if( Nepomuk::StrigiServiceConfig::self()->shouldFolderBeIndexed( path ) ) {
-            modes |= KInotify::EventCreate;
-            modes |= KInotify::EventModify;
             modes |= KInotify::EventCloseWrite;
         }
         else {
-            modes &= (~KInotify::EventCreate);
-            modes &= (~KInotify::EventModify);
             modes &= (~KInotify::EventCloseWrite);
         }
 
@@ -150,10 +146,6 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
              this, SLOT( slotFileMoved( QString, QString ) ) );
     connect( m_dirWatch, SIGNAL( deleted( QString, bool ) ),
              this, SLOT( slotFileDeleted( QString, bool ) ) );
-    connect( m_dirWatch, SIGNAL( created( QString ) ),
-             this, SLOT( slotFileCreated( QString ) ) );
-    connect( m_dirWatch, SIGNAL( modified( QString ) ),
-             this, SLOT( slotFileModified( QString ) ) );
     connect( m_dirWatch, SIGNAL( closedWrite( QString ) ),
              this, SLOT( slotFileClosedAfterWrite( QString ) ) );
     connect( m_dirWatch, SIGNAL( watchUserLimitReached() ),
@@ -200,7 +192,7 @@ void Nepomuk::FileWatch::watchFolder( const QString& path )
 #ifdef BUILD_KINOTIFY
     if ( m_dirWatch && !m_dirWatch->watchingPath( path ) )
         m_dirWatch->addWatch( path,
-                              KInotify::WatchEvents( KInotify::EventMove|KInotify::EventDelete|KInotify::EventDeleteSelf|KInotify::EventCreate|KInotify::EventModify|KInotify::EventCloseWrite ),
+                              KInotify::WatchEvents( KInotify::EventMove|KInotify::EventDelete|KInotify::EventDeleteSelf|KInotify::EventCloseWrite ),
                               KInotify::WatchFlags() );
 #endif
 }
@@ -243,32 +235,11 @@ void Nepomuk::FileWatch::slotFileDeleted( const QString& urlString, bool isDir )
 }
 
 
-void Nepomuk::FileWatch::slotFileCreated( const QString& path )
-{
-    if( StrigiServiceConfig::self()->shouldBeIndexed(path) ) {
-        // we only cache the file and wait until it has been closed, ie. the writing has been finished
-        m_modifiedFilesCache.insert(path);
-    }
-}
-
-
-void Nepomuk::FileWatch::slotFileModified( const QString& path )
-{
-    if( StrigiServiceConfig::self()->shouldBeIndexed(path) ) {
-        // we only cache the file and wait until it has been closed, ie. the writing has been finished
-        m_modifiedFilesCache.insert(path);
-    }
-}
-
-
 void Nepomuk::FileWatch::slotFileClosedAfterWrite( const QString& path )
 {
-    // we only need to update the file if it has actually been modified
-    QSet<KUrl>::iterator it = m_modifiedFilesCache.find(path);
-    if(it != m_modifiedFilesCache.end()) {
+    if(StrigiServiceConfig::self()->shouldBeIndexed(path)) {
         // we do not tell the file indexer right away but wait a short while in case the file is modified very often (irc logs for example)
         m_fileModificationQueue->enqueueUrl( path );
-        m_modifiedFilesCache.erase(it);
     }
 }
 
