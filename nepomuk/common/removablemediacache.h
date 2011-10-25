@@ -56,7 +56,7 @@ public:
         Entry(const Solid::Device& device);
 
         KUrl constructRelativeUrl( const QString& path ) const;
-        QString constructLocalPath( const KUrl& filexUrl ) const;
+        KUrl constructLocalFileUrl( const KUrl& filexUrl ) const;
 
         Solid::Device device() const { return m_device; }
         QString url() const { return m_urlPrefix; }
