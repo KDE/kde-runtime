@@ -93,6 +93,7 @@ Name[zh_TW]=QRZ.com Callsign 資料庫
 Query=http://www.qrz.com/db/\\{@}
 Query[ca]=http://www.qrz.com/db/\\{@}
 Query[da]=http://www.qrz.com/db/\\{@}
+Query[de]=http://www.qrz.com/db/\\{@}
 Query[ia]=http://www.qrz.com/db/\\{@}
 Query[kk]=http://www.qrz.com/db/\\{@}
 Query[nds]=http://www.qrz.com/db/\\{@}
