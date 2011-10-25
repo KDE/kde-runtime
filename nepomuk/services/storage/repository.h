@@ -99,6 +99,7 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void copyFinished( KJob* job );
+        void slotVirtuosoStopped( bool normalExit );
 
     private:
         Soprano::BackendSettings readVirtuosoSettings() const;
