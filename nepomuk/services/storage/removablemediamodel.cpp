@@ -244,7 +244,7 @@ Soprano::Node Nepomuk::RemovableMediaModel::convertFilexUrl(const Soprano::Node 
         if(m_removableMediaCache->hasRemovableSchema(url)) {
             if(const RemovableMediaCache::Entry* entry = m_removableMediaCache->findEntryByUrl(url)) {
                 if(entry->isMounted()) {
-                    return QUrl::fromLocalFile(entry->constructLocalPath(url));
+                    return entry->constructLocalFileUrl(url);
                 }
             }
         }
