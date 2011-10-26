@@ -57,7 +57,6 @@ private:
 
     org::kde::nepomuk::Strigi* m_service;
     org::kde::nepomuk::ServiceControl* m_serviceControl;
-    
     bool m_suspendedManually;
 
     StatusWidget* m_statusWidget;

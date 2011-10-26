@@ -18,7 +18,6 @@
 
 #include "nepomukserverkcm.h"
 #include "nepomukserverinterface.h"
-#include "servicecontrol.h"
 #include "fileexcludefilters.h"
 #include "../kioslaves/common/standardqueries.h"
 #include "nepomukservicecontrolinterface.h"
@@ -137,9 +136,9 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
       m_failedToInitialize( false )
 {
     KAboutData *about = new KAboutData(
-                "kcm_nepomuk", "kcm_nepomuk", ki18n("Nepomuk Configuration Module"),
-                KDE_VERSION_STRING, KLocalizedString(), KAboutData::License_GPL,
-                ki18n("Copyright 2007-2010 Sebastian Trüg"));
+        "kcm_nepomuk", "kcm_nepomuk", ki18n("Nepomuk Configuration Module"),
+        KDE_VERSION_STRING, KLocalizedString(), KAboutData::License_GPL,
+        ki18n("Copyright 2007-2010 Sebastian Trüg"));
     about->addAuthor(ki18n("Sebastian Trüg"), KLocalizedString(), "trueg@kde.org");
     setAboutData(about);
     setButtons(Help|Apply|Default);
