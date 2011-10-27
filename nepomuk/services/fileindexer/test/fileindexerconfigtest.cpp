@@ -43,6 +43,8 @@ void writeIndexerConfig(const QStringList& includeFolders,
     fileIndexerConfig.group( "General" ).writePathEntry( "exclude folders", excludeFolders );
     fileIndexerConfig.group( "General" ).writeEntry( "exclude filters", excludeFilters );
     fileIndexerConfig.group( "General" ).writeEntry( "index hidden folders", indexHidden );
+    fileIndexerConfig.sync();
+    Nepomuk::FileIndexerConfig::self()->forceConfigUpdate();
 }
 
 KTempDir* createTmpFolders(const QStringList& folders) {
@@ -127,7 +129,6 @@ void FileIndexerConfigTest::testShouldFolderBeIndexed()
 
     // create our test config object
     Nepomuk::FileIndexerConfig* cfg = Nepomuk::FileIndexerConfig::self();
-    cfg->forceConfigUpdate();
 
     // run through all the folders
     QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedRootDir));
@@ -143,6 +144,36 @@ void FileIndexerConfigTest::testShouldFolderBeIndexed()
     QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedHiddenSubDir));
     QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + ignoredRootDir));
     QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + excludedRootDir));
+
+
+    // re-write the config with hidden folder indexing enabled
+    writeIndexerConfig(QStringList()
+                       << dirPrefix + indexedRootDir
+                       << dirPrefix + indexedSubFolderToIndexedHidden
+                       << dirPrefix + indexedHiddenSubDir
+                       << dirPrefix + indexedSubDirToExcluded,
+                       QStringList()
+                       << dirPrefix + excludedRootDir
+                       << dirPrefix + excludedSubDir
+                       << dirPrefix + excludedSubSubDir,
+                       QStringList(),
+                       true);
+
+    // run through all the folders
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedRootDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedSubDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedSubSubDir));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + excludedSubSubDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + hiddenSubSubDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + ignoredSubFolderToIndexedHidden));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedSubFolderToIndexedHidden));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + excludedSubDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedSubDirToExcluded));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + hiddenSubDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedHiddenSubDir));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + ignoredRootDir));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + excludedRootDir));
+
 
     // cleanup
     delete mainDir;
@@ -182,9 +213,23 @@ void FileIndexerConfigTest::testShouldBeIndexed()
 
     // create our test config object
     Nepomuk::FileIndexerConfig* cfg = Nepomuk::FileIndexerConfig::self();
-    cfg->forceConfigUpdate();
 
     // run through all the folders
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedRootDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedSubDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedSubSubDir));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + excludedSubSubDir));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + hiddenSubSubDir));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + ignoredSubFolderToIndexedHidden));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedSubFolderToIndexedHidden));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + excludedSubDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedSubDirToExcluded));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + hiddenSubDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedHiddenSubDir));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + ignoredRootDir));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + excludedRootDir));
+
+    // run through all the folders with a file name attached
     const QString fileName = QString::fromLatin1("/somefile.txt");
     QVERIFY(cfg->shouldBeIndexed(dirPrefix + indexedRootDir + fileName));
     QVERIFY(cfg->shouldBeIndexed(dirPrefix + indexedSubDir + fileName));
@@ -196,6 +241,50 @@ void FileIndexerConfigTest::testShouldBeIndexed()
     QVERIFY(!cfg->shouldBeIndexed(dirPrefix + excludedSubDir + fileName));
     QVERIFY(cfg->shouldBeIndexed(dirPrefix + indexedSubDirToExcluded + fileName));
     QVERIFY(!cfg->shouldBeIndexed(dirPrefix + hiddenSubDir + fileName));
+    QVERIFY(cfg->shouldBeIndexed(dirPrefix + indexedHiddenSubDir + fileName));
+    QVERIFY(!cfg->shouldBeIndexed(dirPrefix + ignoredRootDir + fileName));
+    QVERIFY(!cfg->shouldBeIndexed(dirPrefix + excludedRootDir + fileName));
+
+
+    // re-write the config with hidden folder indexing enabled
+    writeIndexerConfig(QStringList()
+                       << dirPrefix + indexedRootDir
+                       << dirPrefix + indexedSubFolderToIndexedHidden
+                       << dirPrefix + indexedHiddenSubDir
+                       << dirPrefix + indexedSubDirToExcluded,
+                       QStringList()
+                       << dirPrefix + excludedRootDir
+                       << dirPrefix + excludedSubDir
+                       << dirPrefix + excludedSubSubDir,
+                       QStringList(),
+                       true);
+
+    // run through all the folders
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedRootDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedSubDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedSubSubDir));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + excludedSubSubDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + hiddenSubSubDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + ignoredSubFolderToIndexedHidden));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedSubFolderToIndexedHidden));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + excludedSubDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedSubDirToExcluded));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + hiddenSubDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedHiddenSubDir));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + ignoredRootDir));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + excludedRootDir));
+
+    // run through all the folders with a file name attached
+    QVERIFY(cfg->shouldBeIndexed(dirPrefix + indexedRootDir + fileName));
+    QVERIFY(cfg->shouldBeIndexed(dirPrefix + indexedSubDir + fileName));
+    QVERIFY(cfg->shouldBeIndexed(dirPrefix + indexedSubSubDir + fileName));
+    QVERIFY(!cfg->shouldBeIndexed(dirPrefix + excludedSubSubDir + fileName));
+    QVERIFY(cfg->shouldBeIndexed(dirPrefix + hiddenSubSubDir + fileName));
+    QVERIFY(cfg->shouldBeIndexed(dirPrefix + ignoredSubFolderToIndexedHidden + fileName));
+    QVERIFY(cfg->shouldBeIndexed(dirPrefix + indexedSubFolderToIndexedHidden + fileName));
+    QVERIFY(!cfg->shouldBeIndexed(dirPrefix + excludedSubDir + fileName));
+    QVERIFY(cfg->shouldBeIndexed(dirPrefix + indexedSubDirToExcluded + fileName));
+    QVERIFY(cfg->shouldBeIndexed(dirPrefix + hiddenSubDir + fileName));
     QVERIFY(cfg->shouldBeIndexed(dirPrefix + indexedHiddenSubDir + fileName));
     QVERIFY(!cfg->shouldBeIndexed(dirPrefix + ignoredRootDir + fileName));
     QVERIFY(!cfg->shouldBeIndexed(dirPrefix + excludedRootDir + fileName));
