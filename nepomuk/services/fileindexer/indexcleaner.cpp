@@ -45,14 +45,6 @@
 using namespace Nepomuk::Vocabulary;
 using namespace Soprano::Vocabulary;
 
-
-Nepomuk::IndexCleaner::IndexCleaner(QObject* parent)
-    : KJob(parent),
-      m_delay(0)
-{
-    setCapabilities( Suspendable );
-}
-
 namespace {
     /**
      * Creates one SPARQL filter expression that excludes the include folders.
@@ -68,96 +60,20 @@ namespace {
         }
         return filters.join( QLatin1String( " && " ) );
     }
-
-    QString constructFolderSubFilter( const QList<QPair<QString, bool> > folders, int& index )
-    {
-        QString path = folders[index].first;
-        if ( !path.endsWith( '/' ) )
-            path += '/';
-        const bool include = folders[index].second;
-
-        ++index;
-
-        QStringList subFilters;
-        while ( index < folders.count() &&
-                folders[index].first.startsWith( path ) ) {
-            subFilters << constructFolderSubFilter( folders, index );
-        }
-
-        QString thisFilter = QString::fromLatin1( "REGEX(STR(?url),'^%1')" ).arg( QString::fromAscii( KUrl( path ).toEncoded() ) );
-
-        // we want all folders that should NOT be indexed
-        if ( include ) {
-            thisFilter.prepend( '!' );
-        }
-        subFilters.prepend( thisFilter );
-
-        if ( subFilters.count() > 1 ) {
-            return '(' + subFilters.join( include ? QLatin1String( " || " ) : QLatin1String( " && " ) ) + ')';
-        }
-        else {
-            return subFilters.first();
-        }
-    }
-
-    /**
-     * Returns true if the specified folder f would already be included using the list
-     * folders.
-     */
-    bool alreadyIncluded( const QList<QPair<QString, bool> >& folders, const QString& f )
-    {
-        bool included = false;
-        for ( int i = 0; i < folders.count(); ++i ) {
-            if ( f != folders[i].first &&
-                 f.startsWith( KUrl( folders[i].first ).path( KUrl::AddTrailingSlash ) ) ) {
-                included = folders[i].second;
-            }
-        }
-        return included;
-    }
-
-    /**
-     * Remove useless include entries which would result in regex filters that match everything. This
-     * is close to the code in FileIndexerConfig which removes useless exclude entries.
-     */
-    void cleanupList( QList<QPair<QString, bool> >& result )
-    {
-        int i = 0;
-        while ( i < result.count() ) {
-            if ( result[i].first.isEmpty() ||
-                 (result[i].second &&
-                  alreadyIncluded( result, result[i].first ) ))
-                result.removeAt( i );
-            else
-                ++i;
-        }
-    }
-
-    /**
-     * Creates one SPARQL filter which matches all files and folders that should NOT be indexed.
-     */
-    QString constructFolderFilter()
-    {
-        QStringList subFilters( constructExcludeIncludeFoldersFilter() );
-
-        // now add the actual filters
-        QList<QPair<QString, bool> > folders = Nepomuk::FileIndexerConfig::self()->folders();
-        cleanupList(folders);
-        int index = 0;
-        while ( index < folders.count() ) {
-            subFilters << constructFolderSubFilter( folders, index );
-        }
-        QString filters = subFilters.join(" && ");
-        if( !filters.isEmpty() )
-            return QString::fromLatin1("FILTER(%1) .").arg(filters);
-
-        return QString();
-    }
 }
+
+
+Nepomuk::IndexCleaner::IndexCleaner(QObject* parent)
+    : KJob(parent),
+      m_delay(0)
+{
+    setCapabilities( Suspendable );
+}
+
 
 void Nepomuk::IndexCleaner::start()
 {
-    const QString folderFilter = constructFolderFilter();
+    const QString folderFilter = constructExcludeFolderFilter(Nepomuk::FileIndexerConfig::self());
 
     const int limit = 20;
 
@@ -353,6 +269,92 @@ bool Nepomuk::IndexCleaner::doResume()
 void Nepomuk::IndexCleaner::setDelay(int msecs)
 {
     m_delay = msecs;
+}
+
+
+namespace {
+    QString constructFolderSubFilter( const QList<QPair<QString, bool> > folders, int& index )
+    {
+        QString path = folders[index].first;
+        if ( !path.endsWith( '/' ) )
+            path += '/';
+        const bool include = folders[index].second;
+
+        ++index;
+
+        QStringList subFilters;
+        while ( index < folders.count() &&
+                folders[index].first.startsWith( path ) ) {
+            subFilters << constructFolderSubFilter( folders, index );
+        }
+
+        QString thisFilter = QString::fromLatin1( "REGEX(STR(?url),'^%1')" ).arg( QString::fromAscii( KUrl( path ).toEncoded() ) );
+
+        // we want all folders that should NOT be indexed
+        if ( include ) {
+            thisFilter.prepend( '!' );
+        }
+        subFilters.prepend( thisFilter );
+
+        if ( subFilters.count() > 1 ) {
+            return '(' + subFilters.join( include ? QLatin1String( " || " ) : QLatin1String( " && " ) ) + ')';
+        }
+        else {
+            return subFilters.first();
+        }
+    }
+
+    /**
+     * Returns true if the specified folder f would already be included using the list
+     * folders.
+     */
+    bool alreadyIncluded( const QList<QPair<QString, bool> >& folders, const QString& f )
+    {
+        bool included = false;
+        for ( int i = 0; i < folders.count(); ++i ) {
+            if ( f != folders[i].first &&
+                 f.startsWith( KUrl( folders[i].first ).path( KUrl::AddTrailingSlash ) ) ) {
+                included = folders[i].second;
+            }
+        }
+        return included;
+    }
+
+    /**
+     * Remove useless include entries which would result in regex filters that match everything. This
+     * is close to the code in FileIndexerConfig which removes useless exclude entries.
+     */
+    void cleanupList( QList<QPair<QString, bool> >& result )
+    {
+        int i = 0;
+        while ( i < result.count() ) {
+            if ( result[i].first.isEmpty() ||
+                 (result[i].second &&
+                  alreadyIncluded( result, result[i].first ) ))
+                result.removeAt( i );
+            else
+                ++i;
+        }
+    }
+}
+
+// static
+QString Nepomuk::IndexCleaner::constructExcludeFolderFilter(FileIndexerConfig *cfg)
+{
+    QStringList subFilters( constructExcludeIncludeFoldersFilter() );
+
+    // now add the actual filters
+    QList<QPair<QString, bool> > folders = cfg->folders();
+    cleanupList(folders);
+    int index = 0;
+    while ( index < folders.count() ) {
+        subFilters << constructFolderSubFilter( folders, index );
+    }
+    QString filters = subFilters.join(" && ");
+    if( !filters.isEmpty() )
+        return QString::fromLatin1("FILTER(%1) .").arg(filters);
+
+    return QString();
 }
 
 #include "indexcleaner.moc"

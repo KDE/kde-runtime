@@ -21,6 +21,7 @@
 
 #include "fileindexerconfigtest.h"
 #include "../fileindexerconfig.h"
+#include "fileindexerconfigutils.h"
 
 #include <KConfig>
 #include <KConfigGroup>
@@ -34,66 +35,7 @@
 
 #include "qtest_kde.h"
 
-namespace {
-void writeIndexerConfig(const QStringList& includeFolders,
-                        const QStringList& excludeFolders,
-                        const QStringList& excludeFilters,
-                        bool indexHidden) {
-    KConfig fileIndexerConfig( "nepomukstrigirc" );
-    fileIndexerConfig.group( "General" ).writePathEntry( "folders", includeFolders );
-    fileIndexerConfig.group( "General" ).writePathEntry( "exclude folders", excludeFolders );
-    fileIndexerConfig.group( "General" ).writeEntry( "exclude filters", excludeFilters );
-    fileIndexerConfig.group( "General" ).writeEntry( "index hidden folders", indexHidden );
-    fileIndexerConfig.sync();
-}
-
-KTempDir* createTmpFolders(const QStringList& folders) {
-    KTempDir* tmpDir = new KTempDir();
-    foreach(const QString& f, folders) {
-        QDir dir(tmpDir->name());
-        foreach(const QString& sf, f.split('/', QString::SkipEmptyParts)) {
-            if(!dir.exists(sf)) {
-                dir.mkdir(sf);
-            }
-            dir.cd(sf);
-        }
-    }
-    return tmpDir;
-}
-}
-
-//
-// Trying to put all cases into one folder tree:
-// |- indexedRootDir
-//   |- indexedSubDir
-//     |- indexedSubSubDir
-//     |- excludedSubSubDir
-//     |- .hiddenSubSubDir
-//       |- ignoredSubFolderToIndexedHidden
-//       |- indexedSubFolderToIndexedHidden
-//   |- excludedSubDir
-//     |- includedSubDirToExcluded
-//   |- .hiddenSubDir
-//   |- .indexedHiddenSubDir
-// |- ignoredRootDir
-// |- excludedRootDir
-//
-FileIndexerConfigTest::FileIndexerConfigTest()
-    : indexedRootDir(QString::fromLatin1("d1")),
-      indexedSubDir(QString::fromLatin1("d1/sd1")),
-      indexedSubSubDir(QString::fromLatin1("d1/sd1/ssd1")),
-      excludedSubSubDir(QString::fromLatin1("d1/sd1/ssd2")),
-      hiddenSubSubDir(QString::fromLatin1("d1/sd1/.ssd3")),
-      ignoredSubFolderToIndexedHidden(QString::fromLatin1("d1/sd1/.ssd3/isfh1")),
-      indexedSubFolderToIndexedHidden(QString::fromLatin1("d1/sd1/.ssd3/isfh2")),
-      excludedSubDir(QString::fromLatin1("d1/sd2")),
-      indexedSubDirToExcluded(QString::fromLatin1("d1/sd2/isde1")),
-      hiddenSubDir(QString::fromLatin1("d1/.sd3")),
-      indexedHiddenSubDir(QString::fromLatin1("d1/.sd4")),
-      ignoredRootDir(QString::fromLatin1("d2")),
-      excludedRootDir(QString::fromLatin1("d3"))
-{
-}
+using namespace Nepomuk::Test;
 
 void FileIndexerConfigTest::testShouldFolderBeIndexed()
 {

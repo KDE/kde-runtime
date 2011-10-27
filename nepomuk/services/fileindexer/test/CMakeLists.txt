@@ -15,3 +15,14 @@ target_link_libraries(fileindexerconfigtest
   ${QT_QTTEST_LIBRARY}
   ${KDE4_KDECORE_LIBS}
   nepomukcommon)
+
+kde4_add_unit_test(indexcleanertest
+  indexcleanertest.cpp
+  ../fileindexerconfig.cpp
+  ../indexcleaner.cpp
+  ../util.cpp)
+target_link_libraries(indexcleanertest
+  ${QT_QTTEST_LIBRARY}
+  ${KDE4_KDECORE_LIBS}
+  nepomukcommon
+  nepomukdatamanagement)

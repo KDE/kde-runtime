@@ -30,6 +30,8 @@
 #include <KJob>
 
 namespace Nepomuk {
+    class FileIndexerConfig;
+
     class IndexCleaner : public KJob
     {
         Q_OBJECT
@@ -40,6 +42,13 @@ namespace Nepomuk {
         virtual void start();
         virtual bool doSuspend();
         virtual bool doResume();
+
+        /**
+         * Construct a SPARQL filter which matches all URLs (variable ?url) that should
+         * not be indexed according to the configured folders in \p cfg. This does not
+         * take exclude filters into account and ignores hidden folders alltogether.
+         */
+        static QString constructExcludeFolderFilter(Nepomuk::FileIndexerConfig* cfg);
 
     public slots:
         /**
