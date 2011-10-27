@@ -9,7 +9,9 @@ include_directories(
   )
 
 kde4_add_unit_test(fileindexerconfigtest
-  fileindexerconfigtest.cpp)
+  fileindexerconfigtest.cpp
+  ../fileindexerconfig.cpp)
 target_link_libraries(fileindexerconfigtest
   ${QT_QTTEST_LIBRARY}
-  ${KDE4_KDECORE_LIBS})
+  ${KDE4_KDECORE_LIBS}
+  nepomukcommon)
