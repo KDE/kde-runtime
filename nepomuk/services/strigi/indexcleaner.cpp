@@ -101,6 +101,39 @@ namespace {
     }
 
     /**
+     * Returns true if the specified folder f would already be included using the list
+     * folders.
+     */
+    bool alreadyIncluded( const QList<QPair<QString, bool> >& folders, const QString& f )
+    {
+        bool included = false;
+        for ( int i = 0; i < folders.count(); ++i ) {
+            if ( f != folders[i].first &&
+                 f.startsWith( KUrl( folders[i].first ).path( KUrl::AddTrailingSlash ) ) ) {
+                included = folders[i].second;
+            }
+        }
+        return included;
+    }
+
+    /**
+     * Remove useless include entries which would result in regex filters that match everything. This
+     * is close to the code in StrigiServiceConfig which removes useless exclude entries.
+     */
+    void cleanupList( QList<QPair<QString, bool> >& result )
+    {
+        int i = 0;
+        while ( i < result.count() ) {
+            if ( result[i].first.isEmpty() ||
+                 (result[i].second &&
+                  alreadyIncluded( result, result[i].first ) ))
+                result.removeAt( i );
+            else
+                ++i;
+        }
+    }
+
+    /**
      * Creates one SPARQL filter which matches all files and folders that should NOT be indexed.
      */
     QString constructFolderFilter()
@@ -109,6 +142,7 @@ namespace {
 
         // now add the actual filters
         QList<QPair<QString, bool> > folders = Nepomuk::StrigiServiceConfig::self()->folders();
+        cleanupList(folders);
         int index = 0;
         while ( index < folders.count() ) {
             subFilters << constructFolderSubFilter( folders, index );
