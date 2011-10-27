@@ -128,21 +128,14 @@ void Nepomuk::IndexCleaner::start()
     // 3. Build filter query for all exclude filters
     // FIXME: also take into account folders which are sub-folders to those that are excluded via filters (see also the unit test for possible cases)
     //
-    QStringList fileFilters;
-    foreach( const QString& filter, Nepomuk::FileIndexerConfig::self()->excludeFilters() ) {
-        QString filterRxStr = QRegExp::escape( filter );
-        filterRxStr.replace( "\\*", QLatin1String( ".*" ) );
-        filterRxStr.replace( "\\?", QLatin1String( "." ) );
-        filterRxStr.replace( '\\',"\\\\" );
-        fileFilters << QString::fromLatin1( "REGEX(STR(?fn),\"^%1$\")" ).arg( filterRxStr );
-    }
-    QString includeExcludeFilters = constructExcludeIncludeFoldersFilter();
+    const QString fileFilters = constructExcludeFiltersFilter(Nepomuk::FileIndexerConfig::self());
+    const QString includeExcludeFilters = constructExcludeIncludeFoldersFilter();
 
     QString filters;
     if( !includeExcludeFilters.isEmpty() && !fileFilters.isEmpty() )
-        filters = QString::fromLatin1("FILTER((%1) && (%2)) .").arg( includeExcludeFilters, fileFilters.join(" || ") );
+        filters = QString::fromLatin1("FILTER((%1) && (%2)) .").arg( includeExcludeFilters, fileFilters );
     else if( !fileFilters.isEmpty() )
-        filters = QString::fromLatin1("FILTER(%1) .").arg( fileFilters.join(" || ") );
+        filters = QString::fromLatin1("FILTER(%1) .").arg( fileFilters );
     else if( !includeExcludeFilters.isEmpty() )
         filters = QString::fromLatin1("FILTER(%1) .").arg( includeExcludeFilters );
 
@@ -355,6 +348,21 @@ QString Nepomuk::IndexCleaner::constructExcludeFolderFilter(FileIndexerConfig *c
         return QString::fromLatin1("FILTER(%1) .").arg(filters);
 
     return QString();
+}
+
+
+// static
+QString Nepomuk::IndexCleaner::constructExcludeFiltersFilter(Nepomuk::FileIndexerConfig *cfg)
+{
+    QStringList fileFilters;
+    foreach( const QString& filter, cfg->excludeFilters() ) {
+        QString filterRxStr = QRegExp::escape( filter );
+        filterRxStr.replace( "\\*", QLatin1String( ".*" ) );
+        filterRxStr.replace( "\\?", QLatin1String( "." ) );
+        filterRxStr.replace( '\\',"\\\\" );
+        fileFilters << QString::fromLatin1( "REGEX(STR(?fn),\"^%1$\")" ).arg( filterRxStr );
+    }
+    return fileFilters.join(QLatin1String(" || "));
 }
 
 #include "indexcleaner.moc"

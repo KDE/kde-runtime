@@ -50,6 +50,12 @@ namespace Nepomuk {
          */
         static QString constructExcludeFolderFilter(Nepomuk::FileIndexerConfig* cfg);
 
+        /**
+         * Construct a SPARQL filter which matches all filenames (variable ?fn) that
+         * match one of the exclude filters set in \p cfg.
+         */
+        static QString constructExcludeFiltersFilter(Nepomuk::FileIndexerConfig* cfg);
+
     public slots:
         /**
          * Set the delay between the cleanup queries.
