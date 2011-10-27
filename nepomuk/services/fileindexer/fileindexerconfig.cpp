@@ -171,11 +171,11 @@ bool Nepomuk::FileIndexerConfig::shouldBeIndexed( const QString& path ) const
 
 bool Nepomuk::FileIndexerConfig::shouldFolderBeIndexed( const QString& path ) const
 {
-    bool exact = false;
-    if ( folderInFolderList( path, exact ) ) {
+    QString folder;
+    if ( folderInFolderList( path, folder ) ) {
         // we always index the folders in the list
         // ignoring the name filters
-        if ( exact )
+        if ( folder == path )
             return true;
 
         // check for hidden folders
@@ -186,8 +186,15 @@ bool Nepomuk::FileIndexerConfig::shouldFolderBeIndexed( const QString& path ) co
         // reset dir, cause isDirHidden modifies the QDir
         dir = path;
 
-        // check the filters
-        return shouldFileBeIndexed( dir.dirName() );
+        // check the exclude filters for all components of the path
+        // after folder
+        const QStringList pathComponents = path.mid(folder.count()).split('/', QString::SkipEmptyParts);
+        foreach(const QString& c, pathComponents) {
+            if(!shouldFileBeIndexed( c )) {
+                return false;
+            }
+        }
+        return true;
     }
     else {
         return false;
@@ -203,7 +210,7 @@ bool Nepomuk::FileIndexerConfig::shouldFileBeIndexed( const QString& fileName ) 
 }
 
 
-bool Nepomuk::FileIndexerConfig::folderInFolderList( const QString& path, bool& exact ) const
+bool Nepomuk::FileIndexerConfig::folderInFolderList( const QString& path, QString& folder ) const
 {
     QMutexLocker lock( &m_folderCacheMutex );
 
@@ -215,33 +222,31 @@ bool Nepomuk::FileIndexerConfig::folderInFolderList( const QString& path, bool& 
         const QString& f = m_folderCache[i].first;
         const bool include = m_folderCache[i].second;
         if ( p.startsWith( f ) ) {
-            exact = ( p == f );
+            folder = f;
             return include;
         }
     }
     // path is not in the list, thus it should not be included
+    folder.clear();
     return false;
 }
 
 
 namespace {
     /**
-     * Returns true if the specified folder f would already be included or excluded using the list
-     * folders. Hidden folders are a special case because of the index hidden files setting.
-     * We always keep hidden folders in the list if they are forced to be indexed.
+     * Returns true if the specified folder f would already be excluded using the list
+     * folders.
      */
-    bool alreadyInList( const QList<QPair<QString, bool> >& folders, const QString& f, bool include )
+    bool alreadyExcluded( const QList<QPair<QString, bool> >& folders, const QString& f )
     {
         bool included = false;
-        const bool hidden = isDirHidden(f);
         for ( int i = 0; i < folders.count(); ++i ) {
             if ( f != folders[i].first &&
-                 f.startsWith( KUrl( folders[i].first ).path( KUrl::AddTrailingSlash ) ) &&
-                 !hidden ) {
+                 f.startsWith( KUrl( folders[i].first ).path( KUrl::AddTrailingSlash ) ) ) {
                 included = folders[i].second;
             }
         }
-        return included == include;
+        return !included;
     }
 
     /**
@@ -260,7 +265,7 @@ namespace {
     }
 
     /**
-     * Remove useless entries which would confuse the algo below.
+     * Remove useless exclude entries which would confuse the folderInFolderList algo.
      * This makes sure all top-level items are include folders.
      * This runs in O(n^2) and could be optimized but what for.
      */
@@ -269,7 +274,8 @@ namespace {
         int i = 0;
         while ( i < result.count() ) {
             if ( result[i].first.isEmpty() ||
-                 alreadyInList( result, result[i].first, result[i].second ) )
+                 (!result[i].second &&
+                  alreadyExcluded( result, result[i].first ) ))
                 result.removeAt( i );
             else
                 ++i;

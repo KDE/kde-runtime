@@ -28,6 +28,7 @@
 
 #include <QtCore/QFile>
 #include <QtCore/QDir>
+#include <QtCore/QScopedPointer>
 
 #include <QtTest>
 
@@ -44,7 +45,6 @@ void writeIndexerConfig(const QStringList& includeFolders,
     fileIndexerConfig.group( "General" ).writeEntry( "exclude filters", excludeFilters );
     fileIndexerConfig.group( "General" ).writeEntry( "index hidden folders", indexHidden );
     fileIndexerConfig.sync();
-    Nepomuk::FileIndexerConfig::self()->forceConfigUpdate();
 }
 
 KTempDir* createTmpFolders(const QStringList& folders) {
@@ -128,7 +128,7 @@ void FileIndexerConfigTest::testShouldFolderBeIndexed()
                        false);
 
     // create our test config object
-    Nepomuk::FileIndexerConfig* cfg = Nepomuk::FileIndexerConfig::self();
+    QScopedPointer<Nepomuk::FileIndexerConfig> cfg(new Nepomuk::FileIndexerConfig());
 
     // run through all the folders
     QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedRootDir));
@@ -158,6 +158,7 @@ void FileIndexerConfigTest::testShouldFolderBeIndexed()
                        << dirPrefix + excludedSubSubDir,
                        QStringList(),
                        true);
+    cfg->forceConfigUpdate();
 
     // run through all the folders
     QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedRootDir));
@@ -212,7 +213,7 @@ void FileIndexerConfigTest::testShouldBeIndexed()
                        false);
 
     // create our test config object
-    Nepomuk::FileIndexerConfig* cfg = Nepomuk::FileIndexerConfig::self();
+    QScopedPointer<Nepomuk::FileIndexerConfig> cfg(new Nepomuk::FileIndexerConfig());
 
     // run through all the folders
     QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedRootDir));
@@ -258,6 +259,7 @@ void FileIndexerConfigTest::testShouldBeIndexed()
                        << dirPrefix + excludedSubSubDir,
                        QStringList(),
                        true);
+    cfg->forceConfigUpdate();
 
     // run through all the folders
     QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedRootDir));
@@ -291,6 +293,64 @@ void FileIndexerConfigTest::testShouldBeIndexed()
 
     // cleanup
     delete mainDir;
+}
+
+void FileIndexerConfigTest::testExcludeFilterOnFolders()
+{
+    const QString excludeFilter1 = QLatin1String("build");
+    const QString excludeFilter2 = QLatin1String("foo?ar");
+
+    const QString excludedSubDir1 = indexedRootDir + QLatin1String("/") + excludeFilter1;
+    const QString excludedSubSubDir1 = excludedSubDir1 + QLatin1String("/sub1");
+
+    const QString excludedSubDir2 = indexedRootDir + QLatin1String("/foobar");
+    const QString excludedSubSubDir2 = excludedSubDir2 + QLatin1String("/sub2");
+
+    const QString includedSubDir = excludedSubDir1 + QLatin1String("/sub3");
+    const QString includedSubSubDir = includedSubDir + QLatin1String("/sub");
+
+    // create the full folder hierarchy
+    KTempDir* mainDir = createTmpFolders(QStringList()
+                                         << indexedRootDir
+                                         << excludedSubDir1
+                                         << excludedSubSubDir1
+                                         << excludedSubDir1
+                                         << excludedSubSubDir2
+                                         << includedSubDir);
+
+    const QString dirPrefix = mainDir->name();
+
+    // write the config with the exclude filters
+    writeIndexerConfig(QStringList()
+                       << dirPrefix + indexedRootDir
+                       << dirPrefix + includedSubDir,
+                       QStringList(),
+                       QStringList()
+                       << excludeFilter1
+                       << excludeFilter2,
+                       false);
+
+    // create our test config object
+    QScopedPointer<Nepomuk::FileIndexerConfig> cfg(new Nepomuk::FileIndexerConfig());
+
+    // run through our folders that should be excluded
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + indexedRootDir));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + excludedSubDir1));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + excludedSubSubDir1));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + excludedSubDir2));
+    QVERIFY(!cfg->shouldFolderBeIndexed(dirPrefix + excludedSubSubDir2));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + includedSubDir));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + includedSubSubDir));
+
+    // and some file checks
+    const QString fileName = QString::fromLatin1("/somefile.txt");
+    QVERIFY(cfg->shouldBeIndexed(dirPrefix + indexedRootDir + fileName));
+    QVERIFY(!cfg->shouldBeIndexed(dirPrefix + excludedSubDir1 + fileName));
+    QVERIFY(!cfg->shouldBeIndexed(dirPrefix + excludedSubSubDir1 + fileName));
+    QVERIFY(!cfg->shouldBeIndexed(dirPrefix + excludedSubDir2 + fileName));
+    QVERIFY(!cfg->shouldBeIndexed(dirPrefix + excludedSubSubDir2 + fileName));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + includedSubDir + fileName));
+    QVERIFY(cfg->shouldFolderBeIndexed(dirPrefix + includedSubSubDir + fileName));
 }
 
 QTEST_KDEMAIN_CORE(FileIndexerConfigTest)

@@ -34,6 +34,7 @@ public:
 private slots:
     void testShouldFolderBeIndexed();
     void testShouldBeIndexed();
+    void testExcludeFilterOnFolders();
 
 private:
     const QString indexedRootDir;

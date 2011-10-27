@@ -156,10 +156,9 @@ namespace Nepomuk {
         /**
          * Check if \p path is in the list of folders to be indexed taking
          * include and exclude folders into account.
-         * \p exact is set to true if \p path is a top level folder from
-         * the include or exclude list.
+         * \p folder is set to the folder which was the reason for the descision.
          */
-        bool folderInFolderList( const QString& path, bool& exact ) const;
+        bool folderInFolderList( const QString& path, QString& folder ) const;
         void buildFolderCache();
         void buildExcludeFilterRegExpCache();
 
