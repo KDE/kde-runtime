@@ -43,21 +43,21 @@ using namespace Nepomuk::Test;
 void IndexCleanerTest::testConstructExcludeFolderFilter()
 {
     // create the full folder hierarchy which includes some special cases:
-    KTempDir* mainDir = createTmpFolders(QStringList()
-                                         << indexedRootDir
-                                         << indexedSubDir
-                                         << indexedSubSubDir
-                                         << excludedSubSubDir
-                                         << hiddenSubSubDir
-                                         << ignoredSubFolderToIndexedHidden
-                                         << indexedSubFolderToIndexedHidden
-                                         << indexedSubDirToExcluded
-                                         << indexedHiddenSubDirToExcluded
-                                         << excludedRootDir
-                                         << hiddenSubDir
-                                         << indexedHiddenSubDir
-                                         << ignoredRootDir
-                                         << excludedRootDir);
+    QScopedPointer<KTempDir> mainDir(createTmpFolders(QStringList()
+                                                      << indexedRootDir
+                                                      << indexedSubDir
+                                                      << indexedSubSubDir
+                                                      << excludedSubSubDir
+                                                      << hiddenSubSubDir
+                                                      << ignoredSubFolderToIndexedHidden
+                                                      << indexedSubFolderToIndexedHidden
+                                                      << indexedSubDirToExcluded
+                                                      << indexedHiddenSubDirToExcluded
+                                                      << excludedRootDir
+                                                      << hiddenSubDir
+                                                      << indexedHiddenSubDir
+                                                      << ignoredRootDir
+                                                      << excludedRootDir));
 
     const QString dirPrefix = mainDir->name();
 
@@ -92,6 +92,86 @@ void IndexCleanerTest::testConstructExcludeFolderFilter()
                                   "!REGEX(STR(?url),'^file://%1d1/sd2/isde1/')))) .")
               .arg(dirPrefix);
     QCOMPARE(Nepomuk::IndexCleaner::constructExcludeFolderFilter(cfg.data()),
+             expectedFilter);
+}
+
+// simplest case: one folder which should be excluded via filters
+void IndexCleanerTest::testConstructExcludeFiltersFolderFilter1()
+{
+    QScopedPointer<KTempDir> mainDir(createTmpFolders(QStringList()
+                                                      << QLatin1String("root/x_y/sub")));
+
+    const QString dirPrefix = mainDir->name();
+
+    // write the config
+    writeIndexerConfig(QStringList()
+                       << dirPrefix + QLatin1String("root"),
+                       QStringList(),
+                       QStringList()
+                       << QLatin1String("x_y"),
+                       false);
+
+    // create our test config object
+    QScopedPointer<Nepomuk::FileIndexerConfig> cfg(new Nepomuk::FileIndexerConfig());
+
+    QString expectedFilter = QLatin1String("((REGEX(STR(?url),'/x_y/')))");
+    QCOMPARE(Nepomuk::IndexCleaner::constructExcludeFiltersFolderFilter(cfg.data()),
+             expectedFilter);
+
+
+    // second simple case: include the sub dir again
+    writeIndexerConfig(QStringList()
+                       << dirPrefix + QLatin1String("root")
+                       << dirPrefix + QLatin1String("root/x_y/sub"),
+                       QStringList(),
+                       QStringList()
+                       << QLatin1String("x_y"),
+                       false);
+    cfg->forceConfigUpdate();
+
+    expectedFilter = QString::fromLatin1("(?url!=<file://%1root/x_y/sub>) && ((REGEX(STR(?url),'/x_y/') && (!REGEX(STR(?url),'^file://%1root/x_y/sub/') || REGEX(bif:substring(STR(?url),%2,10000),'/x_y/'))))")
+                     .arg(dirPrefix)
+                     .arg(dirPrefix.length() + 7 + 13);
+    QCOMPARE(Nepomuk::IndexCleaner::constructExcludeFiltersFolderFilter(cfg.data()),
+             expectedFilter);
+}
+
+// test with two sub-dirs and two filters
+void IndexCleanerTest::testConstructExcludeFiltersFolderFilter2()
+{
+    QScopedPointer<KTempDir> mainDir(createTmpFolders(QStringList()
+                                                      << QLatin1String("root/x_y/sub1/x_z/sub2")));
+
+    const QString dirPrefix = mainDir->name();
+
+    // write the config
+    writeIndexerConfig(QStringList()
+                       << dirPrefix + QLatin1String("root")
+                       << dirPrefix + QLatin1String("root/x_y/sub1")
+                       << dirPrefix + QLatin1String("root/x_y/sub1/x_z/sub2"),
+                       QStringList(),
+                       QStringList()
+                       << QLatin1String("x_y")
+                       << QLatin1String("x_z"),
+                       false);
+
+    // create our test config object
+    QScopedPointer<Nepomuk::FileIndexerConfig> cfg(new Nepomuk::FileIndexerConfig());
+
+    QString expectedFilter = QString::fromLatin1("(?url!=<file://%1root/x_y/sub1/x_z/sub2>) && (?url!=<file://%1root/x_y/sub1>) && "
+                                                 "("
+                                                 "(REGEX(STR(?url),'/x_y/') && "
+                                                 "(!REGEX(STR(?url),'^file://%1root/x_y/sub1/x_z/sub2/') || REGEX(bif:substring(STR(?url),%2,10000),'/x_y/')) && "
+                                                 "(!REGEX(STR(?url),'^file://%1root/x_y/sub1/') || REGEX(bif:substring(STR(?url),%3,10000),'/x_y/'))"
+                                                 ") || "
+                                                 "(REGEX(STR(?url),'/x_z/') && "
+                                                 "(!REGEX(STR(?url),'^file://%1root/x_y/sub1/x_z/sub2/') || REGEX(bif:substring(STR(?url),%2,10000),'/x_z/'))"
+                                                 ")"
+                                                 ")")
+                             .arg(dirPrefix)
+                             .arg(dirPrefix.length() + 7 + 23)
+                             .arg(dirPrefix.length() + 7 + 14);
+    QCOMPARE(Nepomuk::IndexCleaner::constructExcludeFiltersFolderFilter(cfg.data()),
              expectedFilter);
 }
 

@@ -30,6 +30,8 @@ class IndexCleanerTest : public QObject
 
 private slots:
     void testConstructExcludeFolderFilter();
+    void testConstructExcludeFiltersFolderFilter1();
+    void testConstructExcludeFiltersFolderFilter2();
 };
 
 #endif // INDEXCLEANERTEST_H

@@ -54,7 +54,17 @@ namespace Nepomuk {
          * Construct a SPARQL filter which matches all filenames (variable ?fn) that
          * match one of the exclude filters set in \p cfg.
          */
-        static QString constructExcludeFiltersFilter(Nepomuk::FileIndexerConfig* cfg);
+        static QString constructExcludeFiltersFilenameFilter(Nepomuk::FileIndexerConfig* cfg);
+
+        /**
+         * Construct a SPARQL filter which matches all file URLs (variable ?url) that should
+         * not be indexed according to the exclude filters. In contrast to the above method
+         * the filter checks for matching exclude filters in path components instead of the
+         * file name.
+         * This method does take include folders into account but does not specifically handle
+         * hidden folders.
+         */
+        static QString constructExcludeFiltersFolderFilter(Nepomuk::FileIndexerConfig* cfg);
 
     public slots:
         /**

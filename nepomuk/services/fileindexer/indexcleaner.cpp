@@ -26,6 +26,7 @@
 
 #include <QtCore/QTimer>
 #include <QtCore/QMutexLocker>
+#include <QtCore/QSet>
 #include <KDebug>
 
 #include <Nepomuk/Resource>
@@ -52,11 +53,15 @@ namespace {
      * each folder to make sure it does not match something like
      * '/home/foobar' with '/home/foo'.
      */
-    QString constructExcludeIncludeFoldersFilter()
+    QString constructExcludeIncludeFoldersFilter(const QStringList& folders)
     {
         QStringList filters;
-        foreach( const QString& folder, Nepomuk::FileIndexerConfig::self()->includeFolders() ) {
-            filters << QString::fromLatin1( "(?url!=%1)" ).arg( Soprano::Node::resourceToN3( KUrl( folder ) ) );
+        QStringList used;
+        foreach( const QString& folder, folders ) {
+            if(!used.contains(folder)) {
+                used << folder;
+                filters << QString::fromLatin1( "(?url!=%1)" ).arg( Soprano::Node::resourceToN3( KUrl( folder ) ) );
+            }
         }
         return filters.join( QLatin1String( " && " ) );
     }
@@ -126,10 +131,9 @@ void Nepomuk::IndexCleaner::start()
 
     //
     // 3. Build filter query for all exclude filters
-    // FIXME: also take into account folders which are sub-folders to those that are excluded via filters (see also the unit test for possible cases)
     //
-    const QString fileFilters = constructExcludeFiltersFilter(Nepomuk::FileIndexerConfig::self());
-    const QString includeExcludeFilters = constructExcludeIncludeFoldersFilter();
+    const QString fileFilters = constructExcludeFiltersFilenameFilter(Nepomuk::FileIndexerConfig::self());
+    const QString includeExcludeFilters = constructExcludeIncludeFoldersFilter(Nepomuk::FileIndexerConfig::self()->includeFolders());
 
     QString filters;
     if( !includeExcludeFilters.isEmpty() && !fileFilters.isEmpty() )
@@ -139,34 +143,60 @@ void Nepomuk::IndexCleaner::start()
     else if( !includeExcludeFilters.isEmpty() )
         filters = QString::fromLatin1("FILTER(%1) .").arg( includeExcludeFilters );
 
-    // 3.1. Data for files which are excluded through filters
-    if(!appRes.isEmpty()) {
+    if(!filters.isEmpty()) {
+        // 3.1. Data for files which are excluded through filters
+        if(!appRes.isEmpty()) {
+            m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
+                                                     "graph ?g { ?r %1 ?url . } . "
+                                                     "?r %2 ?fn . "
+                                                     "?g %3 %4 . "
+                                                     "FILTER(REGEX(STR(?url),\"^file:/\")) . "
+                                                     "%5 } LIMIT %6" )
+                                .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                                      Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
+                                      Soprano::Node::resourceToN3( NAO::maintainedBy() ),
+                                      Soprano::Node::resourceToN3( appRes ),
+                                      filters )
+                                .arg(limit);
+        }
+
+        // 3.2. (legacy data) Data for files which are excluded through filters
         m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
-                                                 "graph ?g { ?r %1 ?url . } . "
+                                                 "?r %1 ?url . "
                                                  "?r %2 ?fn . "
-                                                 "?g %3 %4 . "
+                                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
                                                  "FILTER(REGEX(STR(?url),\"^file:/\")) . "
-                                                 "%6 } LIMIT %7" )
+                                                 "%3 } LIMIT %4" )
                             .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
                                   Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
-                                  Soprano::Node::resourceToN3( NAO::maintainedBy() ),
-                                  Soprano::Node::resourceToN3( appRes ),
                                   filters )
                             .arg(limit);
     }
 
-    // 3.2. (legacy data) Data for files which are excluded through filters
-    m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
-                                             "?r %1 ?url . "
-                                             "?r %2 ?fn . "
-                                             "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
-                                             "FILTER(REGEX(STR(?url),\"^file:/\")) . "
-                                             "%3 } LIMIT %4" )
-                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                              Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::fileName() ),
-                              filters )
-                        .arg(limit);
+    // 3.3. Data for files which have paths that are excluded through exclude filters
+    const QString excludeFiltersFolderFilter = constructExcludeFiltersFolderFilter(Nepomuk::FileIndexerConfig::self());
+    if(!excludeFiltersFolderFilter.isEmpty()) {
+        m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
+                                                 "graph ?g { ?r %1 ?url . } . "
+                                                 "?g %2 %3 . "
+                                                 "FILTER(REGEX(STR(?url),\"^file:/\") && %4) . "
+                                                 "} LIMIT %5" )
+                            .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                                  Soprano::Node::resourceToN3( NAO::maintainedBy() ),
+                                  Soprano::Node::resourceToN3( appRes ),
+                                  excludeFiltersFolderFilter )
+                            .arg(limit);
 
+        // 3.4. (legacy data) Data for files which have paths that are excluded through exclude filters
+        m_removalQueries << QString::fromLatin1( "select distinct ?r where { "
+                                                 "?r %1 ?url . "
+                                                 "?g <http://www.strigi.org/fields#indexGraphFor> ?r . "
+                                                 "FILTER(REGEX(STR(?url),\"^file:/\") && %2) . "
+                                                 "} LIMIT %3" )
+                            .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
+                                  excludeFiltersFolderFilter)
+                            .arg(limit);
+    }
 
     //
     // 4. (legacy data) Remove all old data from Xesam-times. While we leave out the data created by libnepomuk
@@ -334,7 +364,12 @@ namespace {
 // static
 QString Nepomuk::IndexCleaner::constructExcludeFolderFilter(FileIndexerConfig *cfg)
 {
-    QStringList subFilters( constructExcludeIncludeFoldersFilter() );
+    //
+    // This filter consists of two parts:
+    // 1. A set of filter terms which exlude the actual include folders themselves from being removed
+    // 2. A set of filter terms which is a recursive sequence of inclusion and exclusion
+    //
+    QStringList subFilters( constructExcludeIncludeFoldersFilter(cfg->includeFolders()) );
 
     // now add the actual filters
     QList<QPair<QString, bool> > folders = cfg->folders();
@@ -351,18 +386,108 @@ QString Nepomuk::IndexCleaner::constructExcludeFolderFilter(FileIndexerConfig *c
 }
 
 
-// static
-QString Nepomuk::IndexCleaner::constructExcludeFiltersFilter(Nepomuk::FileIndexerConfig *cfg)
-{
-    QStringList fileFilters;
-    foreach( const QString& filter, cfg->excludeFilters() ) {
+namespace {
+    QString excludeFilterToSparqlRegex(const QString& filter) {
         QString filterRxStr = QRegExp::escape( filter );
         filterRxStr.replace( "\\*", QLatin1String( ".*" ) );
         filterRxStr.replace( "\\?", QLatin1String( "." ) );
         filterRxStr.replace( '\\',"\\\\" );
-        fileFilters << QString::fromLatin1( "REGEX(STR(?fn),\"^%1$\")" ).arg( filterRxStr );
+        return filterRxStr;
+    }
+}
+
+// static
+QString Nepomuk::IndexCleaner::constructExcludeFiltersFilenameFilter(Nepomuk::FileIndexerConfig *cfg)
+{
+    //
+    // This is stright-forward: we convert the filters into SPARQL regex syntax
+    // and then combine them with the || operator.
+    //
+    QStringList fileFilters;
+    foreach( const QString& filter, cfg->excludeFilters() ) {
+        fileFilters << QString::fromLatin1( "REGEX(STR(?fn),\"^%1$\")" ).arg( excludeFilterToSparqlRegex(filter) );
     }
     return fileFilters.join(QLatin1String(" || "));
+}
+
+
+// static
+QString Nepomuk::IndexCleaner::constructExcludeFiltersFolderFilter(Nepomuk::FileIndexerConfig *cfg)
+{
+    //
+    // In order to find the entries which we should remove based on matching exclude filters in path
+    // components we need to consider two things:
+    // 1. For each exclude filter find entries which contain "/FILTER/" in their URL. The ones which
+    //    have it in their file name are already matched in constructExcludeFiltersFilenameFilter.
+    // 2. If there are include folders which have a path component matching one of the exclude filters
+    //    we need to add additional filter terms to make sure we do not remove any of the files in them.
+    // 2.1. The exception are URLs that have a path component which matches one of the exclude filters
+    //      in the path relative to the include folder.
+    //
+
+    // build our own cache of the exclude filters
+    const QStringList excludeFilters = cfg->excludeFilters();
+    RegExpCache excludeFilterCache;
+    excludeFilterCache.rebuildCacheFromFilterList(excludeFilters);
+    QList<QRegExp> excludeRegExps = excludeFilterCache.regExps();
+
+    //
+    // Find all the include folders that have a path component which should normally be excluded through
+    // the exclude filters.
+    // We create a mapping from exclude filter to the include folders in question.
+    //
+    QMultiHash<QString, QString> includeFolders;
+    foreach(const QString& folder, cfg->includeFolders()) {
+        const QStringList components = folder.split('/', QString::SkipEmptyParts);
+        foreach(const QString& c, components) {
+            for(int i = 0; i < excludeRegExps.count(); ++i) {
+                if(excludeRegExps[i].exactMatch(c)) {
+                    includeFolders.insert(excludeRegExps[i].pattern(), folder);
+                }
+            }
+        }
+    }
+
+    //
+    // Build the SPARQL filters that match the urls to remove
+    //
+    QStringList urlFilters;
+    foreach( const QString& filter, excludeFilters ) {
+        QStringList terms;
+
+        // 1. Create the basic filter term to get all urls that match the exclude filter
+        terms << QString::fromLatin1( "REGEX(STR(?url),'/%1/')" ).arg( excludeFilterToSparqlRegex(filter) );
+
+        // 2. Create special cases for all include folders that have a matching path component
+        // (the "10000" is just some random value which should make sure we get all the urls)
+        foreach(const QString folder, includeFolders.values(filter)) {
+            const QString encodedUrl = QString::fromAscii( KUrl( folder ).toEncoded() );
+            terms << QString::fromLatin1("(!REGEX(STR(?url),'^%1/') || REGEX(bif:substring(STR(?url),%2,10000),'/%3/'))")
+                     .arg(encodedUrl)
+                     .arg(encodedUrl.length()+1)
+                     .arg(excludeFilterToSparqlRegex(filter));
+        }
+
+        // 3. Put all together
+        urlFilters << QLatin1String("(") + terms.join(QLatin1String(" && ")) + QLatin1String(")");
+    }
+
+    //
+    // Combine the generated filter terms with the typical include folder exclusion filter which makes
+    // sure that we do not remove the include folders themselves.
+    //
+    if(!urlFilters.isEmpty()) {
+        QString filter;
+        if(!includeFolders.values().isEmpty()) {
+            filter += constructExcludeIncludeFoldersFilter(includeFolders.values())
+                      += QLatin1String(" && ");
+        }
+        filter += QLatin1String("(") + urlFilters.join(QLatin1String(" || ")) + QLatin1String(")");
+        return filter;
+    }
+    else {
+        return QString();
+    }
 }
 
 #include "indexcleaner.moc"
