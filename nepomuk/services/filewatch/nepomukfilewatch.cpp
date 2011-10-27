@@ -98,9 +98,11 @@ namespace {
         // Only watch the index folders for file creation and change.
         if( Nepomuk::FileIndexerConfig::self()->shouldFolderBeIndexed( path ) ) {
             modes |= KInotify::EventCloseWrite;
+            modes |= KInotify::EventCreate;
         }
         else {
             modes &= (~KInotify::EventCloseWrite);
+            modes &= (~KInotify::EventCreate);
         }
 
         return true;
@@ -146,6 +148,8 @@ Nepomuk::FileWatch::FileWatch( QObject* parent, const QList<QVariant>& )
              this, SLOT( slotFileMoved( QString, QString ) ) );
     connect( m_dirWatch, SIGNAL( deleted( QString, bool ) ),
              this, SLOT( slotFileDeleted( QString, bool ) ) );
+    connect( m_dirWatch, SIGNAL( created( QString, bool ) ),
+             this, SLOT( slotFileCreated( QString, bool ) ) );
     connect( m_dirWatch, SIGNAL( closedWrite( QString ) ),
              this, SLOT( slotFileClosedAfterWrite( QString ) ) );
     connect( m_dirWatch, SIGNAL( watchUserLimitReached() ),
@@ -186,13 +190,14 @@ Nepomuk::FileWatch::~FileWatch()
 }
 
 
+// FIXME: listen to Create for folders!
 void Nepomuk::FileWatch::watchFolder( const QString& path )
 {
     kDebug() << path;
 #ifdef BUILD_KINOTIFY
     if ( m_dirWatch && !m_dirWatch->watchingPath( path ) )
         m_dirWatch->addWatch( path,
-                              KInotify::WatchEvents( KInotify::EventMove|KInotify::EventDelete|KInotify::EventDeleteSelf|KInotify::EventCloseWrite ),
+                              KInotify::WatchEvents( KInotify::EventMove|KInotify::EventDelete|KInotify::EventDeleteSelf|KInotify::EventCloseWrite|KInotify::EventCreate ),
                               KInotify::WatchFlags() );
 #endif
 }
@@ -232,6 +237,16 @@ void Nepomuk::FileWatch::slotFileDeleted( const QString& urlString, bool isDir )
         url.append('/');
     }
     slotFilesDeleted( QStringList( url ) );
+}
+
+
+void Nepomuk::FileWatch::slotFileCreated( const QString& path, bool isDir )
+{
+    // we only need the file creation event for folders
+    // file creation is always followed by a CloseAfterWrite event
+    if(isDir) {
+        updateFileViaStrigi(path);
+    }
 }
 
 
