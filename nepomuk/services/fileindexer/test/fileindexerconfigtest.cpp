@@ -310,13 +310,13 @@ void FileIndexerConfigTest::testExcludeFilterOnFolders()
     const QString includedSubSubDir = includedSubDir + QLatin1String("/sub");
 
     // create the full folder hierarchy
-    KTempDir* mainDir = createTmpFolders(QStringList()
-                                         << indexedRootDir
-                                         << excludedSubDir1
-                                         << excludedSubSubDir1
-                                         << excludedSubDir1
-                                         << excludedSubSubDir2
-                                         << includedSubDir);
+    QScopedPointer<KTempDir> mainDir(createTmpFolders(QStringList()
+                                                      << indexedRootDir
+                                                      << excludedSubDir1
+                                                      << excludedSubSubDir1
+                                                      << excludedSubDir1
+                                                      << excludedSubSubDir2
+                                                      << includedSubDir));
 
     const QString dirPrefix = mainDir->name();
 
