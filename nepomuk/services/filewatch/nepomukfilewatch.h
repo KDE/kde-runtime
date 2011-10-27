@@ -72,6 +72,7 @@ namespace Nepomuk {
         void slotFileMoved( const QString& from, const QString& to );
         void slotFileDeleted( const QString& urlString, bool isDir );
         void slotFilesDeleted( const QStringList& path );
+        void slotFileCreated( const QString& path, bool isDir );
         void slotFileClosedAfterWrite( const QString& );
         void slotMovedWithoutData( const QString& );
         void connectToKDirWatch();

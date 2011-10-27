@@ -362,7 +362,7 @@ void KInotify::slotEvent( int socket )
                 // FIXME: store the mode and flags somewhere
                 addWatch( path, d->mode, d->flags );
             }
-            emit created( QFile::decodeName(path) );
+            emit created( QFile::decodeName(path), event->mask & IN_ISDIR );
         }
         if ( event->mask & EventDeleteSelf ) {
             kDebug() << path << "EventDeleteSelf";
