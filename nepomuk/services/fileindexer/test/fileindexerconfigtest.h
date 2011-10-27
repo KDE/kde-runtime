@@ -28,8 +28,27 @@ class FileIndexerConfigTest : public QObject
 {
     Q_OBJECT
 
+public:
+    FileIndexerConfigTest();
+
 private slots:
     void testShouldFolderBeIndexed();
+    void testShouldBeIndexed();
+
+private:
+    const QString indexedRootDir;
+    const QString indexedSubDir;
+    const QString indexedSubSubDir;
+    const QString excludedSubSubDir;
+    const QString hiddenSubSubDir;
+    const QString ignoredSubFolderToIndexedHidden;
+    const QString indexedSubFolderToIndexedHidden;
+    const QString excludedSubDir;
+    const QString indexedSubDirToExcluded;
+    const QString hiddenSubDir;
+    const QString indexedHiddenSubDir;
+    const QString ignoredRootDir;
+    const QString excludedRootDir;
 };
 
 #endif // FILEINDEXERCONFIGTEST_H

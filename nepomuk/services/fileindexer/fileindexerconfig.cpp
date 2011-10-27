@@ -144,9 +144,7 @@ KIO::filesize_t Nepomuk::FileIndexerConfig::minDiskSpace() const
 
 void Nepomuk::FileIndexerConfig::slotConfigDirty()
 {
-    m_config.reparseConfiguration();
-    buildFolderCache();
-    buildExcludeFilterRegExpCache();
+    forceConfigUpdate();
     emit configChanged();
 }
 
@@ -313,6 +311,13 @@ bool Nepomuk::FileIndexerConfig::initialUpdateDisabled() const
 bool Nepomuk::FileIndexerConfig::suspendOnPowerSaveDisabled() const
 {
     return m_config.group( "General" ).readEntry( "disable suspend on powersave", false );
+}
+
+void Nepomuk::FileIndexerConfig::forceConfigUpdate()
+{
+    m_config.reparseConfiguration();
+    buildFolderCache();
+    buildExcludeFilterRegExpCache();
 }
 
 #include "fileindexerconfig.moc"
