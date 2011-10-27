@@ -488,8 +488,14 @@ void Nepomuk::StrigiIndexWriter::finishAnalysis( const AnalysisResult* idx )
         }
 
         // write the mimetype for local files
-        md->data.addProperty( Nepomuk::Vocabulary::NIE::mimeType(),
-                              KMimeType::findByUrl(md->fileUrl)->name() );
+        if(md->fileInfo.isSymLink()) {
+            md->data.addProperty( Nepomuk::Vocabulary::NIE::mimeType(),
+                                  QLatin1String("application/x-symlink"));
+        }
+        else {
+            md->data.addProperty( Nepomuk::Vocabulary::NIE::mimeType(),
+                                  KMimeType::findByUrl(md->fileUrl, 0 /* default mode */, true /* is local file */)->name() );
+        }
 #ifdef Q_OS_UNIX
         KDE_struct_stat statBuf;
         if( KDE_stat( QFile::encodeName(md->fileInfo.absoluteFilePath()).data(), &statBuf ) == 0 ) {
