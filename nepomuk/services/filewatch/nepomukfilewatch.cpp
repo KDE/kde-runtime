@@ -245,7 +245,7 @@ void Nepomuk::FileWatch::slotFileCreated( const QString& path, bool isDir )
     // we only need the file creation event for folders
     // file creation is always followed by a CloseAfterWrite event
     if(isDir) {
-        updateFileViaStrigi(path);
+        updateFileViaFileIndexer(path);
     }
 }
 
