@@ -26,6 +26,7 @@
 
 class KUrl;
 class QUrl;
+class QString;
 
 namespace Nepomuk {
 
@@ -75,6 +76,8 @@ namespace Nepomuk {
         void forceUri( const QUrl & uri );
 
     private:
+        static QString extractTextFromPdf(const QString& path);
+
         class Private;
         Private* d;
     };

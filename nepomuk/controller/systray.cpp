@@ -84,7 +84,12 @@ Nepomuk::SystemTray::SystemTray( QObject* parent )
     connect( dbusServiceWatcher, SIGNAL( serviceUnregistered( QString ) ),
              this, SLOT( slotUpdateFileIndexerStatus()) );
 
+    connect( &m_updateTimer, SIGNAL( timeout() ),
+             this, SLOT( slotActiveStatusTimeout()) );
+
     slotUpdateFileIndexerStatus();
+    m_updateTimer.setSingleShot(true);
+
 }
 
 
@@ -95,16 +100,25 @@ Nepomuk::SystemTray::~SystemTray()
 
 void Nepomuk::SystemTray::slotUpdateFileIndexerStatus()
 {
-    // make sure we do not update the systray icon all the time
-
     ItemStatus newStatus = status();
+
+    // make sure we do not update the systray icon all the time
     const bool fileIndexerInitialized =
             QDBusConnection::sessionBus().interface()->isServiceRegistered(m_service->service()) &&
             m_serviceControl->isInitialized();
 
     // a manually suspended service should not be passive
-    if( fileIndexerInitialized )
-        newStatus = m_service->isIndexing() || m_suspendedManually ? Active : Passive;
+    if ( fileIndexerInitialized ) {
+        if ( m_service->isIndexing() || m_suspendedManually) {
+            if (!m_updateTimer.isActive()) {
+                m_updateTimer.start(3000);
+            }
+        }
+        else {
+            m_updateTimer.stop();
+            newStatus = Passive;
+        }
+    }
     else
         newStatus = Passive;
     if ( newStatus != status() ) {
@@ -178,11 +192,15 @@ void Nepomuk::SystemTray::slotActivateRequested()
 
         const QRect rect = screenRect( 0, -3 );
         m_statusWidget->move( rect.center().x() - m_statusWidget->width() / 2,
-                             rect.center().y() - m_statusWidget->height() / 2 );
+                            rect.center().y() - m_statusWidget->height() / 2 );
     }
     else {
         m_statusWidget->hide();
     }
 }
 
+void Nepomuk::SystemTray::slotActiveStatusTimeout()
+{
+    setStatus(Active);
+} 
 #include "systray.moc"

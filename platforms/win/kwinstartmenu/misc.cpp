@@ -42,7 +42,7 @@
 #include <kdesktopfile.h>
 #include <kdeversion.h>
 
-GlobalOptions globalOptions;
+KWinStartMenuSettings settings;
 
 bool removeDirectory(const QString& aDir)
 {
@@ -98,6 +98,7 @@ QStringList getInstalledKDEVersions()
     QFileInfoList entries = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::Dirs );
     int count = entries.size();
     foreach(QFileInfo entryInfo, entries) {
+        /// @TODO find single app installations 
         if (entryInfo.fileName().startsWith(QLatin1String("KDE ")))
             installedVersions << entryInfo.fileName();
     }
@@ -106,15 +107,17 @@ QStringList getInstalledKDEVersions()
 
 QString getKDEStartMenuRootEntry()
 {
-    QString version = KDE::versionString();
-    QStringList versions = version.split(' '); 
-    QString addOn = !globalOptions.rootCustomString.isEmpty() ? globalOptions.rootCustomString + QString(" ") : QString("");
-#ifdef QT_NO_DEBUG
-    QString compileMode = "Release"; 
-#else
-    QString compileMode = "Debug"; 
-#endif
-    return "KDE " + versions[0] + ' ' + addOn + compileMode;
+    QString result;
+    result += settings.nameString() + ' ';
+    result += settings.versionString() + ' ';
+    if (!settings.customString().isEmpty())
+        result += settings.customString() + ' ';
+ #ifdef QT_NO_DEBUG
+    result += "Release";
+ #else
+    result += "Debug";
+ #endif
+    return result;
 }
 
 inline QString getWorkingDir() 
@@ -230,7 +233,7 @@ bool generateMenuEntries(QList<LinkFile> &files, const KUrl &url, const QString 
             
             QString linkPath = getKDEStartMenuPath();
 
-            if (globalOptions.useCategories)
+            if (settings.useCategories())
                 linkPath +=  relPathTranslated;
             linkPath += '/';
                             
@@ -290,7 +293,7 @@ void removeObsolateInstallations()
             if (fi.exists())
                 available = true;
             QFileInfo f1(lf.workingDir());
-			// compare harmonized pathes
+            // compare harmonized pathes
             if (f1.absoluteFilePath() == currentWorkDir.absoluteFilePath())
                 sameWorkingDir = true;
         }

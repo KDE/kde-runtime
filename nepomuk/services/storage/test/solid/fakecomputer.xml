@@ -356,7 +356,7 @@
                         <property key="mountPoint">/media/dvd</property>
                         <property key="usage">filesystem</property>
                         <property key="fsType">udf</property>
-                        <property key="label">SOLIDMAN_BEGINS</property>
+                        <property key="label">SOLIDMAN BEGINS</property>
                         <property key="size">4235423524</property>
                     </device>
 

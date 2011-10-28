@@ -38,6 +38,8 @@ public:
 
     void rebuildCacheFromFilterList( const QStringList& filters );
 
+    QList<QRegExp> regExps() const { return m_regexpCache; }
+
 private:
     QList<QRegExp> m_regexpCache;
 };

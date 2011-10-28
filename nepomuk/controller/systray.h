@@ -20,6 +20,7 @@
 #define _NEPOMUK_CONTROLLER_SYSTRAY_H_
 
 #include <KStatusNotifierItem>
+#include <QtCore/QTimer>
 #include "fileindexerinterface.h"
 #include "servicecontrol.h"
 
@@ -44,6 +45,7 @@ namespace Nepomuk {
         void slotSuspend( bool suspended );
 
         void slotActivateRequested();
+        void slotActiveStatusTimeout();
 
     private:
         KToggleAction* m_suspendResumeAction;
@@ -56,6 +58,8 @@ namespace Nepomuk {
 
         // used to prevent endless status updates
         QString m_prevStatus;
+        QTimer m_updateTimer;
+
     };
 }
 

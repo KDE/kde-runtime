@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2009-2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2009-2011 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -34,14 +34,22 @@
 
 
 Nepomuk::MetadataMover::MetadataMover( Soprano::Model* model, QObject* parent )
-    : QThread( parent ),
-      m_stopped(false),
+    : QObject( parent ),
+      m_queueMutex(QMutex::Recursive),
       m_model( model )
 {
-    QTimer* timer = new QTimer( this );
-    connect( timer, SIGNAL( timeout() ), this, SLOT( slotClearRecentlyFinishedRequests() ) );
-    timer->setInterval( 30000 );
-    timer->start();
+    // setup the main update queue timer
+    m_queueTimer = new QTimer(this);
+    connect(m_queueTimer, SIGNAL(timeout()),
+            this, SLOT(slotWorkUpdateQueue()),
+            Qt::DirectConnection);
+
+    // setup the cleanup timer which removes requests that are done
+    m_recentlyFinishedRequestsTimer = new QTimer(this);
+    connect( m_recentlyFinishedRequestsTimer, SIGNAL( timeout() ),
+             this, SLOT( slotClearRecentlyFinishedRequests() ),
+             Qt::DirectConnection );
+    m_recentlyFinishedRequestsTimer->setInterval( 30000 );
 }
 
 
@@ -50,26 +58,20 @@ Nepomuk::MetadataMover::~MetadataMover()
 }
 
 
-void Nepomuk::MetadataMover::stop()
-{
-    QMutexLocker lock( &m_queueMutex );
-    m_stopped = true;
-    m_queueWaiter.wakeAll();
-}
-
-
 void Nepomuk::MetadataMover::moveFileMetadata( const KUrl& from, const KUrl& to )
 {
-    kDebug() << from << to;
+//    kDebug() << from << to;
     Q_ASSERT( !from.path().isEmpty() && from.path() != "/" );
     Q_ASSERT( !to.path().isEmpty() && to.path() != "/" );
-    m_queueMutex.lock();
+
+    QMutexLocker lock(&m_queueMutex);
+
     UpdateRequest req( from, to );
     if ( !m_updateQueue.contains( req ) &&
          !m_recentlyFinishedRequests.contains( req ) )
         m_updateQueue.enqueue( req );
-    m_queueMutex.unlock();
-    m_queueWaiter.wakeAll();
+
+    QTimer::singleShot(0, this, SLOT(slotStartUpdateTimer()));
 }
 
 
@@ -83,79 +85,68 @@ void Nepomuk::MetadataMover::removeFileMetadata( const KUrl& file )
 void Nepomuk::MetadataMover::removeFileMetadata( const KUrl::List& files )
 {
     kDebug() << files;
-    m_queueMutex.lock();
+    QMutexLocker lock(&m_queueMutex);
+
     foreach( const KUrl& file, files ) {
         UpdateRequest req( file );
         if ( !m_updateQueue.contains( req ) &&
              !m_recentlyFinishedRequests.contains( req ) )
             m_updateQueue.enqueue( req );
     }
-    m_queueMutex.unlock();
-    m_queueWaiter.wakeAll();
+
+    QTimer::singleShot(0, this, SLOT(slotStartUpdateTimer()));
 }
 
 
-// FIXME: somehow detect when the nepomuk storage service is down and wait for it to come up again (how about having methods for that in Nepomuk::Service?)
-void Nepomuk::MetadataMover::run()
+void Nepomuk::MetadataMover::slotWorkUpdateQueue()
 {
-    m_stopped = false;
-    while( !m_stopped ) {
+    // lock for initial iteration
+    QMutexLocker lock(&m_queueMutex);
 
-        // lock for initial iteration
-        m_queueMutex.lock();
+    // work the queue
+    if( !m_updateQueue.isEmpty() ) {
+        UpdateRequest updateRequest = m_updateQueue.dequeue();
+        m_recentlyFinishedRequests.insert( updateRequest );
 
-        // work the queue
-        while( !m_updateQueue.isEmpty() ) {
-            UpdateRequest updateRequest = m_updateQueue.dequeue();
-            m_recentlyFinishedRequests.insert( updateRequest );
+        // unlock after queue utilization
+        lock.unlock();
 
-            // unlock after queue utilization
-            m_queueMutex.unlock();
+//        kDebug() << "========================= handling" << updateRequest.source() << updateRequest.target();
 
-            kDebug() << "========================= handling" << updateRequest.source() << updateRequest.target();
+        // an empty second url means deletion
+        if( updateRequest.target().isEmpty() ) {
+            removeMetadata( updateRequest.source() );
+        }
+        else {
+            const KUrl from = updateRequest.source();
+            const KUrl to = updateRequest.target();
 
-            // an empty second url means deletion
-            if( updateRequest.target().isEmpty() ) {
-                KUrl url = updateRequest.source();
-                removeMetadata( url );
-            }
-            else {
-                KUrl from = updateRequest.source();
-                KUrl to = updateRequest.target();
+            // We do NOT get deleted messages for overwritten files! Thus, we
+            // have to remove all metadata for overwritten files first.
+            removeMetadata( to );
 
-                // We do NOT get deleted messages for overwritten files! Thus, we
-                // have to remove all metadata for overwritten files first.
-                removeMetadata( to );
-
-                // and finally update the old statements
-                updateMetadata( from, to );
-            }
-
-            kDebug() << "========================= done with" << updateRequest.source() << updateRequest.target();
-
-            // lock for next iteration
-            m_queueMutex.lock();
+            // and finally update the old statements
+            updateMetadata( from, to );
         }
 
-        // wait for more input
-        kDebug() << "Waiting...";
-        m_queueWaiter.wait( &m_queueMutex );
-        m_queueMutex.unlock();
-        kDebug() << "Woke up.";
+//        kDebug() << "========================= done with" << updateRequest.source() << updateRequest.target();
+    }
+    else {
+        kDebug() << "All update requests handled. Stopping timer.";
+        m_queueTimer->stop();
     }
 }
 
 
 void Nepomuk::MetadataMover::removeMetadata( const KUrl& url )
 {
-    kDebug() << url;
+//    kDebug() << url;
 
     if ( url.isEmpty() ) {
         kDebug() << "empty path. Looks like a bug somewhere...";
     }
     else {
         const bool isFolder = url.url().endsWith('/');
-        kDebug() << "removing metadata for file" << url;
         Nepomuk::removeResources(QList<QUrl>() << url);
 
         if( isFolder ) {
@@ -173,7 +164,6 @@ void Nepomuk::MetadataMover::removeMetadata( const KUrl& url )
                                                     "}" )
                                 .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
                                         url.url(KUrl::AddTrailingSlash) );
-            kDebug() << query;
 
             //
             // We cannot use one big loop since our updateMetadata calls below can change the iterator
@@ -213,7 +203,7 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to )
         // If we have no metadata yet we need to tell the file indexer (if running) so it can
         // create the metadata in case the target folder is configured to be indexed.
         //
-        emit movedWithoutData( to.directory( KUrl::IgnoreTrailingSlash ) );
+        emit movedWithoutData( to.path() );
     }
 }
 
@@ -231,6 +221,23 @@ void Nepomuk::MetadataMover::slotClearRecentlyFinishedRequests()
         else {
             ++it;
         }
+    }
+
+    if(m_recentlyFinishedRequests.isEmpty()) {
+        kDebug() << "No more old requests. Stopping timer.";
+        m_recentlyFinishedRequestsTimer->stop();
+    }
+}
+
+
+// start the timer in the update thread
+void Nepomuk::MetadataMover::slotStartUpdateTimer()
+{
+    if(!m_queueTimer->isActive()) {
+        m_queueTimer->start();
+    }
+    if(!m_recentlyFinishedRequestsTimer->isActive()) {
+        m_recentlyFinishedRequestsTimer->start();
     }
 }
 

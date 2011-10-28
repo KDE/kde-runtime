@@ -20,6 +20,7 @@ set(SRCS
   invalidfileresourcecleaner.cpp
   ../fileindexer/fileindexerconfig.cpp
   removabledeviceindexnotification.cpp
+  activefilequeue.cpp
   )
 
 qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.FileIndexer.xml fileindexerinterface)

@@ -10,3 +10,10 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     ${KDE4_KDECORE_LIBS}
   )
 endif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+set(activefilequeuetest_SRC activefilequeuetest.cpp ../activefilequeue.cpp)
+kde4_add_unit_test(activefilequeuetest TESTNAME nepomuk-activefilequeuetest NOGUI ${activefilequeuetest_SRC})
+target_link_libraries(activefilequeuetest
+  ${QT_QTTEST_LIBRARY}
+  ${KDE4_KDECORE_LIBS}
+)

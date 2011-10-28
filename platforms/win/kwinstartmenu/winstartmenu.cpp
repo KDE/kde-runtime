@@ -40,7 +40,6 @@ K_EXPORT_PLUGIN(WinStartMenuFactory("WinStartMenu"))
 struct WinStartMenuModulePrivate
 {
     WinStartMenuModulePrivate()
-     : config("kwinstartmenurc")
     {
     }
     virtual ~WinStartMenuModulePrivate() 
@@ -54,14 +53,8 @@ WinStartMenuModule::WinStartMenuModule(QObject* parent, const QList<QVariant>&)
     : KDEDModule(parent)
     , d( new WinStartMenuModulePrivate )
 {
-    // @todo merge with related stuff in main.cpp 
-    KConfigGroup group( &d->config, "General" );
-
-    if (group.readEntry("Enabled", true))
-      connect(KSycoca::self(), SIGNAL(databaseChanged()), this, SLOT(databaseChanged()));
-
-    globalOptions.useCategories = group.readEntry("useCategories", true);
-    globalOptions.rootCustomString = group.readEntry("rootCustomString", "");
+    if (settings.enabled())
+        connect(KSycoca::self(), SIGNAL(databaseChanged()), this, SLOT(databaseChanged()));
     
     new WinStartMenuAdaptor( this );
 }

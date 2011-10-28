@@ -43,12 +43,14 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QStack>
 #include <QtCore/QMutex>
+#include <QtCore/QProcess>
 
 #include <KUrl>
 #include <KDebug>
 #include <KMimeType>
 #include <kde_file.h>
 #include <KJob>
+#include <KStandardDirs>
 
 #include <sys/stat.h>
 #include <stdlib.h>
@@ -506,6 +508,18 @@ void Nepomuk::StrigiIndexWriter::finishAnalysis( const AnalysisResult* idx )
 
 
     //
+    // A small hack for PDF files. The strigi analyzer is not very powerful yet. Thus,
+    // we use prdftotext to extract the contents instead.
+    //
+    if(md->data.contains(NIE::mimeType(), QLatin1String("application/pdf"))) {
+        const QString txt = extractTextFromPdf(md->fileUrl.toLocalFile());
+        if(!txt.isEmpty()) {
+            md->data.setProperty(NIE::plainTextContent(), txt);
+        }
+    }
+
+
+    //
     // Finally push all the information to Nepomuk
     //
     Nepomuk::SimpleResourceGraph graph;
@@ -564,4 +578,23 @@ void Nepomuk::StrigiIndexWriter::releaseWriterData( const Strigi::FieldRegister&
 void Nepomuk::StrigiIndexWriter::forceUri(const QUrl& uri)
 {
     d->resourceUri = uri;
+}
+
+// static
+QString Nepomuk::StrigiIndexWriter::extractTextFromPdf(const QString &path)
+{
+    const QString pdf2txtExe = KStandardDirs::findExe(QLatin1String("pdftotext"));
+    if(!pdf2txtExe.isEmpty()) {
+        QString txt;
+        QProcess p;
+        p.start(pdf2txtExe, QStringList() << path << QLatin1String("-"));
+        while(p.waitForReadyRead(-1)) {
+            txt.append(QString::fromLocal8Bit(p.readAllStandardOutput()));
+        }
+        p.waitForFinished(-1);
+        return txt.simplified();
+    }
+    else {
+        return QString();
+    }
 }

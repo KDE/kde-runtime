@@ -26,7 +26,7 @@
 #include <KCmdLineArgs>
 #include <KGlobal>
 #include <KProcess>
-#include <QtDebug>
+#include <KDebug>
 
 int main(int argc, char **argv)
 {
@@ -53,15 +53,11 @@ int main(int argc, char **argv)
     if (res == KMessageBox::Cancel)
         return 2;
 
-    KProcess kinit;
-
-    kinit << "kdeinit4" << "--shutdown";
-    kinit.start();
-    bool finish = kinit.waitForFinished(10000);
-    QByteArray result = kinit.readAll();
-    qDebug() << result;
-
-    return finish ? 0 : 1;
+    QStringList cmd;
+    cmd  << "kdeinit4" << "--shutdown";
+    kDebug() << "running" << cmd;
+    KProcess::startDetached(cmd);
+    return 0;
 }
 
 // vim: ts=4 sw=4 et
