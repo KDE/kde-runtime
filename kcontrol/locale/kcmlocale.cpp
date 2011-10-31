@@ -2669,7 +2669,7 @@ void KCMLocale::setTimeFormat( const QString &newValue )
 
 QString KCMLocale::dayPeriodText( const QString &dayPeriod )
 {
-    return dayPeriod.split( QChar::fromLatin1(',') ).at( 2 );
+    return dayPeriod.isEmpty() ? QString() : dayPeriod.split( QChar::fromLatin1(',') ).at( 2 );
 }
 
 QString KCMLocale::amPeriod( const QString &longName, const QString &shortName, const QString &narrowName )
