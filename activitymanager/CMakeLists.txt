@@ -25,7 +25,12 @@ endif(Nepomuk_FOUND)
 macro_optional_find_package(QZeitgeist)
 
 if (QZEITGEIST_INCLUDE_DIR)
-    set(QZeitgeist_FOUND TRUE)
+    if (QZEITGEIST_VERSION VERSION_LESS 0.8.0)
+        set(QZeitgeist_FOUND TRUE)
+    else (QZEITGEIST_VERSION VERSION_LESS 0.8.0)
+        message(STATUS "QZeitgeist 0.8.0 and greater are not supported")
+        set(QZeitgeist_FOUND FALSE)
+    endif (QZEITGEIST_VERSION VERSION_LESS 0.8.0)
 endif(QZEITGEIST_INCLUDE_DIR)
 
 macro_log_feature(
