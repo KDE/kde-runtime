@@ -34,7 +34,8 @@
 #include <KLocale>
 
 ReportInterface::ReportInterface(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      m_duplicate(0)
 {
     m_bugzillaManager = new BugzillaManager(this);
 
@@ -420,6 +421,16 @@ void ReportInterface::setAttachToBugNumber(uint bugNumber)
 uint ReportInterface::attachToBugNumber() const
 {
     return m_attachToBugNumber;
+}
+
+void ReportInterface::setDuplicateId(uint duplicate)
+{
+    m_duplicate = duplicate;
+}
+
+uint ReportInterface::duplicateId() const
+{
+    return m_duplicate;
 }
 
 void ReportInterface::setPossibleDuplicatesByQuery(const QStringList & list)

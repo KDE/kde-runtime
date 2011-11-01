@@ -71,6 +71,10 @@ public:
     void setAttachToBugNumber(uint);
     uint attachToBugNumber() const;
 
+    //Zero means there is no duplicate
+    void setDuplicateId(uint);
+    uint duplicateId() const;
+
     void setPossibleDuplicatesByQuery(const QStringList &);
 
     BugzillaManager * bugzillaManager() const;
@@ -116,6 +120,7 @@ private:
     QStringList m_allPossibleDuplicatesByQuery;
 
     uint     m_attachToBugNumber;
+    uint     m_duplicate;
     
     ProductMapping *    m_productMapping;
     BugzillaManager *   m_bugzillaManager;
