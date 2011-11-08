@@ -24,81 +24,64 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 Item {
     id: main
     state: parent.state
-    property alias imagePath: shadowSvg.imagePath
-    property string hoverElement: "hover"
-    property string focusElement: "focus"
-    property alias shadowElement: shadow.elementId
 
     PlasmaCore.Svg {
-        id: shadowSvg
-        imagePath: "widgets/actionbutton"
+        id: lineEditSvg
+        imagePath: "widgets/lineedit"
+        onRepaintNeeded: {
+            if (lineEditSvg.hasElement("hint-focus-over-base")) {
+                main.z = 800
+            } else {
+                main.z = 0
+            }
+        }
+        Component.onCompleted: {
+            if (lineEditSvg.hasElement("hint-focus-over-base")) {
+                main.z = 800
+            } else {
+                main.z = 0
+            }
+        }
     }
 
-    PlasmaCore.SvgItem {
+    PlasmaCore.FrameSvgItem {
         id: hover
-        svg: shadowSvg
-        elementId: "hover"
 
-        anchors.fill: parent
-
+        anchors {
+            fill: parent
+            leftMargin: -margins.left
+            topMargin: -margins.top
+            rightMargin: -margins.right
+            bottomMargin: -margins.bottom
+        }
         opacity: 0
-    }
-
-    PlasmaCore.SvgItem {
-        id: shadow
-        svg: shadowSvg
-        elementId: "shadow"
-
-        anchors.fill: parent
+        imagePath: "widgets/lineedit"
+        prefix: "hover"
     }
 
     states: [
         State {
-            name: "shadow"
-            PropertyChanges {
-                target: shadow
-                opacity: 1
-            }
-            PropertyChanges {
-                target: hover
-                opacity: 0
-                elementId: hoverElement
-            }
-        },
-        State {
             name: "hover"
             PropertyChanges {
-                target: shadow
-                opacity: 0
-            }
-            PropertyChanges {
                 target: hover
                 opacity: 1
-                elementId: hoverElement
+                prefix: "hover"
             }
         },
         State {
             name: "focus"
             PropertyChanges {
-                target: shadow
-                opacity: 0
-            }
-            PropertyChanges {
                 target: hover
                 opacity: 1
-                elementId: focusElement
+                prefix: "focus"
             }
         },
         State {
-            name: "hover"
-            PropertyChanges {
-                target: shadow
-                opacity: 0
-            }
+            name: "hidden"
             PropertyChanges {
                 target: hover
                 opacity: 0
-                elementId: hoverElement
+                prefix: "hover"
             }
         }
     ]

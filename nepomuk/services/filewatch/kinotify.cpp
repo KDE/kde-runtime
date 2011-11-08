@@ -404,7 +404,7 @@ void KInotify::slotEvent( int socket )
                     }
                 }
 //                kDebug() << oldPath << "EventMoveTo" << path;
-                emit moved( QFile::encodeName(oldPath), QFile::decodeName(path) );
+                emit moved( QFile::decodeName(oldPath), QFile::decodeName(path) );
             }
             else {
                 kDebug() << "No cookie for move information of" << path;
