@@ -4,8 +4,6 @@ include(MacroLibrary)
 include(KDE4Defaults)
 include(PkgConfigGetVar)
 
-FIND_PACKAGE(QCA2 REQUIRED)
-
 INCLUDE_DIRECTORIES (
     ${KDE4_INCLUDES}
     ${QCA2_INCLUDE_DIR}
