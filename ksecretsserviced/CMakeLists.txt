@@ -2,7 +2,7 @@ PROJECT (ksecretsserviced)
 
 include(MacroLibrary)
 include(KDE4Defaults)
-include(PkgConfigGetVar)
+include(MacroDBusAddActivationService)
 
 FIND_PACKAGE(QCA2 REQUIRED)
 
