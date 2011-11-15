@@ -74,9 +74,9 @@ add_subdirectory(kuiserver)
 endif(NOT WINCE)
 add_subdirectory(kwalletd)
 
-if(QCA2_FOUND AND EXISTS ${KDE4_INCLUDE_INSTALL_DIR}/ksecretsservicecodec.h)
+if(QCA2_FOUND AND EXISTS ${KDE4_INCLUDE_INSTALL_DIR}/ksecretsservice/ksecretsserviceglobals.h)
   add_subdirectory(ksecretsserviced)
-endif(QCA2_FOUND AND EXISTS ${KDE4_INCLUDE_INSTALL_DIR}/ksecretsservicecodec.h)
+endif()
 
 if ( UNIX )
    add_subdirectory(soliduiserver)
