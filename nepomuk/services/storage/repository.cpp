@@ -84,6 +84,10 @@ void Nepomuk::Repository::close()
 {
     kDebug() << m_name;
 
+    if(m_dataManagementModel) {
+        emit closed(this);
+    }
+
     delete m_graphMaintainer;
 
     // delete DMS adaptor before anything else so we do not get requests while deleting the DMS
