@@ -22,6 +22,7 @@
 
 #include "reportassistantpage.h"
 
+#include "duplicatefinderjob.h"
 #include "reportassistantpages_base.h"
 #include "bugzillalib.h"
 
@@ -63,6 +64,7 @@ private Q_SLOTS:
 
     void searchFinished(const BugMapList&);
     void searchError(QString);
+    void analyzedDuplicates(KJob *job);
 
     void resetDates();
     
@@ -70,7 +72,7 @@ private Q_SLOTS:
     void openSelectedReport();
     void itemClicked(QTreeWidgetItem *, int);
     void itemClicked(QListWidgetItem *);
-    void showReportInformationDialog(int);
+    void showReportInformationDialog(int, bool relatedButtonEnabled = true);
     void itemSelectionChanged();
 
     /* Selected duplicates list related methods */
@@ -84,9 +86,11 @@ private Q_SLOTS:
     /* Attach to bug related methods */
     void attachToBugReport(int);
     void cancelAttachToBugReport();
+    void informationClicked(const QString &activatedLink);
 
 private:
     bool                                        m_searching;
+    bool                                        m_foundDuplicate;
 
     Ui::AssistantPageBugzillaDuplicates         ui;
     
@@ -99,6 +103,7 @@ private:
     
     KGuiItem                                    m_searchMoreGuiItem;
     KGuiItem                                    m_retrySearchGuiItem;
+    DuplicateFinderJob::Result                  m_result;
 };
 
 /** Internal bug-info dialog **/
@@ -109,8 +114,8 @@ class BugzillaReportInformationDialog : public KDialog
 public:
     BugzillaReportInformationDialog(BugzillaDuplicatesPage*parent=0);
     ~BugzillaReportInformationDialog();
-    
-    void showBugReport(int bugNumber);
+
+    void showBugReport(int bugNumber, bool relatedButtonEnabled = true);
 
     void markAsDuplicate();
     void attachToBugReport();
@@ -132,6 +137,7 @@ Q_SIGNALS:
 
 private:
     Ui::AssistantPageBugzillaDuplicatesDialog   ui;
+    bool                                        m_relatedButtonEnabled;
     BugzillaDuplicatesPage *                    m_parent;
 
     int                                         m_bugNumber;

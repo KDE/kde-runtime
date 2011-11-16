@@ -60,6 +60,7 @@ Nepomuk::Repository::Repository( const QString& name )
     : m_name( name ),
       m_state( CLOSED ),
       m_model( 0 ),
+      m_classAndPropertyTree( 0 ),
       m_inferencer( 0 ),
       m_removableStorageModel( 0 ),
       m_dataManagementModel( 0 ),

@@ -46,6 +46,8 @@ set(drkonqi_SRCS
     applicationdetailsexamples.cpp
     gdbhighlighter.cpp
     findconfigdatajob.cpp
+    parsebugbacktraces.cpp
+    duplicatefinderjob.cpp
 )
 
 kde4_add_ui_files(drkonqi_SRCS

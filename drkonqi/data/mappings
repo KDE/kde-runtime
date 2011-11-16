@@ -157,13 +157,7 @@ akregator=kdepim-base
 kmail=kdepim-base
 KMail 2=kdepim-base
 Akonadi=kdepim-base
-kspread=koffice
 kword=koffice
-krita=koffice
-karbon=koffice
-kchart=koffice
-kplato=koffice
-kpresenter=koffice
 koshell=koffice
 kdevelop=kdevelop
 kdevdesigner=kdevelop
@@ -176,6 +170,10 @@ juk=multimedia
 knetworkmanager=networkmanager
 Skanlite=scanner
 konqueror=filemanagement
+kcells=koffice
+kplato=calligraplan
+kpresenter=calligrastage
+kspread=calligratables
 
 #---
 #This section describes several bugzilla products groups.
