@@ -54,7 +54,7 @@ install(FILES qml/ProgressBar.qml DESTINATION ${PLUGIN_INSTALL_DIR}/platformimpo
 install(FILES qml/RadioButton.qml DESTINATION ${PLUGIN_INSTALL_DIR}/platformimports/touch/org/kde/plasma/components)
 install(FILES qml/ScrollBarDelegate.qml DESTINATION ${PLUGIN_INSTALL_DIR}/platformimports/touch/org/kde/plasma/components)
 install(FILES qml/ScrollDecoratorDelegate.qml DESTINATION ${PLUGIN_INSTALL_DIR}/platformimports/touch/org/kde/plasma/components)
-install(FILES qml/SectionScroller.qml DESTINATION ${PLUGIN_INSTALL_DIR}/platformimports/touch/org/kde/plasma/components)
+install(FILES qml/SectionScroller.js DESTINATION ${PLUGIN_INSTALL_DIR}/platformimports/touch/org/kde/plasma/components)
 install(FILES qml/SelectionDialog.qml DESTINATION ${PLUGIN_INSTALL_DIR}/platformimports/touch/org/kde/plasma/components)
 install(FILES qml/Slider.qml DESTINATION ${PLUGIN_INSTALL_DIR}/platformimports/touch/org/kde/plasma/components)
 install(FILES qml/Switch.qml DESTINATION ${PLUGIN_INSTALL_DIR}/platformimports/touch/org/kde/plasma/components)
@@ -67,7 +67,6 @@ install(FILES qml/TextArea.qml DESTINATION ${PLUGIN_INSTALL_DIR}/platformimports
 install(FILES qml/TextField.qml DESTINATION ${PLUGIN_INSTALL_DIR}/platformimports/touch/org/kde/plasma/components)
 install(FILES qml/ToolBarLayout.qml DESTINATION ${PLUGIN_INSTALL_DIR}/platformimports/touch/org/kde/plasma/components)
 install(FILES qml/ToolBar.qml DESTINATION ${PLUGIN_INSTALL_DIR}/platformimports/touch/org/kde/plasma/components)
-install(FILES qml/ToolButton.qml DESTINATION ${PLUGIN_INSTALL_DIR}/platformimports/touch/org/kde/plasma/components)
 
 
 #install platform overrides
