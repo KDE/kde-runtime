@@ -3297,6 +3297,7 @@ void KCMLocale::initBinaryUnitDialect()
                               "<li>You can also select metric, which is always in units of 1000.</li>"
                               "<li>Selecting JEDEC restores the older-style units used in KDE 3.5 "
                                   "and some other operating systems.</li>"
+			      "</ul>"
                               "</p>" ).toString( m_kcmLocale );
     m_ui->m_comboBinaryUnitDialect->setToolTip( helpText );
     m_ui->m_comboBinaryUnitDialect->setWhatsThis( helpText );
