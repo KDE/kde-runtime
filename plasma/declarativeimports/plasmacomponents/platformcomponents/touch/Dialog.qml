@@ -112,6 +112,7 @@ Item {
         onActiveWindowChanged: if (!activeWindow) dialog.visible = false
 
         mainItem: Item {
+            id: mainItem
             width: theme.defaultFont.mSize.width * 40
             height: titleBar.childrenRect.height + contentItem.childrenRect.height + buttonItem.childrenRect.height
 
@@ -134,6 +135,7 @@ Item {
                 id: contentItem
 
                 clip: true
+                onChildrenRectChanged: mainItem.width = Math.max(childrenRect.width, buttonItem.childrenRect.width)
                 anchors {
                     top: titleBar.bottom
                     left: parent.left
@@ -146,11 +148,11 @@ Item {
                 id: buttonItem
 
                 height: childrenRect.height
-                clip: true
                 anchors {
                     left: parent.left
                     right: parent.right
                     bottom: parent.bottom
+                    bottomMargin: 4
                 }
             }
         }
