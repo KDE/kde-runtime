@@ -27,6 +27,7 @@
 #include "qimageitem.h"
 #include "qiconitem.h"
 
+
 void QtExtraComponentsPlugin::registerTypes(const char *uri)
 {
     Q_ASSERT(uri == QLatin1String("org.kde.qtextracomponents"));

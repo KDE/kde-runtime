@@ -121,7 +121,7 @@ void ProductMapping::getRelatedProductsUsingInternalFile(const QString & bugzill
 void ProductMapping::delayedLoginCheck(bool logged)
 {
     if (logged) {
-        m_bugzillaManagerPtr->delayedCheckVersionsForProduct(m_bugzillaProduct);
+        m_bugzillaManagerPtr->checkVersionsForProduct(m_bugzillaProduct);
     }
 }
 
@@ -131,6 +131,12 @@ void ProductMapping::checkValidVersions(const QStringList & versionList)
     if (versionList.contains(version)) {
         //The version the crash application provided is a valid bugzilla version: use it !
         m_bugzillaVersionString = version;
+    } else if (version.endsWith(QLatin1String(".00"))) {
+        //check if there is a version on bugzilla with just ".0"
+        const QString shorterVersion = version.left(version.size() - 1);
+        if (versionList.contains(shorterVersion)) {
+            m_bugzillaVersionString = shorterVersion;
+        }
     }
 }
 

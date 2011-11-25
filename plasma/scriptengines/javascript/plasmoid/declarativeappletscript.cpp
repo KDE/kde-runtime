@@ -66,6 +66,7 @@ QScriptValue constructKUrlClass(QScriptEngine *engine);
 void registerSimpleAppletMetaTypes(QScriptEngine *engine);
 DeclarativeAppletScript::DeclarativeAppletScript(QObject *parent, const QVariantList &args)
     : AbstractJsAppletScript(parent, args),
+      m_interface(0),
       m_engine(0),
       m_env(0),
       m_auth(this)
@@ -81,7 +82,7 @@ bool DeclarativeAppletScript::init()
 {
     m_declarativeWidget = new Plasma::DeclarativeWidget(applet());
     m_declarativeWidget->setInitializationDelayed(true);
-    KGlobal::locale()->insertCatalog(description().pluginName());
+    KGlobal::locale()->insertCatalog("plasma_applet_" % description().pluginName());
 
     //make possible to import extensions from the package
     //FIXME: probably to be removed, would make possible to use native code from within the package :/
@@ -118,7 +119,6 @@ bool DeclarativeAppletScript::init()
         lay->addItem(m_declarativeWidget);
     }
 
-    m_interface = 0;
     if (pa) {
         m_interface = new PopupAppletInterface(this);
     } else if (cont) {
@@ -492,6 +492,10 @@ QScriptValue DeclarativeAppletScript::loadService(QScriptContext *context, QScri
 
 QList<QAction*> DeclarativeAppletScript::contextualActions()
 {
+    if (!m_interface) {
+        return QList<QAction *>();
+    }
+
     return m_interface->contextualActions();
 }
 

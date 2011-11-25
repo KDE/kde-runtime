@@ -131,7 +131,7 @@ Q_SIGNALS:
      * Emitted if a new file has been created in one of the watched
      * folders (KInotify::EventCreate)
      */
-    void created( const QString& file );
+    void created( const QString& file, bool isDir );
 
     /**
      * Emitted if a watched file or folder has been deleted.

@@ -256,6 +256,7 @@ enum IntervalAlignment {
     Q_INVOKABLE QSizeF size() const;
     Q_INVOKABLE QRectF rect() const;
 
+    Q_INVOKABLE void setActionSeparator(const QString &name);
     Q_INVOKABLE void setAction(const QString &name, const QString &text,
                                const QString &icon = QString(), const QString &shortcut = QString());
 
@@ -317,7 +318,7 @@ protected:
     AbstractJsAppletScript *m_appletScriptEngine;
 
 private:
-    QSet<QString> m_actions;
+    QStringList m_actions;
     QSignalMapper *m_actionSignals;
     QString m_currentConfig;
     QMap<QString, Plasma::ConfigLoader*> m_configs;
@@ -366,11 +367,15 @@ public:
     void setPopupWidget(QGraphicsWidget *widget);
     QGraphicsWidget *popupWidget();
 
+Q_SIGNALS:
+    void popupEvent(bool);
+
 public Q_SLOTS:
     void setPopupIconByName(const QString &name);
     void togglePopup();
     void hidePopup();
     void showPopup();
+    void showPopup(int timeout);
 };
 
 
@@ -422,6 +427,7 @@ Q_SIGNALS:
     void screenChanged();
     void activityNameChanged();
     void activityIdChanged();
+    void availableScreenRegionChanged();
 
 protected Q_SLOTS:
     void appletAddedForward(Plasma::Applet *applet, const QPointF &pos);

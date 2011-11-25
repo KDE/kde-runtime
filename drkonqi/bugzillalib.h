@@ -39,9 +39,41 @@ typedef QList<BugMap>           BugMapList; //List of reports
 class BugReport
 {
 public:
-    BugReport() {
-        m_isValid = false;
-    }
+    enum Status {
+        UnknownStatus,
+        Unconfirmed,
+        New,
+        Assigned,
+        Reopened,
+        Resolved,
+        NeedsInfo,
+        Verified,
+        Closed
+    };
+
+    enum Resolution {
+        UnknownResolution,
+        NotResolved,
+        Fixed,
+        Invalid,
+        WontFix,
+        Later,
+        Remind,
+        Duplicate,
+        WorksForMe,
+        Moved,
+        Upstream,
+        Downstream,
+        WaitingForInfo,
+        Backtrace,
+        Unmaintained
+    };
+
+    BugReport()
+      : m_isValid(false),
+        m_status(UnknownStatus),
+        m_resolution(UnknownResolution)
+    {}
 
     void setBugNumber(const QString & value) {
         setData("bug_id", value);
@@ -94,19 +126,23 @@ public:
     QString platform() const {
         return getData("rep_platform");
     }
-    
-    void setBugStatus(const QString & value) {
-        setData("bug_status", value);
-    }
+
+    void setBugStatus(const QString &status);
     QString bugStatus() const {
         return getData("bug_status");
     }
 
-    void setResolution(const QString & value) {
-        setData("resolution", value);
-    }
+    void setResolution(const QString &resolution);
     QString resolution() const {
         return getData("resolution");
+    }
+
+    Status statusValue() const {
+        return m_status;
+    }
+
+    Resolution resolutionValue() const {
+        return m_resolution;
     }
 
     void setPriority(const QString & value) {
@@ -158,6 +194,35 @@ public:
         return m_isValid;
     }
 
+    /**
+     * @return true if the bug report is still open
+     * @note false does not mean, that the bug report is closed,
+     * as the status could be unknown
+     */
+    bool isOpen() const {
+        return isOpen(m_status);
+    }
+
+    static bool isOpen(Status status) {
+        return (status == Unconfirmed || status == New || status == Assigned || status == Reopened);
+    }
+
+    /**
+     * @return true if the bug report is closed
+     * @note false does not mean, that the bug report is still open,
+     * as the status could be unknown
+     */
+    bool isClosed() const {
+        return isClosed(m_status);
+    }
+
+    static bool isClosed(Status status) {
+        return (status == Resolved || status == NeedsInfo || status == Verified || status == Closed);
+    }
+
+    static Status parseStatus(const QString &text);
+    static Resolution parseResolution(const QString &text);
+
 private:
     void setData(const QString & key, const QString & val) {
         m_dataMap.insert(key, val);
@@ -167,6 +232,8 @@ private:
     }
 
     bool        m_isValid;
+    Status      m_status;
+    Resolution  m_resolution;
 
     BugMap      m_dataMap;
     QStringList m_commentList;
@@ -236,7 +303,6 @@ public:
     void addMeToCC(int);
 
     void checkVersionsForProduct(const QString &);
-    void delayedCheckVersionsForProduct(const QString &);
     
     /* Misc methods */
     QString urlForBug(int bug_number) const;
@@ -257,7 +323,6 @@ private Q_SLOTS:
     void addMeToCCSubJobFinished(KJob*);
     void addMeToCCJobFinished(KJob*);
     void checkVersionJobFinished(KJob*);
-    void delayedCheckVersionJobFinished(KJob*);
 
 Q_SIGNALS:
     /* Bugzilla actions finished successfully */

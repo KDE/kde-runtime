@@ -122,6 +122,18 @@ void RemovableMediaModelTest::testConvertFileUrlsInStatement_data()
     const Statement convertableFileObjectWithNieUrl4_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/nfs"));
     const Statement convertableFileObjectWithNieUrl4_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("nfs://thehost/solid-path"));
     QTest::newRow("convertableFileUrlInObjectWithNieUrl4") << convertableFileObjectWithNieUrl4_original << convertableFileObjectWithNieUrl4_converted;
+
+    const Statement convertableFileObjectWithNieUrl5_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/XO-Y4/file with spaces.txt"));
+    const Statement convertableFileObjectWithNieUrl5_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("filex://xyz-123/file with spaces.txt"));
+    QTest::newRow("convertableFileUrlInObjectWithNieUrl5") << convertableFileObjectWithNieUrl5_original << convertableFileObjectWithNieUrl5_converted;
+
+    const Statement convertableFileObjectWithNieUrl6_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/whatever with spaces/file with spaces.txt"));
+    const Statement convertableFileObjectWithNieUrl6_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("filex://whatever/file with spaces.txt"));
+    QTest::newRow("convertableFileUrlInObjectWithNieUrl6") << convertableFileObjectWithNieUrl6_original << convertableFileObjectWithNieUrl6_converted;
+
+    const Statement convertableFileObjectWithNieUrl7_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/dvd/file with spaces.txt"));
+    const Statement convertableFileObjectWithNieUrl7_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("optical://SOLIDMAN_BEGINS/file with spaces.txt"));
+    QTest::newRow("convertableFileUrlInObjectWithNieUrl7") << convertableFileObjectWithNieUrl7_original << convertableFileObjectWithNieUrl7_converted;
 }
 
 
@@ -145,6 +157,10 @@ void RemovableMediaModelTest::testConvertFileUrlsInQuery_data()
             << QString::fromLatin1("select ?r where { ?r ?p <file:///media/XO-Y4/test.txt> . }")
             << QString::fromLatin1("select ?r where { ?r ?p <filex://xyz-123/test.txt> . }");
 
+    QTest::newRow("queryWithConvertableFileUrl1WeirdFormatting")
+            << QString::fromLatin1("select ?r where { ?r ?p      <file:///media/XO-Y4/test.txt>      . }")
+            << QString::fromLatin1("select ?r where { ?r ?p      <filex://xyz-123/test.txt>      . }");
+
     QTest::newRow("queryWithConvertableFileUrl2")
             << QString::fromLatin1("select ?r where { ?r ?p <file:///media/nfs/test.txt> . }")
             << QString::fromLatin1("select ?r where { ?r ?p <nfs://thehost/solid-path/test.txt> . }");
@@ -153,9 +169,48 @@ void RemovableMediaModelTest::testConvertFileUrlsInQuery_data()
             << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^file:///media/XO-Y4/test')) . }")
             << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^filex://xyz-123/test')) . }");
 
+    QTest::newRow("queryWithConvertableRegex1WithWeirdFormatting")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . filter(reGEx(  STR(?u)  ,  'file:///media/XO-Y4/test'  ) ) . }")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . filter(reGEx(  STR(?u)  ,  'filex://xyz-123/test'  ) ) . }");
+
     QTest::newRow("queryWithConvertableRegex2")
             << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^file:///media/nfs/')) . }")
             << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^nfs://thehost/solid-path/')) . }");
+
+    QTest::newRow("queryWithConvertableRegex3")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '''^file:///media/nfs/''')) . }")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '''^nfs://thehost/solid-path/''')) . }");
+
+    // looking for anything in /media includes files from any storage mounted somewhere under /media
+    QTest::newRow("queryWithConvertableRegex4")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^file:///media')) . }")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . "
+                                   "FILTER(("
+                                   "REGEX(?u, '^file:///media') || "
+                                   "REGEX(?u, '^optical://solidman_begins/') || "
+                                   "REGEX(?u, '^filex://whatever/') || "
+                                   "REGEX(?u, '^nfs://thehost/solid-path/') || "
+                                   "REGEX(?u, '^filex://xyz-123/'))"
+                                   ") . }");
+
+    QTest::newRow("queryWithConvertableRegex4WithWeirdFormatting")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . filter   (  reGEX(  str( ?u)  , '^file:///media'  ) ) . }")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . "
+                                   "filter   (  ("
+                                   "REGEX(str( ?u), '^file:///media') || "
+                                   "REGEX(str( ?u), '^optical://solidman_begins/') || "
+                                   "REGEX(str( ?u), '^filex://whatever/') || "
+                                   "REGEX(str( ?u), '^nfs://thehost/solid-path/') || "
+                                   "REGEX(str( ?u), '^filex://xyz-123/'))"
+                                   " ) . }");
+
+    QTest::newRow("queryWithConvertableRegex4")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER(REGEX(?u, '^file:///media/nfs')) . }")
+            << QString::fromLatin1("select ?r where { ?r nie:url ?u . FILTER((REGEX(?u, '^file:///media/nfs') || REGEX(?u, '^nfs://thehost/solid-path/'))) . }");
+
+    QTest::newRow("queryWithNotReallyAFileUrl")
+            << QString::fromLatin1("select ?r where { ?r ?p ?u . FILTER(REGEX(?u, 'ffile:///media/nfs/')) . }")
+            << QString::fromLatin1("select ?r where { ?r ?p ?u . FILTER(REGEX(?u, 'ffile:///media/nfs/')) . }");
 }
 
 void RemovableMediaModelTest::testConvertFileUrlsInQuery()
@@ -180,8 +235,20 @@ void RemovableMediaModelTest::testConvertFilxUrl_data()
     const Node convertFilex2(QUrl("filex://xyz-123"));
     QTest::newRow("convertFilex2") << convertFilex2 << Node(QUrl("file:///media/XO-Y4"));
 
+    const Node convertFilex3(QUrl("filex://xyz-123/hello world"));
+    QTest::newRow("convertFilex3") << convertFilex3 << Node(QUrl("file:///media/XO-Y4/hello world"));
+
+    const Node convertFilex4(QUrl("filex://whatever/hello world"));
+    QTest::newRow("convertFilex4") << convertFilex4 << Node(QUrl("file:///media/whatever with spaces/hello world"));
+
     const Node convertnfs(QUrl("nfs://thehost/solid-path"));
     QTest::newRow("convertnfs") << convertnfs << Node(QUrl("file:///media/nfs"));
+
+    const Node convertOptical1(QUrl("optical://SOLIDMAN_BEGINS"));
+    QTest::newRow("convertOptical1") << convertOptical1 << Node(QUrl("file:///media/dvd"));
+
+    const Node convertOptical2(QUrl("optical://SOLIDMAN_BEGINS/file with spaces.txt"));
+    QTest::newRow("convertOptical2") << convertOptical2 << Node(QUrl("file:///media/dvd/file with spaces.txt"));
 }
 
 void RemovableMediaModelTest::testConvertFilxUrl()
@@ -224,6 +291,18 @@ void RemovableMediaModelTest::testConvertFilxUrls_data()
     const Statement convertableFilexObjectWithNieUrl4_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("nfs://thehost/solid-path"));
     const Statement convertableFilexObjectWithNieUrl4_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/nfs"));
     QTest::newRow("convertableFileUrlInObjectWithNieUrl4") << convertableFilexObjectWithNieUrl4_original << convertableFilexObjectWithNieUrl4_converted;
+
+    const Statement convertableFilexObjectWithNieUrl5_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("filex://xyz-123/file with spaces.txt"));
+    const Statement convertableFilexObjectWithNieUrl5_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/XO-Y4/file with spaces.txt"));
+    QTest::newRow("convertableFileUrlInObjectWithNieUrl5") << convertableFilexObjectWithNieUrl5_original << convertableFilexObjectWithNieUrl5_converted;
+
+    const Statement convertableFileObjectWithNieUrl6_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("filex://whatever/file with spaces.txt"));
+    const Statement convertableFileObjectWithNieUrl6_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/whatever with spaces/file with spaces.txt"));
+    QTest::newRow("convertableFileUrlInObjectWithNieUrl6") << convertableFileObjectWithNieUrl6_original << convertableFileObjectWithNieUrl6_converted;
+
+    const Statement convertableFileObjectWithNieUrl7_original(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("optical://SOLIDMAN_BEGINS/file with spaces.txt"));
+    const Statement convertableFileObjectWithNieUrl7_converted(QUrl("nepomuk:/res/xyz"), NIE::url(), QUrl("file:///media/dvd/file with spaces.txt"));
+    QTest::newRow("convertableFileUrlInObjectWithNieUrl7") << convertableFileObjectWithNieUrl7_original << convertableFileObjectWithNieUrl7_converted;
 }
 
 void RemovableMediaModelTest::testConvertFilxUrls()

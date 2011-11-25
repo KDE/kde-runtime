@@ -254,8 +254,14 @@ void DataManagementModelTest::testAddProperty_file()
     QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())));
     QVERIFY(!m_model->containsAnyStatement(QUrl::fromLocalFile(fileA.fileName()), Node(), Node()));
 
+    // get the resource uri
+    const QUrl fileAResUri = m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().first().subject().uri();
+
+    // make sure the resource is a file
+    QVERIFY(m_model->containsAnyStatement(fileAResUri, RDF::type(), NFO::FileDataObject()));
+
     // make sure the actual value is there
-    QVERIFY(m_model->containsAnyStatement(m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().first().subject(), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
+    QVERIFY(m_model->containsAnyStatement(fileAResUri, QUrl("prop:/string"), LiteralValue(QLatin1String("foobar"))));
 
 
     // add relation from file to file
@@ -265,10 +271,14 @@ void DataManagementModelTest::testAddProperty_file()
     QVERIFY(m_model->containsAnyStatement(Node(), NIE::url(), QUrl::fromLocalFile(fileB.fileName())));
     QVERIFY(!m_model->containsAnyStatement(QUrl::fromLocalFile(fileB.fileName()), Node(), Node()));
 
+    // get the resource uri
+    const QUrl fileBResUri = m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileB.fileName())).allStatements().first().subject().uri();
+
+    // make sure the resource is a file
+    QVERIFY(m_model->containsAnyStatement(fileBResUri, RDF::type(), NFO::FileDataObject()));
+
     // make sure the actual value is there
-    QVERIFY(m_model->containsAnyStatement(m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().first().subject(),
-                                          QUrl("prop:/res"),
-                                          m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileB.fileName())).allStatements().first().subject()));
+    QVERIFY(m_model->containsAnyStatement(fileAResUri, QUrl("prop:/res"), fileBResUri));
 
 
     // add the same relation but with another app
@@ -285,19 +295,16 @@ void DataManagementModelTest::testAddProperty_file()
     QVERIFY(m_dmModel->lastError());
 
 
-    // get the res URI for file:/A
-    const QUrl fileAUri = m_model->listStatements(Soprano::Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().first().subject().uri();
-
     // test adding a property to both the file and the resource URI. The result should be the exact same as doing it with only one of them
-    m_dmModel->addProperty(QList<QUrl>() << fileAUri << QUrl::fromLocalFile(fileA.fileName()), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("Whatever")), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << fileAResUri << QUrl::fromLocalFile(fileA.fileName()), QUrl("prop:/string"), QVariantList() << QVariant(QLatin1String("Whatever")), QLatin1String("Testapp"));
 
-    QCOMPARE(m_model->listStatements(fileAUri, QUrl("prop:/string"), LiteralValue(QLatin1String("Whatever"))).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(fileAResUri, QUrl("prop:/string"), LiteralValue(QLatin1String("Whatever"))).allStatements().count(), 1);
     QCOMPARE(m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().count(), 1);
 
     // test the same with the file as object
-    m_dmModel->addProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/res"), QVariantList() << QVariant(KUrl(fileA.fileName())) << QVariant(fileAUri), QLatin1String("Testapp"));
+    m_dmModel->addProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), QUrl("prop:/res"), QVariantList() << QVariant(KUrl(fileA.fileName())) << QVariant(fileAResUri), QLatin1String("Testapp"));
 
-    QCOMPARE(m_model->listStatements(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), fileAUri).allStatements().count(), 1);
+    QCOMPARE(m_model->listStatements(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), fileAResUri).allStatements().count(), 1);
     QVERIFY(!m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), QUrl("prop:/res"), QUrl::fromLocalFile(fileA.fileName())));
     QCOMPARE(m_model->listStatements(Node(), NIE::url(), QUrl::fromLocalFile(fileA.fileName())).allStatements().count(), 1);
 
@@ -769,6 +776,7 @@ void DataManagementModelTest::testSetProperty_nieUrl1()
     m_dmModel->setProperty(QList<QUrl>() << QUrl("nepomuk:/res/A"), NIE::url(), QVariantList() << QUrl("file:///tmp/A"), QLatin1String("testapp"));
 
     QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), NIE::url(), QUrl("file:///tmp/A")));
+    QVERIFY(m_model->containsAnyStatement(QUrl("nepomuk:/res/A"), RDF::type(), NFO::FileDataObject()));
 
     // remember the graph since it should not change later on
     const QUrl nieUrlGraph = m_model->listStatements(QUrl("nepomuk:/res/A"), NIE::url(), QUrl("file:///tmp/A")).allStatements().first().context().uri();
@@ -2632,6 +2640,7 @@ void DataManagementModelTest::testRemoveDataByApplication_nieUrlRelated()
     QVERIFY(m_model->containsAnyStatement(res, QUrl("prop:/res"), fileResUri));
 
     QVERIFY(!haveTrailingGraphs());
+    QVERIFY(!haveDataInDefaultGraph());
 }
 
 // make sure the mtime is updated properly in different situations
@@ -4512,8 +4521,6 @@ void DataManagementModelTest::testStoreResources_duplicates()
     m_dmModel->storeResources( graph, "appA" );
     QVERIFY(!m_dmModel->lastError());
 
-    QEXPECT_FAIL("", "Duplicate resolviong not implemented yet.", Abort);
-
     // hash1 and hash2 are the same, they should have been merged together
     int hashCount = m_model->listStatements( Node(), RDF::type(), NFO::FileHash() ).allStatements().size();
     QCOMPARE( hashCount, 1 );
@@ -4524,6 +4531,36 @@ void DataManagementModelTest::testStoreResources_duplicates()
     QVERIFY(!haveTrailingGraphs());
     QVERIFY(!haveDataInDefaultGraph());
 }
+
+void DataManagementModelTest::testStoreResources_duplicates2()
+{
+    SimpleResourceGraph graph;
+
+    for( int i=0; i<2; i++ ) {
+        SimpleResource contact;
+        contact.addType( NCO::Contact() );
+        contact.setProperty( NCO::fullname(), QLatin1String("Peter") );
+
+        SimpleResource email;
+        email.addType( NCO::EmailAddress() );
+        email.addProperty( NCO::emailAddress(), QUrl("peter@parker.com") );
+
+        contact.addProperty( NCO::hasEmailAddress(), email );
+
+        graph << contact << email;
+    }
+
+    m_dmModel->storeResources( graph, QLatin1String("appA") );
+    QVERIFY(!m_dmModel->lastError());
+
+    // There should only be one email and one contact
+    int contactCount = m_model->listStatements( Node(), RDF::type(), NCO::Contact() ).allStatements().size();
+    QCOMPARE( contactCount, 1 );
+
+    int emailCount = m_model->listStatements( Node(), RDF::type(), NCO::EmailAddress() ).allStatements().size();
+    QCOMPARE( emailCount, 1 );
+}
+
 
 void DataManagementModelTest::testStoreResources_overwriteProperties()
 {

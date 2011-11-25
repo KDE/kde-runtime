@@ -17,6 +17,7 @@
 
 #include <QtCore/QString>
 #include <QtCore/QMap>
+#include <QtCore/QPointer>
 
 #include <Soprano/BackendSettings>
 #include <Soprano/FilterModel>
@@ -38,6 +39,7 @@ namespace Nepomuk {
     class DataManagementModel;
     class DataManagementAdaptor;
     class ClassAndPropertyTree;
+    class GraphMaintainer;
 
     /**
      * Represents the main Nepomuk model. While it looks as if there could be more than
@@ -94,9 +96,11 @@ namespace Nepomuk {
 
     Q_SIGNALS:
         void opened( Repository*, bool success );
+        void closed( Repository* );
 
     private Q_SLOTS:
         void copyFinished( KJob* job );
+        void slotVirtuosoStopped( bool normalExit );
 
     private:
         Soprano::BackendSettings readVirtuosoSettings() const;
@@ -112,6 +116,8 @@ namespace Nepomuk {
         Nepomuk::DataManagementAdaptor* m_dataManagementAdaptor;
         Soprano::NRLModel* m_nrlModel;
         const Soprano::Backend* m_backend;
+
+        QPointer<GraphMaintainer> m_graphMaintainer;
 
         // only used during opening
         // ------------------------------------------

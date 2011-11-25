@@ -251,8 +251,10 @@ void ReportAssistantDialog::next()
         }
     }
 
+    const QString name = currentPage()->name();
+
     //If the information the user can provide is not useful, skip the backtrace page
-    if (currentPage()->name() == QLatin1String(PAGE_AWARENESS_ID))
+    if (name == QLatin1String(PAGE_AWARENESS_ID))
     {
         //Force save settings in the current page
         page->aboutToHide();
@@ -262,22 +264,25 @@ void ReportAssistantDialog::next()
             setCurrentPage(m_pageWidgetMap.value(QLatin1String(PAGE_CONCLUSIONS_ID)));
             return;
         }
-    } else {
-        if (currentPage()->name() == QLatin1String(PAGE_CRASHINFORMATION_ID))
-        {
-            //Force save settings in current page
-            page->aboutToHide();
+    } else if (name == QLatin1String(PAGE_CRASHINFORMATION_ID)){
+        //Force save settings in current page
+        page->aboutToHide();
 
-            //If the crash is worth reporting and it is BKO, skip the Conclusions page
-            if (m_reportInterface->isWorthReporting() && 
-                DrKonqi::crashedApplication()->bugReportAddress().isKdeBugzilla())
-            {
-                setCurrentPage(m_pageWidgetMap.value(QLatin1String(PAGE_BZLOGIN_ID)));
-                return;
-            }
+        //If the crash is worth reporting and it is BKO, skip the Conclusions page
+        if (m_reportInterface->isWorthReporting() &&
+            DrKonqi::crashedApplication()->bugReportAddress().isKdeBugzilla())
+        {
+            setCurrentPage(m_pageWidgetMap.value(QLatin1String(PAGE_BZLOGIN_ID)));
+            return;
+        }
+    } else if (name == QLatin1String(PAGE_BZDUPLICATES_ID)) {
+        //a duplicate has been found, yet the report is not being attached
+        if (m_reportInterface->duplicateId() && !m_reportInterface->attachToBugNumber()) {
+            setCurrentPage(m_pageWidgetMap.value(QLatin1String(PAGE_CONCLUSIONS_ID)));
+            return;
         }
     }
-    
+
     KAssistantDialog::next();
 }
 
@@ -287,6 +292,10 @@ void ReportAssistantDialog::back()
  {
     if (currentPage()->name() == QLatin1String(PAGE_CONCLUSIONS_ID))
     {
+        if (m_reportInterface->duplicateId() && !m_reportInterface->attachToBugNumber()) {
+            setCurrentPage(m_pageWidgetMap.value(QLatin1String(PAGE_BZDUPLICATES_ID)));
+            return;
+        }
         if (!(m_reportInterface->isBugAwarenessPageDataUseful()))
         {
             setCurrentPage(m_pageWidgetMap.value(QLatin1String(PAGE_AWARENESS_ID)));
@@ -338,7 +347,7 @@ void ReportAssistantDialog::closeEvent(QCloseEvent * event)
             saveBacktraceItem.setText(i18nc("@action:button", "Save information and close"));
 
             int ret = KMessageBox::questionYesNoCancel(this,
-                           i18nc("@info","Do you really want to close the bug reporting assistant?"
+                           i18nc("@info","Do you really want to close the bug reporting assistant? "
                            "<note>The crash information is still valid, so "
                            "you can save the report before closing if you want.</note>"),
                            i18nc("@title:window","Close the Assistant"),

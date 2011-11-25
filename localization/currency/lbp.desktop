@@ -1,5 +1,5 @@
 [Currency Code]
-CurrencyCodeIsoAlpha3=LBD
+CurrencyCodeIsoAlpha3=LBP
 CurrencyCodeIsoNumeric3=422
 #Context for Name: Adjectival Country Name and Currency Name
 Name=Lebanese Pound
@@ -59,7 +59,7 @@ Name[sr@ijekavian]=либанска фунта
 Name[sr@ijekavianlatin]=libanska funta
 Name[sr@latin]=libanska funta
 Name[sv]=Libanesiska pund
-Name[tg]=Лубнон
+Name[tg]=Фунти Лубнон
 Name[th]=ปอนด์เลบานอน
 Name[tr]=Lübnan Poundu
 Name[ug]=لىۋان فوند سىتېرلىڭى
@@ -69,7 +69,7 @@ Name[x-test]=xxLebanese Poundxx
 Name[zh_CN]=黎巴嫩镑
 Name[zh_TW]=黎巴嫩─鎊（Pound）
 CurrencyNameIso=Lebanese pound
-CurrencyUnitSymbols=ل.ل,LBD
+CurrencyUnitSymbols=ل.ل,LBP
 CurrencyUnitSymbolDefault=ل.ل
 CurrencyUnitSymbolUnambiguous=ل.ل
 CurrencyUnitSingular=pound

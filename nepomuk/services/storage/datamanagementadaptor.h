@@ -77,7 +77,7 @@ public Q_SLOTS:
     Q_SCRIPTABLE QString createResource(const QStringList &types, const QString &label, const QString &description, const QString &app);
     Q_SCRIPTABLE void removeResources(const QStringList &resources, int flags, const QString &app);
     Q_SCRIPTABLE QList<Nepomuk::SimpleResource> describeResources(const QStringList &resources, int flags, const QStringList& targetParties);
-    Q_SCRIPTABLE void storeResources(const QList<Nepomuk::SimpleResource>& resources, int identificationMode, int flags, const Nepomuk::PropertyHash &additionalMetadata, const QString &app);
+    Q_SCRIPTABLE QHash<QString, QString> storeResources(const QList<Nepomuk::SimpleResource>& resources, int identificationMode, int flags, const Nepomuk::PropertyHash &additionalMetadata, const QString &app);
     Q_SCRIPTABLE void mergeResources(const QString &resource1, const QString &resource2, const QString &app);
     Q_SCRIPTABLE void removeDataByApplication(int flags, const QString &app);
     Q_SCRIPTABLE void removeDataByApplication(const QStringList &resources, int flags, const QString &app);

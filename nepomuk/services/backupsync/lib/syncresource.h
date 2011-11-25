@@ -48,7 +48,7 @@ namespace Nepomuk {
          * repository. It's just a collection of in-memory statements.
          *
          * Interally it uses a multi-hash to store the properties and objects.
-         * 
+         *
          * \author Vishesh Handa <handa.vish@gmail.com>
          */
         class NEPOMUKSYNC_EXPORT SyncResource : public QMultiHash<KUrl, Soprano::Node>
@@ -64,7 +64,7 @@ namespace Nepomuk {
              * Please make sure all the subjects are the same cause no kind of checks are made.
              */
             static SyncResource fromStatementList(const QList<Soprano::Statement> & list);
-            
+
             QList<Soprano::Statement> toStatementList() const;
 
             bool isFileDataObject() const;
@@ -79,7 +79,7 @@ namespace Nepomuk {
              * is set to its identifier
              */
             void setUri( const Soprano::Node & node );
-            
+
             QList<Soprano::Node> property( const KUrl & url ) const;
 
             /**
@@ -112,7 +112,8 @@ namespace Nepomuk {
 
             QList<Soprano::Statement> toStatementList() const;
         };
-        
+
+        uint NEPOMUKSYNC_EXPORT qHash(const SyncResource& res);
     }
 }
 #endif // NEPOMUK_SIMPLERESOURCEH_H

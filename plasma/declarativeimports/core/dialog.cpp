@@ -20,7 +20,9 @@
 #include "dialog.h"
 #include "declarativeitemcontainer_p.h"
 
+#include <QApplication>
 #include <QDeclarativeItem>
+#include <QDesktopWidget>
 #include <QGraphicsObject>
 #include <QGraphicsWidget>
 #include <QTimer>
@@ -28,7 +30,11 @@
 
 #include <Plasma/Corona>
 #include <Plasma/Dialog>
+#include <Plasma/WindowEffects>
 
+
+int DialogProxy::offscreenX = 0;
+int DialogProxy::offscreenY = 0;
 
 DialogMargins::DialogMargins(Plasma::Dialog *dialog, QObject *parent)
     : QObject(parent),
@@ -83,7 +89,8 @@ int DialogMargins::bottom() const
 DialogProxy::DialogProxy(QObject *parent)
     : QObject(parent),
       m_declarativeItemContainer(0),
-      m_activeWindow(false)
+      m_activeWindow(false),
+      m_location(Plasma::Floating)
 {
     m_dialog = new Plasma::Dialog();
     m_margins = new DialogMargins(m_dialog, this);
@@ -93,8 +100,8 @@ DialogProxy::DialogProxy(QObject *parent)
 
 DialogProxy::~DialogProxy()
 {
-    delete m_dialog;
     delete m_declarativeItemContainer;
+    delete m_dialog;
 }
 
 QGraphicsObject *DialogProxy::mainItem() const
@@ -169,6 +176,12 @@ void DialogProxy::syncMainItem()
         }
     }
     m_dialog->setGraphicsWidget(widget);
+
+    if (!qobject_cast<Plasma::Corona *>(scene)) {
+        offscreenX -= 10000;
+        offscreenY -= 10000;
+        widget->setPos(offscreenX, offscreenY);
+    }
 }
 
 bool DialogProxy::isVisible() const
@@ -188,16 +201,98 @@ void DialogProxy::setVisible(const bool visible)
     }
 }
 
-QPoint DialogProxy::popupPosition(QGraphicsObject *item, int alignment) const
+QPoint DialogProxy::popupPosition(QGraphicsObject *item, int alignment)
 {
-    if (!item) {
-        return QPoint();
+    QGraphicsObject *actualItem = item;
+
+    //if no item is passed search the root item in order to figure out the view
+    if (!actualItem) {
+        actualItem = qobject_cast<QGraphicsObject *>(parent());
+
+        //search the root object
+        while (true) {
+            QGraphicsObject *ancestor = qobject_cast<QGraphicsObject *>(actualItem->parent());
+
+            if (ancestor) {
+                actualItem = ancestor;
+            } else {
+                break;
+            }
+        }
+        if (!actualItem) {
+            return QPoint();
+        }
     }
-    Plasma::Corona *corona = qobject_cast<Plasma::Corona *>(item->scene());
-    if (corona) {
-        return corona->popupPosition(item, m_dialog->size(), (Qt::AlignmentFlag)alignment);
+
+    //ensure the dialog has the proper size
+    syncMainItem();
+    m_dialog->syncToGraphicsWidget();
+
+    Plasma::Corona *corona = qobject_cast<Plasma::Corona *>(actualItem->scene());
+    if (corona && item) {
+        return corona->popupPosition(actualItem, m_dialog->size(), (Qt::AlignmentFlag)alignment);
     } else {
-        return QPoint();
+
+        QList<QGraphicsView*> views = actualItem->scene()->views();
+
+
+        if (views.size() < 1) {
+            return QPoint();
+        }
+
+        QGraphicsView *view = 0;
+        if (views.size() == 1) {
+            view = views[0];
+        } else {
+            QGraphicsView *found = 0;
+            QGraphicsView *possibleFind = 0;
+
+            foreach (QGraphicsView *v, views) {
+                if (v->sceneRect().intersects(actualItem->sceneBoundingRect()) ||
+                    v->sceneRect().contains(actualItem->scenePos())) {
+                    if (v->isActiveWindow()) {
+                        found = v;
+                    } else {
+                        possibleFind = v;
+                    }
+                }
+            }
+            view = found ? found : possibleFind;
+        }
+
+        if (!view) {
+            return QPoint();
+        }
+
+        //if no item was explicitly specified, align the dialog in the center of the parent view
+        if (!item) {
+            return view->geometry().center() - QPoint(m_dialog->width()/2, m_dialog->height()/2);
+        }
+
+        //swap direction if necessary
+        if (QApplication::isRightToLeft() && alignment != Qt::AlignCenter) {
+            if (alignment == Qt::AlignRight) {
+                alignment = Qt::AlignLeft;
+            } else {
+                alignment = Qt::AlignRight;
+            }
+        }
+
+        int xOffset = 0;
+
+        if (alignment == Qt::AlignCenter) {
+            xOffset = actualItem->boundingRect().width()/2 - m_dialog->width()/2;
+        } else if (alignment == Qt::AlignRight) {
+            xOffset = actualItem->boundingRect().width() - m_dialog->width();
+        }
+
+        const QRect avail = QApplication::desktop()->availableGeometry(view);
+        QPoint menuPos = view->mapToGlobal(view->mapFromScene(actualItem->scenePos()+QPoint(xOffset, actualItem->boundingRect().height())));
+
+        if (menuPos.y() + m_dialog->height() > avail.bottom()) {
+            menuPos = view->mapToGlobal(view->mapFromScene(actualItem->scenePos() - QPoint(-xOffset, m_dialog->height())));
+        }
+        return menuPos;
     }
 }
 
@@ -237,6 +332,11 @@ bool DialogProxy::isActiveWindow() const
     return m_activeWindow;
 }
 
+void DialogProxy::activateWindow()
+{
+    m_dialog->activateWindow();
+}
+
 int DialogProxy::windowFlags() const
 {
     return (int)m_dialog->windowFlags();
@@ -247,6 +347,21 @@ void DialogProxy::setWindowFlags(const int flags)
     m_flags = (Qt::WindowFlags)flags;
     m_dialog->setWindowFlags((Qt::WindowFlags)flags);
 }
+
+int DialogProxy::location() const
+{
+    return (int)m_location;
+}
+
+void DialogProxy::setLocation(int location)
+{
+    if (m_location == location) {
+        return;
+    }
+    m_location = (Plasma::Location)location;
+    emit locationChanged();
+}
+
 
 QObject *DialogProxy::margins() const
 {
@@ -275,8 +390,10 @@ bool DialogProxy::eventFilter(QObject *watched, QEvent *event)
             emit heightChanged();
         }
     } else if (watched == m_dialog && event->type() == QEvent::Show) {
+        Plasma::WindowEffects::slideWindow(m_dialog, m_location);
         emit visibleChanged();
     } else if (watched == m_dialog && event->type() == QEvent::Hide) {
+        Plasma::WindowEffects::slideWindow(m_dialog, m_location);
         emit visibleChanged();
     } else if (watched == m_dialog && event->type() == QEvent::WindowActivate) {
         m_activeWindow = true;

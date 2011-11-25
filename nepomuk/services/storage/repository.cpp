@@ -60,8 +60,12 @@ Nepomuk::Repository::Repository( const QString& name )
     : m_name( name ),
       m_state( CLOSED ),
       m_model( 0 ),
+      m_classAndPropertyTree( 0 ),
       m_inferencer( 0 ),
       m_removableStorageModel( 0 ),
+      m_dataManagementModel( 0 ),
+      m_dataManagementAdaptor( 0 ),
+      m_nrlModel( 0 ),
       m_backend( 0 ),
       m_modelCopyJob( 0 ),
       m_oldStorageBackend( 0 )
@@ -79,6 +83,23 @@ Nepomuk::Repository::~Repository()
 void Nepomuk::Repository::close()
 {
     kDebug() << m_name;
+
+    if(m_dataManagementModel) {
+        emit closed(this);
+    }
+
+    delete m_graphMaintainer;
+
+    // delete DMS adaptor before anything else so we do not get requests while deleting the DMS
+    delete m_dataManagementAdaptor;
+    m_dataManagementAdaptor = 0;
+
+    setParentModel(0);
+    delete m_dataManagementModel;
+    m_dataManagementModel = 0;
+
+    delete m_classAndPropertyTree;
+    m_classAndPropertyTree = 0;
 
     delete m_inferencer;
     m_inferencer = 0;
@@ -176,13 +197,17 @@ void Nepomuk::Repository::open()
         return;
     }
 
+#if SOPRANO_IS_VERSION(2, 7, 3)
+    connect(m_model, SIGNAL(virtuosoStopped(bool)), this, SLOT(slotVirtuosoStopped(bool)));
+#endif
+
     kDebug() << "Successfully created new model for repository" << name();
 
     // Fire up the graph maintainer on the pure data model.
     // =================================
-    GraphMaintainer* graphMaintainer = new GraphMaintainer(m_model);
-    connect(graphMaintainer, SIGNAL(finished()), graphMaintainer, SLOT(deleteLater()));
-    graphMaintainer->start();
+    m_graphMaintainer = new GraphMaintainer(m_model);
+    connect(m_graphMaintainer, SIGNAL(finished()), m_graphMaintainer, SLOT(deleteLater()));
+    m_graphMaintainer->start();
 
     // create the one class and property tree to be used in the crappy inferencer 2 and in DMS
     // =================================
@@ -199,12 +224,12 @@ void Nepomuk::Repository::open()
     // create a SignalCacheModel to make sure no client slows us down by listening to the stupid signals
     // =================================
     Soprano::Util::SignalCacheModel* scm = new Soprano::Util::SignalCacheModel( m_removableStorageModel );
-    scm->setParent(this); // memory management
+    scm->setParent(m_removableStorageModel); // memory management
 
     // Create the NRLModel which is required by the DMM below
     // =================================
     m_nrlModel = new Soprano::NRLModel(scm);
-    m_nrlModel->setParent(this); // memory management
+    m_nrlModel->setParent(scm); // memory management
 
     // create the DataManagementModel on top of everything
     // =================================
@@ -409,6 +434,17 @@ void Nepomuk::Repository::updateInference()
     m_classAndPropertyTree->rebuildTree(this);
     m_inferencer->updateInferenceIndex();
     m_inferencer->updateAllResources();
+}
+
+void Nepomuk::Repository::slotVirtuosoStopped(bool normalExit)
+{
+    if(!normalExit) {
+        kDebug() << "Virtuoso was killed or crashed. Restarting the repository.";
+        // restart the dumb way for now
+        // Ideally we would inform the other services so they can be restarted or something.
+        close();
+        open();
+    }
 }
 
 #include "repository.moc"

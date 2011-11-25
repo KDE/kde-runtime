@@ -128,6 +128,8 @@ target_link_libraries(fakedms
 
 kde4_add_unit_test(asyncclientapitest
   asyncclientapitest.cpp
+  qtest_dms.cpp
+  ../crappyinferencer.cpp
 )
 
 target_link_libraries(asyncclientapitest

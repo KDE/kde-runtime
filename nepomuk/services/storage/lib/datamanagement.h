@@ -47,6 +47,7 @@ class KUrl;
 
 namespace Nepomuk {
     class DescribeResourcesJob;
+    class StoreResourcesJob;
     class CreateResourceJob;
     class SimpleResourceGraph;
 
@@ -156,6 +157,14 @@ namespace Nepomuk {
      * In storeResources() two resources are considered being equal if all of their identifying properties match and they have at
      * least one identifying propery in common. Matching identifying properties here means that there is no identifying property
      * with a different value in the other resource.
+     *
+     *
+     * \section nepomuk_dms_permissions Permissions in %Nepomuk
+     *
+     * FIXME: define exactly how permissions are handled. By default all is private. Questions remaining:
+     * - Do we define permissions on the graph level?
+     * - What is the range of the permissions? \c nao:Party?
+     * - How do we define "public to all"?
      *
      *
      * \section nepomuk_dms_advanced Advanced Nepomuk Concepts
@@ -457,7 +466,7 @@ namespace Nepomuk {
      *
      * See \ref nepomuk_dms_resource_identification for details on how resources are identified.
      */
-    NEPOMUK_DATA_MANAGEMENT_EXPORT KJob* storeResources(const Nepomuk::SimpleResourceGraph& resources,
+    NEPOMUK_DATA_MANAGEMENT_EXPORT StoreResourcesJob* storeResources(const Nepomuk::SimpleResourceGraph& resources,
                                                         Nepomuk::StoreIdentificationMode identificationMode = Nepomuk::IdentifyNew,
                                                         Nepomuk::StoreResourcesFlags flags = Nepomuk::NoStoreResourcesFlags,
                                                         const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>(),

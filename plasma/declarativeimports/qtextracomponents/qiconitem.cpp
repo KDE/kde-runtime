@@ -19,6 +19,7 @@
 
 #include "qiconitem.h"
 
+#include <kicon.h>
 #include <QtGui/QPainter>
 
 
@@ -34,9 +35,14 @@ QIconItem::~QIconItem()
 {
 }
 
-void QIconItem::setIcon(const QIcon &icon)
+void QIconItem::setIcon(const QVariant &icon)
 {
-    m_icon = icon;
+    if(icon.canConvert<QIcon>()) {
+        m_icon = icon.value<QIcon>();
+    }
+    else if(icon.canConvert<QString>()) {
+        m_icon = KIcon(icon.toString());
+    }
     update();
 }
 
@@ -73,7 +79,7 @@ void QIconItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     painter->setRenderHint(QPainter::Antialiasing, m_smooth);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, m_smooth);
 
-    m_icon.paint(painter, boundingRect().toRect());
+    m_icon.paint(painter, boundingRect().toRect(), Qt::AlignCenter, isEnabled()?QIcon::Normal:QIcon::Disabled);
     painter->setRenderHint(QPainter::Antialiasing, wasAntiAlias);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, wasSmoothTransform);
 }

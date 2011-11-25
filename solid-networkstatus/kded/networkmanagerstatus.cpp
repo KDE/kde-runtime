@@ -35,9 +35,9 @@
 
 NetworkManagerStatus::NetworkManagerStatus( QObject *parent )
     : SystemStatusInterface( parent ),
-      m_manager( "org.freedesktop.NetworkManager",
-                 "/org/freedesktop/NetworkManager",
-                 "org.freedesktop.NetworkManager",
+      m_manager( NM_DBUS_SERVICE,
+                 NM_DBUS_PATH,
+                 NM_DBUS_INTERFACE,
                  QDBusConnection::systemBus() )
 {
     connect( &m_manager, SIGNAL(StateChanged(uint)),
@@ -58,6 +58,11 @@ Solid::Networking::Status NetworkManagerStatus::status() const
 bool NetworkManagerStatus::isSupported() const
 {
     return m_manager.isValid();
+}
+
+QString NetworkManagerStatus::serviceName() const
+{
+    return QString(NM_DBUS_SERVICE);
 }
 
 void NetworkManagerStatus::nmStateChanged( uint nmState )

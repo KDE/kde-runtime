@@ -152,11 +152,11 @@ public Q_SLOTS:
      * such as int, string, or url are supported.
      * \param app The calling application
      */
-    void storeResources(const SimpleResourceGraph& resources,
+    QHash<QUrl,QUrl> storeResources(const SimpleResourceGraph& resources,
                         const QString& app,
                         Nepomuk::StoreIdentificationMode identificationMode = Nepomuk::IdentifyNew,
                         Nepomuk::StoreResourcesFlags flags = Nepomuk::NoStoreResourcesFlags,
-                        const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>() );
+                        const QHash<QUrl, QVariant>& additionalMetadata = (QHash<QUrl, QVariant>()));
 
     /**
      * Merges two resources into one. Properties from \p resource1
@@ -188,7 +188,7 @@ public Q_SLOTS:
                          const QString& userSerialization = QString(),
                          Nepomuk::StoreIdentificationMode identificationMode = Nepomuk::IdentifyNew,
                          Nepomuk::StoreResourcesFlags flags = Nepomuk::NoStoreResourcesFlags,
-                         const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>());
+                         const QHash<QUrl, QVariant>& additionalMetadata = (QHash<QUrl, QVariant>()));
 
     /**
      * Describe a set of resources, i.e. retrieve all their properties.
@@ -204,7 +204,7 @@ public Q_SLOTS:
     //@}
 
 private:
-    QUrl createGraph(const QString& app = QString(), const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>());
+    QUrl createGraph(const QString& app = QString(), const QHash<QUrl, QVariant>& additionalMetadata = (QHash<QUrl, QVariant>()));
     QUrl createGraph(const QString& app, const QMultiHash<QUrl, Soprano::Node>& additionalMetadata);
 
     /**
@@ -303,7 +303,7 @@ private:
     bool updateNieUrlOnLocalFile(const QUrl& resource, const QUrl& nieUrl);
 
     ClassAndPropertyTree * classAndPropertyTree();
-    
+
     enum UriType {
         GraphUri,
         ResourceUri

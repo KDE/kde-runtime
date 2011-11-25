@@ -16,18 +16,19 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef _NEPOMUK_STRIGI_SYSTRAY_H_
-#define _NEPOMUK_STRIGI_SYSTRAY_H_
+#ifndef _NEPOMUK_CONTROLLER_SYSTRAY_H_
+#define _NEPOMUK_CONTROLLER_SYSTRAY_H_
 
 #include <KStatusNotifierItem>
-#include "strigiserviceinterface.h"
+#include <QtCore/QTimer>
+#include "fileindexerinterface.h"
 #include "servicecontrol.h"
 
 class KToggleAction;
 
 namespace Nepomuk {
 
-    class StrigiService;
+    class FileIndexer;
     class StatusWidget;
 
     class SystemTray : public KStatusNotifierItem
@@ -39,16 +40,17 @@ namespace Nepomuk {
         ~SystemTray();
 
     private Q_SLOTS:
-        void slotUpdateStrigiStatus();
+        void slotUpdateFileIndexerStatus();
         void slotConfigure();
         void slotSuspend( bool suspended );
 
         void slotActivateRequested();
+        void slotActiveStatusTimeout();
 
     private:
         KToggleAction* m_suspendResumeAction;
 
-        org::kde::nepomuk::Strigi* m_service;
+        org::kde::nepomuk::FileIndexer* m_service;
         org::kde::nepomuk::ServiceControl* m_serviceControl;
         bool m_suspendedManually;
 
@@ -56,6 +58,8 @@ namespace Nepomuk {
 
         // used to prevent endless status updates
         QString m_prevStatus;
+        QTimer m_updateTimer;
+
     };
 }
 

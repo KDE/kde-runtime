@@ -17,9 +17,138 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#include "theme_p.h"
+#include "theme.h"
 
-#include <plasma/theme.h>
+#include <KIconLoader>
+
+class FontProxySingleton
+{
+public:
+    FontProxySingleton()
+        : defaultFont(Plasma::Theme::DefaultFont),
+          desktopFont(Plasma::Theme::DesktopFont),
+          smallestFont(Plasma::Theme::SmallestFont)
+    {
+    }
+
+   FontProxy defaultFont;
+   FontProxy desktopFont;
+   FontProxy smallestFont;
+};
+
+K_GLOBAL_STATIC(FontProxySingleton, privateFontProxySingleton)
+
+FontProxy::FontProxy(Plasma::Theme::FontRole role, QObject *parent)
+    : QObject(parent),
+      m_fontRole(role)
+{
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SIGNAL(boldChanged()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SIGNAL(capitalizationChanged()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SIGNAL(familyChanged()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SIGNAL(italicChanged()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SIGNAL(letterSpacingChanged()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SIGNAL(pixelSizeChanged()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SIGNAL(pointSizeChanged()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SIGNAL(strikeoutChanged()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SIGNAL(underlineChanged()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SIGNAL(weightChanged()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SIGNAL(wordSpacingChanged()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SIGNAL(mSizeChanged()));
+}
+
+FontProxy::~FontProxy()
+{
+}
+
+FontProxy *FontProxy::defaultFont()
+{
+    return &privateFontProxySingleton->defaultFont;
+}
+
+FontProxy *FontProxy::desktopFont()
+{
+    return &privateFontProxySingleton->desktopFont;
+}
+
+FontProxy *FontProxy::smallestFont()
+{
+    return &privateFontProxySingleton->smallestFont;
+}
+
+bool FontProxy::bold() const
+{
+    return Plasma::Theme::defaultTheme()->font(m_fontRole).bold();
+}
+
+FontProxy::Capitalization FontProxy::capitalization() const
+{
+    return (FontProxy::Capitalization)Plasma::Theme::defaultTheme()->font(m_fontRole).capitalization();
+}
+
+QString FontProxy::family() const
+{
+    return Plasma::Theme::defaultTheme()->font(m_fontRole).family();
+}
+
+bool FontProxy::italic() const
+{
+    return Plasma::Theme::defaultTheme()->font(m_fontRole).italic();
+}
+
+qreal FontProxy::letterSpacing() const
+{
+    return Plasma::Theme::defaultTheme()->font(m_fontRole).letterSpacing();
+}
+
+int FontProxy::pixelSize() const
+{
+    return Plasma::Theme::defaultTheme()->font(m_fontRole).pixelSize();
+}
+
+qreal FontProxy::pointSize() const
+{
+    return Plasma::Theme::defaultTheme()->font(m_fontRole).pointSize();
+}
+
+bool FontProxy::strikeout() const
+{
+    return Plasma::Theme::defaultTheme()->font(m_fontRole).strikeOut();
+}
+
+bool FontProxy::underline() const
+{
+    return Plasma::Theme::defaultTheme()->font(m_fontRole).underline();
+}
+
+FontProxy::Weight FontProxy::weight() const
+{
+    return (FontProxy::Weight)Plasma::Theme::defaultTheme()->font(m_fontRole).weight();
+}
+
+qreal FontProxy::wordSpacing() const
+{
+    return Plasma::Theme::defaultTheme()->font(m_fontRole).wordSpacing();
+}
+
+QSize FontProxy::mSize() const
+{
+    return QFontMetrics(Plasma::Theme::defaultTheme()->font(m_fontRole)).boundingRect("M").size();
+}
+
+
+//********** Theme *************
 
 ThemeProxy::ThemeProxy(QObject *parent)
     : QObject(parent)
@@ -36,9 +165,19 @@ QString ThemeProxy::themeName() const
     return Plasma::Theme::defaultTheme()->themeName();
 }
 
-QFont ThemeProxy::font() const
+QObject *ThemeProxy::defaultFont() const
 {
-    return Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
+    return FontProxy::defaultFont();
+}
+
+QObject *ThemeProxy::desktopFont() const
+{
+    return FontProxy::desktopFont();
+}
+
+QObject *ThemeProxy::smallestFont() const
+{
+    return FontProxy::smallestFont();
 }
 
 bool ThemeProxy::windowTranslucencyEnabled() const
@@ -59,6 +198,11 @@ bool ThemeProxy::useGlobalSettings() const
 QString ThemeProxy::wallpaperPath() const
 {
     return Plasma::Theme::defaultTheme()->wallpaperPath();
+}
+
+QString ThemeProxy::wallpaperPathForSize(int width, int height) const
+{
+    return Plasma::Theme::defaultTheme()->wallpaperPath(QSize(width, height));
 }
 
 QColor ThemeProxy::textColor() const
@@ -131,6 +275,35 @@ QString ThemeProxy::styleSheet() const
     return Plasma::Theme::defaultTheme()->styleSheet(QString());
 }
 
+int ThemeProxy::smallIconSize() const
+{
+    return KIconLoader::SizeSmall;
+}
 
-#include "theme_p.moc"
+int ThemeProxy::smallMediumIconSize() const
+{
+    return KIconLoader::SizeSmallMedium;
+}
+
+int ThemeProxy::mediumIconSize() const
+{
+    return KIconLoader::SizeMedium;
+}
+
+int ThemeProxy::largeIconSize() const
+{
+    return KIconLoader::SizeLarge;
+}
+
+int ThemeProxy::hugeIconSize() const
+{
+    return KIconLoader::SizeHuge;
+}
+
+int ThemeProxy::enormousIconSize() const
+{
+    return KIconLoader::SizeEnormous;
+}
+
+#include "theme.moc"
 

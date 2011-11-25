@@ -28,7 +28,9 @@
 #include "datamanagement.h"
 #include "createresourcejob.h"
 #include "describeresourcesjob.h"
+#include "storeresourcesjob.h"
 #include "nepomuk_dms_test_config.h"
+#include "qtest_dms.h"
 
 #include <QtTest>
 #include "qtest_kde.h"
@@ -99,73 +101,8 @@ void AsyncClientApiTest::resetModel()
 
     // add some classes and properties
     QUrl graph("graph:/onto");
-    m_model->addStatement( graph, RDF::type(), NRL::Ontology(), graph );
-    // removeResources depends on type inference
-    m_model->addStatement( graph, RDF::type(), NRL::Graph(), graph );
-
-    m_model->addStatement( QUrl("prop:/int"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int2"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int2"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int3"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int3"), RDFS::range(), XMLSchema::xsdInt(), graph );
-
-    m_model->addStatement( QUrl("prop:/int_c1"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/int_c1"), RDFS::range(), XMLSchema::xsdInt(), graph );
-    m_model->addStatement( QUrl("prop:/int_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    m_model->addStatement( QUrl("prop:/string"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/string"), RDFS::range(), XMLSchema::string(), graph );
-
-    m_model->addStatement( QUrl("prop:/res"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res"), RDFS::range(), RDFS::Resource(), graph );
-
-    m_model->addStatement( QUrl("prop:/res_c1"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), RDFS::range(), RDFS::Resource(), graph );
-    m_model->addStatement( QUrl("prop:/res_c1"), NRL::maxCardinality(), LiteralValue(1), graph );
-
-    m_model->addStatement( QUrl("prop:/date"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/date"), RDFS::range(), XMLSchema::date(), graph );
-
-    m_model->addStatement( QUrl("prop:/time"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/time"), RDFS::range(), XMLSchema::time(), graph );
-
-    m_model->addStatement( QUrl("prop:/dateTime"), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( QUrl("prop:/dateTime"), RDFS::range(), XMLSchema::dateTime(), graph );
-
-    m_model->addStatement( QUrl("class:/A"), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( QUrl("class:/B"), RDF::type(), RDFS::Class(), graph );
-
-    // properties used all the time
-    m_model->addStatement( NAO::identifier(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( RDF::type(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( RDF::type(), RDFS::range(), RDFS::Class(), graph );
-    m_model->addStatement( NIE::url(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::url(), RDFS::range(), RDFS::Resource(), graph );
-
-    // some ontology things the ResourceMerger depends on
-    m_model->addStatement( RDFS::Class(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( RDFS::Class(), RDFS::subClassOf(), RDFS::Resource(), graph );
-    m_model->addStatement( NRL::Graph(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NRL::InstanceBase(), RDF::type(), RDFS::Class(), graph );
-    m_model->addStatement( NRL::InstanceBase(), RDFS::subClassOf(), NRL::Graph(), graph );
-    m_model->addStatement( NAO::prefLabel(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::prefLabel(), RDFS::range(), RDFS::Literal(), graph );
-    m_model->addStatement( NFO::fileName(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NFO::fileName(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NCO::fullname(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NCO::fullname(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NIE::title(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NIE::title(), RDFS::range(), XMLSchema::string(), graph );
-    m_model->addStatement( NAO::created(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::created(), RDFS::range(), XMLSchema::dateTime(), graph );
-    m_model->addStatement( NAO::created(), NRL::maxCardinality(), LiteralValue(1), graph );
-    m_model->addStatement( NAO::lastModified(), RDF::type(), RDF::Property(), graph );
-    m_model->addStatement( NAO::lastModified(), RDFS::range(), XMLSchema::dateTime(), graph );
-    m_model->addStatement( NAO::lastModified(), NRL::maxCardinality(), LiteralValue(1), graph );
-
+    Nepomuk::insertOntologies( m_model, graph );
+    
     // rebuild the internals of the data management model
     QDBusInterface(QLatin1String("org.kde.nepomuk.FakeDataManagement"),
                    QLatin1String("/fakedms"),
@@ -181,6 +118,11 @@ void AsyncClientApiTest::init()
 
 void AsyncClientApiTest::testAddProperty()
 {
+    Soprano::NRLModel nrlModel(m_model);
+    const QUrl g1 = nrlModel.createGraph(NRL::InstanceBase());
+
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), QUrl("class:/typeA"), g1);
+    
     KJob* job = Nepomuk::addProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/int"), QVariantList() << 42);
     QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
     QVERIFY(!job->error());
@@ -190,6 +132,11 @@ void AsyncClientApiTest::testAddProperty()
 
 void AsyncClientApiTest::testSetProperty()
 {
+    Soprano::NRLModel nrlModel(m_model);
+    const QUrl g1 = nrlModel.createGraph(NRL::InstanceBase());
+
+    m_model->addStatement(QUrl("res:/A"), RDF::type(), QUrl("class:/typeA"), g1);
+
     KJob* job = Nepomuk::setProperty(QList<QUrl>() << QUrl("res:/A"), QUrl("prop:/int"), QVariantList() << 42);
     QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
     QVERIFY(!job->error());
@@ -221,17 +168,17 @@ void AsyncClientApiTest::testRemoveProperties()
 
 void AsyncClientApiTest::testCreateResource()
 {
-    CreateResourceJob* job = Nepomuk::createResource(QList<QUrl>() << QUrl("class:/A") << QUrl("class:/B"), QLatin1String("label"), QLatin1String("desc"));
+    CreateResourceJob* job = Nepomuk::createResource(QList<QUrl>() << QUrl("class:/typeA") << QUrl("class:/typeB"), QLatin1String("label"), QLatin1String("desc"));
     QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
     QVERIFY(!job->error());
 
     const QUrl uri = job->resourceUri();
     QVERIFY(!uri.isEmpty());
 
-    QVERIFY(m_model->containsAnyStatement(uri, RDF::type(), QUrl("class:/A")));
-    QVERIFY(m_model->containsAnyStatement(uri, RDF::type(), QUrl("class:/B")));
-    QVERIFY(m_model->containsAnyStatement(uri, NAO::prefLabel(), LiteralValue(QLatin1String("label"))));
-    QVERIFY(m_model->containsAnyStatement(uri, NAO::description(), LiteralValue(QLatin1String("desc"))));
+    QVERIFY(m_model->containsAnyStatement(uri, RDF::type(), QUrl("class:/typeA")));
+    QVERIFY(m_model->containsAnyStatement(uri, RDF::type(), QUrl("class:/typeB")));
+    QVERIFY(m_model->containsAnyStatement(uri, NAO::prefLabel(), LiteralValue::createPlainLiteral(QLatin1String("label"))));
+    QVERIFY(m_model->containsAnyStatement(uri, NAO::description(), LiteralValue::createPlainLiteral(QLatin1String("desc"))));
 }
 
 void AsyncClientApiTest::testRemoveProperty()
@@ -319,8 +266,7 @@ void AsyncClientApiTest::testStoreResources()
     res.addProperty(QUrl("prop:/date"), QDate::currentDate());
     res.addProperty(QUrl("prop:/time"), QTime::currentTime());
     res.addProperty(QUrl("prop:/dateTime"), QDateTime::currentDateTime());
-    res.addProperty(QUrl("prop:/res"), QUrl("res:/A"));
-
+    
     KJob* job = Nepomuk::storeResources(SimpleResourceGraph() << res);
     QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
     QVERIFY(!job->error());

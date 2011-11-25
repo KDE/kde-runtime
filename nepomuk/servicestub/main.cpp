@@ -38,6 +38,8 @@
 #include "priority.h"
 
 namespace {
+    Nepomuk::ServiceControl* s_control = 0;
+
 #ifndef Q_OS_WIN
     void signalHandler( int signal )
     {
@@ -45,6 +47,7 @@ namespace {
         case SIGHUP:
         case SIGQUIT:
         case SIGINT:
+            delete s_control;
             QCoreApplication::exit( 0 );
         }
     }
@@ -157,12 +160,12 @@ int main( int argc, char** argv )
 
     // register the service control
     // ====================================
-    Nepomuk::ServiceControl* control = new Nepomuk::ServiceControl( serviceName, service, &app );
+    s_control = new Nepomuk::ServiceControl( serviceName, service, &app );
 
 
     // start the service (queued since we need an event loop)
     // ====================================
-    QTimer::singleShot( 0, control, SLOT( start() ) );
+    QTimer::singleShot( 0, s_control, SLOT( start() ) );
 
     return app.exec();
 }

@@ -22,7 +22,7 @@
 #include <KCModule>
 #include "ui_nepomukconfigwidget.h"
 #include "nepomukserverinterface.h"
-#include "strigiserviceinterface.h"
+#include "fileindexerinterface.h"
 
 #include <Nepomuk/Query/Query>
 
@@ -49,7 +49,7 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         void updateNepomukServerStatus();
-        void updateStrigiStatus();
+        void updateFileIndexerStatus();
         void updateBackupStatus();
         void recreateInterfaces();
         void slotCustomQueryButtonClicked();
@@ -67,7 +67,7 @@ namespace Nepomuk {
         bool m_nepomukAvailable;
 
         org::kde::NepomukServer* m_serverInterface;
-        org::kde::nepomuk::Strigi* m_strigiInterface;
+        org::kde::nepomuk::FileIndexer* m_fileIndexerInterface;
 
         IndexFolderSelectionDialog* m_indexFolderSelectionDialog;
 

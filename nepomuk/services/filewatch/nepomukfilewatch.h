@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2007-2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2007-2011 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -37,6 +37,8 @@ namespace Soprano {
 class KInotify;
 class KUrl;
 class RegExpCache;
+class ActiveFileQueue;
+class QThread;
 
 namespace Nepomuk {
 
@@ -52,16 +54,16 @@ namespace Nepomuk {
         ~FileWatch();
 
         /**
-         * Tells strigi to update the file (it can also be a folder but
+         * Tells the file indexer to update the file (it can also be a folder but
          * then updating will not be recursive) at \p path.
          */
-        static void updateFileViaStrigi( const QString& path );
+        static void updateFileViaFileIndexer( const QString& path );
 
         /**
-         * Tells strigi to update the folder at \p path or the folder
+         * Tells the file indexer to update the folder at \p path or the folder
          * containing \p path in case it is a file.
          */
-        static void updateFolderViaStrigi( const QString& path );
+        static void updateFolderViaFileIndexer( const QString& path );
 
     public Q_SLOTS:
         Q_SCRIPTABLE void watchFolder( const QString& path );
@@ -70,8 +72,8 @@ namespace Nepomuk {
         void slotFileMoved( const QString& from, const QString& to );
         void slotFileDeleted( const QString& urlString, bool isDir );
         void slotFilesDeleted( const QStringList& path );
-        void slotFileCreated( const QString& );
-        void slotFileModified( const QString& );
+        void slotFileCreated( const QString& path, bool isDir );
+        void slotFileClosedAfterWrite( const QString& );
         void slotMovedWithoutData( const QString& );
         void connectToKDirWatch();
 #ifdef BUILD_KINOTIFY
@@ -91,6 +93,8 @@ namespace Nepomuk {
          */
         void slotDeviceMounted( const Nepomuk::RemovableMediaCache::Entry* );
 
+        void slotActiveFileQueueTimeout(const KUrl& url);
+
     private:
         /**
          * Adds watches for all mounted removable media.
@@ -104,6 +108,7 @@ namespace Nepomuk {
          */
         bool ignorePath( const QString& path );
 
+        QThread* m_metadataMoverThread;
         MetadataMover* m_metadataMover;
 
 #ifdef BUILD_KINOTIFY
@@ -112,6 +117,9 @@ namespace Nepomuk {
 
         RegExpCache* m_pathExcludeRegExpCache;
         RemovableMediaCache* m_removableMediaCache;
+
+        /// queue used to "compress" constant file modifications like downloads
+        ActiveFileQueue* m_fileModificationQueue;
     };
 }
 

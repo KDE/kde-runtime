@@ -2,13 +2,13 @@
          "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
   <interface name="org.kde.NepomukServer">
-    <method name="enableStrigi">
+    <method name="enableFileIndexer">
       <arg name="enabled" type="b" direction="in" />
     </method>
     <method name="enableNepomuk">
       <arg name="enabled" type="b" direction="in" />
     </method>
-    <method name="isStrigiEnabled">
+    <method name="isFileIndexerEnabled">
       <arg name="enabled" type="b" direction="out" />
     </method>
     <method name="isNepomukEnabled">

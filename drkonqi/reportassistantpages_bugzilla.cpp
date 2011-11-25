@@ -820,32 +820,36 @@ void UnhandledErrorDialog::saveErrorMessage()
     dlg.data()->setOperationMode(KFileDialog::Saving);
     dlg.data()->setMode(KFile::File);
     dlg.data()->setConfirmOverwrite(true);
-    dlg.data()->exec();
-
-    if (dlg.isNull()) {
-        //Dialog closed externally (ex. via DBus)
-        return;
-    }
-
-    KUrl fileUrl = dlg.data()->selectedUrl();
-    delete dlg.data();
-
-    if (fileUrl.isValid()) {
-        KTemporaryFile tf;
-        if (tf.open()) {
-            QTextStream ts(&tf);
-            ts << m_extendedHTMLError;
-            ts.flush();
-        } else {
-            KMessageBox::sorry(this, i18nc("@info","Cannot open file <filename>%1</filename> "
-                                                     "for writing.", tf.fileName()));
+    if ( dlg.data()->exec() )
+    {
+        if (dlg.isNull()) {
+            //Dialog closed externally (ex. via DBus)
             return;
         }
 
-        if (!KIO::NetAccess::upload(tf.fileName(), fileUrl, this)) {
-            KMessageBox::sorry(this, KIO::NetAccess::lastErrorString());
+        KUrl fileUrl = dlg.data()->selectedUrl();
+        delete dlg.data();
+
+        if (fileUrl.isValid()) {
+            KTemporaryFile tf;
+            if (tf.open()) {
+                QTextStream ts(&tf);
+                ts << m_extendedHTMLError;
+                ts.flush();
+            } else {
+                KMessageBox::sorry(this, i18nc("@info","Cannot open file <filename>%1</filename> "
+                                               "for writing.", tf.fileName()));
+                return;
+            }
+
+            if (!KIO::NetAccess::upload(tf.fileName(), fileUrl, this)) {
+                KMessageBox::sorry(this, KIO::NetAccess::lastErrorString());
+            }
         }
     }
+    else
+        delete dlg.data();
+
 }
 
 //END UnhandledErrorDialog

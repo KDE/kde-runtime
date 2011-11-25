@@ -139,8 +139,10 @@ const Nepomuk::RemovableMediaCache::Entry* Nepomuk::RemovableMediaCache::findEnt
     for( QHash<QString, Entry>::const_iterator it = m_metadataCache.begin();
          it != m_metadataCache.end(); ++it ) {
         const Entry& entry = *it;
-        if ( entry.device().as<Solid::StorageAccess>()->isAccessible() &&
-             path.startsWith( entry.device().as<Solid::StorageAccess>()->filePath() ) )
+        const Solid::StorageAccess* storage = entry.device().as<Solid::StorageAccess>();
+        if ( storage &&
+             storage->isAccessible() &&
+             path.startsWith( storage->filePath() ) )
             return &entry;
     }
 
@@ -152,16 +154,31 @@ const Nepomuk::RemovableMediaCache::Entry* Nepomuk::RemovableMediaCache::findEnt
 {
     QMutexLocker lock(&m_entryCacheMutex);
 
+    const QString encodedUrl = QString::fromAscii(url.toEncoded());
     for( QHash<QString, Entry>::const_iterator it = m_metadataCache.constBegin();
         it != m_metadataCache.constEnd(); ++it ) {
         const Entry& entry = *it;
-        kDebug() << url << entry.url();
-        if(url.url().startsWith(entry.url())) {
+        if(encodedUrl.startsWith(entry.url())) {
             return &entry;
         }
     }
 
     return 0;
+}
+
+
+QList<const Nepomuk::RemovableMediaCache::Entry*> Nepomuk::RemovableMediaCache::findEntriesByMountPath(const QString &path) const
+{
+    QList<const Entry*> entries;
+    for( QHash<QString, Entry>::const_iterator it = m_metadataCache.constBegin();
+        it != m_metadataCache.constEnd(); ++it ) {
+        const Entry& entry = *it;
+        if(entry.isMounted() &&
+           entry.mountPath().startsWith(path)) {
+            entries.append(&entry);
+        }
+    }
+    return entries;
 }
 
 
@@ -217,10 +234,17 @@ Nepomuk::RemovableMediaCache::Entry::Entry(const Solid::Device& device)
 {
     if(device.is<Solid::StorageVolume>()) {
         const Solid::StorageVolume* volume = m_device.as<Solid::StorageVolume>();
-        if(device.is<Solid::OpticalDisc>()) {
+        if(device.is<Solid::OpticalDisc>() &&
+           !volume->label().isEmpty()) {
             // we use the label as is - it is not even close to unique but
             // so far we have nothing better
-            m_urlPrefix = QLatin1String("optical://") + volume->label();
+
+            // QUrl does convert the host to lower case
+            QString label = volume->label().toLower();
+            // QUrl does not allow spaces in the host
+            label.replace(' ', '_');
+
+            m_urlPrefix = QLatin1String("optical://") + label;
         }
         else if(!volume->uuid().isEmpty()) {
             // we always use lower-case uuids
@@ -246,16 +270,14 @@ KUrl Nepomuk::RemovableMediaCache::Entry::constructRelativeUrl( const QString& p
 }
 
 
-QString Nepomuk::RemovableMediaCache::Entry::constructLocalPath( const KUrl& filexUrl ) const
+KUrl Nepomuk::RemovableMediaCache::Entry::constructLocalFileUrl( const KUrl& filexUrl ) const
 {
     if(const Solid::StorageAccess* sa = m_device.as<Solid::StorageAccess>()) {
         if(sa->isAccessible()) {
             // the base of the path: the mount path
-            QString path( sa->filePath() );
-            if ( path.endsWith( QLatin1String( "/" ) ) )
-                path.truncate( path.length()-1 );
-
-            return path + filexUrl.url().mid(m_urlPrefix.count());
+            KUrl fileUrl( sa->filePath() );
+            fileUrl.addPath(QUrl::fromEncoded(filexUrl.toEncoded().mid(m_urlPrefix.count())).toString());
+            return fileUrl;
         }
     }
 

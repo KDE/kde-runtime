@@ -23,6 +23,8 @@
 #include <QWeakPointer>
 #include <QPoint>
 
+#include <Plasma/Plasma>
+
 class QGraphicsObject;
 
 namespace Plasma
@@ -81,6 +83,7 @@ class DialogProxy : public QObject
     Q_PROPERTY(int windowFlags READ windowFlags WRITE setWindowFlags)
     Q_PROPERTY(QObject *margins READ margins CONSTANT)
     Q_PROPERTY(bool activeWindow READ isActiveWindow NOTIFY activeWindowChanged)
+    Q_PROPERTY(int location READ location WRITE setLocation NOTIFY locationChanged)
 
 public:
     enum WidgetAttribute {
@@ -107,14 +110,24 @@ public:
 
     bool isActiveWindow() const;
 
+    Q_INVOKABLE void activateWindow();
+
     //FIXME: passing an int is ugly
     int windowFlags() const;
     void setWindowFlags(const int);
 
+    int location() const;
+    void setLocation(int location);
+
     QObject *margins() const;
 
+    /**
+     * @returns The suggested screen position for the popup
+     * @arg item the item the popup has to be positioned relatively to. if null, the popup will be positioned in the center of the window
+     * @arg alignment alignment of the popup compared to the item
+     */
     //FIXME: alignment should be Qt::AlignmentFlag
-    Q_INVOKABLE QPoint popupPosition(QGraphicsObject *item, int alignment=Qt::AlignLeft) const;
+    Q_INVOKABLE QPoint popupPosition(QGraphicsObject *item, int alignment=Qt::AlignLeft) ;
     //FIXME:: Qt::WidgetAttribute should be already 
     Q_INVOKABLE void setAttribute(int attribute, bool on);
 
@@ -126,6 +139,7 @@ Q_SIGNALS:
     void widthChanged();
     void heightChanged();
     void activeWindowChanged();
+    void locationChanged();
 
 protected Q_SLOTS:
     void syncMainItem();
@@ -140,6 +154,9 @@ private:
     QWeakPointer<QGraphicsObject> m_mainItem;
     DialogMargins *m_margins;
     bool m_activeWindow;
+    Plasma::Location m_location;
+    static int offscreenX;
+    static int offscreenY;
 };
 
 #endif

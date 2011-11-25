@@ -162,8 +162,17 @@ public:
 
 private:
     QVariant runCommand() {
-        model()->storeResources(m_resources, m_app, m_identificationMode, m_flags, m_additionalMetadata);
-        return QVariant();
+        QHash<QUrl,QUrl> uriMappings
+            = model()->storeResources(m_resources, m_app, m_identificationMode, m_flags, m_additionalMetadata);
+
+        QHash<QString, QString> mappings;
+        QHash<QUrl, QUrl>::const_iterator it = uriMappings.constBegin();
+        for( ; it != uriMappings.constEnd(); it++ ) {
+            mappings.insert( DBus::convertUri( it.key() ),
+                             DBus::convertUri( it.value() ) );
+        }
+
+        return QVariant::fromValue(mappings);
     }
 
     SimpleResourceGraph m_resources;

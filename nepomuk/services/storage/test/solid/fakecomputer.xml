@@ -356,7 +356,7 @@
                         <property key="mountPoint">/media/dvd</property>
                         <property key="usage">filesystem</property>
                         <property key="fsType">udf</property>
-                        <property key="label">SOLIDMAN_BEGINS</property>
+                        <property key="label">SOLIDMAN BEGINS</property>
                         <property key="size">4235423524</property>
                     </device>
 
@@ -432,6 +432,69 @@
                                         <property key="isIgnored">false</property>
                                         <property key="isMounted">true</property>
                                         <property key="mountPoint">/media/XO-Y4</property>
+                                        <property key="usage">filesystem</property>
+                                        <property key="fsType">vfat</property>
+                                        <property key="size">993284096</property>
+                                    </device>
+
+                <!-- USB Device -->
+                <device udi="/org/kde/solid/fakehw/usb_device_whatever">
+                    <property key="name">Acme whatever</property>
+                    <property key="parent">/org/kde/solid/fakehw/usb_device_whatever</property>
+                </device>
+                    <!-- Mass Storage Interface -->
+                    <device udi="/org/kde/solid/fakehw/usb_device_whatever_if0">
+                        <property key="name">USB Mass Storage Inferface</property>
+                        <property key="parent">/org/kde/solid/fakehw/usb_device_whatever</property>
+                    </device>
+                        <!-- SCSI Adapter -->
+                        <device udi="/org/kde/solid/fakehw/usb_device_whatever_if0_scsi_host">
+                            <property key="name">SCSI Host Adapter</property>
+                            <property key="parent">/org/kde/solid/fakehw/usb_device_whatever_if0</property>
+                        </device>
+                        <!-- SCSI Device -->
+                            <device udi="/org/kde/solid/fakehw/usb_device_whatever_if0_scsi_host_scsi_device_lun0">
+                                <property key="name">SCSI Device</property>
+                                <property key="parent">/org/kde/solid/fakehw/usb_device_whatever_if0_scsi_host</property>
+                            </device>
+                                <!-- We finally find the storage device, which is a portable media player... -->
+                                <device udi="/org/kde/solid/fakehw/storage_serial_whatever">
+                                    <property key="name">whatever</property>
+                                    <property key="vendor">Acme Electronics</property>
+                                    <property key="interfaces">StorageDrive,Block,PortableMediaPlayer</property>
+                                    <property key="parent">/org/kde/solid/fakehw/usb_device_whatever_if0_scsi_host_scsi_device_lun0</property>
+
+                                    <property key="minor">0</property>
+                                    <property key="major">8</property>
+                                    <property key="device">/dev/sdb</property>
+
+                                    <property key="bus">usb</property>
+                                    <property key="driveType">disk</property>
+                                    <property key="isRemovable">true</property>
+                                    <property key="isEjectRequired">true</property>
+                                    <property key="isHotpluggable">true</property>
+                                    <property key="isMediaCheckEnabled">true</property>
+                                    <property key="product">whatever</property>
+
+                                    <property key="accessMethod">MassStorage</property>
+                                    <property key="outputFormats">audio/x-mp3</property>
+                                    <property key="inputFormats">audio/x-wav,audio/x-mp3,audio/vorbis</property>
+                                    <property key="playlistFormats">audio/x-mpegurl</property>
+                                </device>
+                                    <!-- ... with a partition since it's a USB Mass Storage device -->
+                                    <device udi="/org/kde/solid/fakehw/volume_part1_whatever">
+                                        <property key="name">StorageVolume (vfat)</property>
+                                        <property key="interfaces">Block,StorageVolume,StorageAccess</property>
+                                        <property key="parent">/org/kde/solid/fakehw/storage_serial_whatever</property>
+                    <property key="uuid">whatever</property>
+
+                                        <property key="minor">1</property>
+                                        <property key="major">8</property>
+                                        <property key="device">/dev/sdb1</property>
+
+                                        <property key="isIgnored">false</property>
+                                        <property key="isMounted">true</property>
+                                        <property key="mountPoint">/media/whatever with spaces</property>
                                         <property key="usage">filesystem</property>
                                         <property key="fsType">vfat</property>
                                         <property key="size">993284096</property>

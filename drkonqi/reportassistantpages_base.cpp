@@ -263,7 +263,8 @@ void ConclusionPage::aboutToShow()
     ui.m_restartAppOnFinish->setVisible(false);
     ui.m_restartAppOnFinish->setChecked(false);
 
-    needToReport = reportInterface()->isWorthReporting();
+    const bool isDuplicate = reportInterface()->duplicateId() && !reportInterface()->attachToBugNumber();
+    needToReport = reportInterface()->isWorthReporting() && !isDuplicate;
     emitCompleteChanged();
 
     BugReportAddress reportAddress = DrKonqi::crashedApplication()->bugReportAddress();
@@ -324,7 +325,12 @@ void ConclusionPage::aboutToShow()
         explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The information you can "
                                         "provide is not considered helpful enough in this case."));
     }
-    
+
+    if (isDuplicate) {
+        explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","Your problem has already been "
+                                                            "reported as bug <numid>%1</numid>.", reportInterface()->duplicateId()));
+    }
+
     explanationHTML += QLatin1String("</ul></p>");
     
     ui.m_explanationLabel->setText(explanationHTML);

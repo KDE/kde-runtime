@@ -7,7 +7,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
-      <string>Strigi Index Folders</string>
+      <string>Folders to index</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
@@ -39,7 +39,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Strigi Index Exclude Filters</string>
+      <string>Index Exclude Filters</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -53,7 +53,7 @@
        </widget>
       </item>
       <item>
-       <widget class="KEditListWidget" name="m_editStrigiExcludeFilters"/>
+       <widget class="KEditListWidget" name="m_editExcludeFilters"/>
       </item>
      </layout>
     </widget>

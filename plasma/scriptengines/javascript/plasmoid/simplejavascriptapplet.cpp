@@ -100,7 +100,8 @@ KSharedPtr<UiLoader> SimpleJavaScriptApplet::s_widgetLoader;
 QHash<QString, Plasma::Animator::Animation> SimpleJavaScriptApplet::s_animationDefs;
 
 SimpleJavaScriptApplet::SimpleJavaScriptApplet(QObject *parent, const QVariantList &args)
-    : AbstractJsAppletScript(parent)
+    : AbstractJsAppletScript(parent),
+      m_interface(0)
 {
     Q_UNUSED(args);
 //    kDebug() << "Script applet launched, args" << applet()->startupArguments();
@@ -231,6 +232,10 @@ void SimpleJavaScriptApplet::paintInterface(QPainter *p, const QStyleOptionGraph
 
 QList<QAction*> SimpleJavaScriptApplet::contextualActions()
 {
+    if (!m_interface) {
+        return QList<QAction *>();
+    }
+
     return m_interface->contextualActions();
 }
 
@@ -309,7 +314,7 @@ bool SimpleJavaScriptApplet::init()
             this, SLOT(extenderItemRestored(Plasma::ExtenderItem*)));
     connect(applet(), SIGNAL(activate()),
             this, SLOT(activate()));
-    KGlobal::locale()->insertCatalog(description().pluginName());
+    KGlobal::locale()->insertCatalog("plasma_applet_" % description().pluginName());
     setupObjects();
 
     AppletAuthorization auth(this);

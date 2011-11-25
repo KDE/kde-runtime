@@ -65,6 +65,15 @@ void Nepomuk::insertOntologies(Soprano::Model* _model, const QUrl& graph)
     model.addStatement( QUrl("prop:/string"), RDF::type(), RDF::Property(), graph );
     model.addStatement( QUrl("prop:/string"), RDFS::range(), XMLSchema::string(), graph );
 
+    model.addStatement( QUrl("prop:/date"), RDF::type(), RDF::Property(), graph );
+    model.addStatement( QUrl("prop:/date"), RDFS::range(), XMLSchema::date(), graph );
+
+    model.addStatement( QUrl("prop:/time"), RDF::type(), RDF::Property(), graph );
+    model.addStatement( QUrl("prop:/time"), RDFS::range(), XMLSchema::time(), graph );
+
+    model.addStatement( QUrl("prop:/dateTime"), RDF::type(), RDF::Property(), graph );
+    model.addStatement( QUrl("prop:/dateTime"), RDFS::range(), XMLSchema::dateTime(), graph );
+
     model.addStatement( QUrl("prop:/res"), RDF::type(), RDF::Property(), graph );
     model.addStatement( QUrl("prop:/res"), RDFS::range(), RDFS::Resource(), graph );
 
@@ -175,6 +184,7 @@ void Nepomuk::insertOntologies(Soprano::Model* _model, const QUrl& graph)
     model.addStatement( NCO::fullname(), NRL::maxCardinality(), LiteralValue(1), graph );
     model.addStatement( NCO::Contact(), RDF::type(), RDFS::Resource(), graph );
     model.addStatement( NCO::Contact(), RDF::type(), RDFS::Class(), graph );
+    model.addStatement( NCO::Role(), RDF::type(), RDFS::Class(), graph );
     model.addStatement( NCO::Contact(), RDFS::subClassOf(), NCO::Role(), graph );
     model.addStatement( NCO::Contact(), RDFS::subClassOf(), NAO::Party(), graph );
 
@@ -186,4 +196,12 @@ void Nepomuk::insertOntologies(Soprano::Model* _model, const QUrl& graph)
     model.addStatement( QUrl("class:/typeA"), RDF::type(), RDFS::Class(), graph );
     model.addStatement( QUrl("class:/typeB"), RDF::type(), RDFS::Class(), graph );
     model.addStatement( QUrl("class:/typeC"), RDF::type(), RDFS::Class(), graph );
+
+    model.addStatement( NCO::EmailAddress(), RDF::type(), RDFS::Class(), graph );
+    model.addStatement( NCO::hasEmailAddress(), RDF::type(), RDF::Property(), graph );
+    model.addStatement( NCO::hasEmailAddress(), RDFS::domain(), NCO::Role(), graph );
+    model.addStatement( NCO::hasEmailAddress(), RDFS::range(), NCO::EmailAddress(), graph );
+    model.addStatement( NCO::emailAddress(), RDF::type(), RDF::Property(), graph );
+    model.addStatement( NCO::emailAddress(), RDFS::domain(), NCO::EmailAddress(), graph );
+    model.addStatement( NCO::emailAddress(), RDFS::range(), XMLSchema::string(), graph );
 }

@@ -2669,7 +2669,7 @@ void KCMLocale::setTimeFormat( const QString &newValue )
 
 QString KCMLocale::dayPeriodText( const QString &dayPeriod )
 {
-    return dayPeriod.split( QChar::fromLatin1(',') ).at( 2 );
+    return dayPeriod.isEmpty() ? QString() : dayPeriod.split( QChar::fromLatin1(',') ).at( 2 );
 }
 
 QString KCMLocale::amPeriod( const QString &longName, const QString &shortName, const QString &narrowName )
@@ -3297,6 +3297,7 @@ void KCMLocale::initBinaryUnitDialect()
                               "<li>You can also select metric, which is always in units of 1000.</li>"
                               "<li>Selecting JEDEC restores the older-style units used in KDE 3.5 "
                                   "and some other operating systems.</li>"
+			      "</ul>"
                               "</p>" ).toString( m_kcmLocale );
     m_ui->m_comboBinaryUnitDialect->setToolTip( helpText );
     m_ui->m_comboBinaryUnitDialect->setWhatsThis( helpText );

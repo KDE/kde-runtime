@@ -63,28 +63,33 @@ Nepomuk::SystemTray::SystemTray( QObject* parent )
     contextMenu()->addAction( m_suspendResumeAction );
     contextMenu()->addAction( configAction );
 
-    // connect to the strigi service
-    m_service = new org::kde::nepomuk::Strigi( QLatin1String("org.kde.nepomuk.services.nepomukstrigiservice"),
-                                               QLatin1String("/nepomukstrigiservice"),
+    // connect to the file indexer service
+    m_service = new org::kde::nepomuk::FileIndexer( QLatin1String("org.kde.nepomuk.services.nepomukfileindexer"),
+                                               QLatin1String("/nepomukfileindexer"),
                                                QDBusConnection::sessionBus(),
                                                this );
-    m_serviceControl = new org::kde::nepomuk::ServiceControl( QLatin1String("org.kde.nepomuk.services.nepomukstrigiservice"),
+    m_serviceControl = new org::kde::nepomuk::ServiceControl( QLatin1String("org.kde.nepomuk.services.nepomukfileindexer"),
                                                               QLatin1String("/servicecontrol"),
                                                               QDBusConnection::sessionBus(),
                                                               this );
-    connect( m_service, SIGNAL( statusChanged() ), this, SLOT( slotUpdateStrigiStatus() ) );
+    connect( m_service, SIGNAL( statusChanged() ), this, SLOT( slotUpdateFileIndexerStatus() ) );
 
-    // watch for the strigi service to come up and go down
+    // watch for the file indexer service to come up and go down
     QDBusServiceWatcher* dbusServiceWatcher = new QDBusServiceWatcher( m_service->service(),
                                                                        QDBusConnection::sessionBus(),
                                                                        QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration,
                                                                        this );
     connect( dbusServiceWatcher, SIGNAL( serviceRegistered( QString ) ),
-             this, SLOT( slotUpdateStrigiStatus()) );
+             this, SLOT( slotUpdateFileIndexerStatus()) );
     connect( dbusServiceWatcher, SIGNAL( serviceUnregistered( QString ) ),
-             this, SLOT( slotUpdateStrigiStatus()) );
+             this, SLOT( slotUpdateFileIndexerStatus()) );
 
-    slotUpdateStrigiStatus();
+    connect( &m_updateTimer, SIGNAL( timeout() ),
+             this, SLOT( slotActiveStatusTimeout()) );
+
+    slotUpdateFileIndexerStatus();
+    m_updateTimer.setSingleShot(true);
+
 }
 
 
@@ -93,18 +98,27 @@ Nepomuk::SystemTray::~SystemTray()
 }
 
 
-void Nepomuk::SystemTray::slotUpdateStrigiStatus()
+void Nepomuk::SystemTray::slotUpdateFileIndexerStatus()
 {
-    // make sure we do not update the systray icon all the time
-
     ItemStatus newStatus = status();
-    const bool strigiServiceInitialized =
+
+    // make sure we do not update the systray icon all the time
+    const bool fileIndexerInitialized =
             QDBusConnection::sessionBus().interface()->isServiceRegistered(m_service->service()) &&
             m_serviceControl->isInitialized();
 
     // a manually suspended service should not be passive
-    if( strigiServiceInitialized )
-        newStatus = m_service->isIndexing() || m_suspendedManually ? Active : Passive;
+    if ( fileIndexerInitialized ) {
+        if ( m_service->isIndexing() || m_suspendedManually) {
+            if (!m_updateTimer.isActive()) {
+                m_updateTimer.start(3000);
+            }
+        }
+        else {
+            m_updateTimer.stop();
+            newStatus = Passive;
+        }
+    }
     else
         newStatus = Passive;
     if ( newStatus != status() ) {
@@ -112,7 +126,7 @@ void Nepomuk::SystemTray::slotUpdateStrigiStatus()
     }
 
     QString statusString;
-    if( strigiServiceInitialized )
+    if( fileIndexerInitialized )
         statusString = m_service->userStatusString();
     else
         statusString = i18n("File indexing service not running");
@@ -121,7 +135,7 @@ void Nepomuk::SystemTray::slotUpdateStrigiStatus()
         setToolTip("nepomuk", i18n("Search Service"), statusString );
     }
 
-    m_suspendResumeAction->setEnabled( strigiServiceInitialized );
+    m_suspendResumeAction->setEnabled( fileIndexerInitialized );
     m_suspendResumeAction->setChecked( m_service->isSuspended() );
 }
 
@@ -151,8 +165,8 @@ static QRect screenRect( QWidget *widget, int screen )
     KConfig gc( "kdeglobals", KConfig::NoGlobals );
     KConfigGroup cg(&gc, "Windows" );
     if ( desktop->isVirtualDesktop() &&
-         cg.readEntry( "XineramaEnabled", true ) &&
-         cg.readEntry( "XineramaPlacementEnabled", true ) ) {
+            cg.readEntry( "XineramaEnabled", true ) &&
+            cg.readEntry( "XineramaPlacementEnabled", true ) ) {
 
         if ( screen < 0 || screen >= desktop->numScreens() ) {
             if ( screen == -1 )
@@ -178,11 +192,15 @@ void Nepomuk::SystemTray::slotActivateRequested()
 
         const QRect rect = screenRect( 0, -3 );
         m_statusWidget->move( rect.center().x() - m_statusWidget->width() / 2,
-                              rect.center().y() - m_statusWidget->height() / 2 );
+                            rect.center().y() - m_statusWidget->height() / 2 );
     }
     else {
         m_statusWidget->hide();
     }
 }
 
+void Nepomuk::SystemTray::slotActiveStatusTimeout()
+{
+    setStatus(Active);
+} 
 #include "systray.moc"

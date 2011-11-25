@@ -10,8 +10,8 @@ if(WINCE)
 endif(WINCE)
 
 #search packages used by KDE
-set(KDE_MIN_VERSION "4.6.80")  # for the < 4.2 macro
-find_package(KDE4 4.6.80 REQUIRED)
+set(KDE_MIN_VERSION "4.7.0")  # for the < 4.2 macro
+find_package(KDE4 4.7.0 REQUIRED)
 if (WIN32)
     find_package(Strigi)
 else ()
@@ -44,6 +44,9 @@ find_package(LibAttica)
 macro_log_feature(LIBATTICA_FOUND "libattica" "A library to access Open Collaboration Service providers" "http://websvn.kde.org/trunk/kdesupport/attica/" TRUE "" "Required for Get Hot New Stuff."
 )
 
+macro_optional_find_package(QCA2)
+macro_log_feature(QCA2_FOUND "QCA2" "Support for remote plasma widgets" "http://delta.affinix.com/qca" FALSE "2.0.0" "")
+
 check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
 check_include_files(sys/time.h HAVE_SYS_TIME_H)
 
@@ -65,11 +68,12 @@ add_subdirectory(kdontchangethehostname)
 add_subdirectory(kglobalaccel)
 add_subdirectory(knotify)
 add_subdirectory(ktimezoned)
+
 if(NOT WINCE)
 add_subdirectory(kuiserver)
 endif(NOT WINCE)
 add_subdirectory(kwalletd)
-add_subdirectory(activitymanager)
+
 if ( UNIX )
    add_subdirectory(soliduiserver)
    add_subdirectory(solidautoeject)

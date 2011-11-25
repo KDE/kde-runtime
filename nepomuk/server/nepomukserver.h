@@ -45,9 +45,9 @@ namespace Nepomuk {
 
     public Q_SLOTS:
         void enableNepomuk(bool enabled);
-        void enableStrigi(bool enabled);
+        void enableFileIndexer(bool enabled);
         bool isNepomukEnabled() const;
-        bool isStrigiEnabled() const;
+        bool isFileIndexerEnabled() const;
 
         /**
          * \return the name of the default data repository.
@@ -64,7 +64,7 @@ namespace Nepomuk {
 
         KSharedConfigPtr m_config;
 
-        const QString m_strigiServiceName;
+        const QString m_fileIndexerServiceName;
 
         static Server* s_self;
     };

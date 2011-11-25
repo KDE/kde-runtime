@@ -223,6 +223,9 @@ QList<QAction*> AppletInterface::contextualActions() const
 {
     QList<QAction*> actions;
     Plasma::Applet *a = applet();
+    if (a->hasFailedToLaunch()) {
+        return actions;
+    }
 
     foreach (const QString &name, m_actions) {
         QAction *action = a->action(name);
@@ -245,6 +248,21 @@ QRectF AppletInterface::rect() const
     return applet()->contentsRect();
 }
 
+void AppletInterface::setActionSeparator(const QString &name)
+{
+    Plasma::Applet *a = applet();
+    QAction *action = a->action(name);
+
+    if (action) {
+        action->setSeparator(true);
+    } else {
+        action = new QAction(this);
+        action->setSeparator(true);
+        a->addAction(name, action);
+        m_actions.append(name);
+    }
+}
+
 void AppletInterface::setAction(const QString &name, const QString &text, const QString &icon, const QString &shortcut)
 {
     Plasma::Applet *a = applet();
@@ -257,7 +275,7 @@ void AppletInterface::setAction(const QString &name, const QString &text, const 
         a->addAction(name, action);
 
         Q_ASSERT(!m_actions.contains(name));
-        m_actions.insert(name);
+        m_actions.append(name);
 
         if (!m_actionSignals) {
             m_actionSignals = new QSignalMapper(this);
@@ -293,7 +311,7 @@ void AppletInterface::removeAction(const QString &name)
         delete action;
     }
 
-    m_actions.remove(name);
+    m_actions.removeAll(name);
 }
 
 QAction *AppletInterface::action(QString name) const
@@ -403,6 +421,7 @@ void AppletInterface::gc()
 PopupAppletInterface::PopupAppletInterface(AbstractJsAppletScript *parent)
     : APPLETSUPERCLASS(parent)
 {
+    connect(m_appletScriptEngine, SIGNAL(popupEvent(bool)), this, SIGNAL(popupEvent(bool)));
 }
 
 void PopupAppletInterface::setPopupIcon(const QIcon &icon)
@@ -445,6 +464,11 @@ void PopupAppletInterface::showPopup()
     popupApplet()->showPopup();
 }
 
+void PopupAppletInterface::showPopup(int timeout)
+{
+    popupApplet()->showPopup(timeout);
+}
+
 void PopupAppletInterface::setPopupWidget(QGraphicsWidget *widget)
 {
     popupApplet()->setGraphicsWidget(widget);
@@ -467,6 +491,11 @@ ContainmentInterface::ContainmentInterface(AbstractJsAppletScript *parent)
 
     connect(containment()->context(), SIGNAL(activityChanged(Plasma::Context *)), this, SIGNAL(activityNameChanged()));
     connect(containment()->context(), SIGNAL(changed(Plasma::Context *)), this, SIGNAL(activityIdChanged()));
+
+     if (containment()->corona()) {
+         connect(containment()->corona(), SIGNAL(availableScreenRegionChanged()),
+                 this, SIGNAL(availableScreenRegionChanged()));
+     }
 }
 
 QScriptValue ContainmentInterface::applets()
