@@ -267,9 +267,12 @@ void AsyncClientApiTest::testStoreResources()
     res.addProperty(QUrl("prop:/time"), QTime::currentTime());
     res.addProperty(QUrl("prop:/dateTime"), QDateTime::currentDateTime());
     
-    KJob* job = Nepomuk::storeResources(SimpleResourceGraph() << res);
+    StoreResourcesJob* job = Nepomuk::storeResources(SimpleResourceGraph() << res);
     QTest::kWaitForSignal(job, SIGNAL(result(KJob*)), 5000);
     QVERIFY(!job->error());
+    const QHash<QUrl, QUrl> mappings = job->mappings();
+    QCOMPARE(mappings.count(), 1);
+    QCOMPARE(mappings.constBegin().key(), res.uri());
 
     // check if the resource exists
     QVERIFY(m_model->containsAnyStatement(Soprano::Node(), RDF::type(), NAO::Tag()));
@@ -278,6 +281,9 @@ void AsyncClientApiTest::testStoreResources()
     QVERIFY(m_model->containsAnyStatement(Soprano::Node(), QUrl("prop:/date"), Soprano::LiteralValue(res.property(QUrl("prop:/date")).first().toDate())));
     QVERIFY(m_model->containsAnyStatement(Soprano::Node(), QUrl("prop:/time"), Soprano::LiteralValue(res.property(QUrl("prop:/time")).first().toTime())));
     QVERIFY(m_model->containsAnyStatement(Soprano::Node(), QUrl("prop:/dateTime"), Soprano::LiteralValue(res.property(QUrl("prop:/dateTime")).first().toDateTime())));
+
+    // make sure we get the actual resource uri in the mappings
+    QCOMPARE(mappings.constBegin().key(), m_model->listStatements(Soprano::Node(), RDF::type(), NAO::Tag()).allStatements().first().subject().uri());
 }
 
 void AsyncClientApiTest::testMergeResources()
