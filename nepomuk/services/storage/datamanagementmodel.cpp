@@ -1523,10 +1523,10 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
                                 if( QFileInfo( nieUrl.toLocalFile() ).isDir() )
                                     newRes.insert( RDF::type(), NFO::Folder() );
                             }
-                        }
 
-                        newRes.setUri( resolvedUri );
-                        syncResources << newRes;
+                            newRes.setUri( resolvedUri );
+                            syncResources << newRes;
+                        }
 
                         resolvedNodes.insert( nieUrl, resolvedUri );
                         it.setValue( convertIfBlankUri(resolvedUri) );
@@ -1610,7 +1610,7 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
         allStatements << stList;
 
         if(stList.isEmpty()) {
-            setError(d->m_classAndPropertyTree->lastError());
+            setError(QString::fromLatin1("storeResources: Encountered empty sync resource (%1). This is a bug. Please report.").arg(syncRes.uri().url()));
             return QHash<QUrl, QUrl>();
         }
 
