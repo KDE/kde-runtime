@@ -363,8 +363,6 @@ void Nepomuk::IndexScheduler::doIndexing()
 
     // get the next file
     if( !m_filesToUpdate.isEmpty() ) {
-        kDebug() << "File";
-
         QFileInfo file = m_filesToUpdate.dequeue();
 
         m_currentMutex.lock();
@@ -384,8 +382,6 @@ void Nepomuk::IndexScheduler::doIndexing()
 
     // get the next folder
     else if( !m_dirsToUpdate.isEmpty() ) {
-        kDebug() << "Directory";
-
         QPair<QString, UpdateDirFlags> dir = m_dirsToUpdate.dequeue();
         dirLock.unlock();
         fileLock.unlock();
@@ -424,7 +420,7 @@ void Nepomuk::IndexScheduler::slotIndexingDone(KJob* job)
 
 void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexScheduler::UpdateDirFlags flags )
 {
-//    kDebug() << dir << analyzer << recursive;
+    kDebug() << dir_;
 
     // normalize the dir name, otherwise things might break below
     QString dir( dir_ );
