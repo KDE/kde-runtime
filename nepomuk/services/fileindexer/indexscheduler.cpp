@@ -420,7 +420,7 @@ void Nepomuk::IndexScheduler::slotIndexingDone(KJob* job)
 
 void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexScheduler::UpdateDirFlags flags )
 {
-    kDebug() << dir;
+    kDebug() << dir_;
 
     // normalize the dir name, otherwise things might break below
     QString dir( dir_ );
