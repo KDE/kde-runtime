@@ -407,6 +407,9 @@ AudioSetup::~AudioSetup()
         pa_glib_mainloop_free(s_mainloop);
         s_mainloop = NULL;
     }
+    s_Cards.clear();
+    s_Sinks.clear();
+    s_Sources.clear();
 }
 
 void AudioSetup::load()
