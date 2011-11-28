@@ -120,9 +120,9 @@ Nepomuk::TimelineProtocol::~TimelineProtocol()
 
 void Nepomuk::TimelineProtocol::listDir( const KUrl& url )
 {
-    // without a running strigi service timeline is not at all reliable
-    if ( !QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.nepomuk.services.nepomukstrigiservice" ) ||
-         !org::kde::nepomuk::ServiceControl( "org.kde.nepomuk.services.nepomukstrigiservice",
+    // without a running file indexer timeline is not at all reliable
+    if ( !QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.nepomuk.services.nepomukfileindexer" ) ||
+         !org::kde::nepomuk::ServiceControl( "org.kde.nepomuk.services.nepomukfileindexer",
                                              "/servicecontrol",
                                              QDBusConnection::sessionBus() ).isInitialized() ) {
         error( KIO::ERR_SLAVE_DEFINED,

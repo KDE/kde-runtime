@@ -15,8 +15,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2010-08-25</date>
-<releaseinfo>&kde; 4.5</releaseinfo>
+<date>2011-11-28</date>
+<releaseinfo>&kde; 4.8</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -309,8 +309,8 @@ effect.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>To Gray</guilabel>:</term>
-<listitem><para>This filter will apply a grayish look to the icon. Click
-<guibutton>Setup...</guibutton> to configure the intensity of this filter. Note
+<listitem><para>This filter will apply a grayish look to the icon. Use the 
+<guilabel>Amount</guilabel> slider to configure the intensity of this filter. Note
 that it is customary for most user interfaces to use this effect for disabled
 icons only.</para></listitem>
 </varlistentry>
@@ -318,21 +318,22 @@ icons only.</para></listitem>
 <term><guilabel>Colorize</guilabel>:</term>
 <listitem><para>Icons will be colorized using a custom color. For example, you
 may configure active icons (&ie; the icon the mouse cursor is over) to
-shine golden. Use the color and <guilabel>Amount</guilabel> buttons to configure the used color and the intensity of the colorization.</para></listitem> 
+shine golden. Use the color buttons and the <guilabel>Amount</guilabel> slider 
+to configure the used color and the intensity of the colorization.</para></listitem> 
 </varlistentry>
 <varlistentry>
 <term><guilabel>Gamma</guilabel>:</term>
 <listitem><para>A different gamma value will be applied to all icons. If you're
 no photographer and don't know what Gamma is: it's quite similar to what people
-call contrast. Just play around with the gamma settings by clicking on
-<guibutton>Setup...</guibutton> to get a feeling for this
+call contrast. Just play around with the gamma settings by moving the 
+<guilabel>Amount</guilabel> slider to get a feeling for this
 effect.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Desaturate</guilabel>:</term>
 <listitem><para>Icons will be drawn desaturated. This is quite similar to the
-<quote>Color</quote> setting on your television. Click
-<guibutton>Setup...</guibutton> to configure the amount of desaturation.
+<quote>Color</quote> setting on your television. Use the slider to configure 
+the amount of desaturation.
 </para></listitem> 
 </varlistentry>
 <varlistentry>
