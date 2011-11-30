@@ -140,7 +140,7 @@ void Nepomuk::FileIndexer::slotIdleTimerResume()
 
 void Nepomuk::FileIndexer::slotIndexingDone()
 {
-    FileIndexerConfig::self()->setInitialRun(true);
+    FileIndexerConfig::self()->setInitialRun(false);
 }
 
 
