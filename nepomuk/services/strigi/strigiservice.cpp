@@ -140,7 +140,7 @@ void Nepomuk::StrigiService::slotIdleTimerResume()
 
 void Nepomuk::StrigiService::slotIndexingDone()
 {
-    StrigiServiceConfig::self()->setInitialRun(true);
+    StrigiServiceConfig::self()->setInitialRun(false);
 }
 
 
