@@ -388,12 +388,17 @@ void JobView::pendingCallStarted()
 void JobView::pendingCallFinished(RequestViewCallWatcher* watcher)
 {
     QDBusPendingReply<QDBusObjectPath> reply = *watcher;
+    QString address = watcher->service();
+
+    if (reply.isError()) { // this happens if plasma crashed meanwhile
+        kWarning() << "got error from" << address << ":" << reply.error();
+        kWarning() << "app name was" << watcher->jobView()->appName();
+        return;
+    }
 
     // note: this is the *remote* jobview objectpath, not the kuiserver one.
     QDBusObjectPath objectPath = reply.argumentAt<0>();
-    QString address = watcher->service();
 
-    Q_ASSERT(!reply.isError());
     Q_ASSERT(reply.isValid());
 
     --m_currentPendingCalls;
