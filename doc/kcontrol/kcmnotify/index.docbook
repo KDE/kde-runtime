@@ -14,8 +14,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-11-19</date>
-<releaseinfo>&kde; 4.4</releaseinfo>
+<date>2011-11-28</date>
+<releaseinfo>&kde; 4.8</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -145,7 +145,7 @@ substitution strings in the text:
 <note><para>The slider only affects &kde; system notifications.  Changes to this slider will not affect other sounds on your computer.</para></note></listitem>
 </varlistentry>
 <varlistentry>
-<term><guilabel>Use external player</guilabel></term>
+<term><guilabel>Use an external player</guilabel></term>
 <listitem><para>If a mark is in this radio button, &kde; will not use the &kde; sound system to play the sound.  This is a good choice if the sound format you want to use is not supported by the &kde; notification system. After checking the radio box, enter the full path and name of the program you want to use into the text field.  You can use the folder button (located along the right side) to browse the directory tree.</para></listitem>
 </varlistentry>
 <varlistentry>

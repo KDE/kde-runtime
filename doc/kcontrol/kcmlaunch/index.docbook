@@ -5,7 +5,7 @@
 <!ENTITY % English "INCLUDE" > <!-- change language only here -->
 ]>
 
-<article lang="&language;">
+<article lang="&language;" id="launch-feedback">
 <articleinfo>
 <title>Launch Feedback</title>
 <authorgroup>
@@ -13,21 +13,10 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-02-10</date>
-<releaseinfo>&kde; 4.2</releaseinfo>
-
-<keywordset>
-<keyword>KDE</keyword>
-<keyword>KControl</keyword>
-<keyword>launch feedback</keyword>
-<keyword>cursor</keyword>
-<keyword>busy</keyword>
-</keywordset>
+<date>2011-11-28</date>
+<releaseinfo>&kde; 4.8</releaseinfo>
 
 </articleinfo>
-
-<sect1 id="launch-feedback">
-<title><guilabel>Launch Feedback</guilabel></title>
 
 <para>Sometimes it is reassuring to know that your computer didn't just
 ignore your command, and something is happening behind the scenes.  In
@@ -42,7 +31,7 @@ modify the cursor, and you can turn this on by choosing a
 to it for a short time, when a new application is being launched.  You
 can configure how long this icon is displayed beside your cursor with the
 <guilabel>Startup indication timeout:</guilabel> spinbox.  The
-default is 30 seconds.</para>
+default is 10 seconds.</para>
 
 <para>There are several variations of busy cursor available, including
 a <guilabel>Blinking Cursor</guilabel>, a <guilabel>Bouncing Cursor</guilabel> 
@@ -67,5 +56,4 @@ tasks from the current desktop</guilabel> is checked.  Setting a timeout ensures
 even in these cases, you can still get launch feedback, but also that
 it will go away when the job is done.</para>
 
-</sect1>
 </article>

@@ -14,8 +14,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
  </authorgroup>
 
-	  <date>2010-11-29</date>
-	  <releaseinfo>4.6</releaseinfo>
+	  <date>2011-11-28</date>
+	  <releaseinfo>4.8</releaseinfo>
 
 	  <keywordset>
 		<keyword>KDE</keyword>
@@ -144,6 +144,9 @@ On this tab, you can select options for how numbers are displayed. The defaults
 are selected automatically based on the country which is currently selected.
 </para>
 
+<para>In the first drop down box you can define the <guilabel>Digit grouping</guilabel> 
+used to display numbers.</para>
+
 <para>
 In the <guilabel>Group separator</guilabel> text box you can type the character
 that you want to use to separate groups of digits in numbers, usually a
@@ -196,7 +199,7 @@ not to American English.
 </para>
 
 <para>
-Note that group separator, decimal separator, decimal places, positive format,
+Note that digit grouping, group separator, decimal separator, decimal places, positive format,
 negative format and the digit set used to display monetary values has to be set
 separately on the <guilabel>Money</guilabel> tab.
 </para>
@@ -237,6 +240,9 @@ This setting will automatically be changed when you change the
 <guilabel>Currency</guilabel> setting.
 </para>
 
+<para>In the next drop down box you can define the <guilabel>Digit grouping</guilabel> 
+used to display monetary values.</para>
+
 <para>
 In the <guilabel>Group separator</guilabel> text box you can type the character
 that you want to use to separate groups of digits in monetary values, usually a
@@ -263,7 +269,7 @@ decimal places displayed for monetary values, &ie; the number of digits
 <para>
 In the <guilabel>Positive format</guilabel> drop-down box you can select how
 you want positive monetary values to be displayed. The drop-down box displays a
-list of ten sample formats that you can choose from, combining the options for
+list of four sample formats that you can choose from, combining the options for
 where the <guilabel>Currency symbol</guilabel> and the numeric value
 <guilabel>Positive sign</guilabel> are displayed. You can also choose to
 replace the numeric value <guilabel>Positive sign</guilabel> with brackets.
@@ -288,7 +294,7 @@ not to American English.
 </para>
 
 <para>
-Note that group separator, decimal separator, decimal places, positive sign,
+Note that digit grouping, group separator, decimal separator, decimal places, positive sign,
 negative sign and the digit set used to display numeric values has to be set
 separately on the <guilabel>Numbers</guilabel> tab.
 </para>

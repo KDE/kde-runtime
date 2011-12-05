@@ -20,6 +20,7 @@
 import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.qtextracomponents 0.1
+import "EditBubble.js" as EditBubbleHelper
 
 Item {
     id: textField
@@ -188,39 +189,28 @@ Item {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                print("clear button clicked");
                 textInput.text = "";
                 textInput.forceActiveFocus();
                 editBubble.state = "collapsed"
             }
-            //Rectangle { anchors.fill: parent; color: "green"; opacity: 0.3; }
         }
     }
 
     MouseEventListener {
         id: mouseEventListener
         anchors.fill: parent
-        //onPressed: print(" MouseEventListener Pressed");
         onPressAndHold: {
-            print(" *** MouseEventListener PressAndHold");
-            editBubble.cursorPosition = mouse;
-            editBubble.x = mouse.x-(editBubble.width/2)
-            editBubble.y = mouse.y-editBubble.height-8
+            EditBubbleHelper.placeEditBubble(mouse);
             editBubble.state  = (textInput.activeFocus && (textInput.selectedText != "" || textInput.canPaste)) ? "expanded" : "collapsed";
-            //editBubble.state = "expanded"
         }
         onPositionChanged: {
-            //print(" positionChanged: " + mouse.x + "," + mouse.y);
-            //if (typeof(mouse) == "undefined") return;
-            editBubble.cursorPosition = mouse;
-            editBubble.x = mouse.x-(editBubble.width/2)
-            editBubble.y = mouse.y-editBubble.height-8
+            EditBubbleHelper.placeEditBubble(mouse);
         }
     }
+
     onActiveFocusChanged: {
         if (!activeFocus) {
             editBubble.state = "collapsed";
-            print("Hiding...");
         }
     }
 }
