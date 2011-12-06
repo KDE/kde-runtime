@@ -582,7 +582,9 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
         setError(QLatin1String("removeProperty: Values needs to be specified."), Soprano::Error::ErrorInvalidArgument);
         return;
     }
-    if(d->m_protectedProperties.contains(property)) {
+    // we do not allow clients to remove nie:url properties. This can only be done by removing the whole resource
+    if(d->m_protectedProperties.contains(property) ||
+       property == NIE::url()) {
         setError(QString::fromLatin1("removeProperty: %1 is a protected property which can only be changed by the data management service itself.").arg(property.toString()),
                  Soprano::Error::ErrorInvalidArgument);
         return;
@@ -699,8 +701,10 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
             setError(QLatin1String("removeProperties: Encountered empty property URI."), Soprano::Error::ErrorInvalidArgument);
             return;
         }
-        else if(d->m_protectedProperties.contains(property)) {
-            setError(QString::fromLatin1("removeProperties: %1 is a protected property which can only be changed by the data management service itself.").arg(property.toString()),
+        // we do not allow clients to remove nie:url properties. This can only be done by removing the whole resource
+        else if(d->m_protectedProperties.contains(property) ||
+           property == NIE::url()) {
+            setError(QString::fromLatin1("removeProperty: %1 is a protected property which can only be changed by the data management service itself.").arg(property.toString()),
                      Soprano::Error::ErrorInvalidArgument);
             return;
         }
