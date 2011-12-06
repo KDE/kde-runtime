@@ -19,6 +19,7 @@
 #include "metadatamover.h"
 #include "nepomukfilewatch.h"
 #include "datamanagement.h"
+#include "kext.h"
 
 #include <QtCore/QTimer>
 
@@ -31,6 +32,9 @@
 #include <Nepomuk/Vocabulary/NIE>
 
 #include <KDebug>
+#include <KJob>
+
+using namespace Nepomuk::Vocabulary;
 
 
 Nepomuk::MetadataMover::MetadataMover( Soprano::Model* model, QObject* parent )
@@ -147,7 +151,7 @@ void Nepomuk::MetadataMover::removeMetadata( const KUrl& url )
     }
     else {
         const bool isFolder = url.url().endsWith('/');
-        Nepomuk::removeResources(QList<QUrl>() << url);
+        Nepomuk::removeResources(QList<QUrl>() << url)->exec();
 
         if( isFolder ) {
             //
@@ -178,7 +182,58 @@ void Nepomuk::MetadataMover::removeMetadata( const KUrl& url )
                     urls << it[0].uri();
                 }
                 if ( !urls.isEmpty() ) {
-                    Nepomuk::removeResources(urls);
+                    Nepomuk::removeResources(urls)->exec();
+                }
+                else {
+                    break;
+                }
+            }
+        }
+
+        //
+        // Handle symlinks created via kext:altUrl
+        // 1. remove any existing altUrl
+        // 2. remove any altUrl which starts with the removed one in case it is a link to a folder
+        //
+        else {
+            Soprano::QueryResultIterator it = m_model->executeQuery(QString::fromLatin1("select ?r where { ?r %1 %2 . } LIMIT 1")
+                                                                    .arg(Soprano::Node::resourceToN3(KExt::altUrl()),
+                                                                         Soprano::Node::resourceToN3(url)),
+                                                                    Soprano::Query::QueryLanguageSparql);
+            if(it.next()) {
+                Nepomuk::removeProperty(QList<QUrl>() << it[0].uri(), KExt::altUrl(), QVariantList() << url)->exec();
+                it.close();
+            }
+
+            //
+            // Recursively remove children of a symlinked folder
+            //
+            // CAUTION: The trailing slash on the from URL is essential! Otherwise we might match the newly added
+            //          URLs, too (in case a rename only added chars to the name)
+            //
+            const QString query = QString::fromLatin1( "select distinct ?r ?url where { "
+                                                       "?r %1 ?url . "
+                                                       "FILTER(REGEX(STR(?url),'^%2')) . "
+                                                       "}" )
+                                  .arg( Soprano::Node::resourceToN3( KExt::altUrl() ),
+                                        url.url(KUrl::AddTrailingSlash) );
+
+            //
+            // We cannot use one big loop since our updateMetadata calls below can change the iterator
+            // which could have bad effects like row skipping. Thus, we handle the urls in chunks of
+            // cached items.
+            //
+            while ( 1 ) {
+                QList<QPair<QUrl, QUrl> > urls;
+                it = m_model->executeQuery( query + QLatin1String( " LIMIT 20" ),
+                                            Soprano::Query::QueryLanguageSparql );
+                while(it.next()) {
+                    urls << qMakePair(it[0].uri(), it[1].uri());
+                }
+                if ( !urls.isEmpty() ) {
+                    for(int i = 0; i < urls.count(); ++i) {
+                        Nepomuk::removeProperty(QList<QUrl>() << urls[i].first, KExt::altUrl(), QVariantList() << urls[i].second)->exec();
+                    }
                 }
                 else {
                     break;
@@ -193,10 +248,17 @@ void Nepomuk::MetadataMover::updateMetadata( const KUrl& from, const KUrl& to )
 {
     kDebug() << from << "->" << to;
 
-    if ( m_model->executeQuery(QString::fromLatin1("ask where { { %1 ?p ?o . } UNION { ?r nie:url %1 . } . }")
-                               .arg(Soprano::Node::resourceToN3(from)),
+    //
+    // There is no need for special handling of kext:altUrl here because:
+    // Direct symlinks are always indexed as separate files. Thus, if they are moved they get a nie:url
+    // update like any other file/folder. This allows the DMS to update the kext:altUrls the exact same
+    // way as it does with the nie:urls.
+    //
+    if ( m_model->executeQuery(QString::fromLatin1("ask where { { %1 ?p ?o . } UNION { ?r %2 %1 . } . }")
+                               .arg(Soprano::Node::resourceToN3(from),
+                                    Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NIE::url())),
                                Soprano::Query::QueryLanguageSparql).boolValue() ) {
-        Nepomuk::setProperty(QList<QUrl>() << from, Nepomuk::Vocabulary::NIE::url(), QVariantList() << to);
+        Nepomuk::setProperty(QList<QUrl>() << from, Nepomuk::Vocabulary::NIE::url(), QVariantList() << to)->exec();
     }
     else {
         //
