@@ -190,7 +190,6 @@ Nepomuk::FileWatch::~FileWatch()
 }
 
 
-// FIXME: listen to Create for folders!
 void Nepomuk::FileWatch::watchFolder( const QString& path )
 {
     kDebug() << path;
