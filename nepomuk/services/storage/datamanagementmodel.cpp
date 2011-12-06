@@ -2461,7 +2461,7 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::resolveUrls(const QList<QUrl> &u
     QHash<QUrl, QUrl> uriHash;
     Q_FOREACH(const QUrl& url, urls) {
         const QUrl resolved = resolveUrl(url, statLocalFiles);
-        if(url.isEmpty() && lastError()) {
+        if(resolved.isEmpty() && lastError()) {
             break;
         }
         uriHash.insert(url, resolved);
