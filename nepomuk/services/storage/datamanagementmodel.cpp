@@ -1559,6 +1559,7 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
                 else if(state == OtherUri) {
                     // We use resolveUrl to check if the otherUri exists. If it doesn't exist,
                     // then resolveUrl which set the last error
+                    // trueg: seems like a waste to not use the resolved uri here!
                     const QUrl legacyUri = resolveUrl( object.uri() );
                     if( lastError() )
                         return QHash<QUrl, QUrl>();
