@@ -32,6 +32,8 @@ set(storage_SRCS
   graphmaintainer.cpp
   )
 
+soprano_add_ontology(storage_SRCS ${nepomuk_ontologies_SOURCE_DIR}/kext.trig "KExt" "Nepomuk::Vocabulary" "trig")
+
 qt4_add_dbus_adaptor(storage_SRCS
   ../../interfaces/org.kde.nepomuk.OntologyManager.xml
   ontologyloader.h

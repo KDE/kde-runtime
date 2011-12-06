@@ -50,6 +50,7 @@ qt4_add_dbus_adaptor(DMTEST
   resourcewatcherconnection.h
   Nepomuk::ResourceWatcherConnection)
 
+soprano_add_ontology(DMTEST ${nepomuk_ontologies_SOURCE_DIR}/kext.trig "KExt" "Nepomuk::Vocabulary" "trig")
 
 kde4_add_library( datamanagementtestlib STATIC ${DMTEST} )
 

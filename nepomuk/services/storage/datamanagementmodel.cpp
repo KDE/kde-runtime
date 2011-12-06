@@ -29,6 +29,7 @@
 #include "resourcewatchermanager.h"
 #include "syncresource.h"
 #include "nepomuktools.h"
+#include "kext.h"
 
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/NAO>
@@ -335,8 +336,14 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
                 return;
             }
 
-            // nie:url is the only property for which we do not want to resolve URLs
+            // for nie:url we do not want to resolve URLs
             resolvedNodes.insert(*nodes.constBegin(), *nodes.constBegin());
+        }
+    }
+    else if(property == KExt::altUrl()) {
+        // in the case of altUrl we do not resolve URLs
+        foreach(const Soprano::Node& node, nodes) {
+            resolvedNodes.insert(node, node);
         }
     }
     else {
@@ -489,8 +496,14 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
             return;
         }
 
-        // nie:url is the only property for which we do not want to resolve URLs
+        // for nie:url we do not want to resolve URLs
         resolvedNodes.insert(*nodes.constBegin(), *nodes.constBegin());
+    }
+    else if(property == KExt::altUrl()) {
+        // in the case of altUrl we do not resolve URLs
+        foreach(const Soprano::Node& node, nodes) {
+            resolvedNodes.insert(node, node);
+        }
     }
     else {
         resolvedNodes = resolveNodes(nodes);
@@ -587,6 +600,7 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
 
     //
     // Resolve file URLs, we can simply ignore the non-existing file resources which are reflected by empty resolved URIs
+    // The only exceptions to not resolve URLs are nie:url and kext:altUrl. The former we disallow above anyway.
     //
     QSet<QUrl> resolvedResources = QSet<QUrl>::fromList(resolveUrls(resources).values());
     resolvedResources.remove(QUrl());
@@ -594,7 +608,13 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
         return;
     }
 
-    QSet<Soprano::Node> resolvedNodes = QSet<Soprano::Node>::fromList(resolveNodes(valueNodes).values());
+    QSet<Soprano::Node> resolvedNodes;
+    if(property == KExt::altUrl()) {
+        resolvedNodes = valueNodes;
+    }
+    else {
+        resolvedNodes = QSet<Soprano::Node>::fromList(resolveNodes(valueNodes).values());
+    }
     resolvedNodes.remove(Soprano::Node());
     if(resolvedNodes.isEmpty() || lastError()) {
         return;
@@ -1491,7 +1511,7 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
                 }
             }
 
-            else if( object.isResource() && it.key() != NIE::url() ) {
+            else if( object.isResource() && it.key() != NIE::url() && it.key() != KExt::altUrl() ) {
 
                 const UriState state = uriState(object.uri());
                 if(state==NepomukUri || state == OntologyUri) {
