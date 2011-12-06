@@ -461,20 +461,18 @@ void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
     while ( dirIt.hasNext() ) {
         QString path = dirIt.next();
 
-        // FIXME: we cannot use canonialFilePath here since that could lead into another folder. Thus, we probably
-        // need to use another approach than the getChildren one.
-        QFileInfo fileInfo = dirIt.fileInfo();//.canonialFilePath();
+        QFileInfo fileInfo = dirIt.fileInfo();
 
-        bool indexFile = Nepomuk::FileIndexerConfig::self()->shouldFileBeIndexed( fileInfo.fileName() );
+        const bool indexFile = Nepomuk::FileIndexerConfig::self()->shouldFileBeIndexed( fileInfo.fileName() );
 
         // check if this file is new by looking it up in the store
         QHash<QString, QDateTime>::iterator filesInStoreIt = filesInStore.find( path );
-        bool newFile = ( filesInStoreIt == filesInStoreEnd );
+        const bool newFile = ( filesInStoreIt == filesInStoreEnd );
         if ( newFile && indexFile )
             kDebug() << "NEW    :" << path;
 
         // do we need to update? Did the file change?
-        bool fileChanged = !newFile && fileInfo.lastModified() != filesInStoreIt.value();
+        const bool fileChanged = !newFile && fileInfo.lastModified() != filesInStoreIt.value();
         //TODO: At some point make these "NEW", "CHANGED", and "FORCED" strings public
         //      so that they can be used to create a better status message.
         if ( fileChanged )
@@ -485,8 +483,7 @@ void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
         if ( indexFile && ( newFile || fileChanged || forceUpdate ) )
             filesToIndex << fileInfo;
 
-        // we do not delete files to update here. We do that in the IndexWriter to make
-        // sure we keep the resource URI
+        // we do not delete files to update here. We do that in the indexer
         else if ( !newFile && !indexFile )
             filesToDelete.append( filesInStoreIt.key() );
 
