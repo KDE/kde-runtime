@@ -243,8 +243,8 @@ void Nepomuk::FileWatch::slotFileCreated( const QString& path, bool isDir )
 {
     // we only need the file creation event for folders
     // file creation is always followed by a CloseAfterWrite event
-    if(isDir) {
-        updateFileViaFileIndexer(path);
+    if(isDir || QFileInfo(path).isSymLink()) {
+        updateFolderViaFileIndexer(path, true);
     }
 }
 
@@ -276,7 +276,7 @@ void Nepomuk::FileWatch::updateFileViaFileIndexer(const QString &path)
 
 
 // static
-void Nepomuk::FileWatch::updateFolderViaFileIndexer( const QString& path )
+void Nepomuk::FileWatch::updateFolderViaFileIndexer( const QString& path, bool recursive )
 {
     if( FileIndexerConfig::self()->shouldBeIndexed(path) ) {
         //
@@ -285,7 +285,7 @@ void Nepomuk::FileWatch::updateFolderViaFileIndexer( const QString& path )
         //
         org::kde::nepomuk::FileIndexer fileIndexer( "org.kde.nepomuk.services.nepomukfileindexer", "/nepomukfileindexer", QDBusConnection::sessionBus() );
         if ( fileIndexer.isValid() ) {
-            fileIndexer.updateFolder( path, false /* non-recursive */, false /* no forced update */ );
+            fileIndexer.updateFolder( path, recursive, false /* no forced update */ );
         }
     }
 }

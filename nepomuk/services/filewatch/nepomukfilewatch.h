@@ -63,7 +63,7 @@ namespace Nepomuk {
          * Tells the file indexer to update the folder at \p path or the folder
          * containing \p path in case it is a file.
          */
-        static void updateFolderViaFileIndexer( const QString& path );
+        static void updateFolderViaFileIndexer( const QString& path, bool recursive = false );
 
     public Q_SLOTS:
         Q_SCRIPTABLE void watchFolder( const QString& path );
