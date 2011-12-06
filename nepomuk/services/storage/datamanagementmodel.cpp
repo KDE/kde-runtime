@@ -2668,11 +2668,12 @@ bool Nepomuk::DataManagementModel::updateNieUrlOnLocalFile(const QUrl &resource,
         // CAUTION: The trailing slash on the from URL is essential! Otherwise we might match the newly added
         //          URLs, too (in case a rename only added chars to the name)
         //
-        const QString query = QString::fromLatin1("select distinct ?r ?u ?g where { "
-                                                  "graph ?g { ?r %1 ?u . } . "
-                                                  "FILTER(REGEX(STR(?u),'^%2')) . "
+        const QString query = QString::fromLatin1("select distinct ?r ?p ?u ?g where { "
+                                                  "graph ?g { ?r ?p ?u . FILTER(?p in (%1,%2)) . } . "
+                                                  "FILTER(REGEX(STR(?u),'^%3')) . "
                                                   "}")
                 .arg(Soprano::Node::resourceToN3(NIE::url()),
+                     Soprano::Node::resourceToN3(KExt::altUrl()),
                      KUrl(oldNieUrl).url(KUrl::AddTrailingSlash));
 
         const QString oldBasePath = KUrl(oldNieUrl).path(KUrl::AddTrailingSlash);
@@ -2692,15 +2693,16 @@ bool Nepomuk::DataManagementModel::updateNieUrlOnLocalFile(const QUrl &resource,
 
             for (int i = 0; i < urls.count(); ++i) {
                 const KUrl u = urls[i]["u"].uri();
-                const QUrl r = urls[i]["r"].uri();
-                const QUrl g = urls[i]["g"].uri();
+                const Soprano::Node p = urls[i]["p"];
+                const Soprano::Node r = urls[i]["r"];
+                const Soprano::Node g = urls[i]["g"];
 
                 // now construct the new URL
                 const QString oldRelativePath = u.path().mid(oldBasePath.length());
                 const KUrl newUrl(newBasePath + oldRelativePath);
 
-                removeStatement(r, NIE::url(), u, g);
-                addStatement(r, NIE::url(), newUrl, g);
+                removeStatement(r, p, u, g);
+                addStatement(r, p, newUrl, g);
             }
         }
 
