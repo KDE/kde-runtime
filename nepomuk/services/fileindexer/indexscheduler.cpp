@@ -110,6 +110,17 @@ namespace {
         else
             return indexedMTime == mtime;
     }
+
+    /**
+     * Check if a symlink creates some loop, ie. it points to a parent folder
+     * of itself.
+     */
+    bool hasSymlinkLoop(const QFileInfo& fi)
+    {
+        const QString p = fi.absoluteFilePath();
+        const QString c = fi.canonicalFilePath();
+        return(p != c && p.startsWith(c));
+    }
 }
 
 
@@ -493,10 +504,10 @@ void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
 
         // prepend sub folders to the dir queue
         if ( indexFile &&
-                recursive &&
-                fileInfo.isDir() &&
-                !fileInfo.isSymLink() &&
-                FileIndexerConfig::self()->shouldFolderBeIndexed( path ) ) {
+             recursive &&
+             fileInfo.isDir() &&
+             !hasSymlinkLoop(fileInfo) &&
+             FileIndexerConfig::self()->shouldFolderBeIndexed( path ) ) {
             QMutexLocker lock( &m_dirsToUpdateMutex );
             m_dirsToUpdate.prependDir( path, flags );
         }

@@ -294,6 +294,28 @@ void Nepomuk::FileIndexerConfig::buildFolderCache()
     m_folderCache.clear();
     insertSortFolders( includeFoldersPlain, true, m_folderCache );
     insertSortFolders( excludeFoldersPlain, false, m_folderCache );
+
+    //
+    // We handle indirect symlinks by simply adding kext:altUrl properties to the target files.
+    // Thus, we also need to index the target folders of symlinked folders.
+    // This also includes converting exclude folders to the symlinked ones.
+    //
+    QStringList symlinkIncludeFolders, symlinkExcludeFolders;
+    for(int i = 0; i < m_folderCache.count(); ++i) {
+        const QFileInfo folder = m_folderCache[i].first;
+        const bool include = m_folderCache[i].second;
+
+        if(folder.absoluteFilePath() != folder.canonicalFilePath()) {
+            kDebug() << "Adding canonical path for symlink indexing" << folder.absoluteFilePath() << folder.canonicalFilePath();
+            if(include)
+                symlinkIncludeFolders << folder.canonicalFilePath();
+            else
+                symlinkExcludeFolders << folder.canonicalFilePath();
+        }
+    }
+    insertSortFolders(symlinkIncludeFolders, true, m_folderCache);
+    insertSortFolders(symlinkExcludeFolders, false, m_folderCache);
+
     cleanupList( m_folderCache );
 }
 
