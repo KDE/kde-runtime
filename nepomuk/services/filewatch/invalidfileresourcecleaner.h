@@ -24,6 +24,7 @@
 
 #include <QtCore/QThread>
 #include <QtCore/QList>
+#include <QtCore/QPair>
 #include <QtCore/QUrl>
 #include <QtCore/QTime>
 
@@ -77,6 +78,8 @@ namespace Nepomuk {
         QString m_basePath;
 
         QList<QUrl> m_resourcesToRemove;
+        QList<QPair<QUrl, QUrl> > m_altUrlsToRemove;
+
 
 #ifndef NDEBUG
         QTime m_timer;

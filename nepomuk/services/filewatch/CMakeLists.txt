@@ -13,7 +13,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../storage/lib/
   )
 
-set(SRCS
+set(filewatch_SRCS
   nepomukfilewatch.cpp
   metadatamover.cpp
   updaterequest.cpp
@@ -23,17 +23,19 @@ set(SRCS
   activefilequeue.cpp
   )
 
-qt4_add_dbus_interface(SRCS ../../interfaces/org.kde.nepomuk.FileIndexer.xml fileindexerinterface)
+soprano_add_ontology(filewatch_SRCS ${nepomuk_ontologies_SOURCE_DIR}/kext.trig "KExt" "Nepomuk::Vocabulary" "trig")
+
+qt4_add_dbus_interface(filewatch_SRCS ../../interfaces/org.kde.nepomuk.FileIndexer.xml fileindexerinterface)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
-  set(SRCS
-    ${SRCS}
+  set(filewatch_SRCS
+    ${filewatch_SRCS}
     kinotify.cpp
 )
 add_definitions(-DBUILD_KINOTIFY)
 endif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
-kde4_add_plugin(nepomukfilewatch ${SRCS})
+kde4_add_plugin(nepomukfilewatch ${filewatch_SRCS})
 
 target_link_libraries(nepomukfilewatch
   nepomukcommon

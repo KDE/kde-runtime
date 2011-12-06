@@ -21,6 +21,7 @@
 
 #include "invalidfileresourcecleaner.h"
 #include "datamanagement.h"
+#include "kext.h"
 
 #include <QtCore/QList>
 #include <QtCore/QFile>
