@@ -20,6 +20,7 @@
 */
 
 #include "invalidfileresourcecleaner.h"
+#include "datamanagement.h"
 
 #include <QtCore/QList>
 #include <QtCore/QFile>
@@ -36,13 +37,13 @@
 #include <KConfig>
 #include <KConfigGroup>
 #include <KUrl>
+#include <KJob>
 
 
 Nepomuk::InvalidFileResourceCleaner::InvalidFileResourceCleaner( QObject* parent )
     : QThread( parent ),
       m_stopped( false )
 {
-    connect( this, SIGNAL(finished()), this, SLOT(deleteLater()) );
 }
 
 
@@ -56,16 +57,15 @@ Nepomuk::InvalidFileResourceCleaner::~InvalidFileResourceCleaner()
 
 void Nepomuk::InvalidFileResourceCleaner::run()
 {
-    kDebug() << "Searching for invalid local file entries";
 #ifndef NDEBUG
-    QTime timer;
-    timer.start();
+    kDebug() << "Searching for invalid local file entries";
+    m_timer.start();
 #endif
+
     //
     // Since the removal of the graphs could intefere with the iterator and result
     // in jumping of rows (worst case) we cache all resources to remove
     //
-    QList<Soprano::Node> resourcesToRemove;
     QString basePathFilter;
     if(!m_basePath.isEmpty()) {
         basePathFilter = QString::fromLatin1("FILTER(REGEX(STR(?url), '^%1')) . ")
@@ -85,27 +85,40 @@ void Nepomuk::InvalidFileResourceCleaner::run()
 
         if( !file.isEmpty() && !QFile::exists(file) ) {
             kDebug() << "REMOVING " << file;
-            resourcesToRemove << it["r"];
+            m_resourcesToRemove << it["r"].uri();
         }
     }
 
-    Q_FOREACH( const Soprano::Node& r, resourcesToRemove ) {
-        if ( m_stopped )
-            break;
-        // TODO: use DMS here instead of Soprano
-        Nepomuk::ResourceManager::instance()->mainModel()->removeAllStatements( r, Soprano::Node(), Soprano::Node() );
-        Nepomuk::ResourceManager::instance()->mainModel()->removeAllStatements( Soprano::Node(), Soprano::Node(), r );
-    }
-    kDebug() << "Done searching for invalid local file entries";
-#ifndef NDEBUG
-    kDebug() << "Time elapsed: " << timer.elapsed()/1000.0 << "sec";
-#endif
+    // call the removal method async - the slot will be called in the main thread since this QObject
+    // lives in the main thread.
+    QMetaObject::invokeMethod(this, "removeResources", Qt::QueuedConnection);
 }
 
 void Nepomuk::InvalidFileResourceCleaner::start(const QString &basePath)
 {
     m_basePath = basePath;
     start();
+}
+
+void Nepomuk::InvalidFileResourceCleaner::removeResources()
+{
+    QList<QUrl> uris;
+    for(int i = 0; i < 10 && !m_resourcesToRemove.isEmpty(); ++i) {
+        uris << m_resourcesToRemove.takeFirst();
+    }
+    if(!m_stopped && !uris.isEmpty()) {
+        kDebug() << uris;
+        connect(Nepomuk::removeResources(uris), SIGNAL(result(KJob*)),
+                this, SLOT(removeResources()));
+    }
+    else {
+    #ifndef NDEBUG
+        kDebug() << "Done searching for invalid local file entries";
+        kDebug() << "Time elapsed: " << m_timer.elapsed()/1000.0 << "sec";
+    #endif
+        deleteLater();
+        emit cleaningDone();
+    }
 }
 
 #include "invalidfileresourcecleaner.moc"

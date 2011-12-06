@@ -23,6 +23,9 @@
 #define _NEPOMUK_INVALID_FILE_RESOURCE_CLEANER_H_
 
 #include <QtCore/QThread>
+#include <QtCore/QList>
+#include <QtCore/QUrl>
+#include <QtCore/QTime>
 
 namespace Nepomuk {
     /**
@@ -61,11 +64,23 @@ namespace Nepomuk {
 
         using QThread::start;
 
+    Q_SIGNALS:
+        void cleaningDone();
+
+    private Q_SLOTS:
+        void removeResources();
+
     private:
         void run();
 
         bool m_stopped;
         QString m_basePath;
+
+        QList<QUrl> m_resourcesToRemove;
+
+#ifndef NDEBUG
+        QTime m_timer;
+#endif
     };
 }
 
