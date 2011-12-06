@@ -5433,6 +5433,34 @@ void DataManagementModelTest::testDescribeResources_excludeDiscardableData()
     QCOMPARE(resI.properties().count(), 2);
 }
 
+void DataManagementModelTest::testDescribeResources_onlyResolveUris()
+{
+    QTemporaryFile file;
+    file.open();
+
+    const QUrl g = m_nrlModel->createGraph(NRL::InstanceBase());
+
+    // create two resources
+    m_model->addStatement(QUrl("nepomuk:/res/A"), RDF::type(), QUrl("class:/typeA"), g);
+    m_model->addStatement(QUrl("nepomuk:/res/A"), NIE::url(), KUrl(file.fileName()), g);
+    m_model->addStatement(QUrl("nepomuk:/res/B"), RDF::type(), QUrl("class:/typeB"), g);
+
+
+    // get the resolved uris via describeResources
+    // 3 resources: one via nie:url, one directly, and one non-existant
+    const SimpleResourceGraph graph = m_dmModel->describeResources(QList<QUrl>() << QUrl("nepomuk:/res/B") << QUrl("nepomuk:/res/C") << KUrl(file.fileName()), OnlyResolveUris);
+
+    QVERIFY(!m_dmModel->lastError());
+
+    QCOMPARE(graph.count(), 2);
+    QVERIFY(graph.contains(QUrl("nepomuk:/res/A")));
+    QCOMPARE(graph[QUrl("nepomuk:/res/A")].count(), 1);
+    QVERIFY(graph[QUrl("nepomuk:/res/A")].contains(NIE::url(), QUrl(KUrl(file.fileName()))));
+
+    QVERIFY(graph.contains(QUrl("nepomuk:/res/B")));
+    QCOMPARE(graph[QUrl("nepomuk:/res/B")].count(), 0);
+}
+
 KTempDir * DataManagementModelTest::createNieUrlTestData()
 {
     // now we create a real example with some real files:

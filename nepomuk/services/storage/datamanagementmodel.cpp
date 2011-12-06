@@ -1839,10 +1839,43 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
     //
     // Resolve all URLs - for now we ignore non-existing resources
     //
-    QSet<QUrl> resolvedResources(QSet<QUrl>::fromList(resolveUrls(resources, false /* do not stat local files - it would be a waste of resources */).values()));
+    const QHash<QUrl, QUrl> resolvedResourcesMap = resolveUrls(resources, false /* do not stat local files - it would be a waste of resources */);
+    if(lastError())
+        return SimpleResourceGraph();
+
+    QSet<QUrl> resolvedResources(QSet<QUrl>::fromList(resolvedResourcesMap.values()));
     if(resolvedResources.isEmpty()) {
         setError(QLatin1String("describeResources: No useful resource specified."), Soprano::Error::ErrorInvalidArgument);
         return SimpleResourceGraph();
+    }
+
+
+    //
+    // If the client only request URI mappings we are already done.
+    //
+    if(flags & Nepomuk::OnlyResolveUris) {
+        SimpleResourceGraph g;
+        for(QHash<QUrl, QUrl>::const_iterator it = resolvedResourcesMap.constBegin();
+            it != resolvedResourcesMap.constEnd(); ++it) {
+            if(!it.value().isEmpty()) {
+                //
+                // This is a little hack. A hack because conceptually we should determine whether the resources
+                // exist at an earlier stage. However, this is the only place where we need the additional
+                // overhead of existance checking. Thus, we only do it here instead of resolveUris.
+                //
+                if(it.key() != it.value() ||
+                   executeQuery(QString::fromLatin1("ask where { %1 ?p ?o . }")
+                                .arg(Soprano::Node::resourceToN3(it.key())),
+                                Soprano::Query::QueryLanguageSparql).boolValue() ) {
+                    SimpleResource res(it.value());
+                    if(it.key() != it.value()) {
+                        res.addProperty(NIE::url(), it.key());
+                    }
+                    g.insert(res);
+                }
+            }
+        }
+        return g;
     }
 
 

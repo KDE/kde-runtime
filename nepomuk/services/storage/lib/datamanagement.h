@@ -398,7 +398,12 @@ namespace Nepomuk {
         ExcludeDiscardableData = 1,
 
         /// Exclude related resources, only include literal properties
-        ExcludeRelatedResources = 2
+        ExcludeRelatedResources = 2,
+
+        /// Do only resolve the URIs of the requested resources. This will
+        /// result in a list of SimpleResource objects which only have
+        /// their URI and optionally a nie:url property set.
+        OnlyResolveUris = 4
     };
     Q_DECLARE_FLAGS(DescribeResourcesFlags, DescribeResourcesFlag)
 

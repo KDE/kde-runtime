@@ -162,6 +162,7 @@ private Q_SLOTS:
     void testDescribeResources();
     void testDescribeResources_relatedResources();
     void testDescribeResources_excludeDiscardableData();
+    void testDescribeResources_onlyResolveUris();
 
     void testImportResources();
 
