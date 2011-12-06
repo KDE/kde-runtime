@@ -123,6 +123,18 @@ kext: {
           rdfs:domain kext:ResourceScoreCache ;
           rdfs:label "calculated score" ;
           rdfs:range xsd:float .
+
+# The altUrl is modelled in kext since it is essentially a hack. A conceptually correct approach to symlinks would use different
+# nie:DataObjects which point to the same nie:InformationElement. This, however, would mean a lot of additional implementation for
+# a rather small feature. Thus, we are using kext:altUrl instead. Be aware, however, that this only applies to indirectly symlinked
+# files, ie. files in folders which are symlinked. Directly symlinked files could have a different file name and, thus, are indexed
+# just like normal files.
+    kext:altUrl
+          a rdf:Property ;
+          rdfs:comment "Alternative URL of a DataObject. Has the same characteristics as nie:url but is used for secondary URLs or links. The most common example are symbolic links in a file system." ;
+          rdfs:domain nie:DataObject ;
+          rdfs:label "alternative url" ;
+          rdfs:range rdfs:Resource .
 }
 
 <http://nepomuk.kde.org/ontologies/2010/11/29/kext/metadata> {

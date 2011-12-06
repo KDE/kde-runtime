@@ -22,10 +22,13 @@
 
 #include "indexer.h"
 #include "nepomukindexwriter.h"
+#include "datamanagement.h"
+#include "kext.h"
 
 #include <Nepomuk/Vocabulary/NIE>
 
 #include <KDebug>
+#include <KJob>
 
 #include <QtCore/QDataStream>
 #include <QtCore/QDateTime>
@@ -40,6 +43,8 @@
 
 #include <iostream>
 
+
+using namespace Nepomuk::Vocabulary;
 
 namespace {
     class StoppableConfiguration : public Strigi::AnalyzerConfiguration
@@ -115,30 +120,60 @@ void Nepomuk::Indexer::indexFile( const QFileInfo& info, const KUrl resUri, uint
     d->m_analyzerConfig.setStop( false );
     d->m_indexWriter->forceUri( resUri );
     
-    // strigi asserts if the file path has a trailing slash
-    const KUrl url( info.filePath() );
-    const QString filePath = url.toLocalFile( KUrl::RemoveTrailingSlash );
-    const QString dir = url.directory( KUrl::IgnoreTrailingSlash );
+    const KUrl url( info.absoluteFilePath() );
+    const KUrl canonicalUrl( info.canonicalFilePath() );
 
-    kDebug() << "Starting to analyze" << info.filePath();
+    kDebug() << "Starting to analyze" << url;
 
-    Strigi::AnalysisResult analysisresult( QFile::encodeName( filePath ).data(),
-                                           mtime ? mtime : info.lastModified().toTime_t(),
-                                           *d->m_indexWriter,
-                                           *d->m_streamAnalyzer,
-                                           QFile::encodeName( dir ).data() );
-    if ( info.isFile() && !info.isSymLink() ) {
-#ifdef STRIGI_HAS_FILEINPUTSTREAM_OPEN
-        Strigi::InputStream* stream = Strigi::FileInputStream::open( QFile::encodeName( info.filePath() ) );
-        analysisresult.index( stream );
-        delete stream;
-#else
-        Strigi::FileInputStream stream( QFile::encodeName( info.filePath() ) );
-        analysisresult.index( &stream );
-#endif
+    // we make a difference between two cases of symlinks:
+    // 1. direct symlinks which result in possibly a different file name are indexed
+    //    like different files
+    // 2. indirect symlinks (files in symlinked folders) are simply added as additional
+    //    URLs to the target files
+    const bool indirectSymLink = !info.isSymLink() && (url != canonicalUrl);
+
+    //
+    // In the case of an indirect symlink we only want to add the alternative URL to the
+    // indexed target file.
+    //
+    if(indirectSymLink) {
+        Nepomuk::addProperty(QList<QUrl>() << canonicalUrl,
+                             KExt::altUrl(),
+                             QVariantList() << url)->exec();
     }
+
     else {
-        analysisresult.index(0);
+        // strigi asserts if the file path has a trailing slash
+        const QString filePath = url.toLocalFile( KUrl::RemoveTrailingSlash );
+        const QString dir = url.directory( KUrl::IgnoreTrailingSlash );
+
+        //
+        // We give the actual file URL to the indexer while reading the contents from
+        // the canonical path. That way the index writer knows that it is handling a
+        // symbolic link (if that is the case) but also gets the full index data from
+        // the target file.
+        // While this means duplicating information instead of using some fancy
+        // nie:InformationElement sharing it is way easier to implement and to handle
+        // during queries.
+        //
+        Strigi::AnalysisResult analysisresult( QFile::encodeName( filePath ).data(),
+                                               mtime ? mtime : info.lastModified().toTime_t(),
+                                               *d->m_indexWriter,
+                                               *d->m_streamAnalyzer,
+                                               QFile::encodeName( dir ).data() );
+        if ( info.isFile() ) {
+#ifdef STRIGI_HAS_FILEINPUTSTREAM_OPEN
+            Strigi::InputStream* stream = Strigi::FileInputStream::open( QFile::encodeName( canonicalUrl.toLocalFile() ) );
+            analysisresult.index( stream );
+            delete stream;
+#else
+            Strigi::FileInputStream stream( QFile::encodeName( info.canonicalFilePath() ) );
+            analysisresult.index( &stream );
+#endif
+        }
+        else {
+            analysisresult.index(0);
+        }
     }
 }
 
