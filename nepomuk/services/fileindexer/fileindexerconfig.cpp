@@ -281,6 +281,21 @@ namespace {
                 ++i;
         }
     }
+
+    /**
+     * Removes any path which does not point to a folder. This includes
+     * non-existing paths.
+     */
+    QStringList removeNonDirPaths(const QStringList& paths) {
+        QStringList cl;
+        foreach(const QString& path, paths) {
+            QFileInfo fi(path);
+            if(fi.isDir()) {
+                cl << path;
+            }
+        }
+        return cl;
+    }
 }
 
 
@@ -288,8 +303,8 @@ void Nepomuk::FileIndexerConfig::buildFolderCache()
 {
     QMutexLocker lock( &m_folderCacheMutex );
 
-    QStringList includeFoldersPlain = m_config.group( "General" ).readPathEntry( "folders", QStringList() << QDir::homePath() );
-    QStringList excludeFoldersPlain = m_config.group( "General" ).readPathEntry( "exclude folders", QStringList() );
+    const QStringList includeFoldersPlain = removeNonDirPaths(m_config.group( "General" ).readPathEntry( "folders", QStringList() << QDir::homePath() ));
+    const QStringList excludeFoldersPlain = removeNonDirPaths(m_config.group( "General" ).readPathEntry( "exclude folders", QStringList() ));
 
     m_folderCache.clear();
     insertSortFolders( includeFoldersPlain, true, m_folderCache );
