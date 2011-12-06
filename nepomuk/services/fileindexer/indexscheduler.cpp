@@ -509,7 +509,7 @@ void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
              !hasSymlinkLoop(fileInfo) &&
              FileIndexerConfig::self()->shouldFolderBeIndexed( path ) ) {
             QMutexLocker lock( &m_dirsToUpdateMutex );
-            m_dirsToUpdate.prependDir( path, flags );
+            m_dirsToUpdate.enqueueDir( path, flags );
         }
     }
 
