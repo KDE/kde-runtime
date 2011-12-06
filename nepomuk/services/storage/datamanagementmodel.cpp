@@ -2491,8 +2491,8 @@ QUrl Nepomuk::DataManagementModel::resolveUrl(const QUrl &url, bool statLocalFil
         }
     }
 
-    // fallback
-    return url;
+    // make gcc shut up
+    return QUrl();
 }
 
 QHash<Soprano::Node, Soprano::Node> Nepomuk::DataManagementModel::resolveNodes(const QSet<Soprano::Node> &nodes) const
