@@ -68,6 +68,11 @@ public:
     bool containsNode(const QUrl& property, const Soprano::Node& value) const;
 
     /**
+     * The number of property/value pairs stored in this resource.
+     */
+    int count() const;
+
+    /**
      * Clear the resource, remove all properties.
      */
     void clear();

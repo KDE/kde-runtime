@@ -273,6 +273,11 @@ void Nepomuk::SimpleResource::setProperties(const Nepomuk::PropertyHash &propert
     d->m_properties = properties;
 }
 
+int Nepomuk::SimpleResource::count() const
+{
+    return d->m_properties.count();
+}
+
 void Nepomuk::SimpleResource::clear()
 {
     d->m_properties.clear();
