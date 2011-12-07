@@ -104,6 +104,7 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
     QString label = m_resource.genericLabel();
 
     QTextStream os( &output, QIODevice::WriteOnly );
+    os.setCodec( "UTF-8" );
     os << "<html xmlns=\"http://www.w3.org/1999/xhtml\" version=\"-//W3C//DTD XHTML 1.2//EN\" xml:lang=\"en\">"
        << "<head>"
        << "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
