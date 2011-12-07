@@ -169,5 +169,11 @@ Comment[zh_CN]=系统通知配置
 Comment[zh_TW]=系統通知組態
 
 X-KDE-Keywords=System sounds,Audio,Sound,Notify,Alerts,Notification,popups
+X-KDE-Keywords[kk]=System sounds,Audio,Sound,Notify,Alerts,Notification,popups
+X-KDE-Keywords[nl]=Systeemgeluiden,audio,geluid,melden,alarmmelding,meldingen,pop-ups
+X-KDE-Keywords[ro]=Sunete sistem,audio,sunet,notificare,alerte,notifică,popup
+X-KDE-Keywords[sv]=Systemljud,Ljud,Underrätta,Varningar,Underrättelser
+X-KDE-Keywords[uk]=System sounds,Audio,Sound,Notify,Alerts,Notification,popups,звук,система,системні звуки,звуки системи,сповіщення,нагадування,підказки,контекст
+X-KDE-Keywords[x-test]=xxSystem sounds,Audio,Sound,Notify,Alerts,Notification,popupsxx
 
 Categories=Qt;KDE;X-KDE-settings-sound;

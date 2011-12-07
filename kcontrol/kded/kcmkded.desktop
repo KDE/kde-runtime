@@ -188,5 +188,11 @@ Comment[x-test]=xxKDE Services Configurationxx
 Comment[zh_CN]=KDE 服务配置
 Comment[zh_TW]=KDE 系統服務組態
 X-KDE-Keywords=KDED,Daemon,Services
+X-KDE-Keywords[kk]=KDED,Daemon,Services
+X-KDE-Keywords[nl]=KDED,daemon,services
+X-KDE-Keywords[ro]=KDED,Servicii,Demon
+X-KDE-Keywords[sv]=KDED,Demon,Tjänster
+X-KDE-Keywords[uk]=KDED,Daemon,Services,служба,служби,фонова служба,фонові служби
+X-KDE-Keywords[x-test]=xxKDED,Daemon,Servicesxx
 
 Categories=Qt;KDE;X-KDE-settings-components;
