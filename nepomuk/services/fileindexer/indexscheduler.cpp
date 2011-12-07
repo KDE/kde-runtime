@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2008-2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2011 Sebastian Trueg <trueg@kde.org>
    Copyright (c) 2010-11 Vishesh Handa <handa.vish@gmail.com>
 
    Parts of this file are based on code from Strigi
@@ -25,6 +25,7 @@
 #include "nepomukindexer.h"
 #include "util.h"
 #include "datamanagement.h"
+#include "kext.h"
 
 #include <QtCore/QMutexLocker>
 #include <QtCore/QList>
@@ -63,7 +64,7 @@ namespace {
     const int s_reducedSpeedDelay = 500; // ms
     const int s_snailPaceDelay = 3000;   // ms
 
-    QHash<QString, QDateTime> getChildren( const QString& dir )
+    QHash<QString, QDateTime> getChildren( const QUrl& dir )
     {
         QHash<QString, QDateTime> children;
         QString query = QString::fromLatin1( "select distinct ?url ?mtime where { "
@@ -73,7 +74,7 @@ namespace {
                                              "}" )
                 .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::isPartOf() ),
                       Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::url() ),
-                      Soprano::Node::resourceToN3( KUrl( dir ) ),
+                      Soprano::Node::resourceToN3( dir ),
                       Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NIE::lastModified() ) );
         //kDebug() << "running getChildren query:" << query;
 
@@ -84,6 +85,23 @@ namespace {
         }
 
         return children;
+    }
+
+    /// query all the kext:altUrls paths which are children of the given dir
+    QStringList getAltUrls( const KUrl& dir )
+    {
+        QStringList altUrls;
+        const QString query = QString::fromLatin1("select ?u where { "
+                                                  "?r %1 ?u . "
+                                                  "FILTER(REGEX(STR(?u), '^%2/[^/]+$')) . "
+                                                  "}")
+                              .arg(Soprano::Node::resourceToN3(KExt::altUrl()),
+                                   dir.url(KUrl::RemoveTrailingSlash));
+        Soprano::QueryResultIterator result = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+        while ( result.next() ) {
+            altUrls << result[0].uri().toLocalFile();
+        }
+        return altUrls;
     }
 
     QDateTime indexedMTimeForUrl(const KUrl& url)
@@ -459,8 +477,11 @@ void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
     }
 
     // get a map of all indexed files from the dir including their stored mtime
-    QHash<QString, QDateTime> filesInStore = getChildren( dir );
+    QHash<QString, QDateTime> filesInStore = getChildren( dirUrl );
     QHash<QString, QDateTime>::iterator filesInStoreEnd = filesInStore.end();
+
+    // get a list of all children that are stored as kext:altUrl
+    const QStringList altUrls = getAltUrls( dirUrl );
 
     QList<QFileInfo> filesToIndex;
     QStringList filesToDelete;
@@ -474,16 +495,20 @@ void Nepomuk::IndexScheduler::analyzeDir( const QString& dir_, Nepomuk::IndexSch
 
         QFileInfo fileInfo = dirIt.fileInfo();
 
+        // should this path be indexed at all
         const bool indexFile = Nepomuk::FileIndexerConfig::self()->shouldFileBeIndexed( fileInfo.fileName() );
+
+        // check if we already have an altUrl stored in case of indirect symlinks
+        const bool haveAltUrl = altUrls.contains(path) && fileInfo.absoluteFilePath() != fileInfo.canonicalFilePath();
 
         // check if this file is new by looking it up in the store
         QHash<QString, QDateTime>::iterator filesInStoreIt = filesInStore.find( path );
-        const bool newFile = ( filesInStoreIt == filesInStoreEnd );
+        const bool newFile = ( filesInStoreIt == filesInStoreEnd && !haveAltUrl);
         if ( newFile && indexFile )
             kDebug() << "NEW    :" << path;
 
         // do we need to update? Did the file change?
-        const bool fileChanged = !newFile && fileInfo.lastModified() != filesInStoreIt.value();
+        const bool fileChanged = !newFile && !haveAltUrl && fileInfo.lastModified() != filesInStoreIt.value();
         //TODO: At some point make these "NEW", "CHANGED", and "FORCED" strings public
         //      so that they can be used to create a better status message.
         if ( fileChanged )

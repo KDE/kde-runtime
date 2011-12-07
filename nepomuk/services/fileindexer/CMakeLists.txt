@@ -21,6 +21,8 @@ set(nepomukfileindexer_SRCS
   nepomukindexer.cpp
   )
 
+soprano_add_ontology(nepomukfileindexer_SRCS ${nepomuk_ontologies_SOURCE_DIR}/kext.trig "KExt" "Nepomuk::Vocabulary" "trig")
+
 qt4_add_dbus_adaptor(nepomukfileindexer_SRCS ../../interfaces/org.kde.nepomuk.FileIndexer.xml fileindexer.h Nepomuk::FileIndexer )
 
 qt4_add_dbus_interface(nepomukfileindexer_SRCS ../../interfaces/org.kde.nepomuk.FileWatch.xml filewatchserviceinterface)
