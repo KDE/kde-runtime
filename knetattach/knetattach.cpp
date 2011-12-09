@@ -181,7 +181,7 @@ bool KNetAttach::validateCurrentPage()
       KConfig config("kio_fishrc");
       KConfigGroup cg(&config, _host->text().trimmed());
       cg.writeEntry("Charset", KGlobal::charsets()->encodingForName(_encoding->currentText()));
-	  url.setProtocol(_protocolText->currentText();
+	  url.setProtocol(_protocolText->currentText());
 	  url.setPort(_port->value());
       } else if (_type == "FTP") {
 	  url.setProtocol("ftp");
