@@ -198,6 +198,7 @@ Comment[zh_CN]=自定义 KDE 图标
 Comment[zh_TW]=自訂 KDE 圖示
 
 X-KDE-Keywords=icons,effects,size,hicolor,locolor
+X-KDE-Keywords[ca]=icones,efectes,mida,color alt,color baix
 X-KDE-Keywords[kk]=icons,effects,size,hicolor,locolor
 X-KDE-Keywords[nl]=pictoogrammen,effecten,grootte,hi-kleur,lo-kleur
 X-KDE-Keywords[pt]=ícones,efeitos,tamanho,muitas cores,poucas cores
