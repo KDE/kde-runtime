@@ -18,6 +18,7 @@
  */
 
 #include "packageaccessmanager.h"
+#include "qfilenetworkreply_p.h"
 
 #include <QNetworkReply>
 
@@ -70,7 +71,10 @@ QNetworkReply *PackageAccessManager::createRequest(QNetworkAccessManager::Operat
         reqUrl.setScheme("file");
         reqUrl.setPath(m_package->filePath(0, reqUrl.path()));
         request.setUrl(reqUrl);
-        return QNetworkAccessManager::createRequest(op, request, outgoingData);
+
+        QFileNetworkReply *reply = new QFileNetworkReply(this, request, op);
+        reply->setUrl(req.url());
+        return reply;
     } else if ((reqUrl.scheme() == "http" && !m_auth->authorizeRequiredExtension("http")) ||
                ((reqUrl.scheme() == "file" || reqUrl.scheme() == "desktop") && !m_auth->authorizeRequiredExtension("localio")) ||
                (!m_auth->authorizeRequiredExtension("networkio"))) {

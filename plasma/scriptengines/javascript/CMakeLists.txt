@@ -130,6 +130,7 @@ set(declarative_appletscript_SRCS
     common/javascriptaddonpackagestructure.cpp
     common/declarativescriptenv.cpp
     declarative/packageaccessmanager.cpp
+    declarative/qfilenetworkreply.cpp
     declarative/packageaccessmanagerfactory.cpp
     plasmoid/abstractjsappletscript.cpp
     plasmoid/appletauthorization.cpp
