@@ -169,6 +169,7 @@ Comment[zh_CN]=系统通知配置
 Comment[zh_TW]=系統通知組態
 
 X-KDE-Keywords=System sounds,Audio,Sound,Notify,Alerts,Notification,popups
+X-KDE-Keywords[ca]=Sons del sistema,Àudio,So,Notificar,Alertes,Notificació,missatges emergents
 X-KDE-Keywords[kk]=System sounds,Audio,Sound,Notify,Alerts,Notification,popups
 X-KDE-Keywords[nl]=Systeemgeluiden,audio,geluid,melden,alarmmelding,meldingen,pop-ups
 X-KDE-Keywords[pt]=Sons do sistema,Áudio,Som,Notificar,Alertas,Notificação,Mensagens
