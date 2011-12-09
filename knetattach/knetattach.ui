@@ -281,6 +281,36 @@
      </widget>
     </item>
     <item row="6" column="0">
+     <widget class="QLabel" name="_protocol">
+      <property name="text">
+       <string>&amp;Protocol:</string>
+      </property>
+      <property name="alignment">
+	<set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="wordWrap">
+       <bool>false</bool>
+      </property>
+      <property name="buddy">
+       <cstring>_port</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="KComboBox" name="_protocolText">
+      <item>
+       <property name="text">
+        <string notr="true">sftp</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string notr="true">fish</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="7" column="0">
      <widget class="QLabel" name="textLabel3">
       <property name="text">
        <string>&amp;Folder:</string>
@@ -296,10 +326,10 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="1" colspan="2">
+    <item row="7" column="1" colspan="2">
      <widget class="KLineEdit" name="_path"/>
     </item>
-    <item row="7" column="0">
+    <item row="8" column="0">
      <widget class="QLabel" name="_encodingText">
       <property name="enabled">
        <bool>true</bool>
@@ -315,10 +345,10 @@
       </property>
      </widget>
     </item>
-    <item row="7" column="1">
+    <item row="8" column="1">
      <widget class="KComboBox" name="_encoding"/>
     </item>
-    <item row="8" column="1" colspan="2">
+    <item row="9" column="1" colspan="2">
      <widget class="QCheckBox" name="_createIcon">
       <property name="text">
        <string>Cr&amp;eate an icon for this remote folder</string>
@@ -328,14 +358,14 @@
       </property>
      </widget>
     </item>
-    <item row="9" column="1">
+    <item row="10" column="1">
      <widget class="QCheckBox" name="_useEncryption">
       <property name="text">
        <string>&amp;Use encryption</string>
       </property>
      </widget>
     </item>
-    <item row="10" column="0" colspan="3">
+    <item row="11" column="0" colspan="3">
      <spacer name="spacer5">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
