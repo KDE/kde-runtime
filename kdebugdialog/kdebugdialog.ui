@@ -6,28 +6,46 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>281</width>
-    <height>368</height>
+    <width>587</width>
+    <height>392</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="2">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Debug area:</string>
-     </property>
-     <property name="buddy">
-      <cstring>pDebugAreas</cstring>
-     </property>
-    </widget>
+   <item row="1" column="0" rowspan="5">
+    <layout class="QVBoxLayout" name="verticalLayout_5">
+     <item>
+      <widget class="KTreeWidgetSearchLineWidget" name="m_incrSearch"/>
+     </item>
+     <item>
+      <widget class="QTreeWidget" name="m_areaWidget">
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="rootIsDecorated">
+        <bool>false</bool>
+       </property>
+       <property name="uniformRowHeights">
+        <bool>true</bool>
+       </property>
+       <property name="itemsExpandable">
+        <bool>false</bool>
+       </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+    </layout>
    </item>
-   <item row="1" column="0" colspan="2">
-    <widget class="KComboBox" name="pDebugAreas"/>
-   </item>
-   <item row="2" column="0">
+   <item row="1" column="1">
     <widget class="QGroupBox" name="pInfoGroup">
      <property name="title">
       <string>Information</string>
@@ -56,7 +74,7 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="1" column="2">
     <widget class="QGroupBox" name="pWarnGroup">
      <property name="title">
       <string>Warning</string>
@@ -85,7 +103,7 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="2" column="1">
     <widget class="QGroupBox" name="pErrorGroup">
      <property name="title">
       <string>Error</string>
@@ -114,7 +132,7 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="2" column="2">
     <widget class="QGroupBox" name="pFatalGroup">
      <property name="title">
       <string>Fatal Error</string>
@@ -143,21 +161,14 @@
      </layout>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="3" column="1">
     <widget class="QCheckBox" name="pAbortFatal">
      <property name="text">
       <string>Abort on fatal errors</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="2">
-    <widget class="QCheckBox" name="m_disableAll2">
-     <property name="text">
-      <string>Disable all debug output</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="2">
+   <item row="5" column="1" colspan="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -169,6 +180,13 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="0" column="0" colspan="3">
+    <widget class="QCheckBox" name="m_disableAll2">
+     <property name="text">
+      <string>Disable all debug output</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -182,6 +200,11 @@
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KTreeWidgetSearchLineWidget</class>
+   <extends>QWidget</extends>
+   <header>ktreewidgetsearchline.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
