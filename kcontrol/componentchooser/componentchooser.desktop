@@ -189,8 +189,10 @@ Comment[zh_TW]=選擇各種服務的預設元件
 
 X-KDE-Keywords=default applications,components,component chooser,resources,e-mail,email client,text editor,instant messenger,terminal emulator,web browser,URL,hyperlinks
 X-KDE-Keywords[ca]=aplicacions per defecte,components,selector de components,recursos,e-mail,client de correu electrònic,editor de text,missatgeria instantània,emulador de terminal,navegador web,URL,hiperenllaços
+X-KDE-Keywords[da]=standardprogrammer,komponenter,komponentvælger,ressourcer,e-mail,email klient,tekst-editor,instant messenger,terminal-emulator,webbrowser,URL,hyperlinks
 X-KDE-Keywords[kk]=default applications,components,component chooser,resources,e-mail,email client,text editor,instant messenger,terminal emulator,web browser,URL,hyperlinks
 X-KDE-Keywords[nb]=standardprogrammer,komponenter,komponentvelger,ressurser,e-post,e-postklient,tekstprogram,lynmelding,terminalemulator,nettleser,URL,hyperlenker
+X-KDE-Keywords[nds]=Standardprogrammen,Komponenten,Komponentköör,Ressourcen,Nettpost,Nettpostprogramm,Texteditor,Kortnarichtenprogramm,Konsool,Terminal,Nettkieker,URL,Hyperlinks
 X-KDE-Keywords[nl]=standaard toepassingen,componenten,componentenkiezer,hulpbronnen,e-mail-client,tekstbewerker,instant-messenger,terminal-emulator,webbrowser,url-adres,hyperlinks
 X-KDE-Keywords[pt]=aplicações predefinidas,componentes,selector de componentes,recursos,e-mail,cliente de e-mail,editor de texto,mensageiro instantâneo,emulador de terminal,navegador Web,URL,hiperligações
 X-KDE-Keywords[pt_BR]=aplicativos padrão,componentes,seletor de componentes,recursos,e-mail,cliente de e-mail,editor de texto,mensageiro instantâneo,emulador de terminal,navegador web,URL,hiperligações

@@ -199,9 +199,11 @@ Comment[zh_TW]=自訂 KDE 圖示
 
 X-KDE-Keywords=icons,effects,size,hicolor,locolor
 X-KDE-Keywords[ca]=icones,efectes,mida,color alt,color baix
+X-KDE-Keywords[da]=ikoner,effekter,størrelse,hicolor,locolor
 X-KDE-Keywords[fa]=icons,effects,size,hicolor,locolor
 X-KDE-Keywords[kk]=icons,effects,size,hicolor,locolor
 X-KDE-Keywords[nb]=ikoner,effekter,størrelse,fargesterk,fargesvak
+X-KDE-Keywords[nds]=Lüttbiller,Effekten,Grött,Hoochklöör,HiColor,LoColor
 X-KDE-Keywords[nl]=pictoogrammen,effecten,grootte,hi-kleur,lo-kleur
 X-KDE-Keywords[pt]=ícones,efeitos,tamanho,muitas cores,poucas cores
 X-KDE-Keywords[pt_BR]=ícones,efeitos,tamanho,muitas cores,poucas cores
