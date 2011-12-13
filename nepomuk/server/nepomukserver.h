@@ -54,17 +54,40 @@ namespace Nepomuk {
          */
         QString defaultRepository() const;
         void reconfigure();
+
+        /**
+         * Asyncronically quits the server by first stopping
+         * all services and then calling QCoreApplication::quit
+         */
         void quit();
+
+    Q_SIGNALS:
+        /// emitted once Nepomuk has been enabled and is fully operational
+        void nepomukEnabled();
+
+        /// emitted once Nepomuk has been disabled and all services are down
+        void nepomukDisabled();
+
+    private Q_SLOTS:
+        void slotServiceInitialized( const QString& name );
+        void slotServiceStopped( const QString& name );
 
     private:
         void init();
 
         ServiceManager* m_serviceManager;
-        bool m_enabled;
 
         KSharedConfigPtr m_config;
 
         const QString m_fileIndexerServiceName;
+
+        enum State {
+            StateDisabled,
+            StateEnabled,
+            StateDisabling,
+            StateEnabling
+        };
+        State m_currentState;
 
         static Server* s_self;
     };
