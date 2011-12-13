@@ -79,10 +79,9 @@ KListDebugDialog::KListDebugDialog(const AreaMap& areaMap, QWidget *parent)
 
     load();
 
-    buildButtons( lay );
+    buildButtons();
     resize( 350, 400 );
     setMainWidget( mainWidget );
-    setButtons( KDialog::NoDefault );
 }
 
 void KListDebugDialog::selectAll()

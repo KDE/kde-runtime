@@ -10,6 +10,7 @@ set(kdebugdialog_SRCS
    kdebugdialog.cpp 
    klistdebugdialog.cpp )
 
+kde4_add_ui_files(kdebugdialog_SRCS kdebugdialog.ui)
 
 kde4_add_executable(kdebugdialog ${kdebugdialog_SRCS})
 
