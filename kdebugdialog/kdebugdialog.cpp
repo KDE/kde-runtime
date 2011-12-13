@@ -45,9 +45,12 @@ KDebugDialog::KDebugDialog(const AreaMap& areaMap, QWidget* parent)
     setupUi(mainWidget());
     mainWidget()->layout()->setContentsMargins(0, 0, 0, 0);
 
-    // Build combo of debug areas
+    // Debug area tree
+    m_incrSearch->searchLine()->addTreeWidget(m_areaWidget);
+
     for( QMap<QString,QString>::const_iterator it = areaMap.begin(); it != areaMap.end(); ++it ) {
-        pDebugAreas->addItem(it.value(), QVariant(it.key().simplified()));
+        QTreeWidgetItem* item = new QTreeWidgetItem(m_areaWidget, QStringList() << it.value());
+        item->setData(0, Qt::UserRole, it.key().simplified());
     }
 
     QStringList destList;
@@ -92,27 +95,27 @@ KDebugDialog::KDebugDialog(const AreaMap& areaMap, QWidget* parent)
     showButtonSeparator(true);
     buildButtons();
 
-    connect( pDebugAreas, SIGNAL(activated(int)),
-            SLOT(slotDebugAreaChanged(int)) );
+    connect( m_areaWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
+            SLOT(slotDebugAreaChanged(QTreeWidgetItem*)) );
 
     // Get initial values
     showArea(QString("0"));
 
     load();
 
-    resize( 300, height() );
+    resize(600, height());
 }
 
 KDebugDialog::~KDebugDialog()
 {
 }
 
-void KDebugDialog::slotDebugAreaChanged(int index)
+void KDebugDialog::slotDebugAreaChanged(QTreeWidgetItem* item)
 {
     // Save settings from previous page
     save();
 
-    const QString areaName = pDebugAreas->itemData(index).toString();
+    const QString areaName = item->data(0, Qt::UserRole).toString();
     showArea(areaName);
 }
 
@@ -173,7 +176,7 @@ void KDebugDialog::disableAllClicked()
 {
     kDebug();
     bool enabled = !m_disableAll->isChecked();
-    pDebugAreas->setEnabled(enabled);
+    m_areaWidget->setEnabled(enabled);
     pInfoGroup->setEnabled(enabled);
     pWarnGroup->setEnabled(enabled);
     pErrorGroup->setEnabled(enabled);

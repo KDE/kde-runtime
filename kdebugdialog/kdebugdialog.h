@@ -48,7 +48,7 @@ public:
     void doSave();
 
 protected Q_SLOTS:
-    void slotDebugAreaChanged(int);
+    void slotDebugAreaChanged(QTreeWidgetItem*);
     void slotDestinationChanged();
     void disableAllClicked();
 
