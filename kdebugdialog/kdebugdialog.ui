@@ -231,6 +231,19 @@
    <header>ktreewidgetsearchline.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>m_disableAll2</tabstop>
+  <tabstop>m_areaWidget</tabstop>
+  <tabstop>pInfoCombo</tabstop>
+  <tabstop>pInfoFile</tabstop>
+  <tabstop>pWarnCombo</tabstop>
+  <tabstop>pWarnFile</tabstop>
+  <tabstop>pErrorCombo</tabstop>
+  <tabstop>pErrorFile</tabstop>
+  <tabstop>pFatalCombo</tabstop>
+  <tabstop>pFatalFile</tabstop>
+  <tabstop>pAbortFatal</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
