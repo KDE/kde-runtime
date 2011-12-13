@@ -39,37 +39,37 @@ KAbstractDebugDialog::~KAbstractDebugDialog()
 
 void KAbstractDebugDialog::buildButtons( QVBoxLayout * topLayout )
 {
-  QHBoxLayout *hbox = new QHBoxLayout();
-  hbox->setSpacing( KDialog::spacingHint() );
-  topLayout->addLayout( hbox );
-  pHelpButton = new KPushButton( KStandardGuiItem::help() );
-  hbox->addWidget( pHelpButton );
-  hbox->addStretch(10);
-  QSpacerItem *spacer = new QSpacerItem(40, 0);
-  hbox->addItem(spacer);
-  pOKButton = new KPushButton( KStandardGuiItem::ok() );
-  hbox->addWidget( pOKButton );
-  pApplyButton = new KPushButton( KStandardGuiItem::apply() );
-  hbox->addWidget( pApplyButton );
-  pCancelButton = new KPushButton( KStandardGuiItem::cancel() );
-  hbox->addWidget( pCancelButton );
+    QHBoxLayout *hbox = new QHBoxLayout();
+    hbox->setSpacing( KDialog::spacingHint() );
+    topLayout->addLayout( hbox );
+    pHelpButton = new KPushButton( KStandardGuiItem::help() );
+    hbox->addWidget( pHelpButton );
+    hbox->addStretch(10);
+    QSpacerItem *spacer = new QSpacerItem(40, 0);
+    hbox->addItem(spacer);
+    pOKButton = new KPushButton( KStandardGuiItem::ok() );
+    hbox->addWidget( pOKButton );
+    pApplyButton = new KPushButton( KStandardGuiItem::apply() );
+    hbox->addWidget( pApplyButton );
+    pCancelButton = new KPushButton( KStandardGuiItem::cancel() );
+    hbox->addWidget( pCancelButton );
 
-  int w1 = pHelpButton->sizeHint().width();
-  int w2 = pOKButton->sizeHint().width();
-  int w3 = pCancelButton->sizeHint().width();
-  int w4 = qMax( w1, qMax( w2, w3 ) );
-  int w5 = pApplyButton->sizeHint().width();
-  w4 = qMax(w4, w5);
+    int w1 = pHelpButton->sizeHint().width();
+    int w2 = pOKButton->sizeHint().width();
+    int w3 = pCancelButton->sizeHint().width();
+    int w4 = qMax( w1, qMax( w2, w3 ) );
+    int w5 = pApplyButton->sizeHint().width();
+    w4 = qMax(w4, w5);
 
-  pHelpButton->setFixedWidth( w4 );
-  pOKButton->setFixedWidth( w4 );
-  pApplyButton->setFixedWidth( w4 );
-  pCancelButton->setFixedWidth( w4 );
+    pHelpButton->setFixedWidth( w4 );
+    pOKButton->setFixedWidth( w4 );
+    pApplyButton->setFixedWidth( w4 );
+    pCancelButton->setFixedWidth( w4 );
 
-  connect( pHelpButton, SIGNAL( clicked() ), SLOT( slotShowHelp() ) );
-  connect( pOKButton, SIGNAL( clicked() ), SLOT( accept() ) );
-  connect( pApplyButton, SIGNAL( clicked() ), SLOT( slotApply() ) );
-  connect( pCancelButton, SIGNAL( clicked() ), SLOT( reject() ) );
+    connect( pHelpButton, SIGNAL( clicked() ), SLOT( slotShowHelp() ) );
+    connect( pOKButton, SIGNAL( clicked() ), SLOT( accept() ) );
+    connect( pApplyButton, SIGNAL( clicked() ), SLOT( slotApply() ) );
+    connect( pCancelButton, SIGNAL( clicked() ), SLOT( reject() ) );
 }
 
 void KAbstractDebugDialog::slotShowHelp()
@@ -79,8 +79,8 @@ void KAbstractDebugDialog::slotShowHelp()
 
 void KAbstractDebugDialog::slotApply()
 {
-  save();
-  pConfig->sync();
+    save();
+    pConfig->sync();
 }
 
 void KAbstractDebugDialog::save()

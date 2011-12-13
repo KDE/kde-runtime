@@ -29,32 +29,32 @@ class KPushButton;
 
 class KAbstractDebugDialog : public KDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  explicit KAbstractDebugDialog(QWidget *parent);
+    explicit KAbstractDebugDialog(QWidget *parent);
 
-  virtual ~KAbstractDebugDialog();
+    virtual ~KAbstractDebugDialog();
 
-  virtual void buildButtons(QVBoxLayout * topLayout);
+    virtual void buildButtons(QVBoxLayout * topLayout);
 
-  void load();
-  void save();
-  virtual void doLoad() = 0;
-  virtual void doSave() = 0;
-  KConfig * config() { return pConfig; }
+    void load();
+    void save();
+    virtual void doLoad() = 0;
+    virtual void doSave() = 0;
+    KConfig * config() { return pConfig; }
 
-  typedef QMap<QString /*area name*/, QString /*description*/> AreaMap;
+    typedef QMap<QString /*area name*/, QString /*description*/> AreaMap;
 
 protected Q_SLOTS:
-  void slotShowHelp();
-  void slotApply();
+    void slotShowHelp();
+    void slotApply();
 
 protected:
-  KConfig* pConfig;
-  KPushButton* pOKButton;
-  KPushButton* pCancelButton;
-  KPushButton* pHelpButton;
-  KPushButton* pApplyButton;
+    KConfig* pConfig;
+    KPushButton* pOKButton;
+    KPushButton* pCancelButton;
+    KPushButton* pHelpButton;
+    KPushButton* pApplyButton;
     QCheckBox* m_disableAll;
 };
 
