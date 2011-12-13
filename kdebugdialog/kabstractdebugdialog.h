@@ -35,7 +35,7 @@ public:
 
     virtual ~KAbstractDebugDialog();
 
-    virtual void buildButtons(QVBoxLayout * topLayout);
+    void buildButtons();
 
     void load();
     void save();
@@ -51,10 +51,6 @@ protected Q_SLOTS:
 
 protected:
     KConfig* pConfig;
-    KPushButton* pOKButton;
-    KPushButton* pCancelButton;
-    KPushButton* pHelpButton;
-    KPushButton* pApplyButton;
     QCheckBox* m_disableAll;
 };
 
