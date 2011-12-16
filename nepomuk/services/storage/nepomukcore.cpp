@@ -34,6 +34,7 @@ static const char s_repositoryName[] = "main";
 Nepomuk::Core::Core( QObject* parent )
     : Soprano::Server::ServerCore( parent ),
       m_repository( 0 ),
+      m_ontologyLoader( 0 ),
       m_initialized( false )
 {
     // we give the Virtuoso server a server thread max of 100 which is already an insane number
@@ -68,16 +69,23 @@ void Nepomuk::Core::slotRepositoryOpened( Repository* repo, bool success )
     if( !success ) {
         emit initializationDone( success );
     }
-    else {
+    else if( !m_ontologyLoader ) {
         // create the ontology loader, let it update all the ontologies,
         // and only then mark the service as initialized
         // TODO: fail the initialization in case loading the ontologies
         // failed.
-        OntologyLoader* ontologyLoader = new OntologyLoader( repo, this );
-        connect( ontologyLoader, SIGNAL(ontologyLoadingFinished(Nepomuk::OntologyLoader*)),
+        m_ontologyLoader = new OntologyLoader( repo, this );
+        connect( m_ontologyLoader, SIGNAL(ontologyLoadingFinished(Nepomuk::OntologyLoader*)),
                  this, SLOT(slotOntologiesLoaded()) );
-        ontologyLoader->updateLocalOntologies();
+        m_ontologyLoader->updateLocalOntologies();
     }
+}
+
+
+void Nepomuk::Core::slotRepositoryClosed(Nepomuk::Repository*)
+{
+    delete m_ontologyLoader;
+    m_ontologyLoader = 0;
 }
 
 
@@ -115,6 +123,8 @@ Soprano::Model* Nepomuk::Core::createModel( const Soprano::BackendSettings& )
         m_repository = new Repository( QLatin1String( s_repositoryName ) );
         connect( m_repository, SIGNAL( opened( Repository*, bool ) ),
                  this, SLOT( slotRepositoryOpened( Repository*, bool ) ) );
+        connect( m_repository, SIGNAL( closed( Repository* ) ),
+                 this, SLOT( slotRepositoryClosed( Repository* ) ) );
         QTimer::singleShot( 0, m_repository, SLOT( open() ) );
     }
     return m_repository;

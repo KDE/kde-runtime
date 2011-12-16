@@ -492,14 +492,23 @@ KPasswdServer::openWallet( int windowId )
 void
 KPasswdServer::processRequest()
 {
-    // guard so processRequest is only ever run once.
-    static bool processing = false;
-    if (processing || m_authPending.isEmpty()) {
+    if (m_authPending.isEmpty()) {
         return;
     }
-    processing = true;
 
-    Request *request = m_authPending.takeFirst();
+    QScopedPointer<Request> request (m_authPending.takeFirst());
+
+    // Prevent multiple prompts originating from the same window or the same
+    // key (server address).
+    const QString windowIdStr = QString::number(request->windowId);
+    if (m_authPrompted.contains(windowIdStr) || m_authPrompted.contains(request->key)) {
+        m_authPending.prepend(request.take());  // put it back.
+        return;
+    }
+
+    m_authPrompted.append(windowIdStr);
+    m_authPrompted.append(request->key);
+
     KIO::AuthInfo &info = request->info;
     bool bypassCacheAndKWallet = info.getExtraField(AUTHINFO_EXTRAFIELD_BYPASS_CACHE_AND_KWALLET).toBool();
     bool skipAutoCaching = info.getExtraField(AUTHINFO_EXTRAFIELD_SKIP_CACHING_ON_QUERY).toBool();
@@ -568,8 +577,12 @@ KPasswdServer::processRequest()
                 dialogFlags |= KPasswordDialog::ShowAnonymousLoginCheckBox;
             }
 
-            dialogFlags |= (info.keepPassword ? ( KPasswordDialog::ShowUsernameLine
-                  |  KPasswordDialog::ShowKeepPassword) : KPasswordDialog::ShowUsernameLine );
+            dialogFlags |= KPasswordDialog::ShowUsernameLine;
+
+            // If wallet is not enabled and the caller explicitly request for it,
+            // do not show the keep password checkbox.
+            if (info.keepPassword && KWallet::Wallet::isEnabled())
+                dialogFlags |= KPasswordDialog::ShowKeepPassword;
 
             // instantiate dialog
             KPasswordDialog dlg( 0l, dialogFlags) ;
@@ -661,8 +674,6 @@ KPasswdServer::processRequest()
         QDBusConnection::sessionBus().send(request->transaction.createReply(QVariantList() << replyData << m_seqNr));
     }
 
-    delete request;
-
     // Check all requests in the wait queue.
     Request *waitRequest;
     QMutableListIterator<Request*> it(m_authWait);
@@ -701,8 +712,9 @@ KPasswdServer::processRequest()
         }
     }
 
-    // reallow processing
-    processing = false;
+    // reallow processing for the specific window.
+    m_authPrompted.removeAll(windowIdStr);
+    m_authPrompted.removeAll(request->key);
 
     if (m_authPending.count())
        QTimer::singleShot(0, this, SLOT(processRequest()));

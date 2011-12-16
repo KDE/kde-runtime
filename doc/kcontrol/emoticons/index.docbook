@@ -12,8 +12,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2010-09-25</date>
-<releaseinfo>&kde; 4.5</releaseinfo>
+<date>2011-11-28</date>
+<releaseinfo>&kde; 4.8</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -93,7 +93,7 @@ You can create your own new theme from scratch. Clicking on this button brings a
 </para>
 </listitem>
 </varlistentry>
-<varlistentry><term><guilabel>Get New Themes...</guilabel></term>
+<varlistentry><term><guilabel>Get New Icon Themes...</guilabel></term>
 <listitem>
 <para>
 You need to be connected to the Internet to use this action. A dialog displays a list of emoticons themes from <ulink url="http://www.kde-look.org">http://www.kde-look.org</ulink> and you can install one by clicking the <guibutton>Install</guibutton> button on the right side of the theme description in the list.

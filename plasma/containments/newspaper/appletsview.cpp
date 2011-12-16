@@ -81,8 +81,7 @@ bool AppletsView::immediateDrag() const
 
 bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
 {
-    if ((watched != m_appletsContainer && !m_appletsContainer->isAncestorOf(watched)) ||
-        (m_appletsContainer->expandAll() && m_appletsContainer->orientation() == Qt::Vertical)) {
+    if (watched != m_appletsContainer && !m_appletsContainer->isAncestorOf(watched)) {
         return Plasma::ScrollWidget::sceneEventFilter(watched, event);
     }
 
@@ -155,6 +154,10 @@ bool AppletsView::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
         if (m_movingApplets) {
             manageMouseReleaseEvent(me);
             return true;
+        }
+
+        if (m_appletsContainer->expandAll()) {
+            return Plasma::ScrollWidget::sceneEventFilter(watched, event);
         }
 
         foreach (Plasma::Applet *applet, m_appletsContainer->containment()->applets()) {

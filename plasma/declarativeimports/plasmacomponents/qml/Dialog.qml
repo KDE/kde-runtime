@@ -69,7 +69,7 @@ Item {
         dialog.y = pos.y
 
         dialog.visible = true
-        dialog.focus = true
+        dialog.activateWindow()
     }
 
     function accept()
@@ -95,6 +95,7 @@ Item {
 
     PlasmaCore.Dialog {
         id: dialog
+        windowFlags: Qt.Dialog
 
 
         //onFaderClicked: root.clickedOutside()
@@ -111,8 +112,9 @@ Item {
         }
 
         mainItem: Item {
+            id: mainItem
             width: theme.defaultFont.mSize.width * 40
-            height: titleBar.childrenRect.height + contentItem.childrenRect.height + buttonItem.childrenRect.height
+            height: titleBar.childrenRect.height + contentItem.childrenRect.height + buttonItem.childrenRect.height + 8
 
             // Consume all key events that are not processed by children
             Keys.onPressed: event.accepted = true
@@ -132,12 +134,15 @@ Item {
             Item {
                 id: contentItem
 
+                onChildrenRectChanged: mainItem.width = Math.max(childrenRect.width, buttonItem.childrenRect.width)
+
                 clip: true
                 anchors {
                     top: titleBar.bottom
                     left: parent.left
                     right: parent.right
                     bottom: buttonItem.top
+                    bottomMargin: 8
                 }
             }
 
@@ -145,15 +150,15 @@ Item {
                 id: buttonItem
 
                 height: childrenRect.height
-                clip: true
                 anchors {
                     left: parent.left
                     right: parent.right
                     bottom: parent.bottom
+                    bottomMargin: 4
                 }
             }
         }
-        
+
         Component.onCompleted: {
             rootItem = Utils.rootObject()
         }

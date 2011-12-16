@@ -195,7 +195,7 @@ void AppletsContainer::setExpandAll(const bool expand)
         return;
     }
 
-    if (expand && m_orientation != Qt::Horizontal) {
+    if (expand) {
         foreach (Plasma::Applet *applet, m_containment->applets()) {
             if (applet->effectiveSizeHint(Qt::MinimumSize).height() > KIconLoader::SizeSmall) {
                 applet->setPreferredHeight(-1);
@@ -203,7 +203,7 @@ void AppletsContainer::setExpandAll(const bool expand)
             QList<AppletTitleBar *> titles = applet->findChildren<AppletTitleBar *>("TitleBar");
 
             if (!titles.isEmpty()) {
-                titles.first()->setActive(false);
+                titles.first()->setActive(true);
             }
         }
 
@@ -435,6 +435,7 @@ void AppletsContainer::createAppletTitle(Plasma::Applet *applet)
 
     appletTitleBar->setParent(applet);
     appletTitleBar->show();
+    appletTitleBar->setActive(m_expandAll);
 
     if (!m_containment) {
         m_containment = applet->containment();

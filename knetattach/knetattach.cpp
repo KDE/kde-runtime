@@ -181,7 +181,7 @@ bool KNetAttach::validateCurrentPage()
       KConfig config("kio_fishrc");
       KConfigGroup cg(&config, _host->text().trimmed());
       cg.writeEntry("Charset", KGlobal::charsets()->encodingForName(_encoding->currentText()));
-	  url.setProtocol("fish");
+	  url.setProtocol(_protocolText->currentText());
 	  url.setPort(_port->value());
       } else if (_type == "FTP") {
 	  url.setProtocol("ftp");
@@ -296,6 +296,8 @@ bool KNetAttach::updateForProtocol(const QString& protocol)
 	_useEncryption->show();
 	_portText->show();
 	_port->show();
+	_protocol->hide();
+	_protocolText->hide();
 	_userText->show();
 	_user->show();
     _encodingText->hide();
@@ -304,6 +306,8 @@ bool KNetAttach::updateForProtocol(const QString& protocol)
 	_useEncryption->hide();
 	_portText->show();
 	_port->show();
+	_protocol->show();
+	_protocolText->show();
 	_userText->show();
 	_user->show();
 	_encodingText->show();
@@ -312,6 +316,8 @@ bool KNetAttach::updateForProtocol(const QString& protocol)
 	_useEncryption->hide();
 	_portText->show();
 	_port->show();
+	_protocol->hide();
+	_protocolText->hide();
 	_userText->show();
 	_user->show();
     _encodingText->show();
@@ -320,6 +326,8 @@ bool KNetAttach::updateForProtocol(const QString& protocol)
 	_useEncryption->hide();
 	_portText->hide();
 	_port->hide();
+	_protocol->hide();
+	_protocolText->hide();
 	_userText->hide();
 	_user->hide();
     _encodingText->hide();

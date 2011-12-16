@@ -63,8 +63,8 @@ Item {
 
     // Commmon API
     property bool flat: true
-    property bool checked: false
-    property bool checkable: false
+    property bool checked: defaultAction ? defaultAction.checked : false
+    property bool checkable: defaultAction ? defaultAction.checkable : false
     property alias pressed: mouse.pressed
     property alias text: label.text
     property alias iconSource: icon.source
@@ -72,6 +72,11 @@ Item {
 
     signal clicked()
 
+    // Plasma extensiuons
+    property QtObject defaultAction
+
+
+    enabled: defaultAction==undefined||defaultAction.enabled
 
     onFlatChanged: {
         surface.opacity = 1
@@ -85,18 +90,19 @@ Item {
             return Math.max(theme.defaultFont.mSize.width*12, icon.width + label.paintedWidth + surface.margins.left + surface.margins.right) + ((icon.valid) ? surface.margins.left : 0)
         }
     }
-    implicitHeight: Math.max(theme.defaultFont.mSize.height*1.8, Math.max(icon.height, label.paintedHeight) + surface.margins.top + surface.margins.bottom)
+    implicitHeight: Math.max(theme.defaultFont.mSize.height*1.6, Math.max(icon.height, label.paintedHeight) + surface.margins.top/2 + surface.margins.bottom/2)
 
     // TODO: needs to define if there will be specific graphics for
     //     disabled buttons
     opacity: enabled ? 1.0 : 0.5
 
-    Keys.onSpacePressed: internal.pressButton()
-    Keys.onReturnPressed: internal.pressButton()
+    Keys.onSpacePressed: internal.userPressed = true
+    Keys.onReturnPressed: internal.userPressed = true
     Keys.onReleased: {
+        internal.userPressed = false
         if (event.key == Qt.Key_Space ||
             event.key == Qt.Key_Return)
-            internal.releaseButton()
+            internal.clickButton()
     }
 
     onActiveFocusChanged: {
@@ -113,24 +119,24 @@ Item {
         id: internal
         property bool userPressed: false
 
-        function pressButton()
+        function clickButton()
         {
-            userPressed = true
-        }
-
-        function releaseButton()
-        {
-            userPressed = false
             if (!button.enabled) {
                 return
             }
 
-            if (button.checkable) {
+            if (defaultAction && defaultAction.checkable) {
+                defaultAction.checked = !defaultAction.checked
+            } else if (button.checkable) {
                 button.checked = !button.checked
             }
 
             button.clicked()
             button.forceActiveFocus()
+
+            if (defaultAction) {
+                defaultAction.trigger()
+            }
         }
     }
 
@@ -149,7 +155,7 @@ Item {
         //internal: if there is no hover status, don't paint on mouse over in touchscreens
         opacity: (internal.userPressed || checked || !flat || (shadow.hasOverState && mouse.containsMouse)) ? 1 : 0
         Behavior on opacity {
-            PropertyAnimation { duration: 250 }
+            PropertyAnimation { duration: 100 }
         }
     }
 
@@ -160,6 +166,10 @@ Item {
             topMargin: surface.margins.top
             rightMargin: surface.margins.right
             bottomMargin: surface.margins.bottom
+        }
+        scale: internal.userPressed ? 0.9 : 1
+        Behavior on scale {
+            PropertyAnimation { duration: 250 }
         }
 
         IconLoader {
@@ -174,6 +184,12 @@ Item {
 
         Text {
             id: label
+
+            //FIXME: why this is needed?
+            onPaintedWidthChanged: {
+                icon.anchors.horizontalCenter = label.paintedWidth > 0 ? undefined : icon.parent.horizontalCenter
+                icon.anchors.left = label.paintedWidth > 0 ? icon.parent.left : undefined
+            }
 
             anchors {
                 top: parent.top
@@ -202,9 +218,9 @@ Item {
         anchors.fill: parent
         hoverEnabled: true
 
-        onPressed: internal.pressButton();
-
-        onReleased: internal.releaseButton();
+        onPressed: internal.userPressed = true
+        onReleased: internal.userPressed = false
+        onClicked: internal.clickButton()
 
         onEntered: {
             if (!flat) {

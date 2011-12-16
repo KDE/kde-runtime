@@ -178,8 +178,8 @@ bool Nepomuk::Sync::ResourceIdentifier::runIdentification(const KUrl& uri)
 
     QString query;
 
-    int numIdentifyingProperties = 0;
     QStringList identifyingProperties;
+    QHash<KUrl, Soprano::Node> identifyingPropertiesHash;
 
     QHash< KUrl, Soprano::Node >::const_iterator it = res.constBegin();
     QHash< KUrl, Soprano::Node >::const_iterator constEnd = res.constEnd();
@@ -211,25 +211,43 @@ bool Nepomuk::Sync::ResourceIdentifier::runIdentification(const KUrl& uri)
             object = mappedUri( objectUri );
         }
 
-        // FIXME: What about optional properties?
-        query += QString::fromLatin1(" optional { ?r %1 ?o%3 . } . filter(!bound(?o%3) || ?o%3=%2). ")
-                 .arg( Soprano::Node::resourceToN3( prop ),
-                       object.toN3(),
-                       QString::number( numIdentifyingProperties++ ) );
+        identifyingPropertiesHash.insert(prop, object);
     }
 
-    if( identifyingProperties.isEmpty() || numIdentifyingProperties == 0 ) {
+    if( identifyingProperties.isEmpty() ) {
         //kDebug() << "No identification properties found!";
         return false;
     }
 
-    // Make sure atleast one of the identification properties has been matched
-    // by adding filter( bound(?o1) || bound(?o2) ... )
-    query += QString::fromLatin1("filter( ");
-    for( int i=0; i<numIdentifyingProperties-1; i++ ) {
-        query += QString::fromLatin1(" bound(?o%1) || ").arg( QString::number( i ) );
+    //
+    // Optimization:
+    // If there is only one identifying property using all that optional and filter stuff
+    // slows the queries down incredibly. Thus, we make it a special case.
+    //
+    if(identifyingPropertiesHash.count() > 1) {
+        int numIdentifyingProperties = 0;
+        for(QHash<KUrl, Soprano::Node>::const_iterator it = identifyingPropertiesHash.constBegin();
+            it != identifyingPropertiesHash.constEnd(); ++it) {
+            // FIXME: What about optional properties?
+            query += QString::fromLatin1(" optional { ?r %1 ?o%3 . } . filter(!bound(?o%3) || ?o%3=%2). ")
+                     .arg( Soprano::Node::resourceToN3( it.key() ),
+                           it.value().toN3(),
+                           QString::number( numIdentifyingProperties++ ) );
+        }
+
+        // Make sure atleast one of the identification properties has been matched
+        // by adding filter( bound(?o1) || bound(?o2) ... )
+        query += QString::fromLatin1("filter( ");
+        for( int i=0; i<numIdentifyingProperties-1; i++ ) {
+            query += QString::fromLatin1(" bound(?o%1) || ").arg( QString::number( i ) );
+        }
+        query += QString::fromLatin1(" bound(?o%1) ) . ").arg( QString::number( numIdentifyingProperties - 1 ) );
     }
-    query += QString::fromLatin1(" bound(?o%1) ) . }").arg( QString::number( numIdentifyingProperties - 1 ) );
+    else {
+        query += QString::fromLatin1("?r %1 %2 . ").arg(Soprano::Node::resourceToN3(identifyingPropertiesHash.constBegin().key()),
+                                                         identifyingPropertiesHash.constBegin().value().toN3());
+    }
+    query += QLatin1String("}");
 
     // Construct the entire query
     QString queryBegin = QString::fromLatin1("select distinct ?r count(?p) as ?cnt "

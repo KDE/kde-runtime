@@ -4532,6 +4532,36 @@ void DataManagementModelTest::testStoreResources_duplicates()
     QVERIFY(!haveDataInDefaultGraph());
 }
 
+void DataManagementModelTest::testStoreResources_duplicates2()
+{
+    SimpleResourceGraph graph;
+
+    for( int i=0; i<2; i++ ) {
+        SimpleResource contact;
+        contact.addType( NCO::Contact() );
+        contact.setProperty( NCO::fullname(), QLatin1String("Peter") );
+
+        SimpleResource email;
+        email.addType( NCO::EmailAddress() );
+        email.addProperty( NCO::emailAddress(), QUrl("peter@parker.com") );
+
+        contact.addProperty( NCO::hasEmailAddress(), email );
+
+        graph << contact << email;
+    }
+
+    m_dmModel->storeResources( graph, QLatin1String("appA") );
+    QVERIFY(!m_dmModel->lastError());
+
+    // There should only be one email and one contact
+    int contactCount = m_model->listStatements( Node(), RDF::type(), NCO::Contact() ).allStatements().size();
+    QCOMPARE( contactCount, 1 );
+
+    int emailCount = m_model->listStatements( Node(), RDF::type(), NCO::EmailAddress() ).allStatements().size();
+    QCOMPARE( emailCount, 1 );
+}
+
+
 void DataManagementModelTest::testStoreResources_overwriteProperties()
 {
     SimpleResource contact;
