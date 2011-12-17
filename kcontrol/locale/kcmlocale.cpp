@@ -658,6 +658,7 @@ void KCMLocale::save()
     }
 
     load();
+    KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
 }
 
 QString KCMLocale::quickHelp() const
