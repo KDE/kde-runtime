@@ -2670,6 +2670,9 @@ void KCMLocale::setTimeFormat( const QString &newValue )
 
 QString KCMLocale::dayPeriodText( const QString &dayPeriod )
 {
+    // If you get here with an empty dayPeriod, this is not the cause, merely a symptom of the
+    // real bug.  You need to find out why it is empty otherwise time parse/format will break.
+    Q_ASSERT( !dayPeriod.isEmpty() );
     return dayPeriod.isEmpty() ? QString() : dayPeriod.split( QChar::fromLatin1(',') ).at( 2 );
 }
 
