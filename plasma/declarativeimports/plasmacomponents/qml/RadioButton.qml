@@ -27,8 +27,31 @@ Imports:
 
 Description:
         It is a simple Radio button which is using the plasma theme.
-        TODO Do we need more info?
+        To create a the Radio button group, use it in conjuction with
+        ButtonRow or ButtonColumn and let the exclusive property to
+        true.
 
+Properties:
+        bool checked:
+        This property holds if the RadionButton is checked or not.
+
+        bool pressed:
+        This property holds if the RadioButton is being pressed.
+    Read-only.
+
+        string text:
+        This property holds the text for the RadioButton label
+     The default value is an empty string.
+
+Plasma Properties:
+        bool enabeld:
+        This property holds if the button will be enabled for user
+    interaction.
+    The default value is true.
+
+Signals:
+        clicked:
+        The signal is emited when the button is clicked.
 **/
 
 import QtQuick 1.0
