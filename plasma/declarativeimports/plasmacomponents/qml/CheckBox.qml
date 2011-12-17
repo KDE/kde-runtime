@@ -25,9 +25,29 @@ Imports:
         org.kde.plasma.core
 
 Description:
- TODO i need more info here
+        It is a simple CheckBox.
 
 Properties:
+        bool checked:
+        This property holds if the CheckBox is checked or not.
+
+        bool pressed:
+        This property holds if the CheckBox is being pressed.
+    Read-only.
+
+        string text:
+        This property holds the text for the CheckBox label
+     The default value is an empty string.
+
+Plasma Properties:
+        bool enabeld:
+        This property holds if the button will be enabled for user
+    interaction.
+    The default value is true.
+
+Signals:
+        clicked:
+        The signal is emited when the button is clicked.
 **/
 
 import QtQuick 1.0
