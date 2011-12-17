@@ -26,29 +26,44 @@ Imports:
         org.kde.plasma.core
 
 Description:
- TODO i need more info here
+        This component is used as base component for RadioButton and
+        CheckBox. This is a private component, use it carefully.
 
 Properties:
-            bool checked:
-            Returns if the Button is checked or not.
+        bool checked:
+        This property holds if the RadionButton is checked or not.
+    The default value is false.
 
-            alias pressed:
-            TODO i need more info here
+        bool pressed:
+        This property holds if the RadioButton is being pressed.
+    Read-only.
 
-            alias text:
-            Sets the text for the button
+        string text:
+        This property holds the text for the button label
+    The default value is an empty string.
 
-            QtObject theme:
-            TODO needs info
+Plasma Properties:
+        bool enabeld:
+        This property holds if the button will be enabled for user
+    interaction.
+    The default value is true.
 
-            alias view:
-            TODO needs info
+        QtObject theme:
+        This property holds the object with all the layout parameters in
+    the current theme.
 
-            alias shadow:
-            TODO needs info
+        Component view:
+        This property holds the component used to render the button
+    visualization.
+
+        Component shadow:
+        This property holds the component used to render the button shadow.
+    The shadow is used to give the visual feedback for users, displaying if
+    it is hovered or pressed.
+
 Signals:
         clicked:
-        The signal is emited when the button is clicked!
+        The signal is emited when the button is clicked.
 **/
 
 import QtQuick 1.0
