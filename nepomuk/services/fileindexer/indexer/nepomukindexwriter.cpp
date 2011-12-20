@@ -524,6 +524,19 @@ void Nepomuk::StrigiIndexWriter::finishAnalysis( const AnalysisResult* idx )
         }
     }
 
+    //
+    // Another small hack to make sure video files always get the proper type.
+    // libstreamanalyzer does not do a great job here
+    //
+    if(!md->data.contains(RDF::type(), NFO::Video())) {
+        foreach(const QVariant& v, md->data.property(NIE::mimeType())) {
+            if(v.toString().contains(QLatin1String("video"))) {
+                md->data.addType(NFO::Video());
+                break;
+            }
+        }
+    }
+
 
     //
     // Finally push all the information to Nepomuk
