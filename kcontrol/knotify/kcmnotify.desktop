@@ -169,14 +169,24 @@ Comment[zh_CN]=系统通知配置
 Comment[zh_TW]=系統通知組態
 
 X-KDE-Keywords=System sounds,Audio,Sound,Notify,Alerts,Notification,popups
+X-KDE-Keywords[bg]=System sounds,Audio,Sound,Notify,Alerts,Notification,popups,Системни звуци,Звук,Уведомление
 X-KDE-Keywords[ca]=Sons del sistema,Àudio,So,Notificar,Alertes,Notificació,missatges emergents
+X-KDE-Keywords[da]=Systemlyde,audio,lyd,meddelelser,alarmer,bekendtgørelse,pop-op
+X-KDE-Keywords[fa]=System sounds,Audio,Sound,Notify,Alerts,Notification,popups
+X-KDE-Keywords[fi]=Järjestelmä-äänet,Ääni,Huomautukset,Ilmoitukset,Varoitukset,Hälytykset,Huomautus,Ilmoitus,Varoitus,Hälytys,ponnahdusikkunat
+X-KDE-Keywords[hu]=Rendszerhangok,Hang,Hang,Értesítés,Figyelmeztetés,Értesítés,felugró
+X-KDE-Keywords[ia]=Sonos de systema,Audio,Sono,Notifica,Alertas,Notification,popups
 X-KDE-Keywords[kk]=System sounds,Audio,Sound,Notify,Alerts,Notification,popups
+X-KDE-Keywords[nb]=Systemlydder,Audio,Lyd,Varsle,Alarm,Varslinger,oppsprett
+X-KDE-Keywords[nds]=Systeemkläng,Klang,Kläng,Systeembescheden,Alarms,Bescheden,Opdukers
 X-KDE-Keywords[nl]=Systeemgeluiden,audio,geluid,melden,alarmmelding,meldingen,pop-ups
+X-KDE-Keywords[pa]=ਸਿਸਟਮ ਸਾਊਂਡ,ਆਡੀਓ,ਸਾਊਂਡ,ਨੋਟੀਫਾਈ,ਸੂਚਨਾ,ਚੇਤਾਵਨੀ,ਨੋਟੀਫਿਕੇਸ਼ਨ,ਪੋਪਅੱਪ
 X-KDE-Keywords[pt]=Sons do sistema,Áudio,Som,Notificar,Alertas,Notificação,Mensagens
 X-KDE-Keywords[pt_BR]=Sons do sistema,Áudio,Som,Notificar,Alertas,Notificação,mensagens
 X-KDE-Keywords[ro]=Sunete sistem,audio,sunet,notificare,alerte,notifică,popup
 X-KDE-Keywords[sv]=Systemljud,Ljud,Underrätta,Varningar,Underrättelser
 X-KDE-Keywords[uk]=System sounds,Audio,Sound,Notify,Alerts,Notification,popups,звук,система,системні звуки,звуки системи,сповіщення,нагадування,підказки,контекст
 X-KDE-Keywords[x-test]=xxSystem sounds,Audio,Sound,Notify,Alerts,Notification,popupsxx
+X-KDE-Keywords[zh_TW]=System sounds,Audio,Sound,Notify,Alerts,Notification,popups
 
 Categories=Qt;KDE;X-KDE-settings-sound;

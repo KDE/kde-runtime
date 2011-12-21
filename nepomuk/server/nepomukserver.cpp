@@ -37,8 +37,8 @@ Nepomuk::Server* Nepomuk::Server::s_self = 0;
 
 Nepomuk::Server::Server( QObject* parent )
     : QObject( parent ),
-      m_enabled( false ),
-      m_fileIndexerServiceName( "nepomukfileindexer" )
+      m_fileIndexerServiceName( "nepomukfileindexer" ),
+      m_currentState(StateDisabled)
 {
     s_self = this;
 
@@ -52,6 +52,10 @@ Nepomuk::Server::Server( QObject* parent )
 
     // create the service manager.
     m_serviceManager = new ServiceManager( this );
+    connect(m_serviceManager, SIGNAL(serviceInitialized(QString)),
+            this, SLOT(slotServiceInitialized(QString)));
+    connect(m_serviceManager, SIGNAL(serviceStopped(QString)),
+            this, SLOT(slotServiceStopped(QString)));
     (void)new ServiceManagerAdaptor( m_serviceManager );
 
     // initialize according to config
@@ -61,7 +65,6 @@ Nepomuk::Server::Server( QObject* parent )
 
 Nepomuk::Server::~Server()
 {
-    m_serviceManager->stopAllServices();
     NepomukServerSettings::self()->writeConfig();
     QDBusConnection::sessionBus().unregisterService( "org.kde.NepomukServer" );
 }
@@ -77,9 +80,11 @@ void Nepomuk::Server::init()
 void Nepomuk::Server::enableNepomuk( bool enabled )
 {
     kDebug() << "enableNepomuk" << enabled;
-    if ( enabled != m_enabled ) {
-        m_enabled = enabled;
+    if ( enabled != isNepomukEnabled() ) {
         if ( enabled ) {
+            // update the server state
+            m_currentState = StateEnabling;
+
             // start all autostart services
             m_serviceManager->startAllServices();
 
@@ -87,6 +92,9 @@ void Nepomuk::Server::enableNepomuk( bool enabled )
             QDBusConnection::sessionBus().registerObject( "/servicemanager", m_serviceManager );
         }
         else {
+            // update the server state
+            m_currentState = StateDisabling;
+
             // stop all running services
             m_serviceManager->stopAllServices();
 
@@ -108,15 +116,12 @@ void Nepomuk::Server::enableFileIndexer( bool enabled )
             m_serviceManager->stopService( m_fileIndexerServiceName );
         }
     }
-
-    KConfigGroup config( m_config, QString("Service-%1").arg(m_fileIndexerServiceName) );
-    config.writeEntry( "autostart", enabled );
 }
 
 
 bool Nepomuk::Server::isNepomukEnabled() const
 {
-    return m_enabled;
+    return m_currentState == StateEnabled || m_currentState == StateEnabling;
 }
 
 
@@ -128,7 +133,7 @@ bool Nepomuk::Server::isFileIndexerEnabled() const
 
 QString Nepomuk::Server::defaultRepository() const
 {
-    return "main";
+    return QLatin1String("main");
 }
 
 
@@ -142,7 +147,15 @@ void Nepomuk::Server::reconfigure()
 
 void Nepomuk::Server::quit()
 {
-    QCoreApplication::instance()->quit();
+    if( isNepomukEnabled() &&
+        !m_serviceManager->runningServices().isEmpty() ) {
+        connect(this, SIGNAL(nepomukDisabled()),
+                qApp, SLOT(quit()));
+        enableNepomuk(false);
+    }
+    else {
+        QCoreApplication::instance()->quit();
+    }
 }
 
 
@@ -155,6 +168,33 @@ KSharedConfig::Ptr Nepomuk::Server::config() const
 Nepomuk::Server* Nepomuk::Server::self()
 {
     return s_self;
+}
+
+void Nepomuk::Server::slotServiceStopped(const QString &name)
+{
+    Q_UNUSED(name);
+
+    kDebug() << name;
+
+    if(m_currentState == StateDisabling &&
+       m_serviceManager->runningServices().isEmpty()) {
+        m_currentState = StateDisabled;
+        emit nepomukDisabled();
+    }
+    else {
+        kDebug() << "Services still running:" << m_serviceManager->runningServices();
+    }
+}
+
+void Nepomuk::Server::slotServiceInitialized(const QString &name)
+{
+    Q_UNUSED(name);
+
+    if(m_currentState == StateEnabling &&
+       m_serviceManager->pendingServices().isEmpty()) {
+        m_currentState = StateEnabled;
+        emit nepomukEnabled();
+    }
 }
 
 #include "nepomukserver.moc"

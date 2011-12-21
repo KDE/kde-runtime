@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2011 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -29,6 +29,7 @@ Nepomuk::ServiceControl::ServiceControl( const QString& serviceName, const KServ
     : QObject( parent ),
       m_serviceName( serviceName ),
       m_service( service ),
+      m_nepomukServiceModule( 0 ),
       m_initialized( false )
 {
     m_description = service->comment();
@@ -88,8 +89,8 @@ void Nepomuk::ServiceControl::start()
     // start the service
     // ====================================
     QString startErrorDescription;
-    Nepomuk::Service* module = m_service->createInstance<Nepomuk::Service>( this, QVariantList(), &startErrorDescription);
-    if( !module ) {
+    m_nepomukServiceModule = m_service->createInstance<Nepomuk::Service>( this, QVariantList(), &startErrorDescription);
+    if( !m_nepomukServiceModule ) {
         s << "Failed to start service " << m_serviceName << " ("<< startErrorDescription << ")." << endl;
         qApp->exit( ErrorFailedToStart );
         return;
@@ -98,7 +99,7 @@ void Nepomuk::ServiceControl::start()
     // register the service
     // ====================================
     QDBusConnection::sessionBus().registerObject( '/' + m_serviceName,
-                                                  module,
+                                                  m_nepomukServiceModule,
                                                   QDBusConnection::ExportScriptableSlots |
                                                   QDBusConnection::ExportScriptableProperties |
                                                   QDBusConnection::ExportAdaptors);
@@ -107,6 +108,8 @@ void Nepomuk::ServiceControl::start()
 
 void Nepomuk::ServiceControl::shutdown()
 {
+    delete m_nepomukServiceModule;
+    m_nepomukServiceModule = 0;
     QCoreApplication::quit();
 }
 

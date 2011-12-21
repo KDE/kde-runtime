@@ -40,6 +40,26 @@
 **
 ****************************************************************************/
 
+/**Documentanted API
+Inherits:
+        DualStateButton
+
+Imports:
+        QtQuick 1.1
+        org.kde.plasma.core
+
+Description:
+        TODO
+
+Properties:
+        Item currentItem:
+        Returns the current item of the tabbar.
+
+        default alias content: tabBarLayout.data
+
+        property alias layout: tabBarLayout
+**/
+
 import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
 
@@ -87,6 +107,11 @@ Item {
             topMargin: backgroundFrame.margins.top + buttonFrame.margins.top
             rightMargin: backgroundFrame.margins.right + buttonFrame.margins.right
             bottomMargin: backgroundFrame.margins.bottom + buttonFrame.margins.bottom
+        }
+        Component.onCompleted: {
+            if (!root.currentTab) {
+                root.currentTab = tabBarLayout.children[0]
+            }
         }
     }
 }

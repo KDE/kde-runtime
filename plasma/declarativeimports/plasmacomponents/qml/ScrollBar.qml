@@ -18,6 +18,47 @@
 *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+/**Documentanted API
+Inherits:
+        Item
+
+Imports:
+        org.kde.plasma.core
+        QtQuick 1.1
+
+Description:
+        Just a simple scrollbar which is using the plasma theme.
+        Plasma theme is the theme which changes via the systemsetting-workspace  appearence
+        -desktop theme.
+
+Properties:
+
+        int orientation:
+        Sets the orientation.
+
+        bool animated:
+        TODO
+
+        bool inverted:
+        Sets if the scrollbar will be inverted or not.
+
+        bool updateValueWhileDragging: true
+        Sets if the Scrollbar will be resized while it is being dragged.
+
+        alias stepSize:
+        Sets the step with which the scrollbar is moving.
+
+        alias pressed:
+        If the scrollbar is pressed it returns true,otherwise false.
+
+        real scrollButtonInterval: 50
+
+        property Flickable flickableItem: null
+
+        property bool interactive:
+        If true,then the scrollbar is interactive otherwise it isn't.
+**/
+
 import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
 
@@ -42,8 +83,8 @@ Item {
     property bool pressed: internalLoader.item.mouseArea?internalLoader.item.mouseArea.pressed:false
     property real scrollButtonInterval: 50
 
-    implicitWidth: internalLoader.isVertical ? (interactive ? 22 : 12) : 200
-    implicitHeight: internalLoader.isVertical ? 200 : (interactive ? 22 : 12)
+    implicitWidth: internalLoader.isVertical ? (interactive ? 16 : 12) : 200
+    implicitHeight: internalLoader.isVertical ? 200 : (interactive ? 16 : 12)
     // TODO: needs to define if there will be specific graphics for
     //     disabled scroll bars
     opacity: enabled ? 1.0 : 0.5
@@ -52,7 +93,7 @@ Item {
 
     anchors {
         right: flickableItem.right
-        left: (orientation == Qt.Vertical) ? undefined : flickableItem.left 
+        left: (orientation == Qt.Vertical) ? undefined : flickableItem.left
         top: (orientation == Qt.Vertical) ? flickableItem.top : undefined
         bottom: flickableItem.bottom
     }

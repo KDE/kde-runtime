@@ -21,6 +21,8 @@
 
 #include "kabstractdebugdialog.h"
 
+#include "ui_kdebugdialog.h"
+
 class QLineEdit;
 class QComboBox;
 class QLabel;
@@ -34,63 +36,31 @@ class QCheckBox;
  *
  * @author Kalle Dalheimer (kalle@kde.org)
  */
-class KDebugDialog : public KAbstractDebugDialog
+class KDebugDialog : public KAbstractDebugDialog, public Ui_KDebugDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit KDebugDialog(const AreaMap& areaMap, QWidget *parent = 0);
-  virtual ~KDebugDialog();
+    explicit KDebugDialog(const AreaMap& areaMap, QWidget *parent = 0);
+    virtual ~KDebugDialog();
 
-  void doLoad() {}
-  void doSave();
+    void doLoad() {}
+    void doSave();
 
 protected Q_SLOTS:
-  void slotDebugAreaChanged(int);
-  void slotDestinationChanged();
+    void slotDebugAreaChanged(QTreeWidgetItem*);
+    void slotDestinationChanged();
     void disableAllClicked();
 
 private:
-  void showArea(const QString& areaName);
+    void showArea(const QString& areaName);
 
-  QString mCurrentDebugArea;
-  QComboBox* pDebugAreas;
-  QGroupBox* pInfoGroup;
-  QLabel* pInfoLabel1;
-  QComboBox* pInfoCombo;
-  QLabel* pInfoLabel2;
-  QLineEdit* pInfoFile;
-  QLabel* pInfoLabel3;
-  QLineEdit* pInfoShow;
-  QGroupBox* pWarnGroup;
-  QLabel* pWarnLabel1;
-  QComboBox* pWarnCombo;
-  QLabel* pWarnLabel2;
-  QLineEdit* pWarnFile;
-  QLabel* pWarnLabel3;
-  QLineEdit* pWarnShow;
-  QGroupBox* pErrorGroup;
-  QLabel* pErrorLabel1;
-  QComboBox* pErrorCombo;
-  QLabel* pErrorLabel2;
-  QLineEdit* pErrorFile;
-  QLabel* pErrorLabel3;
-  QLineEdit* pErrorShow;
-  QGroupBox* pFatalGroup;
-  QLabel* pFatalLabel1;
-  QComboBox* pFatalCombo;
-  QLabel* pFatalLabel2;
-  QLineEdit* pFatalFile;
-  QLabel* pFatalLabel3;
-  QLineEdit* pFatalShow;
-
-  QCheckBox* pAbortFatal;
-    QWidget* m_container;
+    QString mCurrentDebugArea;
 
 private:
-  // Disallow assignment and copy-construction
-  KDebugDialog( const KDebugDialog& );
-  KDebugDialog& operator= ( const KDebugDialog& );
+    // Disallow assignment and copy-construction
+    KDebugDialog( const KDebugDialog& );
+    KDebugDialog& operator= ( const KDebugDialog& );
 };
 
 #endif

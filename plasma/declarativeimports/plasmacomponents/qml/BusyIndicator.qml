@@ -18,6 +18,31 @@
 *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+/**Documentanted API
+Inherits:
+        Item
+
+Imports:
+        org.kde.plasma.core
+        QtQuick 1.1
+
+Description:
+        It is just a simple BusyIndicator.
+        TODO An image has to be added!
+
+Properties:
+
+        bool running:
+        This property holds whether the busy animation is running.
+        The default value is false.
+
+        bool smoothAnimation:
+        Set this property if you don't want to apply a filter to smooth
+        the busy icon while animating.
+        Smooth filtering gives better visual quality, but is slower.
+        The default value is true.
+**/
+
 import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
 

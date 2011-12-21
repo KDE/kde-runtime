@@ -70,7 +70,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
     KCmdLineArgs::init( argc, argv, &aboutdata );
     KUniqueApplication::addCmdLineOptions();
 
-    // check if kwallet is disabled
+    // check if kglobalaccel is disabled
     if (!isEnabled())
         {
         kDebug() << "kglobalaccel is disabled!";

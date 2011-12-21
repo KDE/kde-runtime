@@ -17,6 +17,20 @@
 *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+/**Documentanted API
+Inherits:
+        DualStateButton
+
+Imports:
+        QtQuick 1.0
+        org.kde.plasma.core
+
+Description:
+        It is a simple Radio button which is using the plasma theme.
+        TODO Do we need more info?
+
+**/
+
 import QtQuick 1.0
 import org.kde.plasma.core 0.1 as PlasmaCore
 

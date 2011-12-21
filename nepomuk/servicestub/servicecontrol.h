@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2011 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -24,6 +24,8 @@
 #include <KService>
 
 namespace Nepomuk {
+    class Service;
+
     class ServiceControl : public QObject
     {
         Q_OBJECT
@@ -57,6 +59,7 @@ namespace Nepomuk {
 	QString m_description;
 	QString m_readableName;
         KService::Ptr m_service;
+        Nepomuk::Service* m_nepomukServiceModule;
         bool m_initialized;
     };
 }
