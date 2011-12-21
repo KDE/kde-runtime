@@ -163,8 +163,8 @@ Comment[uz]=Tizimning xabarnomalarini moslash
 Comment[uz@cyrillic]=Тизимнинг хабарномаларини мослаш
 Comment[vi]=Cấu hình Thông báo Hệ thống
 Comment[wa]=Apontiaedje po les notifiaedjes do sistinme
-Comment[xh]=Uqwalaselo Lwezaziso Zendlela yokusebenza
 Comment[x-test]=xxSystem Notification Configurationxx
+Comment[xh]=Uqwalaselo Lwezaziso Zendlela yokusebenza
 Comment[zh_CN]=系统通知配置
 Comment[zh_TW]=系統通知組態
 
@@ -172,6 +172,7 @@ X-KDE-Keywords=System sounds,Audio,Sound,Notify,Alerts,Notification,popups
 X-KDE-Keywords[bg]=System sounds,Audio,Sound,Notify,Alerts,Notification,popups,Системни звуци,Звук,Уведомление
 X-KDE-Keywords[ca]=Sons del sistema,Àudio,So,Notificar,Alertes,Notificació,missatges emergents
 X-KDE-Keywords[da]=Systemlyde,audio,lyd,meddelelser,alarmer,bekendtgørelse,pop-op
+X-KDE-Keywords[et]=Süsteemsed helid,heli,audio,märguanne,märguanded,hüpikaknad
 X-KDE-Keywords[fa]=System sounds,Audio,Sound,Notify,Alerts,Notification,popups
 X-KDE-Keywords[fi]=Järjestelmä-äänet,Ääni,Huomautukset,Ilmoitukset,Varoitukset,Hälytykset,Huomautus,Ilmoitus,Varoitus,Hälytys,ponnahdusikkunat
 X-KDE-Keywords[hu]=Rendszerhangok,Hang,Hang,Értesítés,Figyelmeztetés,Értesítés,felugró
