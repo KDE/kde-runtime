@@ -203,4 +203,8 @@ void Nepomuk::insertOntologies(Soprano::Model* _model, const QUrl& graph)
     model.addStatement( NCO::emailAddress(), RDF::type(), RDF::Property(), graph );
     model.addStatement( NCO::emailAddress(), RDFS::domain(), NCO::EmailAddress(), graph );
     model.addStatement( NCO::emailAddress(), RDFS::range(), XMLSchema::string(), graph );
+
+    model.addStatement( NAO::hasTag(), RDF::type(), RDF::Property(), graph );
+    model.addStatement( NAO::hasTag(), RDFS::domain(), RDFS::Resource(), graph );
+    model.addStatement( NAO::hasTag(), RDFS::range(), NAO::Tag(), graph );
 }
