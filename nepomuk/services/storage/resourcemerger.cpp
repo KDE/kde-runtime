@@ -474,7 +474,8 @@ Soprano::Node Nepomuk::ResourceMerger::resolveMappedNode(const Soprano::Node& no
     if( node.isBlank() )
         return node;
 
-    if( uri.scheme() == QLatin1String("nepomuk") ) {
+    if( uri.scheme() == QLatin1String("nepomuk") &&
+        !m_model->containsAnyStatement( uri, Soprano::Node(), Soprano::Node() ) ) {
         QString error = QString::fromLatin1("Could not resolve %1. "
                                             "You cannot create nepomuk uris using this method")
                         .arg( Soprano::Node::resourceToN3( uri ) );
