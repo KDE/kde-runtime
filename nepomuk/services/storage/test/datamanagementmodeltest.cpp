@@ -5123,7 +5123,7 @@ void DataManagementModelTest::testStoreResources_objectExistsIdentification()
     QVERIFY( !m_dmModel->lastError() );
 
     SimpleResource person;
-    person.addType( NCO::PersonContact() );
+    person.addType( NCO::Contact() );
     person.addProperty( NCO::fullname(), QLatin1String("Santa Claus") );
     person.addProperty( NAO::hasTag(), m.value(res.uri()) );
 
