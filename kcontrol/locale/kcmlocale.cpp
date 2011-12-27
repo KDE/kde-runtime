@@ -3392,21 +3392,29 @@ QString KCMLocale::userToPosixDate( const QString &userFormat ) const
 
 QString KCMLocale::userToPosix( const QString &userFormat, const QMap<QString, QString> &map ) const
 {
+    QMultiMap<int, QString> sizeMap;
+    QMap<QString, QString>::const_iterator it = map.constBegin();
+    while ( it != map.constEnd() ) {
+        sizeMap.insert( it.value().length(), it.key() );
+        ++it;
+    }
+
     QString result;
 
     for ( int pos = 0; pos < userFormat.length(); ++pos ) {
         bool matchFound = false;
-        QMap<QString, QString>::const_iterator it = map.constBegin();
-        while ( it != map.constEnd() && !matchFound ) {
-            QString s = it.value();
+        QMapIterator<int, QString> it2(sizeMap);
+        it2.toBack();
+        while (!matchFound && it2.hasPrevious()) {
+            it2.previous();
+            QString s = map.value(it2.value());
 
             if ( userFormat.mid( pos, s.length() ) == s ) {
                 result += '%';
-                result += it.key();
+                result += it2.value();
                 pos += s.length() - 1;
                 matchFound = true;
             }
-            ++it;
         }
 
         if ( !matchFound ) {
