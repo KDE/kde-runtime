@@ -73,19 +73,6 @@ void QMenuProxy::setVisualParent(QDeclarativeItem *parent)
     emit visualParentChanged();
 }
 
-void QMenuProxy::clearMenuItems()
-{
-    qDeleteAll(m_items);
-    m_items.clear();
-}
-
-void QMenuProxy::addMenuItem(const QString &text)
-{
-    QMenuItem *item = new QMenuItem(this);
-    item->setText(text);
-    m_items << item;
-}
-
 void QMenuProxy::showMenu(int x, int y)
 {
     m_menu->clear();
@@ -110,9 +97,9 @@ void QMenuProxy::open()
 
     QGraphicsObject *parentItem;
     if (m_visualParent) {
-        parentItem = qobject_cast<QGraphicsObject *>(parent());
-    } else {
         parentItem = m_visualParent.data();
+    } else {
+        parentItem = qobject_cast<QGraphicsObject *>(parent());
     }
 
     if (!parentItem || !parentItem->scene()) {
