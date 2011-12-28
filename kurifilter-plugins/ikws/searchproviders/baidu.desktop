@@ -16,6 +16,7 @@ Name[et]=Baidu
 Name[eu]=Baidu
 Name[fi]=Baidu
 Name[fr]=Baidu
+Name[ga]=Baidu
 Name[gu]=બૈડુ
 Name[he]=Baidu
 Name[hi]=बैदु
@@ -76,6 +77,7 @@ Query[et]=http://www.baidu.com/s?wd=\\{@}
 Query[eu]=http://www.baidu.com/s?wd=\\{@}
 Query[fi]=http://www.baidu.com/s?wd=\\{@}
 Query[fr]=http://www.baidu.com/s?wd=\\{@}
+Query[ga]=http://www.baidu.com/s?wd=\\{@}
 Query[gu]=http://www.baidu.com/s?wd=\\{@}
 Query[he]=http://www.baidu.com/s?wd=\\{@}
 Query[hi]=http://www.baidu.com/s?wd=\\{@}
