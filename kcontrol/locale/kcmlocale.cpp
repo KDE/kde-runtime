@@ -2670,6 +2670,9 @@ void KCMLocale::setTimeFormat( const QString &newValue )
 
 QString KCMLocale::dayPeriodText( const QString &dayPeriod )
 {
+    // If you get here with an empty dayPeriod, this is not the cause, merely a symptom of the
+    // real bug.  You need to find out why it is empty otherwise time parse/format will break.
+    Q_ASSERT( !dayPeriod.isEmpty() );
     return dayPeriod.isEmpty() ? QString() : dayPeriod.split( QChar::fromLatin1(',') ).at( 2 );
 }
 
@@ -3389,21 +3392,29 @@ QString KCMLocale::userToPosixDate( const QString &userFormat ) const
 
 QString KCMLocale::userToPosix( const QString &userFormat, const QMap<QString, QString> &map ) const
 {
+    QMultiMap<int, QString> sizeMap;
+    QMap<QString, QString>::const_iterator it = map.constBegin();
+    while ( it != map.constEnd() ) {
+        sizeMap.insert( it.value().length(), it.key() );
+        ++it;
+    }
+
     QString result;
 
     for ( int pos = 0; pos < userFormat.length(); ++pos ) {
         bool matchFound = false;
-        QMap<QString, QString>::const_iterator it = map.constBegin();
-        while ( it != map.constEnd() && !matchFound ) {
-            QString s = it.value();
+        QMapIterator<int, QString> it2(sizeMap);
+        it2.toBack();
+        while (!matchFound && it2.hasPrevious()) {
+            it2.previous();
+            QString s = map.value(it2.value());
 
             if ( userFormat.mid( pos, s.length() ) == s ) {
                 result += '%';
-                result += it.key();
+                result += it2.value();
                 pos += s.length() - 1;
                 matchFound = true;
             }
-            ++it;
         }
 
         if ( !matchFound ) {
