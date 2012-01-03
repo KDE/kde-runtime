@@ -95,7 +95,7 @@ Name[ug]=مۇلازىمەت باشقۇرغۇچ
 Name[uk]=Менеджер служб
 Name[uz]=Xizmat boshqaruvchisi
 Name[uz@cyrillic]=Хизмат бошқарувчиси
-Name[vi]=Bộ quản lý dịch vụ
+Name[vi]=Trình quản lý dịch vụ
 Name[wa]=Manaedjeu di siervices
 Name[xh]=Umphathi Wenkonzo
 Name[x-test]=xxService Managerxx
@@ -210,6 +210,7 @@ X-KDE-Keywords[sv]=KDED,Demon,Tjänster
 X-KDE-Keywords[tg]=KDED,Демонҳо,Хидматҳо
 X-KDE-Keywords[ug]=KDED،Daemon، مۇلازىمەتلار
 X-KDE-Keywords[uk]=KDED,Daemon,Services,служба,служби,фонова служба,фонові служби
+X-KDE-Keywords[vi]=KDED,Trình nền,Dịch vụ, Daemon,Services
 X-KDE-Keywords[x-test]=xxKDED,Daemon,Servicesxx
 X-KDE-Keywords[zh_TW]=KDED,Daemon,Services
 
