@@ -196,6 +196,7 @@ X-KDE-Keywords[et]=õigekiri
 X-KDE-Keywords[fa]=املا
 X-KDE-Keywords[fi]=Oikoluku
 X-KDE-Keywords[ga]=Litriú
+X-KDE-Keywords[gl]=Ortografía
 X-KDE-Keywords[hu]=Helyesírás
 X-KDE-Keywords[ia]=Controlator orthographic
 X-KDE-Keywords[kk]=Spell
@@ -214,6 +215,7 @@ X-KDE-Keywords[ug]=ئىملا
 X-KDE-Keywords[uk]=Spell,правопис,перевірка,правопису
 X-KDE-Keywords[vi]=Chính tả
 X-KDE-Keywords[x-test]=xxSpellxx
+X-KDE-Keywords[zh_CN]=Spell,拼写
 X-KDE-Keywords[zh_TW]=Spell
 
 Categories=Qt;KDE;X-KDE-settings-components;

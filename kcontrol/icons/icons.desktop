@@ -205,6 +205,7 @@ X-KDE-Keywords[et]=ikoonid,efektid,suurus,hicolor,locolor
 X-KDE-Keywords[fa]=icons,effects,size,hicolor,locolor
 X-KDE-Keywords[fi]=kuvakkeet,tehosteet,koko,hicolor,locolor
 X-KDE-Keywords[ga]=deilbhíní,maisíochtaí,méid,ard-dath,ísealdath
+X-KDE-Keywords[gl]=iconas, efectos, tamaño, hicolor, locolor
 X-KDE-Keywords[hu]=ikonok,effektusok,méret,hicolor,locolor
 X-KDE-Keywords[ia]=icones,effectos,grandor,alte color,basse color
 X-KDE-Keywords[kk]=icons,effects,size,hicolor,locolor
@@ -222,6 +223,7 @@ X-KDE-Keywords[ug]=سىنبەلگىلەر، ئۈنۈملەر، چوڭلۇق، hi
 X-KDE-Keywords[uk]=icons,effects,size,hicolor,locolor,піктограми,значки,іконки,ефект,ефекти,розмір,колір
 X-KDE-Keywords[vi]=biểu tượng,hiệu ứng,cỡ,nhiều màu, ít màu, icons,effects,size,hicolor,locolor
 X-KDE-Keywords[x-test]=xxicons,effects,size,hicolor,locolorxx
+X-KDE-Keywords[zh_CN]=icons,effects,size,hicolor,locolor,图标,效果,特效,大小,颜色
 X-KDE-Keywords[zh_TW]=icons,effects,size,hicolor,locolor
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;
