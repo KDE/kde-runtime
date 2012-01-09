@@ -60,15 +60,32 @@ DialogStatus::Status QMenuProxy::status() const
     return m_status;
 }
 
-QDeclarativeItem *QMenuProxy::visualParent() const
+QObject *QMenuProxy::visualParent() const
 {
     return m_visualParent.data();
 }
 
-void QMenuProxy::setVisualParent(QDeclarativeItem *parent)
+void QMenuProxy::setVisualParent(QObject *parent)
 {
     if (m_visualParent.data() == parent) {
         return;
+    }
+
+    //if the old parent was a QAction, disconnect the menu from it
+    QAction *action = qobject_cast<QAction *>(m_visualParent.data());
+    if (action) {
+        action->setMenu(0);
+        m_menu->clear();
+    }
+    //if parent is a QAction, become a submenu
+    action = qobject_cast<QAction *>(parent);
+    if (action) {
+        action->setMenu(m_menu);
+        m_menu->clear();
+        foreach(QMenuItem* item, m_items) {
+            m_menu->addAction(item);
+        }
+        m_menu->updateGeometry();
     }
 
     m_visualParent = parent;
@@ -83,6 +100,7 @@ bool QMenuProxy::event(QEvent *event)
         QMenuItem *mi = qobject_cast<QMenuItem *>(ce->child());
         //FIXME: linear complexity here
         if (mi && !m_items.contains(mi)) {
+            m_menu->addAction(mi);
             m_items << mi;
         }
         break;
@@ -94,6 +112,7 @@ bool QMenuProxy::event(QEvent *event)
 
         //FIXME: linear complexity here
         if (mi) {
+            m_menu->removeAction(mi);
             m_items.removeAll(mi);
         }
         break;
@@ -116,11 +135,13 @@ void QMenuProxy::addMenuItem(const QString &text)
 {
     QMenuItem *item = new QMenuItem(this);
     item->setText(text);
+    m_menu->addAction(item);
     m_items << item;
 }
 
 void QMenuProxy::addMenuItem(QMenuItem *item)
 {
+    m_menu->addAction(item);
     m_items << item;
 }
 
@@ -160,7 +181,7 @@ void QMenuProxy::open()
 
     QGraphicsObject *parentItem;
     if (m_visualParent) {
-        parentItem = m_visualParent.data();
+        parentItem = qobject_cast<QGraphicsObject *>(m_visualParent.data());
     } else {
         parentItem = qobject_cast<QGraphicsObject *>(parent());
     }

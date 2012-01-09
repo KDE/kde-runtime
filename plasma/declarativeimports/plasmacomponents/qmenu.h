@@ -34,7 +34,11 @@ class QMenuProxy : public QObject
 
     Q_PROPERTY(QDeclarativeListProperty<QMenuItem> content READ content CONSTANT)
     Q_CLASSINFO("DefaultProperty", "content")
-    Q_PROPERTY(QDeclarativeItem *visualParent READ visualParent WRITE setVisualParent NOTIFY visualParentChanged())
+
+    /**
+     * the visualParent is used to position the menu. it can be an item on the scene, like a button (that will open the menu on clicked) or another menuitem (in this case this will be a submenu)
+     */
+    Q_PROPERTY(QObject *visualParent READ visualParent WRITE setVisualParent NOTIFY visualParentChanged())
     Q_PROPERTY(DialogStatus::Status status READ status NOTIFY statusChanged)
 
 public:
@@ -46,8 +50,8 @@ public:
     QMenuItem *action(int) const;
     DialogStatus::Status status() const;
 
-    QDeclarativeItem *visualParent() const;
-    void setVisualParent(QDeclarativeItem *parent);
+    QObject *visualParent() const;
+    void setVisualParent(QObject *parent);
 
     void showMenu(int x, int y);
     Q_INVOKABLE void open();
@@ -72,7 +76,7 @@ private:
     QList<QMenuItem*> m_items;
     QMenu *m_menu;
     DialogStatus::Status m_status;
-    QWeakPointer<QDeclarativeItem> m_visualParent;
+    QWeakPointer<QObject> m_visualParent;
 };
 
 #endif //QMENU_PROXY_H
