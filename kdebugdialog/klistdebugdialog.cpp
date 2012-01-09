@@ -82,6 +82,7 @@ KListDebugDialog::KListDebugDialog(const AreaMap& areaMap, QWidget *parent)
     buildButtons();
     resize( 350, 400 );
     setMainWidget( mainWidget );
+    m_incrSearch->searchLine()->setFocus();
 }
 
 void KListDebugDialog::selectAll()
