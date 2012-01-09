@@ -56,6 +56,7 @@ protected Q_SLOTS:
     void solidNetworkingStatusChanged( Solid::Networking::Status status );
     void backendRegistered();
     void backendUnregistered();
+    void delayedStatusChanged();
 protected:
     // set up embedded backend
     void init();
