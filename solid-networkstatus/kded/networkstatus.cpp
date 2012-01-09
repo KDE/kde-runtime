@@ -119,8 +119,17 @@ void NetworkStatusModule::updateStatus()
     d->status = bestStatus;
 
     if ( oldStatus != d->status ) {
-        emit statusChanged( (uint)d->status );
+        if (d->status == Solid::Networking::Connected) {
+            QTimer::singleShot(2000, this, SLOT(delayedStatusChanged()));
+        } else {
+            emit statusChanged( (uint)d->status );
+        }
     }
+}
+
+void NetworkStatusModule::delayedStatusChanged()
+{
+    emit statusChanged( (uint)d->status );
 }
 
 void NetworkStatusModule::serviceUnregistered( const QString & name )
@@ -243,7 +252,7 @@ void NetworkStatusModule::init()
         d->backendAppearedWatcher->setConnection(QDBusConnection::systemBus());
         d->backendAppearedWatcher->setWatchMode(QDBusServiceWatcher::WatchForRegistration);
     }
- 
+
     if ( d->backend == 0 ) {
         // if none found watch for all backends registration.
         for ( int i = 0; i < backends.count(); i++ ) {
@@ -264,7 +273,7 @@ void NetworkStatusModule::init()
             d->backendDisappearedWatcher->addWatchedService(d->backend->serviceName());
             connect(d->backendDisappearedWatcher, SIGNAL(serviceUnregistered(const QString &)), SLOT(backendUnregistered()));
         }
- 
+
         connect( d->backend, SIGNAL(statusChanged(Solid::Networking::Status)),
                  this, SLOT(solidNetworkingStatusChanged(Solid::Networking::Status)));
         Solid::Networking::Status status = d->backend->status();
