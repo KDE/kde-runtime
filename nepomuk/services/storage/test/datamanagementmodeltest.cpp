@@ -4970,6 +4970,28 @@ void DataManagementModelTest::testStoreResources_graphChecks()
     QVERIFY(!haveDataInDefaultGraph());
 }
 
+void DataManagementModelTest::testStoreResources_objectExistsIdentification()
+{
+    SimpleResource res;
+    res.addType( NAO::Tag() );
+    res.addProperty( NAO::identifier(), QLatin1String("Christmas") );
+
+    QHash< QUrl, QUrl > m = m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    SimpleResource person;
+    person.addType( NCO::Contact() );
+    person.addProperty( NCO::fullname(), QLatin1String("Santa Claus") );
+    person.addProperty( NAO::hasTag(), m.value(res.uri()) );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << person, QLatin1String("app") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QVERIFY(!haveTrailingGraphs());
+    QVERIFY(!haveDataInDefaultGraph());
+}
+
+
 void DataManagementModelTest::testMergeResources()
 {
     // first we need to create the two resources we want to merge as well as one that should not be touched

@@ -155,6 +155,7 @@ private Q_SLOTS:
     void testStoreResources_legacyData();
     void testStoreResources_missingBlankNode();
     void testStoreResources_graphChecks();
+    void testStoreResources_objectExistsIdentification();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();

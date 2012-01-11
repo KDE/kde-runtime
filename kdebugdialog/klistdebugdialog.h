@@ -35,28 +35,26 @@ class QTreeWidget;
  */
 class KListDebugDialog : public KAbstractDebugDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit KListDebugDialog(const AreaMap& areaMap, QWidget *parent = 0);
-  virtual ~KListDebugDialog() {}
+    explicit KListDebugDialog(const AreaMap& areaMap, QWidget *parent = 0);
+    virtual ~KListDebugDialog() {}
 
-  void activateArea( const QByteArray& area, bool activate );
+    void activateArea( const QByteArray& area, bool activate );
 
 protected Q_SLOTS:
-  void selectAll();
-  void deSelectAll();
-  void disableAllClicked();
+    void selectAll();
+    void deSelectAll();
+    void disableAllClicked();
 
 protected:
-  virtual void doSave();
-  virtual void doLoad();
-
-
+    virtual void doSave();
+    virtual void doLoad();
 
 private:
-  QTreeWidget* m_areaWidget;
-  KTreeWidgetSearchLineWidget *m_incrSearch;
+    QTreeWidget* m_areaWidget;
+    KTreeWidgetSearchLineWidget *m_incrSearch;
     QWidget* m_buttonContainer;
 };
 
