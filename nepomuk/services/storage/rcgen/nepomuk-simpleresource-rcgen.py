@@ -343,10 +343,12 @@ class OntologyParser():
         # not derived from any other classes then we set the type directly. Otherwise we use the
         # protected constructor defined below which takes a type as parameter making sure that we
         # only add one type instead of the whole hierarchy
-        header.write('    %s()' % className)
-        if len(parentClasses) > 0:
-            header.write('\n      : ')
-        header.write(', '.join([('%s(QUrl::fromEncoded("' + uri.toString().toUtf8().data() + '", QUrl::StrictMode))') % p for p in fullParentHierarchyNames]))
+        header.write('    %s(const QUrl& uri = QUrl())\n' % className)
+        header.write('      : ')
+        header.write('SimpleResource(uri)')
+        if len(parentClassNames) > 0:
+            header.write(', ')
+            header.write(', '.join([('%s(uri, QUrl::fromEncoded("' + uri.toString().toUtf8().data() + '", QUrl::StrictMode))') % p for p in fullParentHierarchyNames]))
         header.write(' {\n')
         if len(parentClassNames) == 0:
             header.write('        addType(QUrl::fromEncoded("%s", QUrl::StrictMode));\n' % uri.toString())
@@ -404,10 +406,12 @@ class OntologyParser():
 
         # write the protected constructors which avoid adding the whole type hierarchy
         header.write('protected:\n')
-        header.write('    %s(const QUrl& type)' % className)
+        header.write('    %s(const QUrl& uri, const QUrl& type)\n' % className)
+        header.write('      : ')
+        header.write('SimpleResource(uri)')
         if len(parentClassNames) > 0:
-            header.write('\n      : ')
-            header.write(', '.join(['%s(type)' % p for p in fullParentHierarchyNames]))
+            header.write(', ')
+            header.write(', '.join(['%s(uri, type)' % p for p in fullParentHierarchyNames]))
         header.write(' {\n')
         if len(parentClassNames) == 0:
             header.write('        addType(type);\n')
