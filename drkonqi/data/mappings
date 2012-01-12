@@ -34,6 +34,7 @@ solid-bluetooth=solid|control::bluetooth
 solid-hardware=solid|general
 solid-network=solid|control::network
 solid-powermanagement=solid|control::powermanager
+bluedevil-helper=solid|bluetooth
 #KDE Platform (Nepomuk)
 nepomuk-rcgen=nepomuk|general
 nepomukserver=nepomuk|general
@@ -56,6 +57,7 @@ knotificationicontest=plasma|widget-systemtray
 lancelot=plasma|widget-lancelot
 plasma-netbook=plasma|plasma-netbook
 kactivitymanagerd=plasma|activities
+plasma-device=Active|General
 #KDE Plasma Desktop (KWin)
 kwin_killer_helper=kwin|general
 kwin_rules_dialog=kwin|general
@@ -106,6 +108,7 @@ kalarmautostart=kalarm|general
 kpilotDaemon=kpilot|kpilotDaemon
 korgac=korgac|general
 kmail=kmail2|general
+kmailcvt=kmail2|general
 
 #KDE Konqueror
 kjs=konqueror|kjs
@@ -114,12 +117,12 @@ nspluginscan=konqueror|nsplugins
 nspluginviewer=konqueror|nspluginviewer
 
 # KDE Telepathy
-telepathy-kde-contactlist=telepathy|contactlist
-telepathy-kde-send-file=telepathy|send-file
-telepathy-kde-text-ui=telepathy|text-ui
-telepathy-kde-call-ui=telepathy|call-ui
-telepathy-kde-filetransfer-handler=telepathy|filetransfer-handler
-telepathy-kde-auth-handler=telepathy|auth-handler
+ktp-contactlist=telepathy|contactlist
+ktp-send-file=telepathy|send-file
+ktp-text-ui=telepathy|text-ui
+ktp-call-ui=telepathy|call-ui
+ktp-filetransfer-handler=telepathy|filetransfer-handler
+ktp-auth-handler=telepathy|auth-handler
 
 #Other KDE Applications and Technologies
 ksysguardd=ksysguard|ksysguardd
@@ -134,6 +137,9 @@ polkit-kde-manager=policykit-kde|manager
 polkit-kde-authentication-agent-1=policykit-kde|polkit-kde-authentication-agent-1
 kepastray=kepas|general
 kpackagekitsmarticon=kpackagekit|general
+apper-sentinel=apper|general
+muon-installer=muon|installer
+muon-updater=muon|updater
 printer-applet-kde=printer-applet|general
 partitionmanager-bin=partitionmanager|general
 krandrtray=krandr|krandrtray
