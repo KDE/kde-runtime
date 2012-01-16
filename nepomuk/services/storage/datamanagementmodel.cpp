@@ -1918,14 +1918,14 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
 
             if(!o.isResource() ||
                     !(flags & ExcludeRelatedResources) ||
-                    d->m_classAndPropertyTree->isIdentifyingProperty(p.uri()) ||
+                    d->m_classAndPropertyTree->isDefiningProperty(p.uri()) ||
                     p == NIE::url()) {
                 graph.addStatement(r, p, o);
             }
 
             if(o.isResource() &&
                     (!(flags & ExcludeRelatedResources) ||
-                     d->m_classAndPropertyTree->isIdentifyingProperty(p.uri())) &&
+                     d->m_classAndPropertyTree->isDefiningProperty(p.uri())) &&
                     !d->m_classAndPropertyTree->isChildOf(p.uri(), NAO::hasSubResource()) &&
                     p != NIE::url() &&
                     p != RDF::type()) {
@@ -1940,10 +1940,10 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
 
 
     //
-    // Now fetch related resources and their identifying properties,
+    // Now fetch related resources and their defining properties,
     // ignoring anything that comes from an ontology.
     //
-    // For related resources we only take the identifying properties since
+    // For related resources we only take the defining properties since
     // that is all that is required to describe them.
     //
     QSet<QUrl> currentRelatedResources(relatedResourcesToFetch);
@@ -1971,7 +1971,7 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
                 const Soprano::Node r = it["s"];
                 const Soprano::Node p = it["p"];
                 const Soprano::Node o = it["o"];
-                if(d->m_classAndPropertyTree->isIdentifyingProperty(p.uri())) {
+                if(d->m_classAndPropertyTree->isDefiningProperty(p.uri())) {
                     graph.addStatement(r, p, o);
                     if(o.isResource()) {
                         currentRelatedResources << o.uri();

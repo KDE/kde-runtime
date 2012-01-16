@@ -72,8 +72,8 @@ public:
     /// \return \p true if \p uri is a property and has a literal range, \p false otherwise.
     bool hasLiteralRange(const QUrl& uri) const;
 
-    /// \return \p true if \p uri is an identifying property, \p false otherwise
-    bool isIdentifyingProperty(const QUrl& uri) const;
+    /// \return \p true if \p uri is an defining property, \p false otherwise
+    bool isDefiningProperty(const QUrl& uri) const;
 
     /// \return A list of all known rdf classes that are visible (nao:userVisible)
     QList<QUrl> visibleTypes() const;
@@ -95,7 +95,7 @@ private:
 
     const ClassOrProperty* findClassOrProperty(const QUrl& uri) const;
     int updateUserVisibility(ClassOrProperty *cop, QSet<QUrl> &visitedNodes);
-    int updateIdentifying(ClassOrProperty* cop, QSet<QUrl>& identifyingNodes);
+    int updateDefining(ClassOrProperty* cop, QSet<QUrl>& definingNodes);
     QSet<QUrl> getAllParents(ClassOrProperty *cop, QSet<QUrl> &visitedNodes);
 
     QHash<QUrl, ClassOrProperty*> m_tree;
