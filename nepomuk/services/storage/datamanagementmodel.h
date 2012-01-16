@@ -141,7 +141,7 @@ public Q_SLOTS:
      * \param resources The resources to be merged. Blank nodes will be converted into new
      * URIs (unless the corresponding resource already exists).
      * \param identificationMode This method can try hard to avoid duplicate resources by looking
-     * for already existing duplicates based on nrl:IdentifyingProperty. By default it only looks
+     * for already existing duplicates based on nrl:DefiningProperty. By default it only looks
      * for duplicates of resources that do not have a resource URI (SimpleResource::uri()) defined.
      * This behaviour can be changed with this parameter.
      * \param flags Additional flags to change the behaviour of the method.
@@ -172,7 +172,7 @@ public Q_SLOTS:
      * \param userSerialization If \p serialization is Soprano::SerializationUser this value is used. See Soprano::Parser
      * for details.
      * \param identificationMode This method can try hard to avoid duplicate resources by looking
-     * for already existing duplicates based on nrl:IdentifyingProperty. By default it only looks
+     * for already existing duplicates based on nrl:DefiningProperty. By default it only looks
      * for duplicates of resources that do not have a resource URI (SimpleResource::uri()) defined.
      * This behaviour can be changed with this parameter.
      * \param flags Additional flags to change the behaviour of the method.

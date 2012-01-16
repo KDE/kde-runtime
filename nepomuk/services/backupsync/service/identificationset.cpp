@@ -39,6 +39,7 @@
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
+#include <Soprano/Vocabulary/NRL>
 #include <Soprano/Serializer>
 #include <Soprano/Parser>
 #include <Soprano/Util/SimpleStatementIterator>
@@ -87,10 +88,10 @@ namespace {
         // FILTER( ?r in ( <res1>, <res2>, ... ) ) . }
         //
         QString query = QString::fromLatin1("select distinct ?r ?p ?o where { ?r ?p ?o. "
-                                            "?p %1 %2 . "
+                                            "?p %1 <%2DefiningProperty> . "
                                             " FILTER( ?r in ( %4 ) ) . } ")
                         .arg(Soprano::Node::resourceToN3( RDFS::subPropertyOf() ),
-                             Soprano::Node::resourceToN3( NRIO::identifyingProperty() ),
+                             NRL::nrlNamespace().toString(),
                              uris.join(", ") );
 
         return m_model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
@@ -263,10 +264,10 @@ namespace {
     
     //TODO: Use Nepomuk::Type::Property
     bool isIdentifyingProperty( QUrl prop, Soprano::Model * model ) {
-        QString query = QString::fromLatin1( "ask { %1 %2 %3 }" )
+        QString query = QString::fromLatin1( "ask { %1 %2 <%3DefiningProperty> }" )
         .arg( Soprano::Node::resourceToN3( prop ) )
         .arg( Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::subPropertyOf()) )
-        .arg( Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NRIO::identifyingProperty()) );
+        .arg( Soprano::Vocabulary::NRL::nrlNamespace().toString() );
         return model->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
     }
 }

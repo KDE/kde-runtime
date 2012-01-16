@@ -49,96 +49,6 @@
 @prefix nrio:    <http://nepomuk.kde.org/ontologies/2010/11/11/nrio#> .
 
 nrio: {
-    nao:identifyingProperty
-        a rdf:Property ;
-        rdfs:comment "A combination of values of all identifying properties are very likely to be unique for a resource, however each identifying property value is not likely to be unique unlike nao:identifier" ;
-        rdfs:label "identifyingProperty" .
-
-    nao:mergeable
-        a rdf:Property;
-        rdfs:comment "Denotes if the property in the domain is mergeable or not. By default all properties are mergeable.";
-        rdfs:label "nonMergeable" ;
-        rdfs:domain rdfs:Property ;
-        rdfs:range xsd:boolean .
-
-    rdf:type
-        rdfs:subPropertyOf nao:identifyingProperty ;
-        nao:mergeable "false"^^xsd:boolean .
-
-    nao:identifier
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    #nao:rating
-    #    rdfs:subPropertyOf nao:identifyingProperty .
-
-    rdfs:label
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nie:url
-        rdfs:subPropertyOf nao:identifyingProperty ;
-        nao:mergeable "false"^^xsd:boolean .
-
-    nie:title
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nie:isPartOf
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nie:mimeType
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nfo:fileName
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nfo:hashValue
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nfo:fileSize
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nmm:performer
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nmm:writer
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nmm:director
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nmm:producer
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nmm:actor
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nmm:cinematographer
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nmm:assistantDirector
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nmm:releaseDate
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nco:url
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nco:contactUID
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nco:nickname
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nco:fullname
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nco:birthdate
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-    nco:hasContactMedium
-        rdfs:subPropertyOf nao:identifyingProperty .
-
-
     nao:created
         nrl:maxCardinality "1"^^xsd:integer .
         
@@ -406,7 +316,7 @@ nrio: {
     nao:hasDefaultNamespaceAbbreviation "nrio" ;
 
     nao:serializationLanguage "TriG" ;
-    nao:lastModified "2010-11-11T11:45:58Z" ;
+    nao:lastModified "2012-01-06T16:08:58Z" ;
     nao:status "Unstable" ;
     nao:updatable "0 " ;
     nao:version "Revision-1" .
