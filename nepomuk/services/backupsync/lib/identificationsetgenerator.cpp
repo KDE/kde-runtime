@@ -28,6 +28,7 @@
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
+#include <Soprano/Vocabulary/NRL>
 
 #include <Nepomuk/ResourceManager>
 
@@ -42,13 +43,13 @@ Nepomuk::Sync::IdentificationSetGenerator::IdentificationSetGenerator(const QSet
 Soprano::QueryResultIterator Nepomuk::Sync::IdentificationSetGenerator::performQuery(const QStringList& uris)
 {
     QString query = QString::fromLatin1("select distinct ?r ?p ?o where { ?r ?p ?o. "
-                                        "{ ?p %1 %2 .} "
+                                        "{ ?p %1 <%2DefiningProperty> .} "
                                         "UNION { ?p %1 %3. } "
                                         "FILTER( ?r in ( %4 ) ) . } ")
     .arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::RDFS::subPropertyOf()),
-            Soprano::Node::resourceToN3(Nepomuk::Vocabulary::NRIO::identifyingProperty()),
-            Soprano::Node::resourceToN3(Soprano::Vocabulary::RDF::type()),
-            uris.join(", "));
+         Soprano::Vocabulary::NRL::nrlNamespace().toString(),
+         Soprano::Node::resourceToN3(Soprano::Vocabulary::RDF::type()),
+         uris.join(", "));
 
 
     return model->executeQuery(query, Soprano::Query::QueryLanguageSparql);

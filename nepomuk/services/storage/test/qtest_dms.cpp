@@ -84,7 +84,7 @@ void Nepomuk::insertOntologies(Soprano::Model* _model, const QUrl& graph)
     model.addStatement( QUrl("prop:/res3"), RDFS::range(), RDFS::Resource(), graph );
 
     model.addStatement( QUrl("prop:/res_ident"), RDF::type(), RDF::Property(), graph );
-    model.addStatement( QUrl("prop:/res_ident"), RDF::type(), QUrl(NRL::nrlNamespace().toString() + QLatin1String("IdentifyingProperty")), graph );
+    model.addStatement( QUrl("prop:/res_ident"), RDF::type(), QUrl(NRL::nrlNamespace().toString() + QLatin1String("DefiningProperty")), graph );
     model.addStatement( QUrl("prop:/res_ident"), RDFS::range(), RDFS::Resource(), graph );
 
     model.addStatement( QUrl("prop:/res_c1"), RDF::type(), RDF::Property(), graph );
@@ -147,7 +147,6 @@ void Nepomuk::insertOntologies(Soprano::Model* _model, const QUrl& graph)
     model.addStatement( NMM::synopsis(), RDFS::range(), XMLSchema::string(), graph );
     model.addStatement( NMM::series(), RDF::type(), RDF::Property(), graph );
     model.addStatement( NMM::series(), RDFS::range(), NMM::TVSeries(), graph );
-    model.addStatement( NIE::title(), RDFS::subClassOf(), QUrl("http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifyingProperty"), graph );
 
     // some ontology things we need in testStoreResources_strigiCase
     model.addStatement( NMM::performer(), RDF::type(), RDF::Property(), graph );
