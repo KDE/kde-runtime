@@ -150,7 +150,7 @@ namespace Nepomuk {
      * properties with non-literal ranges which are in fact identifying. Typical examples include \c rdf:type, \c nfo:hasHash,
      * or \c nmm:performer.
      *
-     * To this end we make use of \c nrl:IdentifyingProperty and \c nrl:FluxProperty. The former is used to mark specific properties
+     * To this end we make use of \c nrl:DefiningProperty and \c nrl:NonDefiningProperty. The former is used to mark specific properties
      * as being identifying while the latter states that a property can change over time without actually chaning the identity
      * of the resource.
      *
@@ -453,7 +453,7 @@ namespace Nepomuk {
      * \param resources The resources to be merged. Blank nodes (URIs of the form \a _:xyz) will be converted into new
      * URIs (unless the identificationMode allows to merge with an existing resource). See \ref nepomuk_dms_resource_uris for details.
      * \param identificationMode This method can try hard to avoid duplicate resources by looking
-     * for already existing duplicates based on nrl:IdentifyingProperty. By default it only looks
+     * for already existing duplicates based on nrl:DefiningProperty. By default it only looks
      * for duplicates of resources that do not have a resource URI (SimpleResource::uri()) defined.
      * This behaviour can be changed with this parameter.
      * \param flags Additional flags to change the behaviour of the method.
@@ -484,7 +484,7 @@ namespace Nepomuk {
      * \param userSerialization If \p serialization is Soprano::SerializationUser this value is used. See Soprano::Parser
      * for details.
      * \param identificationMode This method can try hard to avoid duplicate resources by looking
-     * for already existing duplicates based on nrl:IdentifyingProperty. By default it only looks
+     * for already existing duplicates based on nrl:DefiningProperty. By default it only looks
      * for duplicates of resources that do not have a resource URI (SimpleResource::uri()) defined.
      * This behaviour can be changed with this parameter.
      * \param flags Additional flags to change the behaviour of the method.
