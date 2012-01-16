@@ -54,7 +54,7 @@ public:
         : isProperty(false),
           maxCardinality(0),
           userVisible(0),
-          identifying(0) {
+          defining(0) {
     }
 
     /// true if this is a property, for classes this is false
@@ -75,8 +75,8 @@ public:
     /// 0 - undecided, 1 - visible, -1 - non-visible
     int userVisible;
 
-    /// 0 - undecided, 1 - identifying, -1 - non-identifying
-    int identifying;
+    /// 0 - undecided, 1 - defining, -1 - non-defining
+    int defining;
 
     /// only valid for properties
     QUrl domain;
@@ -187,11 +187,11 @@ bool Nepomuk::ClassAndPropertyTree::hasLiteralRange(const QUrl &uri) const
         return false;
 }
 
-bool Nepomuk::ClassAndPropertyTree::isIdentifyingProperty(const QUrl &uri) const
+bool Nepomuk::ClassAndPropertyTree::isDefiningProperty(const QUrl &uri) const
 {
     QMutexLocker lock(&m_mutex);
     if(const ClassOrProperty* cop = findClassOrProperty(uri))
-        return cop->identifying == 1;
+        return cop->defining == 1;
     else
         return true; // we default to true for unknown properties to ensure that we never perform invalid merges
 }
@@ -445,7 +445,7 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
         }
         else {
             // no range -> resource range
-            r_cop->identifying = -1;
+            r_cop->defining = -1;
         }
 
         if ( p.isResource() &&
@@ -503,9 +503,9 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
         getAllParents( it.value(), visitedNodes );
     }
 
-    // update all identifying and flux properties
-    // by default all properties with a literal range are identifying
-    // and all properties with a resource range are non-idenifying
+    // update all defining and non-defining properties
+    // by default all properties with a literal range are defining
+    // and all properties with a resource range are non-defining
     query = QString::fromLatin1("select ?p ?t where { "
                                 "?p a rdf:Property . "
                                 "?p a ?t . FILTER(?t!=rdf:Property) . }");
@@ -514,27 +514,27 @@ void Nepomuk::ClassAndPropertyTree::rebuildTree(Soprano::Model* model)
         const QUrl p = it["p"].uri();
         const QUrl t = it["t"].uri();
 
-        if(t == QUrl(NRL::nrlNamespace().toString() + QLatin1String("IdentifyingProperty"))) {
-            m_tree[p]->identifying = 1;
+        if(t == QUrl(NRL::nrlNamespace().toString() + QLatin1String("DefiningProperty"))) {
+            m_tree[p]->defining = 1;
         }
-        else if(t == QUrl(NRL::nrlNamespace().toString() + QLatin1String("FluxProperty"))) {
-            m_tree[p]->identifying = -1;
+        else if(t == QUrl(NRL::nrlNamespace().toString() + QLatin1String("NonDefiningProperty"))) {
+            m_tree[p]->defining = -1;
         }
     }
 
-    // rdf:type is identifying by default
+    // rdf:type is defining by default
     if(m_tree.contains(RDF::type()))
-        m_tree[RDF::type()]->identifying = 1;
+        m_tree[RDF::type()]->defining = 1;
 
-    // nao:hasSubResource is identifying by default
+    // nao:hasSubResource is defining by default
     if(m_tree.contains(NAO::hasSubResource()))
-        m_tree[NAO::hasSubResource()]->identifying = 1;
+        m_tree[NAO::hasSubResource()]->defining = 1;
 
     for ( QHash<QUrl, ClassOrProperty*>::iterator it = m_tree.begin();
           it != m_tree.end(); ++it ) {
         if(it.value()->isProperty) {
             QSet<QUrl> visitedNodes;
-            updateIdentifying( it.value(), visitedNodes );
+            updateDefining( it.value(), visitedNodes );
         }
     }
 }
@@ -585,32 +585,32 @@ int Nepomuk::ClassAndPropertyTree::updateUserVisibility( ClassOrProperty* cop, Q
 }
 
 /**
- * Set the value of identifying.
- * An identifying property has at least one identifying direct parent property.
+ * Set the value of defining.
+ * An defining property has at least one defining direct parent property.
  */
-int Nepomuk::ClassAndPropertyTree::updateIdentifying( ClassOrProperty* cop, QSet<QUrl>& identifyingNodes )
+int Nepomuk::ClassAndPropertyTree::updateDefining( ClassOrProperty* cop, QSet<QUrl>& definingNodes )
 {
-    if ( cop->identifying != 0 ) {
-        return cop->identifying;
+    if ( cop->defining != 0 ) {
+        return cop->defining;
     }
     else {
         for ( QSet<QUrl>::iterator it = cop->directParents.begin();
              it != cop->directParents.end(); ++it ) {
             // avoid endless loops
-            if( identifyingNodes.contains(*it) )
+            if( definingNodes.contains(*it) )
                 continue;
-            identifyingNodes.insert(*it);
-            if ( updateIdentifying( m_tree[*it], identifyingNodes ) == 1 ) {
-                cop->identifying = 1;
+            definingNodes.insert(*it);
+            if ( updateDefining( m_tree[*it], definingNodes ) == 1 ) {
+                cop->defining = 1;
                 break;
             }
         }
-        if ( cop->identifying == 0 ) {
-            // properties with a literal range default to identifying
-            cop->identifying = hasLiteralRange(cop->uri) ? 1 : -1;
+        if ( cop->defining == 0 ) {
+            // properties with a literal range default to defining
+            cop->defining = hasLiteralRange(cop->uri) ? 1 : -1;
         }
-        //kDebug() << "Setting identifying of" << cop->uri.toString() << ( cop->identifying == 1 );
-        return cop->identifying;
+        //kDebug() << "Setting defining of" << cop->uri.toString() << ( cop->defining == 1 );
+        return cop->defining;
     }
 }
 

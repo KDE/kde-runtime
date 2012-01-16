@@ -101,7 +101,7 @@ bool Nepomuk::ResourceIdentifier::isIdentifyingProperty(const QUrl& uri)
         return false;
     }
     else {
-        return ClassAndPropertyTree::self()->isIdentifyingProperty(uri);
+        return ClassAndPropertyTree::self()->isDefiningProperty(uri);
     }
 }
 
