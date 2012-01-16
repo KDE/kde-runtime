@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2011 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2011-2012 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,6 @@
 #include <QtDBus/QDBusArgument>
 
 #include "simpleresource.h"
-#include "nepomukdatamanagement_export.h"
 
 Q_DECLARE_METATYPE(Nepomuk::PropertyHash)
 Q_DECLARE_METATYPE(Nepomuk::SimpleResource)
@@ -42,17 +41,17 @@ Q_DECLARE_METATYPE( __nepomuk_QHashQStringQString )
 
 namespace Nepomuk {
     namespace DBus {
-        QString NEPOMUK_DATA_MANAGEMENT_EXPORT convertUri(const QUrl& uri);
-        QStringList NEPOMUK_DATA_MANAGEMENT_EXPORT convertUriList(const QList<QUrl>& uris);
+        QString convertUri(const QUrl& uri);
+        QStringList convertUriList(const QList<QUrl>& uris);
 
         /// Convert QDBusArguments variants into QUrl, QDate, QTime, and QDateTime variants
-        NEPOMUK_DATA_MANAGEMENT_EXPORT QVariant resolveDBusArguments(const QVariant& v);
-        NEPOMUK_DATA_MANAGEMENT_EXPORT QVariantList resolveDBusArguments(const QVariantList& l);
+        QVariant resolveDBusArguments(const QVariant& v);
+        QVariantList resolveDBusArguments(const QVariantList& l);
 
         /// Replaces KUrl with QUrl for DBus marshalling.
         QVariantList normalizeVariantList(const QVariantList& l);
 
-        NEPOMUK_DATA_MANAGEMENT_EXPORT void registerDBusTypes();
+        void registerDBusTypes();
     }
 }
 
