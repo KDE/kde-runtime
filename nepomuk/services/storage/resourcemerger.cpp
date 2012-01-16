@@ -933,11 +933,22 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
     // Handle Resource metadata
     //
 
+    QSet<QUrl> trailingGraphCandidates = m_graphHash.keys().toSet();
+
     // TODO: Maybe inform the RVM about these metadata changes?
     // First update the mtime of all the modified resources
     Soprano::Node currentDateTime = Soprano::LiteralValue( QDateTime::currentDateTime() );
     foreach( const QUrl & resUri, modifiedResources ) {
-        m_model->removeAllStatements( resUri, NAO::lastModified(), Soprano::Node() );
+        Soprano::QueryResultIterator it
+                = m_model->executeQuery(QString::fromLatin1("select distinct ?g where { graph ?g { %1 %2 ?o . } . }")
+                                        .arg(Soprano::Node::resourceToN3(resUri),
+                                             Soprano::Node::resourceToN3(NAO::lastModified())),
+                                        Soprano::Query::QueryLanguageSparql);
+        while(it.next()) {
+            const Soprano::Node g = it["g"];
+            m_model->removeAllStatements( resUri, NAO::lastModified(), Soprano::Node(), g );
+            trailingGraphCandidates << g.uri();
+        }
         m_model->addStatement( resUri, NAO::lastModified(), currentDateTime, m_graph );
     }
 
@@ -945,6 +956,8 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
     foreach( Soprano::Statement st, metadataStatements ) {
         addResMetadataStatement( st );
     }
+
+    m_model->removeTrailingGraphs(trailingGraphCandidates);
 
     return true;
 }
