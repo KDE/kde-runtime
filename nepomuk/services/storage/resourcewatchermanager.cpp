@@ -47,6 +47,16 @@ QDBusVariant nodeToVariant(const Soprano::Node& node) {
     }
 }
 
+QVariantList nodeListToVariantList(const QList<Soprano::Node> &nodes) {
+    QVariantList list;
+    list.reserve(nodes.size());
+    foreach( const Soprano::Node &n, nodes ) {
+        list << nodeToVariant(n).variant();
+    }
+
+    return list;
+}
+
 QStringList convertUris(const QList<QUrl>& uris) {
     QStringList sl;
     foreach(const QUrl& uri, uris)
@@ -127,7 +137,7 @@ void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const
     //TODO: Implement me! ( How? )
 }
 
-void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value)
+void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, const QUrl& property, const QList<Soprano::Node>& values)
 {
     typedef ResourceWatcherConnection RWC;
 
@@ -140,7 +150,7 @@ void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, co
         if( !con->hasProperties() ) {
             emit con->propertyRemoved( KUrl(res.uri()).url(),
                                        property.toString(),
-                                       nodeToVariant(value) );
+                                       nodeListToVariantList(values) );
         }
         else {
             resConnections << con;
@@ -156,8 +166,56 @@ void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, co
         if( it != resConnections.constEnd() ) {
             emit con->propertyRemoved( KUrl(res.uri()).url(),
                                        property.toString(),
-                                       nodeToVariant(value) );
+                                       nodeListToVariantList(values) );
         }
+    }
+}
+
+void Nepomuk::ResourceWatcherManager::setProperty(const QMultiHash< QUrl, Soprano::Node > oldValues,
+                                                  const QUrl& property,
+                                                  const QList<Soprano::Node>& nodes)
+{
+    typedef ResourceWatcherConnection RWC;
+
+    QList<QUrl> uniqueKeys = oldValues.keys();
+    foreach( const QUrl resUri, uniqueKeys ) {
+        QList<Soprano::Node> old = oldValues.values( resUri );
+
+        //
+        // Emit signals for all the connections that are only watching specific resources
+        //
+        QSet<RWC*> resConnections;
+        QList<RWC*> connections = m_resHash.values( resUri );
+        foreach( RWC* con, connections ) {
+            if( !con->hasProperties() ) {
+                emit con->propertyChanged( KUrl(resUri).url(),
+                                           property.toString(),
+                                           nodeListToVariantList(old),
+                                           nodeListToVariantList(nodes) );
+            }
+            else {
+                resConnections << con;
+            }
+        }
+
+        //
+        // Emit signals for the connections that are watching specific resources and properties
+        //
+        QList<RWC*> propConnections = m_propHash.values( property );
+        foreach( RWC* con, propConnections ) {
+            QSet<RWC*>::const_iterator it = resConnections.constFind( con );
+            if( it != resConnections.constEnd() ) {
+                emit con->propertyChanged( KUrl(resUri).url(),
+                                           property.toString(),
+                                           nodeListToVariantList(old),
+                                           nodeListToVariantList(nodes) );
+            }
+        }
+
+        //
+        // Emit type + property signals
+        //
+        //TODO: Implement me! ( How? )
     }
 }
 

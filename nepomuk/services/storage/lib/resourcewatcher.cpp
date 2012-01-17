@@ -28,6 +28,7 @@
 #include <Nepomuk/Resource>
 
 #include <KUrl>
+#include <KDebug>
 
 namespace {
 QList<QUrl> convertUris(const QStringList& uris) {
@@ -102,6 +103,8 @@ bool Nepomuk::ResourceWatcher::start()
                  this, SLOT(slotPropertyRemoved(QString,QString,QDBusVariant)) );
         connect( d->m_connectionInterface, SIGNAL(resourceCreated(QString,QStringList)),
                  this, SLOT(slotResourceCreated(QString,QStringList)) );
+        connect( d->m_connectionInterface, SIGNAL(propertyChanged(QString,QString,QVariantList,QVariantList)),
+                 this, SLOT(slotPropertyChanged(QString,QString,QVariantList,QVariantList)) );
         connect( d->m_connectionInterface, SIGNAL(resourceRemoved(QString,QStringList)),
                  this, SLOT(slotResourceRemoved(QString,QStringList)) );
         connect( d->m_connectionInterface, SIGNAL(resourceTypeAdded(QString,QString)),
@@ -197,6 +200,12 @@ void Nepomuk::ResourceWatcher::slotPropertyAdded(const QString& res, const QStri
 void Nepomuk::ResourceWatcher::slotPropertyRemoved(const QString& res, const QString& prop, const QDBusVariant& object)
 {
     emit propertyRemoved( Resource::fromResourceUri(KUrl(res)), Types::Property( KUrl(prop) ), object.variant() );
+}
+
+void Nepomuk::ResourceWatcher::slotPropertyChanged(const QString& res, const QString& prop, const QVariantList& oldObjs, const QVariantList& newObjs)
+{
+    emit propertyChanged( Resource::fromResourceUri(KUrl(res)), Types::Property( KUrl(prop) ),
+                          oldObjs, newObjs );
 }
 
 #include "resourcewatcher.moc"
