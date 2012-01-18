@@ -26,9 +26,8 @@
 #include <QtDBus/QDBusObjectPath>
 #include <QtDBus/QDBusServiceWatcher>
 
-Nepomuk::ResourceWatcherConnection::ResourceWatcherConnection( ResourceWatcherManager* parent, bool hasProperties )
+Nepomuk::ResourceWatcherConnection::ResourceWatcherConnection( ResourceWatcherManager* parent )
     : QObject( parent ),
-      m_hasProperties( hasProperties ),
       m_manager(parent)
 {
 }
@@ -36,11 +35,6 @@ Nepomuk::ResourceWatcherConnection::ResourceWatcherConnection( ResourceWatcherMa
 Nepomuk::ResourceWatcherConnection::~ResourceWatcherConnection()
 {
     m_manager->removeConnection(this);
-}
-
-bool Nepomuk::ResourceWatcherConnection::hasProperties() const
-{
-    return m_hasProperties;
 }
 
 QDBusObjectPath Nepomuk::ResourceWatcherConnection::registerDBusObject( const QString& dbusClient, int id )

@@ -37,7 +37,7 @@ namespace Nepomuk {
         Q_CLASSINFO( "D-Bus Interface", "org.kde.nepomuk.ResourceWatcherConnection" )
 
     public:
-        ResourceWatcherConnection( ResourceWatcherManager* parent, bool hasProperties );
+        ResourceWatcherConnection( ResourceWatcherManager* parent );
         ~ResourceWatcherConnection();
 
     signals:
@@ -68,13 +68,10 @@ namespace Nepomuk {
         Q_SCRIPTABLE void close();
 
     public:
-        bool hasProperties() const;
-
         QDBusObjectPath registerDBusObject(const QString &dbusClient, int id);
 
     private:
         QString m_objectPath;
-        bool m_hasProperties;
 
         ResourceWatcherManager* m_manager;
         QDBusServiceWatcher* m_serviceWatcher;
