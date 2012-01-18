@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2011 Vishesh Handa <handa.vish@gmail.com>
-    Copyright (C) 2011 Sebastian Trueg <trueg@kde.org>
+    Copyright (C) 2011-2012 Sebastian Trueg <trueg@kde.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -56,6 +56,15 @@ namespace Nepomuk {
                                            const QVariantList & oldValues,
                                            const QVariantList & newValues );
     public Q_SLOTS:
+        Q_SCRIPTABLE void setResources(const QStringList& resources);
+        Q_SCRIPTABLE void addResource(const QString& resource);
+        Q_SCRIPTABLE void removeResource(const QString& resource);
+        Q_SCRIPTABLE void setProperties(const QStringList& properties);
+        Q_SCRIPTABLE void addProperty(const QString& property);
+        Q_SCRIPTABLE void removeProperty(const QString& property);
+        Q_SCRIPTABLE void setTypes(const QStringList& types);
+        Q_SCRIPTABLE void addType(const QString& type);
+        Q_SCRIPTABLE void removeType(const QString& type);
         Q_SCRIPTABLE void close();
 
     public:
