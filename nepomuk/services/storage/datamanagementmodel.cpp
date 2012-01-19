@@ -2402,18 +2402,22 @@ QList<Soprano::Node> Nepomuk::DataManagementModel::addProperty(const QHash<QUrl,
 
         // add all the data
         // TODO: check if using one big sparql insert improves performance
-        QSet<QUrl> finalResources;
+        QHash<QUrl, QList<Soprano::Node> > finalValuesPerResource;
         for(QSet<QPair<QUrl, Soprano::Node> >::const_iterator it = finalProperties.constBegin(); it != finalProperties.constEnd(); ++it) {
             addStatement(it->first, property, it->second, graph);
             if(property == NIE::url() && it->second.uri().scheme() == QLatin1String("file")) {
                 addStatement(it->first, RDF::type(), NFO::FileDataObject(), graph);
             }
-            finalResources.insert(it->first);
-            d->m_watchManager->addProperty(it->first, property, it->second);
+            finalValuesPerResource[it->first].append(it->second);
+        }
+
+        // inform interested parties
+        for(QHash<QUrl, QList<Soprano::Node> >::const_iterator it = finalValuesPerResource.constBegin(); it != finalValuesPerResource.constEnd(); ++it) {
+            d->m_watchManager->addProperty(it.key(), property, it.value());
         }
 
         // update modification date
-        Q_FOREACH(const QUrl& res, finalResources) {
+        Q_FOREACH(const QUrl& res, finalValuesPerResource.keys()) {
             updateModificationDate(res, graph, QDateTime::currentDateTime(), true);
         }
     }

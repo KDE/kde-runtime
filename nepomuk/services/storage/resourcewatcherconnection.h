@@ -47,7 +47,7 @@ namespace Nepomuk {
         Q_SCRIPTABLE void resourceTypeRemoved( const QString & resUri, const QString & type );
         Q_SCRIPTABLE void propertyAdded( const QString & resource,
                                          const QString & property,
-                                         const QDBusVariant & value );
+                                         const QVariantList & value );
         Q_SCRIPTABLE void propertyRemoved( const QString & resource,
                                            const QString & property,
                                            const QVariantList & value );

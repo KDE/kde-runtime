@@ -101,10 +101,10 @@ Nepomuk::ResourceWatcherManager::~ResourceWatcherManager()
 
 void Nepomuk::ResourceWatcherManager::addStatement(const Soprano::Statement& st)
 {
-    addProperty( st.subject(), st.predicate().uri(), st.object() );
+    addProperty( st.subject(), st.predicate().uri(), QList<Soprano::Node>() << st.object() );
 }
 
-void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node& res, const QUrl& property, const Soprano::Node& value)
+void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node& res, const QUrl& property, const QList<Soprano::Node>& values)
 {
     typedef ResourceWatcherConnection RWC;
 
@@ -119,7 +119,7 @@ void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node& res, cons
         if( !m_propHash.values().contains(con) ) {
             emit con->propertyAdded( convertUri(res.uri()),
                                      convertUri(property),
-                                     nodeToVariant(value) );
+                                     nodeListToVariantList(values) );
         }
         else {
             resConnections << con;
@@ -135,7 +135,7 @@ void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node& res, cons
         if( it != resConnections.constEnd() ) {
             emit con->propertyAdded( convertUri(res.uri()),
                                      convertUri(property),
-                                     nodeToVariant(value) );
+                                     nodeListToVariantList(values) );
         }
     }
 
