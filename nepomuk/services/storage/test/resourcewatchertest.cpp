@@ -110,7 +110,7 @@ void ResourceWatcherTest::testPropertyAddedSignal()
     QVERIFY(!m_dmModel->lastError());
 
     // spy for the propertyAdded signal
-    QSignalSpy spy(con, SIGNAL(propertyAdded(QString, QString, QVariant)));
+    QSignalSpy spy(con, SIGNAL(propertyAdded(QString, QString, QVariantList)));
 
     // change the resource
     m_dmModel->setProperty(QList<QUrl>() << resA, NAO::prefLabel(), QVariantList() << QLatin1String("foobar"), QLatin1String("A"));
@@ -129,7 +129,8 @@ void ResourceWatcherTest::testPropertyAddedSignal()
     QCOMPARE(args[1].toString(), NAO::prefLabel().toString());
 
     // 3 param: the value
-    QCOMPARE(args[2].value<QVariant>(), QVariant(QString(QLatin1String("foobar"))));
+    QCOMPARE(args[2].value<QVariantList>().count(), 1);
+    QCOMPARE(args[2].value<QVariantList>().first(), QVariant(QString(QLatin1String("foobar"))));
 
     // cleanup
     con->deleteLater();
@@ -142,7 +143,7 @@ void ResourceWatcherTest::testPropertyRemovedSignal()
 
     Nepomuk::ResourceWatcherConnection* con = m_dmModel->resourceWatcherManager()->createConnection(QList<QUrl>() << resA, QList<QUrl>(), QList<QUrl>());
 
-    QSignalSpy spy(con, SIGNAL(propertyRemoved(QString, QString, QVariant)));
+    QSignalSpy spy(con, SIGNAL(propertyRemoved(QString, QString, QVariantList)));
 
     m_dmModel->removeProperty(QList<QUrl>() << resA, NAO::prefLabel(), QVariantList() << QLatin1String("foobar"), QLatin1String("A"));
     QVERIFY(!m_dmModel->lastError());
@@ -153,7 +154,8 @@ void ResourceWatcherTest::testPropertyRemovedSignal()
 
     QCOMPARE(args[0].toString(), resA.toString());
     QCOMPARE(args[1].toString(), NAO::prefLabel().toString());
-    QCOMPARE(args[2].value<QVariant>(), QVariant(QString(QLatin1String("foobar"))));
+    QCOMPARE(args[2].value<QVariantList>().count(), 1);
+    QCOMPARE(args[2].value<QVariantList>().first(), QVariant(QString(QLatin1String("foobar"))));
 
     con->deleteLater();
 }
