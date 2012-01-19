@@ -104,7 +104,7 @@ void Nepomuk::ResourceWatcherManager::addStatement(const Soprano::Statement& st)
     addProperty( st.subject(), st.predicate().uri(), st.object() );
 }
 
-void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value)
+void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node& res, const QUrl& property, const Soprano::Node& value)
 {
     typedef ResourceWatcherConnection RWC;
 
@@ -145,7 +145,7 @@ void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const
     //TODO: Implement me! ( How? )
 }
 
-void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, const QUrl& property, const QList<Soprano::Node>& values)
+void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node& res, const QUrl& property, const QList<Soprano::Node>& values)
 {
     typedef ResourceWatcherConnection RWC;
 
@@ -179,7 +179,7 @@ void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, co
     }
 }
 
-void Nepomuk::ResourceWatcherManager::setProperty(const QMultiHash< QUrl, Soprano::Node > oldValues,
+void Nepomuk::ResourceWatcherManager::setProperty(const QMultiHash< QUrl, Soprano::Node >& oldValues,
                                                   const QUrl& property,
                                                   const QList<Soprano::Node>& nodes)
 {
