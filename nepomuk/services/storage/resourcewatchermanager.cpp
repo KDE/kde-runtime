@@ -118,7 +118,7 @@ void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node& res, cons
     foreach( RWC* con, connections ) {
         if( !m_propHash.values().contains(con) ) {
             emit con->propertyAdded( convertUri(res.uri()),
-                                     property.toString(),
+                                     convertUri(property),
                                      nodeToVariant(value) );
         }
         else {
@@ -134,7 +134,7 @@ void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node& res, cons
         QSet<RWC*>::const_iterator it = resConnections.constFind( con );
         if( it != resConnections.constEnd() ) {
             emit con->propertyAdded( convertUri(res.uri()),
-                                     property.toString(),
+                                     convertUri(property),
                                      nodeToVariant(value) );
         }
     }
@@ -157,7 +157,7 @@ void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node& res, c
     foreach( RWC* con, connections ) {
         if( !m_propHash.values().contains(con) ) {
             emit con->propertyRemoved( convertUri(res.uri()),
-                                       property.toString(),
+                                       convertUri(property),
                                        nodeListToVariantList(values) );
         }
         else {
@@ -173,7 +173,7 @@ void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node& res, c
         QSet<RWC*>::const_iterator it = resConnections.constFind( con );
         if( it != resConnections.constEnd() ) {
             emit con->propertyRemoved( convertUri(res.uri()),
-                                       property.toString(),
+                                       convertUri(property),
                                        nodeListToVariantList(values) );
         }
     }
@@ -197,7 +197,7 @@ void Nepomuk::ResourceWatcherManager::setProperty(const QMultiHash< QUrl, Sopran
         foreach( RWC* con, connections ) {
             if( !m_propHash.values().contains(con) ) {
                 emit con->propertyChanged( convertUri(resUri),
-                                           property.toString(),
+                                           convertUri(property),
                                            nodeListToVariantList(old),
                                            nodeListToVariantList(nodes) );
             }
@@ -214,7 +214,7 @@ void Nepomuk::ResourceWatcherManager::setProperty(const QMultiHash< QUrl, Sopran
             QSet<RWC*>::const_iterator it = resConnections.constFind( con );
             if( it != resConnections.constEnd() ) {
                 emit con->propertyChanged( convertUri(resUri),
-                                           property.toString(),
+                                           convertUri(property),
                                            nodeListToVariantList(old),
                                            nodeListToVariantList(nodes) );
             }
