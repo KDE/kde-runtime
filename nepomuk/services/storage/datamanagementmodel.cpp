@@ -528,6 +528,11 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
             }
         }
         removeTrailingGraphs(graphs);
+
+        // inform interested parties
+        foreach(const QUrl& res, resourcePropertyCache.keys()) {
+            d->m_watchManager->removeProperty(res, property, resourcePropertyCache.values(res));
+        }
     }
 
     //
