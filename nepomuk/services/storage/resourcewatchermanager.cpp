@@ -57,10 +57,14 @@ QVariantList nodeListToVariantList(const QList<Soprano::Node> &nodes) {
     return list;
 }
 
+QString convertUri(const QUrl& uri) {
+    return KUrl(uri).url();
+}
+
 QStringList convertUris(const QList<QUrl>& uris) {
     QStringList sl;
     foreach(const QUrl& uri, uris)
-        sl << KUrl(uri).url();
+        sl << convertUri(uri);
     return sl;
 }
 
@@ -113,7 +117,7 @@ void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const
     QList<RWC*> connections = m_resHash.values( res.uri() );
     foreach( RWC* con, connections ) {
         if( !m_propHash.values().contains(con) ) {
-            emit con->propertyAdded( KUrl(res.uri()).url(),
+            emit con->propertyAdded( convertUri(res.uri()),
                                      property.toString(),
                                      nodeToVariant(value) );
         }
@@ -129,7 +133,7 @@ void Nepomuk::ResourceWatcherManager::addProperty(const Soprano::Node res, const
     foreach( RWC* con, propConnections ) {
         QSet<RWC*>::const_iterator it = resConnections.constFind( con );
         if( it != resConnections.constEnd() ) {
-            emit con->propertyAdded( KUrl(res.uri()).url(),
+            emit con->propertyAdded( convertUri(res.uri()),
                                      property.toString(),
                                      nodeToVariant(value) );
         }
@@ -152,7 +156,7 @@ void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, co
     QList<RWC*> connections = m_resHash.values( res.uri() );
     foreach( RWC* con, connections ) {
         if( !m_propHash.values().contains(con) ) {
-            emit con->propertyRemoved( KUrl(res.uri()).url(),
+            emit con->propertyRemoved( convertUri(res.uri()),
                                        property.toString(),
                                        nodeListToVariantList(values) );
         }
@@ -168,7 +172,7 @@ void Nepomuk::ResourceWatcherManager::removeProperty(const Soprano::Node res, co
     foreach( RWC* con, propConnections ) {
         QSet<RWC*>::const_iterator it = resConnections.constFind( con );
         if( it != resConnections.constEnd() ) {
-            emit con->propertyRemoved( KUrl(res.uri()).url(),
+            emit con->propertyRemoved( convertUri(res.uri()),
                                        property.toString(),
                                        nodeListToVariantList(values) );
         }
@@ -192,7 +196,7 @@ void Nepomuk::ResourceWatcherManager::setProperty(const QMultiHash< QUrl, Sopran
         QList<RWC*> connections = m_resHash.values( resUri );
         foreach( RWC* con, connections ) {
             if( !m_propHash.values().contains(con) ) {
-                emit con->propertyChanged( KUrl(resUri).url(),
+                emit con->propertyChanged( convertUri(resUri),
                                            property.toString(),
                                            nodeListToVariantList(old),
                                            nodeListToVariantList(nodes) );
@@ -209,7 +213,7 @@ void Nepomuk::ResourceWatcherManager::setProperty(const QMultiHash< QUrl, Sopran
         foreach( RWC* con, propConnections ) {
             QSet<RWC*>::const_iterator it = resConnections.constFind( con );
             if( it != resConnections.constEnd() ) {
-                emit con->propertyChanged( KUrl(resUri).url(),
+                emit con->propertyChanged( convertUri(resUri),
                                            property.toString(),
                                            nodeListToVariantList(old),
                                            nodeListToVariantList(nodes) );
@@ -233,7 +237,7 @@ void Nepomuk::ResourceWatcherManager::createResource(const QUrl &uri, const QLis
     }
 
     foreach(ResourceWatcherConnection* con, connections) {
-        emit con->resourceCreated(KUrl(uri).url(), convertUris(types));
+        emit con->resourceCreated(convertUri(uri), convertUris(types));
     }
 }
 
@@ -250,7 +254,7 @@ void Nepomuk::ResourceWatcherManager::removeResource(const QUrl &res, const QLis
     }
 
     foreach(ResourceWatcherConnection* con, connections) {
-        emit con->resourceRemoved(KUrl(res).url(), convertUris(types));
+        emit con->resourceRemoved(convertUri(res), convertUris(types));
     }
 }
 
