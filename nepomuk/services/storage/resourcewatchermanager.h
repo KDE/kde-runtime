@@ -44,7 +44,9 @@ namespace Nepomuk {
 
         void addStatement(const Soprano::Statement &st);
         void addProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value);
-        void removeProperty(const Soprano::Node res, const QUrl& property, const Soprano::Node& value);
+        void removeProperty(const Soprano::Node res, const QUrl& property, const QList<Soprano::Node>& values);
+        void setProperty(const QMultiHash<QUrl, Soprano::Node> oldValues, const QUrl& property,
+                         const QList<Soprano::Node>& nodes);
         void createResource(const QUrl& uri, const QList<QUrl>& types);
         void removeResource(const QUrl& uri, const QList<QUrl>& types);
 

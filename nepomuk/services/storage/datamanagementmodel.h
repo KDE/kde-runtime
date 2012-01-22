@@ -141,7 +141,7 @@ public Q_SLOTS:
      * \param resources The resources to be merged. Blank nodes will be converted into new
      * URIs (unless the corresponding resource already exists).
      * \param identificationMode This method can try hard to avoid duplicate resources by looking
-     * for already existing duplicates based on nrl:IdentifyingProperty. By default it only looks
+     * for already existing duplicates based on nrl:DefiningProperty. By default it only looks
      * for duplicates of resources that do not have a resource URI (SimpleResource::uri()) defined.
      * This behaviour can be changed with this parameter.
      * \param flags Additional flags to change the behaviour of the method.
@@ -172,7 +172,7 @@ public Q_SLOTS:
      * \param userSerialization If \p serialization is Soprano::SerializationUser this value is used. See Soprano::Parser
      * for details.
      * \param identificationMode This method can try hard to avoid duplicate resources by looking
-     * for already existing duplicates based on nrl:IdentifyingProperty. By default it only looks
+     * for already existing duplicates based on nrl:DefiningProperty. By default it only looks
      * for duplicates of resources that do not have a resource URI (SimpleResource::uri()) defined.
      * This behaviour can be changed with this parameter.
      * \param flags Additional flags to change the behaviour of the method.
@@ -249,8 +249,10 @@ private:
      * \param nodes A hash mapping value nodes as created via resolveNodes from the output of ClassAndPropertyTree::variantToNodeSet. Like \p resources
      *              this hash might contain empty values which refer to non-existing file resources. This cannot be empty.
      * \param app The calling application.
+     *
+     * \return list of all the resolved nodes
      */
-    void addProperty(const QHash<QUrl, QUrl>& resources, const QUrl& property, const QHash<Soprano::Node, Soprano::Node>& nodes, const QString& app);
+    QList<Soprano::Node> addProperty(const QHash<QUrl, QUrl>& resources, const QUrl& property, const QHash<Soprano::Node, Soprano::Node>& nodes, const QString& app);
 
     /**
      * Removes the given resources without any additional checks. The provided list needs to contain already resolved valid resource URIs.

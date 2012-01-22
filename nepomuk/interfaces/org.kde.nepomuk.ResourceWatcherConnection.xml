@@ -27,6 +27,12 @@
       <arg name="property" type="s" direction="out"/>
       <arg name="value" type="v" direction="out"/>
     </signal>
+    <signal name="propertyChanged">
+        <arg name="resource" type="s" direction="out"/>
+        <arg name="property" type="s" direction="out"/>
+        <arg name="oldValues" type="av" direction="out"/>
+        <arg name="newValues" type="av" direction="out"/>
+    </signal>
     <method name="close" />
   </interface>
 </node>

@@ -80,23 +80,11 @@ namespace {
     // Cache the results. This could have very bad consequences if someone updates the ontology
     // when the service is running
     //
-    static QSet<KUrl> nonMergeable;
     bool isMergeable( const KUrl & prop, Soprano::Model * model ) {
-
-        if( nonMergeable.contains( prop ) )
-            return false;
-
-        QString query = QString::fromLatin1( "ask { %1 %2 \"false\"^^xsd:boolean . }" )
-                        .arg( Soprano::Node::resourceToN3( prop ) )
-                        .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NRIO::mergeable() ) );
-
-        bool isMergeable = !model->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue();
-
-        if( !isMergeable ) {
-            nonMergeable.insert( prop );
-            return false;
-        }
-        return true;
+        //
+        // trueg: hardcoding the non-mergeable properties here since there are only 2 defined
+        //
+        return prop != Soprano::Vocabulary::RDF::type() && prop != Nepomuk::Vocabulary::NIE::url();
     }
 
     QList<Nepomuk::ChangeLogRecord> getRecords( const Nepomuk::ResourceLogMap & hash, const KUrl resUri, const KUrl & propUri ) {
@@ -116,7 +104,6 @@ void Nepomuk::ChangeLogMerger::mergeChangeLog()
     m_theGraph = createGraph();
 
     kDebug();
-    const Types::Property mergeableProperty( Nepomuk::Vocabulary::NRIO::mergeable() );
 
     //
     // Get own changeLog

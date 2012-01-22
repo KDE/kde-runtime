@@ -50,8 +50,11 @@ namespace Nepomuk {
                                          const QDBusVariant & value );
         Q_SCRIPTABLE void propertyRemoved( const QString & resource,
                                            const QString & property,
-                                           const QDBusVariant & value );
-
+                                           const QVariantList & value );
+        Q_SCRIPTABLE void propertyChanged( const QString & resource,
+                                           const QString & property,
+                                           const QVariantList & oldValues,
+                                           const QVariantList & newValues );
     public Q_SLOTS:
         Q_SCRIPTABLE void close();
 
