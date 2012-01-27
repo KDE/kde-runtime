@@ -380,7 +380,7 @@ void AudioSetup::updateCard(const pa_card_info *pInfo)
     for (quint32 i = 0; i < pInfo->n_profiles; ++i) {
         const pa_card_profile_info *profile = &(pInfo->profiles[i]);
         const quint32 priority = profile->priority;
-        const QPair<QString, QString> name(profile->name, profile->description);
+        const QPair<QString, QString> name(profile->name, QString::fromUtf8(profile->description));
         info.profiles.insert(priority, name);
     }
 
