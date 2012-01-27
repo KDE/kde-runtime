@@ -29,7 +29,6 @@
 #include <QtCore/QSet>
 #include <KDebug>
 
-#include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 
 #include <Soprano/Model>

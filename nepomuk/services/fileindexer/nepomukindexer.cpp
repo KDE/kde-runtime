@@ -22,8 +22,6 @@
 #include "nepomukindexer.h"
 #include "util.h"
 
-#include <Nepomuk/Resource>
-
 #include <KUrl>
 #include <KDebug>
 #include <KProcess>

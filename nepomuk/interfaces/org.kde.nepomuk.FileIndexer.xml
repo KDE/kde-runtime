@@ -31,6 +31,7 @@
     </method>
     <method name="indexFile">
       <arg name="path" type="s" direction="in" />
+      <arg name="forced" type="b" direction="in" />
     </method>
     <method name="userStatusString">
       <arg type="s" direction="out" />

@@ -163,9 +163,11 @@ namespace Nepomuk {
         void updateAll( bool forceUpdate = false );
 
         /**
-         * Analyze the one file without conditions.
+         * Analyze the one file.
+         *
+         * \param forced Do not check the mtime and force reindexing
          */
-        void analyzeFile( const QString& path );
+        void analyzeFile( const QString& path, bool forced );
 
     Q_SIGNALS:
         void indexingStarted();

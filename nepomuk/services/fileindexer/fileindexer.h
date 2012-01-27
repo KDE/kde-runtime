@@ -90,7 +90,7 @@ namespace Nepomuk {
         /**
          * Index a specific file
          */
-        void indexFile( const QString& path );
+        void indexFile( const QString& path, bool forced );
 
     private Q_SLOTS:
         void finishInitialization();

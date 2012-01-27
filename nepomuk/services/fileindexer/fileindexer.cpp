@@ -278,9 +278,9 @@ void Nepomuk::FileIndexer::updateAllFolders(bool forced)
 }
 
 
-void Nepomuk::FileIndexer::indexFile(const QString& path)
+void Nepomuk::FileIndexer::indexFile(const QString& path, bool forced)
 {
-    m_indexScheduler->analyzeFile( path );
+    m_indexScheduler->analyzeFile( path, forced );
 }
 
 

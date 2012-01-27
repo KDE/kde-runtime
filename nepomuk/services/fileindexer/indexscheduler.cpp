@@ -39,10 +39,7 @@
 #include <KTemporaryFile>
 #include <KUrl>
 
-#include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
-#include <Nepomuk/Variant>
-#include <Nepomuk/Query/ResourceTerm>
 
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
@@ -589,9 +586,12 @@ void Nepomuk::IndexScheduler::slotConfigChanged()
 }
 
 
-void Nepomuk::IndexScheduler::analyzeFile( const QString& path )
+void Nepomuk::IndexScheduler::analyzeFile( const QString& path, bool forced )
 {
     kDebug() << path;
+    if( !forced && compareIndexedMTime(KUrl(path), QFileInfo(path).lastModified()) )
+        return;
+
     QMutexLocker fileLock(&m_filesToUpdateMutex);
     m_filesToUpdate.enqueue(path);
 
