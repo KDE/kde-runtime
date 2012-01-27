@@ -270,7 +270,7 @@ void Nepomuk::FileWatch::updateFileViaFileIndexer(const QString &path)
     if( FileIndexerConfig::self()->shouldBeIndexed(path) ) {
         org::kde::nepomuk::FileIndexer fileIndexer( "org.kde.nepomuk.services.nepomukfileindexer", "/nepomukfileindexer", QDBusConnection::sessionBus() );
         if ( fileIndexer.isValid() ) {
-            fileIndexer.indexFile( path );
+            fileIndexer.indexFile( path, /*forced*/ false );
         }
     }
 }
