@@ -53,6 +53,7 @@ using namespace Nepomuk::Vocabulary;
 namespace {
     const char* s_noFollow = "noFollow";
     const char* s_showUri = "showUris";
+    const char* s_showNonUserVisibible = "showNonUserVisible";
     const char* s_true = "true";
 
     KUrl configureUrl( const KUrl& url, Nepomuk::ResourcePageGenerator::Flags flags ) {
@@ -66,6 +67,11 @@ namespace {
         newUrl.removeEncodedQueryItem( s_showUri );
         if ( flags & Nepomuk::ResourcePageGenerator::ShowUris ) {
             newUrl.addEncodedQueryItem( s_showUri, s_true );
+        }
+
+        newUrl.removeEncodedQueryItem( s_showNonUserVisibible );
+        if ( flags & Nepomuk::ResourcePageGenerator::ShowNonUserVisible ) {
+            newUrl.addEncodedQueryItem( s_showNonUserVisibible, s_true );
         }
 
         return newUrl;
@@ -89,6 +95,8 @@ void Nepomuk::ResourcePageGenerator::setFlagsFromUrl( const KUrl& url )
     m_flags = NoFlags;
     if ( url.encodedQueryItemValue( s_showUri ) == s_true )
         m_flags |= ShowUris;
+    if ( url.encodedQueryItemValue( s_showNonUserVisibible ) == s_true )
+        m_flags |= ShowNonUserVisible;
 }
 
 
@@ -203,8 +211,9 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
     Soprano::StatementIterator it = ResourceManager::instance()->mainModel()->listStatements( m_resource.resourceUri(), Soprano::Node(), Soprano::Node() );
     while ( it.next() ) {
         Soprano::Statement s = it.current();
-        if ( s.predicate().uri() != Soprano::Vocabulary::RDF::type() ) {
-            Nepomuk::Types::Property p( s.predicate().uri() );
+        Nepomuk::Types::Property p( s.predicate().uri() );
+        if ( p != Soprano::Vocabulary::RDF::type() &&
+             ((m_flags & ShowNonUserVisible) || p.userVisible())) {
             os << "<tr><td align=right><i>" << entityLabel( p ) << "</i></td><td width=16px></td><td>";
             if ( s.object().isLiteral() ) {
                 os << formatLiteral(p, s.object().literal());
@@ -238,14 +247,14 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
     Soprano::StatementIterator itb = ResourceManager::instance()->mainModel()->listStatements( Soprano::Node(), Soprano::Node(), m_resource.resourceUri() );
     while ( itb.next() ) {
         Soprano::Statement s = itb.current();
-        if ( s.predicate().uri() != Soprano::Vocabulary::RDF::type() ) {
-            Resource resource( s.subject().uri() );
-            Nepomuk::Types::Property p( s.predicate().uri() );
+        Resource resource( s.subject().uri() );
+        Nepomuk::Types::Property p( s.predicate().uri() );
+        if((m_flags & ShowNonUserVisible) || p.userVisible()) {
             os << "<td align=right>"
                << QString( "<a href=\"%1\">%2</a> (%3)" )
-                .arg( encodeUrl( s.subject().uri() ),
-                      resourceLabel( resource ),
-                      typesToHtml( resource.types() ) )
+                  .arg( encodeUrl( s.subject().uri() ),
+                        resourceLabel( resource ),
+                        typesToHtml( resource.types() ) )
                << "</td>"
                << "<td width=16px></td>"
                << "<td><i>" << entityLabel( p ) << "</i></td></tr>";
@@ -326,9 +335,11 @@ QString Nepomuk::ResourcePageGenerator::encodeUrl( const QUrl& url ) const
 QString Nepomuk::ResourcePageGenerator::createConfigureBoxHtml() const
 {
     QString html
-        = QString::fromLatin1( "<div style=\"position:fixed; right:10px; top:10px; text-align:right;\"><a href=\"%1\">%2</a></div>" )
+        = QString::fromLatin1( "<div style=\"position:fixed; right:10px; top:10px; text-align:right;\"><a href=\"%1\">%2</a><br/><a href=\"%3\">%4</a></div>" )
         .arg( configureUrl( url(), m_flags^ShowUris ).url(),
-              m_flags&ShowUris ? i18n( "Hide URIs" ) : i18n( "Show URIs" ) );
+              m_flags&ShowUris ? i18n( "Hide URIs" ) : i18n( "Show URIs" ),
+              configureUrl( url(), m_flags^ShowNonUserVisible ).url(),
+              m_flags&ShowNonUserVisible ? i18n( "Hide non-user visible properties" ) : i18n( "Show non-user visible properties" ));
 
     return html;
 }

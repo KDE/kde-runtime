@@ -41,7 +41,8 @@ namespace Nepomuk {
 
         enum Flag {
             NoFlags = 0x0,
-            ShowUris = 0x1
+            ShowUris = 0x1,
+            ShowNonUserVisible = 0x2
         };
         Q_DECLARE_FLAGS( Flags, Flag )
 
