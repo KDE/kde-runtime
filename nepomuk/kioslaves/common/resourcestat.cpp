@@ -69,16 +69,21 @@ Nepomuk::Resource Nepomuk::splitNepomukUrl( const KUrl& url, QString* filename )
     //
     // pre KDE 4.4 resources had just a single section, in KDE 4.4 we have "/res/<UUID>"
     //
-    QString urlStr = stripQuery( url ).url();
-    int pos = urlStr.indexOf( '/', urlStr.startsWith( QLatin1String( "nepomuk:/res/" ) ) ? 13 : 9 );
-    if ( pos > 0 ) {
-        KUrl resourceUri = urlStr.left(pos);
-        if ( filename )
-            *filename = urlStr.mid( pos+1 );
-        return resourceUri;
+    if(url.hasQueryItem(QLatin1String("resource"))) {
+        return KUrl(url.queryItemValue(QLatin1String("resource")));
     }
     else {
-        return stripQuery( url );
+        const QString urlStr = stripQuery( url ).url();
+        int pos = urlStr.indexOf( '/', urlStr.startsWith( QLatin1String( "nepomuk:/res/" ) ) ? 13 : 9 );
+        if ( pos > 0 ) {
+            KUrl resourceUri = urlStr.left(pos);
+            if ( filename )
+                *filename = urlStr.mid( pos+1 );
+            return resourceUri;
+        }
+        else {
+            return stripQuery( url );
+        }
     }
 }
 

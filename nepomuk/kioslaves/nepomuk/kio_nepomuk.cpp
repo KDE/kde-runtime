@@ -125,10 +125,9 @@ void Nepomuk::NepomukProtocol::get( const KUrl& url )
 
         mimeType( "text/html" );
 
-        KUrl newUrl = stripQuery( url );
-        Nepomuk::Resource res( newUrl );
+        const KUrl newUrl = stripQuery( url );
         if ( !res.exists() ) {
-            error( KIO::ERR_DOES_NOT_EXIST, newUrl.prettyUrl() );
+            error( KIO::ERR_DOES_NOT_EXIST, QLatin1String("get: ") + QString::fromLatin1("%1 (%2)").arg(url.url(), url.queryItem(QLatin1String("resource"))) );
             return;
         }
 
@@ -176,11 +175,10 @@ void Nepomuk::NepomukProtocol::stat( const KUrl& url )
         ForwardingSlaveBase::stat( url );
     }
     else {
-        KUrl strippedUrl = stripQuery( url );
-        Nepomuk::Resource res( strippedUrl );
+        Nepomuk::Resource res = splitNepomukUrl( url );
 
         if ( !res.exists() ) {
-            error( KIO::ERR_DOES_NOT_EXIST, strippedUrl.prettyUrl() );
+            error( KIO::ERR_DOES_NOT_EXIST, QLatin1String("stat: ") + stripQuery(url).prettyUrl() );
         }
         else {
             KIO::UDSEntry uds = Nepomuk::statNepomukResource( res, noFollow );
