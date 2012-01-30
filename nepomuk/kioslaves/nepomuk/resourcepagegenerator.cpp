@@ -319,7 +319,10 @@ QString Nepomuk::ResourcePageGenerator::typesToHtml( const QList<QUrl>& types ) 
     // extract the labels
     QStringList typeStrings;
     for ( int i = 0; i < normalizedTypes.count(); ++i ) {
-        typeStrings << entityLabel( normalizedTypes[i] );
+        QUrl url("nepomuk:");
+        url.addQueryItem(QLatin1String("resource"), normalizedTypes[i].uri().toString());
+        url.addQueryItem(QLatin1String("noFollow"), QLatin1String("true"));
+        typeStrings << QString::fromLatin1("<a href=\"nepomuk:?resource=%1&noFollow=true\">%2</a>").arg(QUrl::toPercentEncoding(normalizedTypes[i].uri().toString(), "", "/:"), entityLabel( normalizedTypes[i] ));
     }
 
     return typeStrings.join( ", " );
