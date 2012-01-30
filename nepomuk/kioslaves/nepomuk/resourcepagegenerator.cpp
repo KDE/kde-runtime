@@ -37,6 +37,8 @@
 #include <nepomuk/class.h>
 #include <nepomuk/property.h>
 #include <Nepomuk/Vocabulary/NIE>
+#include <Nepomuk/Vocabulary/NFO>
+#include <nepomuk/utils.h>
 
 #include <Soprano/Model>
 #include <Soprano/Node>
@@ -205,10 +207,7 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
             Nepomuk::Types::Property p( s.predicate().uri() );
             os << "<tr><td align=right><i>" << entityLabel( p ) << "</i></td><td width=16px></td><td>";
             if ( s.object().isLiteral() ) {
-                if ( s.object().literal().isDateTime() )
-                    os << KGlobal::locale()->formatDateTime( s.object().literal().toDateTime(), KLocale::FancyShortDate );
-                else
-                    os << s.object().toString();
+                os << formatLiteral(p, s.object().literal());
             }
             else {
                 //
@@ -332,4 +331,30 @@ QString Nepomuk::ResourcePageGenerator::createConfigureBoxHtml() const
               m_flags&ShowUris ? i18n( "Hide URIs" ) : i18n( "Show URIs" ) );
 
     return html;
+}
+
+QString Nepomuk::ResourcePageGenerator::formatLiteral(const Nepomuk::Types::Property &p, const Soprano::LiteralValue &value) const
+{
+    return Nepomuk::Utils::formatPropertyValue(p, Nepomuk::Variant(value.variant()));
+}
+
+QString Nepomuk::ResourcePageGenerator::formatResource(const Nepomuk::Types::Property &p, const QUrl &uri_) const
+{
+    //
+    // nie:url is a special case for which we should never use Resource
+    // since Resource does in turn use nie:url to resolve resource URIs.
+    // Thus, we would get back to m_resource.
+    //
+    KUrl uri(uri_);
+    QString label = uri.fileName();
+    if ( p != NIE::url() ) {
+        Resource resource( uri );
+        uri = resource.resourceUri();
+        label = QString::fromLatin1( "%1 (%2)" )
+                .arg( resourceLabel( resource ),
+                      typesToHtml( resource.types() ) );
+    }
+    return QString( "<a href=\"%1\">%2</a>" )
+            .arg( encodeUrl( uri ),
+                  label );
 }

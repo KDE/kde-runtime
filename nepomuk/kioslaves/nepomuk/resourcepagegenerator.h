@@ -64,6 +64,8 @@ namespace Nepomuk {
         QString typesToHtml( const QList<QUrl>& types ) const;
         QString encodeUrl( const QUrl& u ) const;
         QString createConfigureBoxHtml() const;
+        QString formatLiteral(const Nepomuk::Types::Property& prop, const Soprano::LiteralValue &value) const;
+        QString formatResource(const Nepomuk::Types::Property& p, const QUrl &uri_) const;
 
         Nepomuk::Resource m_resource;
         Flags m_flags;
