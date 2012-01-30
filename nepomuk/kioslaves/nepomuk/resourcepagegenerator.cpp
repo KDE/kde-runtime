@@ -1,5 +1,5 @@
 /*
-   Copyright 2009 Sebastian Trueg <trueg@kde.org>
+   Copyright 2009-2012 Sebastian Trueg <trueg@kde.org>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -31,7 +31,7 @@
 #include <kdeversion.h>
 #include <KUrl>
 
-#include <nepomuk/resource.h>
+#include <nepomuk/file.h>
 #include <nepomuk/resourcemanager.h>
 #include <nepomuk/variant.h>
 #include <nepomuk/class.h>
@@ -45,6 +45,8 @@
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/NAO>
 
+
+using namespace Nepomuk::Vocabulary;
 
 namespace {
     const char* s_noFollow = "noFollow";
@@ -185,6 +187,13 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
 
     os << "<h1>" << label << "</h1>"
        << "Type: " << ( exists ? typesToHtml( m_resource.types() ) : i18n( "Resource does not exist" ) );
+
+    if(m_resource.isFile() && m_resource.hasType(Nepomuk::Vocabulary::NFO::Image())) {
+        os << "<img src=\"" << m_resource.resourceUri().toString() << "\" />";
+    }
+    else if(m_resource.hasProperty(Nepomuk::Vocabulary::NFO::depiction())) {
+        os << "<img src=\"" << m_resource.property(Nepomuk::Vocabulary::NFO::depiction()).toUrlList().first().toString() << "\" />";
+    }
 
     os << "<h2>" << i18n("Relations:") << "</h2><div id=\"relations\"><table>";
 
