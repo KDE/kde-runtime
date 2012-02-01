@@ -318,6 +318,8 @@ private:
      */
     bool containsResourceWithProtectedType(const QSet<QUrl>& resources) const;
 
+    bool isProtectedProperty(const QUrl& prop) const;
+
     class Private;
     Private* const d;
 

@@ -1429,14 +1429,15 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
                 // Resolution of one url failed. Assign it a random blank uri
                 newResUri = SimpleResource().uri(); // HACK: improveme
 
-                res.addProperty( NIE::url(), nieUrl );
-
                 if( state == ExistingFileUrl ) {
                     res.addProperty( RDF::type(), NFO::FileDataObject() );
                     if( QFileInfo( nieUrl.toLocalFile() ).isDir() )
                         res.addProperty( RDF::type(), NFO::Folder() );
                 }
             }
+
+            res.addProperty( NIE::url(), nieUrl );
+
             resolvedNodes.insert( nieUrl, newResUri );
 
             res.setUri( newResUri );
@@ -2722,6 +2723,11 @@ bool Nepomuk::DataManagementModel::containsResourceWithProtectedType(const QSet<
     else {
         return false;
     }
+}
+
+bool Nepomuk::DataManagementModel::isProtectedProperty(const QUrl &prop) const
+{
+    return d->m_protectedProperties.contains(prop);
 }
 
 Nepomuk::ResourceWatcherManager* Nepomuk::DataManagementModel::resourceWatcherManager() const
