@@ -36,11 +36,14 @@
 #include <Soprano/LiteralValue>
 #include <Soprano/Node>
 
+#include <Nepomuk/Vocabulary/NIE>
+
 #include <KDebug>
 #include <Soprano/Graph>
 #include "resourcewatchermanager.h"
 
 using namespace Soprano::Vocabulary;
+using namespace Nepomuk::Vocabulary;
 
 
 Nepomuk::ResourceMerger::ResourceMerger(Nepomuk::DataManagementModel* model, const QString& app,
@@ -535,7 +538,9 @@ void Nepomuk::ResourceMerger::removeDuplicatesInList(QList<Soprano::Statement> *
             const QUrl oldGraph = qit[0].uri();
             qit.close();
 
-            m_duplicateStatements.insert( oldGraph, st );
+            if(!m_model->isProtectedProperty(st.predicate().uri())) {
+                m_duplicateStatements.insert( oldGraph, st );
+            }
             it.remove();
         }
     }

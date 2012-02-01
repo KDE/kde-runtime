@@ -158,6 +158,7 @@ private Q_SLOTS:
     void testStoreResources_missingBlankNode();
     void testStoreResources_graphChecks();
     void testStoreResources_objectExistsIdentification();
+    void testStoreResources_nieUrlDefinesResources();
 
     void testMergeResources();
     void testMergeResources_protectedTypes();

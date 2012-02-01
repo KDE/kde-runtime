@@ -3764,11 +3764,10 @@ void DataManagementModelTest::testStoreResources_file3()
     // The only statement that should have acquired "newApp" as the maintainer should be
     // r2 <prop:/res> <object:/custom>
 
-    query = QString::fromLatin1("select ?name where { graph ?g { %1 %2 %3 . %1 a %4. }"
-                                " ?g %5 ?app . ?app %6 ?name . }")
+    query = QString::fromLatin1("select ?name where { graph ?g { %1 %2 %3 . }"
+                                " ?g %4 ?app . ?app %5 ?name . }")
                 .arg( Soprano::Node::resourceToN3( resUri ),
-                      Soprano::Node::resourceToN3( NIE::url() ),
-                      Soprano::Node::resourceToN3( fileUrl ),
+                      Soprano::Node::resourceToN3( QUrl("prop:/res") ),
                       Soprano::Node::resourceToN3( NFO::FileDataObject() ),
                       Soprano::Node::resourceToN3( NAO::maintainedBy() ),
                       Soprano::Node::resourceToN3( NAO::identifier() ) );
@@ -3779,6 +3778,7 @@ void DataManagementModelTest::testStoreResources_file3()
         appList << it["name"].literal().toString();
 
     QCOMPARE( appList.size(), 1 );
+    QCOMPARE(appList[0], QString::fromLatin1("newApp"));
 
     //query = QString::fromLatin1("ask { )
 
@@ -5093,6 +5093,47 @@ void DataManagementModelTest::testStoreResources_objectExistsIdentification()
     QVERIFY(!haveDataInDefaultGraph());
 }
 
+
+// make sure that two resources are treated as different if their nie:url differs, even if they already exist
+void DataManagementModelTest::testStoreResources_nieUrlDefinesResources()
+{
+    // we create two resources which only differ in their nie:url - but that does make all the difference!
+    QUrl urlA( "http://www.k3b.org" );
+    QUrl urlB( "http://nepomuk.kde.org" );
+
+    const QUrl g1 = m_nrlModel->createGraph( NRL::InstanceBase() );
+    m_model->addStatement( QUrl("nepomuk:/res/A"), RDF::type(), QUrl("class:/typeB"), g1 );
+    m_model->addStatement( QUrl("nepomuk:/res/A"), NIE::url(), urlA, g1 );
+    m_model->addStatement( QUrl("nepomuk:/res/B"), RDF::type(), QUrl("class:/typeB"), g1 );
+    m_model->addStatement( QUrl("nepomuk:/res/B"), NIE::url(),urlB, g1 );
+
+
+    // create a new resource and add links to both existing ones
+    SimpleResourceGraph graph;
+    SimpleResource mainRes;
+    mainRes.addType(QUrl("class:/typeA"));
+
+    SimpleResource resA(urlA);
+    resA.addType(QUrl("class:/typeB"));
+    mainRes.addProperty(QUrl("prop:/res"), urlA);
+
+    SimpleResource resB(urlB);
+    resB.addType(QUrl("class:/typeB"));
+    mainRes.addProperty(QUrl("prop:/res"), urlB);
+
+    graph << resA << resB << mainRes;
+
+
+    // store the data
+    m_dmModel->storeResources(graph, QLatin1String("A"));
+    QVERIFY(!m_dmModel->lastError());
+
+    // verify that all is there
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { ?r a <class:/typeA> . ?r <prop:/res> <nepomuk:/res/A> . }"),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
+    QVERIFY(m_model->executeQuery(QString::fromLatin1("ask where { ?r a <class:/typeA> . ?r <prop:/res> <nepomuk:/res/B> . }"),
+                                  Soprano::Query::QueryLanguageSparql).boolValue());
+}
 
 void DataManagementModelTest::testMergeResources()
 {
