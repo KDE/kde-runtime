@@ -177,6 +177,9 @@ public:
 
     /// a set of properties that are maintained by the service and cannot be changed by clients
     QSet<QUrl> m_protectedProperties;
+
+    /// If true the creation date of graphs is ignored. This results in a lot less graphs
+    bool m_ignoreCreationDate;
 };
 
 Nepomuk::DataManagementModel::DataManagementModel(Nepomuk::ClassAndPropertyTree* tree, Soprano::Model* model, QObject *parent)
@@ -185,6 +188,7 @@ Nepomuk::DataManagementModel::DataManagementModel(Nepomuk::ClassAndPropertyTree*
 {
     d->m_classAndPropertyTree = tree;
     d->m_watchManager = new ResourceWatcherManager(this);
+    d->m_ignoreCreationDate = false;
 
     setParent(parent);
 
@@ -2144,11 +2148,40 @@ QUrl Nepomuk::DataManagementModel::createGraph(const QString& app, const QMultiH
     if(!haveGraphType) {
         graphMetaData.insert(RDF::type(), NRL::InstanceBase());
     }
-    if(!graphMetaData.contains(NAO::created())) {
+    if(!graphMetaData.contains(NAO::created()) && !d->m_ignoreCreationDate) {
         graphMetaData.insert(NAO::created(), Soprano::LiteralValue(QDateTime::currentDateTime()));
     }
     if(!graphMetaData.contains(NAO::maintainedBy()) && !app.isEmpty()) {
         graphMetaData.insert(NAO::maintainedBy(), findApplicationResource(app));
+    }
+
+    // try to find an already existing graph.
+    // Due to the creation date which is never the same this does only make sense
+    // when we ignore the creation date.
+    if(d->m_ignoreCreationDate) {
+        graphMetaData.remove(NAO::created());
+
+        // make sure all the required metadata is accounted for
+        QString query = QLatin1String("select ?g where { ");
+        for(QHash<QUrl, Soprano::Node>::const_iterator it = graphMetaData.constBegin();
+            it != graphMetaData.constEnd(); ++it) {
+            query.append(QString::fromLatin1("?g %1 %2 . ")
+                         .arg(Soprano::Node::resourceToN3(it.key()),
+                              it.value().toN3()));
+        }
+
+        // make sure the graph does not have any additional metadata which does not match
+        query.append(QString::fromLatin1("FILTER((select count(distinct ?o) where { ?g ?p ?o . FILTER(?p!=%1) . }) = %2) . ")
+                     .arg(Soprano::Node::resourceToN3(NAO::created()))
+                     .arg(graphMetaData.count()));
+
+        // we only want one graph
+        query.append(QLatin1String("} LIMIT 1"));
+
+        Soprano::QueryResultIterator it = executeQuery(query, Soprano::Query::QueryLanguageSparql);
+        if(it.next()) {
+            return it[0].uri();
+        }
     }
 
     const QUrl graph = createUri(GraphUri);
