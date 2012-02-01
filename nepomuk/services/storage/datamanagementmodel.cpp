@@ -958,7 +958,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
         //
         QSet<QUrl> excludedSubResources = resolvedResources;
         bool firstIteration = true;
-        do {
+        while(!subResources.isEmpty() && !excludedSubResources.isEmpty()) {
             Soprano::QueryResultIterator it
                     = executeQuery(QString::fromLatin1("select distinct ?r where { "
                                                        "?r2 ?p ?r ."
@@ -977,7 +977,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
             // in all subsequent queries we are only interested in links coming from the excluded sub-resources
             // rather than coming from anything but our resolved resources.
             firstIteration = false;
-        } while(!excludedSubResources.isEmpty());
+        }
     }
 
     QList<Soprano::BindingSet> graphRemovalCandidates;
