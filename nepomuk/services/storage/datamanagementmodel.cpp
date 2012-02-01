@@ -2219,15 +2219,8 @@ QUrl Nepomuk::DataManagementModel::findApplicationResource(const QString &app, b
         return it[0].uri();
     }
     else if(create) {
-        const QUrl graph = createUri(GraphUri);
-        const QUrl metadatagraph = createUri(GraphUri);
+        const QUrl graph = createGraph(QString(), QMultiHash<QUrl, Soprano::Node>());
         const QUrl uri = createUri(ResourceUri);
-
-        // graph metadata
-        addStatement( metadatagraph, NRL::coreGraphMetadataFor(), graph, metadatagraph );
-        addStatement( metadatagraph, RDF::type(), NRL::GraphMetadata(), metadatagraph );
-        addStatement( graph, RDF::type(), NRL::InstanceBase(), metadatagraph );
-        addStatement( graph, NAO::created(), Soprano::LiteralValue(QDateTime::currentDateTime()), metadatagraph );
 
         // the app itself
         addStatement( uri, RDF::type(), NAO::Agent(), graph );
