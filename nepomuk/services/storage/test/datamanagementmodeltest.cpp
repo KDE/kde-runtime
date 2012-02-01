@@ -2396,6 +2396,42 @@ void DataManagementModelTest::testRemoveDataByApplication11()
     QVERIFY(!haveDataInDefaultGraph());
 }
 
+// make sure that sub-resources to sub-resources can have backlinks which do not interfer
+void DataManagementModelTest::testRemoveDataByApplication12()
+{
+    // create our app
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+
+    // create the graph
+    QUrl mg1;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+
+
+    // create the resources: one main resource, one sub, and one sub-sub with a backlink to the sub
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/B"), g1);
+
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+    m_model->addStatement(QUrl("res:/B"), NAO::hasSubResource(), QUrl("res:/C"), g1);
+
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello worldy")), g1);
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/res"), QUrl("res:/B"), g1);
+
+
+    // delete both A and B with sub-resources
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::RemoveSubResoures, QLatin1String("A"));
+
+
+    // now all 3 resources should be gone
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/A"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/C"), Node(), Node()));
+}
+
 // make sure that weird cross sub-resource'ing is handled properly. This is very unlikely to ever happen, but still...
 void DataManagementModelTest::testRemoveDataByApplication_subResourcesOfSubResources()
 {
@@ -2440,6 +2476,66 @@ void DataManagementModelTest::testRemoveDataByApplication_subResourcesOfSubResou
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/C"), Node(), Node()));
     QVERIFY(!m_model->containsAnyStatement(QUrl("res:/D"), Node(), Node()));
+
+    QVERIFY(!haveTrailingGraphs());
+    QVERIFY(!haveDataInDefaultGraph());
+}
+
+// the same test as above except that another app created information about the resource, too
+void DataManagementModelTest::testRemoveDataByApplication_subResourcesOfSubResources2()
+{
+    // create our apps
+    QUrl appG = m_nrlModel->createGraph(NRL::InstanceBase());
+    m_model->addStatement(QUrl("app:/A"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/A"), NAO::identifier(), LiteralValue(QLatin1String("A")), appG);
+    m_model->addStatement(QUrl("app:/B"), RDF::type(), NAO::Agent(), appG);
+    m_model->addStatement(QUrl("app:/B"), NAO::identifier(), LiteralValue(QLatin1String("B")), appG);
+
+    // create the graphs
+    QUrl mg1, mg2, mg3;
+    const QUrl g1 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg1);
+    const QUrl g2 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg2);
+    const QUrl g3 = m_nrlModel->createGraph(NRL::InstanceBase(), &mg3);
+    m_model->addStatement(g1, NAO::maintainedBy(), QUrl("app:/A"), mg1);
+    m_model->addStatement(g2, NAO::maintainedBy(), QUrl("app:/B"), mg2);
+    m_model->addStatement(g3, NAO::maintainedBy(), QUrl("app:/A"), mg3);
+
+    // create the resource to delete
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world")), g1);
+
+    // add some data by app B
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/string"), LiteralValue(QLatin1String("hello world 2")), g2);
+
+    // sub-resource 1
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/B"), g1);
+    m_model->addStatement(QUrl("res:/B"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+    // sub-resource 2
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/C"), g3);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/C"), g3);
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+    // sub-resource 3 (also sub-resource to res:/C)
+    m_model->addStatement(QUrl("res:/A"), QUrl("prop:/res"), QUrl("res:/D"), g1);
+    m_model->addStatement(QUrl("res:/A"), NAO::hasSubResource(), QUrl("res:/D"), g1);
+    m_model->addStatement(QUrl("res:/C"), QUrl("prop:/res"), QUrl("res:/D"), g1);
+    m_model->addStatement(QUrl("res:/C"), NAO::hasSubResource(), QUrl("res:/D"), g1);
+    m_model->addStatement(QUrl("res:/D"), QUrl("prop:/string"), LiteralValue(QLatin1String("foobar")), g1);
+
+
+    // delete the resource
+    QBENCHMARK_ONCE
+    m_dmModel->removeDataByApplication(QList<QUrl>() << QUrl("res:/A"), Nepomuk::RemoveSubResoures, QLatin1String("A"));
+
+
+    // all sub-resources should have been removed
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/B"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/C"), Node(), Node()));
+    QVERIFY(!m_model->containsAnyStatement(QUrl("res:/D"), Node(), Node()));
+
+    // the only statements left for resA should be the one from app B and the metadata (which is only lastModified)
+    QCOMPARE(m_model->listStatements(QUrl("res:/A"), Node(), Node()).allElements().count(), 2);
 
     QVERIFY(!haveTrailingGraphs());
     QVERIFY(!haveDataInDefaultGraph());

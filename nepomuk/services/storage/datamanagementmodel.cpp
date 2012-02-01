@@ -930,10 +930,10 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // Explanation of the query:
     // The query selects all subresources of the resources in resolvedResources.
     // It then filters out the sub-resources that have properties defined by other apps which are not metadata.
-    // It then filters out the sub-resources that are related from other resources that are not the ones being deleted.
     //
     if(flags & RemoveSubResoures && !appRes.isEmpty()) {
-        QSet<QUrl> subResources = resolvedResources;
+        QSet<QUrl> subResources;
+        QSet<QUrl> currentResources = resolvedResources;
         int resCount = 0;
         do {
             resCount = resolvedResources.count();
@@ -942,22 +942,51 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
                                                        "?parent %1 ?r . "
                                                        "FILTER(?parent in (%2)) . "
                                                        "?g %3 %4 . "
-                                                       "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r ?p2 ?o2 . } . ?g2 %3 ?a2 . FILTER(?a2!=%4) . FILTER(%6) . }))) . "
-                                                       "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r2 ?p3 ?r . FILTER(%5) . } . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
+                                                       "FILTER(!bif:exists((select (1) where { graph ?g2 { ?r ?p2 ?o2 . } . ?g2 %3 ?a2 . FILTER(?a2!=%4) . FILTER(%5) . }))) . "
                                                        "}")
                                    .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
-                                        resourcesToN3(subResources).join(QLatin1String(",")),
+                                        resourcesToN3(currentResources).join(QLatin1String(",")),
                                         Soprano::Node::resourceToN3(NAO::maintainedBy()),
                                         Soprano::Node::resourceToN3(appRes),
-                                        createResourceFilter(subResources, QLatin1String("?r2")),
                                         createResourceMetadataPropertyFilter(QLatin1String("?p2"))),
                                    Soprano::Query::QueryLanguageSparql);
-            subResources.clear();
+            currentResources.clear();
             while(it.next()) {
-                subResources << it[0].uri();
+                currentResources << it[0].uri();
             }
-            resolvedResources += subResources;
+            resolvedResources += currentResources;
+            subResources += currentResources;
         } while(resCount < resolvedResources.count());
+
+        //
+        // Now subResources contains the list of all possible sub-resources to delete.
+        // We now have to remove all those which have links from the "outside", ie. resources
+        // that are not in our resolvedResources.
+        // We do this iterative until nothing changes anymore by removing the sub-resources
+        // have are linked from the "outside".
+        //
+        QSet<QUrl> excludedSubResources = resolvedResources;
+        bool firstIteration = true;
+        do {
+            Soprano::QueryResultIterator it
+                    = executeQuery(QString::fromLatin1("select distinct ?r where { "
+                                                       "?r2 ?p ?r ."
+                                                       "FILTER(%1) . "
+                                                       "FILTER(%2) . }" )
+                                   .arg(createResourceFilter(subResources, QLatin1String("?r"), false),
+                                        createResourceFilter(excludedSubResources, QLatin1String("?r2"), firstIteration)),
+                                   Soprano::Query::QueryLanguageSparql);
+            excludedSubResources.clear();
+            while(it.next()) {
+                excludedSubResources << it[0].uri();
+            }
+            subResources -= excludedSubResources;
+            resolvedResources -= excludedSubResources;
+
+            // in all subsequent queries we are only interested in links coming from the excluded sub-resources
+            // rather than coming from anything but our resolved resources.
+            firstIteration = false;
+        } while(!excludedSubResources.isEmpty());
     }
 
     QList<Soprano::BindingSet> graphRemovalCandidates;
