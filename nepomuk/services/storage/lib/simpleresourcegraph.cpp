@@ -170,6 +170,11 @@ Nepomuk::SimpleResource Nepomuk::SimpleResourceGraph::operator[](const QUrl &uri
     return d->resources[uri];
 }
 
+Nepomuk::SimpleResource& Nepomuk::SimpleResourceGraph::operator[](const QUrl &uri)
+{
+    return d->resources[uri];
+}
+
 QSet<Nepomuk::SimpleResource> Nepomuk::SimpleResourceGraph::toSet() const
 {
     return QSet<SimpleResource>::fromList(toList());

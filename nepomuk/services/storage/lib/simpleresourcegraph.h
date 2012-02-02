@@ -89,6 +89,8 @@ public:
 
     SimpleResource operator[](const QUrl& uri) const;
 
+    SimpleResource& operator[](const QUrl& uri);
+
     /**
      * Get a list of the URIs of all resources in this graph.
      * The result is equivalent to:
