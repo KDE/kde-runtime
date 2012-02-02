@@ -17,8 +17,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2010-02-11</date>
-<releaseinfo>1.0 &kde; 4.4</releaseinfo>
+<date>2011-12-20</date>
+<releaseinfo>1.0 &kde; 4.8</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -43,7 +43,7 @@ see a list of <quote>areas</quote>, that can be disabled or enabled. A
 something in the debug output only if the area is enabled.</para>
 
 <note><para>Note that kWarning, kError and kFatal always appear,
-they are <emphasis>NOT</emphasis> controlled by this setting.  </para></note>
+they are <emphasis>NOT</emphasis> controlled by this setting. </para></note>
 
 <para>Enter a matching string into the <guilabel>Search</guilabel> 
 box at the top of the list, this allows you to filter the areas 
@@ -65,7 +65,8 @@ define separately what should be done with the diagnostic messages of
 that level, and the same for each debug area.</para>
 
 <para>In full mode, first you should select the debug area you are
-interested in from the drop down box at the top.</para>
+interested in from the list at the left of the dialog using the 
+search box at the top of the list.</para>
 
 <para>You may independently set the output for various types of
 messages:</para>
