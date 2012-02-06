@@ -30,6 +30,7 @@
 
 #include <QtCore/QVariant>
 #include <QtCore/QHash>
+#include <QThreadStorage>
 
 #include <KDebug>
 
@@ -42,14 +43,8 @@ Nepomuk::GenericDataManagementJob::GenericDataManagementJob(const char *methodNa
                                                             QGenericArgument val5)
     : KJob(0)
 {
-    // DBus types necessary for storeResources
-    DBus::registerDBusTypes();
-
-    org::kde::nepomuk::DataManagement dms(QLatin1String(DMS_DBUS_SERVICE),
-                                          QLatin1String("/datamanagement"),
-                                          KDBusConnectionPool::threadConnection());
     QDBusPendingReply<> reply;
-    QMetaObject::invokeMethod(&dms,
+    QMetaObject::invokeMethod(Nepomuk::dataManagementDBusInterface(),
                               methodName,
                               Qt::DirectConnection,
                               Q_RETURN_ARG(QDBusPendingReply<> , reply),
@@ -84,6 +79,22 @@ void Nepomuk::GenericDataManagementJob::slotDBusCallFinished(QDBusPendingCallWat
     }
     delete watcher;
     emitResult();
+}
+
+QThreadStorage<OrgKdeNepomukDataManagementInterface *> s_perThreadDms;
+
+OrgKdeNepomukDataManagementInterface* Nepomuk::dataManagementDBusInterface()
+{
+  if (!s_perThreadDms.hasLocalData()) {
+    // DBus types necessary for storeResources
+    DBus::registerDBusTypes();
+
+    s_perThreadDms.setLocalData(
+      new org::kde::nepomuk::DataManagement(QLatin1String(DMS_DBUS_SERVICE),
+                                            QLatin1String("/datamanagement"),
+                                            KDBusConnectionPool::threadConnection()));
+  }
+  return s_perThreadDms.localData();
 }
 
 #include "genericdatamanagementjob_p.moc"
