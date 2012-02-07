@@ -51,6 +51,10 @@ install(
   TARGETS nepomukfileindexer
   DESTINATION ${PLUGIN_INSTALL_DIR})
 
+install(
+  FILES nepomukstrigiservice-migrate.upd
+  DESTINATION ${KCONF_UPDATE_INSTALL_DIR})
+
 add_subdirectory(indexer)
 add_subdirectory(test)
 # -----------------------------
