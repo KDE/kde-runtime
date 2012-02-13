@@ -4,7 +4,7 @@ Icon=face-smile
 Type=Service
 X-DocPath=kcontrol/emoticons/index.html
 
-X-KDE-ServiceTypes=KCModule,KCModuleInit
+X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_emoticons
 X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=application-appearance
