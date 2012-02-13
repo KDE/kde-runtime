@@ -93,14 +93,13 @@ namespace Nepomuk {
              */
             int getResultCount() const { return m_resultCount; }
 
-            void addResults( const QList<Result>& result );
-
-            void listingFinished();
-
             /// called by the CountQueryRunnable
             void countQueryFinished( int count );
 
         public Q_SLOTS:
+            void addResults( const QList<Nepomuk::Query::Result>& result );
+            void listingFinished();
+
             void update();
 
         Q_SIGNALS:
