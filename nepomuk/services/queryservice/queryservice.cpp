@@ -35,6 +35,7 @@
 #include <Nepomuk/Types/Property>
 #include <Nepomuk/Query/Query>
 #include <Nepomuk/Query/QueryParser>
+#include <Nepomuk/Query/Result>
 
 Q_DECLARE_METATYPE( QList<QUrl> )
 
@@ -55,6 +56,7 @@ Nepomuk::Query::QueryService::QueryService( QObject* parent, const QVariantList&
 
     // register type used to communicate removeEntries between threads
     qRegisterMetaType<QList<QUrl> >();
+    qRegisterMetaType<QList<Nepomuk::Query::Result> >();
 }
 
 

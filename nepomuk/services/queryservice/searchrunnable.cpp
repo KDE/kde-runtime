@@ -95,7 +95,9 @@ void Nepomuk::Query::SearchRunnable::run()
 
         lock.relock();
         if( m_folder ) {
-            m_folder->addResults( QList<Result>() << result );
+            QList<Nepomuk::Query::Result> results;
+            results << result;
+            QMetaObject::invokeMethod( m_folder, "addResults", Qt::QueuedConnection, Q_ARG( QList<Nepomuk::Query::Result>, results ) );
         }
         lock.unlock();
     }
@@ -106,7 +108,7 @@ void Nepomuk::Query::SearchRunnable::run()
 
     lock.relock();
     if( m_folder ) {
-        m_folder->listingFinished();
+        QMetaObject::invokeMethod( m_folder, "listingFinished", Qt::QueuedConnection );
     }
 }
 
