@@ -725,9 +725,9 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
             if( newCardinality > maxCardinality ) {
                 // Special handling for max Cardinality == 1
                 if( maxCardinality == 1 ) {
-                    // If the difference is 1, then that is okay, as the OverwriteProperties flag
-                    // has been set
-                    if( (m_flags & OverwriteProperties) && (newCardinality-maxCardinality) == 1 ) {
+                    // If the final cardinality is right, then that is okay,
+                    // as the OverwriteProperties flag has been set
+                    if( (m_flags & OverwriteProperties) && objectValues.size() == 1 ) {
                         continue;
                     }
                 }

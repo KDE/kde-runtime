@@ -144,6 +144,7 @@ private Q_SLOTS:
     void testStoreResources_duplicates();
     void testStoreResources_duplicates2();
     void testStoreResources_overwriteProperties();
+    void testStoreResources_overwriteProperties_invalidCard();
     void testStoreResources_correctDomainInStore();
     void testStoreResources_correctDomainInStore2();
     void testStoreResources_correctRangeInStore();
