@@ -4699,6 +4699,38 @@ void DataManagementModelTest::testStoreResources_overwriteProperties()
     QVERIFY(!haveDataInDefaultGraph());
 }
 
+void DataManagementModelTest::testStoreResources_overwriteProperties_invalidCard()
+{
+    SimpleResource contact;
+    contact.addType( NCO::Contact() );
+    contact.addProperty( NCO::fullname(), QLatin1String("Spiderman") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << contact, QLatin1String("app") );
+    QVERIFY( !m_dmModel->lastError() );
+
+    QList< Statement > stList = m_model->listStatements( Node(), RDF::type(), NCO::Contact() ).allStatements();
+    QCOMPARE( stList.size(), 1 );
+
+    const QUrl resUri = stList.first().subject().uri();
+    const QUrl graphUri = stList.first().context().uri();
+
+    m_model->addStatement( resUri, NCO::fullname(), Soprano::LiteralValue("Peter Parker"), graphUri );
+
+    stList = m_model->listStatements( resUri, NCO::fullname(), Soprano::Node() ).allStatements();
+    QVERIFY( stList.size() == 2 );
+
+    SimpleResource contact2;
+    contact2.setUri( resUri );
+    contact2.addType( NCO::Contact() );
+    contact2.setProperty( NCO::fullname(), QLatin1String("Mary Jane") );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << contact2, QLatin1String("app"), IdentifyNew, OverwriteProperties );
+    QVERIFY( !m_dmModel->lastError() );
+
+    stList = m_model->listStatements( resUri, NCO::fullname(), Soprano::Node() ).allStatements();
+    QVERIFY( stList.size() == 1 );
+}
+
 // make sure that already existing resource types are taken into account for domain checks
 void DataManagementModelTest::testStoreResources_correctDomainInStore()
 {
