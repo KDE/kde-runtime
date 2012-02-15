@@ -196,6 +196,8 @@ bool Nepomuk::Sync::ResourceIdentifier::runIdentification(const KUrl& uri)
             continue;
         }
 
+        identifyingProperties << Soprano::Node::resourceToN3( prop );
+
         Soprano::Node object = it.value();
         if( object.isBlank()
             || ( object.isResource() && object.uri().scheme() == QLatin1String("nepomuk") ) ) {
@@ -209,11 +211,8 @@ bool Nepomuk::Sync::ResourceIdentifier::runIdentification(const KUrl& uri)
             object = mappedUri( objectUri );
         }
 
-        identifyingProperties << Soprano::Node::resourceToN3( prop );
         identifyingPropertiesHash.insert(prop, object);
     }
-
-    Q_ASSERT( identifyingProperties.size() == identifyingPropertiesHash.size() );
 
     if( identifyingProperties.isEmpty() ) {
         //kDebug() << "No identification properties found!";
