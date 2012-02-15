@@ -214,7 +214,7 @@ bool Nepomuk::Sync::ResourceIdentifier::runIdentification(const KUrl& uri)
         identifyingPropertiesHash.insert(prop, object);
     }
 
-    if( identifyingProperties.isEmpty() ) {
+    if( identifyingPropertiesHash.isEmpty() ) {
         //kDebug() << "No identification properties found!";
         return false;
     }
