@@ -61,6 +61,11 @@ namespace {
         ".histfile.*",
         ".xsession-errors*",
 
+        // Compiled files
+        "*.class", // Java
+        "*.pyc",   // Python
+        "*.elc",   // Emacs Lisp
+
         // end of list
         0
     };
