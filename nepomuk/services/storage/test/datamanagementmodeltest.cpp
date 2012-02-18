@@ -3857,13 +3857,21 @@ void DataManagementModelTest::testStoreResources_folder()
 
 void DataManagementModelTest::testStoreResources_fileExists()
 {
-    SimpleResource res(QUrl("file:///a/b/v/c/c"));
+    QUrl fileUrl("file:///a/b/v/c/c");
+    SimpleResource res( fileUrl );
     res.addType( NMM::MusicPiece() );
     res.addProperty( NAO::numericRating(), 10 );
 
     m_dmModel->storeResources( SimpleResourceGraph() << res, QLatin1String("app") );
 
     // Should give an error - The file does not exist ( probably )
+    QVERIFY( m_dmModel->lastError() );
+
+    SimpleResource file;
+    file.addType( NFO::FileDataObject() );
+    file.setProperty( NIE::url(), fileUrl );
+
+    m_dmModel->storeResources( SimpleResourceGraph() << file, QLatin1String("app") );
     QVERIFY( m_dmModel->lastError() );
 
     QVERIFY(!haveTrailingGraphs());

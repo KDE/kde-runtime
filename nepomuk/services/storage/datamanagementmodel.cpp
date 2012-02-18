@@ -1538,57 +1538,67 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
                 }
             }
 
-            else if( object.isResource() && it.key() != NIE::url() ) {
-
-                const UriState state = uriState(object.uri());
-                if(state==NepomukUri || state == OntologyUri) {
-                    continue;
-                }
-                else if(state == NonExistingFileUrl) {
-                    setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(object.uri().toLocalFile()),
-                             Soprano::Error::ErrorInvalidArgument);
-                    return QHash<QUrl, QUrl>();
-                }
-                else if(state == ExistingFileUrl || state==SupportedUrl) {
-                    const QUrl nieUrl = object.uri();
-                    // Need to resolve it
-                    QHash< QUrl, QUrl >::const_iterator findIter = resolvedNodes.constFind( nieUrl );
-                    if( findIter != resolvedNodes.constEnd() ) {
-                        it.setValue( convertIfBlankUri(findIter.value()) );
+            else if( object.isResource() ) {
+                if( it.key() != NIE::url() ) {
+                    const UriState state = uriState(object.uri());
+                    if(state==NepomukUri || state == OntologyUri) {
+                        continue;
                     }
-                    else {
-                        Sync::SyncResource newRes;
+                    else if(state == NonExistingFileUrl) {
+                        setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(object.uri().toLocalFile()),
+                                Soprano::Error::ErrorInvalidArgument);
+                        return QHash<QUrl, QUrl>();
+                    }
+                    else if(state == ExistingFileUrl || state==SupportedUrl) {
+                        const QUrl nieUrl = object.uri();
+                        // Need to resolve it
+                        QHash< QUrl, QUrl >::const_iterator findIter = resolvedNodes.constFind( nieUrl );
+                        if( findIter != resolvedNodes.constEnd() ) {
+                            it.setValue( convertIfBlankUri(findIter.value()) );
+                        }
+                        else {
+                            Sync::SyncResource newRes;
 
-                        // It doesn't exist, create it
-                        QUrl resolvedUri = resolveUrl( nieUrl );
-                        if( resolvedUri.isEmpty() ) {
-                            resolvedUri = SimpleResource().uri(); // HACK: improveme
+                            // It doesn't exist, create it
+                            QUrl resolvedUri = resolveUrl( nieUrl );
+                            if( resolvedUri.isEmpty() ) {
+                                resolvedUri = SimpleResource().uri(); // HACK: improveme
 
-                            newRes.insert( NIE::url(), nieUrl );
-                            if( state == ExistingFileUrl ) {
-                                newRes.insert( RDF::type(), NFO::FileDataObject() );
-                                if( QFileInfo( nieUrl.toLocalFile() ).isDir() )
-                                    newRes.insert( RDF::type(), NFO::Folder() );
+                                newRes.insert( NIE::url(), nieUrl );
+                                if( state == ExistingFileUrl ) {
+                                    newRes.insert( RDF::type(), NFO::FileDataObject() );
+                                    if( QFileInfo( nieUrl.toLocalFile() ).isDir() )
+                                        newRes.insert( RDF::type(), NFO::Folder() );
+                                }
+
+                                newRes.setUri( resolvedUri );
+                                syncResources << newRes;
                             }
 
-                            newRes.setUri( resolvedUri );
-                            syncResources << newRes;
+                            resolvedNodes.insert( nieUrl, resolvedUri );
+                            it.setValue( convertIfBlankUri(resolvedUri) );
                         }
+                    }
+                    else if(state == OtherUri) {
+                        // We use resolveUrl to check if the otherUri exists. If it doesn't exist,
+                        // then resolveUrl which set the last error
+                        const QUrl legacyUri = resolveUrl( object.uri() );
+                        if( lastError() )
+                            return QHash<QUrl, QUrl>();
 
-                        resolvedNodes.insert( nieUrl, resolvedUri );
-                        it.setValue( convertIfBlankUri(resolvedUri) );
+                        // It apparently exists, so we must support it
                     }
                 }
-                else if(state == OtherUri) {
-                    // We use resolveUrl to check if the otherUri exists. If it doesn't exist,
-                    // then resolveUrl which set the last error
-                    const QUrl legacyUri = resolveUrl( object.uri() );
-                    if( lastError() )
+                else {
+                    // Check if the file exists
+                    QUrl url = object.uri();
+                    if( url.scheme() == QLatin1String("file") && !QFile::exists(url.toLocalFile()) ) {
+                        setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(object.uri().toLocalFile()),
+                                Soprano::Error::ErrorInvalidArgument);
                         return QHash<QUrl, QUrl>();
-
-                    // It apparently exists, so we must support it
+                    }
                 }
-            }
+            } // if object.isResurce
         } // while( it.hasNext() )
 
         // The resource is now ready.
