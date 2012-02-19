@@ -969,6 +969,7 @@ inline static void insertGenericProperties(const PS::DeviceInfo &dev, QHash<QByt
     p.insert("initialPreference", dev.initialPreference());
     p.insert("isAdvanced", dev.isAdvanced());
     p.insert("icon", dev.icon());
+    p.insert("discovererIcon", "kde");
 }
 
 inline static void insertDALProperty(const PS::DeviceInfo &dev, QHash<QByteArray, QVariant> &p)
