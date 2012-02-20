@@ -54,6 +54,7 @@
 
 #include <Nepomuk/Vocabulary/NIE>
 #include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk/Vocabulary/PIMO>
 
 #include <KDebug>
 #include <KService>
@@ -199,6 +200,13 @@ Nepomuk::DataManagementModel::DataManagementModel(Nepomuk::ClassAndPropertyTree*
     d->m_protectedProperties.insert(NAO::lastModified());
     d->m_protectedProperties.insert(NAO::userVisible());
     d->m_protectedProperties.insert(NIE::url());
+
+    // Specially add <nepomuk:/me> cause the clients cannot
+    // TODO: Add the fullname, email and other details
+    if( !containsAnyStatement( QUrl("nepomuk:/me"), Soprano::Node(), Soprano::Node() ) ) {
+        const QUrl graph = createGraph();
+        addStatement( QUrl("nepomuk:/me"), RDF::type(), PIMO::Person(), graph );
+    }
 }
 
 Nepomuk::DataManagementModel::~DataManagementModel()
