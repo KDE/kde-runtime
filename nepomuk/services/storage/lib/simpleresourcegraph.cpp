@@ -172,7 +172,14 @@ Nepomuk::SimpleResource Nepomuk::SimpleResourceGraph::operator[](const QUrl &uri
 
 Nepomuk::SimpleResource& Nepomuk::SimpleResourceGraph::operator[](const QUrl &uri)
 {
-    return d->resources[uri];
+    QHash<QUrl, SimpleResource>::iterator it = d->resources.find(uri);
+    if( it == d->resources.end() ) {
+        // One expects the uri to be set if one uses operator[]
+        SimpleResource res( uri );
+        it = d->resources.insert( uri, res );
+    }
+
+    return it.value();
 }
 
 QSet<Nepomuk::SimpleResource> Nepomuk::SimpleResourceGraph::toSet() const
