@@ -943,7 +943,7 @@ void Nepomuk::DataManagementModel::removeDataByApplication(const QList<QUrl> &re
     // The query selects all subresources of the resources in resolvedResources.
     // It then filters out the sub-resources that have properties defined by other apps which are not metadata.
     //
-    if(flags & RemoveSubResoures && !appRes.isEmpty()) {
+    if(!appRes.isEmpty()) {
         QSet<QUrl> subResources;
         QSet<QUrl> currentResources = resolvedResources;
         int resCount = 0;
@@ -2806,28 +2806,26 @@ void Nepomuk::DataManagementModel::removeAllResources(const QSet<QUrl> &resource
     // The query selects all subresources of the resources in resolvedResources.
     // It then filters out the sub-resources that are related from other resources that are not the ones being deleted.
     //
-    if(flags & RemoveSubResoures) {
-        QSet<QUrl> subResources = resolvedResources;
-        int resCount = 0;
-        do {
-            resCount = resolvedResources.count();
-            Soprano::QueryResultIterator it
-                    = executeQuery(QString::fromLatin1("select ?r where { ?r ?p ?o . "
-                                                       "?parent %1 ?r . "
-                                                       "FILTER(?parent in (%2)) . "
-                                                       "FILTER(!bif:exists((select (1) where { ?r2 ?p3 ?r . FILTER(%3) . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
-                                                       "}")
-                                   .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
-                                        resourcesToN3(subResources).join(QLatin1String(",")),
-                                        createResourceFilter(resolvedResources, QLatin1String("?r2"))),
-                                   Soprano::Query::QueryLanguageSparql);
-            subResources.clear();
-            while(it.next()) {
-                subResources << it[0].uri();
-            }
-            resolvedResources += subResources;
-        } while(resCount < resolvedResources.count());
-    }
+    QSet<QUrl> subResources = resolvedResources;
+    int resCount = 0;
+    do {
+        resCount = resolvedResources.count();
+        Soprano::QueryResultIterator it
+                = executeQuery(QString::fromLatin1("select ?r where { ?r ?p ?o . "
+                                                   "?parent %1 ?r . "
+                                                   "FILTER(?parent in (%2)) . "
+                                                   "FILTER(!bif:exists((select (1) where { ?r2 ?p3 ?r . FILTER(%3) . FILTER(!bif:exists((select (1) where { ?x %1 ?r2 . FILTER(?x in (%2)) . }))) . }))) . "
+                                                   "}")
+                               .arg(Soprano::Node::resourceToN3(NAO::hasSubResource()),
+                                    resourcesToN3(subResources).join(QLatin1String(",")),
+                                    createResourceFilter(resolvedResources, QLatin1String("?r2"))),
+                               Soprano::Query::QueryLanguageSparql);
+        subResources.clear();
+        while(it.next()) {
+            subResources << it[0].uri();
+        }
+        resolvedResources += subResources;
+    } while(resCount < resolvedResources.count());
 
 
     // get the graphs we need to check with removeTrailingGraphs later on
