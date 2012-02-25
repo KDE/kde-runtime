@@ -50,7 +50,7 @@ public:
     RemovableMediaCache(QObject *parent = 0);
     ~RemovableMediaCache();
 
-    class Entry {
+    class NEPOMUKCOMMON_EXPORT Entry {
     public:
         Entry();
         Entry(const Solid::Device& device);
