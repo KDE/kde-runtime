@@ -114,6 +114,8 @@ private:
 
     class StatementIteratorBackend;
     class QueryResultIteratorBackend;
+
+    friend class RemovableMediaModelTest;
 };
 }
 
