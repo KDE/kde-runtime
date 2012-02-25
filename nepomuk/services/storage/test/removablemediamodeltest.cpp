@@ -21,9 +21,7 @@
 
 #include "removablemediamodeltest.h"
 
-#define private public
 #include "../removablemediamodel.h"
-#undef private
 
 #include <QtTest>
 #include "qtest_kde.h"
