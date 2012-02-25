@@ -51,13 +51,13 @@ namespace Nepomuk {
          *
          * \author Vishesh Handa <handa.vish@gmail.com>
          */
-        class NEPOMUKSYNC_EXPORT SyncResource : public QMultiHash<KUrl, Soprano::Node>
+        class SyncResource : public QMultiHash<KUrl, Soprano::Node>
         {
         public :
-            SyncResource();
-            SyncResource( const KUrl & uri );
-            SyncResource( const SyncResource & rhs );
-            virtual ~SyncResource();
+            NEPOMUKSYNC_EXPORT SyncResource();
+            NEPOMUKSYNC_EXPORT SyncResource( const KUrl & uri );
+            NEPOMUKSYNC_EXPORT SyncResource( const SyncResource & rhs );
+            NEPOMUKSYNC_EXPORT virtual ~SyncResource();
 
             /**
              * It uses the the first element's subject as the uri and ignores all further subjects.
@@ -65,32 +65,32 @@ namespace Nepomuk {
              */
             static SyncResource fromStatementList(const QList<Soprano::Statement> & list);
 
-            QList<Soprano::Statement> toStatementList() const;
+            NEPOMUKSYNC_EXPORT QList<Soprano::Statement> toStatementList() const;
 
-            bool isFileDataObject() const;
-            bool isFolder() const;
-            KUrl nieUrl() const;
+            NEPOMUKSYNC_EXPORT bool isFileDataObject() const;
+            NEPOMUKSYNC_EXPORT bool isFolder() const;
+            NEPOMUKSYNC_EXPORT KUrl nieUrl() const;
 
-            KUrl uri() const;
+            NEPOMUKSYNC_EXPORT KUrl uri() const;
 
             /**
              * If \p node is resource node the uri is set to the node's uri
              * Otherwise if \p node is a blank node then the uri
              * is set to its identifier
              */
-            void setUri( const Soprano::Node & node );
+            NEPOMUKSYNC_EXPORT void setUri( const Soprano::Node & node );
 
-            QList<Soprano::Node> property( const KUrl & url ) const;
+            NEPOMUKSYNC_EXPORT QList<Soprano::Node> property( const KUrl & url ) const;
 
             /**
              * Removes all the statements whose object is \p uri
              */
-            void removeObject( const KUrl & uri );
+            NEPOMUKSYNC_EXPORT void removeObject( const KUrl & uri );
 
-            SyncResource& operator=( const SyncResource & rhs );
-            bool operator==( const SyncResource & res ) const;
+            NEPOMUKSYNC_EXPORT SyncResource& operator=( const SyncResource & rhs );
+            NEPOMUKSYNC_EXPORT bool operator==( const SyncResource & res ) const;
 
-            bool isValid() const;
+            NEPOMUKSYNC_EXPORT bool isValid() const;
         private:
             class Private;
             QSharedDataPointer<Private> d;
