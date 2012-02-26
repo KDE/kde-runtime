@@ -20,8 +20,13 @@
 */
 
 #include "removablemediamodeltest.h"
-
+#ifdef __GNUC__
+#define private public
+#endif
 #include "../removablemediamodel.h"
+#ifdef __GNUC__
+#undef private
+#endif
 
 #include <QtTest>
 #include "qtest_kde.h"
