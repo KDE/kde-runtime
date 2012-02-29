@@ -61,6 +61,8 @@ namespace Nepomuk {
         void slotRestoreBackup();
 
     private:
+        void setFileIndexerStatusText( const QString& text, bool elide );
+
         QRadioButton* buttonForQuery( const Query::Query& query ) const;
         Nepomuk::Query::Query queryForButton( QAbstractButton* button ) const;
 

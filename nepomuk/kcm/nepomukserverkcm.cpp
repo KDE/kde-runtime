@@ -173,8 +173,7 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
                  this, SLOT( changed() ) );
         connect( m_sliderMemoryUsage, SIGNAL( valueChanged(int) ),
                  this, SLOT( changed() ) );
-        connect( m_comboRemovableMediaHandling, SIGNAL( activated(int)
-                                                        ),
+        connect( m_comboRemovableMediaHandling, SIGNAL( activated(int) ),
                  this, SLOT( changed() ) );
         connect( m_spinMaxResults, SIGNAL( valueChanged( int ) ),
                  this, SLOT( changed() ) );
@@ -421,28 +420,38 @@ void Nepomuk::ServerConfigModule::updateNepomukServerStatus()
 }
 
 
+void Nepomuk::ServerConfigModule::setFileIndexerStatusText( const QString& text, bool elide )
+{
+    m_labelFileIndexerStatus->setWordWrap( !elide );
+    m_labelFileIndexerStatus->setTextElideMode( elide ? Qt::ElideMiddle : Qt::ElideNone );
+    m_labelFileIndexerStatus->setText( text );
+}
+
+
 void Nepomuk::ServerConfigModule::updateFileIndexerStatus()
 {
     if ( QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.nepomuk.services.nepomukfileindexer" ) ) {
-        if ( org::kde::nepomuk::ServiceControl( "org.kde.nepomuk.services.nepomukfileindexer", "/servicecontrol", QDBusConnection::sessionBus() ).isInitialized() ) {
+        if ( org::kde::nepomuk::ServiceControl( "org.kde.nepomuk.services.nepomukfileindexer", "/servicecontrol",
+                                                 QDBusConnection::sessionBus() ).isInitialized() ) {
             QString status = m_fileIndexerInterface->userStatusString();
             if ( status.isEmpty() ) {
-                m_labelFileIndexerStatus->setText( i18nc( "@info:status %1 is an error message returned by a dbus interface.",
-                                                         "Failed to contact File Indexer service (%1)",
-                                                         m_fileIndexerInterface->lastError().message() ) );
+                setFileIndexerStatusText( i18nc( "@info:status %1 is an error message returned by a dbus interface.",
+                                                 "Failed to contact File Indexer service (%1)",
+                                                 m_fileIndexerInterface->lastError().message() ), false );
             }
             else {
                 m_failedToInitialize = false;
-                m_labelFileIndexerStatus->setText( status );
+                setFileIndexerStatusText( status, true );
             }
         }
         else {
             m_failedToInitialize = true;
-            m_labelFileIndexerStatus->setText( i18nc( "@info:status", "File indexing service failed to initialize, most likely due to an installation problem." ) );
+            setFileIndexerStatusText( i18nc( "@info:status", "File indexing service failed to initialize, "
+                                             "most likely due to an installation problem." ), false );
         }
     }
     else if ( !m_failedToInitialize ) {
-        m_labelFileIndexerStatus->setText( i18nc( "@info:status", "File indexing service not running." ) );
+        setFileIndexerStatusText( i18nc( "@info:status", "File indexing service not running." ), false );
     }
 }
 
