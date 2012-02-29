@@ -51,14 +51,13 @@ static const char columns[] = "bug_severity,priority,bug_status,product,short_de
 
 //Bugzilla URLs
 static const char loginUrl[] = "index.cgi";
-static const char searchUrl[] = "buglist.cgi?query_format=advanced"
-                            "&product=%1&long_desc_type=allwordssubstr&"
-                            "long_desc=%2&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_"
-                            "type=allwords&keywords=&emailtype1=substring&email1=&emailtype2=substr"
-                            "ing&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=%3&chfieldto="
-                            "%4&chfield=[Bug+creation]&chfieldvalue=&cmdtype=doit&field0-0-0=noop"
-                            "&type0-0-0=noop&value0-0-0=&bug_severity=%5&order=Importance"
-                            "&columnlist=%6&ctype=csv";
+static const char searchUrl[] =
+        "buglist.cgi?query_format=advanced&order=Importance&ctype=csv"
+        "&product=%1"
+        "&long_desc_type=allwordssubstr&long_desc=%2"
+        "&chfieldfrom=%3&chfieldto=%4&chfield=[Bug+creation]"
+        "&bug_severity=%5"
+        "&columnlist=%6";
 // short_desc, product, long_desc(possible backtraces lines), searchFrom, searchTo, severity, columnList
 static const char showBugUrl[] = "show_bug.cgi?id=%1";
 static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
