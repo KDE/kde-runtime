@@ -24,6 +24,7 @@
 
 #include "bugzillalib.h"
 
+#include "drkonqi_globals.h"
 #include "findconfigdatajob.h"
 
 #include <QtCore/QTextStream>
@@ -44,7 +45,7 @@
 #include <KRandom>
 #include <KDebug>
 
-static const char bugtrackerBKOBaseUrl[] = "https://bugs.kde.org/";
+static const char bugtrackerBKOBaseUrl[] = KDE_BUGZILLA_URL;
 
 static const char columns[] = "bug_severity,priority,bug_status,product,short_desc,resolution";
 

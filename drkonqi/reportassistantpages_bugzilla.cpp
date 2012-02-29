@@ -55,7 +55,7 @@ static const char kWalletEntryName[] = "drkonqi_bugzilla";
 static const char kWalletEntryUsername[] = "username";
 static const char kWalletEntryPassword[] = "password";
 
-static const char konquerorKWalletEntryName[] = "https://bugs.kde.org/index.cgi#login";
+static const char konquerorKWalletEntryName[] = KDE_BUGZILLA_URL "index.cgi#login";
 static const char konquerorKWalletEntryUsername[] = "Bugzilla_login";
 static const char konquerorKWalletEntryPassword[] = "Bugzilla_password";
 
