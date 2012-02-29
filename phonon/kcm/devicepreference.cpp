@@ -864,7 +864,10 @@ void DevicePreference::on_testPlaybackButton_toggled(bool down)
             const Phonon::AudioOutputDeviceModel *model = static_cast<const Phonon::AudioOutputDeviceModel *>(idx.model());
             const Phonon::AudioOutputDevice &device = model->modelData(idx);
             m_audioOutput = new Phonon::AudioOutput(this);
-            m_audioOutput->setOutputDevice(device);
+            if (!m_audioOutput->setOutputDevice(device)) {
+                KMessageBox::error(this, i18n("Failed to set the selected audio output device"));
+                break;
+            }
 
             // Just to be very sure that nothing messes our test sound up
             m_audioOutput->setVolume(1.0);
