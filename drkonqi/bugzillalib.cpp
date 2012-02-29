@@ -54,7 +54,7 @@ static const char loginUrl[] = "index.cgi";
 static const char searchUrl[] =
         "buglist.cgi?query_format=advanced&order=Importance&ctype=csv"
         "&product=%1"
-        "&long_desc_type=allwordssubstr&long_desc=%2"
+        "&longdesc_type=allwordssubstr&longdesc=%2"
         "&chfieldfrom=%3&chfieldto=%4&chfield=[Bug+creation]"
         "&bug_severity=%5"
         "&columnlist=%6";
