@@ -226,9 +226,19 @@ void DeviceInfo::syncWithCache(const KSharedConfigPtr &config)
     cGroup.writeEntry("isAdvanced", m_isAdvanced);
     cGroup.writeEntry("deviceNumber", m_key.deviceNumber);
     cGroup.writeEntry("deleted", false);
-    // hack: only internal soundcards should get the icon audio-card. All others, we assume, are
+
+    bool hotpluggable = false;
+
+    // HACK #1: only internal soundcards should get the icon audio-card. All others, we assume, are
     // hotpluggable
-    cGroup.writeEntry("hotpluggable", m_icon != QLatin1String("audio-card"));
+    hotpluggable |= m_icon != QLatin1String("audio-card");
+
+    // HACK #2: Solid currently offers audio-card icon for some hotpluggable stuff, so #1 is unreliable
+    hotpluggable |= (bool) m_cardName.contains("usb", Qt::CaseInsensitive);
+    hotpluggable |= (bool) m_cardName.contains("headset", Qt::CaseInsensitive);
+    hotpluggable |= (bool) m_cardName.contains("headphone", Qt::CaseInsensitive);
+
+    cGroup.writeEntry("hotpluggable", hotpluggable);
 }
 
 } // namespace PS
