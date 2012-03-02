@@ -26,6 +26,11 @@ qt4_add_dbus_interface(datamanagement_SRC
 kde4_add_library(nepomukdatamanagement SHARED
   ${datamanagement_SRC})
 
+set_target_properties(nepomukdatamanagement
+  PROPERTIES
+  VERSION ${GENERIC_LIB_VERSION}
+  SOVERSION ${GENERIC_LIB_SOVERSION})
+
 target_link_libraries(nepomukdatamanagement
   ${QT_QTCORE_LIBRARY}
   ${QT_QTDBUS_LIBRARY}
