@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2011 Vishesh Handa <handa.vish@gmail.com>
-    Copyright (C) 2011 Sebastian Trueg <trueg@kde.org>
+    Copyright (C) 2011-2012 Sebastian Trueg <trueg@kde.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,35 +37,41 @@ namespace Nepomuk {
         Q_CLASSINFO( "D-Bus Interface", "org.kde.nepomuk.ResourceWatcherConnection" )
 
     public:
-        ResourceWatcherConnection( ResourceWatcherManager* parent, bool hasProperties );
+        ResourceWatcherConnection( ResourceWatcherManager* parent );
         ~ResourceWatcherConnection();
 
     signals:
         Q_SCRIPTABLE void resourceCreated( const QString & uri, const QStringList& types );
         Q_SCRIPTABLE void resourceRemoved( const QString & uri, const QStringList& types );
-        Q_SCRIPTABLE void resourceTypeAdded( const QString & resUri, const QString & type );
-        Q_SCRIPTABLE void resourceTypeRemoved( const QString & resUri, const QString & type );
+        Q_SCRIPTABLE void resourceTypesAdded( const QString & resUri, const QStringList & type );
+        Q_SCRIPTABLE void resourceTypesRemoved( const QString & resUri, const QStringList & type );
         Q_SCRIPTABLE void propertyAdded( const QString & resource,
                                          const QString & property,
-                                         const QDBusVariant & value );
+                                         const QVariantList & value );
         Q_SCRIPTABLE void propertyRemoved( const QString & resource,
                                            const QString & property,
                                            const QVariantList & value );
         Q_SCRIPTABLE void propertyChanged( const QString & resource,
                                            const QString & property,
-                                           const QVariantList & oldValues,
-                                           const QVariantList & newValues );
+                                           const QVariantList & addedValues,
+                                           const QVariantList & removedValues );
     public Q_SLOTS:
+        Q_SCRIPTABLE void setResources(const QStringList& resources);
+        Q_SCRIPTABLE void addResource(const QString& resource);
+        Q_SCRIPTABLE void removeResource(const QString& resource);
+        Q_SCRIPTABLE void setProperties(const QStringList& properties);
+        Q_SCRIPTABLE void addProperty(const QString& property);
+        Q_SCRIPTABLE void removeProperty(const QString& property);
+        Q_SCRIPTABLE void setTypes(const QStringList& types);
+        Q_SCRIPTABLE void addType(const QString& type);
+        Q_SCRIPTABLE void removeType(const QString& type);
         Q_SCRIPTABLE void close();
 
     public:
-        bool hasProperties() const;
-
         QDBusObjectPath registerDBusObject(const QString &dbusClient, int id);
 
     private:
         QString m_objectPath;
-        bool m_hasProperties;
 
         ResourceWatcherManager* m_manager;
         QDBusServiceWatcher* m_serviceWatcher;

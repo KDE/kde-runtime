@@ -127,8 +127,11 @@ bool Nepomuk::ResourceMerger::push(const Soprano::Statement& st)
         tree->maxCardinality( st.predicate().uri() ) == 1;
 
         if( lazy || overwrite ) {
-            // FIXME: This may create some empty graphs
-            // Store them somewhere and remove them if they are now empty
+            Soprano::StatementIterator it = m_model->listStatements( st.subject(), st.predicate(), Soprano::Node() );
+            while(it.next()) {
+                m_removedStatements << *it;
+                m_trailingGraphCandidates.insert(it.current().context().uri());
+            }
             m_model->removeAllStatements( st.subject(), st.predicate(), Soprano::Node() );
         }
     }
@@ -499,10 +502,11 @@ Soprano::Node Nepomuk::ResourceMerger::resolveUnmappedNode(const Soprano::Node& 
         return it.value();
     }
 
-    QUrl newUri = createResourceUri();
+    const QUrl newUri = createResourceUri();
     m_mappings.insert( QUrl(node.toN3()), newUri );
 
-    Soprano::Node dateTime( ( Soprano::LiteralValue( QDateTime::currentDateTime() ) ) );
+    // FIXME: trueg: IMHO these statements should instead be added to the list of all statements so there is only one place where anything is actually added to the model
+    Soprano::Node dateTime( Soprano::LiteralValue( QDateTime::currentDateTime() ) );
     m_model->addStatement( newUri, NAO::created(), dateTime, m_graph );
     m_model->addStatement( newUri, NAO::lastModified(), dateTime, m_graph );
 
@@ -567,7 +571,7 @@ namespace {
         return QUrl( Soprano::Vocabulary::XMLSchema::xsdNamespace().toString() + QLatin1String("duration") );
     }
 
-    QStringList nodesToN3( const QList<Soprano::Node> &nodes ) {
+    template<typename T> QStringList nodesToN3( const T &nodes ) {
         QStringList list;
         foreach( const Soprano::Node& node, nodes ) {
             list << node.toN3();
@@ -696,7 +700,7 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
     QMultiHash<QPair<QUrl,QUrl>, Soprano::Node>::const_iterator cIterEnd = cardinality.constEnd();
     for( ; cIter != cIterEnd; ) {
         const QPair<QUrl,QUrl> subPredPair = cIter.key();
-        QList<Soprano::Node> objectValues;
+        QSet<Soprano::Node> objectValues;
         for( ; cIter != cIterEnd && cIter.key() == subPredPair ; cIter++ ) {
             objectValues << cIter.value();
         }
@@ -733,9 +737,9 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
             if( newCardinality > maxCardinality ) {
                 // Special handling for max Cardinality == 1
                 if( maxCardinality == 1 ) {
-                    // If the final cardinality is right, then that is okay,
-                    // as the OverwriteProperties flag has been set
-                    if( (m_flags & OverwriteProperties) && objectValues.size() == 1 ) {
+                    // If the difference is 1, then that is okay, as the OverwriteProperties flag
+                    // has been set
+                    if( (m_flags & OverwriteProperties) && (newCardinality-maxCardinality) == 1 ) {
                         continue;
                     }
                 }
@@ -913,6 +917,24 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
     foreach( const Soprano::Statement &st, remainingStatements ) {
         push( st );
         m_rvm->addStatement( st );
+    }
+
+    // make sure we do not leave trailing empty graphs
+    m_model->removeTrailingGraphs(m_trailingGraphCandidates);
+
+    // Inform the ResourceWatcherManager of the changed properties
+    QHash<QUrl, QHash<QUrl, QList<Soprano::Node> > > addedProperties;
+    QHash<QUrl, QHash<QUrl, QList<Soprano::Node> > > removedProperties;
+    foreach(const Soprano::Statement& s, m_removedStatements) {
+        removedProperties[s.subject().uri()][s.predicate().uri()].append(s.object());
+    }
+    foreach(const Soprano::Statement& s, remainingStatements + typeStatements) {
+        addedProperties[s.subject().uri()][s.predicate().uri()].append(s.object());
+    }
+    foreach(const QUrl& res, addedProperties.keys().toSet() + removedProperties.keys().toSet()) {
+        foreach(const QUrl& prop, addedProperties[res].keys().toSet() + removedProperties[res].keys().toSet()) {
+            m_rvm->changeProperty(res, prop, addedProperties[res][prop], removedProperties[res][prop]);
+        }
     }
 
     // Inform the ResourceWatcherManager of these new types

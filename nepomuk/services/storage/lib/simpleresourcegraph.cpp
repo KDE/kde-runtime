@@ -31,6 +31,8 @@
 #include <QtCore/QDebug>
 #include <QtCore/QDataStream>
 
+#include <Soprano/Graph>
+
 #include <KRandom>
 
 class Nepomuk::SimpleResourceGraph::Private : public QSharedData
@@ -267,6 +269,16 @@ void Nepomuk::SimpleResourceGraph::addStatement(const Soprano::Statement &s)
 void Nepomuk::SimpleResourceGraph::addStatement(const Soprano::Node& subject, const Soprano::Node& predicate, const Soprano::Node& object)
 {
     addStatement( Soprano::Statement( subject, predicate, object ) );
+}
+
+Soprano::Graph Nepomuk::SimpleResourceGraph::toStatementGraph() const
+{
+    Soprano::Graph g;
+    for(QHash<QUrl, SimpleResource>::const_iterator it = d->resources.constBegin();
+        it != d->resources.constEnd(); ++it) {
+        g += it.value().toStatementList();
+    }
+    return g;
 }
 
 Nepomuk::StoreResourcesJob* Nepomuk::SimpleResourceGraph::save(const KComponentData& component) const

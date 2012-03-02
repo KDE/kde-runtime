@@ -85,6 +85,12 @@ namespace Nepomuk {
 
         QHash<QUrl, QUrl> m_mappings;
 
+        /// a set of graphs which we change and which are candidates for empty graphs
+        QSet<QUrl> m_trailingGraphCandidates;
+
+        /// a list of all the statements that have been removed (only used for the resource watcher)
+        QList<Soprano::Statement> m_removedStatements;
+
         /// Can set the error
         QMultiHash<QUrl, Soprano::Node> toNodeHash( const QHash<QUrl, QVariant> &hash );
 

@@ -31,6 +31,8 @@
 
 #include <KGlobal>
 
+#include <Soprano/Graph>
+
 #include "nepomukdatamanagement_export.h"
 
 class QDataStream;
@@ -107,6 +109,7 @@ public:
 
     QSet<SimpleResource> toSet() const;
     QList<SimpleResource> toList() const;
+    Soprano::Graph toStatementGraph() const;
 
     void addStatement(const Soprano::Statement& statement);
     void addStatement(const Soprano::Node & subject,
