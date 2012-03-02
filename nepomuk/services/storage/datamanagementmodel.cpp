@@ -407,7 +407,7 @@ void Nepomuk::DataManagementModel::addProperty(const QList<QUrl> &resources, con
     //
     // Do the actual work
     //
-    addProperty(uriHash, property, resolvedNodes, app);
+    addProperty(uriHash, property, resolvedNodes, app, true /* signal propertyChanged */);
 }
 
 
@@ -524,7 +524,8 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
     //
     const QStringList uriHashN3 = resourceHashToN3(uriHash);
     if(!uriHashN3.isEmpty()) {
-        const QSet<Soprano::Node> existingValues = QSet<Soprano::Node>::fromList(resolvedNodes.values());
+        QHash<QUrl, QList<Soprano::Node> > valuesToRemove;
+        const QSet<Soprano::Node> setValues = QSet<Soprano::Node>::fromList(resolvedNodes.values());
         QSet<QUrl> graphs;
         QList<Soprano::BindingSet> existing
                 = executeQuery(QString::fromLatin1("select ?r ?v ?g where { graph ?g { ?r %1 ?v . FILTER(?r in (%2)) . } . }")
@@ -532,21 +533,39 @@ void Nepomuk::DataManagementModel::setProperty(const QList<QUrl> &resources, con
                                     uriHashN3.join(QLatin1String(","))),
                                Soprano::Query::QueryLanguageSparql).allBindings();
         Q_FOREACH(const Soprano::BindingSet& binding, existing) {
-            if(!existingValues.contains(binding["v"])) {
+            if(!setValues.contains(binding["v"])) {
                 removeAllStatements(binding["r"], property, binding["v"]);
                 graphs.insert(binding["g"].uri());
-                d->m_watchManager->removeProperty(binding["r"], property, binding["v"]);
+                valuesToRemove[binding["r"].uri()].append(binding["v"]);
             }
         }
         removeTrailingGraphs(graphs);
-    }
 
+        // construct the lists of old and new values
+        QHash<QUrl, QList<Soprano::Node> > addedValues;
 
-    //
-    // And finally add the rest of the statements (only if there is anything to add)
-    //
-    if(!nodes.isEmpty()) {
-        addProperty(uriHash, property, resolvedNodes, app);
+        //
+        // And finally add the rest of the statements (only if there is anything to add)
+        //
+        if(!nodes.isEmpty()) {
+            addedValues = addProperty(uriHash, property, resolvedNodes, app);
+        }
+
+        //
+        // Inform interested parties about the changes
+        //
+        QSet<QUrl> allChangedResources = uriHash.values().toSet();
+        allChangedResources.remove(QUrl());
+        foreach(const QUrl& res, allChangedResources) {
+            const QList<Soprano::Node> added = addedValues.value(res);
+            const QList<Soprano::Node> removed = valuesToRemove.value(res);
+            if(!added.isEmpty() || !removed.isEmpty()) {
+                d->m_watchManager->changeProperty(res,
+                                                  property,
+                                                  added,
+                                                  removed);
+            }
+        }
     }
 }
 
@@ -626,19 +645,24 @@ void Nepomuk::DataManagementModel::removeProperty(const QList<QUrl> &resources, 
     //
     QUrl mtimeGraph;
     QSet<QUrl> graphs;
-    const QString propertyN3 = Soprano::Node::resourceToN3(property);
     foreach( const QUrl & res, resolvedResources ) {
         const QList<Soprano::BindingSet> valueGraphs
                 = executeQuery(QString::fromLatin1("select ?g ?v where { graph ?g { %1 %2 ?v . } . FILTER(?v in (%3)) . }")
                                .arg(Soprano::Node::resourceToN3(res),
-                                    propertyN3,
+                                    Soprano::Node::resourceToN3(property),
                                     nodesToN3(resolvedNodes).join(QLatin1String(","))),
                                Soprano::Query::QueryLanguageSparql).allBindings();
 
+        QSet<Soprano::Node> removedValues;
         foreach(const Soprano::BindingSet& binding, valueGraphs) {
+            const Soprano::Node v = binding["v"];
             graphs.insert( binding["g"].uri() );
-            removeAllStatements( res, property, binding["v"] );
-            d->m_watchManager->removeProperty( res, property, binding["v"]);
+            removeAllStatements( res, property, v );
+            removedValues << v;
+        }
+
+        if(!removedValues.isEmpty()) {
+            d->m_watchManager->changeProperty( res, property, QList<Soprano::Node>(), removedValues.toList() );
         }
 
         // we only update the mtime in case we actually remove anything
@@ -727,7 +751,7 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
     QSet<QUrl> graphs;
     foreach( const QUrl & res, resolvedResources ) {
         QSet<Soprano::Node> propertiesToRemove;
-        QList<QPair<Soprano::Node, Soprano::Node> > propertyValues;
+        QMultiHash<QUrl, Soprano::Node> propertyValues;
         Soprano::QueryResultIterator it
                 = executeQuery(QString::fromLatin1("select distinct ?g ?p ?v where { graph ?g { %1 ?p ?v . } . FILTER(?p in (%2)) . }")
                                .arg(Soprano::Node::resourceToN3(res),
@@ -736,7 +760,7 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
         while(it.next()) {
             graphs.insert(it["g"].uri());
             propertiesToRemove.insert(it["p"]);
-            propertyValues.append(qMakePair(it["p"], it["v"]));
+            propertyValues.insert( it["p"].uri(), it["v"] );
         }
 
         // remove the data
@@ -745,9 +769,17 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
         }
 
         // inform interested parties
-        for(QList<QPair<Soprano::Node, Soprano::Node> >::const_iterator it = propertyValues.constBegin();
-            it != propertyValues.constEnd(); ++it) {
-            d->m_watchManager->removeProperty(res, it->first.uri(), it->second);
+        for(QMultiHash<QUrl, Soprano::Node>::const_iterator it = propertyValues.constBegin();
+            it != propertyValues.constEnd(); ) {
+            QList<Soprano::Node> values;
+            values << it.value();
+
+            const QUrl property = it.key();
+            for( ++it; it != propertyValues.constEnd() && it.key() == property; ++it ) {
+                values << it.value();
+            }
+
+            d->m_watchManager->changeProperty(res, property, QList<Soprano::Node>(), values);
         }
 
         // we only update the mtime in case we actually remove anything
@@ -1503,7 +1535,7 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
 
             const Soprano::Error::Error error = d->m_classAndPropertyTree->lastError();
             if( error ) {
-                setError( error.message(), error.code() );
+                setError( error );
                 return QHash<QUrl, QUrl>();
             }
             syncRes.insert( hit.key(), n );
@@ -1541,7 +1573,7 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
                     }
                     else if(state == NonExistingFileUrl) {
                         setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(object.uri().toLocalFile()),
-                                Soprano::Error::ErrorInvalidArgument);
+                                 Soprano::Error::ErrorInvalidArgument);
                         return QHash<QUrl, QUrl>();
                     }
                     else if(state == ExistingFileUrl || state==SupportedUrl) {
@@ -1577,6 +1609,7 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
                     else if(state == OtherUri) {
                         // We use resolveUrl to check if the otherUri exists. If it doesn't exist,
                         // then resolveUrl which set the last error
+                        // trueg: seems like a waste to not use the resolved uri here!
                         const QUrl legacyUri = resolveUrl( object.uri() );
                         if( lastError() )
                             return QHash<QUrl, QUrl>();
@@ -1589,13 +1622,12 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
                     QUrl url = object.uri();
                     if( url.scheme() == QLatin1String("file") && !QFile::exists(url.toLocalFile()) ) {
                         setError(QString::fromLatin1("Cannot store information about non-existing local files. File '%1' does not exist.").arg(object.uri().toLocalFile()),
-                                Soprano::Error::ErrorInvalidArgument);
+                                 Soprano::Error::ErrorInvalidArgument);
                         return QHash<QUrl, QUrl>();
                     }
                 }
             } // if object.isResurce
         } // while( it.hasNext() )
-
         // The resource is now ready.
         syncResources << syncRes;
     }
@@ -2319,7 +2351,7 @@ QUrl Nepomuk::DataManagementModel::createUri(Nepomuk::DataManagementModel::UriTy
 
 
 // TODO: emit resource watcher resource creation signals
-void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resources, const QUrl &property, const QHash<Soprano::Node, Soprano::Node> &nodes, const QString &app)
+QHash<QUrl, QList<Soprano::Node> > Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resources, const QUrl &property, const QHash<Soprano::Node, Soprano::Node> &nodes, const QString &app, bool signalPropertyChanged)
 {
     kDebug() << resources << property << nodes << app;
     Q_ASSERT(!resources.isEmpty());
@@ -2333,7 +2365,7 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
     if( maxCardinality == 1 ) {
         if( nodes.size() != 1 ) {
             setError(QString::fromLatin1("%1 has cardinality of 1. Cannot set more then one value.").arg(property.toString()), Soprano::Error::ErrorInvalidArgument);
-            return;
+            return QHash<QUrl, QList<Soprano::Node> >();
         }
     }
 
@@ -2354,7 +2386,7 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
                 graph = createGraph( app );
                 if(!graph.isValid()) {
                     // error has been set in createGraph
-                    return;
+                    return QHash<QUrl, QList<Soprano::Node> >();
                 }
             }
             const QUrl uri = createUri(ResourceUri);
@@ -2379,7 +2411,7 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
                 graph = createGraph( app );
                 if(!graph.isValid()) {
                     // error has been set in createGraph
-                    return;
+                    return QHash<QUrl, QList<Soprano::Node> >();
                 }
             }
             uri = createUri(ResourceUri);
@@ -2405,17 +2437,17 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
     //
     if(!knownResources.isEmpty()) {
         const QString existingValuesQuery = QString::fromLatin1("select distinct ?r ?v ?g ?m "
-                                                                "(select count(*) where { graph ?g { ?s ?p ?o . } . FILTER(%5) . }) as ?cnt "
+                                                                "(select count(*) where { graph ?g { ?s ?p ?o . } . FILTER(%4) . }) as ?cnt "
                                                                 "where { "
                                                                 "graph ?g { ?r %2 ?v . } . "
                                                                 "?m %1 ?g . "
                                                                 "FILTER(?r in (%3)) . "
-                                                                "FILTER(?v in (%4)) . }")
+                                                                "FILTER(?v in (%5)) . }")
                 .arg(Soprano::Node::resourceToN3(NRL::coreGraphMetadataFor()),
                      Soprano::Node::resourceToN3(property),
                      resourcesToN3(knownResources).join(QLatin1String(",")),
-                     nodesToN3(resolvedNodes).join(QLatin1String(",")),
-                     createResourceMetadataPropertyFilter(QLatin1String("?p")));
+                     createResourceMetadataPropertyFilter(QLatin1String("?p")),
+                     nodesToN3(resolvedNodes).join(QLatin1String(",")));
         QList<Soprano::BindingSet> existingValueBindings = executeQuery(existingValuesQuery, Soprano::Query::QueryLanguageSparql).allBindings();
         Q_FOREACH(const Soprano::BindingSet& binding, existingValueBindings) {
             kDebug() << "Existing value" << binding;
@@ -2425,25 +2457,28 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
             const QUrl m = binding["m"].uri();
             const int cnt = binding["cnt"].literal().toInt();
 
-            // we handle this property here - thus, no need to handle it below
-            finalProperties.remove(qMakePair(r, v));
+            // in case we do not signal the changes we restrict the values already in the query
+            if(resolvedNodes.contains(v)) {
+                // we handle this property here - thus, no need to handle it below
+                finalProperties.remove(qMakePair(r, v));
 
-            // in case the app is the same there is no need to do anything
-            if(containsStatement(g, NAO::maintainedBy(), appRes, m)) {
-                continue;
-            }
-            else if(cnt == 1) {
-                // we can reuse the graph
-                addStatement(g, NAO::maintainedBy(), appRes, m);
-            }
-            else {
-                // we need to split the graph
-                // FIXME: do not split the same graph again and again. Check if the graph in question already is the one we created.
-                const QUrl newGraph = splitGraph(g, m, appRes);
+                // in case the app is the same there is no need to do anything
+                if(containsStatement(g, NAO::maintainedBy(), appRes, m)) {
+                    continue;
+                }
+                else if(cnt == 1) {
+                    // we can reuse the graph
+                    addStatement(g, NAO::maintainedBy(), appRes, m);
+                }
+                else {
+                    // we need to split the graph
+                    // FIXME: do not split the same graph again and again. Check if the graph in question already is the one we created.
+                    const QUrl newGraph = splitGraph(g, m, appRes);
 
-                // and finally move the actual property over to the new graph
-                removeStatement(r, property, v, g);
-                addStatement(r, property, v, newGraph);
+                    // and finally move the actual property over to the new graph
+                    removeStatement(r, property, v, g);
+                    addStatement(r, property, v, newGraph);
+                }
             }
         }
     }
@@ -2457,27 +2492,37 @@ void Nepomuk::DataManagementModel::addProperty(const QHash<QUrl, QUrl> &resource
             graph = createGraph( app );
             if(!graph.isValid()) {
                 // error has been set in createGraph
-                return;
+                return QHash<QUrl, QList<Soprano::Node> >();
             }
         }
 
         // add all the data
         // TODO: check if using one big sparql insert improves performance
-        QSet<QUrl> finalResources;
+        QHash<QUrl, QList<Soprano::Node> > finalValuesPerResource;
         for(QSet<QPair<QUrl, Soprano::Node> >::const_iterator it = finalProperties.constBegin(); it != finalProperties.constEnd(); ++it) {
             addStatement(it->first, property, it->second, graph);
             if(property == NIE::url() && it->second.uri().scheme() == QLatin1String("file")) {
                 addStatement(it->first, RDF::type(), NFO::FileDataObject(), graph);
             }
-            finalResources.insert(it->first);
-            d->m_watchManager->addProperty(it->first, property, it->second);
+            finalValuesPerResource[it->first].append(it->second);
+        }
+
+        // inform interested parties
+        if(signalPropertyChanged) {
+            for(QHash<QUrl, QList<Soprano::Node> >::const_iterator it = finalValuesPerResource.constBegin(); it != finalValuesPerResource.constEnd(); ++it) {
+                d->m_watchManager->changeProperty(it.key(), property, it.value(), QList<Soprano::Node>());
+            }
         }
 
         // update modification date
-        Q_FOREACH(const QUrl& res, finalResources) {
+        Q_FOREACH(const QUrl& res, finalValuesPerResource.keys()) {
             updateModificationDate(res, graph, QDateTime::currentDateTime(), true);
         }
+
+        return finalValuesPerResource;
     }
+
+    return QHash<QUrl, QList<Soprano::Node> >();
 }
 
 bool Nepomuk::DataManagementModel::doesResourceExist(const QUrl &res, const QUrl& graph) const
@@ -2574,7 +2619,11 @@ QHash<Soprano::Node, Soprano::Node> Nepomuk::DataManagementModel::resolveNodes(c
     QHash<Soprano::Node, Soprano::Node> resolvedNodes;
     Q_FOREACH(const Soprano::Node& node, nodes) {
         if(node.isResource()) {
-            resolvedNodes.insert(node, resolveUrl(node.uri(), true));
+            const QUrl resolved = resolveUrl(node.uri(), true);
+            if(resolved.isEmpty() && lastError()) {
+                break;
+            }
+            resolvedNodes.insert(node, resolved);
         }
         else {
             resolvedNodes.insert(node, node);
