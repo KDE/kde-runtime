@@ -61,6 +61,11 @@ install( FILES ${knotifyplugin_HEADERS} DESTINATION ${INCLUDE_INSTALL_DIR} )
 
 ########### D-Bus Autostart Services #########
 
+if(WIN32)
+	set(BIN_PREFIX bin)
+else(WIN32)
+	set(BIN_PREFIX ${CMAKE_INSTALL_PREFIX}/bin)
+endif(WIN32)
 
 configure_file(org.kde.knotify.service.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/org.kde.knotify.service)
