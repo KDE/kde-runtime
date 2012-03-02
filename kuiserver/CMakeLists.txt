@@ -45,6 +45,12 @@ kde4_add_ui_files(kuiserver_KDEINIT_SRCS configdialog.ui)
 qt4_add_dbus_adaptor(kuiserver_KDEINIT_SRCS org.kde.kuiserver.xml progresslistmodel.h ProgressListModel kuiserveradaptor )
 
 
+if(WIN32)
+	set(BIN_PREFIX bin)
+else(WIN32)
+	set(BIN_PREFIX ${CMAKE_INSTALL_PREFIX}/bin)
+endif(WIN32)
+
 dbus_add_activation_service(org.kde.kuiserver.service.in)
 
 #</DBus Stuff>
