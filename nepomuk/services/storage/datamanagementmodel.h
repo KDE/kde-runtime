@@ -22,7 +22,7 @@
 #ifndef DATAMANAGEMENTMODEL_H
 #define DATAMANAGEMENTMODEL_H
 
-#include "lib/datamanagement.h"
+#include "datamanagement.h"
 
 #include <Soprano/FilterModel>
 
@@ -156,7 +156,7 @@ public Q_SLOTS:
                         const QString& app,
                         Nepomuk::StoreIdentificationMode identificationMode = Nepomuk::IdentifyNew,
                         Nepomuk::StoreResourcesFlags flags = Nepomuk::NoStoreResourcesFlags,
-                        const QHash<QUrl, QVariant>& additionalMetadata = (QHash<QUrl, QVariant>()));
+                        const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>() );
 
     /**
      * Merges two resources into one. Properties from \p resource1
@@ -188,7 +188,7 @@ public Q_SLOTS:
                          const QString& userSerialization = QString(),
                          Nepomuk::StoreIdentificationMode identificationMode = Nepomuk::IdentifyNew,
                          Nepomuk::StoreResourcesFlags flags = Nepomuk::NoStoreResourcesFlags,
-                         const QHash<QUrl, QVariant>& additionalMetadata = (QHash<QUrl, QVariant>()));
+                         const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>());
 
     /**
      * Describe a set of resources, i.e. retrieve all their properties.
@@ -204,7 +204,7 @@ public Q_SLOTS:
     //@}
 
 private:
-    QUrl createGraph(const QString& app = QString(), const QHash<QUrl, QVariant>& additionalMetadata = (QHash<QUrl, QVariant>()));
+    QUrl createGraph(const QString& app = QString(), const QHash<QUrl, QVariant>& additionalMetadata = QHash<QUrl, QVariant>());
     QUrl createGraph(const QString& app, const QMultiHash<QUrl, Soprano::Node>& additionalMetadata);
 
     /**
@@ -249,8 +249,10 @@ private:
      * \param nodes A hash mapping value nodes as created via resolveNodes from the output of ClassAndPropertyTree::variantToNodeSet. Like \p resources
      *              this hash might contain empty values which refer to non-existing file resources. This cannot be empty.
      * \param app The calling application.
+     *
+     * \return A mapping from changed resources to actually newly added values.
      */
-    void addProperty(const QHash<QUrl, QUrl>& resources, const QUrl& property, const QHash<Soprano::Node, Soprano::Node>& nodes, const QString& app);
+    QHash<QUrl, QList<Soprano::Node> > addProperty(const QHash<QUrl, QUrl>& resources, const QUrl& property, const QHash<Soprano::Node, Soprano::Node>& nodes, const QString& app, bool signalPropertyChanged = false);
 
     /**
      * Removes the given resources without any additional checks. The provided list needs to contain already resolved valid resource URIs.

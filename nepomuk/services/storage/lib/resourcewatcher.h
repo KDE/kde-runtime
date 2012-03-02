@@ -27,6 +27,7 @@
 #include <Nepomuk/Resource>
 
 #include <QtDBus/QDBusVariant>
+#include <QtCore/QVariant>
 
 #include "nepomukdatamanagement_export.h"
 
@@ -124,6 +125,35 @@ namespace Nepomuk {
         void addProperty( const Types::Property & property );
 
         /**
+         * \brief Remove a type to be watched.
+         *
+         * Every resource of this type will be watched for changes.
+         *
+         * \sa setTypes()
+         */
+        void removeType( const Types::Class & type );
+
+        /**
+         * \brief Remove a resource to be watched.
+         *
+         * Every change to this resource will be
+         * signalled, depending on the configured properties().
+         *
+         * \sa setResources()
+         */
+        void removeResource( const Nepomuk::Resource & res );
+
+        /**
+         * \brief Remove a property to be watched.
+         *
+         * Every change to a value of this property
+         * will be signalled, depending on the configured resources() or types().
+         *
+         * \sa setProperties()
+         */
+        void removeProperty( const Types::Property & property );
+
+        /**
          * \brief Set the types to be watched.
          *
          * Every resource having one of these types will be watched for changes.
@@ -217,7 +247,7 @@ namespace Nepomuk {
          * \param res The changed resource.
          * \param type The newly added type. If types() have been configured it will be one of them.
          */
-        void resourceTypeAdded( const Nepomuk::Resource & res, const Types::Class & type );
+        void resourceTypeAdded( const Nepomuk::Resource & res, const Nepomuk::Types::Class & type );
 
         /**
          * \brief This signal is emitted when a type has been removed from a resource.
@@ -227,7 +257,7 @@ namespace Nepomuk {
          * \param res The changed resource.
          * \param type The removed type. If types() have been configured it will be one of them.
          */
-        void resourceTypeRemoved( const Nepomuk::Resource & res, const Types::Class & type );
+        void resourceTypeRemoved( const Nepomuk::Resource & res, const Nepomuk::Types::Class & type );
 
         /**
          * \brief This signal is emitted when a property value is added.
@@ -249,14 +279,37 @@ namespace Nepomuk {
                               const Nepomuk::Types::Property & property,
                               const QVariant & value );
 
+        /**
+         * \brief This signal is emitted when a property value is changed.
+         *
+         * This signal is essentially a combination of the propertyAdded and propertyRemoved signals.
+         *
+         * Be aware that removing and then adding a property will result in two separate
+         * propertyChanged signals. They are never combined.
+         *
+         * Specially, since one could theoretically take forever between the removal and the
+         * setting of the property.
+         *
+         * \param resource The changed resource.
+         * \param property The property which was changed.
+         * \param addedValues The values that have been added.
+         * \param removedValues The values that have been removed.
+         */
+        void propertyChanged( const Nepomuk::Resource & resource,
+                              const Nepomuk::Types::Property & property,
+                              const QVariantList & addedValues,
+                              const QVariantList & removedValues );
+
     private Q_SLOTS:
         void slotResourceCreated(const QString& res, const QStringList& types);
         void slotResourceRemoved(const QString& res, const QStringList& types);
-        void slotResourceTypeAdded(const QString& res, const QString& type);
-        void slotResourceTypeRemoved(const QString& res, const QString& type);
-        void slotPropertyAdded(const QString& res, const QString& prop, const QDBusVariant& object);
-        void slotPropertyRemoved(const QString& res, const QString& prop, const QDBusVariant& object);
-
+        void slotResourceTypesAdded(const QString& res, const QStringList& types);
+        void slotResourceTypesRemoved(const QString& res, const QStringList& types);
+        void slotPropertyAdded(const QString& res, const QString& prop, const QVariantList& objects);
+        void slotPropertyRemoved(const QString& res, const QString& prop, const QVariantList& objects);
+        void slotPropertyChanged(const QString& res, const QString& prop,
+                                 const QVariantList & oldObjs,
+                                 const QVariantList & newObjs);
     private:
         class Private;
         Private * d;
