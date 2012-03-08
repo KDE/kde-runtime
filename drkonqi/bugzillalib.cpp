@@ -152,18 +152,23 @@ void BugzillaManager::searchBugs(const QStringList & products,
     connect(m_searchJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsJobFinished(KJob*)));
 }
 
-void BugzillaManager::sendReport(BugReport report)
+void BugzillaManager::sendReport(const BugReport & report)
 {
-    QByteArray postData = generatePostDataForReport(report);
+    QMap<QString, QVariant> args;
+    args.insert(QLatin1String("product"), report.product());
+    args.insert(QLatin1String("component"), report.component());
+    args.insert(QLatin1String("version"), report.version());
+    args.insert(QLatin1String("summary"), report.shortDescription());
+    args.insert(QLatin1String("description"), report.description());
+    args.insert(QLatin1String("op_sys"), report.operatingSystem());
+    args.insert(QLatin1String("platform"), report.platform());
+    args.insert(QLatin1String("priority"), report.priority());
+    args.insert(QLatin1String("severity"), report.bugSeverity());
 
-    QString url = QString(m_bugTrackerUrl) + QString(sendReportUrl);
-
-    KIO::Job * sendJob =
-        KIO::storedHttpPost(postData, KUrl(url), KIO::HideProgressInfo);
-
-    connect(sendJob, SIGNAL(finished(KJob*)) , this, SLOT(sendReportJobFinished(KJob*)));
-
-    sendJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");    
+    m_xmlRpcClient->call(QLatin1String("Bug.create"), args,
+            this, SLOT(callMessage(QList<QVariant>,QVariant)),
+            this, SLOT(callFault(int,QString,QVariant)),
+            QString::fromAscii("Bug.create"));
 }
 
 void BugzillaManager::attachTextToReport(const QString & text, const QString & filename, 
@@ -269,51 +274,6 @@ void BugzillaManager::searchBugsJobFinished(KJob * job)
     }
     
     m_searchJob = 0;
-}
-
-void BugzillaManager::sendReportJobFinished(KJob * job)
-{
-    if (!job->error()) {
-        KIO::StoredTransferJob * sendJob = static_cast<KIO::StoredTransferJob*>(job);
-        QString response = sendJob->data();
-        response.remove('\r'); response.remove('\n');
-
-        QRegExp reg("<title>Bug (\\d+) Submitted</title>");
-        int pos = reg.indexIn(response);
-        if (pos != -1) {
-            int bug_id = reg.cap(1).toInt();
-            emit reportSent(bug_id);
-        } else {
-            QString error;
-
-            QString errorMessage = getErrorMessage(response, false);
-            if (!errorMessage.isEmpty())
-            {
-                error = errorMessage;
-            } else {
-                QString illegalPlatformMessage = "Bugzilla has suffered an internal error. "
-                "Please save this page and send";
-                QString illegalPlatformMessage2 = "A legal Platform was not set.";
-                if (response.contains(illegalPlatformMessage) && 
-                            response.contains(illegalPlatformMessage2)) {
-                    emit sendReportErrorInvalidValues();
-                    return;
-                }
-            }
-
-            if (error.contains(QLatin1String("does not exist or you aren't authorized to"))
-                || error.contains(QLatin1String("There is no component named 'general'"))) {
-                emit sendReportErrorInvalidValues();
-            } else if (!error.isEmpty()){
-                emit sendReportError(error, QString());
-            } else {
-                emit sendReportError(i18nc("@info","Unknown error"), response);
-            }
-        }
-    } else {
-        emit sendReportError(job->errorString(), QString());
-    }
-
 }
 
 void BugzillaManager::attachToReportJobFinished(KJob * job)
@@ -488,6 +448,11 @@ void BugzillaManager::callMessage(const QList<QVariant> & result, const QVariant
     if (id.toString() == QLatin1String("login")) {
         m_logged = true;
         Q_EMIT loginFinished(true);
+    } else if (id.toString() == QLatin1String("Bug.create")) {
+        QVariantMap map = result.at(0).toMap();
+        int bug_id = map.value(QLatin1String("id")).toInt();
+        Q_ASSERT(bug_id != 0);
+        Q_EMIT reportSent(bug_id);
     }
 }
 
@@ -516,6 +481,17 @@ void BugzillaManager::callFault(int errorCode, const QString & errorString, cons
         default:
             Q_EMIT loginError(i18nc("@info", "Received unknown error code %1 from bugzilla. "
                                     "Error message was: %2", errorCode, errorString));
+            break;
+        }
+    } else if (id.toString() == QLatin1String("Bug.create")) {
+        switch (errorCode) {
+        case 105: //invalid component
+        case 106: //invalid product
+            Q_EMIT sendReportErrorInvalidValues();
+            break;
+        default:
+            Q_EMIT sendReportError(i18nc("@info", "Received unknown error code %1 from bugzilla. "
+                                         "Error message was: %2", errorCode, errorString));
             break;
         }
     }
@@ -569,32 +545,6 @@ QString BugzillaManager::getErrorMessage(const QString & response, bool fallback
     return errorMessage;
 }
 
-QByteArray BugzillaManager::generatePostDataForReport(BugReport report) const
-{
-    QByteArray postData =
-        QByteArray("product=") +
-        QUrl::toPercentEncoding(report.product()) +
-        QByteArray("&version=") +
-        QUrl::toPercentEncoding(report.version()) +
-        QByteArray("&component=") +
-        QUrl::toPercentEncoding(report.component()) +
-        QByteArray("&bug_severity=") +
-        QUrl::toPercentEncoding(report.bugSeverity()) +
-        QByteArray("&rep_platform=") +
-        QUrl::toPercentEncoding(report.platform()) +
-        QByteArray("&op_sys=") +
-        QUrl::toPercentEncoding(report.operatingSystem()) +
-        QByteArray("&priority=") +
-        QUrl::toPercentEncoding(report.priority()) +
-        QByteArray("&bug_status=") +
-        QUrl::toPercentEncoding(report.bugStatus()) +
-        QByteArray("&short_desc=") +
-        QUrl::toPercentEncoding(report.shortDescription()) +
-        QByteArray("&comment=") +
-        QUrl::toPercentEncoding(report.description());
-
-    return postData;
-}
 //END Private helper methods
 
 //END BugzillaManager

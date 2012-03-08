@@ -296,7 +296,7 @@ public:
     void searchBugs(const QStringList & products, const QString & severity,
                     const QString & date_start, const QString & date_end , QString comment);
     
-    void sendReport(BugReport);
+    void sendReport(const BugReport & report);
     
     void attachTextToReport(const QString &, const QString &, const QString &, uint, const QString &);
 
@@ -317,7 +317,6 @@ private Q_SLOTS:
     /* Slots to handle KJob::finished */
     void fetchBugJobFinished(KJob*);
     void searchBugsJobFinished(KJob*);
-    void sendReportJobFinished(KJob*);
     void attachToReportJobFinished(KJob*);
     void addCommentSubJobFinished(KJob*);
     void addCommentJobFinished(KJob*);
@@ -343,7 +342,7 @@ Q_SIGNALS:
     void loginError(const QString & errorMsg, const QString & extendedErrorMsg = QString());
     void bugReportError(const QString &, QObject *);
     void searchError(const QString &);
-    void sendReportError(const QString &, const QString &);
+    void sendReportError(const QString & errorMsg, const QString & extendedErrorMsg = QString());
     void sendReportErrorInvalidValues(); //To use default values
     void attachToReportError(const QString &, const QString &);
     void addCommentError(const QString &, const QString &);
@@ -356,7 +355,6 @@ private:
     QString getErrorMessage(const QString &, bool fallBackMessage = true);
 
     void attachToReport(const QByteArray &, const QByteArray &);
-    QByteArray generatePostDataForReport(BugReport) const;
 
     QString     m_username;
     QString     m_password;
