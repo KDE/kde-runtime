@@ -26,8 +26,6 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QByteArray>
 #include <QtCore/QString>
-#include <QtCore/QRegExp>
-#include <QtCore/QFile>
 
 #include <QtXml/QDomNode>
 #include <QtXml/QDomNodeList>
@@ -36,9 +34,7 @@
 
 #include <KIO/Job>
 #include <KUrl>
-#include <KConfig>
 #include <KLocale>
-#include <KRandom>
 #include <KDebug>
 
 static const char bugtrackerBKOBaseUrl[] = KDE_BUGZILLA_URL;
@@ -57,9 +53,6 @@ static const char searchUrl[] =
 // short_desc, product, long_desc(possible backtraces lines), searchFrom, searchTo, severity, columnList
 static const char showBugUrl[] = "show_bug.cgi?id=%1";
 static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
-static const char sendReportUrl[] = "post_bug.cgi";
-static const char attachDataUrl[] = "attachment.cgi";
-static const char addInformationUrl[] = "process_bug.cgi";
 
 //BEGIN BugzillaManager
 
