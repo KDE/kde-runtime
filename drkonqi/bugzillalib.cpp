@@ -324,27 +324,16 @@ void BugzillaManager::callFault(int errorCode, const QString & errorString, cons
 {
     kDebug() << id << errorCode << errorString;
 
+    QString genericError = i18nc("@info", "Received unexpected error code %1 from bugzilla. "
+                                 "Error message was: %2", errorCode, errorString);
+
     if (id.toString() == QLatin1String("login")) {
         switch(errorCode) {
-        case 300:
+        case 300: //invalid username or password
             Q_EMIT loginFinished(false); //TODO replace with loginError
             break;
-        case 301:
-            Q_EMIT loginError(i18nc("@info", "Your account has been disabled."));
-            break;
-        case 305:
-            Q_EMIT loginError(i18nc("@info", "Your password is correct, but a new password "
-                                    "is required. Please login to %1 and change your "
-                                    "password to proceed.", KDE_BUGZILLA_URL));
-            break;
-        case 50:
-            Q_EMIT loginError(i18nc("@info", "Internal DrKonqi error: A required parameter "
-                                    "was not provided to the bugzilla \"User.login\" method. "
-                                    "Please report a bug to DrKonqi at %1", KDE_BUGZILLA_URL));
-            break;
         default:
-            Q_EMIT loginError(i18nc("@info", "Received unknown error code %1 from bugzilla. "
-                                    "Error message was: %2", errorCode, errorString));
+            Q_EMIT loginError(genericError);
             break;
         }
     } else if (id.toString() == QLatin1String("Bug.create")) {
@@ -354,22 +343,19 @@ void BugzillaManager::callFault(int errorCode, const QString & errorString, cons
             Q_EMIT sendReportErrorInvalidValues();
             break;
         default:
-            Q_EMIT sendReportError(i18nc("@info", "Received unknown error code %1 from bugzilla. "
-                                         "Error message was: %2", errorCode, errorString));
+            Q_EMIT sendReportError(genericError);
             break;
         }
     } else if (id.toString() == QLatin1String("Bug.add_attachment")) {
         switch (errorCode) {
         default:
-            Q_EMIT attachToReportError(i18nc("@info", "Received unknown error code %1 from bugzilla. "
-                                             "Error message was: %2", errorCode, errorString));
+            Q_EMIT attachToReportError(genericError);
             break;
         }
     } else if (id.toString() == QLatin1String("Bug.update.cc")) {
         switch (errorCode) {
         default:
-            Q_EMIT addMeToCCError(i18nc("@info", "Received unknown error code %1 from bugzilla. "
-                                        "Error message was: %2", errorCode, errorString));
+            Q_EMIT addMeToCCError(genericError);
             break;
         }
     }
