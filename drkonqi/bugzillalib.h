@@ -298,9 +298,10 @@ public:
     
     void sendReport(const BugReport & report);
     
-    void attachTextToReport(const QString &, const QString &, const QString &, uint, const QString &);
+    void attachTextToReport(const QString & text, const QString & filename,
+                            const QString & description, int bugId, const QString & comment);
 
-    void addMeToCC(int);
+    void addMeToCC(int bugId);
 
     void checkVersionsForProduct(const QString &);
     
@@ -315,9 +316,6 @@ private Q_SLOTS:
     /* Slots to handle KJob::finished */
     void fetchBugJobFinished(KJob*);
     void searchBugsJobFinished(KJob*);
-    void attachToReportJobFinished(KJob*);
-    void addMeToCCSubJobFinished(KJob*);
-    void addMeToCCJobFinished(KJob*);
     void checkVersionJobFinished(KJob*);
 
     void callMessage(const QList<QVariant> & result, const QVariant & id);
@@ -339,17 +337,11 @@ Q_SIGNALS:
     void searchError(const QString &);
     void sendReportError(const QString & errorMsg, const QString & extendedErrorMsg = QString());
     void sendReportErrorInvalidValues(); //To use default values
-    void attachToReportError(const QString &, const QString &);
-    void addMeToCCError(const QString &, const QString &);
+    void attachToReportError(const QString & errorMsg, const QString & extendedErrorMsg = QString());
+    void addMeToCCError(const QString & errorMsg, const QString & extendedErrorMsg = QString());
     void checkVersionsForProductError();
 
 private:
-    /* Private helper methods */
-    QString getToken(const QString &);
-    QString getErrorMessage(const QString &, bool fallBackMessage = true);
-
-    void attachToReport(const QByteArray &, const QByteArray &);
-
     QString     m_username;
     QString     m_password;
     bool        m_logged;
@@ -358,30 +350,6 @@ private:
     KXmlRpc::Client *m_xmlRpcClient;
 
     QString     m_bugTrackerUrl;
-};
-
-class BugzillaUploadData
-{
-public:
-    BugzillaUploadData(uint bugNumber);
-    
-    QByteArray postData() const;
-    QByteArray boundary() const;
-    
-    void attachFile(const QString & url, const QString & description);
-    void attachRawData(const QByteArray & data, const QString & filename, 
-                    const QString & mimeType, const QString & description,
-                    const QString & comment = QString());
-    
-private:
-    void addPostField(const QString & name, const QString & value);
-    void addPostData(const QString & name, const QByteArray & data, const QString & mimeType,
-                     const QString & path);
-    void finishPostRequest();
-    
-    QByteArray      m_boundary;
-    uint            m_bugNumber;
-    QByteArray      m_postData;
 };
 
 #endif

@@ -171,21 +171,38 @@ void BugzillaManager::sendReport(const BugReport & report)
             QString::fromAscii("Bug.create"));
 }
 
-void BugzillaManager::attachTextToReport(const QString & text, const QString & filename, 
-    const QString & description, uint bug, const QString & comment)
+void BugzillaManager::attachTextToReport(const QString & text, const QString & filename,
+    const QString & description, int bugId, const QString & comment)
 {
-    BugzillaUploadData request(bug);
-    request.attachRawData(text.toUtf8(), filename, "text/plain", description, comment);
+    QMap<QString, QVariant> args;
+    args.insert(QLatin1String("ids"), QVariantList() << bugId);
+    args.insert(QLatin1String("file_name"), filename);
+    args.insert(QLatin1String("summary"), description);
+    args.insert(QLatin1String("comment"), comment);
+    args.insert(QLatin1String("content_type"), QString::fromAscii("text/plain"));
 
-    attachToReport(request.postData(), request.boundary());
+    //data needs to be a QByteArray so that it is encoded in base64 (query.cpp:246)
+    args.insert(QLatin1String("data"), text.toUtf8());
+
+    m_xmlRpcClient->call(QLatin1String("Bug.add_attachment"), args,
+            this, SLOT(callMessage(QList<QVariant>,QVariant)),
+            this, SLOT(callFault(int,QString,QVariant)),
+            QString::fromAscii("Bug.add_attachment"));
 }
 
-void BugzillaManager::addMeToCC(int bugNumber)
+void BugzillaManager::addMeToCC(int bugId)
 {
-    KUrl addCCJobUrl = KUrl(QString(m_bugTrackerUrl) +
-                                            QString(showBugUrl).arg(bugNumber));
-    KIO::Job * addCCJob = KIO::storedGet(addCCJobUrl, KIO::Reload, KIO::HideProgressInfo);
-    connect(addCCJob, SIGNAL(finished(KJob*)) , this, SLOT(addMeToCCSubJobFinished(KJob*)));
+    QMap<QString, QVariant> args;
+    args.insert(QLatin1String("ids"), QVariantList() << bugId);
+
+    QMap<QString, QVariant> ccChanges;
+    ccChanges.insert(QLatin1String("add"), QVariantList() << m_username);
+    args.insert(QLatin1String("cc"), ccChanges);
+
+    m_xmlRpcClient->call(QLatin1String("Bug.update"), args,
+            this, SLOT(callMessage(QList<QVariant>,QVariant)),
+            this, SLOT(callFault(int,QString,QVariant)),
+            QString::fromAscii("Bug.update.cc"));
 }
 
 void BugzillaManager::checkVersionsForProduct(const QString & product)
@@ -264,90 +281,6 @@ void BugzillaManager::searchBugsJobFinished(KJob * job)
     m_searchJob = 0;
 }
 
-void BugzillaManager::attachToReportJobFinished(KJob * job)
-{
-    if (!job->error()) {
-        KIO::StoredTransferJob * sendJob = static_cast<KIO::StoredTransferJob*>(job);
-        QString response = sendJob->data();
-        response.remove('\r'); response.remove('\n');
-        
-        QRegExp reg("<title>Attachment (\\d+) added to Bug (\\d+)</title>");
-        int pos = reg.indexIn(response);
-        if (pos != -1) {
-            int attach_id = reg.cap(1).toInt();
-            int bug_id = reg.cap(2).toInt();
-            emit attachToReportSent(attach_id, bug_id);
-        } else {
-            QString errorMessage = getErrorMessage(response);
-
-            QString error = i18nc("@info", "Error while attaching the data to the bug report: %1", 
-                                  errorMessage);
-            emit attachToReportError(error, response);
-        }
-    } else {
-        emit attachToReportError(job->errorString(), QString());
-    }
-}
-
-void BugzillaManager::addMeToCCSubJobFinished(KJob * job)
-{
-    if (!job->error()) {
-        KIO::StoredTransferJob * checkJob = static_cast<KIO::StoredTransferJob*>(job);
-        QString response = checkJob->data();
-        response.remove('\r'); response.remove('\n');
-
-        //Parse bugzilla token
-        QString token = getToken(response);
-
-        const QString bug_id = checkJob->url().queryItem("id");
-
-        if (!bug_id.isEmpty()) {
-            //Send add To CC job confirmation
-            QByteArray postData;
-            postData += QByteArray("id=") + QUrl::toPercentEncoding(bug_id) +
-            QByteArray("&addselfcc=on") +
-            QByteArray("&token=") + QUrl::toPercentEncoding(token);
-
-            KIO::Job * addCCJob =
-                KIO::storedHttpPost(postData, KUrl(QString(m_bugTrackerUrl) +
-                                                                QString(addInformationUrl)),
-                                KIO::HideProgressInfo);
-            addCCJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
-            connect(addCCJob, SIGNAL(finished(KJob*)) , this, SLOT(addMeToCCJobFinished(KJob*)));
-        } else {
-            emit addMeToCCError(i18nc("@info","Missing bug ID in the query. Unknown error"), response);
-        }
-
-    } else {
-        emit addMeToCCError(job->errorString(), QString());
-    }
-}
-
-void BugzillaManager::addMeToCCJobFinished(KJob * job)
-{
-    if (!job->error()) {
-        KIO::StoredTransferJob * addCCJob = static_cast<KIO::StoredTransferJob*>(job);
-        QString response = addCCJob->data();
-        response.remove('\r'); response.remove('\n');
-        
-        QRegExp reg("<title>Bug (.+) processed</title>");
-        int pos = reg.indexIn(response);
-        if (pos != -1) {
-            int bug_id = reg.cap(1).toInt();
-            emit addMeToCCFinished(bug_id);
-        } else {
-            QString errorMessage = getErrorMessage(response);
-
-            QString error = i18nc("@info", "Error while adding yourself to the CC list: %1", 
-                                  errorMessage);
-
-            emit addMeToCCError(error, response);
-        }
-    } else {
-        emit addMeToCCError(job->errorString(), QString());
-    }
-}
-
 void BugzillaManager::checkVersionJobFinished(KJob * job)
 {
     if (!job->error()) {
@@ -372,6 +305,18 @@ void BugzillaManager::callMessage(const QList<QVariant> & result, const QVariant
         int bug_id = map.value(QLatin1String("id")).toInt();
         Q_ASSERT(bug_id != 0);
         Q_EMIT reportSent(bug_id);
+    } else if (id.toString() == QLatin1String("Bug.add_attachment")) {
+        QVariantMap map = result.at(0).toMap().value(QLatin1String("attachments")).toMap();
+        map = map.constBegin()->toMap();
+        int attachment_id = map.value(QLatin1String("id")).toInt();
+        int bug_id = map.value(QLatin1String("bug_id")).toInt();
+        Q_ASSERT(bug_id != 0);
+        Q_EMIT attachToReportSent(attachment_id, bug_id);
+    } else if (id.toString() == QLatin1String("Bug.update.cc")) {
+        QVariantMap map = result.at(0).toMap().value(QLatin1String("bugs")).toList().at(0).toMap();
+        int bug_id = map.value(QLatin1String("id")).toInt();
+        Q_ASSERT(bug_id != 0);
+        Q_EMIT addMeToCCFinished(bug_id);
     }
 }
 
@@ -413,58 +358,22 @@ void BugzillaManager::callFault(int errorCode, const QString & errorString, cons
                                          "Error message was: %2", errorCode, errorString));
             break;
         }
+    } else if (id.toString() == QLatin1String("Bug.add_attachment")) {
+        switch (errorCode) {
+        default:
+            Q_EMIT attachToReportError(i18nc("@info", "Received unknown error code %1 from bugzilla. "
+                                             "Error message was: %2", errorCode, errorString));
+            break;
+        }
+    } else if (id.toString() == QLatin1String("Bug.update.cc")) {
+        switch (errorCode) {
+        default:
+            Q_EMIT addMeToCCError(i18nc("@info", "Received unknown error code %1 from bugzilla. "
+                                        "Error message was: %2", errorCode, errorString));
+            break;
+        }
     }
 }
-
-//BEGIN Private helper methods
-void BugzillaManager::attachToReport(const QByteArray & data, const QByteArray & boundary)
-{
-    KIO::Job * attachJob =
-        KIO::storedHttpPost(data, 
-                            KUrl(QString(m_bugTrackerUrl) + QString(attachDataUrl)),
-                            KIO::HideProgressInfo);
-
-    connect(attachJob, SIGNAL(finished(KJob*)) , this, SLOT(attachToReportJobFinished(KJob*)));
-
-    attachJob->addMetaData("content-type", 
-                           "Content-Type: multipart/form-data; boundary=" + boundary);   
-}
-
-QString BugzillaManager::getToken(const QString & response)
-{
-    QString token;
-
-    QString searchToken = QLatin1String("<input type=\"hidden\" name=\"token\" value=\"");
-    int index1 = response.indexOf(searchToken);
-    int index2 = response.indexOf(">", index1);
-
-    if (index1 != -1 && index2 != -1) {
-        index1 += searchToken.length();
-        index2 -= 1;
-        token = response.mid(index1, index2-index1);
-    }
-
-    return token;
-}
-
-QString BugzillaManager::getErrorMessage(const QString & response, bool fallbackMessage)
-{
-    QString errorMessage;
-
-    QRegExp reg("<td id=\"error_msg\" class=\"throw_error\">(.+)</td>");
-    int pos = reg.indexIn(response);
-    if (pos != -1) {
-        errorMessage = reg.cap(1).trimmed();
-    } else if (response.contains("Log in to Bugzilla")) {
-        errorMessage = i18nc("@info", "You are not logged in. Make sure cookies are enabled.");
-    } else if (fallbackMessage) {
-        errorMessage = i18nc("@info","Unknown error");
-    }
-
-    return errorMessage;
-}
-
-//END Private helper methods
 
 //END BugzillaManager
 
@@ -588,77 +497,6 @@ QString BugReportXMLParser::getSimpleValue(const QString & name)   //Extract an 
 }
 
 //END BugzillaXMLParser
-
-//BEGIN BugzillaUploadData
-
-BugzillaUploadData::BugzillaUploadData(uint bugNumber)
-{
-    m_bugNumber = bugNumber;
-    m_boundary = "----------" + KRandom::randomString(42 + 13).toAscii();
-}
-
-void BugzillaUploadData::attachFile(const QString & url, const QString & description)
-{
-    //TODO implement when needed
-    //Read file contents and use attachRawData
-    Q_UNUSED(url);
-    Q_UNUSED(description);
-}
-
-void BugzillaUploadData::attachRawData(const QByteArray & data, const QString & filename,
-    const QString & mimeType, const QString & description, const QString & comment)
-{
-    addPostField("bugid", QString::number(m_bugNumber));
-    addPostField("action", "insert");
-    addPostData("data", data, mimeType, filename);
-    addPostField("description", description);
-    addPostField("comment", comment);
-    addPostField("contenttypemethod", "manual");
-    addPostField("contenttypeselection", "text/plain"); //Needed?
-    addPostField("contenttypeentry", mimeType);
-    finishPostRequest();
-}
-
-void BugzillaUploadData::addPostField(const QString & name, const QString & value)
-{
-     QByteArray str = "--" + m_boundary + "\r\n";
-     str += "Content-Disposition: form-data; name=\"" + name.toAscii() + "\"";
-     str += "\r\n\r\n" + value.toUtf8() + "\r\n";
-
-     m_postData.append(str);
-}
-
-void BugzillaUploadData::addPostData(const QString & name, const QByteArray & data,
-    const QString & mimeType, const QString & path)
-{
-    QByteArray str = "--" + m_boundary + "\r\n";
-    str += "Content-Disposition: form-data; name=\"" + name.toAscii() + "\"; ";
-    str += "filename=\"" + QFile::encodeName(KUrl(path).fileName()) + "\"" + "\r\n";
-    str += "Content-Type: " + mimeType.toUtf8() + "\r\n\r\n";
-    
-    m_postData.append(str);
-    m_postData.append(data);
-    m_postData.append("\r\n");
-}
-
-void BugzillaUploadData::finishPostRequest()
-{
-    QByteArray str = "--" + m_boundary + "--";
-    m_postData.append(str);
-}
-
-
-QByteArray BugzillaUploadData::postData() const
-{
-    return m_postData;
-}
-
-QByteArray BugzillaUploadData::boundary() const
-{
-    return m_boundary;
-}
-
-//END BugzillaUploadData
 
 void BugReport::setBugStatus(const QString &stat)
 {
