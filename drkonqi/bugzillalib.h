@@ -1,6 +1,7 @@
 /*******************************************************************
 * bugzillalib.h
 * Copyright  2009, 2011   Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright  2012  George Kiagiadakis <kiagiadakis.george@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
