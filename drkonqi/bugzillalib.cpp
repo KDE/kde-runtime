@@ -180,18 +180,6 @@ void BugzillaManager::attachTextToReport(const QString & text, const QString & f
     attachToReport(request.postData(), request.boundary());
 }
 
-void BugzillaManager::addCommentToReport(const QString & comment, int bugNumber, bool addToCC)
-{
-    KUrl addCommentJobUrl = KUrl(QString(m_bugTrackerUrl) +
-                                            QString(showBugUrl).arg(bugNumber));
-    addCommentJobUrl.addQueryItem("drkonqi_comment", comment);
-    addCommentJobUrl.addQueryItem("drkonqi_addCC", addToCC ? "1" : "0");
-    
-    KIO::Job * addCommentSubJob = KIO::storedGet(addCommentJobUrl, KIO::Reload, KIO::HideProgressInfo);
-
-    connect(addCommentSubJob, SIGNAL(finished(KJob*)) , this, SLOT(addCommentSubJobFinished(KJob*)));
-}
-    
 void BugzillaManager::addMeToCC(int bugNumber)
 {
     KUrl addCCJobUrl = KUrl(QString(m_bugTrackerUrl) +
@@ -299,75 +287,6 @@ void BugzillaManager::attachToReportJobFinished(KJob * job)
     } else {
         emit attachToReportError(job->errorString(), QString());
     }
-}
-
-void BugzillaManager::addCommentSubJobFinished(KJob * job)
-{
-    if (!job->error()) {
-        KIO::StoredTransferJob * checkJob = static_cast<KIO::StoredTransferJob*>(job);
-        QString response = checkJob->data();
-        response.remove('\r'); response.remove('\n');
-
-        //Parse query values
-        QString token = getToken(response);
-        const QString bug_id = checkJob->url().queryItem("id");
-        const QString comment = checkJob->url().queryItem("drkonqi_comment");
-        const QString addCCString = checkJob->url().queryItem("drkonqi_addCC");
-        bool addToCC = (addCCString == QLatin1String("1"));
-
-        if (!bug_id.isEmpty() && !comment.isEmpty()) {
-            QByteArray postData;
-            postData += 
-                QByteArray("id=") +  QUrl::toPercentEncoding(bug_id) +
-                QByteArray("&token=") +  QUrl::toPercentEncoding(token) +
-                QByteArray("&comment=") +  QUrl::toPercentEncoding(comment);
-            if (addToCC) {
-                postData += QByteArray("&addselfcc=on");
-            }        
-                
-            KIO::Job * addCommentJob =
-                KIO::storedHttpPost(postData, KUrl(QString(m_bugTrackerUrl) +
-                                                                QString(addInformationUrl)),
-                                KIO::HideProgressInfo);
-            connect(addCommentJob, SIGNAL(finished(KJob*)) , this, SLOT(addCommentJobFinished(KJob*)));
-            addCommentJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
-        } else {
-            emit addCommentError(i18nc("@info","Missing bug ID or comment in the query. Unknown error"), response);
-        }
-
-    } else {
-        emit addCommentError(job->errorString(), QString());
-    }
-}
-
-void BugzillaManager::addCommentJobFinished(KJob * job)
-{
-    if (!job->error()) {
-        KIO::StoredTransferJob * addCommentJob = static_cast<KIO::StoredTransferJob*>(job);
-        QString response = addCommentJob->data();
-        response.remove('\r'); response.remove('\n');
-
-        QRegExp reg("<title>Bug (.+) processed</title>");
-        int pos = reg.indexIn(response);
-        if (pos != -1) {
-            int bug_id = reg.cap(1).toInt();
-            emit addCommentFinished(bug_id);
-        } else {
-            QString errorMessage = getErrorMessage(response);
-
-            if (!errorMessage.isEmpty()) {
-                QString error = i18nc("@info", "Error while adding a new comment into the bug report: %1",
-                                  errorMessage);
-                emit addCommentError(error, QString());
-            } else {
-                QString error = i18nc("@info", "Unknown error while adding a new comment into the bug report");
-                emit addCommentError(error, response);
-            }
-
-        }
-    } else {
-        emit addCommentError(job->errorString(), QString());
-    }  
 }
 
 void BugzillaManager::addMeToCCSubJobFinished(KJob * job)
