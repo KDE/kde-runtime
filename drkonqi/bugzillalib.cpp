@@ -74,25 +74,23 @@ BugzillaManager::BugzillaManager(QObject *parent):
         m_searchJob(0)
 {
     m_bugTrackerUrl = bugtrackerBKOBaseUrl;
+    m_xmlRpcClient = new KXmlRpc::Client(KUrl(KDE_BUGZILLA_URL "xmlrpc.cgi"), this);
+    m_xmlRpcClient->setUserAgent(QLatin1String("DrKonqi"));
 }
 
 //BEGIN Login methods
 void BugzillaManager::tryLogin()
 {
     if (!m_logged) {
-        QByteArray postData =
-            QByteArray("GoAheadAndLogIn=1&Bugzilla_login=") +
-            QUrl::toPercentEncoding(m_username) +
-            QByteArray("&Bugzilla_password=") +
-            QUrl::toPercentEncoding(m_password) +
-            QByteArray("&log_in=Log+in");
+        QMap<QString, QVariant> args;
+        args.insert(QLatin1String("login"), m_username);
+        args.insert(QLatin1String("password"), m_password);
+        args.insert(QLatin1String("remember"), false);
 
-        KIO::Job * loginJob =
-            KIO::storedHttpPost(postData, KUrl(QString(m_bugTrackerUrl) + QString(loginUrl)),
-                                KIO::HideProgressInfo);
-        connect(loginJob, SIGNAL(finished(KJob*)) , this, SLOT(loginJobFinished(KJob*)));
-
-        loginJob->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
+        m_xmlRpcClient->call(QLatin1String("User.login"), args,
+                this, SLOT(callMessage(QList<QVariant>,QVariant)),
+                this, SLOT(callFault(int,QString,QVariant)),
+                QString::fromAscii("login"));
     }
 }
 
@@ -229,34 +227,6 @@ void BugzillaManager::stopCurrentSearch()
 //END Misc methods
 
 //BEGIN Slots to handle KJob::finished
-void BugzillaManager::loginJobFinished(KJob* job)
-{
-    if (!job->error()) {
-        KIO::StoredTransferJob * loginJob = static_cast<KIO::StoredTransferJob*>(job);
-        QByteArray response = loginJob->data();
-
-        bool error = false;
-        if (response.contains(QByteArray("The username or password you entered is not valid"))) {
-            m_logged = false;
-        } else {
-            if (response.contains(QByteArray("Managing Your Account"))
-                && response.contains(QByteArray("Log out"))) {
-                m_logged = true;
-            } else {
-                m_logged = false;
-                error = true;
-            }
-        }
-
-        if (error) {
-            emit loginError(i18nc("@info","Unknown response from the server"), response);
-        } else {
-            emit loginFinished(m_logged);
-        }
-    } else {
-        emit loginError(job->errorString(), QString());
-    }
-}
 
 void BugzillaManager::fetchBugJobFinished(KJob* job)
 {
@@ -511,6 +481,46 @@ void BugzillaManager::checkVersionJobFinished(KJob * job)
 }
 
 //END Slots to handle KJob::finished
+
+void BugzillaManager::callMessage(const QList<QVariant> & result, const QVariant & id)
+{
+    kDebug() << id << result;
+
+    if (id.toString() == QLatin1String("login")) {
+        m_logged = true;
+        Q_EMIT loginFinished(true);
+    }
+}
+
+void BugzillaManager::callFault(int errorCode, const QString & errorString, const QVariant & id)
+{
+    kDebug() << id << errorCode << errorString;
+
+    if (id.toString() == QLatin1String("login")) {
+        switch(errorCode) {
+        case 300:
+            Q_EMIT loginFinished(false); //TODO replace with loginError
+            break;
+        case 301:
+            Q_EMIT loginError(i18nc("@info", "Your account has been disabled."));
+            break;
+        case 305:
+            Q_EMIT loginError(i18nc("@info", "Your password is correct, but a new password "
+                                    "is required. Please login to %1 and change your "
+                                    "password to proceed.", KDE_BUGZILLA_URL));
+            break;
+        case 50:
+            Q_EMIT loginError(i18nc("@info", "Internal DrKonqi error: A required parameter "
+                                    "was not provided to the bugzilla \"User.login\" method. "
+                                    "Please report a bug to DrKonqi at %1", KDE_BUGZILLA_URL));
+            break;
+        default:
+            Q_EMIT loginError(i18nc("@info", "Received unknown error code %1 from bugzilla. "
+                                    "Error message was: %2", errorCode, errorString));
+            break;
+        }
+    }
+}
 
 //BEGIN Private helper methods
 void BugzillaManager::attachToReport(const QByteArray & data, const QByteArray & boundary)

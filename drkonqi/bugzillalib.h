@@ -20,6 +20,8 @@
 #ifndef BUGZILLALIB__H
 #define BUGZILLALIB__H
 
+#include <kxmlrpcclient/client.h>
+
 #include <QtCore/QObject>
 #include <QtCore/QMap>
 #include <QtCore/QStringList>
@@ -313,7 +315,6 @@ public:
     
 private Q_SLOTS:
     /* Slots to handle KJob::finished */
-    void loginJobFinished(KJob*);
     void fetchBugJobFinished(KJob*);
     void searchBugsJobFinished(KJob*);
     void sendReportJobFinished(KJob*);
@@ -323,6 +324,9 @@ private Q_SLOTS:
     void addMeToCCSubJobFinished(KJob*);
     void addMeToCCJobFinished(KJob*);
     void checkVersionJobFinished(KJob*);
+
+    void callMessage(const QList<QVariant> & result, const QVariant & id);
+    void callFault(int errorCode, const QString & errorString, const QVariant &id);
 
 Q_SIGNALS:
     /* Bugzilla actions finished successfully */
@@ -336,7 +340,7 @@ Q_SIGNALS:
     void checkVersionsForProductFinished(const QStringList);
 
     /* Bugzilla actions had errors */
-    void loginError(const QString &, const QString &);
+    void loginError(const QString & errorMsg, const QString & extendedErrorMsg = QString());
     void bugReportError(const QString &, QObject *);
     void searchError(const QString &);
     void sendReportError(const QString &, const QString &);
@@ -359,6 +363,7 @@ private:
     bool        m_logged;
 
     KIO::Job *  m_searchJob;
+    KXmlRpc::Client *m_xmlRpcClient;
 
     QString     m_bugTrackerUrl;
 };
