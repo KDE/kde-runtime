@@ -1421,7 +1421,8 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
     //
     // Resolve the nie URLs which are present as resource uris
     //
-    QSet<QUrl> allNonFileResources;
+    QSet<QUrl> blankResources;
+    QSet<QUrl> allNonBlankResources; // Used to order to check if protected types are being modified
     SimpleResourceGraph resGraph( resources );
     QList<SimpleResource> resGraphList = resGraph.toList();
     QMutableListIterator<SimpleResource> iter( resGraphList );
@@ -1436,8 +1437,11 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
         }
 
         const UriState state = uriState(res.uri());
-        if(state == NepomukUri || state == BlankUri) {
-            allNonFileResources << res.uri();
+        if(state == NepomukUri) {
+            allNonBlankResources << res.uri();
+        }
+        else if(state == BlankUri) {
+            blankResources << res.uri();
         }
         // Handle nie urls
         else if(state == NonExistingFileUrl) {
@@ -1473,7 +1477,7 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
             if( lastError() )
                 return QHash<QUrl, QUrl>();
 
-            allNonFileResources << legacyUri;
+            allNonBlankResources << legacyUri;
         }
         else if( state == OntologyUri ) {
             setError(QLatin1String("It is not allowed to add classes or properties through this API."), Soprano::Error::ErrorInvalidArgument);
@@ -1486,10 +1490,10 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
     //
     // We need to ensure that no client removes any ontology constructs or graphs
     //
-    if(!allNonFileResources.isEmpty() &&
-            containsResourceWithProtectedType(allNonFileResources)) {
+    if(containsResourceWithProtectedType(allNonBlankResources)) {
         return QHash<QUrl, QUrl>();
     }
+    allNonBlankResources.clear();
 
 
     ResourceIdentifier resIdent( identificationMode, this );
@@ -1531,8 +1535,8 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
                 //
                 // Extra checks it is a blank node -
                 // If it is a blank node make sure it was present as the subject
-                QSet< QUrl >::const_iterator fit = allNonFileResources.constFind( QUrl(object.toN3()) );
-                if( fit == allNonFileResources.constEnd() ) {
+                QSet<QUrl>::const_iterator fit = blankResources.constFind( QUrl(object.toN3()) );
+                if( fit == blankResources.constEnd() ) {
                     QString error = QString::fromLatin1("%1 does not exist in the graph. In statement (%2, %3, %4)")
                                     .arg( object.toN3(),
                                           syncRes.uri().url(),
@@ -1612,6 +1616,8 @@ QHash<QUrl, QUrl> Nepomuk::DataManagementModel::storeResources(const Nepomuk::Si
         // The resource is now ready.
         syncResources << syncRes;
     }
+
+    blankResources.clear();
 
     // Look for duplicates in the syncResources and merge them
     QHash<Soprano::Node, Soprano::Node> duplicateResources;
@@ -2770,6 +2776,9 @@ Nepomuk::ClassAndPropertyTree* Nepomuk::DataManagementModel::classAndPropertyTre
 
 bool Nepomuk::DataManagementModel::containsResourceWithProtectedType(const QSet<QUrl> &resources) const
 {
+    if(resources.isEmpty())
+        return false;
+
     if(executeQuery(QString::fromLatin1("ask where { ?r a ?t . FILTER(?r in (%1)) . FILTER(?t in (%2,%3,%4)) . }")
             .arg(resourcesToN3(resources).join(QLatin1String(",")),
                  Soprano::Node::resourceToN3(RDFS::Class()),
