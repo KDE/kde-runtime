@@ -69,60 +69,6 @@ kext: {
           rdfs:range xsd:string ;
           nrl:maxCardinality 1 ;
           nao:userVisible false .
-
-    kext:Activity
-          a rdfs:Class ;
-          rdfs:subClassOf rdfs:Resource ;
-          rdfs:label "activity" ;
-          rdfs:comment "A Plasma activity." .
-
-    kext:usedActivity
-          a rdf:Property ;
-          rdfs:label "used activity" ;
-          rdfs:comment "The activity that was active when resource was created. This is mostly used for graphs or desktop events." ;
-          rdfs:domain rdfs:Resource ;
-          rdfs:range kext:Activity ;
-          nrl:maxCardinality 1 ;
-          nao:userVisible false .
-
-    kext:activityIdentifier
-          a rdf:Property ;
-          rdfs:subPropertyOf nao:identifier ;
-          rdfs:label "activity identifier" ;
-          rdfs:comment "The unique ID of the activity as used outside of Nepomuk. Typically this is a UUID." ;
-          rdfs:domain kext:Activity ;
-          rdfs:range xsd:string ;
-          nrl:cardinality 1 ;
-          nao:userVisible false .
-
-    kext:ResourceScoreCache
-          a rdfs:Class ;
-          rdfs:subClassOf rdfs:Resource ;
-          rdfs:label "Resource score cache" ;
-          rdfs:comment "For storing the automatically calculated score based on the usage statistics" ;
-          nao:userVisible false .
-
-    kext:targettedResource
-          a rdf:Property ;
-          rdfs:comment "Resource for which the score is calculated." ;
-          rdfs:domain kext:ResourceScoreCache ;
-          rdfs:label "resource" ;
-          rdfs:range rdfs:Resource .
-
-    kext:initiatingAgent
-          a rdf:Property ;
-          rdfs:comment "Relates the score to the agent initiating the events." ;
-          rdfs:domain kext:ResourceScoreCache ;
-          rdfs:label "involved agent" ;
-          rdfs:range nao:Agent .
-
-    kext:cachedScore
-          a rdf:Property ;
-          rdfs:subPropertyOf nao:score ;
-          rdfs:comment "The automatically calculated score" ;
-          rdfs:domain kext:ResourceScoreCache ;
-          rdfs:label "calculated score" ;
-          rdfs:range xsd:float .
 }
 
 <http://nepomuk.kde.org/ontologies/2010/11/29/kext/metadata> {
@@ -136,7 +82,7 @@ kext: {
           nao:prefLabel "KDE Extensions Ontology" ;
           nao:hasDefaultNamespace "http://nepomuk.kde.org/ontologies/2010/11/29/kext#" ;
           nao:hasDefaultNamespaceAbbreviation "kext" ;
-          nao:lastModified "2011-06-15T18:09:43Z" ;
+          nao:lastModified "2012-03-09T13:04:43Z" ;
           nao:serializationLanguage "TriG" ;
           nao:status "Unstable" ;
           nrl:updatable "0" ;
