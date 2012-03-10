@@ -31,7 +31,7 @@ public:
 };
 
 /* Urls are defined globally here, so that they can change easily */
-#define KDE_BUGZILLA_URL "https://bugs.kde.org"
+#define KDE_BUGZILLA_URL "https://bugs.kde.org/"
 #define KDE_BUGZILLA_CREATE_ACCOUNT_URL  KDE_BUGZILLA_URL "createaccount.cgi"
 #define KDE_BUGZILLA_SHORT_URL "bugs.kde.org"
 #define TECHBASE_HOWTO_DOC "http://techbase.kde.org/Development/Tutorials/Debugging/How_to_create_useful_crash_reports#Preparing_your_KDE_packages"
