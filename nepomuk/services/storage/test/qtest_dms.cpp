@@ -187,6 +187,10 @@ void Nepomuk::insertOntologies(Soprano::Model* _model, const QUrl& graph)
     model.addStatement( NCO::Contact(), RDFS::subClassOf(), NCO::Role(), graph );
     model.addStatement( NCO::Contact(), RDFS::subClassOf(), NAO::Party(), graph );
 
+    model.addStatement( NCO::PersonContact(), RDF::type(), RDFS::Resource(), graph );
+    model.addStatement( NCO::PersonContact(), RDF::type(), RDFS::Class(), graph );
+    model.addStatement( NCO::PersonContact(), RDFS::subClassOf(), NCO::Contact(), graph );
+
     model.addStatement( NAO::Tag(), RDF::type(), RDFS::Class(), graph );
     model.addStatement( NFO::FileDataObject(), RDF::type(), RDFS::Class(), graph );
     model.addStatement( NFO::Folder(), RDF::type(), RDFS::Class(), graph );

@@ -4669,8 +4669,36 @@ void DataManagementModelTest::testStoreResources_duplicates2()
 
     int emailCount = m_model->listStatements( Node(), RDF::type(), NCO::EmailAddress() ).allStatements().size();
     QCOMPARE( emailCount, 1 );
+
+    QVERIFY(!haveTrailingGraphs());
+    QVERIFY(!haveDataInDefaultGraph());
 }
 
+void DataManagementModelTest::testStoreResources_duplicatesInMerger()
+{
+    SimpleResource contact1;
+    contact1.addType( NCO::PersonContact() );
+    contact1.setProperty( NCO::fullname(), QLatin1String("Rachel McAdams") );
+
+    SimpleResourceGraph graph;
+    graph << contact1;
+
+    m_dmModel->storeResources( graph, QLatin1String("appA") );
+    QVERIFY(!m_dmModel->lastError());
+
+    SimpleResource contact2;
+    contact2.addType( NCO::PersonContact() );
+    contact2.setProperty( NCO::fullname(), QLatin1String("Rachel McAdams") );
+    contact2.setProperty( NAO::prefLabel(), QLatin1String("Rachel McAdams") );
+
+    graph << contact2;
+
+    m_dmModel->storeResources( graph, QLatin1String("appA") );
+    QVERIFY(!m_dmModel->lastError());
+
+    QVERIFY(!haveTrailingGraphs());
+    QVERIFY(!haveDataInDefaultGraph());
+}
 
 void DataManagementModelTest::testStoreResources_overwriteProperties()
 {

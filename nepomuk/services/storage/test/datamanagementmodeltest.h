@@ -143,6 +143,7 @@ private Q_SLOTS:
     void testStoreResources_kioProtocols();
     void testStoreResources_duplicates();
     void testStoreResources_duplicates2();
+    void testStoreResources_duplicatesInMerger();
     void testStoreResources_overwriteProperties();
     void testStoreResources_overwriteProperties_invalidCard();
     void testStoreResources_correctDomainInStore();
