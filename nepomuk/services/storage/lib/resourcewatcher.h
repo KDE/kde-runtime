@@ -95,6 +95,7 @@ namespace Nepomuk {
          */
         virtual ~ResourceWatcher();
 
+    public Q_SLOTS:
         /**
          * \brief Add a type to be watched.
          *
@@ -206,7 +207,6 @@ namespace Nepomuk {
          */
         QList<Types::Property> properties() const;
 
-    public Q_SLOTS:
         /**
          * \brief Start the signalling of changes.
          *
