@@ -755,10 +755,10 @@ void Nepomuk::DataManagementModel::removeProperties(const QList<QUrl> &resources
             QList<Soprano::Node> values;
             values << it.value();
 
-            QUrl property = it.key();
-            it++;
-            while( it != propertyValues.constEnd() && it.key() == property )
+            const QUrl property = it.key();
+            for( ++it; it != propertyValues.constEnd() && it.key() == property; ++it ) {
                 values << it.value();
+            }
 
             d->m_watchManager->removeProperty(res, property, values);
         }
