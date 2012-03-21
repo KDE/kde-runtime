@@ -9,6 +9,7 @@ set(kded_networkstatus_PART_SRCS
 )
 
 macro_optional_find_package(NetworkManager)
+macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "kded support to NetworkManager" "http://projects.gnome.org/NetworkManager" FALSE "" "Needed for kded's networkstatus module")
 
 if(NETWORKMANAGER_FOUND)
     macro_ensure_version("0.7.0" ${NETWORKMANAGER_VERSION} NM_0_7)

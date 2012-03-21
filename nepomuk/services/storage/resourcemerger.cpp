@@ -509,20 +509,26 @@ Soprano::Node Nepomuk::ResourceMerger::resolveUnmappedNode(const Soprano::Node& 
     return newUri;
 }
 
-void Nepomuk::ResourceMerger::resolveBlankNodesInList(QList<Soprano::Statement> *stList)
+void Nepomuk::ResourceMerger::resolveBlankNodesInSet(QSet<Soprano::Statement> *stList)
 {
-    QMutableListIterator<Soprano::Statement> iter( *stList );
+    QSet<Soprano::Statement> newSet;
+
+    QSetIterator<Soprano::Statement> iter( *stList );
     while( iter.hasNext() ) {
-        Soprano::Statement &st = iter.next();
+        Soprano::Statement st = iter.next();
 
         st.setSubject( resolveUnmappedNode(st.subject()) );
         st.setObject( resolveUnmappedNode(st.object()) );
+
+        newSet.insert( st );
     }
+
+    *stList = newSet;
 }
 
-void Nepomuk::ResourceMerger::removeDuplicatesInList(QList<Soprano::Statement> *stList)
+void Nepomuk::ResourceMerger::removeDuplicatesInList(QSet<Soprano::Statement> *stList)
 {
-    QMutableListIterator<Soprano::Statement> it( *stList );
+    QMutableSetIterator<Soprano::Statement> it( *stList );
     while( it.hasNext() ) {
         const Soprano::Statement &st = it.next();
         if( st.subject().isBlank() || st.object().isBlank() )
@@ -649,9 +655,9 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
     // First separate all the statements predicate rdf:type.
     // and collect info required to check the types and cardinality
     //
-    QList<Soprano::Statement> remainingStatements;
-    QList<Soprano::Statement> typeStatements;
-    QList<Soprano::Statement> metadataStatements;
+    QSet<Soprano::Statement> remainingStatements;
+    QSet<Soprano::Statement> typeStatements;
+    QSet<Soprano::Statement> metadataStatements;
 
     foreach( const Soprano::Statement & st, statements ) {
         const QUrl subUri = getBlankOrResourceUri( st.subject() );
@@ -676,7 +682,9 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
         // Get the cardinality
         if( tree->maxCardinality( prop ) > 0 ) {
             QPair<QUrl,QUrl> subPredPair( subUri, st.predicate().uri() );
-            cardinality.insert( subPredPair, st.object() );
+            if( !cardinality.contains( subPredPair, st.object() ) ) {
+                cardinality.insert( subPredPair, st.object() );
+            }
         }
     }
 
@@ -892,9 +900,9 @@ bool Nepomuk::ResourceMerger::merge( const Soprano::Graph& stGraph )
     }
 
     // Create all the blank nodes
-    resolveBlankNodesInList( &typeStatements );
-    resolveBlankNodesInList( &remainingStatements );
-    resolveBlankNodesInList( &metadataStatements );
+    resolveBlankNodesInSet( &typeStatements );
+    resolveBlankNodesInSet( &remainingStatements );
+    resolveBlankNodesInSet( &metadataStatements );
 
     // Push all these statements and get the list of all the modified resource
     foreach( Soprano::Statement st, typeStatements ) {
