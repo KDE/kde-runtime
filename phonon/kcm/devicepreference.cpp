@@ -505,12 +505,20 @@ QList<Phonon::AudioOutputDevice> DevicePreference::availableAudioOutputDevices()
 
 QList<Phonon::AudioCaptureDevice> DevicePreference::availableAudioCaptureDevices() const
 {
+#ifndef PHONON_NO_AUDIOCAPTURE
     return Phonon::BackendCapabilities::availableAudioCaptureDevices();
+#else
+    return QList<Phonon::AudioCaptureDevice>();
+#endif
 }
 
 QList<Phonon::VideoCaptureDevice> DevicePreference::availableVideoCaptureDevices() const
 {
+#ifndef PHONON_NO_VIDEOCAPTURE
     return Phonon::BackendCapabilities::availableVideoCaptureDevices();
+#else
+    return QList<Phonon::VideoCaptureDevice>();
+#endif
 }
 
 void DevicePreference::load()
@@ -533,6 +541,7 @@ void DevicePreference::loadCategoryDevices()
         m_audioOutputModel[cat]->setModelData(list);
     }
 
+#ifndef PHONON_NO_AUDIOCAPTURE
     for (int i = 0; i < audioCapCategoriesCount; ++ i) {
         const Phonon::CaptureCategory cat = audioCapCategories[i];
         QList<Phonon::AudioCaptureDevice> list;
@@ -543,7 +552,9 @@ void DevicePreference::loadCategoryDevices()
 
         m_audioCaptureModel[cat]->setModelData(list);
     }
+#endif
 
+#ifndef PHONON_NO_VIDEOCAPTURE
     for (int i = 0; i < videoCapCategoriesCount; ++ i) {
         const Phonon::CaptureCategory cat = videoCapCategories[i];
         QList<Phonon::VideoCaptureDevice> list;
@@ -554,6 +565,7 @@ void DevicePreference::loadCategoryDevices()
 
         m_videoCaptureModel[cat]->setModelData(list);
     }
+#endif
 
     deviceList->resizeColumnToContents(0);
 }
@@ -567,19 +579,23 @@ void DevicePreference::save()
         Phonon::GlobalConfig().setAudioOutputDeviceListFor(cat, order);
     }
 
+#ifndef PHONON_NO_AUDIOCAPTURE
     for (int i = 0; i < audioCapCategoriesCount; ++i) {
         const Phonon::CaptureCategory cat = audioCapCategories[i];
         Q_ASSERT(m_audioCaptureModel.value(cat));
         const QList<int> order = m_audioCaptureModel.value(cat)->tupleIndexOrder();
         Phonon::GlobalConfig().setAudioCaptureDeviceListFor(cat, order);
     }
+#endif
 
+#ifndef PHONON_NO_VIDEOCAPTURE
     for (int i = 0; i < videoCapCategoriesCount; ++i) {
         const Phonon::CaptureCategory cat = videoCapCategories[i];
         Q_ASSERT(m_videoCaptureModel.value(cat));
         const QList<int> order = m_videoCaptureModel.value(cat)->tupleIndexOrder();
         Phonon::GlobalConfig().setVideoCaptureDeviceListFor(cat, order);
     }
+#endif
 }
 
 void DevicePreference::defaults()
@@ -881,6 +897,7 @@ void DevicePreference::on_testPlaybackButton_toggled(bool down)
             break;
         }
 
+#ifndef PHONON_NO_AUDIOCAPTURE
         case AudioCapture: {
             // Create a media object and an audio output
             m_media = new Phonon::MediaObject(this);
@@ -903,7 +920,9 @@ void DevicePreference::on_testPlaybackButton_toggled(bool down)
 
             break;
         }
+#endif
 
+#ifndef PHONON_NO_VIDEOCAPTURE
         case VideoCapture: {
             // Create a media object and a video output
             m_media = new Phonon::MediaObject(this);
@@ -931,6 +950,7 @@ void DevicePreference::on_testPlaybackButton_toggled(bool down)
 
             break;
         }
+#endif
 
         default:
             return;
