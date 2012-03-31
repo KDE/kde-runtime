@@ -26,8 +26,11 @@
 #include <Soprano/Global>
 #include <Soprano/Version>
 #include <Soprano/StorageModel>
+#include <Soprano/QueryResultIterator>
+#include <Soprano/Node>
 #include <Soprano/Error/Error>
 #include <Soprano/Vocabulary/RDF>
+#include <Soprano/Vocabulary/NRL>
 #include <Soprano/Util/SignalCacheModel>
 #define USING_SOPRANO_NRLMODEL_UNSTABLE_API
 #include <Soprano/NRLModel>
@@ -380,6 +383,17 @@ QString Nepomuk::Repository::usedSopranoBackend() const
         return QString();
 }
 
+Soprano::QueryResultIterator Nepomuk::Repository::executeQuery(const QString &query, Soprano::Query::QueryLanguage language, const QString &userQueryLanguage) const
+{
+    if(language == Soprano::Query::QueryLanguageSparql) {
+        // FIXME: some other model puts prefixes in front of this which results in invlide queries!
+        return FilterModel::executeQuery(QLatin1String("DEFINE input:inference <nepomuk:/ontographgroup> ") + query, language);
+    }
+    else {
+        return FilterModel::executeQuery(query, language, userQueryLanguage);
+    }
+}
+
 
 Soprano::BackendSettings Nepomuk::Repository::readVirtuosoSettings() const
 {
@@ -434,6 +448,39 @@ void Nepomuk::Repository::updateInference()
     m_classAndPropertyTree->rebuildTree(this);
     m_inferencer->updateInferenceIndex();
     m_inferencer->updateAllResources();
+
+    //
+    // Remove the old crappy inference graph
+    //
+    m_model->executeQuery(QLatin1String("clear graph <urn:crappyinference2:inferredtriples>"),
+                          Soprano::Query::QueryLanguageSparql);
+
+    //
+    // Update ontology graph group
+    //
+    Soprano::QueryResultIterator it
+            = m_model->executeQuery(QString::fromLatin1("select RGG_IID from DB.DBA.RDF_GRAPH_GROUP where RGG_IRI='nepomuk:/ontographgroup'"),
+                                    Soprano::Query::QueryLanguageUser,
+                                    QLatin1String("sql"));
+    if(!it.next()) {
+        m_model->executeQuery(QLatin1String("DB.DBA.RDF_GRAPH_GROUP_CREATE('nepomuk:/ontographgroup', 1, null, 'The Nepomuk graph group which contains all nrl:Ontology graphs.')"),
+                              Soprano::Query::QueryLanguageUser,
+                              QLatin1String("sql"));
+    }
+
+    // fetch all nrl:Ontology graphs and add them to the group
+    it = m_model->executeQuery(QString::fromLatin1("select distinct ?r where { ?r a %1 . }").arg(Soprano::Node::resourceToN3(Soprano::Vocabulary::NRL::Ontology())),
+                               Soprano::Query::QueryLanguageSparql);
+    while(it.next()) {
+        m_model->executeQuery(QString::fromLatin1("DB.DBA.RDF_GRAPH_GROUP_INS('nepomuk:/ontographgroup', '%1')").arg(it[0].uri().toString()),
+                              Soprano::Query::QueryLanguageUser,
+                              QLatin1String("sql"));
+    }
+
+    // create the rdfs rule graph on the graph group
+    m_model->executeQuery(QLatin1String("rdfs_rule_set('nepomuk:/ontographgroup','nepomuk:/ontographgroup')"),
+                          Soprano::Query::QueryLanguageUser,
+                          QLatin1String("sql"));
 }
 
 void Nepomuk::Repository::slotVirtuosoStopped(bool normalExit)

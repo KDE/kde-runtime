@@ -85,6 +85,11 @@ namespace Nepomuk {
 
         QString usedSopranoBackend() const;
 
+        /**
+         * Reimplemented to enable Virtuoso inference.
+         */
+        Soprano::QueryResultIterator executeQuery(const QString &query, Soprano::Query::QueryLanguage language, const QString &userQueryLanguage) const;
+
     public Q_SLOTS:
         /**
          * Will emit the opened signal
