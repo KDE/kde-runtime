@@ -27,6 +27,7 @@
 #include <Soprano/PluginManager>
 #include <Soprano/StatementIterator>
 #include <Soprano/Parser>
+#include <Soprano/QueryResultIterator>
 
 #include <KConfig>
 #include <KConfigGroup>
@@ -42,14 +43,23 @@
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 
+#include <Soprano/Vocabulary/RDFS>
+#include <Soprano/Vocabulary/NAO>
+#include <Soprano/Vocabulary/XMLSchema>
 
 using namespace Soprano;
+using namespace Soprano::Vocabulary;
+
+namespace {
+    const char* s_typeVisibilityGraph = "nepomuk:/ctx/typevisibility";
+}
 
 class Nepomuk::OntologyLoader::Private
 {
 public:
     Private( OntologyLoader* p )
         : forceOntologyUpdate( false ),
+          someOntologyUpdated( false ),
           q( p ) {
     }
 
@@ -58,6 +68,9 @@ public:
     QTimer updateTimer;
     bool forceOntologyUpdate;
     QStringList desktopFilesToUpdate;
+
+    // true if at least one ontology has been updated
+    bool someOntologyUpdated;
 
     void updateOntology( const QString& filename );
 
@@ -110,6 +123,8 @@ void Nepomuk::OntologyLoader::Private::updateOntology( const QString& filename )
     }
 
     if( update ) {
+        someOntologyUpdated = true;
+
         QString mimeType = df.readEntry( "MimeType", QString() );
 
         const Soprano::Parser* parser
@@ -179,6 +194,7 @@ Nepomuk::OntologyLoader::~OntologyLoader()
 
 void Nepomuk::OntologyLoader::updateLocalOntologies()
 {
+    d->someOntologyUpdated = false;
     d->desktopFilesToUpdate = KGlobal::dirs()->findAllResources( "xdgdata-ontology", "*.ontology", KStandardDirs::Recursive|KStandardDirs::NoDuplicates );
     if(d->desktopFilesToUpdate.isEmpty())
         kError() << "No ontology files found! Make sure the shared-desktop-ontologies project is installed and XDG_DATA_DIRS is set properly.";
@@ -201,6 +217,16 @@ void Nepomuk::OntologyLoader::updateNextOntology()
     else {
         d->forceOntologyUpdate = false;
         d->updateTimer.stop();
+
+        // update graph visibility if something has changed or if we never did it
+        const QUrl visibilityGraph = QUrl::fromEncoded(s_typeVisibilityGraph);
+        if(d->someOntologyUpdated ||
+           !d->model->executeQuery(QString::fromLatin1("ask where { graph %1 { ?s ?p ?o . } }")
+                                   .arg(Soprano::Node::resourceToN3(visibilityGraph)),
+                                   Soprano::Query::QueryLanguageSparql).boolValue()) {
+            updateTypeVisibility();
+        }
+
         emit ontologyLoadingFinished(this);
     }
 }
@@ -229,12 +255,38 @@ void Nepomuk::OntologyLoader::slotGraphRetrieverResult( KJob* job )
         // TODO: find a way to check if the imported version of the ontology
         // is newer than the already installed one
         if ( d->model->updateOntology( graphRetriever->statements(), QUrl()/*graphRetriever->url()*/ ) ) {
+            updateTypeVisibility();
             emit ontologyUpdated( QString::fromAscii( graphRetriever->url().toEncoded() ) );
         }
         else {
             emit ontologyUpdateFailed( QString::fromAscii( graphRetriever->url().toEncoded() ), d->model->lastError().message() );
         }
     }
+}
+
+void Nepomuk::OntologyLoader::updateTypeVisibility()
+{
+    const QUrl visibilityGraph = QUrl::fromEncoded(s_typeVisibilityGraph);
+
+    // 1. remove all visibility values we added ourselves
+    d->model->removeContext(visibilityGraph);
+
+    // 2. make rdfs:Resource non-visible (this is required since with KDE 4.9 we introduced a new
+    //    way of visibility handling which relies on types alone rather than visibility values on
+    //    resources. Any visible type will make all sub-types visible, too. If rdfs:Resource were
+    //    visible everything would be.
+    d->model->removeAllStatements(RDFS::Resource(), NAO::userVisible(), Soprano::Node());
+
+    // 3. Set each type visible which is not rdfs:Resource and does not have a non-visible parent
+    d->model->executeQuery(QString::fromLatin1("insert into %1 { "
+                                               "?t %2 'true'^^%3 . "
+                                               "} where { "
+                                               "?t a rdfs:Class . "
+                                               "filter not exists { ?tt %2 'false'^^%3 .  ?t rdfs:subClassOf ?tt . } }")
+                           .arg(Soprano::Node::resourceToN3(visibilityGraph),
+                                Soprano::Node::resourceToN3(NAO::userVisible()),
+                                Soprano::Node::resourceToN3(XMLSchema::boolean())),
+                           Soprano::Query::QueryLanguageSparql);
 }
 
 #include "ontologyloader.moc"

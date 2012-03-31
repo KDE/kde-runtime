@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2007-2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2007-2012 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -91,6 +91,7 @@ namespace Nepomuk {
         // a little async updating
         void updateNextOntology();
         void slotGraphRetrieverResult( KJob* job );
+        void updateTypeVisibility();
 
     private:
         class Private;
