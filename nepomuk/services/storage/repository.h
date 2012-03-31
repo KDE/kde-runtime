@@ -30,7 +30,6 @@ namespace Soprano {
 }
 
 class KJob;
-class CrappyInferencer2;
 
 namespace Nepomuk {
     class RemovableMediaModel;
@@ -57,11 +56,6 @@ namespace Nepomuk {
      * \li RemovableMediaModel is used to automatically convert the URLs of files
      *     on USB keys, network shares, and so on from and into mount-point independant URLs
      *     like nfs://<HOST>/<HOST-PATH>/local/path.ext.
-     * \li CrappyInferencer2 keeps rdfs:subClassOf and nao:userVisible inference up-to-date.
-     *
-     * On construction it checks for and optionally performs conversion from an old repository
-     * type (pre-Virtuoso times) and runs CrappyInferencer2::updateAllResources() which is
-     * performed in a separate thread.
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */
@@ -115,7 +109,6 @@ namespace Nepomuk {
 
         Soprano::Model* m_model;
         Nepomuk::ClassAndPropertyTree* m_classAndPropertyTree;
-        CrappyInferencer2* m_inferencer;
         RemovableMediaModel* m_removableStorageModel;
         DataManagementModel* m_dataManagementModel;
         Nepomuk::DataManagementAdaptor* m_dataManagementAdaptor;

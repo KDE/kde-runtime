@@ -8,16 +8,6 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/..
   )
 
-kde4_add_unit_test(crappyinferencer2test
-  crappyinferencer2test.cpp
-  ../crappyinferencer2.cpp
-  ../classandpropertytree.cpp)
-target_link_libraries(crappyinferencer2test
-  ${QT_QTTEST_LIBRARY}
-  ${SOPRANO_LIBRARIES}
-  ${KDE4_KDECORE_LIBS}
-  nepomukdatamanagement)
-
 kde4_add_unit_test(removablemediamodeltest
   removablemediamodeltest.cpp
   ../removablemediamodel.cpp

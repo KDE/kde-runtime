@@ -14,7 +14,6 @@
 
 #include "repository.h"
 #include "modelcopyjob.h"
-#include "crappyinferencer2.h"
 #include "removablemediamodel.h"
 #include "datamanagementmodel.h"
 #include "datamanagementadaptor.h"
@@ -64,7 +63,6 @@ Nepomuk::Repository::Repository( const QString& name )
       m_state( CLOSED ),
       m_model( 0 ),
       m_classAndPropertyTree( 0 ),
-      m_inferencer( 0 ),
       m_removableStorageModel( 0 ),
       m_dataManagementModel( 0 ),
       m_dataManagementAdaptor( 0 ),
@@ -103,9 +101,6 @@ void Nepomuk::Repository::close()
 
     delete m_classAndPropertyTree;
     m_classAndPropertyTree = 0;
-
-    delete m_inferencer;
-    m_inferencer = 0;
 
     delete m_removableStorageModel;
     m_removableStorageModel = 0;
@@ -212,17 +207,13 @@ void Nepomuk::Repository::open()
     connect(m_graphMaintainer, SIGNAL(finished()), m_graphMaintainer, SLOT(deleteLater()));
     m_graphMaintainer->start();
 
-    // create the one class and property tree to be used in the crappy inferencer 2 and in DMS
+    // create the one class and property tree to be used in DMS
     // =================================
     m_classAndPropertyTree = new Nepomuk::ClassAndPropertyTree(this);
 
-    // create the crappy inference model which handles rdfs:subClassOf only -> we only use this to improve performance of ResourceTypeTerms
-    // =================================
-    m_inferencer = new CrappyInferencer2( m_classAndPropertyTree, m_model );
-
     // create the RemovableMediaModel which does the transparent handling of removable mounts
     // =================================
-    m_removableStorageModel = new Nepomuk::RemovableMediaModel(m_inferencer);
+    m_removableStorageModel = new Nepomuk::RemovableMediaModel(m_model);
 
     // create a SignalCacheModel to make sure no client slows us down by listening to the stupid signals
     // =================================
@@ -446,8 +437,6 @@ void Nepomuk::Repository::updateInference()
 
     // update the rest
     m_classAndPropertyTree->rebuildTree(this);
-    m_inferencer->updateInferenceIndex();
-    m_inferencer->updateAllResources();
 
     //
     // Remove the old crappy inference graph
