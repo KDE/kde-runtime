@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010-2011 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2010-2012 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -64,30 +64,24 @@ void ClassAndPropertyTreeTest::init()
     // we create one fake ontology
     //
     // situations we need to test:
-    // * class that is marked visible should stay visible
-    // * class that is marked invisible should stay invisible
-    // * non-marked subclass of visible should be visible, too
-    // * non-marked subclass of invisible should be invisible, too
     // * marked subclass should keep its own visiblity and not inherit from parent
     // * whole branch should inherit from parent
-    // * if one parent is visible the class is visible, too, even if N other parents are not
-    // * if all parents are invisible, the class is invisible, even if higher up in the branch a class is visible
     // * properly handle loops (as in: do not run into an endless loop)
     //
     // A
-    // |- B - invisible
+    // |- B
     //    |- C
-    //       |- D - visible
+    //       |- D
     //          |- E
     //             |- F
     //    |- G
     //
-    // AA - invisible
+    // AA
     // | - F
     // | - G
     //
     // X
-    // |- Y - invisible
+    // |- Y
     //    |- Z
     //       |- X
 
@@ -144,21 +138,6 @@ void ClassAndPropertyTreeTest::init()
     m_model->addStatement( QUrl("prop:/D"), Soprano::Vocabulary::NRL::cardinality(), LiteralValue(1), graph );
 
     m_typeTree->rebuildTree(m_model);
-}
-
-void ClassAndPropertyTreeTest::testVisibility()
-{
-    QVERIFY(m_typeTree->isUserVisible(QUrl("onto:/A")));
-    QVERIFY(!m_typeTree->isUserVisible(QUrl("onto:/B")));
-    QVERIFY(!m_typeTree->isUserVisible(QUrl("onto:/C")));
-    QVERIFY(m_typeTree->isUserVisible(QUrl("onto:/D")));
-    QVERIFY(m_typeTree->isUserVisible(QUrl("onto:/E")));
-    QVERIFY(m_typeTree->isUserVisible(QUrl("onto:/F")));
-    QVERIFY(!m_typeTree->isUserVisible(QUrl("onto:/G")));
-    QVERIFY(!m_typeTree->isUserVisible(QUrl("onto:/AA")));
-    QVERIFY(!m_typeTree->isUserVisible(QUrl("onto:/X"))); // because only top-level classes inherit from rdfs:Resource
-    QVERIFY(!m_typeTree->isUserVisible(QUrl("onto:/Y")));
-    QVERIFY(!m_typeTree->isUserVisible(QUrl("onto:/Z")));
 }
 
 void ClassAndPropertyTreeTest::testParents()
@@ -271,18 +250,6 @@ void ClassAndPropertyTreeTest::testProperties()
 {
     QCOMPARE(m_typeTree->maxCardinality(QUrl("prop:/C")), 1);
     QCOMPARE(m_typeTree->maxCardinality(QUrl("prop:/D")), 1);
-}
-
-void ClassAndPropertyTreeTest::testVisibleType()
-{
-    const QList<QUrl> types = m_typeTree->visibleTypes();
-    kDebug() << types;
-    QCOMPARE(types.count(), 5);
-    QVERIFY(types.contains(RDFS::Resource()));
-    QVERIFY(types.contains(QUrl("onto:/A")));
-    QVERIFY(types.contains(QUrl("onto:/D")));
-    QVERIFY(types.contains(QUrl("onto:/E")));
-    QVERIFY(types.contains(QUrl("onto:/F")));
 }
 
 QTEST_KDEMAIN_CORE(ClassAndPropertyTreeTest)

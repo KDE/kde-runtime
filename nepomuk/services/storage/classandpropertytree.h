@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2010-2012 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -64,7 +64,6 @@ public:
      */
     bool isChildOf(const QList<QUrl> & types, const QUrl& superClass) const;
     int maxCardinality(const QUrl& type) const;
-    bool isUserVisible(const QUrl& type) const;
 
     QUrl propertyDomain(const QUrl& uri) const;
     QUrl propertyRange(const QUrl& uri) const;
@@ -74,9 +73,6 @@ public:
 
     /// \return \p true if \p uri is an defining property, \p false otherwise
     bool isDefiningProperty(const QUrl& uri) const;
-
-    /// \return A list of all known rdf classes that are visible (nao:userVisible)
-    QList<QUrl> visibleTypes() const;
 
     /// will try very hard to convert a variant into a node. Supports literal XML types and QUrl
     Soprano::Node variantToNode(const QVariant& value, const QUrl& property) const;
@@ -94,7 +90,6 @@ private:
     class ClassOrProperty;
 
     const ClassOrProperty* findClassOrProperty(const QUrl& uri) const;
-    int updateUserVisibility(ClassOrProperty *cop, QSet<QUrl> &visitedNodes);
     int updateDefining(ClassOrProperty* cop, QSet<QUrl>& definingNodes);
     QSet<QUrl> getAllParents(ClassOrProperty *cop, QSet<QUrl> &visitedNodes);
 
