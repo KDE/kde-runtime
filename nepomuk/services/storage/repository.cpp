@@ -376,8 +376,10 @@ QString Nepomuk::Repository::usedSopranoBackend() const
 
 Soprano::QueryResultIterator Nepomuk::Repository::executeQuery(const QString &query, Soprano::Query::QueryLanguage language, const QString &userQueryLanguage) const
 {
-    if(language == Soprano::Query::QueryLanguageSparql) {
-        // FIXME: some other model puts prefixes in front of this which results in invlide queries!
+    if(language == Soprano::Query::QueryLanguageSparqlNoInference) {
+        return FilterModel::executeQuery(query, Soprano::Query::QueryLanguageSparql);
+    }
+    else if(language == Soprano::Query::QueryLanguageSparql) {
         return FilterModel::executeQuery(QLatin1String("DEFINE input:inference <nepomuk:/ontographgroup> ") + query, language);
     }
     else {
