@@ -30,6 +30,7 @@ set(storage_SRCS
   resourcewatcherconnection.cpp
   graphmaintainer.cpp
   lib/dbustypes.cpp
+  virtuosoinferencemodel.cpp
   )
 
 qt4_add_dbus_adaptor(storage_SRCS

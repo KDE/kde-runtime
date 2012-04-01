@@ -1,6 +1,6 @@
 /*
    This file is part of the Nepomuk KDE project.
-   Copyright (C) 2011 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2011-2012 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,7 @@ class NRLModel;
 namespace Nepomuk {
 class DataManagementModel;
 class ClassAndPropertyTree;
+class VirtuosoInferenceModel;
 }
 class KTempDir;
 
@@ -181,6 +182,7 @@ private:
     KTempDir* m_storageDir;
     Soprano::Model* m_model;
     Soprano::NRLModel* m_nrlModel;
+    Nepomuk::VirtuosoInferenceModel* m_inferenceModel;
     Nepomuk::ClassAndPropertyTree* m_classAndPropertyTree;
     Nepomuk::DataManagementModel* m_dmModel;
 };

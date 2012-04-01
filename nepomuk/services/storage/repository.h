@@ -39,6 +39,7 @@ namespace Nepomuk {
     class DataManagementAdaptor;
     class ClassAndPropertyTree;
     class GraphMaintainer;
+    class VirtuosoInferenceModel;
 
     /**
      * Represents the main Nepomuk model. While it looks as if there could be more than
@@ -79,11 +80,6 @@ namespace Nepomuk {
 
         QString usedSopranoBackend() const;
 
-        /**
-         * Reimplemented to enable Virtuoso inference.
-         */
-        Soprano::QueryResultIterator executeQuery(const QString &query, Soprano::Query::QueryLanguage language, const QString &userQueryLanguage) const;
-
     public Q_SLOTS:
         /**
          * Will emit the opened signal
@@ -110,6 +106,7 @@ namespace Nepomuk {
         Soprano::Model* m_model;
         Nepomuk::ClassAndPropertyTree* m_classAndPropertyTree;
         RemovableMediaModel* m_removableStorageModel;
+        VirtuosoInferenceModel* m_inferenceModel;
         DataManagementModel* m_dataManagementModel;
         Nepomuk::DataManagementAdaptor* m_dataManagementAdaptor;
         Soprano::NRLModel* m_nrlModel;

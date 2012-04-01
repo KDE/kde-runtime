@@ -32,6 +32,7 @@ set( DMTEST
   ../resourcemerger.cpp
   ../resourceidentifier.cpp
   ../crappyinferencer.cpp
+  ../virtuosoinferencemodel.cpp
   ../lib/dbustypes.cpp
   qtest_dms.cpp
 )

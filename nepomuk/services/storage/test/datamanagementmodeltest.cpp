@@ -23,6 +23,7 @@
 #include "datamanagementmodeltest.h"
 #include "../datamanagementmodel.h"
 #include "../classandpropertytree.h"
+#include "../virtuosoinferencemodel.h"
 #include "simpleresource.h"
 #include "simpleresourcegraph.h"
 
@@ -65,6 +66,7 @@ void DataManagementModelTest::resetModel()
 
     // rebuild the internals of the data management model
     m_classAndPropertyTree->rebuildTree(m_dmModel);
+    m_inferenceModel->updateOntologyGraphs();
 }
 
 
@@ -76,15 +78,17 @@ void DataManagementModelTest::initTestCase()
     m_model = backend->createModel( Soprano::BackendSettings() << Soprano::BackendSetting(Soprano::BackendOptionStorageDir, m_storageDir->name()) );
     QVERIFY( m_model );
 
-    // DataManagementModel relies on the ussage of a NRLModel in the storage service
+    // DataManagementModel relies on the usage of a NRLModel in the storage service
     m_nrlModel = new Soprano::NRLModel(m_model);
     m_classAndPropertyTree = new Nepomuk::ClassAndPropertyTree(this);
-    m_dmModel = new Nepomuk::DataManagementModel(m_classAndPropertyTree, m_nrlModel);
+    m_inferenceModel = new Nepomuk::VirtuosoInferenceModel(m_nrlModel);
+    m_dmModel = new Nepomuk::DataManagementModel(m_classAndPropertyTree, m_inferenceModel);
 }
 
 void DataManagementModelTest::cleanupTestCase()
 {
     delete m_dmModel;
+    delete m_inferenceModel;
     delete m_nrlModel;
     delete m_model;
     delete m_storageDir;
