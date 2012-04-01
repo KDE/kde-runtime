@@ -1944,13 +1944,11 @@ Nepomuk::SimpleResourceGraph Nepomuk::DataManagementModel::describeResources(con
             foreach(const QUrl& res, tmp) {
                 Soprano::QueryResultIterator it
                         = executeQuery(QString::fromLatin1("select ?r where { "
-                                                           "graph ?g { ?parent ?p ?r . "
+                                                           "graph ?g { ?parent %2 ?r . "
                                                            "FILTER(?parent in (%1)) . } . "
-                                                           "?p %2 %3 . "
-                                                           "%4"
+                                                           "%3"
                                                            "}")
                                        .arg(/*resourcesToN3(subResources).join(QLatin1String(","))*/Soprano::Node::resourceToN3(res),
-                                            Soprano::Node::resourceToN3(RDFS::subPropertyOf()),
                                             Soprano::Node::resourceToN3(NAO::hasSubResource()),
                                             discardableDataExcludeFilter),
                                        Soprano::Query::QueryLanguageSparql);
