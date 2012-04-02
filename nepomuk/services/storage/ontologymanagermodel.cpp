@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2012 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -17,7 +17,6 @@
 */
 
 #include "ontologymanagermodel.h"
-#include "crappyinferencer.h"
 
 #include <QtCore/QUrl>
 #include <QtCore/QDateTime>
@@ -216,7 +215,7 @@ namespace {
         tmpModel->addStatement( Soprano::Statement( metaDataGraphUri, Soprano::Vocabulary::NRL::coreGraphMetadataFor(), dataGraphUri, metaDataGraphUri ) );
         tmpModel->addStatement( Soprano::Statement( dataGraphUri, Soprano::Vocabulary::RDF::type(), graphType, metaDataGraphUri ) );
         if ( graphType == Soprano::Vocabulary::NRL::KnowledgeBase() ) {
-            // we do not have inference in Nepomuk yet and this way libnepomuk does not get confused when reading types
+            // just to make sure. TODO: Since we now have inference in Nepomuk we could probably remove this.
             tmpModel->addStatement( Soprano::Statement( dataGraphUri, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::Ontology(), metaDataGraphUri ) );
             tmpModel->addStatement( Soprano::Statement( dataGraphUri, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::InstanceBase(), metaDataGraphUri ) );
         }
@@ -236,8 +235,6 @@ public:
         : q( p ) {
     }
 
-    CrappyInferencer m_inferenceModel;
-
 private:
     OntologyManagerModel* q;
 };
@@ -247,24 +244,16 @@ private:
 
 
 Nepomuk::OntologyManagerModel::OntologyManagerModel( Soprano::Model* parentModel, QObject* parent )
-    : FilterModel(),
+    : FilterModel(parentModel),
       d( new Private( this ) )
 {
     setParent( parent );
-    FilterModel::setParentModel( &d->m_inferenceModel );
-    setParentModel( parentModel );
 }
 
 
 Nepomuk::OntologyManagerModel::~OntologyManagerModel()
 {
     delete d;
-}
-
-
-void Nepomuk::OntologyManagerModel::setParentModel( Soprano::Model* parentModel )
-{
-    d->m_inferenceModel.setParentModel( parentModel );
 }
 
 

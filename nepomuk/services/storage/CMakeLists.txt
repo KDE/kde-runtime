@@ -18,7 +18,6 @@ set(storage_SRCS
   ontologyloader.cpp
   ontologymanagermodel.cpp
   graphretriever.cpp
-  crappyinferencer.cpp
   removablemediamodel.cpp
   datamanagementmodel.cpp
   datamanagementadaptor.cpp

@@ -48,11 +48,6 @@ namespace Nepomuk {
         ~OntologyManagerModel();
 
         /**
-         * Reimplemented from FilterModel. The API is not affected.
-         */
-        void setParentModel( Soprano::Model* parentModel );
-        
-        /**
          * Update an ontology.
          *
          * \param data The actual statements defining the ontology. These statements have to 
