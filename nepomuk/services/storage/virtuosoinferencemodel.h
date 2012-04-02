@@ -48,10 +48,13 @@ namespace Nepomuk {
     public slots:
         /**
          * Needs to be called if any ontology changes or a new ontology is imported.
+         *
+         * \param forced If true everything will be updated. If false we will only update if we have never been called before.
          */
-        void updateOntologyGraphs();
+        void updateOntologyGraphs(bool forced);
 
     private:
+        void updateTypeVisibility();
         void createOntologyGraphGroup();
     };
 }

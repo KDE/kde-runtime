@@ -418,7 +418,7 @@ Soprano::BackendSettings Nepomuk::Repository::readVirtuosoSettings() const
     return settings;
 }
 
-void Nepomuk::Repository::updateInference()
+void Nepomuk::Repository::updateInference(bool ontologiesChanged)
 {
     // the funny way to update the query prefix cache
     m_nrlModel->setEnableQueryPrefixExpansion(false);
@@ -435,7 +435,7 @@ void Nepomuk::Repository::updateInference()
 
     // update the rest
     m_classAndPropertyTree->rebuildTree(this);
-    m_inferenceModel->updateOntologyGraphs();
+    m_inferenceModel->updateOntologyGraphs(ontologiesChanged);
 }
 
 void Nepomuk::Repository::slotVirtuosoStopped(bool normalExit)

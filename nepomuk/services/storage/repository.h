@@ -87,7 +87,7 @@ namespace Nepomuk {
         void open();
         void close();
 
-        void updateInference();
+        void updateInference(bool ontologiesChanged);
 
     Q_SIGNALS:
         void opened( Repository*, bool success );

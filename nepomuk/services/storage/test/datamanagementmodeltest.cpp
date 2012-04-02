@@ -66,7 +66,7 @@ void DataManagementModelTest::resetModel()
 
     // rebuild the internals of the data management model
     m_classAndPropertyTree->rebuildTree(m_dmModel);
-    m_inferenceModel->updateOntologyGraphs();
+    m_inferenceModel->updateOntologyGraphs(true);
 }
 
 

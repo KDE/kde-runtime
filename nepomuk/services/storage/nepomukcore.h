@@ -58,7 +58,7 @@ namespace Nepomuk {
     private Q_SLOTS:
         void slotRepositoryOpened( Repository* repo, bool success );
         void slotRepositoryClosed( Repository* repo );
-        void slotOntologiesLoaded();
+        void slotOntologiesLoaded(bool somethingChanged);
 
     private:
         Soprano::Model* createModel( const Soprano::BackendSettings& );

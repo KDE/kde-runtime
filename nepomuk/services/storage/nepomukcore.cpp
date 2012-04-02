@@ -75,8 +75,8 @@ void Nepomuk::Core::slotRepositoryOpened( Repository* repo, bool success )
         // TODO: fail the initialization in case loading the ontologies
         // failed.
         m_ontologyLoader = new OntologyLoader( repo, this );
-        connect( m_ontologyLoader, SIGNAL(ontologyLoadingFinished(Nepomuk::OntologyLoader*)),
-                 this, SLOT(slotOntologiesLoaded()) );
+        connect( m_ontologyLoader, SIGNAL(ontologyUpdateFinished(bool)),
+                 this, SLOT(slotOntologiesLoaded(bool)) );
         m_ontologyLoader->updateLocalOntologies();
     }
 }
@@ -89,10 +89,9 @@ void Nepomuk::Core::slotRepositoryClosed(Nepomuk::Repository*)
 }
 
 
-void Nepomuk::Core::slotOntologiesLoaded()
+void Nepomuk::Core::slotOntologiesLoaded(bool somethingChanged)
 {
-    // the first time this is a very long procedure. Thus, we do it while Nepomuk is active although then some queries might return invalid results
-    m_repository->updateInference();
+    m_repository->updateInference(somethingChanged);
 
     if ( !m_initialized ) {
         // and finally we are done: the repository is online and the ontologies are loaded.

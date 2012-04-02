@@ -70,12 +70,18 @@ namespace Nepomuk {
          * Emitted once the update of the ontologies is done.
          * This signal is emitted whenever the ontologies change
          * and needed updating.
+         *
+         * It is emitted once the update of the locally installed
+         * ontologies is done or once a remote ontolgoy has been
+         * imported. Thus, it is the signal to connect to if one
+         * wants to perform some maintenance after an ontology
+         * update.
          */
-        void ontologyLoadingFinished( Nepomuk::OntologyLoader* );
+        void ontologyUpdateFinished(bool changesDone);
 
         /**
          * Emitted once an ontology has been updated. This holds for both
-         * locally installed ontology files (which are read automaticall)
+         * locally installed ontology files (which are read automatically)
          * and those retrieved from the web via importOntology
          */
         void ontologyUpdated( const QString& uri );
@@ -91,7 +97,6 @@ namespace Nepomuk {
         // a little async updating
         void updateNextOntology();
         void slotGraphRetrieverResult( KJob* job );
-        void updateTypeVisibility();
 
     private:
         class Private;
