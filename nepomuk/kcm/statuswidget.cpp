@@ -41,7 +41,7 @@
 Nepomuk::StatusWidget::StatusWidget( QWidget* parent )
         : KDialog( parent ),
         m_connected( false ),
-        m_updatingJobCnt( 0 ),
+        m_updateRunning( false ),
         m_updateRequested( false ),
         m_fileIndexerService(0)
 {
@@ -97,8 +97,8 @@ Nepomuk::StatusWidget::~StatusWidget()
 
 void Nepomuk::StatusWidget::slotUpdateStoreStatus()
 {
-    if ( !m_updatingJobCnt && !m_updateTimer.isActive() ) {
-        m_updatingJobCnt = 2;
+    if ( !m_updateRunning && !m_updateTimer.isActive() ) {
+        m_updateRunning = true;
 
         // update file count
         // ========================================
@@ -119,10 +119,9 @@ void Nepomuk::StatusWidget::slotFileCountFinished( Soprano::Util::AsyncQuery* qu
     m_labelFileCount->setText( i18np( "1 file in index", "%1 files in index", query->binding( 0 ).literal().toInt() ) );
     query->deleteLater();
 
-    if ( !--m_updatingJobCnt ) {
-        // start the timer to avoid too many updates
-        m_updateTimer.start();
-    }
+    // start the timer to avoid too many updates
+    m_updateTimer.start();
+    m_updateRunning = false;
 }
 
 
