@@ -63,7 +63,7 @@ private:
 
     bool m_connected;
     QTimer m_updateTimer;
-    int m_updatingJobCnt;
+    bool m_updateRunning;
     bool m_updateRequested;
 
     org::kde::nepomuk::FileIndexer* m_fileIndexerService;
