@@ -20,9 +20,9 @@
 #include "mediaobjectitem.h"
 #include <QtCore/QTime>
 #include <QtCore/QUrl>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QPushButton>
-#include <QtGui/QVBoxLayout>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QVBoxLayout>
 #include <kdebug.h>
 #include <kurl.h>
 #include <kurlcompletion.h>

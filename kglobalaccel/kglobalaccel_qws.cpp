@@ -21,7 +21,7 @@
 
 #include <config.h>
 
-#include <QtGui/QWidgetList>
+#include <QWidgetList>
 #ifdef Q_WS_QWS
 
 #include "kglobalaccel.h"

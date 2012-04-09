@@ -25,8 +25,8 @@
 #include <klocale.h>
 #include <Phonon/VolumeSlider>
 #include <Phonon/SeekSlider>
-#include <QtGui/QToolButton>
-#include <QtGui/QBoxLayout>
+#include <QToolButton>
+#include <QBoxLayout>
 
 namespace Phonon
 {

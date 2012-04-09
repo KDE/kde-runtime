@@ -1,9 +1,9 @@
-#include <QtGui/QApplication>
-#include <QtGui/QImage>
+#include <QApplication>
+#include <QImage>
 #include <QtCore/QString>
 
 #include <QtSvg/QSvgRenderer>
-#include <QtGui/QPainter>
+#include <QPainter>
 #include <iostream>
 
 using std::cout;

@@ -24,8 +24,8 @@
 #include <QtCore/QTimer>
 #include <QtCore/QRectF>
 #include <QtCore/QPointF>
-#include <QtGui/QColor>
-#include <QtGui/QGraphicsRectItem>
+#include <QColor>
+#include <QGraphicsRectItem>
 
 class RedRectItem : public QObject, public QGraphicsRectItem
 {

@@ -20,7 +20,7 @@
 #ifndef PHONON_UI_MEDIACONTROLS_H
 #define PHONON_UI_MEDIACONTROLS_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <Phonon/Global>
 
 namespace Phonon

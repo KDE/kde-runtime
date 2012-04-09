@@ -27,11 +27,11 @@
 #include "progresslistmodel.h"
 #include "progresslistdelegate.h"
 
-#include <QtGui/QWidget>
-#include <QtGui/QAction>
-#include <QtGui/QBoxLayout>
-#include <QtGui/QCloseEvent>
-#include <QtGui/QToolBar>
+#include <QWidget>
+#include <QAction>
+#include <QBoxLayout>
+#include <QCloseEvent>
+#include <QToolBar>
 
 #include <kconfigdialog.h>
 #include <klocale.h>

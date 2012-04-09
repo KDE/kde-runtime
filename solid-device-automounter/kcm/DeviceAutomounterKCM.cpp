@@ -19,9 +19,9 @@
 
 #include "DeviceAutomounterKCM.h"
 
-#include <QtGui/QStandardItem>
-#include <QtGui/QStandardItemModel>
-#include <QtGui/QItemSelectionModel>
+#include <QStandardItem>
+#include <QStandardItemModel>
+#include <QItemSelectionModel>
 
 #include <KAboutData>
 #include <KConfigGroup>

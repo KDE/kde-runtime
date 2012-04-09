@@ -20,7 +20,7 @@
 #ifndef UISERVER_P_H
 #define UISERVER_P_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 #include "ui_configdialog.h"
 

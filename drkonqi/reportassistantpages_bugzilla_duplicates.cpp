@@ -27,9 +27,9 @@
 #include <QtCore/QDate>
 #include <QtCore/QTimer>
 
-#include <QtGui/QLabel>
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QHeaderView>
+#include <QLabel>
+#include <QTreeWidgetItem>
+#include <QHeaderView>
 
 #include <KColorScheme>
 #include <KIcon>

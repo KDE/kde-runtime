@@ -19,8 +19,8 @@
 
 #include "audiooutputitem.h"
 #include <QtCore/QModelIndex>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QListView>
+#include <QHBoxLayout>
+#include <QListView>
 
 #include <Phonon/AudioOutputDevice>
 #include <Phonon/BackendCapabilities>

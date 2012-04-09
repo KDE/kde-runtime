@@ -28,9 +28,9 @@
 #include <Phonon/MediaObject>
 #include <Phonon/SeekSlider>
 #include <QtCore/QPointer>
-#include <QtGui/QLabel>
-#include <QtGui/QProgressBar>
-#include <QtGui/QToolButton>
+#include <QLabel>
+#include <QProgressBar>
+#include <QToolButton>
 class QPushButton;
 
 using Phonon::MediaNode;

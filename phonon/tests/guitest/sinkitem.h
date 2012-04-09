@@ -22,7 +22,7 @@
 #define SINKITEM_H
 
 #include <Phonon/MediaNode>
-#include <QtGui/QWidget>
+#include <QWidget>
 
 using Phonon::MediaNode;
 

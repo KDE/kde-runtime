@@ -24,7 +24,7 @@
 
 #include <kdebug.h>
 
-#include <QtGui/QKeySequence>
+#include <QKeySequence>
 
 
 GlobalShortcut::GlobalShortcut()

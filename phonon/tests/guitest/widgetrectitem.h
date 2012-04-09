@@ -23,8 +23,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QVariant>
 #include <QtCore/QPoint>
-#include <QtGui/QGraphicsRectItem>
-#include <QtGui/QGraphicsView>
+#include <QGraphicsRectItem>
+#include <QGraphicsView>
 class PathItem;
 
 class WidgetRectItem : public QGraphicsRectItem

@@ -21,7 +21,7 @@
 
 #include "main.h"
 
-#include <QtGui/QBoxLayout>
+#include <QBoxLayout>
 
 #include <KDE/KAboutData>
 #include <KDE/KDialog>

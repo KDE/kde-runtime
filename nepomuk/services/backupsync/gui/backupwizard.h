@@ -24,7 +24,7 @@
 #ifndef BACKUPWIZARD_H
 #define BACKUPWIZARD_H
 
-#include <QtGui/QWizard>
+#include <QWizard>
 
 #include "identifier.h"
 #include "merger.h"

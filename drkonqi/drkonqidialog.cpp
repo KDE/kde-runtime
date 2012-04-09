@@ -28,11 +28,11 @@
 #include "debuggerlaunchers.h"
 #include "drkonqi_globals.h"
 
-#include <QtGui/QLabel>
-#include <QtGui/QGroupBox>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QTreeWidget>
+#include <QLabel>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QTreeWidget>
 
 #include <KMenu>
 #include <KIcon>

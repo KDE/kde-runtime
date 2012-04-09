@@ -21,7 +21,7 @@
 #define PATHITEM_H
 
 #include <QtCore/QObject>
-#include <QtGui/QGraphicsPathItem>
+#include <QGraphicsPathItem>
 #include "widgetrectitem.h"
 #include <Phonon/Path>
 

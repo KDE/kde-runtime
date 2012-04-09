@@ -20,9 +20,9 @@
 #ifndef ANGLEWIDGET_H
 #define ANGLEWIDGET_H
 
-#include <QtGui/QLabel>
-#include <QtGui/QWidget>
-#include <QtGui/QSpinBox>
+#include <QLabel>
+#include <QWidget>
+#include <QSpinBox>
 #include <Phonon/MediaController>
 
 using Phonon::MediaController;

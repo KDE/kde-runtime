@@ -22,7 +22,7 @@
 #define BACKENDSELECTION_H
 
 #include "ui_backendselection.h"
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <QtCore/QHash>
 
 

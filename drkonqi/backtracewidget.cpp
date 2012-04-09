@@ -28,10 +28,10 @@
 #include "debuggermanager.h"
 #include "gdbhighlighter.h"
 
-#include <QtGui/QLabel>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QScrollBar>
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QScrollBar>
 
 #include <KIcon>
 #include <KMessageBox>

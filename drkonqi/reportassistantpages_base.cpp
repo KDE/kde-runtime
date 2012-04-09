@@ -29,9 +29,9 @@
 #include "drkonqi_globals.h"
 #include "applicationdetailsexamples.h"
 
-#include <QtGui/QLabel>
-#include <QtGui/QCheckBox>
-#include <QtGui/QToolTip>
+#include <QLabel>
+#include <QCheckBox>
+#include <QToolTip>
 
 #include <KToolInvocation>
 #include <KIcon>

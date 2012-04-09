@@ -39,7 +39,7 @@
 #include <Nepomuk/Vocabulary/PIMO>
 
 #include <QtCore/QMutexLocker>
-#include <QtGui/QTextDocument>
+#include <QTextDocument>
 
 #include <KUrl>
 #include <KDebug>

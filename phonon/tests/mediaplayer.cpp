@@ -18,15 +18,15 @@
 #include "mediacontrols.h"
 
 #include <QtCore/QTimer>
-#include <QtGui/QAction>
-#include <QtGui/QLabel>
-#include <QtGui/QDockWidget>
-#include <QtGui/QMainWindow>
-#include <QtGui/QBoxLayout>
-#include <QtGui/QCheckBox>
-#include <QtGui/QComboBox>
-#include <QtGui/QPushButton>
-#include <QtGui/QSlider>
+#include <QAction>
+#include <QLabel>
+#include <QDockWidget>
+#include <QMainWindow>
+#include <QBoxLayout>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QPushButton>
+#include <QSlider>
 
 #include <phonon/audiooutput.h>
 #include <phonon/backendcapabilities.h>

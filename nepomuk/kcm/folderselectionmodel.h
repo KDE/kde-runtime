@@ -26,7 +26,7 @@
 #ifndef _FOLDER_SELECTION_MODEL_H_
 #define _FOLDER_SELECTION_MODEL_H_
 
-#include <QtGui/QFileSystemModel>
+#include <QFileSystemModel>
 #include <QtCore/QSet>
 
 

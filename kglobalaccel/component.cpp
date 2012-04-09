@@ -26,11 +26,11 @@
 #include <KDE/KRun>
 
 #include <QtCore/QStringList>
-#include <QtGui/QKeySequence>
+#include <QKeySequence>
 
 #ifdef Q_WS_X11
-#include <QtGui/QApplication>
-#include <QtGui/QX11Info>
+#include <QApplication>
+#include <QX11Info>
 #endif
 
 static QList<int> keysFromString(const QString &str)

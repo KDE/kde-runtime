@@ -20,11 +20,11 @@
 #include <QtCore/QPair>
 #include <QtOpenGL/QGLWidget>
 #include <QtCore/QSignalMapper>
-#include <QtGui/QAction>
-#include <QtGui/QGraphicsProxyWidget>
-#include <QtGui/QGraphicsView>
-#include <QtGui/QMainWindow>
-#include <QtGui/QMenu>
+#include <QAction>
+#include <QGraphicsProxyWidget>
+#include <QGraphicsView>
+#include <QMainWindow>
+#include <QMenu>
 #include "mediaobjectitem.h"
 #include "mygraphicsscene.h"
 #include <kaboutdata.h>

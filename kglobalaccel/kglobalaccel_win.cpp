@@ -21,7 +21,7 @@
 
 #include "kkeyserver_win.h"
 
-#include <QtGui/QWidgetList>
+#include <QWidgetList>
 #ifdef Q_WS_WIN
 
 #include "kglobalaccel.h"

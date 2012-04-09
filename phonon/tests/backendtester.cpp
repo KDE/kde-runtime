@@ -18,7 +18,7 @@
 */
 
 #include "backendtester.h"
-#include <QtGui/QApplication>
+#include <QApplication>
 
 MainWindow::MainWindow()
 {

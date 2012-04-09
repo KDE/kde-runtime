@@ -26,13 +26,13 @@
 #include "klocale.h"
 #include "knotification.h"
 
-#include <QtGui/QKeySequence>
+#include <QKeySequence>
 #include <QDBusConnection>
 
 #ifdef Q_WS_X11
 #include "kglobalaccel_x11.h"
-#include <QtGui/QX11Info>
-#include <QtGui/QApplication>
+#include <QX11Info>
+#include <QApplication>
 #elif defined(Q_WS_MACX)
 #include "kglobalaccel_mac.h"
 #elif defined(Q_WS_WIN)

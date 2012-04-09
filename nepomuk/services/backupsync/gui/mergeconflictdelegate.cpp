@@ -22,9 +22,9 @@
 #include "mergeconflictdelegate.h"
 #include "identifiermodel.h"
 
-#include <QtGui/QStyleOptionViewItemV4>
-#include <QtGui/QPainter>
-#include <QtGui/QTreeView>
+#include <QStyleOptionViewItemV4>
+#include <QPainter>
+#include <QTreeView>
 #include <QFontMetrics>
 
 #include <kpushbutton.h>

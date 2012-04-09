@@ -19,10 +19,10 @@
 
 #include "effectitem.h"
 #include <QtCore/QModelIndex>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QListView>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QListView>
 
 #include <Phonon/BackendCapabilities>
 #include <Phonon/EffectWidget>

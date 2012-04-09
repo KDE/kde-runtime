@@ -18,8 +18,8 @@
 */
 
 #include "chapterwidget.h"
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QVBoxLayout>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 ChapterWidget::ChapterWidget(QWidget *parent)
     : QWidget(parent), m_iface(0)

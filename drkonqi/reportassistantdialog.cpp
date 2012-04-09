@@ -33,7 +33,7 @@
 #include "reportassistantpages_bugzilla_duplicates.h"
 #include "reportinterface.h"
 
-#include <QtGui/QCloseEvent>
+#include <QCloseEvent>
 #include <KMessageBox>
 
 ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :

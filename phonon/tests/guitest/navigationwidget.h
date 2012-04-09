@@ -20,7 +20,7 @@
 #ifndef NAVIGATIONWIDGET_H
 #define NAVIGATIONWIDGET_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <phonon/mediacontroller.h>
 
 using Phonon::MediaController;

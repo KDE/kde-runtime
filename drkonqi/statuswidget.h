@@ -20,9 +20,9 @@
 #define STATUSWIDGET__H
 
 #include <QtCore/QEvent>
-#include <QtGui/QStackedWidget>
-#include <QtGui/QLabel>
-#include <QtGui/QTextDocument>
+#include <QStackedWidget>
+#include <QLabel>
+#include <QTextDocument>
 
 class WrapLabel;
 class KPixmapSequenceWidget;

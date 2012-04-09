@@ -21,9 +21,9 @@
 #define MYGRAPHICSSCENE_H
 
 #include <QtCore/QObject>
-#include <QtGui/QGraphicsLineItem>
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QGraphicsSceneMouseEvent>
+#include <QGraphicsLineItem>
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
 #include "widgetrectitem.h"
 
 class MyGraphicsScene : public QGraphicsScene

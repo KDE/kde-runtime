@@ -23,7 +23,7 @@
 #include "parser/backtraceparser.h"
 #include "backtracegenerator.h"
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class QPixmap;
 

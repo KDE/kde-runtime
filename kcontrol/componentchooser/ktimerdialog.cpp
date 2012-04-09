@@ -24,7 +24,7 @@
 #include <QLabel>
 #include <QTimer>
 
-#include <QtGui/QProgressBar>
+#include <QProgressBar>
 
 #include <kwindowsystem.h>
 #include <kiconloader.h>

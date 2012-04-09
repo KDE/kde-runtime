@@ -20,10 +20,10 @@
 #ifndef TITLEWIDGET_H
 #define TITLEWIDGET_H
 
-#include <QtGui/QLabel>
-#include <QtGui/QToolButton>
-#include <QtGui/QSpinBox>
-#include <QtGui/QWidget>
+#include <QLabel>
+#include <QToolButton>
+#include <QSpinBox>
+#include <QWidget>
 #include <phonon/mediacontroller.h>
 
 using Phonon::MediaController;

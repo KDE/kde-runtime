@@ -25,7 +25,7 @@
 #include <QtCore/QTimer>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusInterface>
-#include <QtGui/QLabel>
+#include <QLabel>
 
 #include <kaboutdata.h>
 #include <kconfiggroup.h>

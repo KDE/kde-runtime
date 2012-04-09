@@ -19,7 +19,7 @@
 
 #include "widgetrectitem.h"
 #include <QtCore/QEvent>
-#include <QtGui/QGraphicsProxyWidget>
+#include <QGraphicsProxyWidget>
 #include "pathitem.h"
 
 //X WidgetRectItem::WidgetRectItem(QGraphicsItem *parent)

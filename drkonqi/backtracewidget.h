@@ -20,7 +20,7 @@
 #ifndef BACKTRACEWIDGET__H
 #define BACKTRACEWIDGET__H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 #include "debugpackageinstaller.h"
 #include "ui_backtracewidget.h"

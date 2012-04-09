@@ -26,12 +26,12 @@
 #include <QtDBus/QDBusReply>
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusMessage>
-#include <QtGui/QApplication>
-#include <QtGui/QPainter>
-#include <QtGui/QItemDelegate>
-#include <QtGui/QLabel>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHeaderView>
+#include <QApplication>
+#include <QPainter>
+#include <QItemDelegate>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QHeaderView>
 
 #include <Phonon/AudioOutput>
 #include <Phonon/MediaObject>

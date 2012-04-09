@@ -18,7 +18,7 @@
 */
 
 #include "deviceactionsdialog.h"
-#include <QtGui/QLayout>
+#include <QLayout>
 
 #include <krun.h>
 #include <klocale.h>

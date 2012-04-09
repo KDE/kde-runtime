@@ -24,10 +24,10 @@
 #ifndef BACKUPWIZARDPAGES_H
 #define BACKUPWIZARDPAGES_H
 
-#include <QtGui/QWizardPage>
-#include <QtGui/QRadioButton>
-#include <QtGui/QProgressBar>
-#include <QtGui/QListWidget>
+#include <QWizardPage>
+#include <QRadioButton>
+#include <QProgressBar>
+#include <QListWidget>
 
 #include "backupmanagerinterface.h"
 #include "merger.h"

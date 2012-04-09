@@ -22,7 +22,7 @@
 
 #include <QtCore/QList>
 #include <QtCore/QStringList>
-#include <QtGui/QListWidget>
+#include <QListWidget>
 
 #include <KDE/KApplication>
 #include <KDE/KCModuleProxy>

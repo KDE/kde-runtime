@@ -18,9 +18,9 @@
 */
 
 #include "pathitem.h"
-#include <QtGui/QLinearGradient>
-#include <QtGui/QPainterPath>
-#include <QtGui/QPen>
+#include <QLinearGradient>
+#include <QPainterPath>
+#include <QPen>
 
 PathItem::PathItem(WidgetRectItem *start, WidgetRectItem *end, const Path &_path)
     : m_path(_path), m_startItem(start), m_endItem(end)

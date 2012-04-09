@@ -24,8 +24,8 @@
 #include "identifiermodel.h"
 #include "identifiermodeltree.h"
 
-#include <QtGui/QLabel>
-#include <QtGui/QVBoxLayout>
+#include <QLabel>
+#include <QVBoxLayout>
 #include <KDebug>
 #include <KFileDialog>
 

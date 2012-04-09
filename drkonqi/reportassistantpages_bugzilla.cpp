@@ -29,10 +29,10 @@
 
 #include <QtCore/QTimer>
 
-#include <QtGui/QLabel>
-#include <QtGui/QCheckBox>
-#include <QtGui/QToolTip>
-#include <QtGui/QCursor>
+#include <QLabel>
+#include <QCheckBox>
+#include <QToolTip>
+#include <QCursor>
 
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>

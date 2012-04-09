@@ -21,8 +21,8 @@
 #ifndef TESTWIDGET_H
 #define TESTWIDGET_H
 
-#include <QtGui/QTreeView>
-#include <QtGui/QPushButton>
+#include <QTreeView>
+#include <QPushButton>
 
 #include "../identifiermodel.h"
 #include "../mergeconflictdelegate.h"

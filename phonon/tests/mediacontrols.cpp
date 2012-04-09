@@ -23,8 +23,8 @@
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <klocale.h>
-#include <QtGui/QBoxLayout>
-#include <QtGui/QToolButton>
+#include <QBoxLayout>
+#include <QToolButton>
 #include <Phonon/SeekSlider>
 #include <Phonon/VolumeSlider>
 #include <kicon.h>

@@ -39,9 +39,9 @@
 #include <Nepomuk/Query/QueryParser>
 #include <Nepomuk/Query/FileQuery>
 
-#include <QtGui/QRadioButton>
-#include <QtGui/QInputDialog>
-#include <QtGui/QPushButton>
+#include <QRadioButton>
+#include <QInputDialog>
+#include <QPushButton>
 #include <QtCore/QDir>
 #include <QtDBus/QDBusServiceWatcher>
 

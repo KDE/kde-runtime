@@ -20,9 +20,9 @@
 #ifndef CHAPTERWIDGET_H
 #define CHAPTERWIDGET_H
 
-#include <QtGui/QLabel>
-#include <QtGui/QSpinBox>
-#include <QtGui/QWidget>
+#include <QLabel>
+#include <QSpinBox>
+#include <QWidget>
 #include <Phonon/MediaController>
 
 using Phonon::MediaController;

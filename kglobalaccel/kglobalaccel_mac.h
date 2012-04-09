@@ -20,7 +20,7 @@
 #ifndef _KGLOBALACCEL_MAC_H
 #define _KGLOBALACCEL_MAC_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 #include "kshortcut.h"
 /* including kglobalaccel.h here because Carbon.h includes AssertMacros.h which 

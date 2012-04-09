@@ -23,7 +23,7 @@
 #ifndef UISERVER_H
 #define UISERVER_H
 
-#include <QtGui/QListView>
+#include <QListView>
 
 #include <kxmlguiwindow.h>
 

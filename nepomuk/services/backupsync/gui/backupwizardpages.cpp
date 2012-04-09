@@ -32,9 +32,9 @@
 #include <KFileDialog>
 #include <KUrlRequester>
 
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QGroupBox>
-#include <QtGui/QLineEdit>
+#include <QVBoxLayout>
+#include <QGroupBox>
+#include <QLineEdit>
 
 Nepomuk::IntroPage::IntroPage(QWidget* parent)
     : QWizardPage( parent )

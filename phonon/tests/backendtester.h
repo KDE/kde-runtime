@@ -22,7 +22,7 @@
 
 #include <QtCore/QString>
 #include <QtCore/QUrl>
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 #include "ui_backendtester.h"
 
 class MainWindow : public QMainWindow, private Ui::BackendTester

@@ -25,9 +25,9 @@
 #include <QtCore/QList>
 #include <QtCore/QObject>
 
-#include <QtGui/QListView>
-#include <QtGui/QPushButton>
-#include <QtGui/QProgressBar>
+#include <QListView>
+#include <QPushButton>
+#include <QProgressBar>
 
 class QModelIndex;
 class QString;

@@ -19,7 +19,7 @@
 #include "indexfolderselectiondialog.h"
 #include "folderselectionmodel.h"
 
-#include <QtGui/QTreeView>
+#include <QTreeView>
 
 
 namespace {

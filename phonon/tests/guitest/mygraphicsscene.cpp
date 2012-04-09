@@ -25,8 +25,8 @@
 #include "pathitem.h"
 #include "effectitem.h"
 
-#include <QtGui/QGraphicsProxyWidget>
-#include <QtGui/QMenu>
+#include <QGraphicsProxyWidget>
+#include <QMenu>
 
 #include <Phonon/BackendCapabilities>
 

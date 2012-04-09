@@ -19,8 +19,8 @@
 
 #include "backtraceratingwidget.h"
 
-#include <QtGui/QPainter>
-#include <QtGui/QPixmap>
+#include <QPainter>
+#include <QPixmap>
 
 #include <KIcon>
 

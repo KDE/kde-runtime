@@ -20,7 +20,7 @@
 
 #include "testwidget.h"
 
-#include <QtGui/QBoxLayout>
+#include <QBoxLayout>
 
 #include <Nepomuk/Vocabulary/NFO>
 #include <Nepomuk/Vocabulary/NIE>

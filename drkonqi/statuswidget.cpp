@@ -18,9 +18,9 @@
 ******************************************************************/
 #include "statuswidget.h"
 
-#include <QtGui/QApplication>
-#include <QtGui/QSizePolicy>
-#include <QtGui/QHBoxLayout>
+#include <QApplication>
+#include <QSizePolicy>
+#include <QHBoxLayout>
 
 #include <kpixmapsequencewidget.h>
 #include <kpixmapsequence.h>

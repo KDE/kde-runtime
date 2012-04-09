@@ -21,7 +21,7 @@
 #define VIDEOWIDGETITEM_H
 
 #include "sinkitem.h"
-#include <QtGui/QVBoxLayout>
+#include <QVBoxLayout>
 #include <Phonon/VideoWidget>
 
 using Phonon::VideoWidget;

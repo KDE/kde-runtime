@@ -22,7 +22,7 @@
 
 #include "reportassistantdialog.h"
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class BugzillaManager;
 
