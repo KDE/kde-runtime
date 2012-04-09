@@ -31,6 +31,7 @@
 #include <KDebug>
 #include <KWallet/Wallet>
 #include <kcmultidialog.h>
+#include <klocale.h>
 #include <KStringHandler>
 #include <KMessageBox>
 

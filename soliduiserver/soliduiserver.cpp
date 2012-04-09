@@ -39,6 +39,7 @@
 #include <kwindowsystem.h>
 #include <kpassworddialog.h>
 #include <kwallet.h>
+#include <kicon.h>
 #include <solid/storagevolume.h>
 
 #include "deviceactionsdialog.h"

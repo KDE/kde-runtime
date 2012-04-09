@@ -23,6 +23,7 @@
 #include <QtCore/QCoreApplication>
 #include <KAboutData>
 #include <KCmdLineOptions>
+#include <KLocale>
 
 int main(int argc, char **argv)
 {

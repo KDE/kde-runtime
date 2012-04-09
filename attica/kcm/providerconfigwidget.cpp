@@ -26,6 +26,7 @@
 #include <KDebug>
 #include <KMessageBox>
 #include <KColorScheme>
+#include <kicon.h>
 
 #include <attica/person.h>
 

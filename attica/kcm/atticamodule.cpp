@@ -26,6 +26,7 @@
 #include <KPluginFactory>
 #include <KAboutData>
 #include <KDebug>
+#include <kicon.h>
 #include <kurlrequesterdialog.h>
 
 #include <attica/providermanager.h>

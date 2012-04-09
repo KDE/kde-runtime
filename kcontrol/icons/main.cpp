@@ -29,6 +29,7 @@
 #include <kaboutdata.h>
 #include <KPluginFactory>
 #include <KPluginLoader>
+#include <KLocale>
 
 #include "icons.h"
 #include "iconthemes.h"

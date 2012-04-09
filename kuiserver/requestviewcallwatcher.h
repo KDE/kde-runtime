@@ -19,7 +19,7 @@
 #ifndef REQUESTVIEWCALLWATCHER_H
 #define REQUESTVIEWCALLWATCHER_H
 
-class QDBusPendingCallWatcher;
+#include <QDBusPendingCallWatcher>
 class JobView;
 
 class RequestViewCallWatcher : public QDBusPendingCallWatcher

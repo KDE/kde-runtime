@@ -32,6 +32,7 @@
 #include <kurlrequester.h>
 #include <kconfiggroup.h>
 
+#include <KUrl>
 
 CfgTerminalEmulator::CfgTerminalEmulator(QWidget *parent)
     : QWidget(parent), Ui::TerminalEmulatorConfig_UI(), CfgPlugin()

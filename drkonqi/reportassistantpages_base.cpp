@@ -35,6 +35,7 @@
 
 #include <KToolInvocation>
 #include <KIcon>
+#include <KUrl>
 #include <KMessageBox>
 
 //BEGIN IntroductionPage

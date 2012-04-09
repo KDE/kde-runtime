@@ -54,6 +54,7 @@
 #include <KIO/NetAccess>
 #include <KCrash>
 #include <KDebug>
+#include <KLocale>
 
 DrKonqi::DrKonqi()
 {

@@ -23,6 +23,7 @@
 #define KGLOBALACCELD_H
 
 #include <kglobalshortcutinfo.h>
+#include <kdemacros.h>
 
 #include <QtCore/QStringList>
 #include <QtCore/QList>

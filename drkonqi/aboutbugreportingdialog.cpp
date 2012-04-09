@@ -22,6 +22,7 @@
 #include "drkonqi_globals.h"
 
 #include <KLocale>
+#include <KIcon>
 #include <KToolInvocation>
 #include <KTextBrowser>
 

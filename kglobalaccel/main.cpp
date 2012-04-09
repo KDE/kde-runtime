@@ -27,6 +27,7 @@
 #include <kcrash.h>
 #include <kde_file.h>
 #include <kdebug.h>
+#include <klocale.h>
 
 #include <signal.h>
 

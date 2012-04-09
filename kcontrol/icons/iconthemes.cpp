@@ -39,6 +39,7 @@
 #include <kbuildsycocaprogressdialog.h>
 #include <klocale.h>
 #include <kshareddatacache.h>
+#include <kicon.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
 #include <kservice.h>

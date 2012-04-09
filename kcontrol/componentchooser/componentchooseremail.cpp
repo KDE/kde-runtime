@@ -20,6 +20,8 @@
 #include <kopenwithdialog.h>
 #include <kstandarddirs.h>
 
+#include <KUrl>
+
 // for chmod:
 #include <sys/types.h>
 #include <sys/stat.h>

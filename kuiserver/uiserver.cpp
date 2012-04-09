@@ -35,6 +35,7 @@
 
 #include <kconfigdialog.h>
 #include <klocale.h>
+#include <kicon.h>
 #include <kdialog.h>
 #include <ksystemtrayicon.h>
 #include <kpushbutton.h>

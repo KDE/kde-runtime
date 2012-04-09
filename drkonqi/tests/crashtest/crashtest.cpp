@@ -34,6 +34,7 @@
 #include <kdebug.h>
 #include <assert.h>
 #include <QtConcurrentMap>
+#include <KLocale>
 
 enum CrashType { Crash, Malloc, Div0, Assert, QAssert, Threads };
 

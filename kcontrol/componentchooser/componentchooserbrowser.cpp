@@ -18,7 +18,7 @@
 #include <kglobalsettings.h>
 #include <kconfiggroup.h>
 
-
+#include <KUrl>
 
 CfgBrowser::CfgBrowser(QWidget *parent)
     : QWidget(parent), Ui::BrowserConfig_UI(),CfgPlugin()

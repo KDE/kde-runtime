@@ -18,6 +18,7 @@
 #define DRKONQI_GLOBALS_H
 
 #include <KGuiItem>
+#include <KIcon>
 
 /** This class provides a custom constructor to fill the "toolTip"
  * and "whatsThis" texts of KGuiItem with the same text.

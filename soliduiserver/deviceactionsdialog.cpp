@@ -25,6 +25,7 @@
 #include <kstandarddirs.h>
 #include <kio/global.h>
 #include <klistwidget.h>
+#include <kicon.h>
 #include <QCheckBox>
 
 
