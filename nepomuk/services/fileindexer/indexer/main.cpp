@@ -2,6 +2,7 @@
    This file is part of the Nepomuk KDE project.
    Copyright (C) 2010-11 Vishesh Handa <handa.vish@gmail.com>
    Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2012 Ivan Cukic <ivan.cukic@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -35,6 +36,8 @@
 #include <KDebug>
 #include <KUrl>
 
+#include <fstream>
+
 int main(int argc, char *argv[])
 {
     lowerIOPriority();
@@ -48,39 +51,77 @@ int main(int argc, char *argv[])
                          ki18n("(C) 2011, Vishesh Handa"));
     aboutData.addAuthor(ki18n("Vishesh Handa"), ki18n("Current maintainer"), "handa.vish@gmail.com");
     aboutData.addCredit(ki18n("Sebastian Trüg"), ki18n("Developer"), "trueg@kde.org");
-    
+
     KCmdLineArgs::init(argc, argv, &aboutData);
-    
+
     KCmdLineOptions options;
     options.add("uri <uri>", ki18n("The URI provided will be forced on the resource"));
     options.add("mtime <time>", ki18n("The modification time of the resource in time_t format"));
     options.add("+[url]", ki18n("The URL of the file to be indexed"));
     options.add("clear", ki18n("Remove all indexed data of the URL provided"));
-    
-    KCmdLineArgs::addCmdLineOptions(options);   
+    options.add("stdin", ki18n("Get the files to index via stdin and output the status on stdout"));
+
+    KCmdLineArgs::addCmdLineOptions(options);
     const KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     // Application
     QCoreApplication app( argc, argv );
     KComponentData data( aboutData, KComponentData::RegisterAsMainComponent );
-    
-    const KUrl uri = args->getOption("uri");
-    const uint mtime = args->getOption("mtime").toUInt();
 
-    if( args->count() == 0 ) {
+
+    if( args->isSet("stdin") ) {
+
+        QTextStream input( stdin, QIODevice::ReadOnly );
+        QTextStream output( stdout, QIODevice::WriteOnly | QIODevice::Unbuffered);
+
+        QString line;
         Nepomuk::Indexer indexer;
-        indexer.indexStdin( uri, mtime );
-        return 0;
+
+        // We don't support per-resource params in stdin mode
+
+        const KUrl uri;
+        const uint mtime = 0;
+
+        do {
+
+            line = input.readLine();
+
+            if( line.isEmpty() ) {
+                return 0;
+            }
+
+            indexer.indexFile( KUrl(line), uri, mtime );
+
+            output << "0\n";
+            output.flush();
+
+        } while ( !line.isNull() );
+
+
+    } else {
+
+        const KUrl uri = args->getOption("uri");
+        const uint mtime = args->getOption("mtime").toUInt();
+
+        if( args->count() == 0 ) {
+            Nepomuk::Indexer indexer;
+            indexer.indexStdin( uri, mtime );
+            return 0;
+        }
+        else if( args->isSet("clear") ) {
+            Nepomuk::clearIndexedData( args->url(0) );
+            kDebug() << "Removed indexed data for" << args->url(0);
+            return 0;
+        }
+        else {
+            Nepomuk::Indexer indexer;
+            indexer.indexFile( args->url(0), uri, mtime );
+            kDebug() << "Indexed data for" << args->url(0);
+            return 0;
+        }
+
     }
-    else if( args->isSet("clear") ) {
-        Nepomuk::clearIndexedData( args->url(0) );
-        kDebug() << "Removed indexed data for" << args->url(0);
-        return 0;
-    }
-    else {
-        Nepomuk::Indexer indexer;
-        indexer.indexFile( args->url(0), uri, mtime );
-        kDebug() << "Indexed data for" << args->url(0);
-        return 0;
-    }
+
+    return 0;
 }
+
