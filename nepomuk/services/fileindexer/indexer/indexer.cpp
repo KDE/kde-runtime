@@ -78,7 +78,25 @@ public:
     StoppableConfiguration m_analyzerConfig;
     StrigiIndexWriter* m_indexWriter;
     Strigi::StreamAnalyzer* m_streamAnalyzer;
+
+    static bool shouldBeFullyIndexed(const QString & file);
 };
+
+
+#include <kmountpoint.h>
+
+bool Nepomuk::Indexer::Private::shouldBeFullyIndexed(const QString & file)
+{
+    foreach (KSharedPtr<KMountPoint> mount, KMountPoint::currentMountPoints()) {
+        if (mount->mountType() == "fuse.encfs" || mount->probablySlow()) {
+            if (file.startsWith(mount->mountPoint())) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
 
 
 Nepomuk::Indexer::Indexer( QObject* parent )
@@ -111,10 +129,10 @@ void Nepomuk::Indexer::indexFile( const QFileInfo& info, const KUrl resUri, uint
         kDebug() << info.filePath() << " does not exist";
         return;
     }
-    
+
     d->m_analyzerConfig.setStop( false );
     d->m_indexWriter->forceUri( resUri );
-    
+
     // strigi asserts if the file path has a trailing slash
     const KUrl url( info.filePath() );
     const QString filePath = url.toLocalFile( KUrl::RemoveTrailingSlash );
@@ -127,7 +145,7 @@ void Nepomuk::Indexer::indexFile( const QFileInfo& info, const KUrl resUri, uint
                                            *d->m_indexWriter,
                                            *d->m_streamAnalyzer,
                                            QFile::encodeName( dir ).data() );
-    if ( info.isFile() && !info.isSymLink() ) {
+    if ( info.isFile() && !info.isSymLink() && d->shouldBeFullyIndexed(filePath) ) {
 #ifdef STRIGI_HAS_FILEINPUTSTREAM_OPEN
         Strigi::InputStream* stream = Strigi::FileInputStream::open( QFile::encodeName( info.filePath() ) );
         analysisresult.index( stream );
