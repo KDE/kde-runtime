@@ -27,7 +27,7 @@
 This dialog allows you to configure automatic handling of removable storage media.
 </para>
 
-<para>Enabling the automatic mounting features in this module you do not need to use 
+<para>If you enable the automatic mounting features in this module, you will not need to use
 the device notifier applet or the navigation panel in the file manager to get access to a 
 recently plugged in device.
 </para>
