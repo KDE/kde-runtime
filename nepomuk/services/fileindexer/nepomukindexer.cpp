@@ -1,6 +1,7 @@
 /*
    This file is part of the Nepomuk KDE project.
    Copyright (C) 2010-2011 Sebastian Trueg <trueg@kde.org>
+   Copyright (C) 2012 Ivan Cukic <ivan.cukic@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -30,6 +31,7 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QTimer>
 
+KProcess * Nepomuk::Indexer::s_process = NULL;
 
 Nepomuk::Indexer::Indexer(const QFileInfo& info, QObject* parent)
     : KJob(parent),
@@ -43,30 +45,74 @@ Nepomuk::Indexer::Indexer(const QFileInfo& info, QObject* parent)
             this, SLOT(slotProcessTimerTimeout()));
 }
 
+Nepomuk::Indexer::~Indexer()
+{
+    if( s_process ) {
+        s_process->disconnect(this);
+    }
+}
+
 void Nepomuk::Indexer::start()
 {
-    // setup the external process which does the actual indexing
-    const QString exe = KStandardDirs::findExe(QLatin1String("nepomukindexer"));
-    m_process = new KProcess( this );
-    m_process->setProgram( exe, QStringList() << m_url.toLocalFile() );
+    if( s_process && s_process->state() == QProcess::NotRunning ) {
+        s_process->deleteLater();
+        s_process = NULL;
+    }
 
-    // start the process
-    kDebug() << "Running" << exe << m_url.toLocalFile();
-    connect( m_process, SIGNAL(finished(int)), this, SLOT(slotIndexedFile(int)) );
-    m_process->start();
+    if ( !s_process ) {
+        // setup the external process which does the actual indexing
+        const QString exe = KStandardDirs::findExe(QLatin1String("nepomukindexer"));
+
+        s_process = new KProcess();
+        s_process->setOutputChannelMode(KProcess::OnlyStdoutChannel);
+        s_process->setProgram( exe, QStringList() << "--file-list-from-stdin" );
+
+        // start the process
+        kDebug() << "Running" << exe;
+
+        s_process->start();
+    }
+
+    connect( s_process, SIGNAL(finished(int)), this, SLOT(slotProcessFinished(int)) );
+    connect( s_process, SIGNAL(readyReadStandardOutput()), this, SLOT(slotProcessReadyRead()) );
+
+    kDebug() << "Passing" << m_url.toLocalFile() << "to the indexer";
+
+    QString fileName = m_url.toLocalFile() + '\n';
+    s_process->write(fileName.toUtf8());
+    s_process->waitForBytesWritten();
 
     // start the timer which will kill the process if it does not terminate after 5 minutes
     m_processTimer->start(5*60*1000);
 }
 
 
-void Nepomuk::Indexer::slotIndexedFile(int exitCode)
+void Nepomuk::Indexer::slotProcessFinished(int exitCode)
+{
+    m_exitCode = exitCode;
+
+    slotFileIndexed();
+}
+
+void Nepomuk::Indexer::slotProcessReadyRead()
+{
+    QString result = QString::fromUtf8(s_process->readLine().trimmed());
+
+    s_process->readAll(); // ignore
+
+    kDebug() << "This is a result for" << m_url.toLocalFile() << result;
+
+    m_exitCode = result.toInt();
+
+    slotFileIndexed();
+}
+
+void Nepomuk::Indexer::slotFileIndexed()
 {
     // stop the timer since there is no need to kill the process anymore
     m_processTimer->stop();
 
-    kDebug() << "Indexing of " << m_url.toLocalFile() << "finished with exit code" << exitCode;
-    m_exitCode = exitCode;
+    kDebug() << "Indexing of " << m_url.toLocalFile() << "finished with exit code" << m_exitCode;
 
     emitResult();
 }
@@ -74,9 +120,10 @@ void Nepomuk::Indexer::slotIndexedFile(int exitCode)
 void Nepomuk::Indexer::slotProcessTimerTimeout()
 {
     kDebug() << "Killing the indexer process which seems stuck for" << m_url;
-    m_process->disconnect(this);
-    m_process->kill();
-    m_process->waitForFinished();
+
+    s_process->kill();
+    s_process->waitForFinished();
+
     emitResult();
 }
 

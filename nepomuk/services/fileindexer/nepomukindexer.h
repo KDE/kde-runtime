@@ -54,6 +54,7 @@ namespace Nepomuk {
 
     public:
         Indexer( const QFileInfo& info, QObject* parent = 0 );
+        ~Indexer();
 
         KUrl url() const { return m_url; }
 
@@ -73,14 +74,18 @@ namespace Nepomuk {
         // TODO: actually emit the indexingDone signal
 
     private slots:
-        void slotIndexedFile(int exitCode);
+        void slotProcessFinished(int exitCode);
+        void slotProcessReadyRead();
+        void slotFileIndexed();
+
         void slotProcessTimerTimeout();
 
     private:
         KUrl m_url;
-        KProcess* m_process;
         int m_exitCode;
         QTimer* m_processTimer;
+
+        static KProcess* s_process;
     };
 }
 
