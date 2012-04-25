@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     options.add("mtime <time>", ki18n("The modification time of the resource in time_t format"));
     options.add("+[url]", ki18n("The URL of the file to be indexed"));
     options.add("clear", ki18n("Remove all indexed data of the URL provided"));
-    options.add("stdin", ki18n("Get the files to index via stdin and output the status on stdout"));
+    options.add("file-list-from-stdin", ki18n("Get the files to index via stdin and output the status on stdout (if set, other arguments are ignored)"));
 
     KCmdLineArgs::addCmdLineOptions(options);
     const KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     KComponentData data( aboutData, KComponentData::RegisterAsMainComponent );
 
 
-    if( args->isSet("stdin") ) {
+    if( args->isSet("file-list-from-stdin") ) {
 
         QTextStream input( stdin, QIODevice::ReadOnly );
         QTextStream output( stdout, QIODevice::WriteOnly | QIODevice::Unbuffered);

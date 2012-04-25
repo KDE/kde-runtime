@@ -32,7 +32,6 @@
 #include <QtCore/QTimer>
 
 KProcess * Nepomuk::Indexer::s_process = NULL;
-bool Nepomuk::Indexer::s_processActive = false;
 
 Nepomuk::Indexer::Indexer(const QFileInfo& info, QObject* parent)
     : KJob(parent),
@@ -66,7 +65,7 @@ void Nepomuk::Indexer::start()
 
         s_process = new KProcess();
         s_process->setOutputChannelMode(KProcess::OnlyStdoutChannel);
-        s_process->setProgram( exe, QStringList() << "--stdin" );
+        s_process->setProgram( exe, QStringList() << "--file-list-from-stdin" );
 
         // start the process
         kDebug() << "Running" << exe;

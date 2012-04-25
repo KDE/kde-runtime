@@ -86,7 +86,6 @@ namespace Nepomuk {
         QTimer* m_processTimer;
 
         static KProcess* s_process;
-        static bool s_processActive;
     };
 }
 
