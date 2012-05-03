@@ -11,5 +11,5 @@ set(bugzillalibtest_SRCS
 
 kde4_add_executable(bugzillalibtest TEST ${bugzillalibtest_SRCS})
 
-target_link_libraries(bugzillalibtest ${KDE4_KIO_LIBS})
+target_link_libraries(bugzillalibtest ${KDE4_KIO_LIBS} ${KDEPIMLIBS_KXMLRPCCLIENT_LIBRARY})
 
