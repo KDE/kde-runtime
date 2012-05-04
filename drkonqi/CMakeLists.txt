@@ -9,6 +9,8 @@ endif (NOT DEBUG_PACKAGE_INSTALLER_NAME)
 
 configure_file (config-drkonqi.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-drkonqi.h )
 
+include_directories(${KDEPIMLIBS_INCLUDE_DIRS})
+
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=1410)
 
 add_subdirectory( data ) 
