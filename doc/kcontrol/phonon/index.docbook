@@ -49,6 +49,14 @@ and the <guibutton>Test</guibutton> button to play a test sound on the selected 
 </para></listitem>
 </varlistentry>
 
+<!-- new since 4.6 
+<varlistentry><term><guilabel>Audio Hardware Setup</guilabel> tab</term>
+<listitem><para>
+http://colin.guthr.ie/2010/07/speaker-setup-now-or-forever-hold-your-peace/
+</para></listitem>
+</varlistentry>
+-->
+
 <varlistentry><term><guilabel>Backend</guilabel> tab</term>
 <listitem><para>
 On the left side of this module a list of Phonon backends found on your system is shown. 
@@ -56,6 +64,7 @@ The order here determines the order Phonon will use the backends.
 Use the <guibutton>Prefer</guibutton> and <guibutton>Defer</guibutton> buttons 
 to change this order.</para>
 <para>
+<!-- no longer in 4.7 or Xine ? -->
 Depending on the selected backend additional settings might be enabled like &eg; Deinterlacing 
 (Media and method) for Xine.
 </para></listitem>
@@ -63,6 +72,4 @@ Depending on the selected backend additional settings might be enabled like &eg;
 
 </variablelist>
 
-<para>
-</para>
 </article>
