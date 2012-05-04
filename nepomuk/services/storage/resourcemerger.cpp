@@ -506,7 +506,7 @@ Soprano::Node Nepomuk::ResourceMerger::resolveUnmappedNode(const Soprano::Node& 
     m_mappings.insert( QUrl(node.toN3()), newUri );
 
     // FIXME: trueg: IMHO these statements should instead be added to the list of all statements so there is only one place where anything is actually added to the model
-    Soprano::Node dateTime( Soprano::LiteralValue( QDateTime::currentDateTime() ) );
+    Soprano::Node dateTime = Soprano::LiteralValue(QDateTime::currentDateTime());
     m_model->addStatement( newUri, NAO::created(), dateTime, m_graph );
     m_model->addStatement( newUri, NAO::lastModified(), dateTime, m_graph );
 
