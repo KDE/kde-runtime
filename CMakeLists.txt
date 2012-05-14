@@ -29,6 +29,9 @@ include(CheckIncludeFiles)
 find_package(KdepimLibs)
 macro_log_feature(KDEPIMLIBS_FOUND "KdepimLibs" "KDE PIM Libraries" "kdepimlibs" TRUE "" "Required to build Drkonqi")
 
+find_package(KDeclarative REQUIRED)
+macro_log_feature(KDeclarative_FOUND "libkdeclarative" "KDE Declarative (QML) support from kdelibs" "http://www.kde.org" TRUE "" "Required by ksmserver.")
+
 set(SOPRANO_MIN_VERSION "2.6.50")
 set(SDO_MIN_VERSION "0.8.52")
 macro_optional_find_package(SharedDesktopOntologies ${SDO_MIN_VERSION})
