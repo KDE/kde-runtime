@@ -18,5 +18,6 @@
       <arg name="uri" type="s" />
       <arg name="errorString" type="s" />
     </signal>
+    <signal name="ontologyLoadingFinished" />
   </interface>
 </node>

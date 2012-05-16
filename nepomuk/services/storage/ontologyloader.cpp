@@ -201,7 +201,7 @@ void Nepomuk::OntologyLoader::updateNextOntology()
     else {
         d->forceOntologyUpdate = false;
         d->updateTimer.stop();
-        emit ontologyLoadingFinished(this);
+        emit ontologyLoadingFinished();
     }
 }
 

@@ -71,7 +71,7 @@ namespace Nepomuk {
          * This signal is emitted whenever the ontologies change
          * and needed updating.
          */
-        void ontologyLoadingFinished( Nepomuk::OntologyLoader* );
+        void ontologyLoadingFinished();
 
         /**
          * Emitted once an ontology has been updated. This holds for both

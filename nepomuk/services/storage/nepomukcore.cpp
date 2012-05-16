@@ -75,7 +75,7 @@ void Nepomuk::Core::slotRepositoryOpened( Repository* repo, bool success )
         // TODO: fail the initialization in case loading the ontologies
         // failed.
         m_ontologyLoader = new OntologyLoader( repo, this );
-        connect( m_ontologyLoader, SIGNAL(ontologyLoadingFinished(Nepomuk::OntologyLoader*)),
+        connect( m_ontologyLoader, SIGNAL(ontologyLoadingFinished()),
                  this, SLOT(slotOntologiesLoaded()) );
         m_ontologyLoader->updateLocalOntologies();
     }
