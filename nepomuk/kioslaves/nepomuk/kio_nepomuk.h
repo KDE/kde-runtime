@@ -23,9 +23,9 @@
 
 #include <kio/forwardingslavebase.h>
 
-#include <Nepomuk/Resource>
+#include <Nepomuk2/Resource>
 
-namespace Nepomuk {
+namespace Nepomuk2 {
     class NepomukProtocol : public KIO::ForwardingSlaveBase
     {
     public:

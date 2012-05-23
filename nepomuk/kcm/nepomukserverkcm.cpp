@@ -36,8 +36,8 @@
 #include <KCalendarSystem>
 #include <KDirWatch>
 
-#include <Nepomuk/Query/QueryParser>
-#include <Nepomuk/Query/FileQuery>
+#include <Nepomuk2/Query/QueryParser>
+#include <Nepomuk2/Query/FileQuery>
 
 #include <QRadioButton>
 #include <QInputDialog>
@@ -49,7 +49,7 @@
 #include <Soprano/Backend>
 
 
-K_PLUGIN_FACTORY( NepomukConfigModuleFactory, registerPlugin<Nepomuk::ServerConfigModule>(); )
+K_PLUGIN_FACTORY( NepomukConfigModuleFactory, registerPlugin<Nepomuk2::ServerConfigModule>(); )
 K_EXPORT_PLUGIN( NepomukConfigModuleFactory("kcm_nepomuk", "kcm_nepomuk") )
 
 
@@ -130,7 +130,7 @@ namespace {
 }
 
 
-Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariantList& args )
+Nepomuk2::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariantList& args )
     : KCModule( NepomukConfigModuleFactory::componentData(), parent, args ),
       m_serverInterface( 0 ),
       m_fileIndexerInterface( 0 ),
@@ -234,14 +234,14 @@ Nepomuk::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariant
 }
 
 
-Nepomuk::ServerConfigModule::~ServerConfigModule()
+Nepomuk2::ServerConfigModule::~ServerConfigModule()
 {
     delete m_fileIndexerInterface;
     delete m_serverInterface;
 }
 
 
-void Nepomuk::ServerConfigModule::load()
+void Nepomuk2::ServerConfigModule::load()
 {
     if ( !m_nepomukAvailable )
         return;
@@ -261,7 +261,7 @@ void Nepomuk::ServerConfigModule::load()
     m_indexFolderSelectionDialog->setIndexHiddenFolders( fileIndexerConfig.group( "General" ).readEntry( "index hidden folders", false ) );
     m_indexFolderSelectionDialog->setFolders( fileIndexerConfig.group( "General" ).readPathEntry( "folders", defaultFolders() ),
                                               fileIndexerConfig.group( "General" ).readPathEntry( "exclude folders", QStringList() ) );
-    m_indexFolderSelectionDialog->setExcludeFilters( fileIndexerConfig.group( "General" ).readEntry( "exclude filters", Nepomuk::defaultExcludeFilterList() ) );
+    m_indexFolderSelectionDialog->setExcludeFilters( fileIndexerConfig.group( "General" ).readEntry( "exclude filters", Nepomuk2::defaultExcludeFilterList() ) );
 
     const bool indexNewlyMounted = fileIndexerConfig.group( "RemovableMedia" ).readEntry( "index newly mounted", false );
     const bool askIndividually = fileIndexerConfig.group( "RemovableMedia" ).readEntry( "ask user", false );
@@ -289,7 +289,7 @@ void Nepomuk::ServerConfigModule::load()
     buttonForQuery( Query::Query::fromString(
                         kio_nepomuksearchGeneral.readEntry(
                             "Root query",
-                            Nepomuk::lastModifiedFilesQuery().toString() ) ) )->setChecked( true );
+                            Nepomuk2::lastModifiedFilesQuery().toString() ) ) )->setChecked( true );
 
 
 
@@ -316,7 +316,7 @@ void Nepomuk::ServerConfigModule::load()
 }
 
 
-void Nepomuk::ServerConfigModule::save()
+void Nepomuk2::ServerConfigModule::save()
 {
     if ( !m_nepomukAvailable )
         return;
@@ -390,7 +390,7 @@ void Nepomuk::ServerConfigModule::save()
 }
 
 
-void Nepomuk::ServerConfigModule::defaults()
+void Nepomuk2::ServerConfigModule::defaults()
 {
     if ( !m_nepomukAvailable )
         return;
@@ -399,7 +399,7 @@ void Nepomuk::ServerConfigModule::defaults()
     m_checkEnableNepomuk->setChecked( true );
     m_checkEnableEmailIndexer->setChecked( true );
     m_indexFolderSelectionDialog->setIndexHiddenFolders( false );
-    m_indexFolderSelectionDialog->setExcludeFilters( Nepomuk::defaultExcludeFilterList() );
+    m_indexFolderSelectionDialog->setExcludeFilters( Nepomuk2::defaultExcludeFilterList() );
     m_indexFolderSelectionDialog->setFolders( defaultFolders(), QStringList() );
     m_spinMaxResults->setValue( 10 );
     m_checkRootQueryLastModified->setChecked( true );
@@ -408,7 +408,7 @@ void Nepomuk::ServerConfigModule::defaults()
 }
 
 
-void Nepomuk::ServerConfigModule::updateNepomukServerStatus()
+void Nepomuk2::ServerConfigModule::updateNepomukServerStatus()
 {
     if ( m_serverInterface &&
          m_serverInterface->isNepomukEnabled() ) {
@@ -420,7 +420,7 @@ void Nepomuk::ServerConfigModule::updateNepomukServerStatus()
 }
 
 
-void Nepomuk::ServerConfigModule::setFileIndexerStatusText( const QString& text, bool elide )
+void Nepomuk2::ServerConfigModule::setFileIndexerStatusText( const QString& text, bool elide )
 {
     m_labelFileIndexerStatus->setWordWrap( !elide );
     m_labelFileIndexerStatus->setTextElideMode( elide ? Qt::ElideMiddle : Qt::ElideNone );
@@ -428,7 +428,7 @@ void Nepomuk::ServerConfigModule::setFileIndexerStatusText( const QString& text,
 }
 
 
-void Nepomuk::ServerConfigModule::updateFileIndexerStatus()
+void Nepomuk2::ServerConfigModule::updateFileIndexerStatus()
 {
     if ( QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.nepomuk.services.nepomukfileindexer" ) ) {
         if ( org::kde::nepomuk::ServiceControl( "org.kde.nepomuk.services.nepomukfileindexer", "/servicecontrol",
@@ -456,7 +456,7 @@ void Nepomuk::ServerConfigModule::updateFileIndexerStatus()
 }
 
 
-void Nepomuk::ServerConfigModule::updateBackupStatus()
+void Nepomuk2::ServerConfigModule::updateBackupStatus()
 {
     const QString backupUrl = KStandardDirs::locateLocal( "data", "nepomuk/backupsync/backups/" );
     QDir dir( backupUrl );
@@ -475,7 +475,7 @@ void Nepomuk::ServerConfigModule::updateBackupStatus()
 }
 
 
-void Nepomuk::ServerConfigModule::recreateInterfaces()
+void Nepomuk2::ServerConfigModule::recreateInterfaces()
 {
     delete m_fileIndexerInterface;
     delete m_serverInterface;
@@ -488,7 +488,7 @@ void Nepomuk::ServerConfigModule::recreateInterfaces()
 }
 
 
-void Nepomuk::ServerConfigModule::slotCustomQueryButtonClicked()
+void Nepomuk2::ServerConfigModule::slotCustomQueryButtonClicked()
 {
     // this is a temp solution until we have a proper query builder
     QString queryString = QInputDialog::getText( this,
@@ -504,14 +504,14 @@ void Nepomuk::ServerConfigModule::slotCustomQueryButtonClicked()
 }
 
 
-void Nepomuk::ServerConfigModule::slotStatusDetailsClicked()
+void Nepomuk2::ServerConfigModule::slotStatusDetailsClicked()
 {
     StatusWidget statusDialog( this );
     statusDialog.exec();
 }
 
 
-void Nepomuk::ServerConfigModule::slotEditIndexFolders()
+void Nepomuk2::ServerConfigModule::slotEditIndexFolders()
 {
     const QStringList oldIncludeFolders = m_indexFolderSelectionDialog->includeFolders();
     const QStringList oldExcludeFolders = m_indexFolderSelectionDialog->excludeFolders();
@@ -532,7 +532,7 @@ void Nepomuk::ServerConfigModule::slotEditIndexFolders()
 }
 
 
-void Nepomuk::ServerConfigModule::slotCustomQueryToggled( bool on )
+void Nepomuk2::ServerConfigModule::slotCustomQueryToggled( bool on )
 {
     if ( on && m_customQuery.isEmpty() ) {
         slotCustomQueryButtonClicked();
@@ -540,36 +540,36 @@ void Nepomuk::ServerConfigModule::slotCustomQueryToggled( bool on )
 }
 
 
-QRadioButton* Nepomuk::ServerConfigModule::buttonForQuery( const Query::Query& query ) const
+QRadioButton* Nepomuk2::ServerConfigModule::buttonForQuery( const Query::Query& query ) const
 {
-    if ( query == Nepomuk::neverOpenedFilesQuery() )
+    if ( query == Nepomuk2::neverOpenedFilesQuery() )
         return m_checkRootQueryNeverOpened;
-    else if ( query == Nepomuk::lastModifiedFilesQuery() )
+    else if ( query == Nepomuk2::lastModifiedFilesQuery() )
         return m_checkRootQueryLastModified;
-    else if ( query == Nepomuk::mostImportantFilesQuery() )
+    else if ( query == Nepomuk2::mostImportantFilesQuery() )
         return m_checkRootQueryFancy;
     else
         return m_checkRootQueryCustom;
 }
 
 
-Nepomuk::Query::Query Nepomuk::ServerConfigModule::queryForButton( QAbstractButton* button ) const
+Nepomuk2::Query::Query Nepomuk2::ServerConfigModule::queryForButton( QAbstractButton* button ) const
 {
     if ( button == m_checkRootQueryNeverOpened )
-        return Nepomuk::neverOpenedFilesQuery();
+        return Nepomuk2::neverOpenedFilesQuery();
     else if ( button == m_checkRootQueryLastModified )
-        return Nepomuk::lastModifiedFilesQuery();
+        return Nepomuk2::lastModifiedFilesQuery();
     else if ( button == m_checkRootQueryFancy )
-        return Nepomuk::mostImportantFilesQuery();
+        return Nepomuk2::mostImportantFilesQuery();
     else {
         // force to always only query for files
-        Nepomuk::Query::FileQuery query = Query::QueryParser::parseQuery( m_customQuery );
+        Nepomuk2::Query::FileQuery query = Query::QueryParser::parseQuery( m_customQuery );
         query.setFileMode( Query::FileQuery::QueryFiles );
         return query;
     }
 }
 
-void Nepomuk::ServerConfigModule::slotBackupFrequencyChanged()
+void Nepomuk2::ServerConfigModule::slotBackupFrequencyChanged()
 {
     m_comboBackupDay->setShown(m_comboBackupFrequency->currentIndex() >= WeeklyBackup);
     m_comboBackupDay->setDisabled(m_comboBackupFrequency->currentIndex() == DisableAutomaticBackups);
@@ -577,12 +577,12 @@ void Nepomuk::ServerConfigModule::slotBackupFrequencyChanged()
     m_spinBackupMax->setDisabled(m_comboBackupFrequency->currentIndex() == DisableAutomaticBackups);
 }
 
-void Nepomuk::ServerConfigModule::slotManualBackup()
+void Nepomuk2::ServerConfigModule::slotManualBackup()
 {
     KProcess::execute( "nepomukbackup", QStringList() << "--backup" );
 }
 
-void Nepomuk::ServerConfigModule::slotRestoreBackup()
+void Nepomuk2::ServerConfigModule::slotRestoreBackup()
 {
     KProcess::execute( "nepomukbackup", QStringList() << "--restore" );
 }

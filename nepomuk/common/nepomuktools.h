@@ -26,7 +26,7 @@
 #include <QtCore/QStringList>
 #include <Soprano/Node>
 
-namespace Nepomuk {
+namespace Nepomuk2 {
 const int MAX_SPLIT_LIST_ITEMS = 20;
 
 /**

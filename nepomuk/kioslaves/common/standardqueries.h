@@ -20,27 +20,27 @@
 #ifndef _NEPOMUK_STANDARD_QUERIES_H_
 #define _NEPOMUK_STANDARD_QUERIES_H_
 
-#include <Nepomuk/Query/FileQuery>
-#include <Nepomuk/Query/ComparisonTerm>
-#include <Nepomuk/Query/AndTerm>
-#include <Nepomuk/Query/OrTerm>
-#include <Nepomuk/Query/LiteralTerm>
-#include <Nepomuk/Query/NegationTerm>
-#include <Nepomuk/Query/ResourceTerm>
+#include <Nepomuk2/Query/FileQuery>
+#include <Nepomuk2/Query/ComparisonTerm>
+#include <Nepomuk2/Query/AndTerm>
+#include <Nepomuk2/Query/OrTerm>
+#include <Nepomuk2/Query/LiteralTerm>
+#include <Nepomuk2/Query/NegationTerm>
+#include <Nepomuk2/Query/ResourceTerm>
 
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/RDF>
 
-#include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/Vocabulary/NFO>
-#include <Nepomuk/Vocabulary/NUAO>
+#include <Nepomuk2/Vocabulary/NIE>
+#include <Nepomuk2/Vocabulary/NFO>
+#include <Nepomuk2/Vocabulary/NUAO>
 
-namespace Nepomuk {
+namespace Nepomuk2 {
     /**
      * Creates a query that returns all files sorted by descending modification date.
      */
     inline Query::Query lastModifiedFilesQuery() {
-        Query::ComparisonTerm lastModifiedTerm( Nepomuk::Vocabulary::NIE::lastModified(), Query::Term() );
+        Query::ComparisonTerm lastModifiedTerm( Nepomuk2::Vocabulary::NIE::lastModified(), Query::Term() );
         lastModifiedTerm.setSortWeight( 1, Qt::DescendingOrder );
         Query::FileQuery lastModifiedQuery( lastModifiedTerm );
         lastModifiedQuery.setFileMode( Query::FileQuery::QueryFiles );
@@ -69,12 +69,12 @@ namespace Nepomuk {
         // 2. no property at all
         Query::OrTerm usageCntTerm(
             Query::ComparisonTerm(
-                Nepomuk::Vocabulary::NUAO::usageCount(),
+                Nepomuk2::Vocabulary::NUAO::usageCount(),
                 Query::LiteralTerm( 0 ),
                 Query::ComparisonTerm::Equal ),
             Query::NegationTerm::negateTerm(
                 Query::ComparisonTerm(
-                    Nepomuk::Vocabulary::NUAO::usageCount(),
+                    Nepomuk2::Vocabulary::NUAO::usageCount(),
                     Query::Term() ) ) );
 
         // Before we had the data management service there was no usage count
@@ -83,7 +83,7 @@ namespace Nepomuk {
         // However, by default we only show the top 10 results. Thus, in the
         // worst case this query will return the same as lastModifiedFilesQuery().
         Query::ComparisonTerm modDateTerm(
-            Nepomuk::Vocabulary::NIE::lastModified(),
+            Nepomuk2::Vocabulary::NIE::lastModified(),
             Query::Term() );
         modDateTerm.setSortWeight( 1, Qt::DescendingOrder );
 

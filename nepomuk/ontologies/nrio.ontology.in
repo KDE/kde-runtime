@@ -1,8 +1,0 @@
-[Ontology]
-Version=1.0
-Name=Nepomuk Resource Identification Ontology
-Comment=Required for backup and sync.
-Namespace=http://nepomuk.kde.org/ontologies/2010/11/11/nrio#
-Path=${CMAKE_INSTALL_PREFIX}/share/ontology/kde/nrio.trig
-MimeType=application/x-trig
-Type=Data

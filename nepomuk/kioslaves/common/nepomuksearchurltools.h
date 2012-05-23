@@ -22,14 +22,14 @@
 
 #include <QtCore/QString>
 
-#include <nepomuk/query.h>
-#include <nepomuk/queryparser.h>
+#include <nepomuk2/query.h>
+#include <nepomuk2/queryparser.h>
 
 #include <kurl.h>
 
-#include <Nepomuk/Vocabulary/NIE>
+#include <Nepomuk2/Vocabulary/NIE>
 
-namespace Nepomuk {
+namespace Nepomuk2 {
     /**
      * Encode the resource URI into the UDS_NAME to make it unique.
      * It is important that we do not use the % for percent-encoding. Otherwise KUrl::url will

@@ -12,7 +12,7 @@ target_link_libraries(nepomukcommon
   ${QT_QTCORE_LIBRARY}
   ${KDE4_KDECORE_LIBRARY}
   ${KDE4_SOLID_LIBRARY}
-  ${NEPOMUK_LIBRARIES}
+  ${NEPOMUK_CORE_LIBRARIES}
   )
 
 install(TARGETS nepomukcommon EXPORT ${INSTALL_TARGETS_DEFAULT_ARGS})

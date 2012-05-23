@@ -56,7 +56,7 @@ namespace {
 }
 
 
-Nepomuk::IndexFolderSelectionDialog::IndexFolderSelectionDialog( QWidget* parent )
+Nepomuk2::IndexFolderSelectionDialog::IndexFolderSelectionDialog( QWidget* parent )
     : KDialog( parent )
 {
     setupUi( mainWidget() );
@@ -78,12 +78,12 @@ Nepomuk::IndexFolderSelectionDialog::IndexFolderSelectionDialog( QWidget* parent
 }
 
 
-Nepomuk::IndexFolderSelectionDialog::~IndexFolderSelectionDialog()
+Nepomuk2::IndexFolderSelectionDialog::~IndexFolderSelectionDialog()
 {
 }
 
 
-void Nepomuk::IndexFolderSelectionDialog::setFolders( const QStringList& includeDirs, const QStringList& exclude )
+void Nepomuk2::IndexFolderSelectionDialog::setFolders( const QStringList& includeDirs, const QStringList& exclude )
 {
     m_folderModel->setFolders( includeDirs, exclude );
 
@@ -105,19 +105,19 @@ void Nepomuk::IndexFolderSelectionDialog::setFolders( const QStringList& include
 }
 
 
-void Nepomuk::IndexFolderSelectionDialog::setExcludeFilters( const QStringList& filters )
+void Nepomuk2::IndexFolderSelectionDialog::setExcludeFilters( const QStringList& filters )
 {
     m_editExcludeFilters->setItems( filters );
 }
 
 
-void Nepomuk::IndexFolderSelectionDialog::setIndexHiddenFolders( bool enable )
+void Nepomuk2::IndexFolderSelectionDialog::setIndexHiddenFolders( bool enable )
 {
     m_checkShowHiddenFolders->setChecked( enable );
 }
 
 
-QStringList Nepomuk::IndexFolderSelectionDialog::includeFolders() const
+QStringList Nepomuk2::IndexFolderSelectionDialog::includeFolders() const
 {
     if ( !indexHiddenFolders() ) {
         return removeHiddenFolders( m_folderModel->includeFolders() );
@@ -128,7 +128,7 @@ QStringList Nepomuk::IndexFolderSelectionDialog::includeFolders() const
 }
 
 
-QStringList Nepomuk::IndexFolderSelectionDialog::excludeFolders() const
+QStringList Nepomuk2::IndexFolderSelectionDialog::excludeFolders() const
 {
     if ( !indexHiddenFolders() ) {
         return removeHiddenFolders( m_folderModel->excludeFolders() );
@@ -139,13 +139,13 @@ QStringList Nepomuk::IndexFolderSelectionDialog::excludeFolders() const
 }
 
 
-QStringList Nepomuk::IndexFolderSelectionDialog::excludeFilters() const
+QStringList Nepomuk2::IndexFolderSelectionDialog::excludeFilters() const
 {
     return m_editExcludeFilters->items();
 }
 
 
-bool Nepomuk::IndexFolderSelectionDialog::indexHiddenFolders() const
+bool Nepomuk2::IndexFolderSelectionDialog::indexHiddenFolders() const
 {
     return m_checkShowHiddenFolders->isChecked();
 }

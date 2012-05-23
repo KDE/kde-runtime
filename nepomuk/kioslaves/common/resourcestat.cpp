@@ -31,16 +31,16 @@
 #include <kio/udsentry.h>
 #include <KDebug>
 
-#include <Nepomuk/Thing>
-#include <Nepomuk/Variant>
-#include <Nepomuk/Types/Class>
-#include <Nepomuk/ResourceManager>
-#include <Nepomuk/Query/Query>
-#include <Nepomuk/Query/ComparisonTerm>
-#include <Nepomuk/Query/ResourceTerm>
-#include <Nepomuk/Vocabulary/NFO>
-#include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/Vocabulary/PIMO>
+#include <Nepomuk2/Thing>
+#include <Nepomuk2/Variant>
+#include <Nepomuk2/Types/Class>
+#include <Nepomuk2/ResourceManager>
+#include <Nepomuk2/Query/Query>
+#include <Nepomuk2/Query/ComparisonTerm>
+#include <Nepomuk2/Query/ResourceTerm>
+#include <Nepomuk2/Vocabulary/NFO>
+#include <Nepomuk2/Vocabulary/NIE>
+#include <Nepomuk2/Vocabulary/PIMO>
 
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/NAO>
@@ -53,7 +53,7 @@
 #include <Solid/StorageAccess>
 
 
-KUrl Nepomuk::stripQuery( const KUrl& url )
+KUrl Nepomuk2::stripQuery( const KUrl& url )
 {
     KUrl newUrl( url );
     newUrl.setEncodedQuery( QByteArray() );
@@ -61,7 +61,7 @@ KUrl Nepomuk::stripQuery( const KUrl& url )
 }
 
 
-Nepomuk::Resource Nepomuk::splitNepomukUrl( const KUrl& url, QString* filename )
+Nepomuk2::Resource Nepomuk2::splitNepomukUrl( const KUrl& url, QString* filename )
 {
     //
     // let's try to extract the resource from the url in case we listed a tag or
@@ -88,10 +88,10 @@ Nepomuk::Resource Nepomuk::splitNepomukUrl( const KUrl& url, QString* filename )
 }
 
 
-bool Nepomuk::isRemovableMediaFile( const Nepomuk::Resource& res )
+bool Nepomuk2::isRemovableMediaFile( const Nepomuk2::Resource& res )
 {
-    if ( res.hasProperty( Nepomuk::Vocabulary::NIE::url() ) ) {
-        KUrl url = res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
+    if ( res.hasProperty( Nepomuk2::Vocabulary::NIE::url() ) ) {
+        KUrl url = res.property( Nepomuk2::Vocabulary::NIE::url() ).toUrl();
         return ( url.protocol() == QLatin1String( "filex" ) );
     }
     else {
@@ -100,7 +100,7 @@ bool Nepomuk::isRemovableMediaFile( const Nepomuk::Resource& res )
 }
 
 
-Solid::StorageAccess* Nepomuk::storageFromUUID( const QString& uuid )
+Solid::StorageAccess* Nepomuk2::storageFromUUID( const QString& uuid )
 {
     QString solidQuery = QString::fromLatin1( "[ StorageVolume.usage=='FileSystem' AND StorageVolume.uuid=='%1' ]" ).arg( uuid.toLower() );
     QList<Solid::Device> devices = Solid::Device::listFromQuery( solidQuery );
@@ -112,7 +112,7 @@ Solid::StorageAccess* Nepomuk::storageFromUUID( const QString& uuid )
 }
 
 
-bool Nepomuk::mountAndWait( Solid::StorageAccess* storage )
+bool Nepomuk2::mountAndWait( Solid::StorageAccess* storage )
 {
     kDebug() << storage;
     QEventLoop loop;
@@ -131,12 +131,12 @@ bool Nepomuk::mountAndWait( Solid::StorageAccess* storage )
 }
 
 
-KUrl Nepomuk::determineFilesystemPath( const Nepomuk::Resource& fsRes )
+KUrl Nepomuk2::determineFilesystemPath( const Nepomuk2::Resource& fsRes )
 {
     QString uuidQuery = QString::fromLatin1( "select ?uuid where { %1 %2 ?uuid . }" )
                         .arg( Soprano::Node::resourceToN3( fsRes.resourceUri() ),
                               Soprano::Node::resourceToN3( Soprano::Vocabulary::NAO::identifier() ) );
-    Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( uuidQuery, Soprano::Query::QueryLanguageSparql );
+    Soprano::QueryResultIterator it = Nepomuk2::ResourceManager::instance()->mainModel()->executeQuery( uuidQuery, Soprano::Query::QueryLanguageSparql );
     if ( it.next() ) {
         Solid::StorageAccess* storage = storageFromUUID( it["uuid"].toString() );
         it.close();
@@ -150,10 +150,10 @@ KUrl Nepomuk::determineFilesystemPath( const Nepomuk::Resource& fsRes )
 }
 
 
-QString Nepomuk::getFileSystemLabelForRemovableMediaFileUrl( const Nepomuk::Resource& res )
+QString Nepomuk2::getFileSystemLabelForRemovableMediaFileUrl( const Nepomuk2::Resource& res )
 {
     QList<Soprano::Node> labelNodes
-        = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( QString::fromLatin1( "select ?label where { "
+        = Nepomuk2::ResourceManager::instance()->mainModel()->executeQuery( QString::fromLatin1( "select ?label where { "
                                                                                                 "%1 nie:isPartOf ?fs . "
                                                                                                 "?fs a nfo:Filesystem . "
                                                                                                 "?fs nao:prefLabel ?label . "
@@ -164,17 +164,17 @@ QString Nepomuk::getFileSystemLabelForRemovableMediaFileUrl( const Nepomuk::Reso
     if ( !labelNodes.isEmpty() )
         return labelNodes.first().toString();
     else
-        return res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl().host(); // Solid UUID
+        return res.property( Nepomuk2::Vocabulary::NIE::url() ).toUrl().host(); // Solid UUID
 }
 
 
-KUrl Nepomuk::convertRemovableMediaFileUrl( const KUrl& url, bool evenMountIfNecessary )
+KUrl Nepomuk2::convertRemovableMediaFileUrl( const KUrl& url, bool evenMountIfNecessary )
 {
-    Solid::StorageAccess* storage = Nepomuk::storageFromUUID( url.host() );
+    Solid::StorageAccess* storage = Nepomuk2::storageFromUUID( url.host() );
     kDebug() << url << storage;
     if ( storage &&
          ( storage->isAccessible() ||
-           ( evenMountIfNecessary && Nepomuk::mountAndWait( storage ) ) ) ) {
+           ( evenMountIfNecessary && Nepomuk2::mountAndWait( storage ) ) ) ) {
         kDebug() << "converted:" << KUrl( storage->filePath() + QLatin1String( "/" ) + url.path() );
         return QString( storage->filePath() + QLatin1String( "/" ) + url.path() );
     }
@@ -184,7 +184,7 @@ KUrl Nepomuk::convertRemovableMediaFileUrl( const KUrl& url, bool evenMountIfNec
 }
 
 
-void Nepomuk::addGenericNepomukResourceData( const Nepomuk::Resource& res, KIO::UDSEntry& uds, bool includeMimeType )
+void Nepomuk2::addGenericNepomukResourceData( const Nepomuk2::Resource& res, KIO::UDSEntry& uds, bool includeMimeType )
 {
     //
     // Add some random values
@@ -216,7 +216,7 @@ void Nepomuk::addGenericNepomukResourceData( const Nepomuk::Resource& res, KIO::
 
     if ( includeMimeType ) {
         // Use nice display types like "Person", "Project" and so on
-        Nepomuk::Types::Class type( res.resourceType() );
+        Nepomuk2::Types::Class type( res.resourceType() );
         if (!type.label().isEmpty())
             uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, type.label() );
 
@@ -235,7 +235,7 @@ void Nepomuk::addGenericNepomukResourceData( const Nepomuk::Resource& res, KIO::
 }
 
 
-KIO::UDSEntry Nepomuk::statNepomukResource( const Nepomuk::Resource& res, bool doNotForward )
+KIO::UDSEntry Nepomuk2::statNepomukResource( const Nepomuk2::Resource& res, bool doNotForward )
 {
     //
     // We do not have a local file
@@ -289,7 +289,7 @@ KIO::UDSEntry Nepomuk::statNepomukResource( const Nepomuk::Resource& res, bool d
     addGenericNepomukResourceData( res, uds, !uds.contains( KIO::UDSEntry::UDS_MIME_TYPE ) );
 
     if ( !doNotForward ) {
-        KUrl reUrl = Nepomuk::redirectionUrl( res );
+        KUrl reUrl = Nepomuk2::redirectionUrl( res );
         if ( !reUrl.isEmpty() ) {
             uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QLatin1String( "inode/directory" ) );
             uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
@@ -300,25 +300,25 @@ KIO::UDSEntry Nepomuk::statNepomukResource( const Nepomuk::Resource& res, bool d
 }
 
 
-bool Nepomuk::willBeRedirected( const Nepomuk::Resource& res )
+bool Nepomuk2::willBeRedirected( const Nepomuk2::Resource& res )
 {
     // here the same canditions as in redirectionUrl need to be listed
-    return( res.hasType( Nepomuk::Vocabulary::NFO::Folder() ) ||
+    return( res.hasType( Nepomuk2::Vocabulary::NFO::Folder() ) ||
             res.hasType( Soprano::Vocabulary::NAO::Tag() ) ||
-            res.hasType( Nepomuk::Vocabulary::NFO::Filesystem() ) ||
-            !res.hasType( Nepomuk::Vocabulary::NFO::FileDataObject() ) );
+            res.hasType( Nepomuk2::Vocabulary::NFO::Filesystem() ) ||
+            !res.hasType( Nepomuk2::Vocabulary::NFO::FileDataObject() ) );
 }
 
 
-KUrl Nepomuk::redirectionUrl( const Nepomuk::Resource& res )
+KUrl Nepomuk2::redirectionUrl( const Nepomuk2::Resource& res )
 {
     // list folders by forwarding to the actual folder on disk
-    if ( res.hasType( Nepomuk::Vocabulary::NFO::Folder() ) ) {
-        return res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
+    if ( res.hasType( Nepomuk2::Vocabulary::NFO::Folder() ) ) {
+        return res.property( Nepomuk2::Vocabulary::NIE::url() ).toUrl();
     }
 
     // list filesystems by forwarding to the mounted path on disk (in case the fs is mounted)
-    else if ( res.hasType( Nepomuk::Vocabulary::NFO::Filesystem() ) ) {
+    else if ( res.hasType( Nepomuk2::Vocabulary::NFO::Filesystem() ) ) {
         KUrl fsUrl = determineFilesystemPath( res );
         if ( fsUrl.isValid() ) {
             return fsUrl;
@@ -335,7 +335,7 @@ KUrl Nepomuk::redirectionUrl( const Nepomuk::Resource& res )
 
     // list everything else besides files by querying things related to the resource in some way
     // this works for music albums or artists but it would also work for tags
-    else if ( !res.hasType( Nepomuk::Vocabulary::NFO::FileDataObject() ) ) {
+    else if ( !res.hasType( Nepomuk2::Vocabulary::NFO::FileDataObject() ) ) {
         Query::ComparisonTerm term( QUrl(), Query::ResourceTerm( res ), Query::ComparisonTerm::Equal );
         KUrl url = Query::Query( term ).toSearchUrl( res.genericLabel() );
         url.addQueryItem( QLatin1String( "resource" ), KUrl( res.resourceUri() ).url() );
@@ -352,10 +352,10 @@ namespace {
     /**
      * Check if the resource represents a local file with an existing nie:url property.
      */
-    bool isLocalFile( const Nepomuk::Resource& res )
+    bool isLocalFile( const Nepomuk2::Resource& res )
     {
-        if ( res.hasProperty( Nepomuk::Vocabulary::NIE::url() ) ) {
-            KUrl url = res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
+        if ( res.hasProperty( Nepomuk2::Vocabulary::NIE::url() ) ) {
+            KUrl url = res.property( Nepomuk2::Vocabulary::NIE::url() ).toUrl();
             return ( !url.isEmpty() &&
                      QFile::exists( url.toLocalFile() ) );
         }
@@ -365,10 +365,10 @@ namespace {
     }
 }
 
-KUrl Nepomuk::nepomukToFileUrl( const KUrl& url, bool evenMountIfNecessary )
+KUrl Nepomuk2::nepomukToFileUrl( const KUrl& url, bool evenMountIfNecessary )
 {
     QString filename;
-    Nepomuk::Resource res = splitNepomukUrl( url, &filename );
+    Nepomuk2::Resource res = splitNepomukUrl( url, &filename );
 
     if ( !res.exists() )
         return KUrl();
@@ -378,7 +378,7 @@ KUrl Nepomuk::nepomukToFileUrl( const KUrl& url, bool evenMountIfNecessary )
     //
     // let's see if it is a pimo thing which refers to a file
     //
-    if ( res.hasType( Nepomuk::Vocabulary::PIMO::Thing() ) ) {
+    if ( res.hasType( Nepomuk2::Vocabulary::PIMO::Thing() ) ) {
         if ( !res.pimoThing().groundingOccurrences().isEmpty() ) {
             res = res.pimoThing().groundingOccurrences().first();
         }
@@ -388,7 +388,7 @@ KUrl Nepomuk::nepomukToFileUrl( const KUrl& url, bool evenMountIfNecessary )
         newURL = res.property( Vocabulary::NIE::url() ).toUrl();
     }
     else if ( isRemovableMediaFile( res ) ) {
-        const KUrl removableMediaUrl = res.property( Nepomuk::Vocabulary::NIE::url() ).toUrl();
+        const KUrl removableMediaUrl = res.property( Nepomuk2::Vocabulary::NIE::url() ).toUrl();
         newURL = convertRemovableMediaFileUrl( removableMediaUrl, evenMountIfNecessary );
     }
 

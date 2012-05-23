@@ -37,7 +37,7 @@ class AsyncQuery;
 }
 }
 
-namespace Nepomuk {
+namespace Nepomuk2 {
 
 
 class StatusWidget : public KDialog, public Ui::StatusWidget

@@ -25,12 +25,12 @@
 #include <QtDBus/QDBusObjectPath>
 
 #include <kurl.h>
-#include <nepomuk/result.h>
+#include <nepomuk2/result.h>
 
 #include "queryinterface.h"
 
 
-namespace Nepomuk {
+namespace Nepomuk2 {
     class SearchUrlListener : public QObject
     {
         Q_OBJECT
@@ -46,8 +46,8 @@ namespace Nepomuk {
         KUrl notificationUrl() const { return m_notifyUrl; }
 
     private Q_SLOTS:
-        void slotNewEntries( const QList<Nepomuk::Query::Result>& entries );
-        void slotEntriesRemoved( const QList<Nepomuk::Query::Result>& entries );
+        void slotNewEntries( const QList<Nepomuk2::Query::Result>& entries );
+        void slotEntriesRemoved( const QList<Nepomuk2::Query::Result>& entries );
         void slotQueryServiceInitialized( bool success );
 
     private:

@@ -25,9 +25,9 @@ class QString;
 
 #include <QtCore/QDate>
 
-#include <Nepomuk/Query/Query>
+#include <Nepomuk2/Query/Query>
 
-namespace Nepomuk {
+namespace Nepomuk2 {
     /**
      * The hierarchy in timeline:/ looks as follows:
      *

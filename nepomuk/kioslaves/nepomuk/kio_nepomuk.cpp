@@ -37,17 +37,17 @@
 #include <KMessageBox>
 #include <KMimeType>
 
-#include <nepomuk/thing.h>
-#include <nepomuk/resourcemanager.h>
-#include <nepomuk/variant.h>
-#include <nepomuk/class.h>
-#include <nepomuk/property.h>
-#include <Nepomuk/Query/Query>
-#include <Nepomuk/Query/ComparisonTerm>
-#include <Nepomuk/Query/ResourceTerm>
-#include <Nepomuk/Vocabulary/NFO>
-#include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/Vocabulary/PIMO>
+#include <nepomuk2/thing.h>
+#include <nepomuk2/resourcemanager.h>
+#include <nepomuk2/variant.h>
+#include <nepomuk2/class.h>
+#include <nepomuk2/property.h>
+#include <Nepomuk2/Query/Query>
+#include <Nepomuk2/Query/ComparisonTerm>
+#include <Nepomuk2/Query/ResourceTerm>
+#include <Nepomuk2/Vocabulary/NFO>
+#include <Nepomuk2/Vocabulary/NIE>
+#include <Nepomuk2/Vocabulary/PIMO>
 
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/NAO>
@@ -66,19 +66,19 @@ namespace {
     }
 }
 
-Nepomuk::NepomukProtocol::NepomukProtocol( const QByteArray& poolSocket, const QByteArray& appSocket )
+Nepomuk2::NepomukProtocol::NepomukProtocol( const QByteArray& poolSocket, const QByteArray& appSocket )
     : KIO::ForwardingSlaveBase( "nepomuk", poolSocket, appSocket )
 {
     ResourceManager::instance()->init();
 }
 
 
-Nepomuk::NepomukProtocol::~NepomukProtocol()
+Nepomuk2::NepomukProtocol::~NepomukProtocol()
 {
 }
 
 
-void Nepomuk::NepomukProtocol::listDir( const KUrl& url )
+void Nepomuk2::NepomukProtocol::listDir( const KUrl& url )
 {
     if ( !ensureNepomukRunning() )
         return;
@@ -89,8 +89,8 @@ void Nepomuk::NepomukProtocol::listDir( const KUrl& url )
     // anything.
     // See README for details
     //
-    Nepomuk::Resource res = Nepomuk::splitNepomukUrl( url );
-    KUrl reUrl = Nepomuk::redirectionUrl( res );
+    Nepomuk2::Resource res = Nepomuk2::splitNepomukUrl( url );
+    KUrl reUrl = Nepomuk2::redirectionUrl( res );
     if ( !reUrl.isEmpty() ) {
         redirection( reUrl );
         finished();
@@ -101,7 +101,7 @@ void Nepomuk::NepomukProtocol::listDir( const KUrl& url )
 }
 
 
-void Nepomuk::NepomukProtocol::get( const KUrl& url )
+void Nepomuk2::NepomukProtocol::get( const KUrl& url )
 {
     if ( !ensureNepomukRunning() )
         return;
@@ -111,13 +111,13 @@ void Nepomuk::NepomukProtocol::get( const KUrl& url )
     m_currentOperation = Get;
     const bool noFollow = noFollowSet( url );
 
-    Nepomuk::Resource res = splitNepomukUrl( url );
-    if ( !noFollow && Nepomuk::isRemovableMediaFile( res ) ) {
+    Nepomuk2::Resource res = splitNepomukUrl( url );
+    if ( !noFollow && Nepomuk2::isRemovableMediaFile( res ) ) {
         error( KIO::ERR_SLAVE_DEFINED,
                i18nc( "@info", "Please insert the removable medium <resource>%1</resource> to access this file.",
                       getFileSystemLabelForRemovableMediaFileUrl( res ) ) );
     }
-    else if ( !noFollow && !Nepomuk::nepomukToFileUrl( url ).isEmpty() ) {
+    else if ( !noFollow && !Nepomuk2::nepomukToFileUrl( url ).isEmpty() ) {
         ForwardingSlaveBase::get( url );
     }
     else {
@@ -150,7 +150,7 @@ void Nepomuk::NepomukProtocol::get( const KUrl& url )
 }
 
 
-void Nepomuk::NepomukProtocol::put( const KUrl& url, int permissions, KIO::JobFlags flags )
+void Nepomuk2::NepomukProtocol::put( const KUrl& url, int permissions, KIO::JobFlags flags )
 {
     if ( !ensureNepomukRunning() )
         return;
@@ -162,7 +162,7 @@ void Nepomuk::NepomukProtocol::put( const KUrl& url, int permissions, KIO::JobFl
 }
 
 
-void Nepomuk::NepomukProtocol::stat( const KUrl& url )
+void Nepomuk2::NepomukProtocol::stat( const KUrl& url )
 {
     if ( !ensureNepomukRunning() )
         return;
@@ -171,17 +171,17 @@ void Nepomuk::NepomukProtocol::stat( const KUrl& url )
 
     m_currentOperation = Stat;
     const bool noFollow = noFollowSet( url );
-    if ( !noFollow && !Nepomuk::nepomukToFileUrl( url ).isEmpty() ) {
+    if ( !noFollow && !Nepomuk2::nepomukToFileUrl( url ).isEmpty() ) {
         ForwardingSlaveBase::stat( url );
     }
     else {
-        Nepomuk::Resource res = splitNepomukUrl( url );
+        Nepomuk2::Resource res = splitNepomukUrl( url );
 
         if ( !res.exists() ) {
             error( KIO::ERR_DOES_NOT_EXIST, QLatin1String("stat: ") + stripQuery(url).prettyUrl() );
         }
         else {
-            KIO::UDSEntry uds = Nepomuk::statNepomukResource( res, noFollow );
+            KIO::UDSEntry uds = Nepomuk2::statNepomukResource( res, noFollow );
             statEntry( uds );
             finished();
         }
@@ -189,7 +189,7 @@ void Nepomuk::NepomukProtocol::stat( const KUrl& url )
 }
 
 
-void Nepomuk::NepomukProtocol::mimetype( const KUrl& url )
+void Nepomuk2::NepomukProtocol::mimetype( const KUrl& url )
 {
     if ( !ensureNepomukRunning() )
         return;
@@ -204,15 +204,15 @@ void Nepomuk::NepomukProtocol::mimetype( const KUrl& url )
     }
 
     QString filename;
-    Nepomuk::Resource res = Nepomuk::splitNepomukUrl( url, &filename );
+    Nepomuk2::Resource res = Nepomuk2::splitNepomukUrl( url, &filename );
     if ( filename.isEmpty() &&
-         Nepomuk::willBeRedirected( res ) ) {
+         Nepomuk2::willBeRedirected( res ) ) {
         kDebug() << res.resourceUri() << "is tag or file system -> mimetype inode/directory";
         mimeType( QLatin1String( "inode/directory" ) );
         finished();
     }
     else {
-        if ( !Nepomuk::nepomukToFileUrl( url ).isEmpty() ) {
+        if ( !Nepomuk2::nepomukToFileUrl( url ).isEmpty() ) {
             ForwardingSlaveBase::mimetype( url );
         }
         else {
@@ -235,7 +235,7 @@ void Nepomuk::NepomukProtocol::mimetype( const KUrl& url )
 }
 
 
-void Nepomuk::NepomukProtocol::del(const KUrl& url, bool isFile)
+void Nepomuk2::NepomukProtocol::del(const KUrl& url, bool isFile)
 {
     if ( !ensureNepomukRunning() )
         return;
@@ -247,7 +247,7 @@ void Nepomuk::NepomukProtocol::del(const KUrl& url, bool isFile)
         ForwardingSlaveBase::del( url, isFile );
     }
     else {
-        Nepomuk::Resource res( url );
+        Nepomuk2::Resource res( url );
         if ( !res.exists() ) {
             error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
         }
@@ -259,19 +259,19 @@ void Nepomuk::NepomukProtocol::del(const KUrl& url, bool isFile)
 }
 
 
-bool Nepomuk::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
+bool Nepomuk2::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 {
     if ( noFollowSet( url ) )
         return false;
 
-    newURL = Nepomuk::nepomukToFileUrl( url, m_currentOperation == Get );
+    newURL = Nepomuk2::nepomukToFileUrl( url, m_currentOperation == Get );
     return newURL.isValid();
 }
 
 
-bool Nepomuk::NepomukProtocol::ensureNepomukRunning()
+bool Nepomuk2::NepomukProtocol::ensureNepomukRunning()
 {
-    if ( Nepomuk::ResourceManager::instance()->init() ) {
+    if ( Nepomuk2::ResourceManager::instance()->init() ) {
         error( KIO::ERR_SLAVE_DEFINED, i18n( "The desktop search service is not activated. Unable to answer queries without it." ) );
         return false;
     }
@@ -295,7 +295,7 @@ extern "C"
             exit(-1);
         }
 
-        Nepomuk::NepomukProtocol slave(argv[2], argv[3]);
+        Nepomuk2::NepomukProtocol slave(argv[2], argv[3]);
         slave.dispatchLoop();
 
         return 0;

@@ -27,16 +27,16 @@
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Node> // for qHash( QUrl )
 
-#include <Nepomuk/Variant>
-#include <Nepomuk/Thing>
-#include <Nepomuk/Types/Class>
-#include <Nepomuk/Query/Query>
-#include <Nepomuk/Query/QueryParser>
-#include <Nepomuk/Query/ResourceTypeTerm>
-#include <Nepomuk/Query/QueryServiceClient>
-#include <Nepomuk/Vocabulary/NFO>
-#include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/Vocabulary/PIMO>
+#include <Nepomuk2/Variant>
+#include <Nepomuk2/Thing>
+#include <Nepomuk2/Types/Class>
+#include <Nepomuk2/Query/Query>
+#include <Nepomuk2/Query/QueryParser>
+#include <Nepomuk2/Query/ResourceTypeTerm>
+#include <Nepomuk2/Query/QueryServiceClient>
+#include <Nepomuk2/Vocabulary/NFO>
+#include <Nepomuk2/Vocabulary/NIE>
+#include <Nepomuk2/Vocabulary/PIMO>
 
 #include <QtCore/QMutexLocker>
 #include <QTextDocument>
@@ -51,7 +51,7 @@
 #include <KConfigGroup>
 
 
-Nepomuk::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
+Nepomuk2::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
     : QThread(),
       m_url( url ),
       m_initialListingFinished( false ),
@@ -66,7 +66,7 @@ Nepomuk::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
 }
 
 
-Nepomuk::SearchFolder::~SearchFolder()
+Nepomuk2::SearchFolder::~SearchFolder()
 {
     kDebug() << m_url << QThread::currentThread();
 
@@ -76,18 +76,18 @@ Nepomuk::SearchFolder::~SearchFolder()
 }
 
 
-void Nepomuk::SearchFolder::run()
+void Nepomuk2::SearchFolder::run()
 {
     kDebug() << m_url << QThread::currentThread();
 
-    m_client = new Nepomuk::Query::QueryServiceClient();
+    m_client = new Nepomuk2::Query::QueryServiceClient();
 
     // results signals are connected directly to update the results cache m_resultsQueue
     // and the entries cache m_entries, as well as emitting KDirNotify signals
     // a queued connection is not possible since we have no event loop after the
     // initial listing which means that queued signals would never get delivered
-    connect( m_client, SIGNAL( newEntries( const QList<Nepomuk::Query::Result>& ) ),
-             this, SLOT( slotNewEntries( const QList<Nepomuk::Query::Result>& ) ),
+    connect( m_client, SIGNAL( newEntries( const QList<Nepomuk2::Query::Result>& ) ),
+             this, SLOT( slotNewEntries( const QList<Nepomuk2::Query::Result>& ) ),
              Qt::DirectConnection );
     connect( m_client, SIGNAL( resultCount(int) ),
              this, SLOT( slotResultCount(int) ),
@@ -110,7 +110,7 @@ void Nepomuk::SearchFolder::run()
 }
 
 
-void Nepomuk::SearchFolder::list()
+void Nepomuk2::SearchFolder::list()
 {
     kDebug() << m_url << QThread::currentThread();
 
@@ -129,7 +129,7 @@ void Nepomuk::SearchFolder::list()
 
 
 // always called in search thread
-void Nepomuk::SearchFolder::slotNewEntries( const QList<Nepomuk::Query::Result>& results )
+void Nepomuk2::SearchFolder::slotNewEntries( const QList<Nepomuk2::Query::Result>& results )
 {
 //    kDebug() << m_url;
 
@@ -143,7 +143,7 @@ void Nepomuk::SearchFolder::slotNewEntries( const QList<Nepomuk::Query::Result>&
 }
 
 
-void Nepomuk::SearchFolder::slotResultCount( int count )
+void Nepomuk2::SearchFolder::slotResultCount( int count )
 {
     if ( !m_initialListingFinished ) {
         QMutexLocker lock( &m_slaveMutex );
@@ -153,7 +153,7 @@ void Nepomuk::SearchFolder::slotResultCount( int count )
 
 
 // always called in search thread
-void Nepomuk::SearchFolder::slotFinishedListing()
+void Nepomuk2::SearchFolder::slotFinishedListing()
 {
     kDebug() << m_url;
     QMutexLocker lock( &m_resultMutex );
@@ -163,7 +163,7 @@ void Nepomuk::SearchFolder::slotFinishedListing()
 
 
 // always called in main thread
-void Nepomuk::SearchFolder::statResults()
+void Nepomuk2::SearchFolder::statResults()
 {
     while ( 1 ) {
         m_resultMutex.lock();
@@ -204,9 +204,9 @@ namespace {
             }
         }
 
-        Nepomuk::Resource res( url );
+        Nepomuk2::Resource res( url );
         if ( res.exists() ) {
-            uds = Nepomuk::statNepomukResource( res );
+            uds = Nepomuk2::statNepomukResource( res );
             return true;
         }
 
@@ -217,13 +217,13 @@ namespace {
 
 
 // always called in main thread
-// This method tries to avoid loading the Nepomuk::Resource as long as possible by only using the
+// This method tries to avoid loading the Nepomuk2::Resource as long as possible by only using the
 // request property nie:url in the Result for local files.
-KIO::UDSEntry Nepomuk::SearchFolder::statResult( const Query::Result& result )
+KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
 {
     Resource res( result.resource() );
     const KUrl uri( res.resourceUri() );
-    KUrl nieUrl( result[Nepomuk::Vocabulary::NIE::url()].uri() );
+    KUrl nieUrl( result[Nepomuk2::Vocabulary::NIE::url()].uri() );
 
     // the additional bindings that we only have on unix systems
     // Either all are bound or none of them.
@@ -263,7 +263,7 @@ KIO::UDSEntry Nepomuk::SearchFolder::statResult( const Query::Result& result )
 
         // check if we have a pimo thing relating to a file
         if ( nieUrl.isEmpty() )
-            nieUrl = Nepomuk::nepomukToFileUrl( uri );
+            nieUrl = Nepomuk2::nepomukToFileUrl( uri );
 
         // try to stat the file
         if ( statFile( uri, nieUrl, uds ) ) {
@@ -280,10 +280,10 @@ KIO::UDSEntry Nepomuk::SearchFolder::statResult( const Query::Result& result )
             // make sure we do not use these ugly names for display
             if ( !uds.contains( KIO::UDSEntry::UDS_DISPLAY_NAME ) ) {
                 if ( nieUrl.isEmpty() &&
-                        res.hasType( Nepomuk::Vocabulary::PIMO::Thing() ) ) {
+                        res.hasType( Nepomuk2::Vocabulary::PIMO::Thing() ) ) {
                     if ( !res.pimoThing().groundingOccurrences().isEmpty() ) {
                         res = res.pimoThing().groundingOccurrences().first();
-                        nieUrl = res.property(Nepomuk::Vocabulary::NIE::url()).toUrl();
+                        nieUrl = res.property(Nepomuk2::Vocabulary::NIE::url()).toUrl();
                     }
                 }
 

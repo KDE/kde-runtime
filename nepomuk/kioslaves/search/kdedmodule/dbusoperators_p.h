@@ -23,18 +23,18 @@
 
 #include <QtDBus/QDBusArgument>
 
-#include <nepomuk/result.h>
-#include <nepomuk/query.h>
-#include <nepomuk/term.h>
-#include <nepomuk/nepomukquery_export.h>
+#include <nepomuk2/result.h>
+#include <nepomuk2/query.h>
+#include <nepomuk2/term.h>
+#include <nepomuk2/nepomuk_export.h>
 
-Q_DECLARE_METATYPE(Nepomuk::Query::Result)
+Q_DECLARE_METATYPE(Nepomuk2::Query::Result)
 Q_DECLARE_METATYPE(Soprano::Node)
-Q_DECLARE_METATYPE(QList<Nepomuk::Query::Result>)
+Q_DECLARE_METATYPE(QList<Nepomuk2::Query::Result>)
 typedef QHash<QString, QString> RequestPropertyMapDBus;
 Q_DECLARE_METATYPE( RequestPropertyMapDBus )
 
-namespace Nepomuk {
+namespace Nepomuk2 {
     namespace Query {
         /**
          * Register the DBus types necessary for communication with the Nepomuk
@@ -46,10 +46,10 @@ namespace Nepomuk {
 }
 
 // We export the non-public operators so that we do not need duplicated code in kdebase
-NEPOMUKQUERY_EXPORT QDBusArgument& operator<<( QDBusArgument& arg, const Soprano::Node& );
-NEPOMUKQUERY_EXPORT const QDBusArgument& operator>>( const QDBusArgument& arg, Soprano::Node& );
+NEPOMUK_EXPORT QDBusArgument& operator<<( QDBusArgument& arg, const Soprano::Node& );
+NEPOMUK_EXPORT const QDBusArgument& operator>>( const QDBusArgument& arg, Soprano::Node& );
 
-NEPOMUKQUERY_EXPORT QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk::Query::Result& );
-NEPOMUKQUERY_EXPORT const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk::Query::Result& );
+NEPOMUK_EXPORT QDBusArgument& operator<<( QDBusArgument& arg, const Nepomuk2::Query::Result& );
+NEPOMUK_EXPORT const QDBusArgument& operator>>( const QDBusArgument& arg, Nepomuk2::Query::Result& );
 
 #endif

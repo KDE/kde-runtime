@@ -35,7 +35,7 @@
 #include <QDesktopWidget>
 
 
-Nepomuk::SystemTray::SystemTray( QObject* parent )
+Nepomuk2::SystemTray::SystemTray( QObject* parent )
     : KStatusNotifierItem( parent ),
       m_service( 0 ),
       m_suspendedManually( false ),
@@ -93,12 +93,12 @@ Nepomuk::SystemTray::SystemTray( QObject* parent )
 }
 
 
-Nepomuk::SystemTray::~SystemTray()
+Nepomuk2::SystemTray::~SystemTray()
 {
 }
 
 
-void Nepomuk::SystemTray::slotUpdateFileIndexerStatus()
+void Nepomuk2::SystemTray::slotUpdateFileIndexerStatus()
 {
     ItemStatus newStatus = status();
 
@@ -140,7 +140,7 @@ void Nepomuk::SystemTray::slotUpdateFileIndexerStatus()
 }
 
 
-void Nepomuk::SystemTray::slotConfigure()
+void Nepomuk2::SystemTray::slotConfigure()
 {
     QStringList args;
     args << "kcm_nepomuk";
@@ -148,7 +148,7 @@ void Nepomuk::SystemTray::slotConfigure()
 }
 
 
-void Nepomuk::SystemTray::slotSuspend( bool suspended )
+void Nepomuk2::SystemTray::slotSuspend( bool suspended )
 {
     m_suspendedManually = suspended;
     if( suspended )
@@ -182,10 +182,10 @@ static QRect screenRect( QWidget *widget, int screen )
         return desktop->geometry();
 }
 
-void Nepomuk::SystemTray::slotActivateRequested()
+void Nepomuk2::SystemTray::slotActivateRequested()
 {
     if(!m_statusWidget)
-        m_statusWidget = new Nepomuk::StatusWidget();
+        m_statusWidget = new Nepomuk2::StatusWidget();
 
     if(!m_statusWidget->isVisible()) {
         m_statusWidget->show();
@@ -199,7 +199,7 @@ void Nepomuk::SystemTray::slotActivateRequested()
     }
 }
 
-void Nepomuk::SystemTray::slotActiveStatusTimeout()
+void Nepomuk2::SystemTray::slotActiveStatusTimeout()
 {
     setStatus(Active);
 } 

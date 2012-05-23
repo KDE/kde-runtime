@@ -26,7 +26,7 @@
 
 class KToggleAction;
 
-namespace Nepomuk {
+namespace Nepomuk2 {
 
     class FileIndexer;
     class StatusWidget;

@@ -27,15 +27,15 @@
 #include <KUrl>
 #include <KDebug>
 
-#include <Nepomuk/Query/Query>
-#include <Nepomuk/Query/OptionalTerm>
-#include <Nepomuk/Query/ComparisonTerm>
-#include <Nepomuk/Query/AndTerm>
-#include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk2/Query/Query>
+#include <Nepomuk2/Query/OptionalTerm>
+#include <Nepomuk2/Query/ComparisonTerm>
+#include <Nepomuk2/Query/AndTerm>
+#include <Nepomuk2/Vocabulary/NIE>
+#include <Nepomuk2/Vocabulary/NFO>
 
 
-namespace Nepomuk {
+namespace Nepomuk2 {
     namespace Query {
         /**
          * KIO specific query handling shared by the KIO slave and the kded search module
@@ -43,31 +43,31 @@ namespace Nepomuk {
         bool parseQueryUrl( const KUrl& url, Query& query, QString& sparqlQuery )
         {
             // parse URL (this may fail in which case we fall back to pure SPARQL below)
-            query = Nepomuk::Query::Query::fromQueryUrl( url );
+            query = Nepomuk2::Query::Query::fromQueryUrl( url );
 
             // request properties to easily create UDSEntry instances
             QList<Query::RequestProperty> reqProperties;
             // local URL
-            reqProperties << Query::RequestProperty( Nepomuk::Vocabulary::NIE::url(), !query.isFileQuery() );
+            reqProperties << Query::RequestProperty( Nepomuk2::Vocabulary::NIE::url(), !query.isFileQuery() );
 #ifdef Q_OS_UNIX
             if( query.isFileQuery() ) {
                 // file size
-                ComparisonTerm contentSizeTerm( Nepomuk::Vocabulary::NIE::contentSize(), Term() );
+                ComparisonTerm contentSizeTerm( Nepomuk2::Vocabulary::NIE::contentSize(), Term() );
                 contentSizeTerm.setVariableName( QLatin1String("size") );
                 // mimetype
-                ComparisonTerm mimetypeTerm( Nepomuk::Vocabulary::NIE::mimeType(), Term() );
+                ComparisonTerm mimetypeTerm( Nepomuk2::Vocabulary::NIE::mimeType(), Term() );
                 mimetypeTerm.setVariableName( QLatin1String("mime") );
                 // mtime
-                ComparisonTerm mtimeTerm( Nepomuk::Vocabulary::NIE::lastModified(), Term() );
+                ComparisonTerm mtimeTerm( Nepomuk2::Vocabulary::NIE::lastModified(), Term() );
                 mtimeTerm.setVariableName( QLatin1String("mtime") );
                 // mode
-                ComparisonTerm modeTerm( Nepomuk::Vocabulary::KExt::unixFileMode(), Term() );
+                ComparisonTerm modeTerm( Nepomuk2::Vocabulary::KExt::unixFileMode(), Term() );
                 modeTerm.setVariableName( QLatin1String("mode") );
                 // user
-                ComparisonTerm userTerm( Nepomuk::Vocabulary::KExt::unixFileOwner(), Term() );
+                ComparisonTerm userTerm( Nepomuk2::Vocabulary::KExt::unixFileOwner(), Term() );
                 userTerm.setVariableName( QLatin1String("user") );
                 // group
-                ComparisonTerm groupTerm( Nepomuk::Vocabulary::KExt::unixFileGroup(), Term() );
+                ComparisonTerm groupTerm( Nepomuk2::Vocabulary::KExt::unixFileGroup(), Term() );
                 groupTerm.setVariableName( QLatin1String("group") );
 
                 // instead of separate request properties we use one optional and term. That way
@@ -90,7 +90,7 @@ namespace Nepomuk {
             }
             else {
                 // the URL contains pure sparql.
-                sparqlQuery = Nepomuk::Query::Query::sparqlFromQueryUrl( url );
+                sparqlQuery = Nepomuk2::Query::Query::sparqlFromQueryUrl( url );
                 kDebug() << "Extracted SPARL query" << sparqlQuery;
             }
 

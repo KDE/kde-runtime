@@ -30,7 +30,7 @@ namespace Solid {
     class StorageAccess;
 }
 
-namespace Nepomuk {
+namespace Nepomuk2 {
 
     class Resource;
 
@@ -43,13 +43,13 @@ namespace Nepomuk {
      * Split the filename part off a nepomuk:/ URI. This is used in many methods for identifying
      * entries listed from tags and filesystems.
      */
-    Nepomuk::Resource splitNepomukUrl( const KUrl& url, QString* filename = 0 );
+    Nepomuk2::Resource splitNepomukUrl( const KUrl& url, QString* filename = 0 );
 
     /**
      * Check if the resource represents a file on a removable media using a filex:/
      * URL.
      */
-    bool isRemovableMediaFile( const Nepomuk::Resource& res );
+    bool isRemovableMediaFile( const Nepomuk2::Resource& res );
 
     /**
      * Create a Solid storage access interface from the volume UUID.
@@ -65,12 +65,12 @@ namespace Nepomuk {
     /**
      * Get the mount path of a nfo:Filesystem resource as created by the removable storage service.
      */
-    KUrl determineFilesystemPath( const Nepomuk::Resource& fsRes );
+    KUrl determineFilesystemPath( const Nepomuk2::Resource& fsRes );
 
     /**
      * Determine the label for a filesystem \p res is stored on.
      */
-    QString getFileSystemLabelForRemovableMediaFileUrl( const Nepomuk::Resource& res );
+    QString getFileSystemLabelForRemovableMediaFileUrl( const Nepomuk2::Resource& res );
 
     /**
      * Convert a filex:/ URL into its actual local file URL.
@@ -82,24 +82,24 @@ namespace Nepomuk {
      */
     KUrl convertRemovableMediaFileUrl( const KUrl& url, bool evenMountIfNecessary = false );
 
-    void addGenericNepomukResourceData( const Nepomuk::Resource& res, KIO::UDSEntry& uds, bool includeMimeType = true );
+    void addGenericNepomukResourceData( const Nepomuk2::Resource& res, KIO::UDSEntry& uds, bool includeMimeType = true );
 
     /**
      * Stat a Nepomuk resource. Might start a local event loop
      */
-    KIO::UDSEntry statNepomukResource( const Nepomuk::Resource& res, bool doNotForward = false );
+    KIO::UDSEntry statNepomukResource( const Nepomuk2::Resource& res, bool doNotForward = false );
 
     /**
      * \return \p true for all resources that will get a valid redirection url in
      * redirectionUrl().
      */
-    bool willBeRedirected( const Nepomuk::Resource& res );
+    bool willBeRedirected( const Nepomuk2::Resource& res );
 
     /**
      * Create a redirection query URL for resources such as tags or filesystems.
      * For other resources an empty KUrl is returned.
      */
-    KUrl redirectionUrl( const Nepomuk::Resource& res );
+    KUrl redirectionUrl( const Nepomuk2::Resource& res );
 
     /**
      * Convert a nepomuk:/ URL to a file:/ URL if possible.

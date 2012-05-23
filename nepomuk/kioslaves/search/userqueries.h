@@ -30,20 +30,20 @@
 #include <QtCore/QStringList>
 
 
-namespace Nepomuk {
+namespace Nepomuk2 {
     /// convert a normal query URL which can be listed to a URL which is used as location for user queries
     inline KUrl queryUrlToUserQueryUrl( const KUrl& url )
     {
         // the query URL is NOT the URL under which the query is listed!
         KUrl queryListUrl;
         queryListUrl.setProtocol( QLatin1String( "nepomuksearch" ) );
-        queryListUrl.setFileName( Nepomuk::resourceUriToUdsName( url ) );
+        queryListUrl.setFileName( Nepomuk2::resourceUriToUdsName( url ) );
         return queryListUrl;
     }
 
     inline KUrl queryUrlFromUserQueryUrl( const KUrl& url )
     {
-        return Nepomuk::udsNameToResourceUri( url.fileName() );
+        return Nepomuk2::udsNameToResourceUri( url.fileName() );
     }
 
     class UserQueryUrlList : public KUrl::List
@@ -114,7 +114,7 @@ namespace Nepomuk {
             QStringList oldUserQueryUrls;
             QList<KUrl>::iterator it = findQueryUrl( url );
             while ( it != end() ) {
-                oldUserQueryUrls << Nepomuk::queryUrlToUserQueryUrl( *it ).url();
+                oldUserQueryUrls << Nepomuk2::queryUrlToUserQueryUrl( *it ).url();
                 erase( it );
                 it = findQueryUrl( url );
             }
