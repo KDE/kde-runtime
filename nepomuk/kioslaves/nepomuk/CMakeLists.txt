@@ -16,7 +16,7 @@ target_link_libraries(kio_nepomuk
   nepomukcommon
   ${KDE4_KIO_LIBS}
   ${KDE4_SOLID_LIBS}
-  ${NEPOMUK_CORE_LIBRARIES}
+  ${NEPOMUK_CORE_LIBRARY}
   ${SOPRANO_LIBRARIES})
 
 install(TARGETS kio_nepomuk DESTINATION ${PLUGIN_INSTALL_DIR})

@@ -31,7 +31,7 @@ target_link_libraries(kcm_nepomuk
   nepomukcommon
   ${KDE4_KDEUI_LIBS}
   ${KDE4_KIO_LIBS}
-  ${NEPOMUK_CORE_LIBRARIES}
+  ${NEPOMUK_CORE_LIBRARY}
   ${SOPRANO_LIBRARIES}
   )
 # -----------------------------

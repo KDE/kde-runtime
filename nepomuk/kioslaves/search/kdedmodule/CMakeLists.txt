@@ -37,7 +37,7 @@ target_link_libraries(kded_nepomuksearchmodule
   nepomukcommon
   ${KDE4_KDECORE_LIBS}
   ${KDE4_KIO_LIBS}
-  ${NEPOMUK_CORE_LIBRARIES}
+  ${NEPOMUK_CORE_LIBRARY}
   ${SOPRANO_LIBRARIES}
 )
 
