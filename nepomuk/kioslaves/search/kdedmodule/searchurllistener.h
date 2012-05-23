@@ -27,7 +27,7 @@
 #include <kurl.h>
 #include <nepomuk2/result.h>
 
-#include "queryinterface.h"
+#include "nepomuk2/queryinterface.h"
 
 
 namespace Nepomuk2 {

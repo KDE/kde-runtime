@@ -19,15 +19,15 @@
 
 #include "searchurllistener.h"
 #include "nepomuksearchurltools.h"
-#include "queryserviceinterface.h"
-#include "queryinterface.h"
 #include "../queryutils.h"
 
 #include <kdirnotify.h>
 #include <kdebug.h>
-#include <Nepomuk2/Result/Result>
 #include <Nepomuk2/Query/Query>
+#include <Nepomuk2/Query/Result>
 #include <Nepomuk2/Resource>
+#include <nepomuk2/queryinterface.h>
+#include <nepomuk2/queryserviceinterface.h>
 
 #include <QtCore/QHash>
 #include <QtDBus/QDBusConnection>
