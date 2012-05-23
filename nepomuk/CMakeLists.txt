@@ -9,6 +9,7 @@ include(SopranoAddOntology)
 include_directories(
   ${SOPRANO_INCLUDE_DIR}
   ${STRIGI_INCLUDE_DIR}
+  ${NEPOMUK_CORE_INCLUDE_DIR}
   ${nepomuk_SOURCE_DIR}/common
   ${nepomuk_BINARY_DIR}/common
 )
