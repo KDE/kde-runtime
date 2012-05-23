@@ -33,8 +33,7 @@ find_package(KDeclarative REQUIRED)
 macro_log_feature(KDeclarative_FOUND "libkdeclarative" "KDE Declarative (QML) support from kdelibs" "http://www.kde.org" TRUE "" "Required by ksmserver.")
 
 macro_optional_find_package(NepomukCore)
-find_package(NepomukCore REQUIRED)
-macro_log_feature(NepomukCore_FOUND "Nepomuk Core" "Nepomuk Core Libraries" "kde:nepomuk-core" FALSE "" "Required to build Nepomuk.")
+macro_log_feature(NepomukCore_FOUND "Nepomuk Core" "Nepomuk Core Libraries" "https://projects.kde.org/nepomuk-core" FALSE "" "Required to build Nepomuk.")
 
 macro_optional_find_package(SLP)
 macro_log_feature( SLP_FOUND
