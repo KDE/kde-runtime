@@ -10,15 +10,9 @@ include_directories(
   ${nepomuk_BINARY_DIR}/common
 )
 
-add_subdirectory(ontologies)
 add_subdirectory(common)
-add_subdirectory(server)
 add_subdirectory(kcm)
-add_subdirectory(services)
-add_subdirectory(servicestub)
 add_subdirectory(kioslaves)
 add_subdirectory(controller)
-add_subdirectory(interfaces)
-add_subdirectory(removed-services)
 
 #add_subdirectory(test)
