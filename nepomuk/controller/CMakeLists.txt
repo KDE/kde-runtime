@@ -4,7 +4,7 @@ include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
   ${SOPRANO_INCLUDE_DIR}
-  ${NEPOMUK_INCLUDE_DIR}
+  ${NEPOMUK_CORE_INCLUDE_DIR}
   ${CMAKE_CURRENT_BUILD_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/../kcm
   )
@@ -15,8 +15,8 @@ set(controller_SRCS
   ../kcm/statuswidget.cpp
   )
 
-qt4_add_dbus_interface(controller_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../interfaces/org.kde.nepomuk.FileIndexer.xml fileindexerinterface)
-qt4_add_dbus_interface(controller_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../interfaces/org.kde.nepomuk.ServiceControl.xml servicecontrol)
+qt4_add_dbus_interface(controller_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.FileIndexer.xml fileindexerinterface)
+qt4_add_dbus_interface(controller_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.ServiceControl.xml servicecontrol)
 
 kde4_add_ui_files(controller_SRCS ../kcm/statuswidget.ui)
 
@@ -26,7 +26,7 @@ target_link_libraries(nepomukcontroller
   ${KDE4_KDEUI_LIBS}
   ${KDE4_KIO_LIBS}
   ${KDE4_SOLID_LIBS}
-  ${NEPOMUK_LIBRARIES}
+  ${NEPOMUK_CORE_LIBRARY}
   ${SOPRANO_LIBRARIES}
   )
 

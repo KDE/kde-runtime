@@ -27,17 +27,17 @@
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
 
-#include <Nepomuk/Query/Term>
-#include <Nepomuk/Query/Result>
-#include <Nepomuk/Query/Query>
+#include <Nepomuk2/Query/Term>
+#include <Nepomuk2/Query/Result>
+#include <Nepomuk2/Query/Query>
 
 #include <kio/udsentry.h>
 #include <kio/slavebase.h>
-#include <Nepomuk/Resource>
+#include <Nepomuk2/Resource>
 #include <KUrl>
 
 
-namespace Nepomuk {
+namespace Nepomuk2 {
     namespace Query {
         class QueryServiceClient;
     }
@@ -80,7 +80,7 @@ namespace Nepomuk {
 
     private Q_SLOTS:
         /// connected to the QueryServiceClient in the search thread
-        void slotNewEntries( const QList<Nepomuk::Query::Result>& );
+        void slotNewEntries( const QList<Nepomuk2::Query::Result>& );
 
         /// connected to the QueryServiceClient in the search thread
         void slotResultCount( int );

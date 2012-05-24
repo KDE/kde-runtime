@@ -31,14 +31,14 @@
 #include <kdeversion.h>
 #include <KUrl>
 
-#include <nepomuk/file.h>
-#include <nepomuk/resourcemanager.h>
-#include <nepomuk/variant.h>
-#include <nepomuk/class.h>
-#include <nepomuk/property.h>
-#include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/Vocabulary/NFO>
-#include <nepomuk/utils.h>
+#include <nepomuk2/file.h>
+#include <nepomuk2/resourcemanager.h>
+#include <nepomuk2/variant.h>
+#include <nepomuk2/class.h>
+#include <nepomuk2/property.h>
+#include <Nepomuk2/Vocabulary/NIE>
+#include <Nepomuk2/Vocabulary/NFO>
+#include <nepomuk2/utils.h>
 
 #include <Soprano/Model>
 #include <Soprano/Node>
@@ -48,7 +48,7 @@
 #include <Soprano/Vocabulary/NAO>
 
 
-using namespace Nepomuk::Vocabulary;
+using namespace Nepomuk2::Vocabulary;
 
 namespace {
     const char* s_noFollow = "noFollow";
@@ -56,7 +56,7 @@ namespace {
     const char* s_showNonUserVisibible = "showNonUserVisible";
     const char* s_true = "true";
 
-    KUrl configureUrl( const KUrl& url, Nepomuk::ResourcePageGenerator::Flags flags ) {
+    KUrl configureUrl( const KUrl& url, Nepomuk2::ResourcePageGenerator::Flags flags ) {
         KUrl newUrl( url );
 
         newUrl.removeEncodedQueryItem( s_noFollow );
@@ -65,12 +65,12 @@ namespace {
         }
 
         newUrl.removeEncodedQueryItem( s_showUri );
-        if ( flags & Nepomuk::ResourcePageGenerator::ShowUris ) {
+        if ( flags & Nepomuk2::ResourcePageGenerator::ShowUris ) {
             newUrl.addEncodedQueryItem( s_showUri, s_true );
         }
 
         newUrl.removeEncodedQueryItem( s_showNonUserVisibible );
-        if ( flags & Nepomuk::ResourcePageGenerator::ShowNonUserVisible ) {
+        if ( flags & Nepomuk2::ResourcePageGenerator::ShowNonUserVisible ) {
             newUrl.addEncodedQueryItem( s_showNonUserVisibible, s_true );
         }
 
@@ -79,18 +79,18 @@ namespace {
 }
 
 
-Nepomuk::ResourcePageGenerator::ResourcePageGenerator( const Nepomuk::Resource& res )
+Nepomuk2::ResourcePageGenerator::ResourcePageGenerator( const Nepomuk2::Resource& res )
     : m_resource( res )
 {
 }
 
 
-Nepomuk::ResourcePageGenerator::~ResourcePageGenerator()
+Nepomuk2::ResourcePageGenerator::~ResourcePageGenerator()
 {
 }
 
 
-void Nepomuk::ResourcePageGenerator::setFlagsFromUrl( const KUrl& url )
+void Nepomuk2::ResourcePageGenerator::setFlagsFromUrl( const KUrl& url )
 {
     m_flags = NoFlags;
     if ( url.encodedQueryItemValue( s_showUri ) == s_true )
@@ -100,14 +100,14 @@ void Nepomuk::ResourcePageGenerator::setFlagsFromUrl( const KUrl& url )
 }
 
 
-KUrl Nepomuk::ResourcePageGenerator::url() const
+KUrl Nepomuk2::ResourcePageGenerator::url() const
 {
     return configureUrl( m_resource.resourceUri(), m_flags );
 }
 
 
 // TODO: create an html template rather than having it hardcoded here
-QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
+QByteArray Nepomuk2::ResourcePageGenerator::generatePage() const
 {
     bool exists = m_resource.exists();
 
@@ -198,11 +198,11 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
     os << "<h1>" << label << "</h1>"
        << "Type: " << ( exists ? typesToHtml( m_resource.types() ) : i18n( "Resource does not exist" ) );
 
-    if(m_resource.isFile() && m_resource.hasType(Nepomuk::Vocabulary::NFO::Image())) {
+    if(m_resource.isFile() && m_resource.hasType(Nepomuk2::Vocabulary::NFO::Image())) {
         os << "<img src=\"" << m_resource.resourceUri().toString() << "\" />";
     }
-    else if(m_resource.hasProperty(Nepomuk::Vocabulary::NFO::depiction())) {
-        os << "<img src=\"" << m_resource.property(Nepomuk::Vocabulary::NFO::depiction()).toUrlList().first().toString() << "\" />";
+    else if(m_resource.hasProperty(Nepomuk2::Vocabulary::NFO::depiction())) {
+        os << "<img src=\"" << m_resource.property(Nepomuk2::Vocabulary::NFO::depiction()).toUrlList().first().toString() << "\" />";
     }
 
     os << "<h2>" << i18n("Relations:") << "</h2><div id=\"relations\"><table>";
@@ -211,7 +211,7 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
     Soprano::StatementIterator it = ResourceManager::instance()->mainModel()->listStatements( m_resource.resourceUri(), Soprano::Node(), Soprano::Node() );
     while ( it.next() ) {
         Soprano::Statement s = it.current();
-        Nepomuk::Types::Property p( s.predicate().uri() );
+        Nepomuk2::Types::Property p( s.predicate().uri() );
         if ( p != Soprano::Vocabulary::RDF::type() &&
              ((m_flags & ShowNonUserVisible) || p.userVisible())) {
             os << "<tr><td align=right><i>" << entityLabel( p ) << "</i></td><td width=16px></td><td>";
@@ -226,7 +226,7 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
                 //
                 KUrl uri = s.object().uri();
                 QString label = uri.fileName();
-                if ( s.predicate() != Nepomuk::Vocabulary::NIE::url() ) {
+                if ( s.predicate() != Nepomuk2::Vocabulary::NIE::url() ) {
                     Resource resource( uri );
                     uri = resource.resourceUri();
                     label = QString::fromLatin1( "%1 (%2)" )
@@ -248,7 +248,7 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
     while ( itb.next() ) {
         Soprano::Statement s = itb.current();
         Resource resource( s.subject().uri() );
-        Nepomuk::Types::Property p( s.predicate().uri() );
+        Nepomuk2::Types::Property p( s.predicate().uri() );
         if((m_flags & ShowNonUserVisible) || p.userVisible()) {
             os << "<td align=right>"
                << QString( "<a href=\"%1\">%2</a> (%3)" )
@@ -274,7 +274,7 @@ QByteArray Nepomuk::ResourcePageGenerator::generatePage() const
 }
 
 
-QString Nepomuk::ResourcePageGenerator::resourceLabel( const Resource& res ) const
+QString Nepomuk2::ResourcePageGenerator::resourceLabel( const Resource& res ) const
 {
     if ( m_flags & ShowUris )
         return KUrl( res.resourceUri() ).prettyUrl();
@@ -283,7 +283,7 @@ QString Nepomuk::ResourcePageGenerator::resourceLabel( const Resource& res ) con
 }
 
 
-QString Nepomuk::ResourcePageGenerator::entityLabel( const Nepomuk::Types::Entity& e ) const
+QString Nepomuk2::ResourcePageGenerator::entityLabel( const Nepomuk2::Types::Entity& e ) const
 {
     if ( m_flags & ShowUris )
         return KUrl( e.uri() ).prettyUrl();
@@ -292,17 +292,17 @@ QString Nepomuk::ResourcePageGenerator::entityLabel( const Nepomuk::Types::Entit
 }
 
 
-QString Nepomuk::ResourcePageGenerator::typesToHtml( const QList<QUrl>& types ) const
+QString Nepomuk2::ResourcePageGenerator::typesToHtml( const QList<QUrl>& types ) const
 {
-    QList<Nepomuk::Types::Class> typeClasses;
+    QList<Nepomuk2::Types::Class> typeClasses;
     foreach( const QUrl& type, types ) {
-        typeClasses << Nepomuk::Types::Class( type );
+        typeClasses << Nepomuk2::Types::Class( type );
     }
 
     // remove all types that are supertypes of others in the list
-    QList<Nepomuk::Types::Class> normalizedTypes;
+    QList<Nepomuk2::Types::Class> normalizedTypes;
     for ( int i = 0; i < typeClasses.count(); ++i ) {
-        Nepomuk::Types::Class& type = typeClasses[i];
+        Nepomuk2::Types::Class& type = typeClasses[i];
         bool use = true;
         for ( int j = 0; j < typeClasses.count(); ++j ) {
             if ( type != typeClasses[j] &&
@@ -329,13 +329,13 @@ QString Nepomuk::ResourcePageGenerator::typesToHtml( const QList<QUrl>& types ) 
 }
 
 
-QString Nepomuk::ResourcePageGenerator::encodeUrl( const QUrl& url ) const
+QString Nepomuk2::ResourcePageGenerator::encodeUrl( const QUrl& url ) const
 {
     return QString::fromAscii( configureUrl( url, m_flags ).toEncoded() );
 }
 
 
-QString Nepomuk::ResourcePageGenerator::createConfigureBoxHtml() const
+QString Nepomuk2::ResourcePageGenerator::createConfigureBoxHtml() const
 {
     QString html
         = QString::fromLatin1( "<div style=\"position:fixed; right:10px; top:10px; text-align:right;\"><a href=\"%1\">%2</a><br/><a href=\"%3\">%4</a></div>" )
@@ -347,12 +347,12 @@ QString Nepomuk::ResourcePageGenerator::createConfigureBoxHtml() const
     return html;
 }
 
-QString Nepomuk::ResourcePageGenerator::formatLiteral(const Nepomuk::Types::Property &p, const Soprano::LiteralValue &value) const
+QString Nepomuk2::ResourcePageGenerator::formatLiteral(const Nepomuk2::Types::Property &p, const Soprano::LiteralValue &value) const
 {
-    return Nepomuk::Utils::formatPropertyValue(p, Nepomuk::Variant(value.variant()));
+    return Nepomuk2::Utils::formatPropertyValue(p, Nepomuk2::Variant(value.variant()));
 }
 
-QString Nepomuk::ResourcePageGenerator::formatResource(const Nepomuk::Types::Property &p, const QUrl &uri_) const
+QString Nepomuk2::ResourcePageGenerator::formatResource(const Nepomuk2::Types::Property &p, const QUrl &uri_) const
 {
     //
     // nie:url is a special case for which we should never use Resource

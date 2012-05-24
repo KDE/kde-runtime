@@ -25,7 +25,7 @@
 
 #include <QtCore/QQueue>
 
-namespace Nepomuk {
+namespace Nepomuk2 {
     namespace Search {
         class Query;
     }

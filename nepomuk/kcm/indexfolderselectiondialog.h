@@ -24,7 +24,7 @@
 
 class FolderSelectionModel;
 
-namespace Nepomuk {
+namespace Nepomuk2 {
     class IndexFolderSelectionDialog : public KDialog, public Ui_IndexFolderSelectionWidget
     {
         Q_OBJECT

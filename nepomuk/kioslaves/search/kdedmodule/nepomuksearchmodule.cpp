@@ -25,7 +25,7 @@
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusServiceWatcher>
 
-#include <Nepomuk/Vocabulary/NIE>
+#include <Nepomuk2/Vocabulary/NIE>
 
 #include <kdebug.h>
 #include <kdirnotify.h>
@@ -50,12 +50,12 @@ namespace {
 }
 
 
-Nepomuk::SearchModule::SearchModule( QObject* parent, const QList<QVariant>& )
+Nepomuk2::SearchModule::SearchModule( QObject* parent, const QList<QVariant>& )
     : KDEDModule( parent )
 {
     kDebug();
 
-    Nepomuk::Query::registerDBusTypes();
+    Nepomuk2::Query::registerDBusTypes();
 
     //
     // connect to serviceOwnerChanged to catch crashed clients that never unregistered
@@ -86,13 +86,13 @@ Nepomuk::SearchModule::SearchModule( QObject* parent, const QList<QVariant>& )
 }
 
 
-Nepomuk::SearchModule::~SearchModule()
+Nepomuk2::SearchModule::~SearchModule()
 {
     kDebug();
 }
 
 
-void Nepomuk::SearchModule::registerSearchUrl( const QString& urlString )
+void Nepomuk2::SearchModule::registerSearchUrl( const QString& urlString )
 {
     const KUrl url( urlString );
     KUrl queryUrl;
@@ -102,8 +102,8 @@ void Nepomuk::SearchModule::registerSearchUrl( const QString& urlString )
     }
     else if ( isTimelineUrl( url ) ) {
         QDate date;
-        if ( Nepomuk::parseTimelineUrl( url, &date ) == Nepomuk::DayFolder )
-            queryUrl = Nepomuk::buildTimelineQuery( date ).toSearchUrl();
+        if ( Nepomuk2::parseTimelineUrl( url, &date ) == Nepomuk2::DayFolder )
+            queryUrl = Nepomuk2::buildTimelineQuery( date ).toSearchUrl();
     }
 
     if ( queryUrl.isValid() ) {
@@ -126,7 +126,7 @@ void Nepomuk::SearchModule::registerSearchUrl( const QString& urlString )
 }
 
 
-void Nepomuk::SearchModule::unregisterSearchUrl( const QString& urlString )
+void Nepomuk2::SearchModule::unregisterSearchUrl( const QString& urlString )
 {
     const KUrl url( urlString );
     if ( isNepomukSearchOrTimelineUrl( url ) ) {
@@ -141,13 +141,13 @@ void Nepomuk::SearchModule::unregisterSearchUrl( const QString& urlString )
 }
 
 
-QStringList Nepomuk::SearchModule::watchedSearchUrls()
+QStringList Nepomuk2::SearchModule::watchedSearchUrls()
 {
     return KUrl::List( m_queryHash.keys() ).toStringList();
 }
 
 
-void Nepomuk::SearchModule::slotServiceUnregistered( const QString& serviceName )
+void Nepomuk2::SearchModule::slotServiceUnregistered( const QString& serviceName )
 {
     QHash<QString, KUrl>::iterator it = m_dbusServiceUrlHash.find( serviceName );
     while ( it != m_dbusServiceUrlHash.end() ) {
@@ -159,7 +159,7 @@ void Nepomuk::SearchModule::slotServiceUnregistered( const QString& serviceName 
 }
 
 
-void Nepomuk::SearchModule::unrefUrl( const KUrl& url )
+void Nepomuk2::SearchModule::unrefUrl( const KUrl& url )
 {
     QHash<KUrl, SearchUrlListener*>::iterator it = m_queryHash.find( url );
     if ( it != m_queryHash.end() ) {
@@ -174,7 +174,7 @@ void Nepomuk::SearchModule::unrefUrl( const KUrl& url )
 #include <kpluginloader.h>
 
 K_PLUGIN_FACTORY(NepomukSearchModuleFactory,
-                 registerPlugin<Nepomuk::SearchModule>();
+                 registerPlugin<Nepomuk2::SearchModule>();
     )
 K_EXPORT_PLUGIN(NepomukSearchModuleFactory("nepomuksearchmodule"))
 

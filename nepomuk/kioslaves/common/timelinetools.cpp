@@ -24,16 +24,16 @@
 #include <Soprano/Node>
 #include <Soprano/Vocabulary/XMLSchema>
 
-#include <Nepomuk/Vocabulary/NFO>
-#include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/Vocabulary/NUAO>
+#include <Nepomuk2/Vocabulary/NFO>
+#include <Nepomuk2/Vocabulary/NIE>
+#include <Nepomuk2/Vocabulary/NUAO>
 
-#include <Nepomuk/Query/FileQuery>
-#include <Nepomuk/Query/AndTerm>
-#include <Nepomuk/Query/OrTerm>
-#include <Nepomuk/Query/ComparisonTerm>
-#include <Nepomuk/Query/LiteralTerm>
-#include <Nepomuk/Query/StandardQuery>
+#include <Nepomuk2/Query/FileQuery>
+#include <Nepomuk2/Query/AndTerm>
+#include <Nepomuk2/Query/OrTerm>
+#include <Nepomuk2/Query/ComparisonTerm>
+#include <Nepomuk2/Query/LiteralTerm>
+#include <Nepomuk2/Query/StandardQuery>
 
 #include <KUrl>
 #include <KCalendarSystem>
@@ -85,7 +85,7 @@ namespace {
 }
 
 
-Nepomuk::TimelineFolderType Nepomuk::parseTimelineUrl( const KUrl& url, QDate* date, QString* filename )
+Nepomuk2::TimelineFolderType Nepomuk2::parseTimelineUrl( const KUrl& url, QDate* date, QString* filename )
 {
     kDebug() << url;
 
@@ -149,9 +149,9 @@ Nepomuk::TimelineFolderType Nepomuk::parseTimelineUrl( const KUrl& url, QDate* d
 }
 
 
-Nepomuk::Query::Query Nepomuk::buildTimelineQuery( const QDate& from, const QDate& to )
+Nepomuk2::Query::Query Nepomuk2::buildTimelineQuery( const QDate& from, const QDate& to )
 {
-    Nepomuk::Query::FileQuery query = Nepomuk::Query::dateRangeQuery( from, to.isValid() ? to : from );
+    Nepomuk2::Query::FileQuery query = Nepomuk2::Query::dateRangeQuery( from, to.isValid() ? to : from );
     query.setFileMode( Query::FileQuery::QueryFiles );
     return query;
 }

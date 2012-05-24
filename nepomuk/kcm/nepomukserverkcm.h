@@ -24,12 +24,12 @@
 #include "nepomukserverinterface.h"
 #include "fileindexerinterface.h"
 
-#include <Nepomuk/Query/Query>
+#include <Nepomuk2/Query/Query>
 
 class QRadioButton;
 class QAbstractButton;
 
-namespace Nepomuk {
+namespace Nepomuk2 {
 
     class IndexFolderSelectionDialog;
     class StatusWidget;
@@ -64,7 +64,7 @@ namespace Nepomuk {
         void setFileIndexerStatusText( const QString& text, bool elide );
 
         QRadioButton* buttonForQuery( const Query::Query& query ) const;
-        Nepomuk::Query::Query queryForButton( QAbstractButton* button ) const;
+        Nepomuk2::Query::Query queryForButton( QAbstractButton* button ) const;
 
         bool m_nepomukAvailable;
 

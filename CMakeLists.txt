@@ -32,15 +32,8 @@ macro_log_feature(KDEPIMLIBS_FOUND "KdepimLibs" "KDE PIM Libraries" "kdepimlibs"
 find_package(KDeclarative REQUIRED)
 macro_log_feature(KDeclarative_FOUND "libkdeclarative" "KDE Declarative (QML) support from kdelibs" "http://www.kde.org" TRUE "" "Required by ksmserver.")
 
-set(SOPRANO_MIN_VERSION "2.6.50")
-set(SDO_MIN_VERSION "0.8.52")
-macro_optional_find_package(SharedDesktopOntologies ${SDO_MIN_VERSION})
-macro_optional_find_package(Nepomuk)
-macro_log_feature(SHAREDDESKTOPONTOLOGIES_FOUND "Shared desktop ontologies" "Desktop ontologies" "http://oscaf.sourceforge.net" FALSE ${SDO_MIN_VERSION} "Ontologies necessary for the Nepomuk semantic desktop.")
-macro_log_feature(Nepomuk_FOUND "Nepomuk" "Nepomuk Libraries" "kdelibs" FALSE "" "Required to build Nepomuk.")
-macro_log_feature(SOPRANO_PLUGIN_VIRTUOSOBACKEND_FOUND "Soprano Virtuoso Backend" "Virtuoso storage backend for Soprano" "http://soprano.sourceforge.net" FALSE "" "The Soprano Virtuoso backend is required to run the Nepomuk semantic desktop system.")
-macro_log_feature(SOPRANO_PLUGIN_RAPTORPARSER_FOUND "Soprano Raptor Parser" "RDF parser plugin for Soprano" "http://soprano.sourceforge.net" FALSE "" "The Soprano raptor parser plugin is required to build the Nepomuk semantic desktop system.")
-macro_log_feature(SOPRANO_PLUGIN_REDLANDBACKEND_FOUND "Soprano Redland Backend" "Redland storage backend for Soprano" "http://soprano.sourceforge.net" FALSE "" "The Soprano redland backend is required to build the Nepomuk semantic desktop system.")
+macro_optional_find_package(NepomukCore)
+macro_log_feature(NepomukCore_FOUND "Nepomuk Core" "Nepomuk Core Libraries" "https://projects.kde.org/nepomuk-core" FALSE "" "Required to build Nepomuk.")
 
 macro_optional_find_package(SLP)
 macro_log_feature( SLP_FOUND
@@ -69,8 +62,6 @@ include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCL
 # Build infrastructure
 add_subdirectory(cmake)
 
-add_definitions(-DDISABLE_NEPOMUK_LEGACY)
-
 # Background processes
 add_subdirectory(kpasswdserver)
 add_subdirectory(kdontchangethehostname)
@@ -90,9 +81,9 @@ if ( UNIX )
    add_subdirectory(solid-networkstatus)
 endif ( UNIX )
 
-if(SHAREDDESKTOPONTOLOGIES_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY AND SOPRANO_PLUGIN_REDLANDBACKEND_FOUND AND SOPRANO_PLUGIN_VIRTUOSOBACKEND_FOUND AND SOPRANO_PLUGIN_RAPTORPARSER_FOUND)
-  macro_optional_add_subdirectory(nepomuk)
-endif(SHAREDDESKTOPONTOLOGIES_FOUND AND Nepomuk_FOUND AND STRIGI_STRIGIQTDBUSCLIENT_LIBRARY AND SOPRANO_PLUGIN_REDLANDBACKEND_FOUND AND SOPRANO_PLUGIN_VIRTUOSOBACKEND_FOUND AND SOPRANO_PLUGIN_RAPTORPARSER_FOUND)
+if(NepomukCore_FOUND)
+    macro_optional_add_subdirectory(nepomuk)
+endif(NepomukCore_FOUND)
 
 # Plugins/components required for basic utility
 if ( NOT WINCE )

@@ -24,8 +24,8 @@
 #include <KIO/NetAccess>
 #include <kio/directorysizejob.h>
 
-#include <Nepomuk/ResourceManager>
-#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk2/ResourceManager>
+#include <Nepomuk2/Vocabulary/NFO>
 
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
@@ -38,7 +38,7 @@
 #include <QtDBus/QDBusConnectionInterface>
 #include <QtDBus/QDBusServiceWatcher>
 
-Nepomuk::StatusWidget::StatusWidget( QWidget* parent )
+Nepomuk2::StatusWidget::StatusWidget( QWidget* parent )
         : KDialog( parent ),
         m_connected( false ),
         m_updateRunning( false ),
@@ -90,12 +90,12 @@ Nepomuk::StatusWidget::StatusWidget( QWidget* parent )
     updateSuspendResumeButtonText( m_fileIndexerService->isSuspended() );
 }
 
-Nepomuk::StatusWidget::~StatusWidget()
+Nepomuk2::StatusWidget::~StatusWidget()
 {
 }
 
 
-void Nepomuk::StatusWidget::slotUpdateStoreStatus()
+void Nepomuk2::StatusWidget::slotUpdateStoreStatus()
 {
     if ( !m_updateRunning && !m_updateTimer.isActive() ) {
         m_updateRunning = true;
@@ -105,7 +105,7 @@ void Nepomuk::StatusWidget::slotUpdateStoreStatus()
         Soprano::Util::AsyncQuery* query
         = Soprano::Util::AsyncQuery::executeQuery( ResourceManager::instance()->mainModel(),
                 QString::fromLatin1( "select count(distinct ?r) where { ?r a %1 . }" )
-                .arg( Soprano::Node::resourceToN3( Nepomuk::Vocabulary::NFO::FileDataObject() ) ),
+                .arg( Soprano::Node::resourceToN3( Nepomuk2::Vocabulary::NFO::FileDataObject() ) ),
                 Soprano::Query::QueryLanguageSparql );
         connect( query, SIGNAL( nextReady(Soprano::Util::AsyncQuery*) ), this, SLOT( slotFileCountFinished(Soprano::Util::AsyncQuery*) ) );
     }
@@ -114,7 +114,7 @@ void Nepomuk::StatusWidget::slotUpdateStoreStatus()
     }
 }
 
-void Nepomuk::StatusWidget::slotFileCountFinished( Soprano::Util::AsyncQuery* query )
+void Nepomuk2::StatusWidget::slotFileCountFinished( Soprano::Util::AsyncQuery* query )
 {
     m_labelFileCount->setText( i18np( "1 file in index", "%1 files in index", query->binding( 0 ).literal().toInt() ) );
     query->deleteLater();
@@ -125,7 +125,7 @@ void Nepomuk::StatusWidget::slotFileCountFinished( Soprano::Util::AsyncQuery* qu
 }
 
 
-void Nepomuk::StatusWidget::slotUpdateTimeout()
+void Nepomuk2::StatusWidget::slotUpdateTimeout()
 {
     if ( m_updateRequested ) {
         m_updateRequested = false;
@@ -133,7 +133,7 @@ void Nepomuk::StatusWidget::slotUpdateTimeout()
     }
 }
 
-void Nepomuk::StatusWidget::slotUpdateStatus()
+void Nepomuk2::StatusWidget::slotUpdateStatus()
 {
     const bool fileIndexerInitialized =
         QDBusConnection::sessionBus().interface()->isServiceRegistered(m_fileIndexerService->service()) &&
@@ -153,7 +153,7 @@ void Nepomuk::StatusWidget::slotUpdateStatus()
     updateSuspendResumeButtonText( m_fileIndexerService->isSuspended() );
 }
 
-void Nepomuk::StatusWidget::slotSuspendResume()
+void Nepomuk2::StatusWidget::slotSuspendResume()
 {
     if ( m_fileIndexerService->isSuspended()) {
         m_fileIndexerService->resume();
@@ -165,7 +165,7 @@ void Nepomuk::StatusWidget::slotSuspendResume()
     }
 }
 
-void Nepomuk::StatusWidget::updateSuspendResumeButtonText(bool suspended)
+void Nepomuk2::StatusWidget::updateSuspendResumeButtonText(bool suspended)
 {
     if (!suspended) {
         m_suspendResumeButton->setText( i18nc("Suspends the Nepomuk file indexing service.","Suspend File Indexing") );
@@ -175,7 +175,7 @@ void Nepomuk::StatusWidget::updateSuspendResumeButtonText(bool suspended)
     }
 }
 
-void Nepomuk::StatusWidget::showEvent( QShowEvent* event )
+void Nepomuk2::StatusWidget::showEvent( QShowEvent* event )
 {
     if ( !m_connected ) {
         connect( ResourceManager::instance()->mainModel(), SIGNAL( statementsAdded() ),
@@ -192,7 +192,7 @@ void Nepomuk::StatusWidget::showEvent( QShowEvent* event )
 }
 
 
-void Nepomuk::StatusWidget::hideEvent( QHideEvent* event )
+void Nepomuk2::StatusWidget::hideEvent( QHideEvent* event )
 {
     if ( m_connected ) {
         ResourceManager::instance()->mainModel()->disconnect( this );

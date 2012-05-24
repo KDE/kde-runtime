@@ -1,5 +1,5 @@
 /* This file is part of the KDE Project
-   Copyright (c) 2008 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2008-2010 Sebastian Trueg <trueg@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -16,11 +16,27 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef _NEPOMUK_LINUX_PRIORITY_H_
-#define _NEPOMUK_LINUX_PRIORITY_H_
+#ifndef _FILE_EXCLUDE_FILTERS_H_
+#define _FILE_EXCLUDE_FILTERS_H_
 
-bool lowerIOPriority();
-bool lowerSchedulingPriority();
-bool lowerPriority();
+#include <QtCore/QStringList>
 
-#endif // _NEPOMUK_LINUX_PRIORITY_H_
+#include "nepomukcommon_export.h"
+
+namespace Nepomuk2 {
+    /**
+     * \return A list of default exclude filters to be used
+     * in the filewatch service to ignore temporary files
+     * and folders that change a lot and as a basis for the
+     * user configurable exclude filters in the strigi service.
+     */
+    NEPOMUKCOMMON_EXPORT QStringList defaultExcludeFilterList();
+
+    /**
+     * \return The version of the default exclude filter list.
+     * This is increased whenever the list changes.
+     */
+    NEPOMUKCOMMON_EXPORT int defaultExcludeFilterListVersion();
+}
+
+#endif

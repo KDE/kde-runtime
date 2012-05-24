@@ -21,14 +21,14 @@
 #ifndef _RESOURCE_PAGE_GENERATOR_H_
 #define _RESOURCE_PAGE_GENERATOR_H_
 
-#include <Nepomuk/Resource>
+#include <Nepomuk2/Resource>
 
 #include <QtCore/QList>
 #include <KUrl>
 
 class QByteArray;
 
-namespace Nepomuk {
+namespace Nepomuk2 {
     namespace Types {
         class Entity;
     }
@@ -36,7 +36,7 @@ namespace Nepomuk {
     class ResourcePageGenerator
     {
     public:
-        ResourcePageGenerator( const Nepomuk::Resource& res );
+        ResourcePageGenerator( const Nepomuk2::Resource& res );
         ~ResourcePageGenerator();
 
         enum Flag {
@@ -61,18 +61,18 @@ namespace Nepomuk {
 
     private:
         QString resourceLabel( const Resource& res ) const;
-        QString entityLabel( const Nepomuk::Types::Entity& e ) const;
+        QString entityLabel( const Nepomuk2::Types::Entity& e ) const;
         QString typesToHtml( const QList<QUrl>& types ) const;
         QString encodeUrl( const QUrl& u ) const;
         QString createConfigureBoxHtml() const;
-        QString formatLiteral(const Nepomuk::Types::Property& prop, const Soprano::LiteralValue &value) const;
-        QString formatResource(const Nepomuk::Types::Property& p, const QUrl &uri_) const;
+        QString formatLiteral(const Nepomuk2::Types::Property& prop, const Soprano::LiteralValue &value) const;
+        QString formatResource(const Nepomuk2::Types::Property& p, const QUrl &uri_) const;
 
-        Nepomuk::Resource m_resource;
+        Nepomuk2::Resource m_resource;
         Flags m_flags;
     };
 }
 
-Q_DECLARE_OPERATORS_FOR_FLAGS( Nepomuk::ResourcePageGenerator::Flags )
+Q_DECLARE_OPERATORS_FOR_FLAGS( Nepomuk2::ResourcePageGenerator::Flags )
 
 #endif

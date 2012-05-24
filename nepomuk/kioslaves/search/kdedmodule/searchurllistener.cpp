@@ -19,15 +19,15 @@
 
 #include "searchurllistener.h"
 #include "nepomuksearchurltools.h"
-#include "queryserviceinterface.h"
-#include "queryinterface.h"
 #include "../queryutils.h"
 
 #include <kdirnotify.h>
 #include <kdebug.h>
-#include <nepomuk/result.h>
-#include <nepomuk/query.h>
-#include <nepomuk/resource.h>
+#include <Nepomuk2/Query/Query>
+#include <Nepomuk2/Query/Result>
+#include <Nepomuk2/Resource>
+#include <nepomuk2/queryinterface.h>
+#include <nepomuk2/queryserviceinterface.h>
 
 #include <QtCore/QHash>
 #include <QtDBus/QDBusConnection>
@@ -37,7 +37,7 @@
 #include <Soprano/BindingSet>
 
 
-Nepomuk::SearchUrlListener::SearchUrlListener( const KUrl& queryUrl, const KUrl& notifyUrl )
+Nepomuk2::SearchUrlListener::SearchUrlListener( const KUrl& queryUrl, const KUrl& notifyUrl )
     : QObject( 0 ),
       m_ref( 0 ),
       m_queryUrl( queryUrl ),
@@ -67,7 +67,7 @@ Nepomuk::SearchUrlListener::SearchUrlListener( const KUrl& queryUrl, const KUrl&
 }
 
 
-Nepomuk::SearchUrlListener::~SearchUrlListener()
+Nepomuk2::SearchUrlListener::~SearchUrlListener()
 {
     kDebug() << m_queryUrl;
 
@@ -77,35 +77,35 @@ Nepomuk::SearchUrlListener::~SearchUrlListener()
 }
 
 
-int Nepomuk::SearchUrlListener::ref()
+int Nepomuk2::SearchUrlListener::ref()
 {
     return ++m_ref;
 }
 
 
-int Nepomuk::SearchUrlListener::unref()
+int Nepomuk2::SearchUrlListener::unref()
 {
     return --m_ref;
 }
 
 
-void Nepomuk::SearchUrlListener::slotNewEntries( const QList<Nepomuk::Query::Result>& )
+void Nepomuk2::SearchUrlListener::slotNewEntries( const QList<Nepomuk2::Query::Result>& )
 {
     org::kde::KDirNotify::emitFilesAdded( m_notifyUrl.url() );
 }
 
 
-void Nepomuk::SearchUrlListener::slotEntriesRemoved( const QList<Nepomuk::Query::Result>& entries )
+void Nepomuk2::SearchUrlListener::slotEntriesRemoved( const QList<Nepomuk2::Query::Result>& entries )
 {
     QStringList urls;
     foreach( const Query::Result& result, entries ) {
         // make sure we use the exact same name used in searchfolder.cpp
         KUrl url( result.resource().resourceUri() );
-        if( result.requestProperties().contains(Nepomuk::Vocabulary::NIE::url()) )
-            url = result[Nepomuk::Vocabulary::NIE::url()].uri();
+        if( result.requestProperties().contains(Nepomuk2::Vocabulary::NIE::url()) )
+            url = result[Nepomuk2::Vocabulary::NIE::url()].uri();
 
         KUrl resultUrl( m_notifyUrl );
-        resultUrl.addPath( Nepomuk::resourceUriToUdsName( url ) );
+        resultUrl.addPath( Nepomuk2::resourceUriToUdsName( url ) );
         urls << resultUrl.url();
     }
     kDebug() << urls;
@@ -113,7 +113,7 @@ void Nepomuk::SearchUrlListener::slotEntriesRemoved( const QList<Nepomuk::Query:
 }
 
 
-void Nepomuk::SearchUrlListener::slotQueryServiceInitialized( bool success )
+void Nepomuk2::SearchUrlListener::slotQueryServiceInitialized( bool success )
 {
     kDebug() << m_queryUrl << success;
 
@@ -127,7 +127,7 @@ void Nepomuk::SearchUrlListener::slotQueryServiceInitialized( bool success )
 }
 
 
-void Nepomuk::SearchUrlListener::createInterface()
+void Nepomuk2::SearchUrlListener::createInterface()
 {
     kDebug() << m_queryUrl;
 
@@ -156,10 +156,10 @@ void Nepomuk::SearchUrlListener::createInterface()
         m_queryInterface = new org::kde::nepomuk::Query( queryService,
                                                          r.value().path(),
                                                          QDBusConnection::sessionBus() );
-        connect( m_queryInterface, SIGNAL( newEntries( QList<Nepomuk::Query::Result> ) ),
-                 this, SLOT( slotNewEntries( QList<Nepomuk::Query::Result> ) ) );
-        connect( m_queryInterface, SIGNAL( entriesRemoved( QList<Nepomuk::Query::Result> ) ),
-                 this, SLOT( slotEntriesRemoved( QList<Nepomuk::Query::Result> ) ) );
+        connect( m_queryInterface, SIGNAL( newEntries( QList<Nepomuk2::Query::Result> ) ),
+                 this, SLOT( slotNewEntries( QList<Nepomuk2::Query::Result> ) ) );
+        connect( m_queryInterface, SIGNAL( entriesRemoved( QList<Nepomuk2::Query::Result> ) ),
+                 this, SLOT( slotEntriesRemoved( QList<Nepomuk2::Query::Result> ) ) );
         m_queryInterface->listen();
     }
 }

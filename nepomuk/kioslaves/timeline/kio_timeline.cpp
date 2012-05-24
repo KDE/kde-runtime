@@ -22,10 +22,10 @@
 #include "nepomukservicecontrolinterface.h"
 #include "timelinetools.h"
 
-#include <Nepomuk/ResourceManager>
-#include <Nepomuk/Vocabulary/NFO>
-#include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/Vocabulary/NUAO>
+#include <Nepomuk2/ResourceManager>
+#include <Nepomuk2/Vocabulary/NFO>
+#include <Nepomuk2/Vocabulary/NIE>
+#include <Nepomuk2/Vocabulary/NUAO>
 
 #include <KUrl>
 #include <kio/global.h>
@@ -92,33 +92,33 @@ namespace {
         KIO::UDSEntry uds = createFolderUDSEntry( date.toString("yyyy-MM-dd"),
                                                   KGlobal::locale()->formatDate( date, KLocale::FancyLongDate ),
                                                   date );
-        uds.insert( KIO::UDSEntry::UDS_NEPOMUK_QUERY, Nepomuk::buildTimelineQuery( date ).toString() );
+        uds.insert( KIO::UDSEntry::UDS_NEPOMUK_QUERY, Nepomuk2::buildTimelineQuery( date ).toString() );
         return uds;
     }
 
     bool filesInDateRange( const QDate& from, const QDate& to = QDate() )
     {
-        return Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(
-                    Nepomuk::buildTimelineQuery( from, to ).toSparqlQuery(Nepomuk::Query::Query::CreateAskQuery),
+        return Nepomuk2::ResourceManager::instance()->mainModel()->executeQuery(
+                    Nepomuk2::buildTimelineQuery( from, to ).toSparqlQuery(Nepomuk2::Query::Query::CreateAskQuery),
                     Soprano::Query::QueryLanguageSparql ).boolValue();
     }
 }
 
 
-Nepomuk::TimelineProtocol::TimelineProtocol( const QByteArray& poolSocket, const QByteArray& appSocket )
+Nepomuk2::TimelineProtocol::TimelineProtocol( const QByteArray& poolSocket, const QByteArray& appSocket )
     : KIO::ForwardingSlaveBase( "timeline", poolSocket, appSocket )
 {
     kDebug();
 }
 
 
-Nepomuk::TimelineProtocol::~TimelineProtocol()
+Nepomuk2::TimelineProtocol::~TimelineProtocol()
 {
     kDebug();
 }
 
 
-void Nepomuk::TimelineProtocol::listDir( const KUrl& url )
+void Nepomuk2::TimelineProtocol::listDir( const KUrl& url )
 {
     // without a running file indexer timeline is not at all reliable
     if ( !QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.nepomuk.services.nepomukfileindexer" ) ||
@@ -162,14 +162,14 @@ void Nepomuk::TimelineProtocol::listDir( const KUrl& url )
 }
 
 
-void Nepomuk::TimelineProtocol::mkdir( const KUrl &url, int permissions )
+void Nepomuk2::TimelineProtocol::mkdir( const KUrl &url, int permissions )
 {
     Q_UNUSED(permissions);
     error( ERR_UNSUPPORTED_ACTION, url.prettyUrl() );
 }
 
 
-void Nepomuk::TimelineProtocol::get( const KUrl& url )
+void Nepomuk2::TimelineProtocol::get( const KUrl& url )
 {
     kDebug() << url;
 
@@ -182,7 +182,7 @@ void Nepomuk::TimelineProtocol::get( const KUrl& url )
 }
 
 
-void Nepomuk::TimelineProtocol::put( const KUrl& url, int permissions, KIO::JobFlags flags )
+void Nepomuk2::TimelineProtocol::put( const KUrl& url, int permissions, KIO::JobFlags flags )
 {
     kDebug() << url;
 
@@ -195,7 +195,7 @@ void Nepomuk::TimelineProtocol::put( const KUrl& url, int permissions, KIO::JobF
 }
 
 
-void Nepomuk::TimelineProtocol::copy( const KUrl& src, const KUrl& dest, int permissions, KIO::JobFlags flags )
+void Nepomuk2::TimelineProtocol::copy( const KUrl& src, const KUrl& dest, int permissions, KIO::JobFlags flags )
 {
     Q_UNUSED(src);
     Q_UNUSED(dest);
@@ -206,7 +206,7 @@ void Nepomuk::TimelineProtocol::copy( const KUrl& src, const KUrl& dest, int per
 }
 
 
-void Nepomuk::TimelineProtocol::rename( const KUrl& src, const KUrl& dest, KIO::JobFlags flags )
+void Nepomuk2::TimelineProtocol::rename( const KUrl& src, const KUrl& dest, KIO::JobFlags flags )
 {
     Q_UNUSED(src);
     Q_UNUSED(dest);
@@ -216,21 +216,21 @@ void Nepomuk::TimelineProtocol::rename( const KUrl& src, const KUrl& dest, KIO::
 }
 
 
-void Nepomuk::TimelineProtocol::del( const KUrl& url, bool isfile )
+void Nepomuk2::TimelineProtocol::del( const KUrl& url, bool isfile )
 {
     kDebug() << url;
     ForwardingSlaveBase::del( url, isfile );
 }
 
 
-void Nepomuk::TimelineProtocol::mimetype( const KUrl& url )
+void Nepomuk2::TimelineProtocol::mimetype( const KUrl& url )
 {
     kDebug() << url;
     ForwardingSlaveBase::mimetype( url );
 }
 
 
-void Nepomuk::TimelineProtocol::stat( const KUrl& url )
+void Nepomuk2::TimelineProtocol::stat( const KUrl& url )
 {
     switch( parseTimelineUrl( url, &m_date, &m_filename ) ) {
     case RootFolder: {
@@ -272,7 +272,7 @@ void Nepomuk::TimelineProtocol::stat( const KUrl& url )
 
 
 // only used for the queries
-bool Nepomuk::TimelineProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
+bool Nepomuk2::TimelineProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 {
     if ( parseTimelineUrl( url, &m_date, &m_filename ) == DayFolder ) {
         newURL = buildTimelineQuery( m_date ).toSearchUrl();
@@ -286,7 +286,7 @@ bool Nepomuk::TimelineProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 }
 
 
-void Nepomuk::TimelineProtocol::prepareUDSEntry( KIO::UDSEntry& entry,
+void Nepomuk2::TimelineProtocol::prepareUDSEntry( KIO::UDSEntry& entry,
                                                  bool listing ) const
 {
     kDebug() << entry.stringValue( KIO::UDSEntry::UDS_NEPOMUK_URI) << entry.stringValue( KIO::UDSEntry::UDS_MIME_TYPE) << listing;
@@ -294,7 +294,7 @@ void Nepomuk::TimelineProtocol::prepareUDSEntry( KIO::UDSEntry& entry,
 }
 
 
-void Nepomuk::TimelineProtocol::listDays( int month, int year )
+void Nepomuk2::TimelineProtocol::listDays( int month, int year )
 {
     kDebug() << month << year;
     const int days = KGlobal::locale()->calendar()->daysInMonth( QDate( year, month, 1 ) );
@@ -308,7 +308,7 @@ void Nepomuk::TimelineProtocol::listDays( int month, int year )
 }
 
 
-void Nepomuk::TimelineProtocol::listThisYearsMonths()
+void Nepomuk2::TimelineProtocol::listThisYearsMonths()
 {
     kDebug();
     int currentMonth = QDate::currentDate().month();
@@ -322,7 +322,7 @@ void Nepomuk::TimelineProtocol::listThisYearsMonths()
 }
 
 
-void Nepomuk::TimelineProtocol::listPreviousYears()
+void Nepomuk2::TimelineProtocol::listPreviousYears()
 {
     kDebug();
     // TODO: list years before this year that have files, but first get the smallest date
@@ -345,7 +345,7 @@ extern "C"
             exit(-1);
         }
 
-        Nepomuk::TimelineProtocol slave(argv[2], argv[3]);
+        Nepomuk2::TimelineProtocol slave(argv[2], argv[3]);
         slave.dispatchLoop();
 
         kDebug(7102) << "Timeline slave Done";

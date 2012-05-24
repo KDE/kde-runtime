@@ -37,24 +37,24 @@
 #include <KStandardDirs>
 #include <KFileItem>
 
-#include <Nepomuk/Thing>
-#include <Nepomuk/ResourceManager>
-#include <Nepomuk/Variant>
-#include <Nepomuk/Query/QueryServiceClient>
-#include <Nepomuk/Query/ComparisonTerm>
-#include <Nepomuk/Query/ResourceTypeTerm>
-#include <Nepomuk/Query/AndTerm>
-#include <Nepomuk/Query/NegationTerm>
-#include <Nepomuk/Query/Query>
+#include <Nepomuk2/Thing>
+#include <Nepomuk2/ResourceManager>
+#include <Nepomuk2/Variant>
+#include <Nepomuk2/Query/QueryServiceClient>
+#include <Nepomuk2/Query/ComparisonTerm>
+#include <Nepomuk2/Query/ResourceTypeTerm>
+#include <Nepomuk2/Query/AndTerm>
+#include <Nepomuk2/Query/NegationTerm>
+#include <Nepomuk2/Query/Query>
 
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/RDFS>
 #include <Soprano/Vocabulary/NRL>
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/XMLSchema>
-#include <Nepomuk/Vocabulary/NFO>
-#include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/Vocabulary/PIMO>
+#include <Nepomuk2/Vocabulary/NFO>
+#include <Nepomuk2/Vocabulary/NIE>
+#include <Nepomuk2/Vocabulary/PIMO>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -69,12 +69,12 @@ namespace {
         uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
         uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
         uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, i18n( "Query folder" ) );
-        uds.insert( KIO::UDSEntry::UDS_NAME, Nepomuk::Query::Query::titleFromQueryUrl( url ) );
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, Nepomuk::Query::Query::titleFromQueryUrl( url ) );
+        uds.insert( KIO::UDSEntry::UDS_NAME, Nepomuk2::Query::Query::titleFromQueryUrl( url ) );
+        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, Nepomuk2::Query::Query::titleFromQueryUrl( url ) );
         if ( url.hasQueryItem( QLatin1String( "resource" ) ) ) {
-            Nepomuk::addGenericNepomukResourceData( Nepomuk::Resource( KUrl( url.queryItemValue( QLatin1String( "resource" ) ) ) ), uds );
+            Nepomuk2::addGenericNepomukResourceData( Nepomuk2::Resource( KUrl( url.queryItemValue( QLatin1String( "resource" ) ) ) ), uds );
         }
-        Nepomuk::Query::Query query = Nepomuk::Query::Query::fromQueryUrl( url );
+        Nepomuk2::Query::Query query = Nepomuk2::Query::Query::fromQueryUrl( url );
         if ( query.isValid() )
             uds.insert( KIO::UDSEntry::UDS_NEPOMUK_QUERY, query.toString() );
         return uds;
@@ -102,23 +102,23 @@ namespace {
     }
 
     KUrl convertLegacyQueryUrl( const KUrl& url ) {
-        KUrl newUrl(QLatin1String("nepomuksearch:/") + Nepomuk::Query::Query::titleFromQueryUrl(url));
-        Nepomuk::Query::Query query = Nepomuk::Query::Query::fromQueryUrl(url);
+        KUrl newUrl(QLatin1String("nepomuksearch:/") + Nepomuk2::Query::Query::titleFromQueryUrl(url));
+        Nepomuk2::Query::Query query = Nepomuk2::Query::Query::fromQueryUrl(url);
         if(query.isValid())
             newUrl.addQueryItem(QLatin1String("encodedquery"), query.toString());
         else
-            newUrl.addQueryItem(QLatin1String("sparql"), Nepomuk::Query::Query::sparqlFromQueryUrl(url));
+            newUrl.addQueryItem(QLatin1String("sparql"), Nepomuk2::Query::Query::sparqlFromQueryUrl(url));
         return newUrl;
     }
 
-    Nepomuk::Query::Query rootQuery() {
+    Nepomuk2::Query::Query rootQuery() {
         KConfig config( "kio_nepomuksearchrc" );
         QString queryStr = config.group( "General" ).readEntry( "Root query", QString() );
-        Nepomuk::Query::Query query;
+        Nepomuk2::Query::Query query;
         if ( queryStr.isEmpty() )
-            query = Nepomuk::lastModifiedFilesQuery();
+            query = Nepomuk2::lastModifiedFilesQuery();
         else
-            query = Nepomuk::Query::Query::fromString( queryStr );
+            query = Nepomuk2::Query::Query::fromString( queryStr );
         query.setLimit( config.group( "General" ).readEntry( "Root query limit", 10 ) );
         return query;
     }
@@ -126,26 +126,26 @@ namespace {
 }
 
 
-Nepomuk::SearchProtocol::SearchProtocol( const QByteArray& poolSocket, const QByteArray& appSocket )
+Nepomuk2::SearchProtocol::SearchProtocol( const QByteArray& poolSocket, const QByteArray& appSocket )
     : KIO::ForwardingSlaveBase( "nepomuksearch", poolSocket, appSocket )
 {
 }
 
 
-Nepomuk::SearchProtocol::~SearchProtocol()
+Nepomuk2::SearchProtocol::~SearchProtocol()
 {
 }
 
 
-bool Nepomuk::SearchProtocol::ensureNepomukRunning( bool emitError )
+bool Nepomuk2::SearchProtocol::ensureNepomukRunning( bool emitError )
 {
-    if ( Nepomuk::ResourceManager::instance()->init() ) {
+    if ( Nepomuk2::ResourceManager::instance()->init() ) {
         kDebug() << "Failed to init Nepomuk";
         if ( emitError )
             error( KIO::ERR_SLAVE_DEFINED, i18n( "The desktop search service is not activated. Unable to answer queries without it." ) );
         return false;
     }
-    else if ( !Nepomuk::Query::QueryServiceClient::serviceAvailable() ) {
+    else if ( !Nepomuk2::Query::QueryServiceClient::serviceAvailable() ) {
         kDebug() << "Nepomuk Query service is not running.";
         if ( emitError )
             error( KIO::ERR_SLAVE_DEFINED, i18n( "The desktop search query service is not running. Unable to answer queries without it." ) );
@@ -157,7 +157,7 @@ bool Nepomuk::SearchProtocol::ensureNepomukRunning( bool emitError )
 }
 
 
-void Nepomuk::SearchProtocol::listDir( const KUrl& url )
+void Nepomuk2::SearchProtocol::listDir( const KUrl& url )
 {
     kDebug() << url;
 
@@ -197,7 +197,7 @@ void Nepomuk::SearchProtocol::listDir( const KUrl& url )
 }
 
 
-void Nepomuk::SearchProtocol::get( const KUrl& url )
+void Nepomuk2::SearchProtocol::get( const KUrl& url )
 {
     kDebug() << url;
 
@@ -208,7 +208,7 @@ void Nepomuk::SearchProtocol::get( const KUrl& url )
 }
 
 
-void Nepomuk::SearchProtocol::put( const KUrl& url, int permissions, KIO::JobFlags flags )
+void Nepomuk2::SearchProtocol::put( const KUrl& url, int permissions, KIO::JobFlags flags )
 {
     kDebug() << url << permissions << flags;
 
@@ -220,7 +220,7 @@ void Nepomuk::SearchProtocol::put( const KUrl& url, int permissions, KIO::JobFla
 }
 
 
-void Nepomuk::SearchProtocol::mimetype( const KUrl& url )
+void Nepomuk2::SearchProtocol::mimetype( const KUrl& url )
 {
     kDebug() << url;
 
@@ -246,7 +246,7 @@ void Nepomuk::SearchProtocol::mimetype( const KUrl& url )
 }
 
 
-void Nepomuk::SearchProtocol::stat( const KUrl& url )
+void Nepomuk2::SearchProtocol::stat( const KUrl& url )
 {
     kDebug() << url;
 
@@ -283,22 +283,22 @@ void Nepomuk::SearchProtocol::stat( const KUrl& url )
 }
 
 
-void Nepomuk::SearchProtocol::del(const KUrl& url, bool isFile)
+void Nepomuk2::SearchProtocol::del(const KUrl& url, bool isFile)
 {
     ForwardingSlaveBase::del( url, isFile );
 }
 
 
-bool Nepomuk::SearchProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
+bool Nepomuk2::SearchProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 {
     // we do it the speedy but slightly umpf way: decode the encoded URI from the filename
-    newURL = Nepomuk::udsNameToResourceUri( url.fileName() );
+    newURL = Nepomuk2::udsNameToResourceUri( url.fileName() );
     kDebug() << "URL:" << url << "NEW URL:" << newURL << newURL.protocol() << newURL.path() << newURL.fileName();
     return !newURL.isEmpty();
 }
 
 
-void Nepomuk::SearchProtocol::prepareUDSEntry( KIO::UDSEntry& uds, bool listing ) const
+void Nepomuk2::SearchProtocol::prepareUDSEntry( KIO::UDSEntry& uds, bool listing ) const
 {
     // do nothing - we do everything in SearchFolder::statResult
     Q_UNUSED(uds);
@@ -306,7 +306,7 @@ void Nepomuk::SearchProtocol::prepareUDSEntry( KIO::UDSEntry& uds, bool listing 
 }
 
 
-void Nepomuk::SearchProtocol::listRoot()
+void Nepomuk2::SearchProtocol::listRoot()
 {
     kDebug();
 
@@ -323,13 +323,13 @@ void Nepomuk::SearchProtocol::listRoot()
 }
 
 
-Nepomuk::SearchFolder* Nepomuk::SearchProtocol::getQueryFolder( const KUrl& url )
+Nepomuk2::SearchFolder* Nepomuk2::SearchProtocol::getQueryFolder( const KUrl& url )
 {
     return new SearchFolder( url, this );
 }
 
 
-void Nepomuk::SearchProtocol::updateQueryUrlHistory( const KUrl& url )
+void Nepomuk2::SearchProtocol::updateQueryUrlHistory( const KUrl& url )
 {
     //
     // if the url is already in the history update its timestamp
@@ -387,7 +387,7 @@ extern "C"
 
         kDebug(7102) << "Starting nepomuksearch slave " << getpid();
 
-        Nepomuk::SearchProtocol slave( argv[2], argv[3] );
+        Nepomuk2::SearchProtocol slave( argv[2], argv[3] );
         slave.dispatchLoop();
 
         kDebug(7102) << "Nepomuksearch slave Done";
@@ -398,7 +398,7 @@ extern "C"
 
 
 #if 0
-void Nepomuk::SearchProtocol::listUserQueries()
+void Nepomuk2::SearchProtocol::listUserQueries()
 {
     UserQueryUrlList userQueries;
     Q_FOREACH( const KUrl& url, userQueries ) {
@@ -407,7 +407,7 @@ void Nepomuk::SearchProtocol::listUserQueries()
         listEntry( uds, false );
     }
 }
-void Nepomuk::SearchProtocol::listLastQueries()
+void Nepomuk2::SearchProtocol::listLastQueries()
 {
     KSharedConfigPtr cfg = KSharedConfig::openConfig( "kio_nepomuksearchrc" );
     KConfigGroup grp = cfg->group( "Last Queries" );

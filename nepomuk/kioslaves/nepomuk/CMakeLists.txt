@@ -1,6 +1,7 @@
 include_directories(
   ${KDE4_INCLUDES}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${NEPOMUK_CORE_INCLUDE_DIR}
   ${nepomuk_kio_slaves_SOURCE_DIR}/common
 )
 
@@ -15,9 +16,7 @@ target_link_libraries(kio_nepomuk
   nepomukcommon
   ${KDE4_KIO_LIBS}
   ${KDE4_SOLID_LIBS}
-  ${NEPOMUK_LIBRARIES}
-  ${NEPOMUK_QUERY_LIBRARIES}
-  ${NEPOMUK_UTILS_LIBRARIES}
+  ${NEPOMUK_CORE_LIBRARY}
   ${SOPRANO_LIBRARIES})
 
 install(TARGETS kio_nepomuk DESTINATION ${PLUGIN_INSTALL_DIR})

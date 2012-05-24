@@ -23,7 +23,7 @@
 
 #include "nepomukcommon_export.h"
 
-namespace Nepomuk {
+namespace Nepomuk2 {
     /**
      * \return A list of default exclude filters to be used
      * in the filewatch service to ignore temporary files

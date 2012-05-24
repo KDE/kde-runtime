@@ -33,7 +33,7 @@
 #include <KUrl>
 
 
-namespace Nepomuk {
+namespace Nepomuk2 {
 
 /**
  * The removable media cache provides access to all removable
@@ -93,8 +93,8 @@ public:
     bool hasRemovableSchema(const KUrl& url) const;
 
 signals:
-    void deviceAdded(const Nepomuk::RemovableMediaCache::Entry* entry);
-    void deviceMounted(const Nepomuk::RemovableMediaCache::Entry* entry);
+    void deviceAdded(const Nepomuk2::RemovableMediaCache::Entry* entry);
+    void deviceMounted(const Nepomuk2::RemovableMediaCache::Entry* entry);
 
 private slots:
     void slotSolidDeviceAdded(const QString &udi);
@@ -117,6 +117,6 @@ private:
     mutable QMutex m_entryCacheMutex;
 };
 
-} // namespace Nepomuk
+} // namespace Nepomuk2
 
 #endif // NEPOMUK_REMOVABLEMEDIACACHE_H
