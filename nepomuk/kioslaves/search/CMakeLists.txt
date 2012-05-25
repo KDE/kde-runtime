@@ -28,7 +28,6 @@ kde4_add_plugin(kio_nepomuksearch
   ${kio_nepomuksearch_PART_SRCS})
 
 target_link_libraries(kio_nepomuksearch
-  nepomukcommon
   ${KDE4_KIO_LIBS}
   ${KDE4_SOLID_LIBS}
   ${NEPOMUK_CORE_LIBRARY}

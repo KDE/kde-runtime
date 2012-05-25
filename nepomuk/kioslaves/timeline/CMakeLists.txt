@@ -20,7 +20,6 @@ qt4_add_dbus_interface(kio_timeline_PART_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR
 kde4_add_plugin(kio_timeline ${kio_timeline_PART_SRCS})
 
 target_link_libraries(kio_timeline
-  nepomukcommon
   ${KDE4_KIO_LIBS}
   ${NEPOMUK_CORE_LIBRARY}
   ${SOPRANO_LIBRARIES}

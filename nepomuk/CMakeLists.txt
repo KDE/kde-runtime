@@ -14,7 +14,6 @@ include_directories(
   ${nepomuk_BINARY_DIR}/common
 )
 
-add_subdirectory(common)
 add_subdirectory(kcm)
 add_subdirectory(kioslaves)
 add_subdirectory(controller)

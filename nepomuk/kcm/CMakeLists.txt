@@ -28,7 +28,6 @@ kde4_add_ui_files(kcmnepomuk_SRCS
 kde4_add_plugin(kcm_nepomuk ${kcmnepomuk_SRCS})
 
 target_link_libraries(kcm_nepomuk
-  nepomukcommon
   ${KDE4_KDEUI_LIBS}
   ${KDE4_KIO_LIBS}
   ${NEPOMUK_CORE_LIBRARY}

@@ -13,7 +13,6 @@ set(kio_nepomuk_PART_SRCS
 kde4_add_plugin(kio_nepomuk ${kio_nepomuk_PART_SRCS})
 
 target_link_libraries(kio_nepomuk
-  nepomukcommon
   ${KDE4_KIO_LIBS}
   ${KDE4_SOLID_LIBS}
   ${NEPOMUK_CORE_LIBRARY}

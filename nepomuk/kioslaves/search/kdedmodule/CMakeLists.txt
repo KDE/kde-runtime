@@ -34,7 +34,6 @@ qt4_add_dbus_interface(nepomuksearchmodule_SRCS
 kde4_add_plugin(kded_nepomuksearchmodule ${nepomuksearchmodule_SRCS})
 
 target_link_libraries(kded_nepomuksearchmodule
-  nepomukcommon
   ${KDE4_KDECORE_LIBS}
   ${KDE4_KIO_LIBS}
   ${NEPOMUK_CORE_LIBRARY}
