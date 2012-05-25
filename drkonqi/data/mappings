@@ -63,6 +63,7 @@ kwin_killer_helper=kwin|general
 kwin_rules_dialog=kwin|general
 
 #KDE Kontact (Akonadi)
+akonadi_archivemail_agent=Akonadi|Archive Mail Agent
 akonadi_benchmarker=Akonadi|general
 akonadi_birthdays_resource=Akonadi|general
 akonadi_contacts_resource=Akonadi|Contacts resource
@@ -101,6 +102,8 @@ akonadictl=Akonadi|general
 akonadiserver=Akonadi|server
 akonaditest=Akonadi|general
 akonaditray=Akonadi|general
+backupmail=kdepim|backupmail
+importwizard=kdepim|importwizard
 
 #KDE Kontact (PIM)
 kalarmautostart=kalarm|general
