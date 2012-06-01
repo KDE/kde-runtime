@@ -11,7 +11,7 @@ endif(WINCE)
 
 #search packages used by KDE
 set(KDE_MIN_VERSION "4.7.97")  # for the < 4.2 macro
-find_package(KDE4 4.8.3 REQUIRED)
+find_package(KDE4 4.8.4 REQUIRED)
 if (WIN32)
     find_package(Strigi)
 else ()
