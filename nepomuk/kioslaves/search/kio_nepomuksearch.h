@@ -82,11 +82,6 @@ namespace Nepomuk2 {
         void listRoot();
 
         /**
-         * Create a query folder for a query url
-         */
-        SearchFolder* getQueryFolder( const KUrl& url );
-
-        /**
          * Store \a url in the history of last used queries.
          */
         void updateQueryUrlHistory( const KUrl& url );

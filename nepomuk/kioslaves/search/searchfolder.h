@@ -46,7 +46,7 @@ namespace Nepomuk2 {
      * A SearchFolder lists all results from one query and then deletes
      * itself.
      */
-    class SearchFolder : public QThread
+    class SearchFolder : public QObject
     {
         Q_OBJECT
 
@@ -76,7 +76,7 @@ namespace Nepomuk2 {
         /**
          * List the results directly on the parent slave.
          */
-        void list();
+        void waitForListing();
 
     private Q_SLOTS:
         /// connected to the QueryServiceClient in the search thread
@@ -89,18 +89,6 @@ namespace Nepomuk2 {
         void slotFinishedListing();
 
     private:
-        // reimplemented from QThread -> does handle the query
-        // we run this in a different thread since SlaveBase does
-        // not have an event loop but we need to deliver signals
-        // anyway
-        void run();
-
-        /**
-         * This method will stat all entries in m_resultsQueue until
-         * the search thread is finished. It is run in the main thread.
-         */
-        void statResults();
-
         /**
          * Stats the result and returns the entry.
          */
@@ -116,27 +104,12 @@ namespace Nepomuk2 {
         // SPARQL query that is actually sent to the query service
         QString m_sparqlQuery;
 
-        // result cache, filled by the search thread
-        QQueue<Query::Result> m_resultsQueue;
-
-        // true if the client listed all results and new
-        // ones do not need to be listed but emitted through
-        // KDirNotify
-        bool m_initialListingFinished;
-
         // the parent slave used for listing and stating
         KIO::SlaveBase* m_slave;
 
         Query::QueryServiceClient* m_client;
 
-        // mutex to protect the results
-        QMutex m_resultMutex;
-
-        // mutex to protect the slave
-        QMutex m_slaveMutex;
-
-        // used to wait in the main thread for the serch thread to deliver results
-        QWaitCondition m_resultWaiter;
+        QEventLoop m_eventLoop;
     };
 }
 

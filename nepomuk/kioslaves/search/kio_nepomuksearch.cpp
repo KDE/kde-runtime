@@ -179,14 +179,12 @@ void Nepomuk2::SearchProtocol::listDir( const KUrl& url )
             listEntry( KIO::UDSEntry(),  true);
             finished();
         }
-        else if ( SearchFolder* folder = getQueryFolder( url ) ) {
+        else {
+            SearchFolder folder( url, this );
             updateQueryUrlHistory( url );
-            folder->list();
+            folder.waitForListing();
             listEntry( KIO::UDSEntry(), true );
             finished();
-        }
-        else {
-            error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
         }
     }
 
@@ -315,17 +313,13 @@ void Nepomuk2::SearchProtocol::listRoot()
 
     Query::Query query = rootQuery();
     if ( query.isValid() ) {
-        getQueryFolder( query.toSearchUrl() )->list();
+        // FIXME: Avoid this useless conversion to searchUrl and back
+        SearchFolder folder( query.toSearchUrl(), this );
+        folder.waitForListing();
     }
 
     listEntry( KIO::UDSEntry(), true );
     finished();
-}
-
-
-Nepomuk2::SearchFolder* Nepomuk2::SearchProtocol::getQueryFolder( const KUrl& url )
-{
-    return new SearchFolder( url, this );
 }
 
 

@@ -1,5 +1,6 @@
 /*
    Copyright 2008-2010 Sebastian Trueg <trueg@kde.org>
+   Copyright 2012 Vishesh Handa <me@vhanda.in>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -52,140 +53,64 @@
 
 
 Nepomuk2::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
-    : QThread(),
+    : QObject( 0 ),
       m_url( url ),
-      m_initialListingFinished( false ),
       m_slave( slave )
 {
-    kDebug() <<  url;
-
-    qRegisterMetaType<QList<QUrl> >();
-
     // parse URL (this may fail in which case we fall back to pure SPARQL below)
     Query::parseQueryUrl( url, m_query, m_sparqlQuery );
-}
-
-
-Nepomuk2::SearchFolder::~SearchFolder()
-{
-    kDebug() << m_url << QThread::currentThread();
-
-    // properly shut down the search thread
-    quit();
-    wait();
-}
-
-
-void Nepomuk2::SearchFolder::run()
-{
-    kDebug() << m_url << QThread::currentThread();
 
     m_client = new Nepomuk2::Query::QueryServiceClient();
 
-    // results signals are connected directly to update the results cache m_resultsQueue
-    // and the entries cache m_entries, as well as emitting KDirNotify signals
-    // a queued connection is not possible since we have no event loop after the
-    // initial listing which means that queued signals would never get delivered
     connect( m_client, SIGNAL( newEntries( const QList<Nepomuk2::Query::Result>& ) ),
-             this, SLOT( slotNewEntries( const QList<Nepomuk2::Query::Result>& ) ),
-             Qt::DirectConnection );
+             this, SLOT( slotNewEntries( const QList<Nepomuk2::Query::Result>& ) ) );
     connect( m_client, SIGNAL( resultCount(int) ),
-             this, SLOT( slotResultCount(int) ),
-             Qt::DirectConnection );
+             this, SLOT( slotResultCount(int) ) );
     connect( m_client, SIGNAL( finishedListing() ),
-             this, SLOT( slotFinishedListing() ),
-             Qt::DirectConnection );
+             this, SLOT( slotFinishedListing() ) );
     connect( m_client, SIGNAL( error(QString) ),
-             this, SLOT( slotFinishedListing() ),
-             Qt::DirectConnection );
+             this, SLOT( slotFinishedListing() ) );
+    connect( m_client, SIGNAL( finishedListing() ),
+             m_client, SLOT( deleteLater() ) );
 
     if ( m_query.isValid() )
         m_client->query( m_query );
     else
         m_client->sparqlQuery( m_sparqlQuery );
-    exec();
-    delete m_client;
-
-    kDebug() << m_url << "done";
 }
 
 
-void Nepomuk2::SearchFolder::list()
+Nepomuk2::SearchFolder::~SearchFolder()
 {
-    kDebug() << m_url << QThread::currentThread();
-
-    // start the search thread
-    start();
-
-    // list all results
-    statResults();
-
-    kDebug() << "listing done";
-
-    // shutdown and delete
-    exit();
-    deleteLater();
 }
 
+void Nepomuk2::SearchFolder::waitForListing()
+{
+    m_eventLoop.exec();
+}
 
-// always called in search thread
 void Nepomuk2::SearchFolder::slotNewEntries( const QList<Nepomuk2::Query::Result>& results )
 {
-//    kDebug() << m_url;
-
-    m_resultMutex.lock();
-    m_resultsQueue += results;
-    m_resultMutex.unlock();
-
-    if ( !m_initialListingFinished ) {
-        m_resultWaiter.wakeAll();
+    KIO::UDSEntryList entryList;
+    foreach(const Query::Result& result, results ) {
+        KIO::UDSEntry uds = statResult( result );
+        if ( uds.count() ) {
+            //kDebug() << "listing" << result.resource().resourceUri();
+            m_slave->listEntry(uds, false);
+        }
     }
 }
 
 
 void Nepomuk2::SearchFolder::slotResultCount( int count )
 {
-    if ( !m_initialListingFinished ) {
-        QMutexLocker lock( &m_slaveMutex );
-        m_slave->totalSize( count );
-    }
+    m_slave->totalSize( count );
 }
 
 
-// always called in search thread
 void Nepomuk2::SearchFolder::slotFinishedListing()
 {
-    kDebug() << m_url;
-    QMutexLocker lock( &m_resultMutex );
-    m_initialListingFinished = true;
-    m_resultWaiter.wakeAll();
-}
-
-
-// always called in main thread
-void Nepomuk2::SearchFolder::statResults()
-{
-    while ( 1 ) {
-        m_resultMutex.lock();
-        if ( !m_resultsQueue.isEmpty() ) {
-            Query::Result result = m_resultsQueue.dequeue();
-            m_resultMutex.unlock();
-            KIO::UDSEntry uds = statResult( result );
-            if ( uds.count() ) {
-//                kDebug() << "listing" << result.resource().resourceUri();
-                QMutexLocker lock( &m_slaveMutex );
-                m_slave->listEntries( KIO::UDSEntryList() << uds );
-            }
-        }
-        else if ( !m_initialListingFinished ) {
-            m_resultWaiter.wait( &m_resultMutex );
-            m_resultMutex.unlock();
-        }
-        else {
-            m_resultMutex.unlock();
-            break;
-        }
-    }
+    m_eventLoop.exit();
 }
 
 
@@ -215,8 +140,6 @@ namespace {
     }
 }
 
-
-// always called in main thread
 // This method tries to avoid loading the Nepomuk2::Resource as long as possible by only using the
 // request property nie:url in the Result for local files.
 KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
