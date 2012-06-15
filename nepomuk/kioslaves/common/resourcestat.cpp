@@ -349,6 +349,7 @@ KUrl Nepomuk2::redirectionUrl( const Nepomuk2::Resource& res )
 
 
 namespace {
+
     /**
      * Check if the resource represents a local file with an existing nie:url property.
      */

@@ -36,6 +36,9 @@
 #include <Nepomuk2/Resource>
 #include <KUrl>
 
+namespace Soprano {
+    class QueryResultIterator;
+}
 
 namespace Nepomuk2 {
     namespace Query {
@@ -76,23 +79,15 @@ namespace Nepomuk2 {
         /**
          * List the results directly on the parent slave.
          */
-        void waitForListing();
-
-    private Q_SLOTS:
-        /// connected to the QueryServiceClient in the search thread
-        void slotNewEntries( const QList<Nepomuk2::Query::Result>& );
-
-        /// connected to the QueryServiceClient in the search thread
-        void slotResultCount( int );
-
-        /// connected to the QueryServiceClient in the search thread
-        void slotFinishedListing();
+        void list();
 
     private:
         /**
          * Stats the result and returns the entry.
          */
         KIO::UDSEntry statResult( const Query::Result& result );
+
+        Query::Result extractResult( const Soprano::QueryResultIterator& it ) const;
 
         // folder properties
         KUrl m_url;

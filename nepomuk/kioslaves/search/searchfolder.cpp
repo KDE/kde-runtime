@@ -32,15 +32,19 @@
 #include <Nepomuk2/Thing>
 #include <Nepomuk2/Types/Class>
 #include <Nepomuk2/Query/Query>
-#include <Nepomuk2/Query/QueryParser>
+#include <Nepomuk2/Query/Result>
 #include <Nepomuk2/Query/ResourceTypeTerm>
-#include <Nepomuk2/Query/QueryServiceClient>
 #include <Nepomuk2/Vocabulary/NFO>
 #include <Nepomuk2/Vocabulary/NIE>
 #include <Nepomuk2/Vocabulary/PIMO>
 
+#include <Nepomuk2/ResourceManager>
+#include <Nepomuk2/Resource>
+
 #include <QtCore/QMutexLocker>
 #include <QTextDocument>
+#include <Soprano/QueryResultIterator>
+#include <Soprano/Model>
 
 #include <KUrl>
 #include <KDebug>
@@ -51,6 +55,8 @@
 #include <KConfig>
 #include <KConfigGroup>
 
+using namespace Nepomuk2::Vocabulary;
+using namespace Soprano::Vocabulary;
 
 Nepomuk2::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
     : QObject( 0 ),
@@ -60,23 +66,9 @@ Nepomuk2::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
     // parse URL (this may fail in which case we fall back to pure SPARQL below)
     Query::parseQueryUrl( url, m_query, m_sparqlQuery );
 
-    m_client = new Nepomuk2::Query::QueryServiceClient();
-
-    connect( m_client, SIGNAL( newEntries( const QList<Nepomuk2::Query::Result>& ) ),
-             this, SLOT( slotNewEntries( const QList<Nepomuk2::Query::Result>& ) ) );
-    connect( m_client, SIGNAL( resultCount(int) ),
-             this, SLOT( slotResultCount(int) ) );
-    connect( m_client, SIGNAL( finishedListing() ),
-             this, SLOT( slotFinishedListing() ) );
-    connect( m_client, SIGNAL( error(QString) ),
-             this, SLOT( slotFinishedListing() ) );
-    connect( m_client, SIGNAL( finishedListing() ),
-             m_client, SLOT( deleteLater() ) );
-
-    if ( m_query.isValid() )
-        m_client->query( m_query );
-    else
-        m_client->sparqlQuery( m_sparqlQuery );
+    if ( m_query.isValid() ) {
+        m_sparqlQuery = m_query.toSparqlQuery();
+    }
 }
 
 
@@ -84,35 +76,19 @@ Nepomuk2::SearchFolder::~SearchFolder()
 {
 }
 
-void Nepomuk2::SearchFolder::waitForListing()
+void Nepomuk2::SearchFolder::list()
 {
-    m_eventLoop.exec();
-}
-
-void Nepomuk2::SearchFolder::slotNewEntries( const QList<Nepomuk2::Query::Result>& results )
-{
-    KIO::UDSEntryList entryList;
-    foreach(const Query::Result& result, results ) {
+    //FIXME: Do the result count as well?
+    Soprano::Model* model = ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator it = model->executeQuery( m_sparqlQuery, Soprano::Query::QueryLanguageSparql );
+    while( it.next() ) {
+        Query::Result result = extractResult( it );
         KIO::UDSEntry uds = statResult( result );
         if ( uds.count() ) {
-            //kDebug() << "listing" << result.resource().resourceUri();
             m_slave->listEntry(uds, false);
         }
     }
 }
-
-
-void Nepomuk2::SearchFolder::slotResultCount( int count )
-{
-    m_slave->totalSize( count );
-}
-
-
-void Nepomuk2::SearchFolder::slotFinishedListing()
-{
-    m_eventLoop.exit();
-}
-
 
 namespace {
     bool statFile( const KUrl& url, const KUrl& fileUrl, KIO::UDSEntry& uds )
@@ -146,7 +122,7 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
 {
     Resource res( result.resource() );
     const KUrl uri( res.resourceUri() );
-    KUrl nieUrl( result[Nepomuk2::Vocabulary::NIE::url()].uri() );
+    KUrl nieUrl( result[NIE::url()].uri() );
 
     // the additional bindings that we only have on unix systems
     // Either all are bound or none of them.
@@ -262,4 +238,37 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
     }
 
     return uds;
+}
+
+// copied from the QueryService
+Nepomuk2::Query::Result Nepomuk2::SearchFolder::extractResult(const Soprano::QueryResultIterator& it) const
+{
+    Query::Result result( Resource::fromResourceUri( it[0].uri() ) );
+    const Query::RequestPropertyMap map = m_query.requestPropertyMap();
+    for( Query::RequestPropertyMap::const_iterator rit = map.begin(); rit != map.constEnd(); rit++ ) {
+        result.addRequestProperty( rit.value(), it.binding( rit.key() ) );
+    }
+
+    // make sure we do not store values twice
+    QStringList names = it.bindingNames();
+    names.removeAll( QLatin1String( "r" ) );
+
+    static const char* s_scoreVarName = "_n_f_t_m_s_";
+    static const char* s_excerptVarName = "_n_f_t_m_ex_";
+
+    Soprano::BindingSet set;
+    int score = 0;
+    Q_FOREACH( const QString& var, names ) {
+        if ( var == QLatin1String( s_scoreVarName ) )
+            score = it[var].literal().toInt();
+        else if ( var == QLatin1String( s_excerptVarName ) )
+            result.setExcerpt( it[var].toString() );
+        else
+            set.insert( var, it[var] );
+    }
+
+    result.setAdditionalBindings( set );
+    result.setScore( ( double )score );
+
+    return result;
 }
