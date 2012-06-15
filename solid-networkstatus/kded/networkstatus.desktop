@@ -78,6 +78,7 @@ Comment[da]=Overvåger status af netværksgrænseflader og giver besked til prog
 Comment[de]=Überprüft den Status von Netzwerkschnittstellen und benachrichtigt Programme, die das Netzwerk verwenden
 Comment[el]=Παρακολουθεί την κατάσταση των διασυνδέσεων δικτύου και προσφέρει ειδοποιήσεις σε εφαρμογές που χρησιμοποιούν το δίκτυο.
 Comment[en_GB]=Tracks status of network interfaces and provides notification to applications using the network.
+Comment[eo]=Ĝi spuras la staton de retaj interfacoj kaj provizas atentigon al aplikaĵoj, kiuj uzas la reton.
 Comment[es]=Estudia el estado de los interfaces de red y notifica las aplicaciones de red.
 Comment[et]=Võrguliideste oleku jälgimine ja märguannete edastamine rakendustele võrgu vahendusel.
 Comment[eu]=Sare interfazeen egoera zelatatu eta sarea erabiltzen duten aplikazioei jakinarazpenak ematen dizkie.
