@@ -182,7 +182,7 @@ void Nepomuk2::SearchProtocol::listDir( const KUrl& url )
         else {
             SearchFolder folder( url, this );
             updateQueryUrlHistory( url );
-            folder.waitForListing();
+            folder.list();
             listEntry( KIO::UDSEntry(), true );
             finished();
         }
@@ -315,7 +315,7 @@ void Nepomuk2::SearchProtocol::listRoot()
     if ( query.isValid() ) {
         // FIXME: Avoid this useless conversion to searchUrl and back
         SearchFolder folder( query.toSearchUrl(), this );
-        folder.waitForListing();
+        folder.list();
     }
 
     listEntry( KIO::UDSEntry(), true );
