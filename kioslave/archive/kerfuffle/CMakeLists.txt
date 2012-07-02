@@ -30,7 +30,7 @@ endif (NOT WIN32)
 
 set_target_properties(kerfuffle PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
 
-install(TARGETS kerfuffle ${INSTALL_TARGETS_DEFAULT_ARGS})
+#install(TARGETS kerfuffle ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 #install(FILES kerfufflePlugin.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR})
 #install(FILES ark.kcfg                DESTINATION ${KCFG_INSTALL_DIR})
