@@ -671,8 +671,11 @@ void ArchiveProtocol::mkdir( const KUrl & url, int permissions )
     }
 
     time_t time = QDateTime::currentDateTime().toTime_t();
-    m_archiveFile->writeDir( destName, m_archiveFile->directory()->user(), m_archiveFile->directory()->group(),
-                             permissions, time /*atime*/, time /*mtime*/, time /*ctime*/ );
+    if (!m_archiveFile->writeDir( destName, m_archiveFile->directory()->user(), m_archiveFile->directory()->group(),
+                             permissions, time /*atime*/, time /*mtime*/, time /*ctime*/ )) {
+        error( KIO::ERR_COULD_NOT_MKDIR, url.prettyUrl() );
+        return;
+    }
 
     finished();
 }
