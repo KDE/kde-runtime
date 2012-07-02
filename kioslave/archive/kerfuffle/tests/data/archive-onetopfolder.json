@@ -1,0 +1,9 @@
+[
+    {
+        "FileName": "aDir/",
+        "IsDirectory": true
+    },
+    {
+        "FileName": "aDir/b.txt"
+    }
+]

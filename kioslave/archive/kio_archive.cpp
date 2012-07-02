@@ -32,6 +32,7 @@
 #include <kcomponentdata.h>
 #include <ktar.h>
 #include <kzip.h>
+#include <k7z.h>
 #include <kar.h>
 #include <kmimetype.h>
 #include <klocale.h>
@@ -104,10 +105,13 @@ bool ArchiveProtocol::checkNewFile( const KUrl & url, QString & path, KIO::Error
     // Close previous file
     if ( m_archiveFile )
     {
+        kDebug() << "Lamarque closing archive";
         m_archiveFile->close();
+        kDebug() << "Lamarque deleting archive";
         delete m_archiveFile;
         m_archiveFile = 0L;
     }
+    kDebug() << "Lamarque archive is now null";
 
     // Find where the tar file is in the full path
     int pos = 0;
@@ -181,6 +185,9 @@ bool ArchiveProtocol::checkNewFile( const KUrl & url, QString & path, KIO::Error
     } else if ( url.protocol() == "zip" ) {
         kDebug(7109) << "Opening KZip on " << archiveFile;
         m_archiveFile = new KZip( archiveFile );
+    } else if ( url.protocol() == "p7zip" ) {
+        kDebug(7109) << "Opening K7z on " << archiveFile;
+        m_archiveFile = new K7z( archiveFile );
     } else {
         kWarning(7109) << "Protocol" << url.protocol() << "not supported by this IOSlave" ;
         errorNum = KIO::ERR_UNSUPPORTED_PROTOCOL;
@@ -223,6 +230,11 @@ void ArchiveProtocol::createUDSEntry( const KArchiveEntry * archiveEntry, UDSEnt
     entry.insert( KIO::UDSEntry::UDS_USER, archiveEntry->user());
     entry.insert( KIO::UDSEntry::UDS_GROUP, archiveEntry->group());
     entry.insert( KIO::UDSEntry::UDS_LINK_DEST, archiveEntry->symLinkTarget());
+}
+
+QString ArchiveProtocol::relativePath( const QString & fullPath )
+{
+    return QString(fullPath).remove(m_archiveFile->fileName() + QLatin1Char('/'));
 }
 
 void ArchiveProtocol::listDir( const KUrl & url )
@@ -525,6 +537,142 @@ void ArchiveProtocol::get( const KUrl & url )
     delete io;
 
     data( QByteArray() );
+
+    finished();
+}
+
+void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flags  )
+{
+    kDebug(7109);
+
+#if 0
+    if (url.protocol() != QLatin1String("p7zip")) {
+        kDebug(7109) << "put operation not supported by protocol" << url.protocol();
+        finished();
+        return;
+    }
+#endif
+
+    QString destName = relativePath(url.path());
+    Q_ASSERT(!destName.isEmpty());
+    kDebug(7109) << "Putting" << url << "as" << destName;
+
+    const KArchiveEntry * ent = m_archiveFile->directory()->entry( destName );
+
+    if (ent && !(flags & KIO::Overwrite) && !(flags & KIO::Resume)) {
+        if (ent->isDirectory()) {
+            kDebug(7109) << url <<" already isdir !!";
+            error( KIO::ERR_DIR_ALREADY_EXIST, url.prettyUrl());
+        } else {
+            kDebug(7109) << url << " already exist !!";
+            error( KIO::ERR_FILE_ALREADY_EXIST, url.prettyUrl());
+        }
+        return;
+    }
+
+    if (ent && !(flags & KIO::Resume) && (flags & KIO::Overwrite)) {
+        kDebug(7109) << "exists try to remove " << url;
+        // TODO: implement
+    }
+
+    if (flags & KIO::Resume) {
+        // TODO: implement
+        kDebug(7109) << "resume not supported " << url;
+        error( KIO::ERR_UNSUPPORTED_ACTION, url.prettyUrl());
+        return;
+    } else {
+        if (permissions == -1) {
+            permissions = 600;//0666;
+        } else {
+            permissions = permissions | S_IWUSR | S_IRUSR;
+        }
+    }
+
+    if (!m_archiveFile->open(QIODevice::WriteOnly)) {
+        kWarning() << " open" << destName << "failed";
+        error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
+    }
+
+    const QString mtimeStr = metaData( "modified" );
+    time_t mtime = 0;
+    if ( !mtimeStr.isEmpty() ) {
+        QDateTime dt = QDateTime::fromString( mtimeStr, Qt::ISODate );
+        if ( dt.isValid() ) {
+            mtime = dt.toTime_t();
+            kDebug() << "setting modified time to" << dt;
+        }
+    }
+
+    // TODO: set the missing metadata.
+    if (!m_archiveFile->prepareWriting(destName, m_archiveFile->directory()->user(), m_archiveFile->directory()->group(), 0 /*size*/,
+                                       permissions, 0 /*atime*/, mtime, 0 /*ctime*/))
+    {
+        kWarning() << " prepareWriting" << destName << "failed";
+        error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
+        return;
+    }
+
+    // Read and write data in chunks to minimize memory usage
+    QByteArray buffer;
+    qint64 total = 0;
+    while (1) {
+        dataReq(); // Request for data
+
+        if (readData(buffer) <= 0) {
+            kDebug(7109) << "readData <= 0";
+            break;
+        }
+
+        if ( !m_archiveFile->writeData( buffer.data(), buffer.size() ) ) {
+            kWarning() << "writeData failed";
+            error(ERR_COULD_NOT_WRITE, url.prettyUrl());
+            return;
+        }
+	kDebug() << "Wrote" << buffer.size() << "bytes";
+        total += buffer.size();
+    }
+
+    if ( !m_archiveFile->finishWriting( total /* to set file size */ ) ) {
+        kWarning() << "finishWriting failed";
+        error(ERR_COULD_NOT_WRITE, url.prettyUrl());
+        return;
+    }
+
+    kDebug() << "closing archive";
+    m_archiveFile->close();
+    finished();
+    kDebug() << "finished";
+}
+
+void ArchiveProtocol::close()
+{
+    kDebug(7109);
+    m_archiveFile->close();
+    finished();
+}
+
+void ArchiveProtocol::mkdir( const KUrl & url, int permissions )
+{
+    kDebug(7109) << url;
+    QString destName = relativePath(url.path());
+    Q_ASSERT(!destName.isEmpty());
+
+    const KArchiveEntry * ent = m_archiveFile->directory()->entry( destName );
+
+    if (ent) {
+        if (ent->isDirectory()) {
+            kDebug(7109) << url <<" already isdir !!";
+            error( KIO::ERR_DIR_ALREADY_EXIST, url.prettyUrl());
+        } else {
+            kDebug(7109) << url << " already exist !!";
+            error( KIO::ERR_FILE_ALREADY_EXIST, url.prettyUrl());
+        }
+        return;
+    }
+
+    time_t time = QDateTime::currentDateTime().toTime_t();
+    m_archiveFile->writeDir( destName, m_archiveFile->directory()->user(), m_archiveFile->directory()->group(),
+                             permissions, time /*atime*/, time /*mtime*/, time /*ctime*/ );
 
     finished();
 }

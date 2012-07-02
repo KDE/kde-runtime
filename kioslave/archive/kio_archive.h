@@ -26,21 +26,40 @@
 #include <kio/slavebase.h>
 
 class KArchive;
+class KArchiveDirectory;
 class KArchiveEntry;
 
-class ArchiveProtocol : public KIO::SlaveBase
+class ArchiveProtocol : public QObject, public KIO::SlaveBase
 {
+    Q_OBJECT
+
 public:
     ArchiveProtocol( const QByteArray &pool, const QByteArray &app );
     virtual ~ArchiveProtocol();
 
+    // browsing operations
     virtual void listDir( const KUrl & url );
     virtual void stat( const KUrl & url );
-    virtual void get( const KUrl & url );
+
+    // directory operations
+/*    virtual void copy( const KUrl& src, const KUrl &dest, int permissions, KIO::JobFlags flags );
+    virtual void del( const KUrl& kurl, bool isfile);*/
+    virtual void mkdir( const KUrl& kurl, int permissions );
+    //virtual void rename( const KUrl& src, const KUrl& dest, KIO::JobFlags flags );
+
+    // file operations
+    virtual void get( const KUrl& kurl );
+    virtual void put( const KUrl& kurl, int permissions, KIO::JobFlags flags );
+    //virtual void open( const KUrl& kurl, QIODevice::OpenMode mode );
+    //virtual void read( KIO::filesize_t bytesRequested );
+    //virtual void write( const QByteArray &fileData );
+    //virtual void seek( KIO::filesize_t offset );
+    virtual void close();
 
 private:
     void createRootUDSEntry( KIO::UDSEntry & entry );
     void createUDSEntry( const KArchiveEntry * tarEntry, KIO::UDSEntry & entry );
+    QString relativePath( const QString & fullPath );
 
     /**
      * \brief find, check and open the archive file

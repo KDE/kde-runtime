@@ -1,7 +1,7 @@
 [Protocol]
 exec=kio_archive
-protocol=zip
-archiveMimetype=application/zip
+protocol=p7zip
+archiveMimetype=application/x-7z-compressed
 input=filesystem
 output=filesystem
 listing=Name,Type,Size,Date,Access,Owner,Group,Link
@@ -15,6 +15,5 @@ opening=true
 moving=true
 
 source=true
-#DocPath=kioslave/zip/index.html
-Icon=package-x-generic
+Icon=application-x-7z-compressed
 Class=:local
