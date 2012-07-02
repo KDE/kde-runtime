@@ -23,6 +23,7 @@
 #include "cli7zplugin/cliplugin.h"
 #include "kerfuffle/archive.h"
 
+#include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
 
@@ -203,11 +204,18 @@ bool K7z::doWriteDir(const QString &name, const QString &user, const QString &gr
     if (tmpDir.isEmpty()) {
         tmpDir = QLatin1String("/tmp/");
     }
+    tmpDir += QString("K7z%1").arg(QCoreApplication::applicationPid());
+
+    int i = 0;
+    QString temp = tmpDir;
+    while (QDir(temp).exists()) {
+        temp = tmpDir + QString("_%1").arg(++i);
+    }
+    tmpDir = temp + QLatin1Char('/');
     QDir().mkpath(tmpDir + name);
 
-    // TODO: check if directory already exists and remove it if it does.
     if (!QDir(tmpDir + name).exists()) {
-        kDebug(7109) << "error creating directory " << (tmpDir + name);
+        kDebug(7109) << "error creating temporary directory " << (tmpDir + name);
         return false;
     }
 
