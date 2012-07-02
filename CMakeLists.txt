@@ -26,9 +26,6 @@ include(MacroLibrary)
 include(CheckFunctionExists)
 include(CheckIncludeFiles)
 
-find_package(KdepimLibs)
-macro_log_feature(KDEPIMLIBS_FOUND "KdepimLibs" "KDE PIM Libraries" "kdepimlibs" TRUE "" "Required to build Drkonqi")
-
 if(NOT WIN32)
 find_package(KDeclarative REQUIRED)
 macro_log_feature(KDeclarative_FOUND "libkdeclarative" "KDE Declarative (QML) support from kdelibs" "http://www.kde.org" TRUE "" "Required by corebindingsplugin (org.kde.plasma.core).")
