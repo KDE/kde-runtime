@@ -97,11 +97,11 @@ bool K7z::del( const QString & name, bool isFile )
 {
     Q_UNUSED(isFile);
 
-    // this is equivalent to "7z a archive.7z dir/subdir/"
+    // this is equivalent to "7z d archive.7z dir/file"
     d->process = new KProcess();
     QStringList args;
     args.append(QLatin1String("d"));
-    args.append(this->fileName()); // archive where we will create the new directory.
+    args.append(this->fileName()); // archive where we will delete the file from.
     args.append(name);
     d->process->setProgram(d->programPath, args);
     kDebug(7109) << "starting '" << d->programPath << args << "'";
