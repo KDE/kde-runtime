@@ -46,6 +46,14 @@ public:
      */
     virtual bool writeData(const char * data, qint64 size);
 
+    /**
+     * Delete a file or directory from the archive.
+     * @param path the relative path of the file or the directory in the archive.
+     * @param isFile true if the path is a file, false if it is a directory.
+     * @return true if successfull, false otherwise.
+     */
+    bool del( const QString & name, bool isFile );
+
 protected:
 
     /**

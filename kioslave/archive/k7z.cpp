@@ -93,6 +93,32 @@ bool K7z::writeData(const char * data, qint64 size)
     return true;
 }
 
+bool K7z::del( const QString & name, bool isFile )
+{
+    Q_UNUSED(isFile);
+
+    // this is equivalent to "7z a archive.7z dir/subdir/"
+    d->process = new KProcess();
+    QStringList args;
+    args.append(QLatin1String("d"));
+    args.append(this->fileName()); // archive where we will create the new directory.
+    args.append(name);
+    d->process->setProgram(d->programPath, args);
+    kDebug(7109) << "starting '" << d->programPath << args << "'";
+    d->process->start();
+
+    if (!d->process->waitForStarted()) {
+         return false;
+    }
+    kDebug(7109) << " started";
+
+    if (!d->process->waitForFinished()) {
+         return false;
+    }
+
+    return true;
+}
+
 bool K7z::openArchive(QIODevice::OpenMode mode)
 {
     if (mode == QIODevice::WriteOnly) {

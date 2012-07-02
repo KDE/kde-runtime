@@ -651,6 +651,48 @@ void ArchiveProtocol::close()
     finished();
 }
 
+void ArchiveProtocol::del( const KUrl & url, bool isFile )
+{
+    kDebug(7109) << url;
+
+    QString relPath = relativePath(url.path());
+    Q_ASSERT(!relPath.isEmpty());
+    kDebug(7109) << "Deleting" << relPath << "from" << url;
+
+    const KArchiveEntry * ent = m_archiveFile->directory()->entry( relPath );
+
+    if (!ent) {
+        error( ERR_DOES_NOT_EXIST, url.prettyUrl() );
+        return;
+    }
+
+    if (!m_archiveFile->open(QIODevice::WriteOnly)) {
+        kWarning() << " deleting" << relPath << "failed";
+        error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
+    }
+
+    if ( url.protocol() == "p7zip" ) {
+        QString relPath = relativePath(url.path());
+        Q_ASSERT(!relPath.isEmpty());
+
+        if (!(dynamic_cast<K7z *>(m_archiveFile)->del(relPath, isFile))) {
+            if (isFile) {
+                error( KIO::ERR_CANNOT_DELETE, url.prettyUrl() );
+            } else {
+                error( KIO::ERR_COULD_NOT_RMDIR, url.prettyUrl() );
+            }
+            m_archiveFile->close();
+            return;
+        }
+    } else {
+        error( KIO::ERR_UNSUPPORTED_ACTION, url.prettyUrl());
+        return;
+    }
+
+    m_archiveFile->close();
+    finished();
+}
+
 void ArchiveProtocol::mkdir( const KUrl & url, int permissions )
 {
     kDebug(7109) << url;
