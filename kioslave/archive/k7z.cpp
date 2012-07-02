@@ -203,9 +203,13 @@ bool K7z::doWriteDir(const QString &name, const QString &user, const QString &gr
     if (tmpDir.isEmpty()) {
         tmpDir = QLatin1String("/tmp/");
     }
-    QDir().mkdir(tmpDir + name);
+    QDir().mkpath(tmpDir + name);
 
     // TODO: check if directory already exists and remove it if it does.
+    if (!QDir(tmpDir + name).exists()) {
+        kDebug(7109) << "error creating directory " << (tmpDir + name);
+        return false;
+    }
 
     // this is equivalent to "7z a archive.7z dir/subdir/"
     d->process = new KProcess();
