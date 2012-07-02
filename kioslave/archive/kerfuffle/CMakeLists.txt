@@ -21,7 +21,7 @@ include_directories("..")
 
 #kde4_add_ui_files(kerfuffle_SRCS extractiondialog.ui adddialog.ui )
 
-kde4_add_library(kerfuffle SHARED ${kerfuffle_SRCS})
+kde4_add_library(kerfuffle STATIC ${kerfuffle_SRCS})
 
 target_link_libraries(kerfuffle ${KDE4_KFILE_LIBS} ${KDE4_KPARTS_LIBS})
 if (NOT WIN32)
