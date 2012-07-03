@@ -625,8 +625,9 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
             error(ERR_COULD_NOT_WRITE, url.prettyUrl());
             return;
         }
-	kDebug(7109) << "Wrote" << buffer.size() << "bytes";
+        kDebug(7109) << "Wrote" << buffer.size() << "bytes";
         total += buffer.size();
+        processedSize( total );
     }
 
     if ( !m_archiveFile->finishWriting( total /* to set file size */ ) ) {
@@ -733,7 +734,7 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
             error(ERR_COULD_NOT_WRITE, dest.prettyUrl());
             return;
         }
-	kDebug(7109) << "Wrote" << buffer.size() << "bytes";
+        kDebug(7109) << "Wrote" << buffer.size() << "bytes";
         /*total += buffer.size();
     }
     ioDevice->deleteLater();*/
