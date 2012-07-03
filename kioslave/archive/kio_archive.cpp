@@ -434,6 +434,7 @@ void ArchiveProtocol::get( const KUrl & url )
 
     if ( !archiveEntry )
     {
+        kDebug(7109) << "entry" << path << "not found";
         error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
         return;
     }
@@ -550,6 +551,27 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
     }
 #endif
 
+    QString path;
+    KIO::Error errorNum;
+    if ( !checkNewFile( url, path, errorNum ) )
+    {
+        if ( errorNum == KIO::ERR_CANNOT_OPEN_FOR_READING )
+        {
+            // If we cannot open, it might be a problem with the archive header (e.g. unsupported format)
+            // Therefore give a more specific error message
+            error( KIO::ERR_SLAVE_DEFINED,
+                   i18n( "Could not open the file, probably due to an unsupported file format.\n%1",
+                             url.prettyUrl() ) );
+            return;
+        }
+        else
+        {
+            // We have any other error
+            error( errorNum, url.prettyUrl() );
+            return;
+        }
+    }
+
     QString destName = relativePath(url.path());
     Q_ASSERT(!destName.isEmpty());
     kDebug(7109) << "Putting" << url << "as" << destName;
@@ -636,10 +658,13 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
         return;
     }
 
-    kDebug(7109) << "closing archive";
-    m_archiveFile->close();
     finished();
     kDebug(7109) << "finished";
+
+    // to force the archive to be re-read.
+    m_archiveFile->close();
+    delete m_archiveFile;
+    m_archiveFile = 0L;
 }
 
 void ArchiveProtocol::close()
@@ -652,6 +677,28 @@ void ArchiveProtocol::close()
 void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, KIO::JobFlags flags )
 {
     kDebug(7109) << src << dest;
+
+    QString path;
+    KIO::Error errorNum;
+    if ( !checkNewFile( src, path, errorNum ) )
+    {
+        if ( errorNum == KIO::ERR_CANNOT_OPEN_FOR_READING )
+        {
+            // If we cannot open, it might be a problem with the archive header (e.g. unsupported format)
+            // Therefore give a more specific error message
+            error( KIO::ERR_SLAVE_DEFINED,
+                   i18n( "Could not open the file, probably due to an unsupported file format.\n%1",
+                             src.prettyUrl() ) );
+            return;
+        }
+        else
+        {
+            // We have any other error
+            error( errorNum, src.prettyUrl() );
+            return;
+        }
+    }
+
     QString srcRelativePath = relativePath(src.path());
     kDebug(7109) << "srcRelativePath == " << srcRelativePath;
     Q_ASSERT(!srcRelativePath.isEmpty());
@@ -659,11 +706,13 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
     const KArchiveEntry * ent = m_archiveFile->directory()->entry( srcRelativePath );
 
     if (!ent) {
+        kDebug(7109) << "source file" << srcRelativePath << "not found";
         error( ERR_DOES_NOT_EXIST, src.prettyUrl() );
         return;
     }
 
     if (ent->isDirectory()) {
+        kDebug(7109) << "source file" << srcRelativePath << "is a directory";
         error( KIO::ERR_IS_DIRECTORY, src.prettyUrl() );
         return;
     }
@@ -689,6 +738,8 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
         error(KIO::ERR_CANNOT_OPEN_FOR_READING, src.prettyUrl());
         return;
     }
+
+    // TODO: do the copy in chuncks.
     QIODevice * ioDevice = srcArchiveFile->createDevice();
     ioDevice->open(QIODevice::ReadOnly);
     QByteArray buffer = ioDevice->readAll();
@@ -745,15 +796,38 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
         return;
     }
 
-    kDebug(7109) << "closing archive";
-    m_archiveFile->close();
-
     finished();
+
+    // to force the archive to be re-read.
+    m_archiveFile->close();
+    delete m_archiveFile;
+    m_archiveFile = 0L;
 }
 
 void ArchiveProtocol::del( const KUrl & url, bool isFile )
 {
     kDebug(7109) << url;
+
+    QString path;
+    KIO::Error errorNum;
+    if ( !checkNewFile( url, path, errorNum ) )
+    {
+        if ( errorNum == KIO::ERR_CANNOT_OPEN_FOR_READING )
+        {
+            // If we cannot open, it might be a problem with the archive header (e.g. unsupported format)
+            // Therefore give a more specific error message
+            error( KIO::ERR_SLAVE_DEFINED,
+                   i18n( "Could not open the file, probably due to an unsupported file format.\n%1",
+                             url.prettyUrl() ) );
+            return;
+        }
+        else
+        {
+            // We have any other error
+            error( errorNum, url.prettyUrl() );
+            return;
+        }
+    }
 
     QString relPath = relativePath(url.path());
     Q_ASSERT(!relPath.isEmpty());
@@ -767,6 +841,7 @@ void ArchiveProtocol::del( const KUrl & url, bool isFile )
     const KArchiveEntry * ent = m_archiveFile->directory()->entry( relPath );
 
     if (!ent) {
+        kDebug(7109) << "entry" << relPath << "not found";
         error( ERR_DOES_NOT_EXIST, url.prettyUrl() );
         return;
     }
@@ -786,7 +861,6 @@ void ArchiveProtocol::del( const KUrl & url, bool isFile )
             } else {
                 error( KIO::ERR_COULD_NOT_RMDIR, url.prettyUrl() );
             }
-            m_archiveFile->close();
             return;
         }
     } else {
@@ -794,13 +868,39 @@ void ArchiveProtocol::del( const KUrl & url, bool isFile )
         return;
     }
 
-    m_archiveFile->close();
     finished();
+
+    // to force the archive to be re-read.
+    m_archiveFile->close();
+    delete m_archiveFile;
+    m_archiveFile = 0L;
 }
 
 void ArchiveProtocol::mkdir( const KUrl & url, int permissions )
 {
     kDebug(7109) << url;
+
+    QString path;
+    KIO::Error errorNum;
+    if ( !checkNewFile( url, path, errorNum ) )
+    {
+        if ( errorNum == KIO::ERR_CANNOT_OPEN_FOR_READING )
+        {
+            // If we cannot open, it might be a problem with the archive header (e.g. unsupported format)
+            // Therefore give a more specific error message
+            error( KIO::ERR_SLAVE_DEFINED,
+                   i18n( "Could not open the file, probably due to an unsupported file format.\n%1",
+                             url.prettyUrl() ) );
+            return;
+        }
+        else
+        {
+            // We have any other error
+            error( errorNum, url.prettyUrl() );
+            return;
+        }
+    }
+
     QString destName = relativePath(url.path());
     Q_ASSERT(!destName.isEmpty());
 
@@ -825,6 +925,11 @@ void ArchiveProtocol::mkdir( const KUrl & url, int permissions )
     }
 
     finished();
+
+    // to force the archive to be re-read.
+    m_archiveFile->close();
+    delete m_archiveFile;
+    m_archiveFile = 0L;
 }
 
 void ArchiveProtocol::rename( const KUrl& src, const KUrl& dest, KIO::JobFlags flags )
