@@ -26,6 +26,7 @@ Item {
     property string dayStatus: "active";
 
     signal clicked(int clickedDay);
+    signal hovered(int hoveredDay);
 
     PlasmaCore.SvgItem {
         id: backgroundSvg;
@@ -53,7 +54,10 @@ Item {
         hoverEnabled: true;
 
         onClicked: parent.clicked(day);
-        onEntered: backgroundSvg.elementId = "hoverHighlight";
+        onEntered: {
+            backgroundSvg.elementId = "hoverHighlight";
+            parent.hovered(day);
+        }
         onExited: backgroundSvg.elementId = dayStatus;
     }
 

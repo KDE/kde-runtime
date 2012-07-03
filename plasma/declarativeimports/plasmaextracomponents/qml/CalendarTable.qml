@@ -28,6 +28,9 @@ Item {
     property variant weekDaysModel;
     property variant weeksModel;
     
+    signal dayClicked(int clickedDay);
+    signal dayHovered(int hoveredDay);
+
     PlasmaCore.Svg {
         id: calendarSvg;
         imagePath: "widgets/calendar";
@@ -122,6 +125,9 @@ Item {
                 height: ~~(daysGrid.height / daysGrid.rows) - 1;
 
                 day: index;
+
+                onClicked: calendar.dayClicked(clickedDay);
+                onHovered: calendar.dayHovered(hoveredDay);
             }
         }
     }
