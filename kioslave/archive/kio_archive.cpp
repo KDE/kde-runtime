@@ -105,13 +105,10 @@ bool ArchiveProtocol::checkNewFile( const KUrl & url, QString & path, KIO::Error
     // Close previous file
     if ( m_archiveFile )
     {
-        kDebug() << "Lamarque closing archive";
         m_archiveFile->close();
-        kDebug() << "Lamarque deleting archive";
         delete m_archiveFile;
         m_archiveFile = 0L;
     }
-    kDebug() << "Lamarque archive is now null";
 
     // Find where the tar file is in the full path
     int pos = 0;
