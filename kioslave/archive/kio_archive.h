@@ -42,7 +42,7 @@ public:
     virtual void stat( const KUrl & url );
 
     // directory operations
-    //virtual void copy( const KUrl& src, const KUrl &dest, int permissions, KIO::JobFlags flags );
+    virtual void copy( const KUrl& src, const KUrl &dest, int permissions, KIO::JobFlags flags );
     virtual void del( const KUrl& kurl, bool isFile);
     virtual void mkdir( const KUrl& kurl, int permissions );
     //virtual void rename( const KUrl& src, const KUrl& dest, KIO::JobFlags flags );

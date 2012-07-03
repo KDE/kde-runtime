@@ -648,6 +648,108 @@ void ArchiveProtocol::close()
     finished();
 }
 
+void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, KIO::JobFlags flags )
+{
+    kDebug(7109) << src << dest;
+    QString srcRelativePath = relativePath(src.path());
+    kDebug(7109) << "srcRelativePath == " << srcRelativePath;
+    Q_ASSERT(!srcRelativePath.isEmpty());
+
+    const KArchiveEntry * ent = m_archiveFile->directory()->entry( srcRelativePath );
+
+    if (!ent) {
+        error( ERR_DOES_NOT_EXIST, src.prettyUrl() );
+        return;
+    }
+
+    if (ent->isDirectory()) {
+        error( KIO::ERR_IS_DIRECTORY, src.prettyUrl() );
+        return;
+    }
+
+    QString destRelativePath = relativePath(dest.path());
+    kDebug(7109) << "destRelativePath == " << destRelativePath;
+    Q_ASSERT(!destRelativePath.isEmpty());
+
+    const KArchiveEntry * ent2 = m_archiveFile->directory()->entry( destRelativePath );
+
+    if (ent2) {
+        if (ent2->isDirectory()) {
+            error( KIO::ERR_DIR_ALREADY_EXIST, dest.prettyUrl() );
+            return;
+        } else if (!(flags & KIO::Overwrite))  {
+            error( KIO::ERR_FILE_ALREADY_EXIST, dest.prettyUrl() );
+            return;
+        }
+    }
+
+    const KArchiveFile * srcArchiveFile = dynamic_cast<const KArchiveFile *>(ent);
+    if (!srcArchiveFile) {
+        error(KIO::ERR_CANNOT_OPEN_FOR_READING, src.prettyUrl());
+        return;
+    }
+    QIODevice * ioDevice = srcArchiveFile->createDevice();
+    ioDevice->open(QIODevice::ReadOnly);
+    QByteArray buffer = ioDevice->readAll();
+    ioDevice->close();
+    ioDevice->deleteLater();
+
+    if (!m_archiveFile->open(QIODevice::WriteOnly)) {
+        kWarning() << " open" << m_archiveFile->fileName() << "failed";
+        error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyUrl());
+    }
+
+    const QString mtimeStr = metaData( "modified" );
+    time_t mtime = 0;
+    if ( !mtimeStr.isEmpty() ) {
+        QDateTime dt = QDateTime::fromString( mtimeStr, Qt::ISODate );
+        if ( dt.isValid() ) {
+            mtime = dt.toTime_t();
+            kDebug(7109) << "setting modified time to" << dt;
+        }
+    }
+
+    // TODO: set the missing metadata.
+    if (!m_archiveFile->prepareWriting(destRelativePath, m_archiveFile->directory()->user(), m_archiveFile->directory()->group(), 0 /*size*/,
+                                       permissions, 0 /*atime*/, mtime, 0 /*ctime*/))
+    {
+        kWarning() << " prepareWriting" << destRelativePath << "failed";
+        error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyUrl());
+        return;
+    }
+
+    // Read and write data in chunks to minimize memory usage.
+    /*QByteArray buffer;
+    QIODevice * ioDevice = srcArchiveFile->createDevice();
+    qint64 total = 0;
+    while (1) {
+        buffer = ioDevice->read(1024 * 1024);
+        if (buffer.isEmpty()) {
+            break;
+        }*/
+    
+        if ( !m_archiveFile->writeData( buffer.data(), buffer.size() ) ) {
+            kWarning() << "writeData failed";
+            error(ERR_COULD_NOT_WRITE, dest.prettyUrl());
+            return;
+        }
+	kDebug(7109) << "Wrote" << buffer.size() << "bytes";
+        /*total += buffer.size();
+    }
+    ioDevice->deleteLater();*/
+
+    if ( !m_archiveFile->finishWriting( /*total*/ buffer.size() /* to set file size */ ) ) {
+        kWarning() << "finishWriting failed";
+        error(ERR_COULD_NOT_WRITE, dest.prettyUrl());
+        return;
+    }
+
+    kDebug(7109) << "closing archive";
+    m_archiveFile->close();
+
+    finished();
+}
+
 void ArchiveProtocol::del( const KUrl & url, bool isFile )
 {
     kDebug(7109) << url;
