@@ -50,10 +50,6 @@ public:
     // file operations
     virtual void get( const KUrl& kurl );
     virtual void put( const KUrl& kurl, int permissions, KIO::JobFlags flags );
-    //virtual void open( const KUrl& kurl, QIODevice::OpenMode mode );
-    //virtual void read( KIO::filesize_t bytesRequested );
-    //virtual void write( const QByteArray &fileData );
-    //virtual void seek( KIO::filesize_t offset );
     virtual void close();
 
 private:
