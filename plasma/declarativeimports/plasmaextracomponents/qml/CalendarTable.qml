@@ -43,12 +43,12 @@ Item {
             left: parent.left;
             top: parent.top;
         }
-        width: parent.width;
+        width: ~~(parent.width / (daysGrid.columns + 1)) * (daysGrid.columns + 1) - 1;
         height: ~~(parent.height / (daysGrid.rows + 1)) - 1;
 
         svg: calendarSvg;
         elementId: "weekDayHeader";
-        
+ 
         Row {
             anchors {
                 fill: parent;
@@ -76,10 +76,11 @@ Item {
         anchors {
             left: parent.left;
             top: weekDaysHeader.bottom;
-            bottom: parent.bottom;
+            topMargin: 1;
         }
         width: ~~(parent.width / (daysGrid.columns + 1)) - 1;
-        
+        height: ~~(daysGrid.height / daysGrid.rows) * daysGrid.rows - 1;
+
         svg: calendarSvg;
         elementId: "weeksColumn";        
         
@@ -109,12 +110,14 @@ Item {
             top: weekDaysHeader.bottom;
             right: parent.right;
             bottom: parent.bottom;
+            leftMargin: 1;
+            topMargin: 1;
         }
-        
+ 
         spacing: 1;
         columns: 7;
         rows: 6;
-        
+ 
         Repeater {
             id: days;
 
