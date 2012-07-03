@@ -758,6 +758,11 @@ void ArchiveProtocol::del( const KUrl & url, bool isFile )
     Q_ASSERT(!relPath.isEmpty());
     kDebug(7109) << "Deleting" << relPath << "from" << url;
 
+    // when renaming files it can be closed at this point.
+    if (!m_archiveFile->isOpen()) {
+        m_archiveFile->open(QIODevice::ReadOnly);
+    }
+
     const KArchiveEntry * ent = m_archiveFile->directory()->entry( relPath );
 
     if (!ent) {
@@ -819,6 +824,14 @@ void ArchiveProtocol::mkdir( const KUrl & url, int permissions )
     }
 
     finished();
+}
+
+void ArchiveProtocol::rename( const KUrl& src, const KUrl& dest, KIO::JobFlags flags )
+{
+    kDebug(7109) << src << dest;
+
+    // kio is smart enough to do copy(src, dest) + del(src) actions to simulate renaming.
+    error( KIO::ERR_UNSUPPORTED_ACTION, src.prettyUrl() );
 }
 
 /*
