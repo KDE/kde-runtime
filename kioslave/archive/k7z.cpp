@@ -184,7 +184,8 @@ void K7z::addEntry(const Kerfuffle::ArchiveEntry & archiveEntry)
     Q_ASSERT(!entryName.isEmpty());
 
     if (archiveEntry[IsDirectory].toBool()) {
-        const KArchiveEntry * ent = rootDir()->entry(entryName);
+        QString path = QDir::cleanPath( name );
+        const KArchiveEntry * ent = rootDir()->entry(path);
         permissions = S_IFDIR | 0755;
 
         if (ent && ent->isDirectory()) {
