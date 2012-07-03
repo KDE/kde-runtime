@@ -610,6 +610,7 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
     if (!m_archiveFile->open(QIODevice::WriteOnly)) {
         kWarning() << " open" << m_archiveFile->fileName() << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
+        return;
     }
 
     const QString mtimeStr = metaData( "modified" );
@@ -914,6 +915,12 @@ void ArchiveProtocol::mkdir( const KUrl & url, int permissions )
             kDebug(7109) << url << " already exist !!";
             error( KIO::ERR_FILE_ALREADY_EXIST, url.prettyUrl());
         }
+        return;
+    }
+
+    if (!m_archiveFile->open(QIODevice::WriteOnly)) {
+        kWarning() << " open" << m_archiveFile->fileName() << "failed";
+        error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
         return;
     }
 
