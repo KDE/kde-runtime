@@ -1,6 +1,7 @@
 plugin plasmaextracomponentsplugin
 
 App 0.1 App.qml
+CalendarTable 0.1 CalendarTable.qml
 Heading 0.1 Heading.qml
 Paragraph 0.1 Paragraph.qml
 ScrollArea 0.1 ScrollArea.qml
