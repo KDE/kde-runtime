@@ -586,7 +586,7 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
     }
 
     if (!m_archiveFile->open(QIODevice::WriteOnly)) {
-        kWarning() << " open" << destName << "failed";
+        kWarning() << " open" << m_archiveFile->fileName() << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
     }
 
@@ -596,7 +596,7 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
         QDateTime dt = QDateTime::fromString( mtimeStr, Qt::ISODate );
         if ( dt.isValid() ) {
             mtime = dt.toTime_t();
-            kDebug() << "setting modified time to" << dt;
+            kDebug(7109) << "setting modified time to" << dt;
         }
     }
 
@@ -625,7 +625,7 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
             error(ERR_COULD_NOT_WRITE, url.prettyUrl());
             return;
         }
-	kDebug() << "Wrote" << buffer.size() << "bytes";
+	kDebug(7109) << "Wrote" << buffer.size() << "bytes";
         total += buffer.size();
     }
 
@@ -635,10 +635,10 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
         return;
     }
 
-    kDebug() << "closing archive";
+    kDebug(7109) << "closing archive";
     m_archiveFile->close();
     finished();
-    kDebug() << "finished";
+    kDebug(7109) << "finished";
 }
 
 void ArchiveProtocol::close()
