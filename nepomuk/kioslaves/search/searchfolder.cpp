@@ -178,14 +178,6 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
 
             // make sure we do not use these ugly names for display
             if ( !uds.contains( KIO::UDSEntry::UDS_DISPLAY_NAME ) ) {
-                if ( nieUrl.isEmpty() &&
-                        res.hasType( Nepomuk2::Vocabulary::PIMO::Thing() ) ) {
-                    if ( !res.pimoThing().groundingOccurrences().isEmpty() ) {
-                        res = res.pimoThing().groundingOccurrences().first();
-                        nieUrl = res.property(Nepomuk2::Vocabulary::NIE::url()).toUrl();
-                    }
-                }
-
                 if ( !nieUrl.isEmpty() ) {
                     uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, nieUrl.fileName() );
 
