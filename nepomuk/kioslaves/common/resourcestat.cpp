@@ -376,15 +376,6 @@ KUrl Nepomuk2::nepomukToFileUrl( const KUrl& url, bool evenMountIfNecessary )
 
     KUrl newURL;
 
-    //
-    // let's see if it is a pimo thing which refers to a file
-    //
-    if ( res.hasType( Nepomuk2::Vocabulary::PIMO::Thing() ) ) {
-        if ( !res.pimoThing().groundingOccurrences().isEmpty() ) {
-            res = res.pimoThing().groundingOccurrences().first();
-        }
-    }
-
     if ( isLocalFile( res ) ) {
         newURL = res.property( Vocabulary::NIE::url() ).toUrl();
     }
