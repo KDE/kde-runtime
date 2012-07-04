@@ -25,7 +25,7 @@
 #include <kio/global.h>
 #include <kio/slavebase.h>
 
-class KArchive;
+class KCliArchive;
 class KArchiveDirectory;
 class KArchiveEntry;
 
@@ -66,7 +66,7 @@ private:
      */
     bool checkNewFile( const KUrl & url, QString & path, KIO::Error& errorNum );
 
-    KArchive * m_archiveFile;
+    KCliArchive * m_archiveFile;
     QString m_archiveName;
     QString m_user, m_group;
     time_t m_mtime;

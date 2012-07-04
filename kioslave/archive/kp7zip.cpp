@@ -20,45 +20,24 @@
  */
 
 #include "kp7zip.h"
-#include "cli7zplugin/cliplugin.h"
-#include "kerfuffle/archive.h"
 
-#include <QCoreApplication>
 #include <QDir>
-#include <QFileInfo>
 
 #include <KDebug>
-#include <KProcess>
-#include <KStandardDirs>
-#include <ktemporaryfile.h>
 
 using namespace Kerfuffle;
 
-class KP7zip::KP7zipPrivate
-{
-public:
-    KP7zipPrivate()
-        : currentFile(0),
-          process(0),
-          tmpFile(0)
-    {}
-
-    QList<KP7zipFileEntry *> fileList;
-    KP7zipFileEntry * currentFile; // file currently being added to this archive
-    KProcess * process; // used to pipe data to the 7z command when adding a file to the archive.
-    KTemporaryFile * tmpFile; // just to prevent a Q_ASSERT in KArchive::open.
-    QString programPath; // path of 7z command.
-};
-
-
 KP7zip::KP7zip(const QString & fileName)
-    : KArchive(fileName), Cli7zPlugin(0, QVariantList() << QVariant(QFileInfo(fileName).absoluteFilePath())), d(new KP7zipPrivate)
+    : KCliArchive(fileName),
+      m_archiveType(ArchiveType7z),
+      m_state(ReadStateHeader)
 {
-    d->programPath = KStandardDirs::findExe(QLatin1String("7z"));
 }
 
 KP7zip::KP7zip(QIODevice * dev)
-    : KArchive(dev), Cli7zPlugin(0, QVariantList()), d(new KP7zipPrivate)
+    : KCliArchive(dev),
+      m_archiveType(ArchiveType7z),
+      m_state(ReadStateHeader)
 {
     // TODO: check if it is possible to implement QIODevice support.
     kDebug(7109) << "QIODevice is not supported";
@@ -66,414 +45,139 @@ KP7zip::KP7zip(QIODevice * dev)
 
 KP7zip::~KP7zip()
 {
-    kDebug();
-    if(isOpen()) {
-        close();
-    }
-    delete d;
-}
-
-bool KP7zip::writeData(const char * data, qint64 size)
-{
     kDebug(7109);
-    Q_ASSERT(d->process);
-
-    if (d->process->write(data, size) != size) {
-        return false;
-    }
-
-    kDebug(7109) << "data written";
-
-    return true;
 }
 
-bool KP7zip::del( const QString & name, bool isFile )
+ParameterList KP7zip::parameterList() const
 {
-    Q_UNUSED(isFile);
+    static ParameterList p;
 
-    // this is equivalent to "7z d archive.7z dir/file"
-    d->process = new KProcess();
-    QStringList args;
-    args.append(QLatin1String("d"));
-    args.append(this->fileName()); // archive where we will delete the file from.
-    args.append(name);
-    d->process->setProgram(d->programPath, args);
-    kDebug(7109) << "starting '" << d->programPath << args << "'";
-    d->process->start();
+    if (p.isEmpty()) {
+        //p[CaptureProgress] = true;
+        p[ListProgram] = p[ExtractProgram] = p[DeleteProgram] = p[AddProgram] = QLatin1String( "7z" );
 
-    if (!d->process->waitForStarted()) {
-         return false;
+        p[ListArgs] = QStringList() << QLatin1String( "l" ) << QLatin1String( "-slt" ) << QLatin1String( "$Archive" );
+        p[ExtractArgs] = QStringList() << QLatin1String( "$PreservePathSwitch" ) << QLatin1String( "$PasswordSwitch" ) << QLatin1String( "$Archive" ) << QLatin1String( "$Files" );
+        p[PreservePathSwitch] = QStringList() << QLatin1String( "x" ) << QLatin1String( "e" );
+        p[PasswordSwitch] = QStringList() << QLatin1String( "-p$Password" );
+        p[FileExistsExpression] = QLatin1String( "already exists. Overwrite with" );
+        p[WrongPasswordPatterns] = QStringList() << QLatin1String( "Wrong password" );
+        p[AddArgs] = QStringList() << QLatin1String( "a" ) << QLatin1String( "$Archive" ) << QLatin1String( "$Files" );
+        p[DeleteArgs] = QStringList() << QLatin1String( "d" ) << QLatin1String( "$Archive" ) << QLatin1String( "$Files" );
+
+        p[FileExistsInput] = QStringList()
+                             << QLatin1String( "Y" ) //overwrite
+                             << QLatin1String( "N" ) //skip
+                             << QLatin1String( "A" ) //overwrite all
+                             << QLatin1String( "S" ) //autoskip
+                             << QLatin1String( "Q" ) //cancel
+                             ;
+
+        p[PasswordPromptPattern] = QLatin1String("Enter password \\(will not be echoed\\) :");
     }
-    kDebug(7109) << " started";
 
-    if (!d->process->waitForFinished()) {
-         return false;
-    }
-
-    return true;
+    return p;
 }
 
-bool KP7zip::openArchive(QIODevice::OpenMode mode)
+bool KP7zip::readListLine(const QString& line)
 {
-    if (mode == QIODevice::WriteOnly) {
-        return true;
-    }
+    static const QLatin1String archiveInfoDelimiter1("--"); // 7z 9.13+
+    static const QLatin1String archiveInfoDelimiter2("----"); // 7z 9.04
+    static const QLatin1String entryInfoDelimiter("----------");
 
-    setArchive(this);
-    return list();
-}
-
-bool KP7zip::closeArchive()
-{
-    if (mode() & QIODevice::WriteOnly) {
-        if (d->tmpFile) {
-            delete d->tmpFile;
-            d->tmpFile = 0L;
+    switch (m_state) {
+    case ReadStateHeader:
+        if (line.startsWith(QLatin1String("Listing archive:"))) {
+            kDebug() << "Archive name: "
+                     << line.right(line.size() - 16).trimmed();
+        } else if ((line == archiveInfoDelimiter1) ||
+                   (line == archiveInfoDelimiter2)) {
+            m_state = ReadStateArchiveInformation;
+        } else if (line.contains(QLatin1String( "Error:" ))) {
+            kDebug() << line.mid(6);
         }
-        setDevice(0);
-    }
+        break;
 
-    kDebug() << "closed";
+    case ReadStateArchiveInformation:
+        if (line == entryInfoDelimiter) {
+            m_state = ReadStateEntryInformation;
+        } else if (line.startsWith(QLatin1String("Type ="))) {
+            const QString type = line.mid(7).trimmed();
+            kDebug() << "Archive type: " << type;
 
-    return true;
-}
-
-bool KP7zip::createDevice(QIODevice::OpenMode mode)
-{
-    kDebug();
-    bool b = false;
-
-    if (mode == QIODevice::WriteOnly) {
-        // the real device will be set in doPrepareWriting.
-        // this is to prevent a Q_ASSERT in KArchive::open.
-        if (!d->tmpFile) {
-            d->tmpFile = new KTemporaryFile();
+            if (type == QLatin1String("7z")) {
+                m_archiveType = ArchiveType7z;
+            } else if (type == QLatin1String("BZip2")) {
+                m_archiveType = ArchiveTypeBZip2;
+            } else if (type == QLatin1String("GZip")) {
+                m_archiveType = ArchiveTypeGZip;
+            } else if (type == QLatin1String("Tar")) {
+                m_archiveType = ArchiveTypeTar;
+            } else if (type == QLatin1String("Zip")) {
+                m_archiveType = ArchiveTypeZip;
+            } else {
+                // Should not happen
+                kWarning() << "Unsupported archive type: " << type;
+                return false;
+            }
         }
-        b = d->tmpFile->open();
-        setDevice(d->tmpFile);
-    } else {
-        b = KArchive::createDevice(mode);
-    }
-    return b;
-}
 
-void KP7zip::addEntry(const Kerfuffle::ArchiveEntry & archiveEntry)
-{
-    KArchiveEntry * entry;
-    int permissions = 0100644;
-    QString name = archiveEntry[FileName].toString();
-    QString entryName;
+        break;
 
-    // TODO: test if we really need the '/' at the end of all directory paths.
-    if (archiveEntry[IsDirectory].toBool()) {
-        name = name.remove(name.length()-1, 1);
-    }
+    case ReadStateEntryInformation:
+        if (line.startsWith(QLatin1String("Path ="))) {
+            const QString entryFilename =
+                QDir::fromNativeSeparators(line.mid(6).trimmed());
+            m_currentArchiveEntry.clear();
+            m_currentArchiveEntry[FileName] = entryFilename;
+            m_currentArchiveEntry[InternalID] = entryFilename;
+        } else if (line.startsWith(QLatin1String("Size = "))) {
+            m_currentArchiveEntry[ Size ] = line.mid(7).trimmed();
+        } else if (line.startsWith(QLatin1String("Packed Size = "))) {
+            // #236696: 7z files only show a single Packed Size value
+            //          corresponding to the whole archive.
+            if (m_archiveType != ArchiveType7z) {
+                m_currentArchiveEntry[CompressedSize] = line.mid(14).trimmed();
+            }
+        } else if (line.startsWith(QLatin1String("Modified = "))) {
+            m_currentArchiveEntry[ Timestamp ] =
+                QDateTime::fromString(line.mid(11).trimmed(),
+                                      QLatin1String( "yyyy-MM-dd hh:mm:ss" ));
+        } else if (line.startsWith(QLatin1String("Attributes = "))) {
+            const QString attributes = line.mid(13).trimmed();
 
-    int pos = name.lastIndexOf(QLatin1Char('/'));
-    if (pos == -1) {
-        entryName = name;
-    } else {
-        entryName = name.mid(pos + 1);
-    }
-    Q_ASSERT(!entryName.isEmpty());
+            const bool isDirectory = attributes.startsWith(QLatin1Char( 'D' ));
+            m_currentArchiveEntry[ IsDirectory ] = isDirectory;
+            if (isDirectory) {
+                const QString directoryName =
+                    m_currentArchiveEntry[FileName].toString();
+                if (!directoryName.endsWith(QLatin1Char( '/' ))) {
+                    const bool isPasswordProtected = (line.at(12) == QLatin1Char( '+' ));
+                    m_currentArchiveEntry[FileName] =
+                        m_currentArchiveEntry[InternalID] = QString(directoryName + QLatin1Char( '/' ));
+                    m_currentArchiveEntry[ IsPasswordProtected ] =
+                        isPasswordProtected;
+                }
+            }
 
-    if (archiveEntry[IsDirectory].toBool()) {
-        QString path = QDir::cleanPath( name );
-        const KArchiveEntry * ent = rootDir()->entry(path);
-        permissions = S_IFDIR | 0755;
-
-        if (ent && ent->isDirectory()) {
-            //kDebug(7109) << "directory" << name << "already exists, NOT going to add it again";
-            entry = 0;
-        } else {
-            //kDebug(7109) << "creating KArchiveDirectory, entryName= " << entryName << ", name=" << name;
-            entry = new KArchiveDirectory(this, entryName, permissions, archiveEntry[Timestamp].toDateTime().toTime_t(), rootDir()->user(), rootDir()->group(), QString());
+            m_currentArchiveEntry[ Permissions ] = attributes.mid(1);
+        } else if (line.startsWith(QLatin1String("CRC = "))) {
+            m_currentArchiveEntry[ CRC ] = line.mid(6).trimmed();
+        } else if (line.startsWith(QLatin1String("Method = "))) {
+            m_currentArchiveEntry[ Method ] = line.mid(9).trimmed();
+        } else if (line.startsWith(QLatin1String("Encrypted = ")) &&
+                   line.size() >= 13) {
+            m_currentArchiveEntry[ IsPasswordProtected ] = (line.at(12) == QLatin1Char( '+' ));
+        } else if (line.startsWith(QLatin1String("Block = "))) {
+            if (m_currentArchiveEntry.contains(FileName)) {
+                //entry(m_currentArchiveEntry);
+                addEntry(m_currentArchiveEntry);
+            }
         }
-    } else {
-        //kDebug(7109) << "creating KP7zipFileEntry, entryName= " << entryName << ", name=" << name;
-        entry = new KP7zipFileEntry(this, entryName, permissions, archiveEntry[Timestamp].toDateTime().toTime_t(),
-                                 rootDir()->user(), rootDir()->group(),
-                                 QString() /*symlink*/, name, 0 /*dataoffset*/,
-                                 archiveEntry[Size].toInt(), 0 /*cmethod*/, archiveEntry[CompressedSize].toInt());
+        break;
     }
-
-    if (entry) {
-        if (pos == -1) {
-            rootDir()->addEntry(entry);
-        } else {
-            // In some tar files we can find dir/./file => call cleanPath
-            QString path = QDir::cleanPath(name.left(pos));
-            // Ensure container directory exists, create otherwise
-            KArchiveDirectory * tdir = findOrCreate(path);
-            tdir->addEntry(entry);
-        }
-    }
-}
-
-bool KP7zip::doWriteDir(const QString &name, const QString &user, const QString &group,
-                       mode_t perm, time_t atime, time_t mtime, time_t ctime)
-{
-    kDebug(7109);
-
-    if (d->process) {
-        d->process->waitForFinished();
-        delete d->process;
-    }
-
-    // we need to create the directory to be added in the filesystem before running the 7z command.
-    QString tmpDir = KGlobal::dirs()->findDirs("tmp", "")[0];
-    if (tmpDir.isEmpty()) {
-        tmpDir = QLatin1String("/tmp/");
-    }
-    tmpDir += QString("KP7zip%1").arg(QCoreApplication::applicationPid());
-
-    int i = 0;
-    QString temp = tmpDir;
-    while (QDir(temp).exists()) {
-        temp = tmpDir + QString("_%1").arg(++i);
-    }
-    tmpDir = temp + QLatin1Char('/');
-    QDir().mkpath(tmpDir + name);
-
-    if (!QDir(tmpDir + name).exists()) {
-        kDebug(7109) << "error creating temporary directory " << (tmpDir + name);
-        return false;
-    }
-
-    // this is equivalent to "7z a archive.7z dir/subdir/"
-    d->process = new KProcess();
-    d->process->setWorkingDirectory(tmpDir);
-    QStringList args;
-    args.append(QLatin1String("a"));
-    args.append(this->fileName()); // archive where we will create the new directory.
-    args.append(name);
-    d->process->setProgram(d->programPath, args);
-    kDebug(7109) << "starting '" << d->programPath << args << "'";
-    d->process->start();
-
-    if (!d->process->waitForStarted()) {
-         return false;
-    }
-    kDebug(7109) << " started";
-
-    if (!d->process->waitForFinished()) {
-         return false;
-    }
-
-    QDir().rmpath(tmpDir + name);
-
-    //setDevice(d->process);
 
     return true;
 }
 
-bool KP7zip::doWriteSymLink(const QString &name, const QString &target,
-                         const QString &user, const QString &group,
-                         mode_t perm, time_t atime, time_t mtime, time_t ctime)
-{
-    kDebug(7109);
 
-    // TODO: maybe copy name to d->currentFile.
-
-    return true;
-}
-
-bool KP7zip::doPrepareWriting(const QString & name, const QString & user,
-                           const QString & group, qint64 /*size*/, mode_t perm,
-                           time_t atime, time_t mtime, time_t ctime)
-{
-    kDebug(7109);
-    if (!isOpen()) {
-        kWarning(7109) << "You must open the 7z file before writing to it";
-        return false;
-    }
-
-    // accept WriteOnly and ReadWrite
-    if (!(mode() & QIODevice::WriteOnly)) {
-        kWarning(7109) << "You must open the 7z file for writing";
-        return false;
-    }
-
-    // delete entries in the filelist with the same fileName as the one we want
-    // to save, so that we don't have duplicate file entries when viewing the zip
-    // with konqi...
-    // CAUTION: the old file itself is still in the zip and won't be removed !!!
-    QMutableListIterator<KP7zipFileEntry *> it(d->fileList);
-    kDebug(7109) << "fileName to write: " << name;
-    
-    while(it.hasNext()) {
-        it.next();
-
-        kDebug(7109) << "prepfileName: " << it.value()->path();
-        if (name == it.value()->path()) {
-            kDebug(7109) << "removing following entry: " << it.value()->path();
-            delete it.value();
-            it.remove();
-        }
-    }
-
-    // Find or create parent dir
-    KArchiveDirectory * parentDir = rootDir();
-    QString fileName(name);
-    int i = name.lastIndexOf(QLatin1Char('/'));
-    if (i != -1) {
-        QString dir = name.left(i);
-        fileName = name.mid(i + 1);
-        kDebug(7109) << "ensuring" << dir << "exists. fileName=" << fileName;
-        parentDir = findOrCreate(dir);
-    }
-
-    // construct a KP7zipFileEntry and add it to list
-    KP7zipFileEntry * e = new KP7zipFileEntry(this, fileName, perm, mtime, user, group, QString(),
-                                        name, 0 /*dataoffset*/,
-                                        0 /*size unknown yet*/, 0 /*cmethod*/, 0 /*csize unknown yet*/);
-    
-    parentDir->addEntry(e);
-    d->fileList.append(e);
-    d->currentFile = e;
-
-    if (d->process) {
-        d->process->waitForFinished();
-        delete d->process;
-    }
-
-    // TODO: maybe use KSaveFile to make this process more secure (KSaveFile is used to implement rollback).
-
-    // this is equivalent to "cat dir/file | 7z -sidir/file a archive.7z"
-    d->process = new KProcess();
-    QStringList args;
-    args.append(QLatin1String("-si") + name); // name is the filename relative to the archive.
-    args.append(QLatin1String("a")); // TODO: use "u" if file already exists.
-    args.append(this->fileName()); // archive we will add the new file to.
-    d->process->setProgram(d->programPath, args);
-    kDebug(7109) << "starting '" << d->programPath << args << "'";
-    d->process->start();
-
-    if (!d->process->waitForStarted()) {
-         return false;
-    }
-    kDebug(7109) << " started";
-    setDevice(d->process);
-
-    return true;
-}
-
-bool KP7zip::doFinishWriting(qint64 size)
-{
-    kDebug(7109);
-
-    Q_ASSERT(d->currentFile);
-    Q_ASSERT(d->process);
-    d->currentFile->setSize(size);
-
-    // TODO: calcule the compressed size.
-    //d->currentFile->setCompressedSize(csize);
-
-    d->process->closeWriteChannel();
-
-    if (!d->process->waitForFinished()) {
-         return false;
-    }
-
-    d->process->deleteLater();
-    d->process = 0L;
-    d->currentFile = 0L;
-
-    kDebug() << "finished";
-
-    return true;
-}
-
-void KP7zip::virtual_hook(int id, void * data)
-{
-    kDebug(7109);
-    KArchive::virtual_hook(id, data);
-}
-
-/***************************/
-class KP7zipFileEntry::KP7zipFileEntryPrivate
-{
-public:
-    KP7zipFileEntryPrivate()
-    : crc(0),
-      compressedSize(0),
-      headerStart(0),
-      encoding(0)
-    {}
-    unsigned long crc;
-    qint64        compressedSize;
-    qint64        headerStart;
-    int           encoding;
-    QString       path;
-
-    KP7zip * q;
-};
-
-KP7zipFileEntry::KP7zipFileEntry(KP7zip * zip, const QString & name, int permissions, int date,
-                           const QString & user, const QString & group, const QString & symlink,
-                           const QString & path, qint64 start, qint64 uncompressedSize,
-                           int encoding, qint64 compressedSize)
- : KArchiveFile(zip, name, permissions, date, user, group, symlink, start, uncompressedSize),
-   d(new KP7zipFileEntryPrivate)
-{
-    d->path = path;
-    d->encoding = encoding;
-    d->compressedSize = compressedSize;
-    d->q = zip;
-}
-
-KP7zipFileEntry::~KP7zipFileEntry()
-{
-    delete d;
-}
-
-const QString &KP7zipFileEntry::path() const
-{
-    return d->path;
-}
-
-QByteArray KP7zipFileEntry::data() const
-{
-    QIODevice * dev = createDevice();
-    QByteArray arr;
-
-    if (dev) {
-        arr = dev->readAll();
-        delete dev;
-    }
-
-    return arr;
-}
-
-QIODevice* KP7zipFileEntry::createDevice() const
-{
-    QList<QVariant> filesToExtract;
-    filesToExtract.append(QVariant::fromValue(path()));
-
-    QString tmpDir = KGlobal::dirs()->findDirs("tmp", "")[0];
-    if (tmpDir.isEmpty()) {
-        tmpDir = QLatin1String("/tmp/");
-    }
-
-    QString filePath = tmpDir + path();
-    QString destDir = filePath;
-    int temp = filePath.lastIndexOf(QLatin1Char('/'));
-    if (temp != -1) {
-        destDir = filePath.left(temp);
-    }
-    QDir().mkpath(destDir);
-
-    kDebug(7109) << "temporary file is about to be saved in" << destDir;
-
-    // 7z command stalls asking what to do when file already exists, so make
-    // sure it does not.
-    if (QFile::exists(filePath)) {
-        QFile::remove(filePath);
-    }
-
-    d->q->copyFiles(filesToExtract, destDir, ExtractionOptions());
-
-    // according to the documentation the caller of this method is responsible
-    // for deleting the QIODevice returned here.
-    return new QFile(filePath);
-}

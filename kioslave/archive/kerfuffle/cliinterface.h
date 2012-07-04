@@ -263,7 +263,7 @@ public:
      */
     void setEscapedCharacters(const QString& characters);
 
-private:
+//private:
     void substituteListVariables(QStringList& params);
 
     void cacheParameterList();

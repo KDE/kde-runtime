@@ -22,12 +22,12 @@
 #ifndef KP7ZIP_H
 #define KP7ZIP_H
 
-#include "cliplugins/cli7zplugin/cliplugin.h"
+#include "kcliarchive.h"
 
-#include <karchive.h>
-
-class KP7zip: public KArchive, public Cli7zPlugin
+class KP7zip: public KCliArchive
 {
+    Q_OBJECT
+
 public:
     KP7zip(const QString& filename);
 
@@ -38,72 +38,28 @@ public:
 
     virtual ~KP7zip();
 
-    /**
-     * Write data to a file that has been created using prepareWriting().
-     * @param data a pointer to the data
-     * @param size the size of the chunk
-     * @return true if successful, false otherwise
-     */
-    virtual bool writeData(const char * data, qint64 size);
-
-    /**
-     * Delete a file or directory from the archive.
-     * @param path the relative path of the file or the directory in the archive.
-     * @param isFile true if the path is a file, false if it is a directory.
-     * @return true if successfull, false otherwise.
-     */
-    bool del( const QString & name, bool isFile );
-
 protected:
-
-    /**
-     * Opens the archive for reading.
-     * Parses the directory listing of the archive
-     * and creates the KArchiveDirectory/KArchiveFile entries.
-     * @param mode the mode of the file
-     */
-    virtual bool openArchive(QIODevice::OpenMode mode);
-
-    /**
-     * Closes the archive
-     */
-    virtual bool closeArchive();
-
-    /**
-     * create the QIODevice to read from & write to the archive.
-     */
-    virtual bool createDevice(QIODevice::OpenMode mode);
-
-    // Reimplemented from KArchive
-    virtual bool doWriteDir(const QString & name, const QString & user,
-                            const QString & group, mode_t perm, time_t atime,
-                            time_t mtime, time_t ctime);
-
-    // Reimplemented from KArchive
-    virtual bool doWriteSymLink(const QString & name, const QString & target,
-                                const QString & user, const QString & group,
-                                mode_t perm, time_t atime, time_t mtime, time_t ctime);
-
-    // Reimplemented from KArchive
-    virtual bool doPrepareWriting(const QString & name, const QString & user,
-                                  const QString & group, qint64 size, mode_t perm,
-                                  time_t atime, time_t mtime, time_t ctime);
-
-    /**
-     * Write data to a file that has been created using prepareWriting().
-     * @param size the size of the file
-     * @return true if successful, false otherwise
-     */
-    virtual bool doFinishWriting(qint64 size);
-
-    virtual void virtual_hook(int id, void * data);
+    virtual Kerfuffle::ParameterList parameterList() const;
+    virtual bool readListLine(const QString &line);
 
 private:
-    class KP7zipPrivate;
-    KP7zipPrivate * const d;
-    friend class Cli7zPlugin;
+    enum ArchiveType {
+	ArchiveType7z = 0,
+	ArchiveTypeBZip2,
+	ArchiveTypeGZip,
+	ArchiveTypeTar,
+	ArchiveTypeZip
+    };
 
-    void addEntry(const Kerfuffle::ArchiveEntry & archiveEntry);
+    enum ReadState {
+	ReadStateHeader = 0,
+	ReadStateArchiveInformation,
+	ReadStateEntryInformation
+    };
+
+    ArchiveType m_archiveType;
+    Kerfuffle::ArchiveEntry m_currentArchiveEntry;
+    ReadState m_state;
 };
 
 /**

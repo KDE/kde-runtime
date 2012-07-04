@@ -173,7 +173,7 @@ bool ArchiveProtocol::checkNewFile( const KUrl & url, QString & path, KIO::Error
     }
 
     // Open new file
-    if ( url.protocol() == "tar" ) {
+    /*if ( url.protocol() == "tar" ) {
         kDebug(7109) << "Opening KTar on" << archiveFile;
         m_archiveFile = new KTar( archiveFile );
     } else if ( url.protocol() == "ar" ) {
@@ -182,7 +182,7 @@ bool ArchiveProtocol::checkNewFile( const KUrl & url, QString & path, KIO::Error
     } else if ( url.protocol() == "zip" ) {
         kDebug(7109) << "Opening KZip on " << archiveFile;
         m_archiveFile = new KZip( archiveFile );
-    } else if ( url.protocol() == "p7zip" ) {
+    } else*/ if ( url.protocol() == "p7zip" ) {
         kDebug(7109) << "Opening KP7zip on " << archiveFile;
         m_archiveFile = new KP7zip( archiveFile );
     } else {
@@ -191,7 +191,7 @@ bool ArchiveProtocol::checkNewFile( const KUrl & url, QString & path, KIO::Error
         return false;
     }
 
-    if ( !m_archiveFile->open( QIODevice::ReadOnly ) )
+    if ( !(static_cast<KArchive *>(m_archiveFile))->open( QIODevice::ReadOnly ) )
     {
         kDebug(7109) << "Opening" << archiveFile << "failed.";
         delete m_archiveFile;
@@ -607,7 +607,7 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
         }
     }
 
-    if (!m_archiveFile->open(QIODevice::WriteOnly)) {
+    if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
         kWarning() << " open" << m_archiveFile->fileName() << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
         return;
@@ -747,7 +747,7 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
     ioDevice->close();
     ioDevice->deleteLater();
 
-    if (!m_archiveFile->open(QIODevice::WriteOnly)) {
+    if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
         kWarning() << " open" << m_archiveFile->fileName() << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyUrl());
     }
@@ -836,7 +836,7 @@ void ArchiveProtocol::del( const KUrl & url, bool isFile )
 
     // when renaming files it can be closed at this point.
     if (!m_archiveFile->isOpen()) {
-        m_archiveFile->open(QIODevice::ReadOnly);
+        static_cast<KArchive *>(m_archiveFile)->open(QIODevice::ReadOnly);
     }
 
     const KArchiveEntry * ent = m_archiveFile->directory()->entry( relPath );
@@ -847,16 +847,13 @@ void ArchiveProtocol::del( const KUrl & url, bool isFile )
         return;
     }
 
-    if (!m_archiveFile->open(QIODevice::WriteOnly)) {
+    if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
         kWarning() << " deleting" << relPath << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
     }
 
     if ( url.protocol() == "p7zip" ) {
-        QString relPath = relativePath(url.path());
-        Q_ASSERT(!relPath.isEmpty());
-
-        if (!(dynamic_cast<KP7zip *>(m_archiveFile)->del(relPath, isFile))) {
+        if (m_archiveFile->del(relPath, isFile)) {
             if (isFile) {
                 error( KIO::ERR_CANNOT_DELETE, url.prettyUrl() );
             } else {
@@ -918,7 +915,7 @@ void ArchiveProtocol::mkdir( const KUrl & url, int permissions )
         return;
     }
 
-    if (!m_archiveFile->open(QIODevice::WriteOnly)) {
+    if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
         kWarning() << " open" << m_archiveFile->fileName() << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
         return;
