@@ -38,13 +38,11 @@ class K7z::K7zPrivate
 {
 public:
     K7zPrivate()
-        : cli7zPlugin(0),
-          currentFile(0),
+        : currentFile(0),
           process(0),
           tmpFile(0)
     {}
 
-    Cli7zPlugin * cli7zPlugin;
     QList<K7zFileEntry *> fileList;
     K7zFileEntry * currentFile; // file currently being added to this archive
     KProcess * process; // used to pipe data to the 7z command when adding a file to the archive.
@@ -54,17 +52,13 @@ public:
 
 
 K7z::K7z(const QString & fileName)
-    : KArchive(fileName), d(new K7zPrivate)
+    : KArchive(fileName), Cli7zPlugin(0, QVariantList() << QVariant(QFileInfo(fileName).absoluteFilePath())), d(new K7zPrivate)
 {
-    QVariantList args;
-    args.append(QVariant(QFileInfo(fileName).absoluteFilePath()));
-
-    d->cli7zPlugin = new Cli7zPlugin(0, args);
     d->programPath = KStandardDirs::findExe(QLatin1String("7z"));
 }
 
 K7z::K7z(QIODevice * dev)
-    : KArchive(dev), d(new K7zPrivate)
+    : KArchive(dev), Cli7zPlugin(0, QVariantList()), d(new K7zPrivate)
 {
     // TODO: check if it is possible to implement QIODevice support.
     kDebug(7109) << "QIODevice is not supported";
@@ -125,8 +119,8 @@ bool K7z::openArchive(QIODevice::OpenMode mode)
         return true;
     }
 
-    d->cli7zPlugin->setArchive(this);
-    return d->cli7zPlugin->list();
+    setArchive(this);
+    return list();
 }
 
 bool K7z::closeArchive()
@@ -394,11 +388,6 @@ void K7z::virtual_hook(int id, void * data)
 {
     kDebug(7109);
     KArchive::virtual_hook(id, data);
-}
-
-void K7z::copyFiles(const QList<QVariant> & files, const QString & destinationDirectory, ExtractionOptions options)
-{
-    d->cli7zPlugin->copyFiles(files, destinationDirectory, options);
 }
 
 /***************************/

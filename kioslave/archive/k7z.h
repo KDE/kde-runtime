@@ -22,11 +22,11 @@
 #ifndef K7Z_H
 #define K7Z_H
 
-#include "kerfuffle/cliinterface.h"
+#include "cliplugins/cli7zplugin/cliplugin.h"
 
 #include <karchive.h>
 
-class K7z: public KArchive
+class K7z: public KArchive, public Cli7zPlugin
 {
 public:
     K7z(const QString& filename);
@@ -102,10 +102,8 @@ private:
     class K7zPrivate;
     K7zPrivate * const d;
     friend class Cli7zPlugin;
-    friend class K7zFileEntry;
 
     void addEntry(const Kerfuffle::ArchiveEntry & archiveEntry);
-    void copyFiles(const QList<QVariant> & files, const QString & destinationDirectory, Kerfuffle::ExtractionOptions options);
 };
 
 /**

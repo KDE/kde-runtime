@@ -105,7 +105,7 @@ bool Cli7zPlugin::readListLine(const QString& line)
 
             if (type == QLatin1String("7z")) {
                 m_archiveType = ArchiveType7z;
-            } /*else if (type == QLatin1String("BZip2")) {
+            } else if (type == QLatin1String("BZip2")) {
                 m_archiveType = ArchiveTypeBZip2;
             } else if (type == QLatin1String("GZip")) {
                 m_archiveType = ArchiveTypeGZip;
@@ -113,7 +113,7 @@ bool Cli7zPlugin::readListLine(const QString& line)
                 m_archiveType = ArchiveTypeTar;
             } else if (type == QLatin1String("Zip")) {
                 m_archiveType = ArchiveTypeZip;
-            }*/ else {
+            } else {
                 // Should not happen
                 kWarning() << "Unsupported archive type: " << type;
                 return false;
