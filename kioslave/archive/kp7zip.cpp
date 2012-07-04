@@ -88,13 +88,13 @@ bool KP7zip::readListLine(const QString& line)
     switch (m_state) {
     case ReadStateHeader:
         if (line.startsWith(QLatin1String("Listing archive:"))) {
-            kDebug() << "Archive name: "
+            kDebug(7109) << "Archive name: "
                      << line.right(line.size() - 16).trimmed();
         } else if ((line == archiveInfoDelimiter1) ||
                    (line == archiveInfoDelimiter2)) {
             m_state = ReadStateArchiveInformation;
         } else if (line.contains(QLatin1String( "Error:" ))) {
-            kDebug() << line.mid(6);
+            kDebug(7109) << line.mid(6);
         }
         break;
 
@@ -102,18 +102,18 @@ bool KP7zip::readListLine(const QString& line)
         if (line == entryInfoDelimiter) {
             m_state = ReadStateEntryInformation;
         } else if (line.startsWith(QLatin1String("Type ="))) {
-            const QString type = line.mid(7).trimmed();
-            kDebug() << "Archive type: " << type;
+            const QString type = line.mid(7).trimmed().toLower();
+            kDebug(7109) << "Archive type: " << type;
 
             if (type == QLatin1String("7z")) {
                 m_archiveType = ArchiveType7z;
-            } else if (type == QLatin1String("BZip2")) {
+            } else if (type == QLatin1String("bzip2")) {
                 m_archiveType = ArchiveTypeBZip2;
-            } else if (type == QLatin1String("GZip")) {
+            } else if (type == QLatin1String("gzip")) {
                 m_archiveType = ArchiveTypeGZip;
-            } else if (type == QLatin1String("Tar")) {
+            } else if (type == QLatin1String("tar")) {
                 m_archiveType = ArchiveTypeTar;
-            } else if (type == QLatin1String("Zip")) {
+            } else if (type == QLatin1String("zip")) {
                 m_archiveType = ArchiveTypeZip;
             } else {
                 // Should not happen
@@ -125,6 +125,7 @@ bool KP7zip::readListLine(const QString& line)
         break;
 
     case ReadStateEntryInformation:
+        kDebug(7109) << "Line: " << line;
         if (line.startsWith(QLatin1String("Path ="))) {
             const QString entryFilename =
                 QDir::fromNativeSeparators(line.mid(6).trimmed());
@@ -168,9 +169,10 @@ bool KP7zip::readListLine(const QString& line)
         } else if (line.startsWith(QLatin1String("Encrypted = ")) &&
                    line.size() >= 13) {
             m_currentArchiveEntry[ IsPasswordProtected ] = (line.at(12) == QLatin1Char( '+' ));
-        } else if (line.startsWith(QLatin1String("Block = "))) {
+        } else if (line.startsWith(QLatin1String("Block = ")) /*    7z */ ||
+                   line.startsWith(QLatin1String("Link"))     /*   tar */ ||
+                   line.startsWith(QLatin1String("Version"))  /*   zip */ ) {
             if (m_currentArchiveEntry.contains(FileName)) {
-                //entry(m_currentArchiveEntry);
                 addEntry(m_currentArchiveEntry);
             }
         }

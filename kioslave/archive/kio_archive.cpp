@@ -18,6 +18,7 @@
 */
 
 #include "kio_archive.h"
+#include "kp7zip.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -30,10 +31,6 @@
 #include <kurl.h>
 #include <kdebug.h>
 #include <kcomponentdata.h>
-#include <ktar.h>
-#include <kzip.h>
-#include <kp7zip.h>
-#include <kar.h>
 #include <kmimetype.h>
 #include <klocale.h>
 #include <kde_file.h>
@@ -173,16 +170,16 @@ bool ArchiveProtocol::checkNewFile( const KUrl & url, QString & path, KIO::Error
     }
 
     // Open new file
-    /*if ( url.protocol() == "tar" ) {
-        kDebug(7109) << "Opening KTar on" << archiveFile;
-        m_archiveFile = new KTar( archiveFile );
-    } else if ( url.protocol() == "ar" ) {
+    if ( url.protocol() == "tar" ) {
+        kDebug(7109) << "Opening KP7zip on" << archiveFile;
+        m_archiveFile = new KP7zip( archiveFile );
+    } /*else if ( url.protocol() == "ar" ) {
         kDebug(7109) << "Opening KAr on " << archiveFile;
         m_archiveFile = new KAr( archiveFile );
-    } else if ( url.protocol() == "zip" ) {
-        kDebug(7109) << "Opening KZip on " << archiveFile;
-        m_archiveFile = new KZip( archiveFile );
-    } else*/ if ( url.protocol() == "p7zip" ) {
+    }*/ else if ( url.protocol() == "zip" ) {
+        kDebug(7109) << "Opening KP7zip on " << archiveFile;
+        m_archiveFile = new KP7zip( archiveFile );
+    } else if ( url.protocol() == "p7zip" ) {
         kDebug(7109) << "Opening KP7zip on " << archiveFile;
         m_archiveFile = new KP7zip( archiveFile );
     } else {
@@ -543,14 +540,6 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
 {
     kDebug(7109);
 
-#if 0
-    if (url.protocol() != QLatin1String("p7zip")) {
-        kDebug(7109) << "put operation not supported by protocol" << url.protocol();
-        finished();
-        return;
-    }
-#endif
-
     QString path;
     KIO::Error errorNum;
     if ( !checkNewFile( url, path, errorNum ) )
@@ -852,17 +841,12 @@ void ArchiveProtocol::del( const KUrl & url, bool isFile )
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
     }
 
-    if ( url.protocol() == "p7zip" ) {
-        if (m_archiveFile->del(relPath, isFile)) {
-            if (isFile) {
-                error( KIO::ERR_CANNOT_DELETE, url.prettyUrl() );
-            } else {
-                error( KIO::ERR_COULD_NOT_RMDIR, url.prettyUrl() );
-            }
-            return;
+    if (m_archiveFile->del(relPath, isFile)) {
+        if (isFile) {
+            error( KIO::ERR_CANNOT_DELETE, url.prettyUrl() );
+        } else {
+            error( KIO::ERR_COULD_NOT_RMDIR, url.prettyUrl() );
         }
-    } else {
-        error( KIO::ERR_UNSUPPORTED_ACTION, url.prettyUrl());
         return;
     }
 
