@@ -1,5 +1,5 @@
 /*
- * k7z.cpp
+ * kp7zip.cpp
  *
  * Copyright (C) 2012 basysKom GmbH
  *
@@ -19,7 +19,7 @@
  *
  */
 
-#include "k7z.h"
+#include "kp7zip.h"
 #include "cli7zplugin/cliplugin.h"
 #include "kerfuffle/archive.h"
 
@@ -34,37 +34,37 @@
 
 using namespace Kerfuffle;
 
-class K7z::K7zPrivate
+class KP7zip::KP7zipPrivate
 {
 public:
-    K7zPrivate()
+    KP7zipPrivate()
         : currentFile(0),
           process(0),
           tmpFile(0)
     {}
 
-    QList<K7zFileEntry *> fileList;
-    K7zFileEntry * currentFile; // file currently being added to this archive
+    QList<KP7zipFileEntry *> fileList;
+    KP7zipFileEntry * currentFile; // file currently being added to this archive
     KProcess * process; // used to pipe data to the 7z command when adding a file to the archive.
     KTemporaryFile * tmpFile; // just to prevent a Q_ASSERT in KArchive::open.
     QString programPath; // path of 7z command.
 };
 
 
-K7z::K7z(const QString & fileName)
-    : KArchive(fileName), Cli7zPlugin(0, QVariantList() << QVariant(QFileInfo(fileName).absoluteFilePath())), d(new K7zPrivate)
+KP7zip::KP7zip(const QString & fileName)
+    : KArchive(fileName), Cli7zPlugin(0, QVariantList() << QVariant(QFileInfo(fileName).absoluteFilePath())), d(new KP7zipPrivate)
 {
     d->programPath = KStandardDirs::findExe(QLatin1String("7z"));
 }
 
-K7z::K7z(QIODevice * dev)
-    : KArchive(dev), Cli7zPlugin(0, QVariantList()), d(new K7zPrivate)
+KP7zip::KP7zip(QIODevice * dev)
+    : KArchive(dev), Cli7zPlugin(0, QVariantList()), d(new KP7zipPrivate)
 {
     // TODO: check if it is possible to implement QIODevice support.
     kDebug(7109) << "QIODevice is not supported";
 }
 
-K7z::~K7z()
+KP7zip::~KP7zip()
 {
     kDebug();
     if(isOpen()) {
@@ -73,7 +73,7 @@ K7z::~K7z()
     delete d;
 }
 
-bool K7z::writeData(const char * data, qint64 size)
+bool KP7zip::writeData(const char * data, qint64 size)
 {
     kDebug(7109);
     Q_ASSERT(d->process);
@@ -87,7 +87,7 @@ bool K7z::writeData(const char * data, qint64 size)
     return true;
 }
 
-bool K7z::del( const QString & name, bool isFile )
+bool KP7zip::del( const QString & name, bool isFile )
 {
     Q_UNUSED(isFile);
 
@@ -113,7 +113,7 @@ bool K7z::del( const QString & name, bool isFile )
     return true;
 }
 
-bool K7z::openArchive(QIODevice::OpenMode mode)
+bool KP7zip::openArchive(QIODevice::OpenMode mode)
 {
     if (mode == QIODevice::WriteOnly) {
         return true;
@@ -123,7 +123,7 @@ bool K7z::openArchive(QIODevice::OpenMode mode)
     return list();
 }
 
-bool K7z::closeArchive()
+bool KP7zip::closeArchive()
 {
     if (mode() & QIODevice::WriteOnly) {
         if (d->tmpFile) {
@@ -138,7 +138,7 @@ bool K7z::closeArchive()
     return true;
 }
 
-bool K7z::createDevice(QIODevice::OpenMode mode)
+bool KP7zip::createDevice(QIODevice::OpenMode mode)
 {
     kDebug();
     bool b = false;
@@ -157,7 +157,7 @@ bool K7z::createDevice(QIODevice::OpenMode mode)
     return b;
 }
 
-void K7z::addEntry(const Kerfuffle::ArchiveEntry & archiveEntry)
+void KP7zip::addEntry(const Kerfuffle::ArchiveEntry & archiveEntry)
 {
     KArchiveEntry * entry;
     int permissions = 0100644;
@@ -190,8 +190,8 @@ void K7z::addEntry(const Kerfuffle::ArchiveEntry & archiveEntry)
             entry = new KArchiveDirectory(this, entryName, permissions, archiveEntry[Timestamp].toDateTime().toTime_t(), rootDir()->user(), rootDir()->group(), QString());
         }
     } else {
-        //kDebug(7109) << "creating K7zFileEntry, entryName= " << entryName << ", name=" << name;
-        entry = new K7zFileEntry(this, entryName, permissions, archiveEntry[Timestamp].toDateTime().toTime_t(),
+        //kDebug(7109) << "creating KP7zipFileEntry, entryName= " << entryName << ", name=" << name;
+        entry = new KP7zipFileEntry(this, entryName, permissions, archiveEntry[Timestamp].toDateTime().toTime_t(),
                                  rootDir()->user(), rootDir()->group(),
                                  QString() /*symlink*/, name, 0 /*dataoffset*/,
                                  archiveEntry[Size].toInt(), 0 /*cmethod*/, archiveEntry[CompressedSize].toInt());
@@ -210,7 +210,7 @@ void K7z::addEntry(const Kerfuffle::ArchiveEntry & archiveEntry)
     }
 }
 
-bool K7z::doWriteDir(const QString &name, const QString &user, const QString &group,
+bool KP7zip::doWriteDir(const QString &name, const QString &user, const QString &group,
                        mode_t perm, time_t atime, time_t mtime, time_t ctime)
 {
     kDebug(7109);
@@ -225,7 +225,7 @@ bool K7z::doWriteDir(const QString &name, const QString &user, const QString &gr
     if (tmpDir.isEmpty()) {
         tmpDir = QLatin1String("/tmp/");
     }
-    tmpDir += QString("K7z%1").arg(QCoreApplication::applicationPid());
+    tmpDir += QString("KP7zip%1").arg(QCoreApplication::applicationPid());
 
     int i = 0;
     QString temp = tmpDir;
@@ -267,7 +267,7 @@ bool K7z::doWriteDir(const QString &name, const QString &user, const QString &gr
     return true;
 }
 
-bool K7z::doWriteSymLink(const QString &name, const QString &target,
+bool KP7zip::doWriteSymLink(const QString &name, const QString &target,
                          const QString &user, const QString &group,
                          mode_t perm, time_t atime, time_t mtime, time_t ctime)
 {
@@ -278,7 +278,7 @@ bool K7z::doWriteSymLink(const QString &name, const QString &target,
     return true;
 }
 
-bool K7z::doPrepareWriting(const QString & name, const QString & user,
+bool KP7zip::doPrepareWriting(const QString & name, const QString & user,
                            const QString & group, qint64 /*size*/, mode_t perm,
                            time_t atime, time_t mtime, time_t ctime)
 {
@@ -298,7 +298,7 @@ bool K7z::doPrepareWriting(const QString & name, const QString & user,
     // to save, so that we don't have duplicate file entries when viewing the zip
     // with konqi...
     // CAUTION: the old file itself is still in the zip and won't be removed !!!
-    QMutableListIterator<K7zFileEntry *> it(d->fileList);
+    QMutableListIterator<KP7zipFileEntry *> it(d->fileList);
     kDebug(7109) << "fileName to write: " << name;
     
     while(it.hasNext()) {
@@ -323,8 +323,8 @@ bool K7z::doPrepareWriting(const QString & name, const QString & user,
         parentDir = findOrCreate(dir);
     }
 
-    // construct a K7zFileEntry and add it to list
-    K7zFileEntry * e = new K7zFileEntry(this, fileName, perm, mtime, user, group, QString(),
+    // construct a KP7zipFileEntry and add it to list
+    KP7zipFileEntry * e = new KP7zipFileEntry(this, fileName, perm, mtime, user, group, QString(),
                                         name, 0 /*dataoffset*/,
                                         0 /*size unknown yet*/, 0 /*cmethod*/, 0 /*csize unknown yet*/);
     
@@ -358,7 +358,7 @@ bool K7z::doPrepareWriting(const QString & name, const QString & user,
     return true;
 }
 
-bool K7z::doFinishWriting(qint64 size)
+bool KP7zip::doFinishWriting(qint64 size)
 {
     kDebug(7109);
 
@@ -384,17 +384,17 @@ bool K7z::doFinishWriting(qint64 size)
     return true;
 }
 
-void K7z::virtual_hook(int id, void * data)
+void KP7zip::virtual_hook(int id, void * data)
 {
     kDebug(7109);
     KArchive::virtual_hook(id, data);
 }
 
 /***************************/
-class K7zFileEntry::K7zFileEntryPrivate
+class KP7zipFileEntry::KP7zipFileEntryPrivate
 {
 public:
-    K7zFileEntryPrivate()
+    KP7zipFileEntryPrivate()
     : crc(0),
       compressedSize(0),
       headerStart(0),
@@ -406,15 +406,15 @@ public:
     int           encoding;
     QString       path;
 
-    K7z * q;
+    KP7zip * q;
 };
 
-K7zFileEntry::K7zFileEntry(K7z * zip, const QString & name, int permissions, int date,
+KP7zipFileEntry::KP7zipFileEntry(KP7zip * zip, const QString & name, int permissions, int date,
                            const QString & user, const QString & group, const QString & symlink,
                            const QString & path, qint64 start, qint64 uncompressedSize,
                            int encoding, qint64 compressedSize)
  : KArchiveFile(zip, name, permissions, date, user, group, symlink, start, uncompressedSize),
-   d(new K7zFileEntryPrivate)
+   d(new KP7zipFileEntryPrivate)
 {
     d->path = path;
     d->encoding = encoding;
@@ -422,17 +422,17 @@ K7zFileEntry::K7zFileEntry(K7z * zip, const QString & name, int permissions, int
     d->q = zip;
 }
 
-K7zFileEntry::~K7zFileEntry()
+KP7zipFileEntry::~KP7zipFileEntry()
 {
     delete d;
 }
 
-const QString &K7zFileEntry::path() const
+const QString &KP7zipFileEntry::path() const
 {
     return d->path;
 }
 
-QByteArray K7zFileEntry::data() const
+QByteArray KP7zipFileEntry::data() const
 {
     QIODevice * dev = createDevice();
     QByteArray arr;
@@ -445,7 +445,7 @@ QByteArray K7zFileEntry::data() const
     return arr;
 }
 
-QIODevice* K7zFileEntry::createDevice() const
+QIODevice* KP7zipFileEntry::createDevice() const
 {
     QList<QVariant> filesToExtract;
     filesToExtract.append(QVariant::fromValue(path()));

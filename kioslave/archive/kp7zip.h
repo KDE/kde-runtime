@@ -1,5 +1,5 @@
 /*
- * k7z.h
+ * kp7zip.h
  *
  * Copyright (C) 2012 basysKom GmbH
  *
@@ -19,24 +19,24 @@
  *
  */
 
-#ifndef K7Z_H
-#define K7Z_H
+#ifndef KP7ZIP_H
+#define KP7ZIP_H
 
 #include "cliplugins/cli7zplugin/cliplugin.h"
 
 #include <karchive.h>
 
-class K7z: public KArchive, public Cli7zPlugin
+class KP7zip: public KArchive, public Cli7zPlugin
 {
 public:
-    K7z(const QString& filename);
+    KP7zip(const QString& filename);
 
     /**
      * Not supported yet, do not use it.
      */
-    K7z(QIODevice * dev);
+    KP7zip(QIODevice * dev);
 
-    virtual ~K7z();
+    virtual ~KP7zip();
 
     /**
      * Write data to a file that has been created using prepareWriting().
@@ -99,23 +99,23 @@ protected:
     virtual void virtual_hook(int id, void * data);
 
 private:
-    class K7zPrivate;
-    K7zPrivate * const d;
+    class KP7zipPrivate;
+    KP7zipPrivate * const d;
     friend class Cli7zPlugin;
 
     void addEntry(const Kerfuffle::ArchiveEntry & archiveEntry);
 };
 
 /**
- * A K7zFileEntry represents an file in a zip archive.
+ * A KP7zipFileEntry represents an file in a zip archive.
  */
-class K7zFileEntry : public KArchiveFile
+class KP7zipFileEntry : public KArchiveFile
 {
 public:
     /**
-     * Creates a new zip file entry. Do not call this, K7z takes care of it.
+     * Creates a new zip file entry. Do not call this, KP7zip takes care of it.
      */
-    K7zFileEntry(K7z * zip, const QString & name, int permissions, int date,
+    KP7zipFileEntry(KP7zip * zip, const QString & name, int permissions, int date,
                  const QString & user, const QString & group, const QString & symlink,
                  const QString & path, qint64 start, qint64 uncompressedSize,
                  int encoding, qint64 compressedSize);
@@ -123,7 +123,7 @@ public:
     /**
      * Destructor. Do not call this.
      */
-    ~K7zFileEntry();
+    ~KP7zipFileEntry();
 
     /// Name with complete path - KArchiveFile::name() is the filename only (no path)
     const QString & path() const;
@@ -144,8 +144,8 @@ public:
     virtual QIODevice * createDevice() const;
 
 private:
-    class K7zFileEntryPrivate;
-    K7zFileEntryPrivate * const d;
+    class KP7zipFileEntryPrivate;
+    KP7zipFileEntryPrivate * const d;
 };
 
 #endif

@@ -32,7 +32,7 @@
 #include <kcomponentdata.h>
 #include <ktar.h>
 #include <kzip.h>
-#include <k7z.h>
+#include <kp7zip.h>
 #include <kar.h>
 #include <kmimetype.h>
 #include <klocale.h>
@@ -183,8 +183,8 @@ bool ArchiveProtocol::checkNewFile( const KUrl & url, QString & path, KIO::Error
         kDebug(7109) << "Opening KZip on " << archiveFile;
         m_archiveFile = new KZip( archiveFile );
     } else if ( url.protocol() == "p7zip" ) {
-        kDebug(7109) << "Opening K7z on " << archiveFile;
-        m_archiveFile = new K7z( archiveFile );
+        kDebug(7109) << "Opening KP7zip on " << archiveFile;
+        m_archiveFile = new KP7zip( archiveFile );
     } else {
         kWarning(7109) << "Protocol" << url.protocol() << "not supported by this IOSlave" ;
         errorNum = KIO::ERR_UNSUPPORTED_PROTOCOL;
@@ -856,7 +856,7 @@ void ArchiveProtocol::del( const KUrl & url, bool isFile )
         QString relPath = relativePath(url.path());
         Q_ASSERT(!relPath.isEmpty());
 
-        if (!(dynamic_cast<K7z *>(m_archiveFile)->del(relPath, isFile))) {
+        if (!(dynamic_cast<KP7zip *>(m_archiveFile)->del(relPath, isFile))) {
             if (isFile) {
                 error( KIO::ERR_CANNOT_DELETE, url.prettyUrl() );
             } else {

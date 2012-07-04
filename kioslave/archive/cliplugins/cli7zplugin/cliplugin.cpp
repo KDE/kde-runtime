@@ -23,7 +23,7 @@
 #include "cliplugin.h"
 #include "kerfuffle/cliinterface.h"
 #include "kerfuffle/kerfuffle_export.h"
-#include "../k7z.h"
+#include "../kp7zip.h"
 
 #include <QDateTime>
 #include <QDir>
@@ -178,7 +178,7 @@ bool Cli7zPlugin::readListLine(const QString& line)
     return true;
 }
 
-void Cli7zPlugin::setArchive(K7z * archive)
+void Cli7zPlugin::setArchive(KP7zip * archive)
 {
     m_archive = archive;
 }

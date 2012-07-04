@@ -6,7 +6,7 @@ add_subdirectory(tests)
 
 include_directories("cliplugins")
 
-set(kio_archive_SRCS kio_archive.cpp k7z.cpp)
+set(kio_archive_SRCS kio_archive.cpp kp7zip.cpp)
 
 kde4_add_plugin(kio_archive ${kio_archive_SRCS})
 

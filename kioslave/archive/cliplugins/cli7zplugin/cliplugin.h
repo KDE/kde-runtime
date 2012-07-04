@@ -26,7 +26,7 @@
 
 #include "kerfuffle/cliinterface.h"
 
-class K7z;
+class KP7zip;
 
 class Cli7zPlugin : public Kerfuffle::CliInterface
 {
@@ -36,7 +36,7 @@ public:
     explicit Cli7zPlugin(QObject *parent, const QVariantList & args);
     virtual ~Cli7zPlugin();
 
-    void setArchive(K7z * archive);
+    void setArchive(KP7zip * archive);
 
 protected:
     virtual Kerfuffle::ParameterList parameterList() const;
@@ -60,7 +60,7 @@ private:
     ArchiveType m_archiveType;
     Kerfuffle::ArchiveEntry m_currentArchiveEntry;
     ReadState m_state;
-    K7z * m_archive;
+    KP7zip * m_archive;
 };
 
 #endif // CLIPLUGIN_H
