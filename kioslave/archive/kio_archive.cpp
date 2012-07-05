@@ -473,7 +473,7 @@ void ArchiveProtocol::get( const KUrl & url )
 
     if ( !io->open( QIODevice::ReadOnly ) )
     {
-        error( KIO::ERR_CANNOT_OPEN_FOR_READING, url.prettyUrl() );
+        error( KIO::ERR_CANNOT_OPEN_FOR_READING, url.prettyUrl() + ": " + io->errorString() );
         delete io;
         return;
     }
@@ -732,7 +732,13 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
 
     // TODO: do the copy in chuncks.
     QIODevice * ioDevice = srcArchiveFile->createDevice();
-    ioDevice->open(QIODevice::ReadOnly);
+
+    if (!ioDevice->open(QIODevice::ReadOnly)) {
+        error( KIO::ERR_CANNOT_OPEN_FOR_READING, src.prettyUrl() + ": " + ioDevice->errorString() );
+        delete ioDevice;
+        return;
+    }
+
     QByteArray buffer = ioDevice->readAll();
     ioDevice->close();
     ioDevice->deleteLater();
@@ -740,6 +746,7 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
     if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
         kWarning() << " open" << m_archiveFile->fileName() << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyUrl());
+        return;
     }
 
     const QString mtimeStr = metaData( "modified" );
