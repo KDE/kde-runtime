@@ -645,7 +645,6 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
     }
 
     finished();
-    kDebug(7109) << "finished";
 
     // to force the archive to be re-read.
     m_archiveFile->close();
@@ -725,7 +724,7 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
         return;
     }
 
-    // TODO: do the copy in chuncks.
+    // open source file.
     QIODevice * ioDevice = srcArchiveFile->createDevice();
 
     if (!ioDevice->open(QIODevice::ReadOnly)) {
@@ -734,13 +733,13 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
         return;
     }
 
-    QByteArray buffer = ioDevice->readAll();
-    ioDevice->close();
-    ioDevice->deleteLater();
-
+    // open destination file.
     if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
         kWarning() << " open" << m_archiveFile->fileName() << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyUrl());
+
+        ioDevice->close();
+        ioDevice->deleteLater();
         return;
     }
 
@@ -760,18 +759,21 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
     {
         kWarning() << " prepareWriting" << destRelativePath << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyUrl());
+
+        ioDevice->close();
+        ioDevice->deleteLater();
         return;
     }
 
-    // Read and write data in chunks to minimize memory usage.
-    /*QByteArray buffer;
-    QIODevice * ioDevice = srcArchiveFile->createDevice();
+    // Read and data in chunks to minimize memory usage.
+    QByteArray buffer;
     qint64 total = 0;
     while (1) {
         buffer = ioDevice->read(1024 * 1024);
+
         if (buffer.isEmpty()) {
             break;
-        }*/
+        }
     
         if ( !m_archiveFile->writeData( buffer.data(), buffer.size() ) ) {
             kWarning() << "writeData failed";
@@ -779,11 +781,13 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
             return;
         }
         kDebug(7109) << "Wrote" << buffer.size() << "bytes";
-        /*total += buffer.size();
+        total += buffer.size();
+        processedSize( total );
     }
-    ioDevice->deleteLater();*/
+    ioDevice->close();
+    ioDevice->deleteLater();
 
-    if ( !m_archiveFile->finishWriting( /*total*/ buffer.size() /* to set file size */ ) ) {
+    if ( !m_archiveFile->finishWriting( total /* to set file size */ ) ) {
         kWarning() << "finishWriting failed";
         error(ERR_COULD_NOT_WRITE, dest.prettyUrl());
         return;
