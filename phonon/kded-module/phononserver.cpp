@@ -1047,11 +1047,7 @@ void PhononServer::updateDevicesCache()
 
 void PhononServer::deviceAdded(const QString &udi)
 {
-    Solid::Device device(udi);
-    Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
-    if (!audiohw || 0 == (audiohw->deviceType() & (Solid::AudioInterface::AudioInput | Solid::AudioInterface::AudioOutput))) {
-        return;
-    }
+    kDebug(601) << udi;
     m_updateDevicesTimer.start(50, this);
 }
 
@@ -1075,6 +1071,7 @@ void PhononServer::timerEvent(QTimerEvent *e)
 
 void PhononServer::deviceRemoved(const QString &udi)
 {
+    kDebug(601) << udi;
     if (m_udisOfDevices.contains(udi)) {
         m_updateDevicesTimer.start(50, this);
     }
