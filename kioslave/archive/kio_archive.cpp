@@ -579,11 +579,6 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
         return;
     }
 
-    if (ent && !(flags & KIO::Resume) && (flags & KIO::Overwrite)) {
-        kDebug(7109) << "exists try to remove " << url;
-        // TODO: implement
-    }
-
     if (flags & KIO::Resume) {
         // TODO: implement
         kDebug(7109) << "resume not supported " << url;
