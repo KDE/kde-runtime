@@ -34,6 +34,7 @@ KRar::KRar(const QString & fileName)
       m_remainingIgnoredSubHeaderLines(0),
       m_isUnrarFree(false)
 {
+    m_archiveType = ArchiveTypeRar;
 }
 
 KRar::KRar(QIODevice * dev)

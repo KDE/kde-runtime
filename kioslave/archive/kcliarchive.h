@@ -52,7 +52,8 @@ protected:
 	ArchiveTypeBZip2,
 	ArchiveTypeGZip,
 	ArchiveTypeTar,
-	ArchiveTypeZip
+	ArchiveTypeZip,
+	ArchiveTypeRar
     };
 
     ArchiveType m_archiveType;
