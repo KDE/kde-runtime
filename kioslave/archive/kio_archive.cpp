@@ -841,7 +841,7 @@ void ArchiveProtocol::del( const KUrl & url, bool isFile )
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
     }
 
-    if (m_archiveFile->del(relPath, isFile)) {
+    if (!m_archiveFile->del(relPath, isFile)) {
         if (isFile) {
             error( KIO::ERR_CANNOT_DELETE, url.prettyUrl() );
         } else {
