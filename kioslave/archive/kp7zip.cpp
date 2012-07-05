@@ -125,7 +125,7 @@ bool KP7zip::readListLine(const QString& line)
         break;
 
     case ReadStateEntryInformation:
-        kDebug(7109) << "Line: " << line;
+        //kDebug(7109) << "Line: " << line;
         if (line.startsWith(QLatin1String("Path ="))) {
             const QString entryFilename =
                 QDir::fromNativeSeparators(line.mid(6).trimmed());
@@ -144,7 +144,7 @@ bool KP7zip::readListLine(const QString& line)
             m_currentArchiveEntry[ Timestamp ] =
                 QDateTime::fromString(line.mid(11).trimmed(),
                                       QLatin1String( "yyyy-MM-dd hh:mm:ss" ));
-        } else if (line.startsWith(QLatin1String("Attributes = "))) {
+        } else if (line.startsWith(QLatin1String("Attributes = "))) { // 7z and zip
             const QString attributes = line.mid(13).trimmed();
 
             const bool isDirectory = attributes.startsWith(QLatin1Char( 'D' ));
@@ -162,6 +162,21 @@ bool KP7zip::readListLine(const QString& line)
             }
 
             m_currentArchiveEntry[ Permissions ] = attributes.mid(1);
+        } else if (line.startsWith(QLatin1String("Folder = "))) { // tar
+            const bool isDirectory = line[9] == QLatin1Char('+');
+            m_currentArchiveEntry[ IsDirectory ] = isDirectory;
+            if (isDirectory) {
+                const QString directoryName =
+                    m_currentArchiveEntry[FileName].toString();
+                if (!directoryName.endsWith(QLatin1Char( '/' ))) {
+                    m_currentArchiveEntry[FileName] =
+                        m_currentArchiveEntry[InternalID] = QString(directoryName + QLatin1Char( '/' ));
+                    m_currentArchiveEntry[ IsPasswordProtected ] =
+                        false;
+                }
+            }
+        } else if (line.startsWith(QLatin1String("Mode = "))) { // tar
+            m_currentArchiveEntry[ Permissions ] = line.mid(7);
         } else if (line.startsWith(QLatin1String("CRC = "))) {
             m_currentArchiveEntry[ CRC ] = line.mid(6).trimmed();
         } else if (line.startsWith(QLatin1String("Method = "))) {
