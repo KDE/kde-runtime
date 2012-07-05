@@ -89,8 +89,10 @@ void BackendSelection::showBackendKcm(const KService::Ptr &backendService)
     }
     QWidget *w = m_kcms.value(parentComponent);
     if (w) {
+        stackedWidget->show();
         stackedWidget->setCurrentWidget(w);
     } else {
+        stackedWidget->hide();
         stackedWidget->setCurrentIndex(m_emptyPage);
     }
 }
