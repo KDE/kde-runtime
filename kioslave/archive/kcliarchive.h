@@ -114,8 +114,10 @@ private:
 /**
  * A KCliArchiveFileEntry represents an file in a archive.
  */
-class KCliArchiveFileEntry : public KArchiveFile
+class KCliArchiveFileEntry : public QObject, public KArchiveFile
 {
+    Q_OBJECT
+
 public:
     /**
      * Creates a new file entry. Do not call this, KCliArchive takes care of it.
@@ -147,6 +149,9 @@ public:
      * The returned device auto-opens (in readonly mode), no need to open it.
      */
     virtual QIODevice * createDevice() const;
+
+private Q_SLOTS:
+    void _k_destroyed(QObject * object);
 
 private:
     class KCliArchiveFileEntryPrivate;

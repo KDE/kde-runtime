@@ -487,7 +487,8 @@ KCliArchiveFileEntry::KCliArchiveFileEntry(KCliArchive * cliArchive, const QStri
                            const QString & user, const QString & group, const QString & symlink,
                            const QString & path, qint64 start, qint64 uncompressedSize,
                            int encoding, qint64 compressedSize)
- : KArchiveFile(cliArchive, name, permissions, date, user, group, symlink, start, uncompressedSize),
+ : QObject(0),
+   KArchiveFile(cliArchive, name, permissions, date, user, group, symlink, start, uncompressedSize),
    d(new KCliArchiveFileEntryPrivate)
 {
     d->path = path;
@@ -543,7 +544,18 @@ QIODevice* KCliArchiveFileEntry::createDevice() const
 
     // according to the documentation the caller of this method is responsible
     // for deleting the QIODevice returned here.
-    // TODO: find a way to delete file from filesystem once it is not used.
-    // maybe use the destroyed signal of the object below.
-    return new QFile(filePath);
+
+    QFile * file = new QFile(filePath);
+    file->setProperty("filePath", QVariant::fromValue(filePath));
+    connect(file, SIGNAL(destroyed(QObject*)), SLOT(_k_destroyed(QObject*)));
+    return file;
+}
+
+void KCliArchiveFileEntry::_k_destroyed(QObject * object)
+{
+    QString filePath = object->property("filePath").toString();
+    kDebug(7109) << "removing" << filePath;
+ 
+    QFile::remove(filePath);
+    QDir().rmpath(filePath.left(filePath.lastIndexOf(QLatin1Char('/'))));
 }
