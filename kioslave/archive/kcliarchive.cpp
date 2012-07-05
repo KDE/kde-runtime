@@ -218,11 +218,6 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
 {
     kDebug(7109);
 
-    if (d->process) {
-        d->process->waitForFinished();
-        delete d->process;
-    }
-
     // we need to create the directory to be added in the filesystem before running the 7z command.
     generateTmpDirPath();
     QDir().mkpath(tmpDir + name);
@@ -236,6 +231,11 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
     if (programPath.isEmpty()) {
         kError(7109) << "Failed to locate program" << m_param.value(AddProgram).toString() << "in PATH.";
         return false;
+    }
+
+    if (d->process) {
+        d->process->waitForFinished();
+        delete d->process;
     }
 
     // this is equivalent to "7z a archive.7z dir/subdir/"
@@ -265,8 +265,6 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
     }
 
     QDir().rmpath(tmpDir + name);
-
-    //setDevice(d->process);
 
     return ret;
 }
