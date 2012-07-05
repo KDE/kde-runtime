@@ -6,14 +6,11 @@ input=filesystem
 output=filesystem
 listing=Name,Type,Size,Date,Access,Owner,Group,Link
 reading=true
-
-# TODO: implement those below
 writing=true
 makedir=true
 deleting=true
 opening=true
 moving=true
-
 source=true
 Icon=application-x-7z-compressed
 Class=:local
