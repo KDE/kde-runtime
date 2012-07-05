@@ -593,7 +593,7 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
     }
 
     if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
-        kWarning() << " open" << m_archiveFile->fileName() << "failed";
+        kWarning(7109) << " open" << m_archiveFile->fileName() << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
         return;
     }
@@ -613,7 +613,7 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
     if (!m_archiveFile->prepareWriting(destName, m_archiveFile->directory()->user(), m_archiveFile->directory()->group(), 0 /*size*/,
                                        permissions, 0 /*atime*/, mtime, 0 /*ctime*/))
     {
-        kWarning() << " prepareWriting" << destName << "failed";
+        kWarning(7109) << " prepareWriting" << destName << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
         return;
     }
@@ -630,7 +630,7 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
         }
 
         if ( !m_archiveFile->writeData( buffer.data(), buffer.size() ) ) {
-            kWarning() << "writeData failed";
+            kWarning(7109) << "writeData failed";
             error(ERR_COULD_NOT_WRITE, url.prettyUrl());
             return;
         }
@@ -640,7 +640,7 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
     }
 
     if ( !m_archiveFile->finishWriting( total /* to set file size */ ) ) {
-        kWarning() << "finishWriting failed";
+        kWarning(7109) << "finishWriting failed";
         error(ERR_COULD_NOT_WRITE, url.prettyUrl());
         return;
     }
@@ -736,7 +736,7 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
 
     // open destination file.
     if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
-        kWarning() << " open" << m_archiveFile->fileName() << "failed";
+        kWarning(7109) << " open" << m_archiveFile->fileName() << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyUrl());
 
         ioDevice->close();
@@ -758,7 +758,7 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
     if (!m_archiveFile->prepareWriting(destRelativePath, m_archiveFile->directory()->user(), m_archiveFile->directory()->group(), 0 /*size*/,
                                        permissions, 0 /*atime*/, mtime, 0 /*ctime*/))
     {
-        kWarning() << " prepareWriting" << destRelativePath << "failed";
+        kWarning(7109) << " prepareWriting" << destRelativePath << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyUrl());
 
         ioDevice->close();
@@ -778,7 +778,7 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
         }
     
         if ( !m_archiveFile->writeData( buffer.data(), buffer.size() ) ) {
-            kWarning() << "writeData failed";
+            kWarning(7109) << "writeData failed";
             error(ERR_COULD_NOT_WRITE, dest.prettyUrl());
             return;
         }
@@ -791,7 +791,7 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
     ioDevice->deleteLater();
 
     if ( !m_archiveFile->finishWriting( total /* to set file size */ ) ) {
-        kWarning() << "finishWriting failed";
+        kWarning(7109) << "finishWriting failed";
         error(ERR_COULD_NOT_WRITE, dest.prettyUrl());
         return;
     }
@@ -847,7 +847,7 @@ void ArchiveProtocol::del( const KUrl & url, bool isFile )
     }
 
     if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
-        kWarning() << " deleting" << relPath << "failed";
+        kWarning(7109) << " deleting" << relPath << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
     }
 
@@ -910,7 +910,7 @@ void ArchiveProtocol::mkdir( const KUrl & url, int permissions )
     }
 
     if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
-        kWarning() << " open" << m_archiveFile->fileName() << "failed";
+        kWarning(7109) << " open" << m_archiveFile->fileName() << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
         return;
     }
