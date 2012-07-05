@@ -112,6 +112,11 @@ bool KCliArchive::del( const QString & name, bool isFile )
          return false;
     }
 
+    if (d->process->exitCode() != 0) {
+        kDebug(7109) << "exitCode" << d->process->exitCode();
+        return false;
+    }
+
     return true;
 }
 
@@ -164,6 +169,8 @@ void KCliArchive::addEntry(const Kerfuffle::ArchiveEntry & archiveEntry)
     int permissions = 0100644;
     QString name = archiveEntry[FileName].toString();
     QString entryName;
+
+    //kDebug(7109) << "adding" << name << archiveEntry[IsDirectory].toBool();
 
     // TODO: test if we really need the '/' at the end of all directory paths.
     if (archiveEntry[IsDirectory].toBool()) {
@@ -267,11 +274,17 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
          return false;
     }
 
+    bool ret = true;
+    if (d->process->exitCode() != 0) {
+        kDebug(7109) << "exitCode" << d->process->exitCode();
+        ret = false;
+    }
+
     QDir().rmpath(tmpDir + name);
 
     //setDevice(d->process);
 
-    return true;
+    return ret;
 }
 
 bool KCliArchive::doWriteSymLink(const QString &name, const QString &target,
@@ -388,13 +401,19 @@ bool KCliArchive::doFinishWriting(qint64 size)
          return false;
     }
 
+    bool ret = true;
+    if (d->process->exitCode() != 0) {
+        kDebug(7109) << "exitCode" << d->process->exitCode();
+        ret = false;
+    }
+
     d->process->deleteLater();
     d->process = 0L;
     d->currentFile = 0L;
 
     kDebug() << "finished";
 
-    return true;
+    return ret;
 }
 
 void KCliArchive::virtual_hook(int id, void * data)
