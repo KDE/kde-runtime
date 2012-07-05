@@ -19,6 +19,7 @@
 
 #include "kio_archive.h"
 #include "kp7zip.h"
+#include "krar.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -174,8 +175,8 @@ bool ArchiveProtocol::checkNewFile( const KUrl & url, QString & path, KIO::Error
         kDebug(7109) << "Opening KP7zip on" << archiveFile;
         m_archiveFile = new KP7zip( archiveFile );
     } else if ( url.protocol() == "ar" ) {
-        kDebug(7109) << "Opening KP7zip on " << archiveFile;
-        m_archiveFile = new KP7zip( archiveFile );
+        kDebug(7109) << "Opening KRar on " << archiveFile;
+        m_archiveFile = new KRar( archiveFile );
     } else if ( url.protocol() == "zip" ) {
         kDebug(7109) << "Opening KP7zip on " << archiveFile;
         m_archiveFile = new KP7zip( archiveFile );

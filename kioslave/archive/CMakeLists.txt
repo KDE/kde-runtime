@@ -3,7 +3,7 @@ add_subdirectory(tests)
 
 ########### kio_archive ###############
 
-set(kio_archive_SRCS kio_archive.cpp kcliarchive.cpp kp7zip.cpp)
+set(kio_archive_SRCS kio_archive.cpp kcliarchive.cpp kp7zip.cpp krar.cpp)
 
 kde4_add_plugin(kio_archive ${kio_archive_SRCS})
 
