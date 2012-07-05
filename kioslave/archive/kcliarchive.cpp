@@ -45,11 +45,14 @@ public:
     QList<KCliArchiveFileEntry *> fileList;
     KCliArchiveFileEntry * currentFile; // file currently being added to this archive
     KProcess * process; // used to pipe data to the 7z command when adding a file to the archive.
-    KTemporaryFile * tmpFile; // just to prevent a Q_ASSERT in KArchive::open.
+    QIODevice * tmpFile;
 };
 
 KCliArchive::KCliArchive(const QString & fileName)
-    : KArchive(fileName), CliInterface(0, QVariantList() << QVariant(QFileInfo(fileName).absoluteFilePath())), d(new KCliArchivePrivate)
+    : KArchive(fileName),
+      CliInterface(0, QVariantList() << QVariant(QFileInfo(fileName).absoluteFilePath())),
+      m_archiveType(ArchiveType7z),
+      d(new KCliArchivePrivate)
 {
 }
 
@@ -69,20 +72,6 @@ KCliArchive::~KCliArchive()
     delete d;
 }
 
-bool KCliArchive::writeData(const char * data, qint64 size)
-{
-    kDebug(7109);
-    Q_ASSERT(d->process);
-
-    if (d->process->write(data, size) != size) {
-        return false;
-    }
-
-    kDebug(7109) << "data written";
-
-    return true;
-}
-
 bool KCliArchive::del( const QString & name, bool isFile )
 {
     Q_UNUSED(isFile);
@@ -93,8 +82,11 @@ bool KCliArchive::del( const QString & name, bool isFile )
         return false;
     }
 
+    generateTmpDirPath();
+
     // this is equivalent to "7z d archive.7z dir/file"
     d->process = new KProcess();
+    d->process->setWorkingDirectory(tmpDir); // 7z command creates temporary files in the current working directory.
     QStringList args;
     args.append(QLatin1String("d"));
     args.append(this->fileName()); // archive where we will delete the file from.
@@ -111,6 +103,8 @@ bool KCliArchive::del( const QString & name, bool isFile )
     if (!d->process->waitForFinished()) {
          return false;
     }
+
+    QDir().rmpath(tmpDir);
 
     if (d->process->exitCode() != 0) {
         kDebug(7109) << "exitCode" << d->process->exitCode();
@@ -153,9 +147,10 @@ bool KCliArchive::createDevice(QIODevice::OpenMode mode)
         // the real device will be set in doPrepareWriting.
         // this is to prevent a Q_ASSERT in KArchive::open.
         if (!d->tmpFile) {
-            d->tmpFile = new KTemporaryFile();
+            KTemporaryFile * temp = new KTemporaryFile();
+            b = temp->open();
+            d->tmpFile = temp;
         }
-        b = d->tmpFile->open();
         setDevice(d->tmpFile);
     } else {
         b = KArchive::createDevice(mode);
@@ -229,18 +224,7 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
     }
 
     // we need to create the directory to be added in the filesystem before running the 7z command.
-    QString tmpDir = KGlobal::dirs()->findDirs("tmp", "")[0];
-    if (tmpDir.isEmpty()) {
-        tmpDir = QLatin1String("/tmp/");
-    }
-    tmpDir += QString("KCliArchive%1").arg(QCoreApplication::applicationPid());
-
-    int i = 0;
-    QString temp = tmpDir;
-    while (QDir(temp).exists()) {
-        temp = tmpDir + QString("_%1").arg(++i);
-    }
-    tmpDir = temp + QLatin1Char('/');
+    generateTmpDirPath();
     QDir().mkpath(tmpDir + name);
 
     if (!QDir(tmpDir + name).exists()) {
@@ -359,27 +343,50 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
 
     // TODO: maybe use KSaveFile to make this process more secure (KSaveFile is used to implement rollback).
 
-    const QString programPath(KStandardDirs::findExe(m_param.value(AddProgram).toString()));
-    if (programPath.isEmpty()) {
-        kError(7109) << "Failed to locate program" << m_param.value(AddProgram).toString() << "in PATH.";
+    if (m_archiveType == ArchiveType7z) {
+        const QString programPath(KStandardDirs::findExe(m_param.value(AddProgram).toString()));
+        if (programPath.isEmpty()) {
+            kError(7109) << "Failed to locate program" << m_param.value(AddProgram).toString() << "in PATH.";
+            return false;
+        }
+
+        generateTmpDirPath();
+
+        // this is equivalent to "cat dir/file | 7z -sidir/file a archive.7z",
+        // which only works for 7z archive type.
+        d->process = new KProcess();
+        d->process->setWorkingDirectory(tmpDir);
+        QStringList args;
+        args.append(QLatin1String("-si") + name); // name is the filename relative to the archive.
+        args.append(QLatin1String("a")); // TODO: use "u" if file already exists.
+        args.append(this->fileName()); // archive we will add the new file to.
+        d->process->setProgram(programPath, args);
+        kDebug(7109) << "starting '" << programPath << args << "'";
+        d->process->start();
+    
+        if (!d->process->waitForStarted()) {
+             return false;
+        }
+        kDebug(7109) << " started";
+        setDevice(d->process);
+        return true;
+    }
+
+    if (d->tmpFile) {
+        delete d->tmpFile;
+    }
+
+    generateTmpDirPath();
+    QString tmpFilePath = tmpDir + name;
+    QDir().mkpath(tmpFilePath.left(tmpFilePath.lastIndexOf(QLatin1Char('/'))));
+    d->tmpFile = new QFile(tmpFilePath);
+
+    kDebug(7109) << "Opening" << tmpFilePath << "for writing";
+    if (!d->tmpFile->open(QIODevice::WriteOnly)) {
         return false;
     }
 
-    // this is equivalent to "cat dir/file | 7z -sidir/file a archive.7z"
-    d->process = new KProcess();
-    QStringList args;
-    args.append(QLatin1String("-si") + name); // name is the filename relative to the archive.
-    args.append(QLatin1String("a")); // TODO: use "u" if file already exists.
-    args.append(this->fileName()); // archive we will add the new file to.
-    d->process->setProgram(programPath, args);
-    kDebug(7109) << "starting '" << programPath << args << "'";
-    d->process->start();
-
-    if (!d->process->waitForStarted()) {
-         return false;
-    }
-    kDebug(7109) << " started";
-    setDevice(d->process);
+    setDevice(d->tmpFile);
 
     return true;
 }
@@ -387,10 +394,24 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
 bool KCliArchive::doFinishWriting(qint64 size)
 {
     kDebug(7109);
-
     Q_ASSERT(d->currentFile);
-    Q_ASSERT(d->process);
     d->currentFile->setSize(size);
+
+    if (m_archiveType != ArchiveType7z) {
+        d->tmpFile->close();
+        CompressionOptions options;
+        options[QLatin1String("GlobalWorkDir")] = tmpDir;
+
+        bool ret = addFiles(QStringList() << d->currentFile->path(), options);
+
+        QString tmpFilePath = tmpDir + d->currentFile->path();
+        QFile::remove(tmpFilePath);
+        QDir().rmpath(tmpFilePath.left(tmpFilePath.lastIndexOf(QLatin1Char('/'))));
+
+        return ret;
+    }
+
+    Q_ASSERT(d->process);
 
     // TODO: calcule the compressed size.
     //d->currentFile->setCompressedSize(csize);
@@ -400,6 +421,10 @@ bool KCliArchive::doFinishWriting(qint64 size)
     if (!d->process->waitForFinished()) {
          return false;
     }
+
+    QString tmpFilePath = tmpDir + d->currentFile->path();
+    QFile::remove(tmpFilePath);
+    QDir().rmpath(tmpFilePath.left(tmpFilePath.lastIndexOf(QLatin1Char('/'))));
 
     bool ret = true;
     if (d->process->exitCode() != 0) {
@@ -420,6 +445,25 @@ void KCliArchive::virtual_hook(int id, void * data)
 {
     kDebug(7109);
     KArchive::virtual_hook(id, data);
+}
+
+QString KCliArchive::generateTmpDirPath()
+{
+    QString temp = KGlobal::dirs()->findDirs("tmp", "")[0];
+    if (temp.isEmpty()) {
+        temp = QLatin1String("/tmp/");
+    }
+    temp += QString("KCliArchive%1").arg(QCoreApplication::applicationPid());
+
+    int i = 0;
+    tmpDir = temp;
+    while (QDir(tmpDir).exists()) {
+        tmpDir = temp + QString("_%1").arg(++i);
+    }
+    tmpDir += QLatin1Char('/');
+    QDir().mkpath(tmpDir);
+
+    return tmpDir;
 }
 
 /***************************/
@@ -472,6 +516,10 @@ QByteArray KCliArchiveFileEntry::data() const
     if (dev) {
         arr = dev->readAll();
         delete dev;
+
+        QString filePath = d->q->tmpDir + path();
+        QFile::remove(filePath);
+        QDir().rmpath(filePath.left(filePath.lastIndexOf(QLatin1Char('/'))));
     }
 
     return arr;
@@ -482,12 +530,8 @@ QIODevice* KCliArchiveFileEntry::createDevice() const
     QList<QVariant> filesToExtract;
     filesToExtract.append(QVariant::fromValue(path()));
 
-    QString tmpDir = KGlobal::dirs()->findDirs("tmp", "")[0];
-    if (tmpDir.isEmpty()) {
-        tmpDir = QLatin1String("/tmp/");
-    }
-
-    QString filePath = tmpDir + path();
+    d->q->generateTmpDirPath();
+    QString filePath = d->q->tmpDir + path();
     QString destDir = filePath;
     int temp = filePath.lastIndexOf(QLatin1Char('/'));
     if (temp != -1) {
@@ -496,12 +540,6 @@ QIODevice* KCliArchiveFileEntry::createDevice() const
     QDir().mkpath(destDir);
 
     kDebug(7109) << "temporary file is about to be saved in" << destDir;
-
-    // 7z command stalls asking what to do when file already exists, so make
-    // sure it does not.
-    if (QFile::exists(filePath)) {
-        QFile::remove(filePath);
-    }
 
     d->q->copyFiles(filesToExtract, destDir, ExtractionOptions());
 

@@ -29,14 +29,12 @@ using namespace Kerfuffle;
 
 KP7zip::KP7zip(const QString & fileName)
     : KCliArchive(fileName),
-      m_archiveType(ArchiveType7z),
       m_state(ReadStateHeader)
 {
 }
 
 KP7zip::KP7zip(QIODevice * dev)
     : KCliArchive(dev),
-      m_archiveType(ArchiveType7z),
       m_state(ReadStateHeader)
 {
     // TODO: check if it is possible to implement QIODevice support.

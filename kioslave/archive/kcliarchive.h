@@ -39,14 +39,6 @@ public:
     virtual ~KCliArchive();
 
     /**
-     * Write data to a file that has been created using prepareWriting().
-     * @param data a pointer to the data
-     * @param size the size of the chunk
-     * @return true if successful, false otherwise
-     */
-    virtual bool writeData(const char * data, qint64 size);
-
-    /**
      * Delete a file or directory from the archive.
      * @param path the relative path of the file or the directory in the archive.
      * @param isFile true if the path is a file, false if it is a directory.
@@ -55,6 +47,15 @@ public:
     bool del( const QString & name, bool isFile );
 
 protected:
+    enum ArchiveType {
+	ArchiveType7z = 0,
+	ArchiveTypeBZip2,
+	ArchiveTypeGZip,
+	ArchiveTypeTar,
+	ArchiveTypeZip
+    };
+
+    ArchiveType m_archiveType;
 
     /**
      * Opens the archive for reading.
@@ -99,6 +100,10 @@ protected:
     virtual void virtual_hook(int id, void * data);
 
     void addEntry(const Kerfuffle::ArchiveEntry & archiveEntry);
+
+    QString tmpDir;
+    QString generateTmpDirPath();
+    friend class KCliArchiveFileEntry;
 
 private:
     class KCliArchivePrivate;
