@@ -527,9 +527,6 @@ QByteArray KCliArchiveFileEntry::data() const
 
 QIODevice* KCliArchiveFileEntry::createDevice() const
 {
-    QList<QVariant> filesToExtract;
-    filesToExtract.append(QVariant::fromValue(path()));
-
     d->q->generateTmpDirPath();
     QString filePath = d->q->tmpDir + path();
     QString destDir = filePath;
@@ -539,11 +536,16 @@ QIODevice* KCliArchiveFileEntry::createDevice() const
     }
     QDir().mkpath(destDir);
 
-    kDebug(7109) << "temporary file is about to be saved in" << destDir;
+    kDebug(7109) << "temporary file is about to be saved in" << filePath;
+
+    QList<QVariant> filesToExtract;
+    filesToExtract.append(QVariant::fromValue(path()));
 
     d->q->copyFiles(filesToExtract, destDir, ExtractionOptions());
 
     // according to the documentation the caller of this method is responsible
     // for deleting the QIODevice returned here.
+    // TODO: find a way to delete file from filesystem once it is not used.
+    // maybe use the destroyed signal of the object below.
     return new QFile(filePath);
 }
