@@ -598,6 +598,7 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
         return;
     }
 
+    //kDebug(7109) << "Metadata" << allMetaData();
     const QString mtimeStr = metaData( "modified" );
     time_t mtime = 0;
     if ( !mtimeStr.isEmpty() ) {
@@ -768,6 +769,7 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
     // Read and data in chunks to minimize memory usage.
     QByteArray buffer;
     qint64 total = 0;
+    totalSize(ioDevice->size());
     while (1) {
         buffer = ioDevice->read(1024 * 1024);
 
@@ -784,6 +786,7 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
         total += buffer.size();
         processedSize( total );
     }
+    Q_ASSERT(total == ioDevice->size());
     ioDevice->close();
     ioDevice->deleteLater();
 

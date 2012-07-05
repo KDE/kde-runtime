@@ -275,7 +275,7 @@ bool KCliArchive::doWriteSymLink(const QString &name, const QString &target,
 {
     kDebug(7109);
 
-    // TODO: maybe copy name to d->currentFile.
+    // TODO: implement
 
     return true;
 }
