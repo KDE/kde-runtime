@@ -608,7 +608,7 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
         }
     }
 
-    // TODO: set the missing metadata.
+    // TODO: set the missing metadata. size will be set in m_archive->finishWriting.
     if (!m_archiveFile->prepareWriting(destName, m_archiveFile->directory()->user(), m_archiveFile->directory()->group(), 0 /*size*/,
                                        permissions, 0 /*atime*/, mtime, 0 /*ctime*/))
     {
