@@ -94,6 +94,7 @@ Query[sr@latin]=http://duckduckgo.com/?q=\\{@}&v=r&t=KDE
 Query[sv]=http://duckduckgo.com/?q=\\{@}&v=r&t=KDE
 Query[tr]=http://duckduckgo.com/?q=\\{@}&v=r&t=KDE
 Query[uk]=http://duckduckgo.com/?q=\\{@}&v=r&t=KDE
+Query[wa]=http://duckduckgo.com/?q=\\{@}&v=r&t=KDE
 Query[x-test]=xxhttp://duckduckgo.com/?q=\\{@}&v=r&t=KDExx
 Query[zh_CN]=http://duckduckgo.com/?q=\\{@}&v=r&t=KDE
 Query[zh_TW]=http://duckduckgo.com/?q=\\{@}&v=r&t=KDE
