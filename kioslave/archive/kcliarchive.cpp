@@ -19,7 +19,7 @@
  *
  */
 
-#include "kp7zip.h"
+#include "kcliarchive.h"
 #include "kerfuffle/archive.h"
 
 #include <QCoreApplication>
@@ -218,7 +218,7 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
 {
     kDebug(7109);
 
-    // we need to create the directory to be added in the filesystem before running the 7z command.
+    // we need to create the directory to be added in the filesystem before launching the command line process.
     generateTmpDirPath();
     QDir().mkpath(tmpDir + name);
 
@@ -286,13 +286,13 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
 {
     kDebug(7109);
     if (!isOpen()) {
-        kWarning(7109) << "You must open the 7z file before writing to it";
+        kWarning(7109) << "You must open the archive before writing to it";
         return false;
     }
 
     // accept WriteOnly and ReadWrite
     if (!(mode() & QIODevice::WriteOnly)) {
-        kWarning(7109) << "You must open the 7z file for writing";
+        kWarning(7109) << "You must open the archive for writing";
         return false;
     }
 
