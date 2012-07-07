@@ -103,7 +103,7 @@ protected:
     void addEntry(const Kerfuffle::ArchiveEntry & archiveEntry);
 
     QString tmpDir;
-    QString generateTmpDirPath();
+    QString createTmpDir();
     friend class KCliArchiveFileEntry;
 
 private:
