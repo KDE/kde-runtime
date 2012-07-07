@@ -96,11 +96,13 @@ bool KCliArchive::del( const QString & name, bool isFile )
     d->process->start();
 
     if (!d->process->waitForStarted()) {
+         QDir().rmpath(tmpDir);
          return false;
     }
     kDebug(7109) << " started";
 
     if (!d->process->waitForFinished()) {
+         QDir().rmpath(tmpDir);
          return false;
     }
 
@@ -250,11 +252,13 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
     d->process->start();
 
     if (!d->process->waitForStarted()) {
+         QDir().rmpath(tmpDir + name);
          return false;
     }
     kDebug(7109) << " started";
 
     if (!d->process->waitForFinished()) {
+         QDir().rmpath(tmpDir + name);
          return false;
     }
 
@@ -363,6 +367,7 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
         d->process->start();
     
         if (!d->process->waitForStarted()) {
+             QDir().rmpath(tmpDir);
              return false;
         }
         kDebug(7109) << " started";
@@ -386,6 +391,8 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
 
     kDebug(7109) << "Opening" << tmpFilePath << "for writing";
     if (!d->tmpFile->open(QIODevice::WriteOnly)) {
+        QFile::remove(tmpFilePath);
+        QDir().rmpath(tmpFilePath.left(tmpFilePath.lastIndexOf(QLatin1Char('/'))));
         return false;
     }
 
