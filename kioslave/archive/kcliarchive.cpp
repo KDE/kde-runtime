@@ -65,7 +65,7 @@ KCliArchive::KCliArchive(QIODevice * dev)
 
 KCliArchive::~KCliArchive()
 {
-    kDebug();
+    kDebug(7109);
     if(isOpen()) {
         close();
     }
@@ -133,14 +133,14 @@ bool KCliArchive::closeArchive()
         setDevice(0);
     }
 
-    kDebug() << "closed";
+    kDebug(7109) << "closed";
 
     return true;
 }
 
 bool KCliArchive::createDevice(QIODevice::OpenMode mode)
 {
-    kDebug();
+    kDebug(7109);
     bool b = false;
 
     if (mode == QIODevice::WriteOnly) {
@@ -434,7 +434,7 @@ bool KCliArchive::doFinishWriting(qint64 size)
     d->process = 0L;
     d->currentFile = 0L;
 
-    kDebug() << "finished";
+    kDebug(7109) << "finished";
 
     return ret;
 }
