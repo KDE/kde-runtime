@@ -82,7 +82,7 @@ bool KCliArchive::del( const QString & name, bool isFile )
         return false;
     }
 
-    generateTmpDirPath();
+    createTmpDir();
 
     // this is equivalent to "7z d archive.7z dir/file"
     d->process = new KProcess();
@@ -227,7 +227,7 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
     }
 
     // we need to create the directory to be added in the filesystem before launching the command line process.
-    generateTmpDirPath();
+    createTmpDir();
     QDir().mkpath(tmpDir + name);
 
     if (!QDir(tmpDir + name).exists()) {
@@ -352,7 +352,7 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
             return false;
         }
 
-        generateTmpDirPath();
+        createTmpDir();
 
         // this is equivalent to "cat dir/file | 7z -sidir/file a archive.7z",
         // which only works for 7z archive type.
@@ -384,7 +384,7 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
         delete d->tmpFile;
     }
 
-    generateTmpDirPath();
+    createTmpDir();
     QString tmpFilePath = tmpDir + name;
     QDir().mkpath(tmpFilePath.left(tmpFilePath.lastIndexOf(QLatin1Char('/'))));
     d->tmpFile = new QFile(tmpFilePath);
@@ -436,6 +436,8 @@ bool KCliArchive::doFinishWriting(qint64 size)
     QFile::remove(tmpFilePath);
     QDir().rmpath(tmpFilePath.left(tmpFilePath.lastIndexOf(QLatin1Char('/'))));
 
+    kDebug(7109) << "Lamarque removed" << tmpFilePath.left(tmpFilePath.lastIndexOf(QLatin1Char('/')));
+
     bool ret = true;
     if (d->process->exitCode() != 0) {
         kDebug(7109) << "exitCode" << d->process->exitCode();
@@ -457,7 +459,7 @@ void KCliArchive::virtual_hook(int id, void * data)
     KArchive::virtual_hook(id, data);
 }
 
-QString KCliArchive::generateTmpDirPath()
+QString KCliArchive::createTmpDir()
 {
     QString temp = KGlobal::dirs()->findDirs("tmp", "")[0];
     if (temp.isEmpty()) {
@@ -467,11 +469,14 @@ QString KCliArchive::generateTmpDirPath()
 
     int i = 0;
     tmpDir = temp;
+    QDir dir(tmpDir);
+    dir.rmpath(tmpDir);
     while (QDir(tmpDir).exists()) {
         tmpDir = temp + QString("_%1").arg(++i);
+        dir.rmpath(tmpDir);
     }
     tmpDir += QLatin1Char('/');
-    QDir().mkpath(tmpDir);
+    dir.mkpath(tmpDir);
 
     return tmpDir;
 }
@@ -538,7 +543,7 @@ QByteArray KCliArchiveFileEntry::data() const
 
 QIODevice* KCliArchiveFileEntry::createDevice() const
 {
-    d->q->generateTmpDirPath();
+    d->q->createTmpDir();
     QString filePath = d->q->tmpDir + path();
     QString destDir = filePath;
     int temp = filePath.lastIndexOf(QLatin1Char('/'));
