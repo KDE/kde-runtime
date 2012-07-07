@@ -366,6 +366,11 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
              return false;
         }
         kDebug(7109) << " started";
+
+        if (!d->tmpFile) {
+            delete d->tmpFile;
+            d->tmpFile = 0;
+        }
         setDevice(d->process);
         return true;
     }
