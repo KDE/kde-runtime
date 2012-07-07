@@ -218,18 +218,18 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
 {
     kDebug(7109);
 
+    const QString programPath(KStandardDirs::findExe(m_param.value(AddProgram).toString()));
+    if (programPath.isEmpty()) {
+        kError(7109) << "Failed to locate program" << m_param.value(AddProgram).toString() << "in PATH.";
+        return false;
+    }
+
     // we need to create the directory to be added in the filesystem before launching the command line process.
     generateTmpDirPath();
     QDir().mkpath(tmpDir + name);
 
     if (!QDir(tmpDir + name).exists()) {
         kDebug(7109) << "error creating temporary directory " << (tmpDir + name);
-        return false;
-    }
-
-    const QString programPath(KStandardDirs::findExe(m_param.value(AddProgram).toString()));
-    if (programPath.isEmpty()) {
-        kError(7109) << "Failed to locate program" << m_param.value(AddProgram).toString() << "in PATH.";
         return false;
     }
 
