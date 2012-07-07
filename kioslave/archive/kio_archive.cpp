@@ -624,6 +624,11 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
     while (1) {
         dataReq(); // Request for data
 
+        if (wasKilled()) {
+            kDebug(7109) << "wasKilled";
+            break;
+        }
+
         if (readData(buffer) <= 0) {
             kDebug(7109) << "readData <= 0";
             break;
@@ -639,6 +644,8 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
         processedSize( total );
     }
 
+    // even if the ioslave was killed we need to call finishWriting here to remove
+    // any temporary file created during m_archiveFile->prepareWriting.
     if ( !m_archiveFile->finishWriting( total /* to set file size */ ) ) {
         kWarning(7109) << "finishWriting failed";
         error(ERR_COULD_NOT_WRITE, url.prettyUrl());
@@ -773,6 +780,11 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
     while (1) {
         buffer = ioDevice->read(1024 * 1024);
 
+        if (wasKilled()) {
+            kDebug(7109) << "wasKilled";
+            break;
+        }
+
         if (buffer.isEmpty()) {
             break;
         }
@@ -790,6 +802,8 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
     ioDevice->close();
     ioDevice->deleteLater();
 
+    // even if the ioslave was killed we need to call finishWriting here to remove
+    // any temporary file created during m_archiveFile->prepareWriting.
     if ( !m_archiveFile->finishWriting( total /* to set file size */ ) ) {
         kWarning(7109) << "finishWriting failed";
         error(ERR_COULD_NOT_WRITE, dest.prettyUrl());
