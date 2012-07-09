@@ -209,7 +209,7 @@ void ArchiveProtocol::createRootUDSEntry( KIO::UDSEntry & entry )
     entry.insert( KIO::UDSEntry::UDS_NAME, "." );
     entry.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
     entry.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, m_mtime );
-    //entry.insert( KIO::UDSEntry::UDS_ACCESS, 07777 ); // fake 'x' permissions, this is a pseudo-directory
+    entry.insert( KIO::UDSEntry::UDS_ACCESS, 07777 ); // fake 'x' permissions, this is a pseudo-directory
     entry.insert( KIO::UDSEntry::UDS_USER, m_user);
     entry.insert( KIO::UDSEntry::UDS_GROUP, m_group);
 }
