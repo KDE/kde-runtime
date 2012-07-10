@@ -102,6 +102,7 @@ protected:
 
     void addEntry(const Kerfuffle::ArchiveEntry & archiveEntry);
 
+    QList<Kerfuffle::ArchiveEntry> symLinksToAdd;
     QString tmpDir;
     QString createTmpDir();
     friend class KCliArchiveFileEntry;

@@ -22,6 +22,8 @@
 #include "kcliarchive.h"
 #include "kerfuffle/archive.h"
 
+#include <unistd.h>
+
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
@@ -122,7 +124,19 @@ bool KCliArchive::openArchive(QIODevice::OpenMode mode)
         return true;
     }
 
-    return list();
+    // CliInterface is not ready to allow several KProcess running in parallel.
+    // We cannot run CliInterface::list() in parallel with other methods of CliInterface,
+    // like CliInterface::copyFiles(), which is used to add symbolic links in KCliArchive::addEntry().
+    // We will save the symbolic link list and add them after CliInterface::list() finishes.
+    symLinksToAdd.clear();
+    bool ret = list();
+    if (ret) {
+        foreach(const Kerfuffle::ArchiveEntry & entry, symLinksToAdd) {
+            addEntry(entry);
+        }
+    }
+    symLinksToAdd.clear();
+    return ret;
 }
 
 bool KCliArchive::closeArchive()
@@ -196,9 +210,53 @@ void KCliArchive::addEntry(const Kerfuffle::ArchiveEntry & archiveEntry)
         }
     } else {
         //kDebug(7109) << "creating KCliArchiveFileEntry, entryName= " << entryName << ", name=" << name;
+
+        QString symLinkTarget;
+
+        // we need to patch 7z to print the "IsLink" line for symlinks in 7z archives.
+        if (archiveEntry[Link].toBool()) {
+            //kDebug(7109) << name << "is a symbolic link";
+
+            // only tar archives provide the symlink's target info during listing.
+            symLinkTarget = archiveEntry[LinkTarget].toString();
+
+            // zip archives do not support symbolic links.
+            // krar.cpp does not detect symbolic links yet.
+            if (m_archiveType == ArchiveType7z && symLinkTarget.isEmpty()) {
+                createTmpDir();
+                QString filePath = tmpDir + name;
+                QString destDir = filePath;
+                int temp = filePath.lastIndexOf(QLatin1Char('/'));
+                if (temp != -1) {
+                    destDir = filePath.left(temp);
+                }
+                QDir().mkpath(destDir);
+            
+                //kDebug(7109) << "extracting symlink to" << filePath;
+    
+                QList<QVariant> filesToExtract;
+                filesToExtract.append(QVariant::fromValue(name));
+                copyFiles(filesToExtract, destDir, ExtractionOptions());
+                //kDebug(7109) << "reading symlink's target";
+    
+                QByteArray symlink = filePath.toUtf8();
+                char buf[256];
+                int bytesRead = readlink(symlink.constData(), buf, 256);
+                if (bytesRead > -1) {
+                    buf[bytesRead] = '\0';
+                    symLinkTarget = QString(buf);
+                    kDebug(7109) << "symlink target for" << name << "is" << symLinkTarget;
+                } else {
+                    kDebug(7109) << "error reading symLinkTarget for" << symlink;
+                }
+    
+                QFile::remove(filePath);
+                QDir().rmpath(filePath.left(filePath.lastIndexOf(QLatin1Char('/'))));
+            }
+        }
         entry = new KCliArchiveFileEntry(this, entryName, permissions, archiveEntry[Timestamp].toDateTime().toTime_t(),
                                  rootDir()->user(), rootDir()->group(),
-                                 QString() /*symlink*/, name, 0 /*dataoffset*/,
+                                 symLinkTarget, name, 0 /*dataoffset*/,
                                  archiveEntry[Size].toInt(), 0 /*cmethod*/, archiveEntry[CompressedSize].toInt());
     }
 

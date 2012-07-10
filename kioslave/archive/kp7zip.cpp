@@ -173,6 +173,10 @@ bool KP7zip::readListLine(const QString& line)
                         false;
                 }
             }
+        } else if (line.startsWith(QLatin1String("IsLink = "))) { // 7z
+            // we need to patch 7z to print the IsLink attribute line.
+            // the patch only exposes the IsLink attribute, not the symlink's target.
+            m_currentArchiveEntry[ Link ] = true;
         } else if (line.startsWith(QLatin1String("Mode = "))) { // tar
             m_currentArchiveEntry[ Permissions ] = line.mid(7);
         } else if (line.startsWith(QLatin1String("CRC = "))) {
@@ -183,10 +187,27 @@ bool KP7zip::readListLine(const QString& line)
                    line.size() >= 13) {
             m_currentArchiveEntry[ IsPasswordProtected ] = (line.at(12) == QLatin1Char( '+' ));
         } else if (line.startsWith(QLatin1String("Block = ")) /*    7z */ ||
-                   line.startsWith(QLatin1String("Link"))     /*   tar */ ||
-                   line.startsWith(QLatin1String("Version"))  /*   zip */ ) {
+                   line.startsWith(QLatin1String("Link = "))     /*   tar */ ||
+                   line.startsWith(QLatin1String("Version = "))  /*   zip */ ) {
+
+            if (line.startsWith(QLatin1String("Link = "))) { // tar
+                QString symLinkTarget = line.mid(7);
+                if (!symLinkTarget.isEmpty()) {
+                    m_currentArchiveEntry[ Link ] = true;
+                    m_currentArchiveEntry[ LinkTarget ] = symLinkTarget;
+                }
+            }
             if (m_currentArchiveEntry.contains(FileName)) {
-                addEntry(m_currentArchiveEntry);
+                if (m_currentArchiveEntry[ Link ].toBool()) {
+                    // the patch for 7z does not exposes the symlink's target,
+                    // so we will have to extract the link in KCliArchive::addEntry
+                    // and use readlink to read the target. That cannot be done while
+                    // CliInterface::list is running, so we will save the list here
+                    // and process it when CliInterface::list finishes.
+                    symLinksToAdd.append(m_currentArchiveEntry);
+                } else {
+                    addEntry(m_currentArchiveEntry);
+                }
             }
         }
         break;

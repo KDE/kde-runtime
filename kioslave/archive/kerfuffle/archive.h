@@ -61,6 +61,7 @@ enum EntryMetaDataType {
     Size,                /**< The entry's original size */
     CompressedSize,      /**< The compressed size for the entry */
     Link,                /**< The entry is a symbolic link */
+    LinkTarget,          /**< Target of the symbolic link (only for tar archives) */
     Ratio,               /**< The compression ratio for the entry */
     CRC,                 /**< The entry's CRC */
     Method,              /**< The compression method used on the entry */
