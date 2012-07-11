@@ -61,6 +61,8 @@ static void writeTestFilesToP7zipArchive( KArchive* archive )
     QVERIFY( ok );
     ok = archive->finishWriting( buffer1.size() + buffer2.size() + buffer3.size() );
     QVERIFY( ok );
+
+    writeTestFilesToArchive(archive);
 }
 
 void TestKioArchive::initTestCase()
@@ -159,7 +161,7 @@ void TestKioArchive::cleanupTestCase()
     KIO::NetAccess::synchronousRun(KIO::del(tmpDir(), KIO::HideProgressInfo), 0);
 }
 
-void TestKioArchive::copyFromTar(const KUrl& src, const QString& destPath)
+void TestKioArchive::copyFromArchive(const KUrl& src, const QString& destPath)
 {
     KUrl dest(destPath);
     // Check that src exists
@@ -177,7 +179,7 @@ void TestKioArchive::testExtractFileFromTar()
     const QString destPath = tmpDir() + "fileFromTar_copied";
     KUrl u = tarUrl();
     u.addPath("mydir/subfile");
-    copyFromTar(u, destPath);
+    copyFromArchive(u, destPath);
     QVERIFY(QFileInfo(destPath).isFile());
     QVERIFY(QFileInfo(destPath).size() == 7);
 }
@@ -187,7 +189,86 @@ void TestKioArchive::testExtractSymlinkFromTar()
     const QString destPath = tmpDir() + "symlinkFromTar_copied";
     KUrl u = tarUrl();
     u.addPath("mydir/symlink");
-    copyFromTar(u, destPath);
+    copyFromArchive(u, destPath);
+    QVERIFY(QFileInfo(destPath).isFile());
+    QEXPECT_FAIL("", "See #5601 -- on FTP we want to download the real file, not the symlink...", Continue);
+    // See comment in 149903
+    // Maybe this is something we can do depending on Class=:local and Class=:internet
+    // (we already know if a protocol is local or remote).
+    // So local->local should copy symlinks, while internet->local and internet->internet should
+    // copy the actual file, I guess?
+    // -> ### TODO
+    QVERIFY(QFileInfo(destPath).isSymLink());
+}
+
+KUrl TestKioArchive::p7zipUrl() const
+{
+    KUrl url;
+    url.setProtocol("p7zip");
+    url.setPath(QDir::currentPath());
+    url.addPath(s_p7zipFileName);
+    return url;
+}
+
+
+void TestKioArchive::testListP7zip()
+{
+    m_listResult.clear();
+    KIO::ListJob* job = KIO::listDir(p7zipUrl(), KIO::HideProgressInfo);
+    connect( job, SIGNAL( entries( KIO::Job*, const KIO::UDSEntryList& ) ),
+             SLOT( slotEntries( KIO::Job*, const KIO::UDSEntryList& ) ) );
+    bool ok = KIO::NetAccess::synchronousRun( job, 0 );
+    QVERIFY( ok );
+    kDebug() << "listDir done - entry count=" << m_listResult.count();
+    QVERIFY( m_listResult.count() > 1 );
+
+    kDebug() << m_listResult;
+    QCOMPARE(m_listResult.count( "." ), 1); // found it, and only once
+    QCOMPARE(m_listResult.count("testFile"), 1);
+    QCOMPARE(m_listResult.count("empty"), 1);
+    QCOMPARE(m_listResult.count("test1"), 1);
+    QCOMPARE(m_listResult.count("mydir"), 1);
+    QCOMPARE(m_listResult.count("mydir/subfile"), 0); // not a recursive listing
+    QCOMPARE(m_listResult.count("mydir/symlink"), 0);
+}
+
+void TestKioArchive::testListP7zipRecursive()
+{
+    m_listResult.clear();
+    KIO::ListJob* job = KIO::listRecursive(p7zipUrl(), KIO::HideProgressInfo);
+    connect( job, SIGNAL( entries( KIO::Job*, const KIO::UDSEntryList& ) ),
+             SLOT( slotEntries( KIO::Job*, const KIO::UDSEntryList& ) ) );
+    bool ok = KIO::NetAccess::synchronousRun( job, 0 );
+    QVERIFY( ok );
+    kDebug() << "listDir done - entry count=" << m_listResult.count();
+    QVERIFY( m_listResult.count() > 1 );
+
+    kDebug() << m_listResult;
+    QCOMPARE(m_listResult.count( "." ), 1); // found it, and only once
+    QCOMPARE(m_listResult.count("testFile"), 1);
+    QCOMPARE(m_listResult.count("empty"), 1);
+    QCOMPARE(m_listResult.count("test1"), 1);
+    QCOMPARE(m_listResult.count("mydir"), 1);
+    QCOMPARE(m_listResult.count("mydir/subfile"), 1);
+    QCOMPARE(m_listResult.count("mydir/symlink"), 1);
+}
+
+void TestKioArchive::testExtractFileFromP7zip()
+{
+    const QString destPath = tmpDir() + "fileFromP7zip_copied";
+    KUrl u = p7zipUrl();
+    u.addPath("mydir/subfile");
+    copyFromArchive(u, destPath);
+    QVERIFY(QFileInfo(destPath).isFile());
+    QVERIFY(QFileInfo(destPath).size() == 7);
+}
+
+void TestKioArchive::testExtractSymlinkFromP7zip()
+{
+    const QString destPath = tmpDir() + "symlinkFromP7zip_copied";
+    KUrl u = p7zipUrl();
+    u.addPath("mydir/symlink");
+    copyFromArchive(u, destPath);
     QVERIFY(QFileInfo(destPath).isFile());
     QEXPECT_FAIL("", "See #5601 -- on FTP we want to download the real file, not the symlink...", Continue);
     // See comment in 149903

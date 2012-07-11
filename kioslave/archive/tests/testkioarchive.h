@@ -41,6 +41,10 @@ private Q_SLOTS:
     void testListRecursive();
     void testExtractFileFromTar();
     void testExtractSymlinkFromTar();
+    void testListP7zip();
+    void testListP7zipRecursive();
+    void testExtractFileFromP7zip();
+    void testExtractSymlinkFromP7zip();
     void cleanupTestCase();
 
 protected Q_SLOTS: // real slots, not tests
@@ -49,7 +53,8 @@ protected Q_SLOTS: // real slots, not tests
 private:
     QString tmpDir() const;
     KUrl tarUrl() const;
-    void copyFromTar(const KUrl& url, const QString& destPath);
+    KUrl p7zipUrl() const;
+    void copyFromArchive(const KUrl& url, const QString& destPath);
 
     QStringList m_listResult;
 };
