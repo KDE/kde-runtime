@@ -12,6 +12,7 @@ deleting=true
 opening=true
 moving=true
 source=true
+linking=true
 X-DocPath=kioslave/tar/index.html
 Icon=package-x-generic
 Class=:local

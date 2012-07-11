@@ -12,5 +12,6 @@ deleting=true
 opening=true
 moving=true
 source=true
+linking=true
 Icon=application-x-7z-compressed
 Class=:local
