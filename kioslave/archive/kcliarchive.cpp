@@ -105,6 +105,12 @@ bool KCliArchive::del( const QString & name, bool isFile )
 {
     Q_UNUSED(isFile);
 
+    // accept WriteOnly and ReadWrite
+    if (!(mode() & QIODevice::WriteOnly)) {
+        kWarning(7109) << "You must open the archive for writing";
+        return false;
+    }
+
     const QString programPath(KStandardDirs::findExe(m_param.value(DeleteProgram).toString()));
     if (programPath.isEmpty()) {
         kError(7109) << "Failed to locate program" << m_param.value(DeleteProgram).toString() << "in PATH.";
@@ -314,6 +320,12 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
 {
     kDebug(7109);
 
+    // accept WriteOnly and ReadWrite
+    if (!(mode() & QIODevice::WriteOnly)) {
+        kWarning(7109) << "You must open the archive for writing";
+        return false;
+    }
+
     const QString programPath(KStandardDirs::findExe(m_param.value(AddProgram).toString()));
     if (programPath.isEmpty()) {
         kError(7109) << "Failed to locate program" << m_param.value(AddProgram).toString() << "in PATH.";
@@ -343,6 +355,12 @@ bool KCliArchive::doWriteSymLink(const QString &name, const QString &target,
                          mode_t perm, time_t atime, time_t mtime, time_t ctime)
 {
     kDebug(7109) << name << target;
+
+    // accept WriteOnly and ReadWrite
+    if (!(mode() & QIODevice::WriteOnly)) {
+        kWarning(7109) << "You must open the archive for writing";
+        return false;
+    }
 
     const QString programPath(KStandardDirs::findExe(m_param.value(AddProgram).toString()));
     if (programPath.isEmpty()) {
