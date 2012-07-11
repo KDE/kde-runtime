@@ -519,13 +519,12 @@ bool KCliArchive::doFinishWriting(qint64 size)
 
         bool ret = addFiles(QStringList() << d->currentFile->path(), options);
 
-
         return ret;
     }
 
     Q_ASSERT(d->process);
 
-    // TODO: calcule the compressed size.
+    // TODO: calculate the compressed size.
     //d->currentFile->setCompressedSize(csize);
 
     d->process->closeWriteChannel();
