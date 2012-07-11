@@ -952,6 +952,68 @@ void ArchiveProtocol::rename( const KUrl& src, const KUrl& dest, KIO::JobFlags f
     error( KIO::ERR_UNSUPPORTED_ACTION, src.prettyUrl() );
 }
 
+void ArchiveProtocol::symlink( const QString& target, const KUrl& dest, JobFlags flags )
+{
+    kDebug(7109) << target << dest;
+
+    QString path;
+    KIO::Error errorNum;
+    if ( !checkNewFile( dest, path, errorNum ) )
+    {
+        if ( errorNum == KIO::ERR_CANNOT_OPEN_FOR_READING )
+        {
+            // If we cannot open, it might be a problem with the archive header (e.g. unsupported format)
+            // Therefore give a more specific error message
+            error( KIO::ERR_SLAVE_DEFINED,
+                   i18n( "Could not open the file, probably due to an unsupported file format.\n%1",
+                             dest.prettyUrl() ) );
+            return;
+        }
+        else
+        {
+            // We have any other error
+            error( errorNum, dest.prettyUrl() );
+            return;
+        }
+    }
+
+    QString destName = relativePath(dest.path());
+    Q_ASSERT(!destName.isEmpty());
+
+    const KArchiveEntry * ent = m_archiveFile->directory()->entry( destName );
+
+    if (ent) {
+        if (ent->isDirectory()) {
+            kDebug(7109) << dest <<" already isdir !!";
+            error( KIO::ERR_DIR_ALREADY_EXIST, dest.prettyUrl());
+        } else {
+            kDebug(7109) << dest << " already exist !!";
+            error( KIO::ERR_FILE_ALREADY_EXIST, dest.prettyUrl());
+        }
+        return;
+    }
+
+    if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
+        kWarning(7109) << " open" << m_archiveFile->fileName() << "failed";
+        error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyUrl());
+        return;
+    }
+
+    time_t time = QDateTime::currentDateTime().toTime_t();
+    if (!m_archiveFile->writeSymLink( destName, target, m_archiveFile->directory()->user(), m_archiveFile->directory()->group(),
+                             0120755, time /*atime*/, time /*mtime*/, time /*ctime*/ )) {
+        error( KIO::ERR_CANNOT_SYMLINK, dest.prettyUrl() );
+        return;
+    }
+
+    finished();
+
+    // to force the archive to be re-read.
+    m_archiveFile->close();
+    delete m_archiveFile;
+    m_archiveFile = 0L;
+}
+
 /*
   In case someone wonders how the old filter stuff looked like :    :)
 void TARProtocol::slotData(void *_p, int _len)

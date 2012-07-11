@@ -46,6 +46,7 @@ public:
     virtual void del( const KUrl& kurl, bool isFile);
     virtual void mkdir( const KUrl& kurl, int permissions );
     virtual void rename( const KUrl& src, const KUrl& dest, KIO::JobFlags flags );
+    virtual void symlink( const QString& target, const KUrl& dest, KIO::JobFlags flags );
 
     // file operations
     virtual void get( const KUrl& kurl );

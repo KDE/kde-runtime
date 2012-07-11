@@ -335,11 +335,74 @@ bool KCliArchive::doWriteSymLink(const QString &name, const QString &target,
                          const QString &user, const QString &group,
                          mode_t perm, time_t atime, time_t mtime, time_t ctime)
 {
-    kDebug(7109);
+    kDebug(7109) << name << target;
 
-    // TODO: implement
+    const QString programPath(KStandardDirs::findExe(m_param.value(AddProgram).toString()));
+    if (programPath.isEmpty()) {
+        kError(7109) << "Failed to locate program" << m_param.value(AddProgram).toString() << "in PATH.";
+        return false;
+    }
 
-    return true;
+    // we need to create the symlink to be added in the filesystem before launching the command line process.
+    createTmpDir();
+    QString subdir;
+    int i = name.lastIndexOf(QLatin1Char('/'));
+    if (i != -1) {
+        subdir = name.left(i);
+    }
+    QDir().mkpath(tmpDir + subdir);
+
+    if (!QDir(tmpDir + subdir).exists()) {
+        kDebug(7109) << "error creating temporary directory " << (tmpDir + subdir);
+        return false;
+    }
+
+    QByteArray t = target.toUtf8();
+    QByteArray l = tmpDir.toUtf8() + name.toUtf8();
+    if (symlink(t.constData(), l.constData()) < 0) {
+        kDebug(7109) << "error creating temporary symlink " << (tmpDir + name);
+        return false;
+    }
+
+    if (d->process) {
+        d->process->waitForFinished();
+        delete d->process;
+    }
+
+    // this is equivalent to "7z a archive.7z dir/subdir/symlink"
+    d->process = new KProcess();
+    d->process->setWorkingDirectory(tmpDir);
+    QStringList args;
+    args.append(QLatin1String("a"));
+    args.append(this->fileName()); // archive where we will create the symlink.
+    args.append(name);
+    d->process->setProgram(programPath, args);
+    kDebug(7109) << "starting '" << programPath << args << "'";
+    d->process->start();
+
+    if (!d->process->waitForStarted()) {
+         QFile::remove(tmpDir + name);
+         QDir().rmpath(tmpDir + subdir);
+         return false;
+    }
+    kDebug(7109) << " started";
+
+    if (!d->process->waitForFinished()) {
+         QFile::remove(tmpDir + name);
+         QDir().rmpath(tmpDir + subdir);
+         return false;
+    }
+
+    bool ret = true;
+    if (d->process->exitCode() != 0) {
+        kDebug(7109) << "exitCode" << d->process->exitCode();
+        ret = false;
+    }
+
+    QFile::remove(tmpDir + name);
+    QDir().rmpath(tmpDir + subdir);
+
+    return ret;
 }
 
 bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
