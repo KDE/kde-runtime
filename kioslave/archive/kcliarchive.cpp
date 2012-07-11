@@ -115,31 +115,11 @@ bool KCliArchive::del( const QString & name, bool isFile )
     TemporaryPath tmpPath(tmpDir);
 
     // this is equivalent to "7z d archive.7z dir/file"
-    d->process = new KProcess();
-    d->process->setWorkingDirectory(tmpDir); // 7z command creates temporary files in the current working directory.
     QStringList args;
     args.append(QLatin1String("d"));
     args.append(this->fileName()); // archive where we will delete the file from.
     args.append(name);
-    d->process->setProgram(programPath, args);
-    kDebug(7109) << "starting '" << programPath << args << "'";
-    d->process->start();
-
-    if (!d->process->waitForStarted()) {
-         return false;
-    }
-    kDebug(7109) << " started";
-
-    if (!d->process->waitForFinished()) {
-         return false;
-    }
-
-    if (d->process->exitCode() != 0) {
-        kDebug(7109) << "exitCode" << d->process->exitCode();
-        return false;
-    }
-
-    return true;
+    return runProcess2(programPath, args);
 }
 
 bool KCliArchive::openArchive(QIODevice::OpenMode mode)
@@ -295,6 +275,40 @@ void KCliArchive::addEntry(const Kerfuffle::ArchiveEntry & archiveEntry)
     }
 }
 
+bool KCliArchive::runProcess2(const QString & programPath, const QStringList & args, const bool waitForFinished)
+{
+    if (d->process) {
+        d->process->waitForFinished();
+        delete d->process;
+    }
+
+    d->process = new KProcess();
+    d->process->setWorkingDirectory(tmpDir); // 7z command creates temporary files in the current working directory.
+    d->process->setProgram(programPath, args);
+    kDebug(7109) << "starting '" << programPath << args << "'";
+    d->process->start();
+
+    if (!d->process->waitForStarted()) {
+         return false;
+    }
+    kDebug(7109) << " started";
+
+    if (!waitForFinished) {
+        return true;
+    }
+
+    if (!d->process->waitForFinished()) {
+         return false;
+    }
+
+    if (d->process->exitCode() != 0) {
+        kDebug(7109) << "exitCode" << d->process->exitCode();
+        return false;
+    }
+
+    return true;
+}
+
 bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QString &group,
                        mode_t perm, time_t atime, time_t mtime, time_t ctime)
 {
@@ -316,38 +330,12 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
         return false;
     }
 
-    if (d->process) {
-        d->process->waitForFinished();
-        delete d->process;
-    }
-
     // this is equivalent to "7z a archive.7z dir/subdir/"
-    d->process = new KProcess();
-    d->process->setWorkingDirectory(tmpDir);
     QStringList args;
     args.append(QLatin1String("a"));
     args.append(this->fileName()); // archive where we will create the new directory.
     args.append(name);
-    d->process->setProgram(programPath, args);
-    kDebug(7109) << "starting '" << programPath << args << "'";
-    d->process->start();
-
-    if (!d->process->waitForStarted()) {
-         return false;
-    }
-    kDebug(7109) << " started";
-
-    if (!d->process->waitForFinished()) {
-         return false;
-    }
-
-    bool ret = true;
-    if (d->process->exitCode() != 0) {
-        kDebug(7109) << "exitCode" << d->process->exitCode();
-        ret = false;
-    }
-
-    return ret;
+    return runProcess2(programPath, args);
 }
 
 bool KCliArchive::doWriteSymLink(const QString &name, const QString &target,
@@ -384,38 +372,12 @@ bool KCliArchive::doWriteSymLink(const QString &name, const QString &target,
         return false;
     }
 
-    if (d->process) {
-        d->process->waitForFinished();
-        delete d->process;
-    }
-
     // this is equivalent to "7z a archive.7z dir/subdir/symlink"
-    d->process = new KProcess();
-    d->process->setWorkingDirectory(tmpDir);
     QStringList args;
     args.append(QLatin1String("a"));
     args.append(this->fileName()); // archive where we will create the symlink.
     args.append(name);
-    d->process->setProgram(programPath, args);
-    kDebug(7109) << "starting '" << programPath << args << "'";
-    d->process->start();
-
-    if (!d->process->waitForStarted()) {
-         return false;
-    }
-    kDebug(7109) << " started";
-
-    if (!d->process->waitForFinished()) {
-         return false;
-    }
-
-    bool ret = true;
-    if (d->process->exitCode() != 0) {
-        kDebug(7109) << "exitCode" << d->process->exitCode();
-        ret = false;
-    }
-
-    return ret;
+    return runProcess2(programPath, args);
 }
 
 bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
@@ -472,11 +434,6 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
     d->fileList.append(e);
     d->currentFile = e;
 
-    if (d->process) {
-        d->process->waitForFinished();
-        delete d->process;
-    }
-
     // TODO: maybe use KSaveFile to make this process more secure (KSaveFile is used to implement rollback).
 
     if (m_archiveType == ArchiveType7z) {
@@ -490,17 +447,13 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
 
         // this is equivalent to "cat dir/file | 7z -sidir/file a archive.7z",
         // which only works for 7z archive type.
-        d->process = new KProcess();
-        d->process->setWorkingDirectory(tmpDir);
         QStringList args;
         args.append(QLatin1String("-si") + name); // name is the filename relative to the archive.
         args.append(QLatin1String("a")); // TODO: use "u" if file already exists.
         args.append(this->fileName()); // archive we will add the new file to.
-        d->process->setProgram(programPath, args);
-        kDebug(7109) << "starting '" << programPath << args << "'";
-        d->process->start();
+        bool ret = runProcess2(programPath, args, false);
     
-        if (!d->process->waitForStarted()) {
+        if (!ret) {
              TemporaryPath tmpPath(tmpDir);
              return false;
         }
@@ -511,7 +464,7 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
             d->tmpFile = 0;
         }
         setDevice(d->process);
-        return true;
+        return ret;
     }
 
     if (d->tmpFile) {

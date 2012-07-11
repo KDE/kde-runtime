@@ -102,6 +102,8 @@ protected:
 
     void addEntry(const Kerfuffle::ArchiveEntry & archiveEntry);
 
+    bool runProcess2(const QString & programPath, const QStringList & args, const bool waitForFinished = true);
+
     QList<Kerfuffle::ArchiveEntry> symLinksToAdd;
     QString tmpDir;
     QString createTmpDir();
