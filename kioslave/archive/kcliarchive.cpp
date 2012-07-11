@@ -83,6 +83,9 @@ KCliArchive::KCliArchive(const QString & fileName)
       m_archiveType(ArchiveType7z),
       d(new KCliArchivePrivate)
 {
+    // in case the archive is opened for writing before it has been opened for reading,
+    // like in the unit tests.
+    cacheParameterList();
 }
 
 KCliArchive::KCliArchive(QIODevice * dev)
