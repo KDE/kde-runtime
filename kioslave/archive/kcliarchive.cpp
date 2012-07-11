@@ -35,6 +35,33 @@
 
 using namespace Kerfuffle;
 
+class TemporaryPath
+{
+public:
+    TemporaryPath(const QString & path): m_path(path)
+    {
+    }
+
+    ~TemporaryPath()
+    {
+         kDebug(7109) << "removing" << m_path;
+         QFile::remove(m_path);
+         QDir().rmpath(m_path);
+         int i = m_path.lastIndexOf(QLatin1Char('/'));
+         if (i != -1) {
+             QDir().mkpath(m_path.left(i));
+         }
+    }
+
+    QString path()
+    {
+        return m_path;
+    }
+
+private:
+    QString m_path;
+};
+
 class KCliArchive::KCliArchivePrivate
 {
 public:
@@ -85,6 +112,7 @@ bool KCliArchive::del( const QString & name, bool isFile )
     }
 
     createTmpDir();
+    TemporaryPath tmpPath(tmpDir);
 
     // this is equivalent to "7z d archive.7z dir/file"
     d->process = new KProcess();
@@ -98,17 +126,13 @@ bool KCliArchive::del( const QString & name, bool isFile )
     d->process->start();
 
     if (!d->process->waitForStarted()) {
-         QDir().rmpath(tmpDir);
          return false;
     }
     kDebug(7109) << " started";
 
     if (!d->process->waitForFinished()) {
-         QDir().rmpath(tmpDir);
          return false;
     }
-
-    QDir().rmpath(tmpDir);
 
     if (d->process->exitCode() != 0) {
         kDebug(7109) << "exitCode" << d->process->exitCode();
@@ -225,6 +249,7 @@ void KCliArchive::addEntry(const Kerfuffle::ArchiveEntry & archiveEntry)
             if (m_archiveType == ArchiveType7z && symLinkTarget.isEmpty()) {
                 createTmpDir();
                 QString filePath = tmpDir + name;
+                TemporaryPath tmpPath(filePath);
                 QString destDir = filePath;
                 int temp = filePath.lastIndexOf(QLatin1Char('/'));
                 if (temp != -1) {
@@ -249,9 +274,6 @@ void KCliArchive::addEntry(const Kerfuffle::ArchiveEntry & archiveEntry)
                 } else {
                     kDebug(7109) << "error reading symLinkTarget for" << symlink;
                 }
-    
-                QFile::remove(filePath);
-                QDir().rmpath(filePath.left(filePath.lastIndexOf(QLatin1Char('/'))));
             }
         }
         entry = new KCliArchiveFileEntry(this, entryName, permissions, archiveEntry[Timestamp].toDateTime().toTime_t(),
@@ -287,6 +309,7 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
     // we need to create the directory to be added in the filesystem before launching the command line process.
     createTmpDir();
     QDir().mkpath(tmpDir + name);
+    TemporaryPath tmpPath(tmpDir + name);
 
     if (!QDir(tmpDir + name).exists()) {
         kDebug(7109) << "error creating temporary directory " << (tmpDir + name);
@@ -310,13 +333,11 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
     d->process->start();
 
     if (!d->process->waitForStarted()) {
-         QDir().rmpath(tmpDir + name);
          return false;
     }
     kDebug(7109) << " started";
 
     if (!d->process->waitForFinished()) {
-         QDir().rmpath(tmpDir + name);
          return false;
     }
 
@@ -325,8 +346,6 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
         kDebug(7109) << "exitCode" << d->process->exitCode();
         ret = false;
     }
-
-    QDir().rmpath(tmpDir + name);
 
     return ret;
 }
@@ -345,6 +364,7 @@ bool KCliArchive::doWriteSymLink(const QString &name, const QString &target,
 
     // we need to create the symlink to be added in the filesystem before launching the command line process.
     createTmpDir();
+    TemporaryPath tmpPath(tmpDir + name);
     QString subdir;
     int i = name.lastIndexOf(QLatin1Char('/'));
     if (i != -1) {
@@ -381,15 +401,11 @@ bool KCliArchive::doWriteSymLink(const QString &name, const QString &target,
     d->process->start();
 
     if (!d->process->waitForStarted()) {
-         QFile::remove(tmpDir + name);
-         QDir().rmpath(tmpDir + subdir);
          return false;
     }
     kDebug(7109) << " started";
 
     if (!d->process->waitForFinished()) {
-         QFile::remove(tmpDir + name);
-         QDir().rmpath(tmpDir + subdir);
          return false;
     }
 
@@ -398,9 +414,6 @@ bool KCliArchive::doWriteSymLink(const QString &name, const QString &target,
         kDebug(7109) << "exitCode" << d->process->exitCode();
         ret = false;
     }
-
-    QFile::remove(tmpDir + name);
-    QDir().rmpath(tmpDir + subdir);
 
     return ret;
 }
@@ -488,7 +501,7 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
         d->process->start();
     
         if (!d->process->waitForStarted()) {
-             QDir().rmpath(tmpDir);
+             TemporaryPath tmpPath(tmpDir);
              return false;
         }
         kDebug(7109) << " started";
@@ -512,8 +525,7 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
 
     kDebug(7109) << "Opening" << tmpFilePath << "for writing";
     if (!d->tmpFile->open(QIODevice::WriteOnly)) {
-        QFile::remove(tmpFilePath);
-        QDir().rmpath(tmpFilePath.left(tmpFilePath.lastIndexOf(QLatin1Char('/'))));
+        TemporaryPath tmpPath(tmpFilePath);
         return false;
     }
 
@@ -527,6 +539,7 @@ bool KCliArchive::doFinishWriting(qint64 size)
     kDebug(7109);
     Q_ASSERT(d->currentFile);
     d->currentFile->setSize(size);
+    TemporaryPath tmpPath(tmpDir + d->currentFile->path());
 
     if (m_archiveType != ArchiveType7z) {
         d->tmpFile->close();
@@ -535,9 +548,6 @@ bool KCliArchive::doFinishWriting(qint64 size)
 
         bool ret = addFiles(QStringList() << d->currentFile->path(), options);
 
-        QString tmpFilePath = tmpDir + d->currentFile->path();
-        QFile::remove(tmpFilePath);
-        QDir().rmpath(tmpFilePath.left(tmpFilePath.lastIndexOf(QLatin1Char('/'))));
 
         return ret;
     }
@@ -552,12 +562,6 @@ bool KCliArchive::doFinishWriting(qint64 size)
     if (!d->process->waitForFinished()) {
          return false;
     }
-
-    QString tmpFilePath = tmpDir + d->currentFile->path();
-    QFile::remove(tmpFilePath);
-    QDir().rmpath(tmpFilePath.left(tmpFilePath.lastIndexOf(QLatin1Char('/'))));
-
-    kDebug(7109) << "Lamarque removed" << tmpFilePath.left(tmpFilePath.lastIndexOf(QLatin1Char('/')));
 
     bool ret = true;
     if (d->process->exitCode() != 0) {
