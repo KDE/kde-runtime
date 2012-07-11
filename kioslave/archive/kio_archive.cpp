@@ -189,7 +189,7 @@ bool ArchiveProtocol::checkNewFile( const KUrl & url, QString & path, KIO::Error
         return false;
     }
 
-    if ( !(static_cast<KArchive *>(m_archiveFile))->open( QIODevice::ReadOnly ) )
+    if ( !m_archiveFile->open( QIODevice::ReadOnly ) )
     {
         kDebug(7109) << "Opening" << archiveFile << "failed.";
         delete m_archiveFile;
@@ -592,7 +592,7 @@ void ArchiveProtocol::put( const KUrl & url, int permissions, KIO::JobFlags flag
         }
     }
 
-    if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
+    if (!m_archiveFile->open(QIODevice::WriteOnly)) {
         kWarning(7109) << " open" << m_archiveFile->fileName() << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
         return;
@@ -742,7 +742,7 @@ void ArchiveProtocol::copy( const KUrl& src, const KUrl &dest, int permissions, 
     }
 
     // open destination file.
-    if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
+    if (!m_archiveFile->open(QIODevice::WriteOnly)) {
         kWarning(7109) << " open" << m_archiveFile->fileName() << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyUrl());
 
@@ -849,7 +849,7 @@ void ArchiveProtocol::del( const KUrl & url, bool isFile )
 
     // when renaming files it can be closed at this point.
     if (!m_archiveFile->isOpen()) {
-        static_cast<KArchive *>(m_archiveFile)->open(QIODevice::ReadOnly);
+        m_archiveFile->open(QIODevice::ReadOnly);
     }
 
     const KArchiveEntry * ent = m_archiveFile->directory()->entry( relPath );
@@ -860,7 +860,7 @@ void ArchiveProtocol::del( const KUrl & url, bool isFile )
         return;
     }
 
-    if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
+    if (!m_archiveFile->open(QIODevice::WriteOnly)) {
         kWarning(7109) << " deleting" << relPath << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
     }
@@ -923,7 +923,7 @@ void ArchiveProtocol::mkdir( const KUrl & url, int permissions )
         return;
     }
 
-    if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
+    if (!m_archiveFile->open(QIODevice::WriteOnly)) {
         kWarning(7109) << " open" << m_archiveFile->fileName() << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, url.prettyUrl());
         return;
@@ -993,7 +993,7 @@ void ArchiveProtocol::symlink( const QString& target, const KUrl& dest, JobFlags
         return;
     }
 
-    if (!(static_cast<KArchive *>(m_archiveFile))->open(QIODevice::WriteOnly)) {
+    if (!m_archiveFile->open(QIODevice::WriteOnly)) {
         kWarning(7109) << " open" << m_archiveFile->fileName() << "failed";
         error(KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyUrl());
         return;

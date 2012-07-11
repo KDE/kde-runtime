@@ -63,8 +63,6 @@ public:
     void KDE_NO_EXPORT registerObserver(ArchiveObserver *observer);
     void KDE_NO_EXPORT removeObserver(ArchiveObserver *observer);
 
-    virtual bool open();
-
     /**
      * List archive contents.
      * This runs the process of reading archive contents.

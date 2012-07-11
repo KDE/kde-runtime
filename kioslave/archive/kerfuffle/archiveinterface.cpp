@@ -55,11 +55,6 @@ bool ReadOnlyArchiveInterface::isReadOnly() const
     return true;
 }
 
-bool ReadOnlyArchiveInterface::open()
-{
-    return true;
-}
-
 void ReadOnlyArchiveInterface::setPassword(QString password)
 {
     m_password = password;
