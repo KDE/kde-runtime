@@ -292,7 +292,7 @@ bool KCliArchive::runProcess2(const QString & programPath, const QStringList & a
     }
 
     d->process = new KProcess();
-    d->process->setWorkingDirectory(QDir::homePath()); // 7z command creates temporary files in the current working directory.
+    d->process->setWorkingDirectory(tmpDir); // 7z command creates temporary files in the current working directory.
     d->process->setProgram(programPath, args);
     kDebug(7109) << "starting '" << programPath << args << "'";
     d->process->start();
@@ -463,6 +463,10 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
             kError(7109) << "Failed to locate program" << m_param.value(AddProgram).toString() << "in PATH.";
             return false;
         }
+
+        // the KProcess in runProcess2 uses tmpDir as working directory but the command below
+        // does not need a temporary directory, so use the HOME dir instead.
+        tmpDir = QDir::homePath();
 
         // this is equivalent to "cat dir/file | 7z -sidir/file a archive.7z",
         // which only works for 7z archive type.
