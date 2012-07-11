@@ -292,7 +292,7 @@ bool KCliArchive::runProcess2(const QString & programPath, const QStringList & a
     }
 
     d->process = new KProcess();
-    d->process->setWorkingDirectory(tmpDir); // 7z command creates temporary files in the current working directory.
+    d->process->setWorkingDirectory(QDir::homePath()); // 7z command creates temporary files in the current working directory.
     d->process->setProgram(programPath, args);
     kDebug(7109) << "starting '" << programPath << args << "'";
     d->process->start();
@@ -464,8 +464,6 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
             return false;
         }
 
-        createTmpDir();
-
         // this is equivalent to "cat dir/file | 7z -sidir/file a archive.7z",
         // which only works for 7z archive type.
         QStringList args;
@@ -513,7 +511,6 @@ bool KCliArchive::doFinishWriting(qint64 size)
     kDebug(7109);
     Q_ASSERT(d->currentFile);
     d->currentFile->setSize(size);
-    TemporaryPath tmpPath(tmpDir + d->currentFile->path());
 
     if (m_archiveType != ArchiveType7z) {
         d->tmpFile->close();
@@ -521,6 +518,7 @@ bool KCliArchive::doFinishWriting(qint64 size)
         options[QLatin1String("GlobalWorkDir")] = tmpDir;
 
         bool ret = addFiles(QStringList() << d->currentFile->path(), options);
+        TemporaryPath tmpPath(tmpDir + d->currentFile->path());
 
         return ret;
     }
