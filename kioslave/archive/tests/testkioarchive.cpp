@@ -18,6 +18,7 @@
 */
 
 #include "testkioarchive.h"
+#include "../kp7zip.h"
 #include <qtest_kde.h>
 #include <kio/copyjob.h>
 #include <kio/deletejob.h>
@@ -28,6 +29,7 @@
 
 QTEST_KDEMAIN(TestKioArchive, NoGUI)
 static const char s_tarFileName[] = "karchivetest.tar";
+static const char s_p7zipFileName[] = "karchivetest.7z";
 
 static void writeTestFilesToArchive( KArchive* archive )
 {
@@ -39,6 +41,25 @@ static void writeTestFilesToArchive( KArchive* archive )
     ok = archive->writeFile( "mydir/subfile", "dfaure", "users", "Bonjour", 7 );
     QVERIFY( ok );
     ok = archive->writeSymLink( "mydir/symlink", "subfile", "dfaure", "users" );
+    QVERIFY( ok );
+}
+
+static void writeTestFilesToP7zipArchive( KArchive* archive )
+{
+    bool ok;
+    ok = archive->prepareWriting( "testFile", archive->directory()->user(), archive->directory()->group(), 0 /*size*/,
+                                  0100644, 0 /*atime*/, 0 /*mtime*/, 0 /*ctime*/ );
+    QVERIFY( ok );
+    QByteArray buffer1( "First buffer" );
+    ok = archive->writeData( buffer1.data(), buffer1.size() );
+    QVERIFY( ok );
+    QByteArray buffer2( "Second buffer" );
+    ok = archive->writeData( buffer2.data(), buffer2.size() );
+    QVERIFY( ok );
+    QByteArray buffer3( "Third buffer" );
+    ok = archive->writeData( buffer3.data(), buffer3.size() );
+    QVERIFY( ok );
+    ok = archive->finishWriting( buffer1.size() + buffer2.size() + buffer3.size() );
     QVERIFY( ok );
 }
 
@@ -55,6 +76,16 @@ void TestKioArchive::initTestCase()
     ok = tar.close();
     QVERIFY( ok );
     QFileInfo fileInfo( QFile::encodeName( s_tarFileName ) );
+    QVERIFY( fileInfo.exists() );
+
+    // need to pass absolute path or the archive will be created in a temporary directory.
+    KP7zip p7zip( QDir::currentPath() + '/' + s_p7zipFileName );
+    ok = p7zip.open( QIODevice::WriteOnly );
+    QVERIFY( ok );
+    writeTestFilesToP7zipArchive( &p7zip );
+    ok = p7zip.close();
+    QVERIFY( ok );
+    fileInfo.setFile( QFile::encodeName( s_p7zipFileName ) );
     QVERIFY( fileInfo.exists() );
 }
 
