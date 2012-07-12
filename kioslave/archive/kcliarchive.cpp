@@ -32,6 +32,7 @@
 #include <KProcess>
 #include <KStandardDirs>
 #include <ktemporaryfile.h>
+#include <kde_file.h>
 
 using namespace Kerfuffle;
 
@@ -337,13 +338,15 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
 
     // we need to create the directory to be added in the filesystem before launching the command line process.
     createTmpDir();
-    QDir().mkpath(tmpDir + name);
+    KDE::mkdir(tmpDir + name, perm);
     TemporaryPath tmpPath(tmpDir + name);
 
     if (!QDir(tmpDir + name).exists()) {
         kDebug(7109) << "error creating temporary directory " << (tmpDir + name);
         return false;
     }
+
+    setTimes(tmpPath.path(), atime, mtime);
 
     // this is equivalent to "7z a archive.7z dir/subdir/"
     QStringList args;
@@ -392,6 +395,9 @@ bool KCliArchive::doWriteSymLink(const QString &name, const QString &target,
         kDebug(7109) << "error creating temporary symlink " << (tmpDir + name);
         return false;
     }
+
+    setTimes(tmpPath.path(), atime, mtime);
+    KDE::chmod(tmpPath.path(), perm);
 
     // this is equivalent to "7z a archive.7z dir/subdir/symlink"
     QStringList args;
@@ -496,6 +502,8 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
 
     createTmpDir();
     QString tmpFilePath = tmpDir + name;
+    setTimes(tmpFilePath, atime, mtime);
+    KDE::chmod(tmpFilePath, perm);
     QDir().mkpath(tmpFilePath.left(tmpFilePath.lastIndexOf(QLatin1Char('/'))));
     d->tmpFile = new QFile(tmpFilePath);
 
@@ -579,6 +587,22 @@ QString KCliArchive::createTmpDir()
     dir.mkpath(tmpDir);
 
     return tmpDir;
+}
+
+bool KCliArchive::setTimes( const QString & path, const time_t atime, const time_t mtime)
+{
+    KDE_struct_stat statbuf;
+    if (KDE::lstat(path, &statbuf) == 0) {
+        struct utimbuf utbuf;
+        utbuf.actime = atime; // access time, unchanged
+        utbuf.modtime = mtime; // modification time
+
+        // TODO: errno could be EACCES, EPERM, EROFS
+        if (KDE::utime(path, &utbuf) == 0) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /***************************/

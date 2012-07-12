@@ -107,6 +107,7 @@ protected:
     QList<Kerfuffle::ArchiveEntry> symLinksToAdd;
     QString tmpDir;
     QString createTmpDir();
+    bool setTimes( const QString & path, const time_t atime, const time_t mtime);
     friend class KCliArchiveFileEntry;
 
 private:
