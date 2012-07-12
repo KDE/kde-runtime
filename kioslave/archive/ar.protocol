@@ -6,6 +6,8 @@ input=filesystem
 output=filesystem
 listing=Name,Type,Size,Date,Access,Owner,Group,Link
 reading=true
+
+# writing/makedir/deleting/moving only work if the proprietary rar command is installed
 writing=true
 makedir=true
 deleting=true
