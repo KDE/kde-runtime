@@ -121,7 +121,7 @@ namespace {
 KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
 {
     Resource res( result.resource() );
-    const KUrl uri( res.resourceUri() );
+    const KUrl uri( res.uri() );
     KUrl nieUrl( result[NIE::url()].uri() );
 
     // the additional bindings that we only have on unix systems
@@ -194,7 +194,7 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
             }
         }
         else {
-            kDebug() << "Stating" << result.resource().resourceUri() << "failed";
+            kDebug() << "Stating" << result.resource().uri() << "failed";
             return KIO::UDSEntry();
         }
     }

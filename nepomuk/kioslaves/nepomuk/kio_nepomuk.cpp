@@ -207,7 +207,7 @@ void Nepomuk2::NepomukProtocol::mimetype( const KUrl& url )
     Nepomuk2::Resource res = Nepomuk2::splitNepomukUrl( url, &filename );
     if ( filename.isEmpty() &&
          Nepomuk2::willBeRedirected( res ) ) {
-        kDebug() << res.resourceUri() << "is tag or file system -> mimetype inode/directory";
+        kDebug() << res.uri() << "is tag or file system -> mimetype inode/directory";
         mimeType( QLatin1String( "inode/directory" ) );
         finished();
     }

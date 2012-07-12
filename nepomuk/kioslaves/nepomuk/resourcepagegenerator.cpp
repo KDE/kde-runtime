@@ -102,7 +102,7 @@ void Nepomuk2::ResourcePageGenerator::setFlagsFromUrl( const KUrl& url )
 
 KUrl Nepomuk2::ResourcePageGenerator::url() const
 {
-    return configureUrl( m_resource.resourceUri(), m_flags );
+    return configureUrl( m_resource.uri(), m_flags );
 }
 
 
@@ -199,7 +199,7 @@ QByteArray Nepomuk2::ResourcePageGenerator::generatePage() const
        << "Type: " << ( exists ? typesToHtml( m_resource.types() ) : i18n( "Resource does not exist" ) );
 
     if(m_resource.isFile() && m_resource.hasType(Nepomuk2::Vocabulary::NFO::Image())) {
-        os << "<img src=\"" << m_resource.resourceUri().toString() << "\" />";
+        os << "<img src=\"" << m_resource.uri().toString() << "\" />";
     }
     else if(m_resource.hasProperty(Nepomuk2::Vocabulary::NFO::depiction())) {
         os << "<img src=\"" << m_resource.property(Nepomuk2::Vocabulary::NFO::depiction()).toUrlList().first().toString() << "\" />";
@@ -208,7 +208,7 @@ QByteArray Nepomuk2::ResourcePageGenerator::generatePage() const
     os << "<h2>" << i18n("Relations:") << "</h2><div id=\"relations\"><table>";
 
     // query relations
-    Soprano::StatementIterator it = ResourceManager::instance()->mainModel()->listStatements( m_resource.resourceUri(), Soprano::Node(), Soprano::Node() );
+    Soprano::StatementIterator it = ResourceManager::instance()->mainModel()->listStatements( m_resource.uri(), Soprano::Node(), Soprano::Node() );
     while ( it.next() ) {
         Soprano::Statement s = it.current();
         Nepomuk2::Types::Property p( s.predicate().uri() );
@@ -228,7 +228,7 @@ QByteArray Nepomuk2::ResourcePageGenerator::generatePage() const
                 QString label = uri.fileName();
                 if ( s.predicate() != Nepomuk2::Vocabulary::NIE::url() ) {
                     Resource resource( uri );
-                    uri = resource.resourceUri();
+                    uri = resource.uri();
                     label = QString::fromLatin1( "%1 (%2)" )
                             .arg( resourceLabel( resource ),
                                   typesToHtml( resource.types() ) );
@@ -244,7 +244,7 @@ QByteArray Nepomuk2::ResourcePageGenerator::generatePage() const
 
     // query backlinks
     os << "<h2>" << i18n("Backlinks:") << "</h2><div id=\"relations\"><table>";
-    Soprano::StatementIterator itb = ResourceManager::instance()->mainModel()->listStatements( Soprano::Node(), Soprano::Node(), m_resource.resourceUri() );
+    Soprano::StatementIterator itb = ResourceManager::instance()->mainModel()->listStatements( Soprano::Node(), Soprano::Node(), m_resource.uri() );
     while ( itb.next() ) {
         Soprano::Statement s = itb.current();
         Resource resource( s.subject().uri() );
@@ -264,7 +264,7 @@ QByteArray Nepomuk2::ResourcePageGenerator::generatePage() const
 
     if ( exists ) {
         os << "<h2>" << i18n("Actions:") << "</h2>"
-           << "<div id=\"relations\"><a href=\"" << KUrl( m_resource.resourceUri() ).url() << "?action=delete\">" << i18n( "Delete resource" ) << "</a></div>";
+           << "<div id=\"relations\"><a href=\"" << KUrl( m_resource.uri() ).url() << "?action=delete\">" << i18n( "Delete resource" ) << "</a></div>";
     }
 
     os << "</div></div></div></div></body></html>";
@@ -277,7 +277,7 @@ QByteArray Nepomuk2::ResourcePageGenerator::generatePage() const
 QString Nepomuk2::ResourcePageGenerator::resourceLabel( const Resource& res ) const
 {
     if ( m_flags & ShowUris )
-        return KUrl( res.resourceUri() ).prettyUrl();
+        return KUrl( res.uri() ).prettyUrl();
     else
         return res.genericLabel();
 }
@@ -363,7 +363,7 @@ QString Nepomuk2::ResourcePageGenerator::formatResource(const Nepomuk2::Types::P
     QString label = uri.fileName();
     if ( p != NIE::url() ) {
         Resource resource( uri );
-        uri = resource.resourceUri();
+        uri = resource.uri();
         label = QString::fromLatin1( "%1 (%2)" )
                 .arg( resourceLabel( resource ),
                       typesToHtml( resource.types() ) );
