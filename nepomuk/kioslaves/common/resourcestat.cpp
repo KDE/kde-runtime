@@ -134,7 +134,7 @@ bool Nepomuk2::mountAndWait( Solid::StorageAccess* storage )
 KUrl Nepomuk2::determineFilesystemPath( const Nepomuk2::Resource& fsRes )
 {
     QString uuidQuery = QString::fromLatin1( "select ?uuid where { %1 %2 ?uuid . }" )
-                        .arg( Soprano::Node::resourceToN3( fsRes.resourceUri() ),
+                        .arg( Soprano::Node::resourceToN3( fsRes.uri() ),
                               Soprano::Node::resourceToN3( Soprano::Vocabulary::NAO::identifier() ) );
     Soprano::QueryResultIterator it = Nepomuk2::ResourceManager::instance()->mainModel()->executeQuery( uuidQuery, Soprano::Query::QueryLanguageSparql );
     if ( it.next() ) {
@@ -158,7 +158,7 @@ QString Nepomuk2::getFileSystemLabelForRemovableMediaFileUrl( const Nepomuk2::Re
                                                                                                 "?fs a nfo:Filesystem . "
                                                                                                 "?fs nao:prefLabel ?label . "
                                                                                                 "} LIMIT 1" )
-                                                                           .arg( Soprano::Node::resourceToN3( res.resourceUri() ) ),
+                                                                           .arg( Soprano::Node::resourceToN3( res.uri() ) ),
                                                                            Soprano::Query::QueryLanguageSparql ).iterateBindings( "label" ).allNodes();
 
     if ( !labelNodes.isEmpty() )
@@ -212,11 +212,11 @@ void Nepomuk2::addGenericNepomukResourceData( const Nepomuk2::Resource& res, KIO
     // everything much cleaner since kio slaves can decide if the resources can be
     // annotated or not.
     //
-    uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, KUrl( res.resourceUri() ).url() );
+    uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, KUrl( res.uri() ).url() );
 
     if ( includeMimeType ) {
         // Use nice display types like "Person", "Project" and so on
-        Nepomuk2::Types::Class type( res.resourceType() );
+        Nepomuk2::Types::Class type( res.type() );
         if (!type.label().isEmpty())
             uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, type.label() );
 
@@ -264,7 +264,7 @@ KIO::UDSEntry Nepomuk2::statNepomukResource( const Nepomuk2::Resource& res, bool
     uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, displayName );
 
     // UDS_NAME needs to be unique but can be ugly
-    uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( res.resourceUri() ) );
+    uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( res.uri() ) );
 
     //
     // There can still be file resources that have a mimetype but are
@@ -329,7 +329,7 @@ KUrl Nepomuk2::redirectionUrl( const Nepomuk2::Resource& res )
     else if ( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
         Query::ComparisonTerm term( Soprano::Vocabulary::NAO::hasTag(), Query::ResourceTerm( res ), Query::ComparisonTerm::Equal );
         KUrl url = Query::Query( term ).toSearchUrl( i18n( "Things tagged '%1'", res.genericLabel() ) );
-        url.addQueryItem( QLatin1String( "resource" ), KUrl( res.resourceUri() ).url() );
+        url.addQueryItem( QLatin1String( "resource" ), KUrl( res.uri() ).url() );
         return url;
     }
 
@@ -338,7 +338,7 @@ KUrl Nepomuk2::redirectionUrl( const Nepomuk2::Resource& res )
     else if ( !res.hasType( Nepomuk2::Vocabulary::NFO::FileDataObject() ) ) {
         Query::ComparisonTerm term( QUrl(), Query::ResourceTerm( res ), Query::ComparisonTerm::Equal );
         KUrl url = Query::Query( term ).toSearchUrl( res.genericLabel() );
-        url.addQueryItem( QLatin1String( "resource" ), KUrl( res.resourceUri() ).url() );
+        url.addQueryItem( QLatin1String( "resource" ), KUrl( res.uri() ).url() );
         kDebug() << url;
         return url;
     }

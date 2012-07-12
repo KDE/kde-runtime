@@ -100,7 +100,7 @@ void Nepomuk2::SearchUrlListener::slotEntriesRemoved( const QList<Nepomuk2::Quer
     QStringList urls;
     foreach( const Query::Result& result, entries ) {
         // make sure we use the exact same name used in searchfolder.cpp
-        KUrl url( result.resource().resourceUri() );
+        KUrl url( result.resource().uri() );
         if( result.requestProperties().contains(Nepomuk2::Vocabulary::NIE::url()) )
             url = result[Nepomuk2::Vocabulary::NIE::url()].uri();
 
