@@ -59,6 +59,5 @@ else(KDEBASE_DISABLE_MULTIMEDIA)
 
    add_subdirectory(kded-module)
    add_subdirectory(platform_kde)
-   macro_optional_add_subdirectory(tests)
    macro_optional_add_subdirectory(kcm)
 endif(KDEBASE_DISABLE_MULTIMEDIA)
