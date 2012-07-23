@@ -95,8 +95,8 @@ void TestKioArchive::testListTar()
 {
     m_listResult.clear();
     KIO::ListJob* job = KIO::listDir(tarUrl(), KIO::HideProgressInfo);
-    connect( job, SIGNAL( entries( KIO::Job*, const KIO::UDSEntryList& ) ),
-             SLOT( slotEntries( KIO::Job*, const KIO::UDSEntryList& ) ) );
+    connect( job, SIGNAL(entries(KIO::Job*,KIO::UDSEntryList)),
+             SLOT(slotEntries(KIO::Job*,KIO::UDSEntryList)) );
     bool ok = KIO::NetAccess::synchronousRun( job, 0 );
     QVERIFY( ok );
     kDebug() << "listDir done - entry count=" << m_listResult.count();
@@ -115,8 +115,8 @@ void TestKioArchive::testListRecursive()
 {
     m_listResult.clear();
     KIO::ListJob* job = KIO::listRecursive(tarUrl(), KIO::HideProgressInfo);
-    connect( job, SIGNAL( entries( KIO::Job*, const KIO::UDSEntryList& ) ),
-             SLOT( slotEntries( KIO::Job*, const KIO::UDSEntryList& ) ) );
+    connect( job, SIGNAL(entries(KIO::Job*,KIO::UDSEntryList)),
+             SLOT(slotEntries(KIO::Job*,KIO::UDSEntryList)) );
     bool ok = KIO::NetAccess::synchronousRun( job, 0 );
     QVERIFY( ok );
     kDebug() << "listDir done - entry count=" << m_listResult.count();
@@ -215,8 +215,8 @@ void TestKioArchive::testListP7zip()
 {
     m_listResult.clear();
     KIO::ListJob* job = KIO::listDir(p7zipUrl(), KIO::HideProgressInfo);
-    connect( job, SIGNAL( entries( KIO::Job*, const KIO::UDSEntryList& ) ),
-             SLOT( slotEntries( KIO::Job*, const KIO::UDSEntryList& ) ) );
+    connect( job, SIGNAL(entries(KIO::Job*,KIO::UDSEntryList)),
+             SLOT(slotEntries(KIO::Job*,KIO::UDSEntryList)) );
     bool ok = KIO::NetAccess::synchronousRun( job, 0 );
     QVERIFY( ok );
     kDebug() << "listDir done - entry count=" << m_listResult.count();
@@ -236,8 +236,8 @@ void TestKioArchive::testListP7zipRecursive()
 {
     m_listResult.clear();
     KIO::ListJob* job = KIO::listRecursive(p7zipUrl(), KIO::HideProgressInfo);
-    connect( job, SIGNAL( entries( KIO::Job*, const KIO::UDSEntryList& ) ),
-             SLOT( slotEntries( KIO::Job*, const KIO::UDSEntryList& ) ) );
+    connect( job, SIGNAL(entries(KIO::Job*,KIO::UDSEntryList)),
+             SLOT(slotEntries(KIO::Job*,KIO::UDSEntryList)) );
     bool ok = KIO::NetAccess::synchronousRun( job, 0 );
     QVERIFY( ok );
     kDebug() << "listDir done - entry count=" << m_listResult.count();
