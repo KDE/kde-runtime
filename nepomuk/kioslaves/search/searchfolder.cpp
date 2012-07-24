@@ -204,9 +204,16 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
         // file names in opening applications and non-KDE apps can handle the URLs properly. The downside
         // is that we lose the context information, i.e. query results cannot be browsed in the opening
         // application. We decide pro-filenames and pro-non-kde-apps here.
-        if( !uds.isDir() ) {
+        //
+        // Setting UDS_TARGET_URL for directories as well as files fixes bug 293111,
+        // which is about files in subfolders of listings not opening correctly.
+        // It breaks tree listings of search results, but, since KDE 4.9, it is not possible to view search results 
+        // as tree listings in dolphin, so there is no user-visible effect.
+        // If you were to want to do that, you should fix bug 293111 another way, perhaps by adding
+        // more complicated logic to Nepomuk2::SearchProtocol::listDir
+        // which sets UDS_TARGET_URL for members of subdirectories of a search query directory as well.
+        //   if( !uds.isDir() ) {
             uds.insert( KIO::UDSEntry::UDS_TARGET_URL, nieUrl.url() );
-        }
 
         // set the local path so that KIO can handle the rest
         if( nieUrl.isLocalFile() )
