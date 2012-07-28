@@ -52,6 +52,8 @@ public:
      */
     QString filename() const;
 
+    inline void setFilename(const QString & f) { m_filename = f; }
+
     /**
      * Returns whether the file can only be read.
      *

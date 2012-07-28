@@ -21,6 +21,7 @@
 
 #include "kcliarchive.h"
 #include "kerfuffle/archive.h"
+#include "temporarypath.h"
 
 #include <unistd.h>
 
@@ -35,33 +36,6 @@
 #include <kde_file.h>
 
 using namespace Kerfuffle;
-
-class TemporaryPath
-{
-public:
-    TemporaryPath(const QString & path): m_path(path)
-    {
-    }
-
-    ~TemporaryPath()
-    {
-         kDebug(7109) << "removing" << m_path;
-         QFile::remove(m_path);
-         QDir().rmpath(m_path);
-         int i = m_path.lastIndexOf(QLatin1Char('/'));
-         if (i != -1) {
-             QDir().mkpath(m_path.left(i));
-         }
-    }
-
-    QString path()
-    {
-        return m_path;
-    }
-
-private:
-    QString m_path;
-};
 
 class KCliArchive::KCliArchivePrivate
 {
