@@ -261,7 +261,28 @@ bool KTar::closeArchive()
 
     if (!m_originalFilename.isEmpty()) {
         if (mode() & QIODevice::WriteOnly) {
-            // TODO; copy m_tmpTarFilename over m_originalFilename
+            QString newArchiveFilename = m_tmpTarFilename + '.' + m_originalFilename.section(QLatin1Char('.'), -1, -1);
+            kDebug(7109) << "Will create new archive" << newArchiveFilename; 
+            setFilename(newArchiveFilename);
+
+            // FIXME: 7z refuses to add file if one directory appears twice in the archive. I think
+            // libarchive plugin in Ark is causing the duplicate directory problem. The tar command
+            // does not complaint about that.
+            if (addFiles(QStringList() << m_tmpTarFilename, CompressionOptions())) {
+                if (QFile::remove(m_originalFilename)) {
+                    Q_ASSERT(!QFile::exists(m_originalFilename));
+
+                    if (QFile::copy(newArchiveFilename, m_originalFilename)) {
+                        Q_ASSERT(QFile::exists(m_originalFilename));
+                    } else {
+                        kDebug(7109) << "Error saving new archive to" << m_originalFilename; 
+                    }
+                } else {
+                    kDebug(7109) << "Error removing original archive" << m_originalFilename; 
+                }
+            } else {
+                kDebug(7109) << "Error adding" << m_tmpTarFilename;
+            }
         }
 
         TemporaryPath tmpPath(m_tmpTarFilename);

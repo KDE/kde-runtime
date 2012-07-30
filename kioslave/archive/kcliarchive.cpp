@@ -98,7 +98,7 @@ bool KCliArchive::del( const QString & name, bool isFile )
     // this is equivalent to "7z d archive.7z dir/file"
     QStringList args;
     args.append(QLatin1String("d"));
-    args.append(this->fileName()); // archive where we will delete the file from.
+    args.append(filename()); // archive where we will delete the file from.
     args.append(name);
     return runProcess2(programPath, args);
 }
@@ -325,7 +325,7 @@ bool KCliArchive::doWriteDir(const QString &name, const QString &user, const QSt
     // this is equivalent to "7z a archive.7z dir/subdir/"
     QStringList args;
     args.append(QLatin1String("a"));
-    args.append(this->fileName()); // archive where we will create the new directory.
+    args.append(filename()); // archive where we will create the new directory.
     args.append(name);
     return runProcess2(programPath, args);
 }
@@ -376,7 +376,7 @@ bool KCliArchive::doWriteSymLink(const QString &name, const QString &target,
     // this is equivalent to "7z a archive.7z dir/subdir/symlink"
     QStringList args;
     args.append(QLatin1String("a"));
-    args.append(this->fileName()); // archive where we will create the symlink.
+    args.append(filename()); // archive where we will create the symlink.
     args.append(name);
     return runProcess2(programPath, args);
 }
@@ -453,7 +453,7 @@ bool KCliArchive::doPrepareWriting(const QString & name, const QString & user,
         QStringList args;
         args.append(QLatin1String("-si") + name); // name is the filename relative to the archive.
         args.append(QLatin1String("a")); // TODO: use "u" if file already exists.
-        args.append(this->fileName()); // archive we will add the new file to.
+        args.append(filename()); // archive we will add the new file to.
         bool ret = runProcess2(programPath, args, false);
     
         if (!ret) {
