@@ -29,7 +29,6 @@
 #include <Soprano/Node> // for qHash( QUrl )
 
 #include <Nepomuk2/Variant>
-#include <Nepomuk2/Thing>
 #include <Nepomuk2/Types/Class>
 #include <Nepomuk2/Query/Query>
 #include <Nepomuk2/Query/Result>

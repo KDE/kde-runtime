@@ -31,7 +31,6 @@
 #include <kio/udsentry.h>
 #include <KDebug>
 
-#include <Nepomuk2/Thing>
 #include <Nepomuk2/Variant>
 #include <Nepomuk2/Types/Class>
 #include <Nepomuk2/ResourceManager>
