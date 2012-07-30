@@ -227,7 +227,7 @@ bool KTar::openArchive(QIODevice::OpenMode mode)
         QDir dir(tmpDir);
         foreach (const QString & f, dir.entryList()) {
             if (f.endsWith(QLatin1String(".tar"))) {
-                m_tmpTarFilename = tmpDir + '/' + f;
+                m_tmpTarFilename = tmpDir + f;
                 setFilename(m_tmpTarFilename);
                 break;
             }
@@ -279,6 +279,7 @@ bool KTar::closeArchive()
 
                     if (QFile::copy(newArchiveFilename, m_originalFilename)) {
                         Q_ASSERT(QFile::exists(m_originalFilename));
+                        TemporaryPath tmpPath(newArchiveFilename);
                     } else {
                         kDebug(7109) << "Error saving new archive to" << m_originalFilename; 
                     }
