@@ -222,11 +222,16 @@ bool KTar::openArchive(QIODevice::OpenMode mode)
 {
     if (m_originalFilename.isEmpty() && filename().section(QLatin1Char('.'), -2, -2) == QLatin1String("tar")) {
         createTmpDir();
-        m_tmpTarFilename = tmpDir + filename().section(QLatin1Char('/'), -1, -1);
-        m_tmpTarFilename = m_tmpTarFilename.left(m_tmpTarFilename.lastIndexOf(QLatin1Char('.'))); // remove .gz or .bz2 extension.
         copyFiles(QList<QVariant>(), tmpDir, CompressionOptions());
         m_originalFilename = filename();
-        setFilename(m_tmpTarFilename);
+        QDir dir(tmpDir);
+        foreach (const QString & f, dir.entryList()) {
+            if (f.endsWith(QLatin1String(".tar"))) {
+                m_tmpTarFilename = tmpDir + '/' + f;
+                setFilename(m_tmpTarFilename);
+                break;
+            }
+        }
 
         kDebug(1601) << "Temporary tar file:" << m_tmpTarFilename;
     } else {
