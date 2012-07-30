@@ -37,7 +37,6 @@
 #include <KStandardDirs>
 #include <KFileItem>
 
-#include <Nepomuk2/Thing>
 #include <Nepomuk2/ResourceManager>
 #include <Nepomuk2/Variant>
 #include <Nepomuk2/Query/QueryServiceClient>

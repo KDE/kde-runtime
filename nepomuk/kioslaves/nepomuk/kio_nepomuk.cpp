@@ -37,7 +37,6 @@
 #include <KMessageBox>
 #include <KMimeType>
 
-#include <nepomuk2/thing.h>
 #include <nepomuk2/resourcemanager.h>
 #include <nepomuk2/variant.h>
 #include <nepomuk2/class.h>
