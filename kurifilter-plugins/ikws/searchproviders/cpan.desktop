@@ -118,6 +118,7 @@ Query[lv]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}
 Query[nb]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}
 Query[nds]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}
 Query[nl]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}
+Query[nn]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}
 Query[pa]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}
 Query[pl]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}
 Query[pt]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}
