@@ -28,6 +28,7 @@
 #include <unistd.h>
 
 #include <QFile>
+#include <QTextCodec>
 
 #include <kglobal.h>
 #include <kurl.h>
@@ -39,6 +40,8 @@
 #include <kio/global.h>
 
 #include <kuser.h>
+
+#define TRY_CODEC_CP850 1
 
 using namespace KIO;
 
@@ -430,6 +433,15 @@ void ArchiveProtocol::get( const KUrl & url )
 
     const KArchiveDirectory* root = m_archiveFile->directory();
     const KArchiveEntry* archiveEntry = root->entry( path );
+
+#if TRY_CODEC_CP850
+    if ( !archiveEntry )
+    {
+        kDebug(7109) << "entry" << path << "not found. Trying again with CP850 codec";
+        path = QTextCodec::codecForName("CP850")->fromUnicode(path.toLatin1());
+        archiveEntry = root->entry( path );
+    }
+#endif
 
     if ( !archiveEntry )
     {
