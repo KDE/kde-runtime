@@ -34,7 +34,7 @@ TemporaryPath::~TemporaryPath()
      QDir().rmpath(m_path);
      int i = m_path.lastIndexOf(QLatin1Char('/'));
      if (i != -1) {
-         QDir().mkpath(m_path.left(i));
+         QDir().rmpath(m_path.left(i));
      }
 }
 
