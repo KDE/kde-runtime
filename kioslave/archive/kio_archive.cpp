@@ -80,7 +80,11 @@ ArchiveProtocol::~ArchiveProtocol()
 bool ArchiveProtocol::checkNewFile( const KUrl & url, QString & path, KIO::Error& errorNum )
 {
 #ifndef Q_WS_WIN
-    QString fullPath = url.path();
+    // this removes the filename if it contains chars with broken encoding.
+    //QString fullPath = url.path();
+
+    // this one works better.
+    QString fullPath = url.prettyUrl().remove(url.protocol() + QLatin1String(":"));
 #else
     QString fullPath = url.path().remove(0, 1);
 #endif
