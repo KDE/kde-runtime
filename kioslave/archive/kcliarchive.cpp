@@ -256,6 +256,7 @@ void KCliArchive::addEntry(const Kerfuffle::ArchiveEntry & archiveEntry)
             KArchiveDirectory * tdir = findOrCreate(path);
             tdir->addEntry(entry);
         }
+        kDebug(7109) << "Added" << entry->name();
     }
 }
 
