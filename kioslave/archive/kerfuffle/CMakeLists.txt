@@ -3,7 +3,7 @@ macro_log_feature(QJSON_FOUND "qjson" "A library for processing and serializing 
 
 ########### next target ###############
 
-set(kerfuffle_SRCS
+set(kerfuffle2_SRCS
     archive.cpp
     archiveinterface.cpp
     jobs.cpp
@@ -17,22 +17,22 @@ set(kerfuffle_SRCS
 
 include_directories("..")
 
-#kde4_add_kcfg_files(kerfuffle_SRCS settings.kcfgc)
+#kde4_add_kcfg_files(kerfuffle2_SRCS settings.kcfgc)
 
-#kde4_add_ui_files(kerfuffle_SRCS extractiondialog.ui adddialog.ui )
+#kde4_add_ui_files(kerfuffle2_SRCS extractiondialog.ui adddialog.ui )
 
-kde4_add_library(kerfuffle STATIC ${kerfuffle_SRCS})
+kde4_add_library(kerfuffle2 STATIC ${kerfuffle2_SRCS})
 
-target_link_libraries(kerfuffle ${KDE4_KFILE_LIBS} ${KDE4_KPARTS_LIBS})
+target_link_libraries(kerfuffle2 ${KDE4_KFILE_LIBS} ${KDE4_KPARTS_LIBS})
 if (NOT WIN32)
-  target_link_libraries(kerfuffle ${KDE4_KPTY_LIBS})
+  target_link_libraries(kerfuffle2 ${KDE4_KPTY_LIBS})
 endif (NOT WIN32)
 
-set_target_properties(kerfuffle PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
+set_target_properties(kerfuffle2 PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
 
-#install(TARGETS kerfuffle ${INSTALL_TARGETS_DEFAULT_ARGS})
+#install(TARGETS kerfuffle2 ${INSTALL_TARGETS_DEFAULT_ARGS})
 
-#install(FILES kerfufflePlugin.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR})
+#install(FILES kerfuffle2Plugin.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR})
 #install(FILES ark.kcfg                DESTINATION ${KCFG_INSTALL_DIR})
 
 if (QJSON_FOUND)
