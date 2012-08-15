@@ -54,8 +54,8 @@ ParameterList KP7zip::parameterList() const
         //p[CaptureProgress] = true;
         p[ListProgram] = p[ExtractProgram] = p[DeleteProgram] = p[AddProgram] = QLatin1String( "7z" );
 
-        p[ListArgs] = QStringList() << QLatin1String( "l" ) << QLatin1String("-no-utf16") << QLatin1String( "-slt" ) << QLatin1String( "$Archive" );
-        p[ExtractArgs] = QStringList() << QLatin1String("-no-utf16") << QLatin1String( "$PreservePathSwitch" ) << QLatin1String( "$PasswordSwitch" ) << QLatin1String( "$Archive" ) << QLatin1String( "$Files" );
+        p[ListArgs] = QStringList() << QLatin1String( "l" ) << QLatin1String( "-slt" ) << QLatin1String( "$Archive" );
+        p[ExtractArgs] = QStringList() << QLatin1String( "$PreservePathSwitch" ) << QLatin1String( "$PasswordSwitch" ) << QLatin1String( "$Archive" ) << QLatin1String( "$Files" );
         p[PreservePathSwitch] = QStringList() << QLatin1String( "x" ) << QLatin1String( "e" );
         p[PasswordSwitch] = QStringList() << QLatin1String( "-p$Password" );
         p[FileExistsExpression] = QLatin1String( "already exists. Overwrite with" );
