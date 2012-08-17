@@ -44,7 +44,8 @@ private Q_SLOTS:
     void testListP7zip();
     void testListP7zipRecursive();
     void testExtractFileFromP7zip();
-    void testExtractSymlinkFromP7zip();
+    // only works with patched p7zip: https://sourceforge.net/tracker/?func=detail&aid=3553730&group_id=111810&atid=660496
+    //void testExtractSymlinkFromP7zip();
     void cleanupTestCase();
 
 protected Q_SLOTS: // real slots, not tests
