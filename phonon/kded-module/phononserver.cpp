@@ -225,7 +225,7 @@ void PhononServer::findVirtualDevices()
 
                 cardName = alsaDeviceName.mid(cardNameStart, cardNameEnd - cardNameStart);
             } else {
-                cardName = i18n("Unknown");
+                cardName = i18nc("unknown sound card", "Unknown");
             }
         }
 
