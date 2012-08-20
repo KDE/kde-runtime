@@ -19,15 +19,24 @@
 
 import QtQuick 1.0;
 import org.kde.plasma.core 0.1 as PlasmaCore
+import org.kde.locale 0.1 as Locale
 import "private/"
 
 Item {
     id: calendar;
     
-    property variant daysModel;
-    property variant weekDaysModel;
-    property variant weeksModel;
-    
+    property variant daysModel: ListModel { }
+    property variant weekDaysModel: ListModel { }
+    property variant weeksModel: ListModel { }
+    property variant calendarSystem: Locale.CalendarSystem { }
+    property variant selectedDate;
+
+    property int selectedYear;
+    property int selectedMonth;
+    property int daysInWeek;
+    property int weekDayFirstOfSelectedMonth;
+    property int daysShownInPrevMonth;
+
     signal dayClicked(int clickedDay);
     signal dayHovered(int hoveredDay);
 
@@ -94,7 +103,7 @@ Item {
                 model: weeksModel;
 
                 Week {
-                    week: index;
+                    week: modelData;
                     width: ~~(calendar.width / (daysGrid.columns + 1)) - 1;
                     height: ~~(daysGrid.height / daysGrid.rows) - 1;
                 }
@@ -127,11 +136,57 @@ Item {
                 width: ~~(daysGrid.width / daysGrid.columns) - 1;
                 height: ~~(daysGrid.height / daysGrid.rows) - 1;
 
-                day: index;
+                day: modelData;
 
                 onClicked: calendar.dayClicked(clickedDay);
                 onHovered: calendar.dayHovered(hoveredDay);
             }
         }
+    }
+
+    function setDate(newDate){
+        selectedDate = newDate;
+	selectedMonth = calendarSystem.month(newDate);
+	selectedYear = calendarSystem.year(newDate);
+	daysInWeek = calendarSystem.daysInWeek(newDate);
+	//FIX: locale binding
+	//daysInSelectedMonth = calendarSystem.daysInMonth(newDate);
+	//FIX: locale binding
+	daysShownInPrevMonth = 0;//(weekDayFirstOfSelectedMonth - calendarSystem.weekStartDay() + daysInWeek) % daysInWeek;
+        if (daysShownInPrevMonth < 1) {
+	    daysShownInPrevMonth += daysInWeek;
+	}
+    }
+
+    function dateFromRowColumn(weekRow, weekdayColumn){
+        var cellDate = new Date();
+
+        //FIX: locale binding
+	//if (calendarSystem.setYMD(cellDate, selectedYear, selectedMonth, 1)){
+            cellDate = calendarSystem.addDays(cellDate, (weekRow * daysInWeek) + weekdayColumn - daysShownInPrevMonth);
+	//}
+
+	return cellDate;
+    }
+
+    Component.onCompleted: {
+        setDate(new Date());
+
+        for (var i = 0; i < 6; i++){
+	    //FIX: locale biding
+            weeksModel.append({'modelData': i});
+	}
+
+        for (var i = 1; i <= 7; i++){
+            weekDaysModel.append({'modelData': calendarSystem.weekDayName(i, Locale.CalendarSystem.ShortDayName)});
+	}
+
+        for (var weekRow = 0; weekRow < 6; weekRow++){
+	    for (var weekdayColumn = 0; weekdayColumn < daysInWeek; weekdayColumn++){
+                var cellDate = dateFromRowColumn(weekRow, weekdayColumn);
+		var cellDay = calendarSystem.day(cellDate);
+                daysModel.append({'modelData': cellDay});
+            }
+	}	
     }
 }
