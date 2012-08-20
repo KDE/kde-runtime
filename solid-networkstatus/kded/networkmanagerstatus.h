@@ -44,6 +44,7 @@ private slots:
 private:
     static Solid::Networking::Status convertNmState( uint nmState );
 
+    Solid::Networking::Status m_status;
     mutable QDBusInterface m_manager;
 };
 

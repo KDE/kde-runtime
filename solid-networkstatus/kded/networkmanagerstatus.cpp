@@ -5,6 +5,7 @@
     Author: Kevin Ottens <kevin.ottens@kdab.com>
 
     Copyright (c) 2011 Lukas Tinkl <ltinkl@redhat.com>
+    Copyright (c) 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -42,17 +43,19 @@ NetworkManagerStatus::NetworkManagerStatus( QObject *parent )
 {
     connect( &m_manager, SIGNAL(StateChanged(uint)),
              this, SLOT(nmStateChanged(uint)));
+
+    QDBusReply<uint> reply = m_manager.call( "state" );
+
+    if ( reply.isValid() ) {
+        m_status = convertNmState( reply );
+    } else {
+        m_status = Solid::Networking::Unknown;
+    }
 }
 
 Solid::Networking::Status NetworkManagerStatus::status() const
 {
-    QDBusReply<uint> reply = m_manager.call( "state" );
-
-    if ( reply.isValid() ) {
-        return convertNmState( reply );
-    } else {
-        return Solid::Networking::Unknown;
-    }
+    return m_status;
 }
 
 bool NetworkManagerStatus::isSupported() const
@@ -67,7 +70,8 @@ QString NetworkManagerStatus::serviceName() const
 
 void NetworkManagerStatus::nmStateChanged( uint nmState )
 {
-    emit statusChanged( convertNmState( nmState ) );
+    m_status = convertNmState( nmState );
+    emit statusChanged( m_status );
 }
 
 Solid::Networking::Status NetworkManagerStatus::convertNmState( uint nmState )
