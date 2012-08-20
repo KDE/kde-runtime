@@ -129,6 +129,7 @@ public:
     void requestSuspend();
     void requestResume();
     void requestCancel();
+    void requestInteraction();
 
 
     /**
@@ -158,6 +159,7 @@ Q_SIGNALS:
     void suspendRequested();
     void resumeRequested();
     void cancelRequested();
+    void interactionRequested();
 
     void finished(JobView*);
 

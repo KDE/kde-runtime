@@ -91,6 +91,11 @@ void JobView::requestCancel()
     emit cancelRequested();
 }
 
+void JobView::requestInteraction()
+{
+    emit interactionRequested();
+}
+
 void JobView::setSuspended(bool suspended)
 {
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
@@ -126,7 +131,13 @@ void JobView::setTotalAmount(qulonglong amount, const QString &unit)
     } else if (unit == "dirs") {
         m_sizeTotal = amount ? i18np("%1 folder", "%1 folders", amount) : QString();
 
+    } else if (unit == "errors") {
+        // errors count changed
+        
+    } else if (unit == "skipped") {
+        // skipped files count changed
     }
+    
     emit changed(m_jobId);
 }
 
@@ -324,6 +335,7 @@ void JobView::addJobContact(const QString& objectPath, const QString& address)
     connect(client, SIGNAL(suspendRequested()), this, SIGNAL(suspendRequested()));
     connect(client, SIGNAL(resumeRequested()), this, SIGNAL(resumeRequested()));
     connect(client, SIGNAL(cancelRequested()), this, SIGNAL(cancelRequested()));
+    connect(client, SIGNAL(interactionRequested()), this, SIGNAL(interactionRequested()));
     Q_ASSERT(!m_objectPaths.contains(address));
     m_objectPaths.insert(address, pair);
 
