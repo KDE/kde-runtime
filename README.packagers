@@ -1,9 +1,14 @@
-Information for packagers of kdebase/runtime
+Information for packagers of kde-runtime
 ============================================
 
 This document gives some hints to packagers on what is needed to provide
-a sane installation and packaging of kdebase/runtime.
+a sane installation and packaging of kde-runtime.
 
+General
+-------
+* The Oxygen Icons (recommended version the one released with the same KDE SC)
+  <http://download.kde.org/stable/>
+  kdelibs and kde-runtime assume these icons as the base (fallback) icon set.
 
 network:/ kio-slave
 ------------------
