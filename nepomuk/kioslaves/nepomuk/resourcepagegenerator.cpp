@@ -264,7 +264,7 @@ QByteArray Nepomuk2::ResourcePageGenerator::generatePage() const
 
     if ( exists ) {
         os << "<h2>" << i18n("Actions:") << "</h2>"
-           << "<div id=\"relations\"><a href=\"" << KUrl( m_resource.uri() ).url() << "?action=delete\">" << i18n( "Delete resource" ) << "</a></div>";
+           << "<div id=\"relations\"><a href=\"" << KUrl( m_resource.uri() ).url() << "?noFollow=true&action=delete\">" << i18n( "Delete resource" ) << "</a></div>";
     }
 
     os << "</div></div></div></div></body></html>";

@@ -111,7 +111,18 @@ void Nepomuk2::NepomukProtocol::get( const KUrl& url )
     const bool noFollow = noFollowSet( url );
 
     Nepomuk2::Resource res = splitNepomukUrl( url );
-    if ( !noFollow && Nepomuk2::isRemovableMediaFile( res ) ) {
+
+    if ( url.hasQueryItem( QLatin1String( "action") ) &&
+         url.queryItem( QLatin1String( "action" ) ) == QLatin1String( "delete" ) &&
+         messageBox( i18n( "Do you really want to delete the resource and all relations "
+                           "to and from it?" ),
+                     KIO::SlaveBase::QuestionYesNo,
+                     i18n( "Delete Resource" ) ) == KMessageBox::Yes ) {
+        res.remove();
+        data( "<html><body><p>Resource has been deleted from the Nepomuk storage.</p></body></html>" );
+        finished();
+    }
+    else if ( !noFollow && Nepomuk2::isRemovableMediaFile( res ) ) {
         error( KIO::ERR_SLAVE_DEFINED,
                i18nc( "@info", "Please insert the removable medium <resource>%1</resource> to access this file.",
                       getFileSystemLabelForRemovableMediaFileUrl( res ) ) );
@@ -130,20 +141,9 @@ void Nepomuk2::NepomukProtocol::get( const KUrl& url )
             return;
         }
 
-        if ( url.hasQueryItem( QLatin1String( "action") ) &&
-             url.queryItem( QLatin1String( "action" ) ) == QLatin1String( "delete" ) &&
-             messageBox( i18n( "Do you really want to delete the resource and all relations "
-                               "to and from it?" ),
-                         KIO::SlaveBase::QuestionYesNo,
-                         i18n( "Delete Resource" ) ) == KMessageBox::Yes ) {
-            res.remove();
-            data( "<html><body><p>Resource has been deleted from the Nepomuk storage.</p></body></html>" );
-        }
-        else {
-            ResourcePageGenerator gen( res );
-            gen.setFlagsFromUrl( url );
-            data( gen.generatePage() );
-        }
+        ResourcePageGenerator gen( res );
+        gen.setFlagsFromUrl( url );
+        data( gen.generatePage() );
         finished();
     }
 }
