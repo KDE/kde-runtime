@@ -26,6 +26,7 @@
 #include <KToolInvocation>
 #include <KActionCollection>
 #include <KStandardAction>
+#include <KDebug>
 
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusConnectionInterface>
@@ -136,7 +137,8 @@ void Nepomuk2::SystemTray::slotUpdateFileIndexerStatus()
     }
 
     m_suspendResumeAction->setEnabled( fileIndexerInitialized );
-    m_suspendResumeAction->setChecked( m_service->isSuspended() );
+    if( fileIndexerInitialized )
+        m_suspendResumeAction->setChecked( m_service->isSuspended() );
 }
 
 
