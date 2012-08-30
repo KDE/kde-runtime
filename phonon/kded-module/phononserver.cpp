@@ -67,8 +67,6 @@ PhononServer::PhononServer(QObject *parent, const QList<QVariant> &)
     findDevices();
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)), SLOT(deviceAdded(const QString &)));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)), SLOT(deviceRemoved(const QString &)));
-
-    registerMetaTypes();
 }
 
 PhononServer::~PhononServer()
