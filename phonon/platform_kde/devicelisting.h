@@ -39,8 +39,8 @@ class DeviceListing : public QObject
         DeviceListing();
         ~DeviceListing();
 
-        QList<int> objectDescriptionIndexes(Phonon::ObjectDescriptionType type);
-        QHash<QByteArray, QVariant> objectDescriptionProperties(Phonon::ObjectDescriptionType type, int index);
+        QList<int> objectDescriptionIndexes(ObjectDescriptionType type);
+        QHash<QByteArray, QVariant> objectDescriptionProperties(ObjectDescriptionType type, int index);
 
     signals:
         void objectDescriptionChanged(ObjectDescriptionType);

@@ -73,19 +73,19 @@ static void installAlsaPhononDeviceHandle()
 namespace Phonon
 {
 
-QList<int> DeviceListing::objectDescriptionIndexes(Phonon::ObjectDescriptionType type)
+QList<int> DeviceListing::objectDescriptionIndexes(ObjectDescriptionType type)
 {
     QList<int> r;
     QDBusReply<QByteArray> reply;
 
-    if (type == Phonon::AudioOutputDeviceType || type == Phonon::AudioCaptureDeviceType) {
+    if (type == AudioOutputDeviceType || type == AudioCaptureDeviceType) {
         reply = m_phononServer.call(QLatin1String("audioDevicesIndexes"), static_cast<int>(type));
         if (!reply.isValid()) {
             kError(600) << reply.error();
             return r;
         }
     } else
-    if (type == Phonon::VideoCaptureDeviceType) {
+    if (type == VideoCaptureDeviceType) {
         reply = m_phononServer.call(QLatin1String("videoDevicesIndexes"), static_cast<int>(type));
         if (!reply.isValid()) {
             kError(600) << reply.error();
@@ -99,19 +99,19 @@ QList<int> DeviceListing::objectDescriptionIndexes(Phonon::ObjectDescriptionType
     return r;
 }
 
-QHash<QByteArray, QVariant> DeviceListing::objectDescriptionProperties(Phonon::ObjectDescriptionType type, int index)
+QHash<QByteArray, QVariant> DeviceListing::objectDescriptionProperties(ObjectDescriptionType type, int index)
 {
     QHash<QByteArray, QVariant> r;
     QDBusReply<QByteArray> reply;
 
-    if (type == Phonon::AudioOutputDeviceType || type == Phonon::AudioCaptureDeviceType) {
+    if (type == AudioOutputDeviceType || type == AudioCaptureDeviceType) {
         reply = m_phononServer.call(QLatin1String("audioDevicesProperties"), index);
         if (!reply.isValid()) {
             kError(600) << reply.error();
             return r;
         }
     } else
-    if (type == Phonon::VideoCaptureDeviceType) {
+    if (type == VideoCaptureDeviceType) {
         reply = m_phononServer.call(QLatin1String("videoDevicesProperties"), index);
         if (!reply.isValid()) {
             kError(600) << reply.error();
@@ -154,9 +154,9 @@ void DeviceListing::timerEvent(QTimerEvent *e)
     if (e->timerId() == m_signalTimer.timerId()) {
         m_signalTimer.stop();
         kDebug(600) << "emitting objectDescriptionChanged for all devices";
-        emit objectDescriptionChanged(Phonon::AudioOutputDeviceType);
-        emit objectDescriptionChanged(Phonon::AudioCaptureDeviceType);
-        emit objectDescriptionChanged(Phonon::VideoCaptureDeviceType);
+        emit objectDescriptionChanged(AudioOutputDeviceType);
+        emit objectDescriptionChanged(AudioCaptureDeviceType);
+        emit objectDescriptionChanged(VideoCaptureDeviceType);
     }
 }
 

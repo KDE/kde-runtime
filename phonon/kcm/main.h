@@ -22,7 +22,9 @@
 #define MAIN_H
 
 #include <kcmodule.h>
+namespace Phonon {
 class DevicePreference;
+}
 class BackendSelection;
 
 #ifdef HAVE_PULSEAUDIO
@@ -47,7 +49,7 @@ class PhononKcm : public KCModule
 
     private:
         KTabWidget* m_tabs;
-        DevicePreference *m_devicePreferenceWidget;
+        Phonon::DevicePreference *m_devicePreferenceWidget;
         BackendSelection *m_backendSelection;
 #ifdef HAVE_PULSEAUDIO
         AudioSetup* m_speakerSetup;
