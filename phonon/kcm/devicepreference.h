@@ -31,10 +31,9 @@
 
 namespace Phonon
 {
-    class MediaObject;
-    class AudioOutput;
-    class VideoWidget;
-} // namespace Phonon
+class MediaObject;
+class AudioOutput;
+class VideoWidget;
 
 class DevicePreference : public QWidget, private Ui::DevicePreference
 {
@@ -67,28 +66,30 @@ class DevicePreference : public QWidget, private Ui::DevicePreference
         void updateVideoCaptureDevices();
 
     private:
-        enum DeviceType {InvalidDevice, AudioOutput, AudioCapture, VideoCapture};
+        enum DeviceType {dtInvalidDevice, dtAudioOutput, dtAudioCapture, dtVideoCapture};
 
     private:
-        template<Phonon::ObjectDescriptionType T> void removeDevice(const Phonon::ObjectDescription<T> &deviceToRemove,
-                QMap<int, Phonon::ObjectDescriptionModel<T> *> *modelMap);
+        template<ObjectDescriptionType T> void removeDevice(const ObjectDescription<T> &deviceToRemove,
+                QMap<int, ObjectDescriptionModel<T> *> *modelMap);
         void loadCategoryDevices();
-        QList<Phonon::AudioOutputDevice> availableAudioOutputDevices() const;
-        QList<Phonon::AudioCaptureDevice> availableAudioCaptureDevices() const;
-        QList<Phonon::VideoCaptureDevice> availableVideoCaptureDevices() const;
+        QList<AudioOutputDevice> availableAudioOutputDevices() const;
+        QList<AudioCaptureDevice> availableAudioCaptureDevices() const;
+        QList<VideoCaptureDevice> availableVideoCaptureDevices() const;
         DeviceType shownModelType() const;
 
     private:
-        QMap<int, Phonon::AudioOutputDeviceModel *> m_audioOutputModel;
-        QMap<int, Phonon::AudioCaptureDeviceModel *> m_audioCaptureModel;
-        QMap<int, Phonon::VideoCaptureDeviceModel *> m_videoCaptureModel;
+        QMap<int, AudioOutputDeviceModel *> m_audioOutputModel;
+        QMap<int, AudioCaptureDeviceModel *> m_audioCaptureModel;
+        QMap<int, VideoCaptureDeviceModel *> m_videoCaptureModel;
         QStandardItemModel m_categoryModel;
         QStandardItemModel m_headerModel;
         DeviceType m_testingType;
 
-        Phonon::MediaObject *m_media;
-        Phonon::AudioOutput *m_audioOutput;
-        Phonon::VideoWidget *m_videoWidget;
+        MediaObject *m_media;
+        AudioOutput *m_audioOutput;
+        VideoWidget *m_videoWidget;
 };
+
+} // namespace Phonon
 
 #endif // DEVICEPREFERENCE_H_STUPID_UIC

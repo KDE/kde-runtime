@@ -57,6 +57,9 @@ K_PLUGIN_FACTORY(PhononServerFactory,
         )
 K_EXPORT_PLUGIN(PhononServerFactory("phononserver"))
 
+using namespace Phonon;
+
+
 PhononServer::PhononServer(QObject *parent, const QList<QVariant> &)
     : KDEDModule(parent),
     m_config(KSharedConfig::openConfig("phonondevicesrc", KConfig::SimpleConfig))
@@ -65,7 +68,7 @@ PhononServer::PhononServer(QObject *parent, const QList<QVariant> &)
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)), SLOT(deviceAdded(const QString &)));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)), SLOT(deviceRemoved(const QString &)));
 
-    Phonon::registerMetaTypes();
+    registerMetaTypes();
 }
 
 PhononServer::~PhononServer()
@@ -766,7 +769,7 @@ void PhononServer::findDevices()
         qSort(askToRemoveAudio);
         QMetaObject::invokeMethod(this, "askToRemoveDevices", Qt::QueuedConnection,
                 Q_ARG(QStringList, askToRemoveAudio),
-                Q_ARG(int, Phonon::AudioOutputDeviceType | Phonon::AudioCaptureDeviceType),
+                Q_ARG(int, AudioOutputDeviceType | AudioCaptureDeviceType),
                 Q_ARG(QList<int>, askToRemoveAudioIndexes));
     }
 
@@ -774,7 +777,7 @@ void PhononServer::findDevices()
         qSort(askToRemoveVideo);
         QMetaObject::invokeMethod(this, "askToRemoveDevices", Qt::QueuedConnection,
                 Q_ARG(QStringList, askToRemoveVideo),
-                Q_ARG(int, Phonon::VideoCaptureDeviceType),
+                Q_ARG(int, VideoCaptureDeviceType),
                 Q_ARG(QList<int>, askToRemoveVideoIndexes));
     }
 
@@ -813,10 +816,10 @@ QByteArray PhononServer::audioDevicesIndexes(int type)
     QByteArray *v;
 
     switch (type) {
-    case Phonon::AudioOutputDeviceType:
+    case AudioOutputDeviceType:
         v = &m_audioOutputDevicesIndexesCache;
         break;
-    case Phonon::AudioCaptureDeviceType:
+    case AudioCaptureDeviceType:
         v = &m_audioCaptureDevicesIndexesCache;
         break;
     default:
@@ -832,7 +835,7 @@ QByteArray PhononServer::audioDevicesIndexes(int type)
 
 QByteArray PhononServer::videoDevicesIndexes(int type)
 {
-    if (type != Phonon::VideoCaptureDeviceType)
+    if (type != VideoCaptureDeviceType)
         return QByteArray();
 
     if (m_videoCaptureDevicesIndexesCache.isEmpty()) {
@@ -974,11 +977,11 @@ inline static void insertGenericProperties(const PS::DeviceInfo &dev, QHash<QByt
 
 inline static void insertDALProperty(const PS::DeviceInfo &dev, QHash<QByteArray, QVariant> &p)
 {
-    Phonon::DeviceAccessList deviceAccessList;
+    DeviceAccessList deviceAccessList;
     foreach (const PS::DeviceAccess &access, dev.accessList()) {
         const QByteArray &driver = nameForDriver(access.driver());
         foreach (const QString &deviceId, access.deviceIds()) {
-            deviceAccessList << Phonon::DeviceAccess(driver, deviceId);
+            deviceAccessList << DeviceAccess(driver, deviceId);
         }
     }
 
@@ -992,7 +995,7 @@ void PhononServer::updateDevicesCache()
         QHash<QByteArray, QVariant> properties;
         insertGenericProperties(dev, properties);
 
-        Phonon::DeviceAccessList deviceAccessList;
+        DeviceAccessList deviceAccessList;
         bool first = true;
         QStringList oldDeviceIds;
         PS::DeviceAccess::DeviceDriverType driverId = PS::DeviceAccess::InvalidDriver;
@@ -1008,7 +1011,7 @@ void PhononServer::updateDevicesCache()
                 if (access.driver() == driverId) {
                     oldDeviceIds << deviceId;
                 }
-                deviceAccessList << Phonon::DeviceAccess(driver, deviceId);
+                deviceAccessList << DeviceAccess(driver, deviceId);
             }
         }
 
@@ -1079,8 +1082,8 @@ void PhononServer::deviceRemoved(const QString &udi)
 
 void PhononServer::askToRemoveDevices(const QStringList &devList, int type, const QList< int >& indexes)
 {
-    bool areAudio = type & (Phonon::AudioOutputDeviceType | Phonon::AudioCaptureDeviceType);
-    bool areVideo = type & Phonon::VideoCaptureDeviceType;
+    bool areAudio = type & (AudioOutputDeviceType | AudioCaptureDeviceType);
+    bool areVideo = type & VideoCaptureDeviceType;
 
     if (!areAudio && !areVideo)
         return;

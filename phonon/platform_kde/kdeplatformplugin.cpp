@@ -298,10 +298,10 @@ DeviceAccessList KdePlatformPlugin::deviceAccessListFor(
     const QVariant &deviceIdsVariant) const
 {
     if (dalVariant.isValid()) {
-        return qvariant_cast<Phonon::DeviceAccessList>(dalVariant);
+        return qvariant_cast<DeviceAccessList>(dalVariant);
     }
 
-    Phonon::DeviceAccessList ret;
+    DeviceAccessList ret;
     if (driverVariant.isValid()) {
         const QByteArray &driver = driverVariant.toByteArray();
         const QStringList &deviceIds = deviceIdsVariant.toStringList();
