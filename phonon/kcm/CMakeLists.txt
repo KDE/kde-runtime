@@ -6,8 +6,6 @@ find_package(GLIB2)
 pkg_check_modules(CANBERRA libcanberra)
 macro_log_feature(CANBERRA_FOUND "libcanberra" "libcanberra audio library" "http://0pointer.de/lennart/projects/libcanberra/" FALSE "" "libcanberra is needed for audio setup GUI")
 
-add_subdirectory(xine)
-
 set(kcmphonon_SRCS main.cpp devicepreference.cpp backendselection.cpp)
 kde4_add_ui_files(kcmphonon_SRCS devicepreference.ui backendselection.ui)
 set(kcmphonon_LIBS ${KDE4_PHONON_LIBS} ${KDE4_KCMUTILS_LIBS} ${KDE4_KIO_LIBS})
