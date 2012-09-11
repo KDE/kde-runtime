@@ -29,6 +29,7 @@ if (NOT WIN32)
 endif (NOT WIN32)
 
 set_target_properties(kerfuffle2 PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
+set_target_properties(kerfuffle2 PROPERTIES COMPILE_FLAGS -fPIC)
 
 #install(TARGETS kerfuffle2 ${INSTALL_TARGETS_DEFAULT_ARGS})
 
