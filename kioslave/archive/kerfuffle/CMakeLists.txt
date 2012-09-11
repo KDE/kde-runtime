@@ -8,11 +8,11 @@ set(kerfuffle2_SRCS
     archiveinterface.cpp
     jobs.cpp
     archivebase.cpp
-    #	extractiondialog.cpp
-    #	adddialog.cpp
-	queries.cpp
-    #	addtoarchive.cpp
-	cliinterface.cpp
+    #extractiondialog.cpp
+    #adddialog.cpp
+    queries.cpp
+    #addtoarchive.cpp
+    cliinterface.cpp
    )
 
 include_directories("..")

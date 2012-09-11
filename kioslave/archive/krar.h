@@ -44,9 +44,9 @@ protected:
 
 private:
     enum ReadState {
-	ReadStateHeader = 0,
-	ReadStateArchiveInformation,
-	ReadStateEntryInformation
+        ReadStateHeader = 0,
+        ReadStateArchiveInformation,
+        ReadStateEntryInformation
     };
 
     enum {

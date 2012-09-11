@@ -48,12 +48,12 @@ public:
 
 protected:
     enum ArchiveType {
-	ArchiveType7z = 0,
-	ArchiveTypeBZip2,
-	ArchiveTypeGZip,
-	ArchiveTypeTar,
-	ArchiveTypeZip,
-	ArchiveTypeRar
+        ArchiveType7z = 0,
+        ArchiveTypeBZip2,
+        ArchiveTypeGZip,
+        ArchiveTypeTar,
+        ArchiveTypeZip,
+        ArchiveTypeRar
     };
 
     ArchiveType m_archiveType;
