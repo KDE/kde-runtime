@@ -175,14 +175,18 @@ void QMenuProxy::showMenu(int x, int y)
     }
 
     if (!parentItem || !parentItem->scene()) {
-        open(0, 0);
+        m_menu->popup(QPoint(0, 0));
+        m_status = DialogStatus::Open;
+        emit statusChanged();
         return;
     }
 
     QList<QGraphicsView*> views = parentItem->scene()->views();
 
     if (views.size() < 1) {
-        open(0, 0);
+        m_menu->popup(QPoint(0, 0));
+        m_status = DialogStatus::Open;
+        emit statusChanged();
         return;
     }
 
@@ -233,14 +237,18 @@ void QMenuProxy::open()
     }
 
     if (!parentItem || !parentItem->scene()) {
-        showMenu(0, 0);
+        m_menu->popup(QPoint(0, 0));
+        m_status = DialogStatus::Open;
+        emit statusChanged();
         return;
     }
 
     QList<QGraphicsView*> views = parentItem->scene()->views();
 
     if (views.size() < 1) {
-        showMenu(0, 0);
+        m_menu->popup(QPoint(0, 0));
+        m_status = DialogStatus::Open;
+        emit statusChanged();
         return;
     }
 
@@ -264,7 +272,9 @@ void QMenuProxy::open()
     }
 
     if (!view) {
-        showMenu(0, 0);
+        m_menu->popup(QPoint(0, 0));
+        m_status = DialogStatus::Open;
+        emit statusChanged();
         return;
     }
 
