@@ -611,12 +611,11 @@ void PhononServer::findDevices()
             kDebug(601) << "- driver" << driverName << ":" << videoDevice->driverHandle(driverName);
         }
 
-        // Iterate through the supported drivers to create different acccess objects for each one
+        // Iterate through the supported drivers to create different access objects for each one
         foreach (const QString driverName, videoDevice->supportedDrivers()) {
             deviceIds.clear();
             accessPreference = 0;
             driver = PS::DeviceAccess::InvalidDriver;
-            valid = true;
             isAdvanced = false;
 
             QVariant handle = videoDevice->driverHandle(driverName);
@@ -640,10 +639,6 @@ void PhononServer::findDevices()
              * TODO Check v4l docs or something to see if there's anything
              * else to do here
              */
-
-            if (!valid) {
-                continue;
-            }
 
             m_udisOfDevices.append(hwDevice.udi());
 
