@@ -177,6 +177,7 @@ DevicePreference::DevicePreference(QWidget *parent)
                 "background-position: bottom left;"
                 "background-attachment: fixed;"
                 "background-repeat: no-repeat;"
+                "background-clip: padding;"
                 "}")
             .arg(KStandardDirs::locate("data", "kcm_phonon/listview-background.png")));
     deviceList->setAlternatingRowColors(false);
