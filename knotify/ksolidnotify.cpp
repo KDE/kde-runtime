@@ -29,6 +29,7 @@
 #include <Solid/StorageAccess>
 #include <Solid/OpticalDrive>
 #include <Solid/OpticalDisc>
+#include <Solid/PortableMediaPlayer>
 #include <Solid/Predicate>
 
 #include <QDBusConnection>
@@ -48,6 +49,7 @@ KSolidNotify::KSolidNotify(KNotify* parent):
 {
 	Solid::Predicate p(Solid::DeviceInterface::StorageAccess);
 	p |= Solid::Predicate(Solid::DeviceInterface::OpticalDrive);
+    p |= Solid::Predicate(Solid::DeviceInterface::PortableMediaPlayer);
 	QList<Solid::Device> devices = Solid::Device::listFromQuery(p);
 	foreach (const Solid::Device &dev, devices)
 	{
