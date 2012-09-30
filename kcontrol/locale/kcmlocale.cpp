@@ -3120,7 +3120,7 @@ void KCMLocale::initDateTimeDigitSet()
                               "only if used in the language of the application or the piece of "
                               "text where the date or time is shown.</p><p>Note that the set of "
                               "digits used to display numeric and monetary values have to be set "
-                              "separately (see the 'Number' or 'Money' tabs).</p>" ).toString( m_kcmLocale );
+                              "separately (see the 'Numbers' or 'Money' tabs).</p>" ).toString( m_kcmLocale );
     m_ui->m_comboDateTimeDigitSet->setToolTip( helpText );
     m_ui->m_comboDateTimeDigitSet->setWhatsThis( helpText );
 
