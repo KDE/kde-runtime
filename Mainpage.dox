@@ -39,6 +39,7 @@ The following components are available:
 - KTraderClient, a utility for querying the KDE trader system
 - KUIServer, an application for displaying progress information,
   eg: of KIO slaves
+- <a href="../plasma/html/index.html">Plasma QML components</a>: some components usable as QML imports to access Plasma functionality
 - Various plugins for KUriFilter
 - Some basic localization information
 - The <a href="../nepomuk/html/index.html">Nepomuk daemon and helper
