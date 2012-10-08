@@ -92,9 +92,9 @@ Item {
         if (label.text.length == 0) {
             height;
         } else {
-            //return Math.max(theme.defaultFont.mSize.width*12, label.paintedWidth)
             Math.max(theme.defaultFont.mSize.width*12, icon.width + label.implicitWidth + surfaceNormal.margins.left + surfaceNormal.margins.right) + ((icon.valid) ? surfaceNormal.margins.left : 0)
         }
+    }
 
     implicitHeight: Math.max(theme.defaultFont.mSize.height*1.6, Math.max(icon.height, label.paintedHeight) + surfaceNormal.margins.top/2 + surfaceNormal.margins.bottom/2)
 
