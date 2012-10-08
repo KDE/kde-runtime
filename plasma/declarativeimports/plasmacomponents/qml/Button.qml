@@ -87,15 +87,17 @@ Item {
 
     signal clicked()
 
-    implicitWidth:
-        if (label.implicitWidth == 0) {
-            height
+
+    implicitWidth: {
+        if (label.text.length == 0) {
+            height;
         } else {
             //return Math.max(theme.defaultFont.mSize.width*12, label.paintedWidth)
             Math.max(theme.defaultFont.mSize.width*12, icon.width + label.implicitWidth + surfaceNormal.margins.left + surfaceNormal.margins.right) + ((icon.valid) ? surfaceNormal.margins.left : 0)
         }
 
     implicitHeight: Math.max(theme.defaultFont.mSize.height*1.6, Math.max(icon.height, label.paintedHeight) + surfaceNormal.margins.top/2 + surfaceNormal.margins.bottom/2)
+
 
     // TODO: needs to define if there will be specific graphics for
     //     disabled buttons
@@ -213,8 +215,8 @@ Item {
 
             anchors {
                 verticalCenter: parent.verticalCenter
-                left: label.paintedWidth > 0 ? parent.left : undefined
-                horizontalCenter: label.paintedWidth > 0 ? undefined : parent.horizontalCenter
+                left: label.text.length > 0 ? parent.left : undefined
+                horizontalCenter: label.text.length > 0 ? undefined : parent.horizontalCenter
             }
             height: roundToStandardSize(parent.height)
             width: height
@@ -225,8 +227,8 @@ Item {
 
             //FIXME: why this is needed?
             onPaintedWidthChanged: {
-                icon.anchors.horizontalCenter = label.paintedWidth > 0 ? undefined : icon.parent.horizontalCenter
-                icon.anchors.left = label.paintedWidth > 0 ? icon.parent.left : undefined
+                icon.anchors.horizontalCenter = label.text.length > 0 ? undefined : icon.parent.horizontalCenter
+                icon.anchors.left = label.text.length > 0 ? icon.parent.left : undefined
             }
 
             anchors {
