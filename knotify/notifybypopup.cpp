@@ -68,10 +68,33 @@ NotifyByPopup::NotifyByPopup(QObject *parent)
 	watcher->addWatchedService(dbusServiceName);
 	connect(watcher, SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
 			SLOT(slotServiceOwnerChanged(const QString&, const QString&, const QString&)));
-#ifdef Q_WS_WIN
         if(!m_dbusServiceExists)
-            QDBusConnection::sessionBus().interface()->startService("org.freedesktop.Notifications");
+	{
+		bool startfdo = false;
+#ifdef Q_WS_WIN
+		startfdo = true;
+#else
+		if (qgetenv("KDE_FULL_SESSION").isEmpty())
+		{
+			QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.DBus",
+							"/org/freedesktop/DBus",
+							"org.freedesktop.DBus",
+							"ListActivatableNames");
+			QDBusReply<QStringList> reply = QDBusConnection::sessionBus().call(message);
+			if (reply.isValid() && reply.value().contains(dbusServiceName)) {
+				startfdo = true;
+				// We need to set m_dbusServiceExists to true because dbus might be too slow
+				// starting the service and the first call to NotifyByPopup::notify
+				// might not have had the service up, by setting this to true we
+				// guarantee it will still go through dbus and dbus will do the correct
+				// thing and wait for the service to go up
+				m_dbusServiceExists = true;
+			}
+		}
 #endif
+		if (startfdo)
+			QDBusConnection::sessionBus().interface()->startService(dbusServiceName);
+	}
 }
 
 
