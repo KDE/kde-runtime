@@ -5,8 +5,8 @@
 <!ENTITY % English "INCLUDE" > <!-- change language only here -->
 ]>
 
-<article id="attica" lang="&language;">
-<article id="attica"info>
+<article lang="&language;">
+<articleinfo>
 
 <title>Social Desktop</title>
 <authorgroup>

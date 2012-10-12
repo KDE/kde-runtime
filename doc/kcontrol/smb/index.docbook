@@ -5,8 +5,8 @@
 <!ENTITY % English "INCLUDE" > <!-- change language only here -->
 ]>
 
-<article id="smb" lang="&language;">
-<article id="smb"info>
+<article lang="&language;">
+<articleinfo>
 <title>Windows Shares</title>
 <authorgroup>
 <author>&Mike.McBride; &Mike.McBride.mail;</author>

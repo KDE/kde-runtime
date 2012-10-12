@@ -6,8 +6,8 @@
 <!ENTITY % English "INCLUDE" > <!-- change language only here -->
 ]>
 
-<article id="khtml-behavior" lang="&language;">
-<article id="khtml-behavior"info>
+<article lang="&language;">
+<articleinfo>
 <title>Web Browsing</title>
 <authorgroup>
 <author>&Krishna.Tateneni; &Krishna.Tateneni.mail;</author>

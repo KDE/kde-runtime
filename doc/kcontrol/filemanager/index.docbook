@@ -5,8 +5,8 @@
 <!ENTITY % English "INCLUDE" > <!-- change language only here -->
 ]>
 
-<article id="filemanager" lang="&language;">
-<article id="filemanager"info>
+<article lang="&language;">
+<articleinfo>
 <title>File Management</title>
 <authorgroup>
 <author>&Mike.McBride; &Mike.McBride.mail;</author>

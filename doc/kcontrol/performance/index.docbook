@@ -5,8 +5,8 @@
 <!ENTITY % English "INCLUDE" > <!-- change language only here -->
 ]>
 
-<article id="performance" lang="&language;">
-<article id="performance"info>
+<article lang="&language;">
+<articleinfo>
 <title>Performance</title>
 <authorgroup>
 <author>&Mike.McBride; &Mike.McBride.mail;</author>

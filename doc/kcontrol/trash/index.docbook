@@ -4,9 +4,9 @@
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE">
 ]>
-<article id="trash" lang="&language;">
+<article lang="&language;">
 <title>Trash</title>
-<article id="trash"info>
+<articleinfo>
 <authorgroup>
 <author>&Burkhard.Lueck;</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->

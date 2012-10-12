@@ -4,9 +4,9 @@
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE">
 ]>
-<article id="history" lang="&language;">
+<article lang="&language;">
 <title>History Sidebar</title>
-<article id="history"info>
+<articleinfo>
 <authorgroup>
 <author>&Burkhard.Lueck;</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->

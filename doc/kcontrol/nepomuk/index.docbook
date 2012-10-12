@@ -5,8 +5,8 @@
 <!ENTITY % English "INCLUDE" > <!-- change language only here -->
 ]>
 
-<article id="nepomuk" lang="&language;">
-<article id="nepomuk"info>
+<article lang="&language;">
+<articleinfo>
 <title>Nepomuk Desktop Search Configuration</title>
 
 <authorgroup>

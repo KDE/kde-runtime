@@ -4,8 +4,8 @@
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE">
 ]>
-<article id="emoticons" lang="&language;">
-<article id="emoticons"info>
+<article lang="&language;">
+<articleinfo>
 <title>Emoticons</title>
 <authorgroup>
 <author>&Anne-Marie.Mahfouf;</author>
