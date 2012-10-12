@@ -9,9 +9,9 @@
   
 ]>
 
-<article lang="&language;">
+<article id="kdebugdialog" lang="&language;">
 <title>KDebugDialog</title>
-<articleinfo>
+<article id="kdebugdialog"info>
 <authorgroup>
 <author>&David.Faure; &David.Faure.mail;</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->

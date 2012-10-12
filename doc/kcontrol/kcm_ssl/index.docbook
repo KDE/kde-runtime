@@ -4,9 +4,9 @@
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE">
 ]>
-<article lang="&language;">
+<article id="kcm_ssl" lang="&language;">
 <title>SSL Versions and Certificates</title>
-<articleinfo>
+<article id="kcm_ssl"info>
 <authorgroup>
 <author><firstname>Subhashish</firstname> <surname>Pradhan</surname></author>
 <author>&TC.Hollingsworth; &TC.Hollingsworth.mail;</author>

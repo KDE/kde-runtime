@@ -4,9 +4,9 @@
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE">
 ]>
-<article lang="&language;">
+<article id="phonon" lang="&language;">
 <title>Phonon</title>
-<articleinfo>
+<article id="phonon"info>
 <authorgroup>
 <author><firstname>Matthias</firstname><surname>Kretz</surname></author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->

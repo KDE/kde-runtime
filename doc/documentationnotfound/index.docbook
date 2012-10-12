@@ -4,9 +4,9 @@
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE">
 ]>
-<article lang="&language;">
+<article id="documentationnotfound" lang="&language;">
 <title>Documentation not Found</title>
-<articleinfo>
+<article id="documentationnotfound"info>
 <authorgroup>
 <author><firstname>Jack</firstname>
 <surname>Ostroff</surname>

@@ -4,9 +4,9 @@
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE">
 ]>
-<article lang="&language;">
+<article id="onlinehelp" lang="&language;">
 <title>Online Help</title>
-<articleinfo>
+<article id="onlinehelp"info>
 
 <date>2010-05-13</date>
 <releaseinfo>&kde; 4.5</releaseinfo>

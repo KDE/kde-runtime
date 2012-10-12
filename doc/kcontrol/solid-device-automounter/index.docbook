@@ -4,9 +4,9 @@
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE">
 ]>
-<article lang="&language;">
+<article id="solid-device-automounter" lang="&language;">
 <title>Removable Devices</title>
-<articleinfo>
+<article id="solid-device-automounter"info>
 <authorgroup>
 <author><firstname>Trever</firstname><surname>Fischer</surname></author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->

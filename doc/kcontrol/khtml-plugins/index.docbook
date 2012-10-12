@@ -6,8 +6,8 @@
 <!ENTITY % English "INCLUDE" > <!-- change language only here -->
 ]>
 
-<article lang="&language;">
-<articleinfo>
+<article id="khtml-plugins" lang="&language;">
+<article id="khtml-plugins"info>
 <title>Browser Plugins</title>
 <authorgroup>
 <author>&Krishna.Tateneni;</author><author>&Jost.Schenck;
