@@ -612,7 +612,11 @@ ContainmentInterface::ContainmentInterface(AbstractJsAppletScript *parent)
                  this, SIGNAL(availableScreenRegionChanged()));
      }
 
+<<<<<<< HEAD
     qmlRegisterType<AppletContainer>("org.kde.plasma.containments", 0, 1, "AppletContainer");
+=======
+    qmlRegisterType<AppletContainer>("org.kde.plasma.desktop", 0, 1, "AppletContainer");
+>>>>>>> Containments expose an AppletContainer
 
 }
 
