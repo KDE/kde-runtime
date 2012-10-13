@@ -6,7 +6,7 @@
 <!ENTITY kappname "&sonnet;">
 ]>
 
-<article id="spellchecking" lang="&language;">
+<article lang="&language;">
 <articleinfo>
 <title>Spell Checker</title>
 
