@@ -613,7 +613,11 @@ ContainmentInterface::ContainmentInterface(AbstractJsAppletScript *parent)
      }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     qmlRegisterType<AppletContainer>("org.kde.plasma.containments", 0, 1, "AppletContainer");
+=======
+    qmlRegisterType<AppletContainer>("org.kde.plasma.desktop", 0, 1, "AppletContainer");
+>>>>>>> Containments expose an AppletContainer
 =======
     qmlRegisterType<AppletContainer>("org.kde.plasma.desktop", 0, 1, "AppletContainer");
 >>>>>>> Containments expose an AppletContainer
