@@ -12,7 +12,7 @@
        from entities/general.entities and $LANG/user.entities. -->
 ]>
 
-<book lang="&language;">
+<book id="knetattach" lang="&language;">
 
 <!-- This header contains all of the meta-information for the document such
 as Authors, publish date, the abstract, and Keywords -->

@@ -4,7 +4,7 @@
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE">
 ]>
-<article lang="&language;">
+<article id="solid-device-automounter" lang="&language;">
 <title>Removable Devices</title>
 <articleinfo>
 <authorgroup>
