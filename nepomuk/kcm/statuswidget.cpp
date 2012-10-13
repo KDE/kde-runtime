@@ -169,9 +169,11 @@ void Nepomuk2::StatusWidget::updateSuspendResumeButtonText(bool suspended)
 {
     if (!suspended) {
         m_suspendResumeButton->setText( i18nc("Suspends the Nepomuk file indexing service.","Suspend File Indexing") );
+        m_suspendResumeButton->setIcon( KIcon("media-playback-pause") );
     }
     else {
         m_suspendResumeButton->setText( i18nc("Resumes the Nepomuk file indexing service.","Resume File Indexing") );
+        m_suspendResumeButton->setIcon( KIcon("media-playback-start") );
     }
 }
 
