@@ -87,14 +87,25 @@
       <widget class="KSqueezedTextLabel" name="m_labelFileIndexing"/>
      </item>
      <item>
-      <widget class="QPushButton" name="m_suspendResumeButton">
-       <property name="text">
-        <string>Suspend</string>
-       </property>
-       <property name="clicked" stdset="0">
-        <bool>false</bool>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QPushButton" name="m_suspendResumeButton">
+         <property name="text">
+          <string>Suspend</string>
+         </property>
+         <property name="clicked" stdset="0">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="m_configureButton">
+         <property name="text">
+          <string>Configure</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -132,14 +143,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KSqueezedTextLabel</class>
-   <extends>QLabel</extends>
-   <header>ksqueezedtextlabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>KTitleWidget</class>
    <extends>QWidget</extends>
    <header>ktitlewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KSqueezedTextLabel</class>
+   <extends>QLabel</extends>
+   <header>ksqueezedtextlabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

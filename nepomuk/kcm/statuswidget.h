@@ -54,6 +54,7 @@ private Q_SLOTS:
     void slotUpdateTimeout();
     void slotUpdateStatus();
     void slotSuspendResume();
+    void slotConfigure();
 
 private:
     void updateSuspendResumeButtonText(bool suspended);

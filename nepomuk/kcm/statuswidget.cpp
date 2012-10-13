@@ -21,6 +21,7 @@
 #include <KIcon>
 #include <KLocale>
 #include <KStandardDirs>
+#include <KToolInvocation>
 #include <KIO/NetAccess>
 #include <kio/directorysizejob.h>
 
@@ -56,6 +57,8 @@ Nepomuk2::StatusWidget::StatusWidget( QWidget* parent )
     iconLabel->setPixmap( icon.pixmap( 32, 32 ) );
     setWindowIcon( icon );
 
+    m_configureButton->setIcon( KIcon("configure") );
+
     m_updateTimer.setSingleShot( true );
     m_updateTimer.setInterval( 10*1000 ); // do not update multiple times in 10 seconds
     connect( &m_updateTimer, SIGNAL( timeout() ),
@@ -86,6 +89,8 @@ Nepomuk2::StatusWidget::StatusWidget( QWidget* parent )
 
     connect( m_suspendResumeButton, SIGNAL(clicked()),
              this, SLOT(slotSuspendResume()) );
+    connect( m_configureButton, SIGNAL(clicked()),
+             this, SLOT(slotConfigure()) );
 
     updateSuspendResumeButtonText( m_fileIndexerService->isSuspended() );
 }
@@ -165,6 +170,13 @@ void Nepomuk2::StatusWidget::slotSuspendResume()
     }
 }
 
+void Nepomuk2::StatusWidget::slotConfigure()
+{
+    QStringList args;
+    args << "kcm_nepomuk";
+    KToolInvocation::kdeinitExec("kcmshell4", args);
+}
+
 void Nepomuk2::StatusWidget::updateSuspendResumeButtonText(bool suspended)
 {
     if (!suspended) {
@@ -186,6 +198,13 @@ void Nepomuk2::StatusWidget::showEvent( QShowEvent* event )
                  this, SLOT( slotUpdateStoreStatus() ) );
 
         m_connected = true;
+    }
+
+    if ( QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.internal.KSettingsWidget-kcm_nepomuk") ) {
+        // hide Configure button when being run from inside the KCM
+        m_configureButton->hide();
+    } else {
+        m_configureButton->show();
     }
 
     QTimer::singleShot( 0, this, SLOT( slotUpdateStoreStatus() ) );
