@@ -4,7 +4,7 @@
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE">
 ]>
-<article lang="&language;">
+<article id="emoticons" lang="&language;">
 <articleinfo>
 <title>Emoticons</title>
 <authorgroup>
@@ -118,7 +118,7 @@ This action will remove the selected theme from your disk. Select the theme you 
 
 </sect2>
 
-<sect2 id="emoticons">
+<sect2 id="emoticons-management">
 <title>Emoticons Management</title>
 
 <para>

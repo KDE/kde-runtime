@@ -6,7 +6,7 @@
 <!ENTITY kappname "&sonnet;">
 ]>
 
-<article lang="&language;">
+<article id="spellchecking" lang="&language;">
 <articleinfo>
 <title>Spell Checker</title>
 
@@ -31,7 +31,7 @@
 kdeui/sonnet/configui.ui
 -->
 
-<sect1 id="spellchecking">
+<sect1 id="spellchecker">
 <title>Spell Checker</title>
 <para>The configuration options available here are used as default by all &kde;
 applications that use &sonnet;, which is a frontend to various free spell checkers.</para>
