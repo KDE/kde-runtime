@@ -172,9 +172,7 @@ void Nepomuk2::StatusWidget::slotSuspendResume()
 
 void Nepomuk2::StatusWidget::slotConfigure()
 {
-    QStringList args;
-    args << "kcm_nepomuk";
-    KToolInvocation::kdeinitExec("kcmshell4", args);
+    KToolInvocation::kdeinitExec("kcmshell4", QStringList() << "kcm_nepomuk");
 }
 
 void Nepomuk2::StatusWidget::updateSuspendResumeButtonText(bool suspended)
