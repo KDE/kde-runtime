@@ -21,6 +21,8 @@
 #include "kio_tags.h"
 
 #include <Nepomuk2/ResourceManager>
+#include <Nepomuk2/DataManagement>
+
 #include <Nepomuk2/Vocabulary/NFO>
 #include <Nepomuk2/Vocabulary/NIE>
 #include <Nepomuk2/Vocabulary/NUAO>
@@ -48,6 +50,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+using namespace Soprano::Vocabulary;
 
 Nepomuk2::TagsProtocol::TagsProtocol(const QByteArray& pool_socket, const QByteArray& app_socket)
 : KIO::SlaveBase("nepomuktags", pool_socket, app_socket)
@@ -300,12 +303,38 @@ void Nepomuk2::TagsProtocol::mkdir(const KUrl& url, int permissions)
 
 void Nepomuk2::TagsProtocol::copy(const KUrl& src, const KUrl& dest, int permissions, KIO::JobFlags flags)
 {
-    Q_UNUSED(src);
-    Q_UNUSED(dest);
     Q_UNUSED(permissions);
     Q_UNUSED(flags);
 
-    error( KIO::ERR_UNSUPPORTED_ACTION, src.prettyUrl() );
+    // We use directory cause the filename would be appended at the end of the path
+    QString path = dest.directory();
+    if( path.isEmpty() || path == QLatin1String("/") ) {
+        error( KIO::ERR_UNSUPPORTED_ACTION, src.prettyUrl() );
+        return;
+    }
+
+    if( path.startsWith(QChar::fromLatin1('/')) )
+        path = path.mid( 1 );
+
+    QVariantList tagUris;
+    QStringList tags = path.split( QChar::fromLatin1('/') );
+    foreach(const QString& tag, tags) {
+        QUrl uri = fetchUri(tag);
+        if( uri.isEmpty() ) {
+            // FIXME: Give a better error?
+            QString text = QString::fromLatin1("Tag %1 does not exist").arg(tag);
+            error( KIO::ERR_CANNOT_ENTER_DIRECTORY, text );
+            return;
+        }
+
+        tagUris.append( uri );
+    }
+
+    //FIXME: Check the src?
+    KJob* job = Nepomuk2::addProperty( QList<QUrl>() << src, NAO::hasTag(), tagUris );
+    job->exec();
+
+    finished();
 }
 
 

@@ -9,6 +9,7 @@ deleting=true
 linking=false
 makedir=false
 moving=false
+copyFromFile=true
 listing=Name,Type,Size,Date,AccessDate,Access,Owner,Group,Link
 source=false
 Icon=nepomuk
