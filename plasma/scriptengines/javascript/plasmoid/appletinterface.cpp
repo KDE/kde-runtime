@@ -30,6 +30,7 @@
 #include <QSignalMapper>
 #include <QTimer>
 
+#include <KAuthorized>
 #include <KDebug>
 #include <KGlobalSettings>
 #include <KIcon>
@@ -658,6 +659,16 @@ void ContainmentInterface::setContainmentType(ContainmentInterface::Type type)
 int ContainmentInterface::screen() const
 {
     return containment()->screen();
+}
+
+bool ContainmentInterface::lockScreenAllowed() const
+{
+    return KAuthorized::authorizeKAction("lock_screen");
+}
+
+bool ContainmentInterface::logoutAllowed() const
+{
+    return KAuthorized::authorizeKAction("logout");
 }
 
 QScriptValue ContainmentInterface::screenGeometry(int id) const
