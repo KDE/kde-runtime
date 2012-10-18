@@ -45,7 +45,6 @@ SequentialAnimation {
             from: 1.0
             to: 0.8
             duration: disappearAnimation.duration * 0.6
-            from: 1.0; to: 0.8
             easing.type: Easing.OutExpo;
         }
     }
