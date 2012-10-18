@@ -446,6 +446,9 @@ public:
     QString activityName() const;
     QString activityId() const;
 
+
+    Q_INVOKABLE bool lockScreenAllowed() const;
+    Q_INVOKABLE bool logoutAllowed() const;
     Q_INVOKABLE QScriptValue screenGeometry(int id) const;
     Q_INVOKABLE QScriptValue availableScreenRegion(int id) const;
 
