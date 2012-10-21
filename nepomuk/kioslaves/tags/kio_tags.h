@@ -22,17 +22,27 @@
 #define _NEPOMUK_KIO_TAGS_H_
 
 #include <kio/forwardingslavebase.h>
+#include <Nepomuk2/Tag>
 
 namespace Nepomuk2 {
-    class TagsProtocol : public KIO::SlaveBase
-    {
 
+    /**
+     * The nepomuktags kio slave. It has the following url structure -
+     *
+     * nepomuktags:/Tag1/Tag2/Tag3/
+     * nepomuktags:/Tag1/Tag2/Tag3/_file_url_
+     *
+     */
+    class TagsProtocol : public KIO::ForwardingSlaveBase
+    {
+        Q_OBJECT
     public:
         TagsProtocol(const QByteArray& pool_socket, const QByteArray& app_socket);
         virtual ~TagsProtocol();
 
         /**
-         * List all files and folders tagged with the corresponding tag.
+         * List all files and folders tagged with the corresponding tag, along with
+         * additional tags that can be used to filter the results
          */
         void listDir( const KUrl& url );
 
@@ -71,15 +81,18 @@ namespace Nepomuk2 {
 
         /**
          * Files will be forwarded.
-         * Folders will be created as virtual folders.
+         * Tags will be created as virtual folders.
          */
         void mimetype( const KUrl& url );
 
         /**
          * Files will be forwarded.
-         * Folders will be created as virtual folders.
+         * Tags will be created as virtual folders.
          */
         void stat( const KUrl& url );
+
+    protected:
+        virtual bool rewriteUrl(const KUrl& url, KUrl& newURL);
 
     private:
         QHash<QUrl, QString> m_tagUriIdentHash;
@@ -87,6 +100,19 @@ namespace Nepomuk2 {
 
         QUrl fetchUri( const QString& label );
         QString fetchIdentifer( const QUrl& uri );
+
+        enum ParseResult {
+            RootUrl,
+            TagUrl,
+            FileUrl,
+            InvalidUrl
+        };
+        ParseResult parseUrl(const KUrl& url, QList<Tag>& tags, QUrl& fileUrl, bool ignoreErrors = false);
+
+        bool splitUrl(const KUrl& url, QList<Tag>& tags, QString& filename);
+
+        QUrl decodeFileUrl(const QString& urlString);
+        QString encodeFileUrl(const QUrl& url);
     };
 }
 

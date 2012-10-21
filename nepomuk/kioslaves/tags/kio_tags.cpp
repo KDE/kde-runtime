@@ -49,19 +49,21 @@
 
 #include <sys/types.h>
 #include <unistd.h>
+#include <Nepomuk2/Variant>
 
+using namespace Nepomuk2;
 using namespace Soprano::Vocabulary;
 
-Nepomuk2::TagsProtocol::TagsProtocol(const QByteArray& pool_socket, const QByteArray& app_socket)
-: KIO::SlaveBase("nepomuktags", pool_socket, app_socket)
+TagsProtocol::TagsProtocol(const QByteArray& pool_socket, const QByteArray& app_socket)
+    : KIO::ForwardingSlaveBase("nepomuktags", pool_socket, app_socket)
 {
 }
 
-Nepomuk2::TagsProtocol::~TagsProtocol()
+TagsProtocol::~TagsProtocol()
 {
 }
 
-QString Nepomuk2::TagsProtocol::fetchIdentifer(const QUrl& uri)
+QString TagsProtocol::fetchIdentifer(const QUrl& uri)
 {
     QHash< QUrl, QString >::const_iterator it = m_tagUriIdentHash.constFind( uri );
     if( it != m_tagUriIdentHash.constEnd() ) {
@@ -86,7 +88,7 @@ QString Nepomuk2::TagsProtocol::fetchIdentifer(const QUrl& uri)
     }
 }
 
-QUrl Nepomuk2::TagsProtocol::fetchUri(const QString& label)
+QUrl TagsProtocol::fetchUri(const QString& label)
 {
     QHash< QString, QUrl >::const_iterator it = m_tagIdentUriHash.constFind( label );
     if( it != m_tagIdentUriHash.constEnd() ) {
@@ -136,241 +138,450 @@ namespace {
     }
 }
 
-void Nepomuk2::TagsProtocol::listDir(const KUrl& url)
+void TagsProtocol::listDir(const KUrl& url)
 {
-    Soprano::Model* model = ResourceManager::instance()->mainModel();
+    QList<Tag> tags;
+    QUrl fileUrl;
 
-    QString path = url.path( KUrl::RemoveTrailingSlash );
-    if( path.isEmpty() || path == QLatin1String("/") ) {
-
-        QLatin1String query("select distinct ?r ?ident where { ?r a nao:Tag ; nao:identifier ?ident .}");
-        Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparqlNoInference );
-        while( it.next() ) {
-            QString tagLabel = it["ident"].literal().toString();
-            QUrl tagUri = it["r"].uri();
-
-            m_tagUriIdentHash.insert( tagUri, tagLabel );
-            m_tagIdentUriHash.insert( tagLabel, tagUri );
-
-            listEntry( createUDSEntryForTag( tagUri, tagLabel ), false );
-        }
-
-        listEntry( KIO::UDSEntry(), true );
-        finished();
-        return;
-    }
-
-    if( path.startsWith(QChar::fromLatin1('/')) )
-        path = path.mid( 1 );
-
-    // Fetch tag uris
-    QSet<QUrl> tagUris;
-    QStringList tagN3;
-
-    QStringList tags = path.split( QChar::fromLatin1('/') );
-    foreach(const QString& tag, tags) {
-        QUrl uri = fetchUri(tag);
-        if( uri.isEmpty() ) {
-            QString text = QString::fromLatin1("Tag %1 does not exist").arg(tag);
-            // messageBox( text, Information );
-            error( KIO::ERR_CANNOT_ENTER_DIRECTORY, text );
+    ParseResult result = parseUrl( url, tags, fileUrl );
+    switch( result ) {
+        case InvalidUrl:
             return;
-        }
 
-        tagUris.insert( uri );
-        tagN3.append( Soprano::Node::resourceToN3(uri) );
-    }
+        case RootUrl: {
+            QLatin1String query("select distinct ?r ?ident where { ?r a nao:Tag ; nao:identifier ?ident .}");
+            Soprano::Model* model = ResourceManager::instance()->mainModel();
+            Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparqlNoInference );
+            while( it.next() ) {
+                QString tagLabel = it["ident"].literal().toString();
+                QUrl tagUri = it["r"].uri();
 
-    // Fetch all the files
-    QString query = QString::fromLatin1("select ?r ?url where { ?r a nfo:FileDataObject; nie:url ?url; nao:hasTag %1 .}")
-                    .arg( tagN3.join(",") );
+                m_tagUriIdentHash.insert( tagUri, tagLabel );
+                m_tagIdentUriHash.insert( tagLabel, tagUri );
 
-    Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparqlNoInference );
-    QList<QUrl> fileUris;
-    while( it.next() ) {
-        // Fetch info about each of these files
-        QUrl fileUri = it[0].uri();
-        QUrl fileUrl = it[1].uri();
-
-        fileUris << fileUri;
-
-        QString localUrl = fileUrl.toLocalFile();
-
-        // Somehow stat the file
-        KIO::UDSEntry uds;
-        if ( KIO::StatJob* job = KIO::stat( fileUrl, KIO::HideProgressInfo ) ) {
-            // we do not want to wait for the event loop to delete the job
-            QScopedPointer<KIO::StatJob> sp( job );
-            job->setAutoDelete( false );
-            if ( KIO::NetAccess::synchronousRun( job, 0 ) ) {
-                uds = job->statResult();
+                listEntry( createUDSEntryForTag( tagUri, tagLabel ), false );
             }
-        }
-        uds.insert( KIO::UDSEntry::UDS_URL, fileUrl.toString() );
-        uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, localUrl );
-        uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, fileUri.toString() );
 
-        listEntry( uds, false );
-    }
-
-    // Get all the tags the files are tagged with
-    QSet<QUrl> allTags;
-    foreach(const QUrl& fileUri, fileUris) {
-        // Fetch all the tags
-        QString query = QString::fromLatin1("select distinct ?t where { %1 nao:hasTag ?t . }")
-                        .arg( Soprano::Node::resourceToN3( fileUri ) );
-
-        Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparqlNoInference );
-        while( it.next() ) {
-            allTags.insert( it[0].uri() );
-        }
-    }
-
-    // Remove already listed tags from tagUris
-    QSet<QUrl> tagsToList = allTags.subtract( tagUris );
-
-    // Emit the total number of files
-    totalSize( tagsToList.size() + fileUris.size() );
-
-    // List each of the tags
-    foreach(const QUrl& tagUri, tagsToList) {
-        listEntry( createUDSEntryForTag( tagUri, fetchIdentifer(tagUri) ), false );
-    }
-
-    listEntry( KIO::UDSEntry(), true );
-    finished();
-}
-
-void Nepomuk2::TagsProtocol::stat(const KUrl& url)
-{
-    QString path = url.path( KUrl::RemoveTrailingSlash );
-    if( path.isEmpty() || path == QLatin1String("/") ) {
-        KIO::UDSEntry uds;
-        uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
-        uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
-        uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
-        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
-
-        uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, i18n( "Tag" ) );
-
-        //uds.insert( KIO::UDSEntry::UDS_NAME, QLatin1String(".") );
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, i18n("All Tags") );
-
-        statEntry( uds );
-        finished();
-        return;
-    }
-
-    if( path.startsWith(QChar::fromLatin1('/')) )
-        path = path.mid( 1 );
-
-
-    QString displayName;
-    QStringList tags = path.split( QChar::fromLatin1('/') );
-    foreach(const QString& tag, tags) {
-        QUrl uri = fetchUri(tag);
-        if( uri.isEmpty() ) {
-            QString text = QString::fromLatin1("Tag %1 does not exist").arg(tag);
-            error( KIO::ERR_MALFORMED_URL, text );
+            listEntry( KIO::UDSEntry(), true );
+            finished();
             return;
         }
 
-        displayName.append( tag + QLatin1Char(' ') );
+        case TagUrl: {
+            // Get the N3
+            QStringList tagN3;
+            QSet<QUrl> tagUris;
+            foreach(const Tag& tag, tags) {
+                tagUris << tag.uri();
+                tagN3.append( Soprano::Node::resourceToN3(tag.uri()) );
+            }
+
+            // Fetch all the files
+            QString query = QString::fromLatin1("select ?r ?url where { ?r a nfo:FileDataObject; "
+                                                "nie:url ?url; nao:hasTag %1 .}")
+                            .arg( tagN3.join(",") );
+
+            Soprano::Model* model = ResourceManager::instance()->mainModel();
+            Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparqlNoInference );
+            QList<QUrl> fileUris;
+            while( it.next() ) {
+                // Fetch info about each of these files
+                KUrl fileUri = it[0].uri();
+                KUrl fileUrl = it[1].uri();
+
+                fileUris << fileUri;
+
+                QString localUrl = fileUrl.toLocalFile();
+
+                // Somehow stat the file
+                KIO::UDSEntry uds;
+                if ( KIO::StatJob* job = KIO::stat( fileUrl, KIO::HideProgressInfo ) ) {
+                    // we do not want to wait for the event loop to delete the job
+                    QScopedPointer<KIO::StatJob> sp( job );
+                    job->setAutoDelete( false );
+                    if( job->exec() ) {
+                        uds = job->statResult();
+                    }
+                }
+
+                uds.insert( KIO::UDSEntry::UDS_NAME, encodeFileUrl(fileUrl) );
+                uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, fileUrl.fileName() );
+                //FIXME: Should we be setting the UDS_URL?
+                //uds.insert( KIO::UDSEntry::UDS_URL, fileUrl.url() );
+                uds.insert( KIO::UDSEntry::UDS_TARGET_URL, fileUrl.url() );
+                uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, localUrl );
+                uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, fileUri.url() );
+
+                listEntry( uds, false );
+            }
+
+            // Get all the tags the files are tagged with
+            QSet<QUrl> allTags;
+            foreach(const QUrl& fileUri, fileUris) {
+                // Fetch all the tags
+                QString query = QString::fromLatin1("select distinct ?t where { %1 nao:hasTag ?t . }")
+                                .arg( Soprano::Node::resourceToN3( fileUri ) );
+
+                Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparqlNoInference );
+                while( it.next() ) {
+                    allTags.insert( it[0].uri() );
+                }
+            }
+
+            // Remove already listed tags from tagUris
+            QSet<QUrl> tagsToList = allTags.subtract( tagUris );
+
+            // Emit the total number of files
+            totalSize( tagsToList.size() + fileUris.size() );
+
+            // List each of the tags
+            foreach(const QUrl& tagUri, tagsToList) {
+                listEntry( createUDSEntryForTag( tagUri, fetchIdentifer(tagUri) ), false );
+            }
+
+            listEntry( KIO::UDSEntry(), true );
+            finished();
+        }
+
+        case FileUrl:
+            ForwardingSlaveBase::listDir( fileUrl );
+            return;
     }
-
-    KIO::UDSEntry uds;
-    uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
-    uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
-    uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
-    uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
-
-    uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
-    uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, i18n( "Tag" ) );
-
-    uds.insert( KIO::UDSEntry::UDS_NAME, path );
-    uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, displayName );
-
-    statEntry( uds );
-    finished();
 }
 
-void Nepomuk2::TagsProtocol::mkdir(const KUrl& url, int permissions)
+void TagsProtocol::stat(const KUrl& url)
 {
-    Q_UNUSED(permissions);
+    QList<Tag> tags;
+    QUrl fileUrl;
+
+    ParseResult result = parseUrl( url, tags, fileUrl );
+    switch( result ) {
+        case InvalidUrl:
+            return;
+
+        case RootUrl: {
+            KIO::UDSEntry uds;
+            uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
+            uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
+            uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
+            uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
+
+            uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
+            uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, i18n( "Tag" ) );
+
+            uds.insert( KIO::UDSEntry::UDS_NAME, QLatin1String(".") );
+            uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, i18n("All Tags") );
+
+            statEntry( uds );
+            finished();
+            return;
+        }
+
+        case TagUrl: {
+            QString displayName;
+            QString path = url.path();
+            QStringList tagnames = path.split( QChar::fromLatin1('/') );
+            foreach(const QString& tag, tagnames) {
+                displayName.append( tag + QLatin1Char(' ') );
+            }
+
+            KIO::UDSEntry uds;
+            uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
+            uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
+            uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
+            uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
+
+            uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
+            uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, i18n( "Tag" ) );
+
+            uds.insert( KIO::UDSEntry::UDS_NAME, path );
+            uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, displayName );
+            uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, tags.last().uri().toString() );
+
+            statEntry( uds );
+            finished();
+            return;
+        }
+
+        case FileUrl:
+            ForwardingSlaveBase::get( fileUrl );
+            return;
+    }
+}
+
+void TagsProtocol::mkdir(const KUrl& url, int permissions)
+{
+    Q_UNUSED( permissions );
+
+    QList<Tag> tags;
+    QUrl fileUrl;
+
+    ParseResult result = parseUrl( url, tags, fileUrl );
+    switch( result ) {
+        case InvalidUrl:
+            return;
+
+        case RootUrl:
+            error( KIO::ERR_UNSUPPORTED_ACTION, url.prettyUrl() );
+            return;
+
+        case TagUrl: {
+            QString errorString = QString::fromLatin1("Tag %1 already exists").arg( url.fileName() );
+            error( KIO::ERR_COULD_NOT_MKDIR, errorString );
+            return;
+        }
+
+        // WE think it is a fileUrl since the last tag doesn't exist
+        case FileUrl: {
+            const QString label = url.fileName();
+            Tag tag( label );
+            tag.setProperty( NAO::prefLabel(), label );
+
+            finished();
+            return;
+        }
+    }
+}
+
+void TagsProtocol::copy(const KUrl& src, const KUrl& dest, int permissions, KIO::JobFlags flags)
+{
+    if( src.scheme() == QLatin1String("file") ) {
+        QList<Tag> tags;
+        QUrl fileUrl;
+
+        ParseResult result = parseUrl( dest, tags, fileUrl );
+        switch( result ) {
+            case InvalidUrl:
+                return;
+
+            case RootUrl:
+            case TagUrl:
+                error( KIO::ERR_UNSUPPORTED_ACTION, src.prettyUrl() );
+                return;
+
+            // It's a file url, cause the filename doesn't exist as a tag
+            case FileUrl:
+                QVariantList tagUris;
+                foreach(const Tag& tag, tags)
+                    tagUris << tag.uri();
+
+                KJob* job = Nepomuk2::addProperty( QList<QUrl>() << src, NAO::hasTag(), tagUris );
+                job->exec();
+                finished();
+                return;
+        }
+    }
+
+    QList<Tag> tags;
+    QUrl fileUrl;
+
+    ParseResult result = parseUrl( dest, tags, fileUrl );
+    switch( result ) {
+        case InvalidUrl:
+            return;
+
+        case RootUrl:
+        case TagUrl:
+            error( KIO::ERR_UNSUPPORTED_ACTION, src.prettyUrl() );
+            return;
+
+        case FileUrl:
+            ForwardingSlaveBase::copy( src, fileUrl, permissions, flags );
+            return;
+    }
+}
+
+
+void TagsProtocol::get(const KUrl& url)
+{
+    QList<Tag> tags;
+    QUrl fileUrl;
+
+    ParseResult result = parseUrl( url, tags, fileUrl );
+    switch( result ) {
+        case InvalidUrl:
+            return;
+
+        case RootUrl:
+        case TagUrl:
+            error( KIO::ERR_UNSUPPORTED_ACTION, url.prettyUrl() );
+            return;
+
+        case FileUrl:
+            ForwardingSlaveBase::get( fileUrl );
+            return;
+    }
+}
+
+
+void TagsProtocol::put(const KUrl& url, int permissions, KIO::JobFlags flags)
+{
+    Q_UNUSED( permissions );
+    Q_UNUSED( flags );
+
     error( KIO::ERR_UNSUPPORTED_ACTION, url.prettyUrl() );
+    return;
 }
 
-void Nepomuk2::TagsProtocol::copy(const KUrl& src, const KUrl& dest, int permissions, KIO::JobFlags flags)
+
+void TagsProtocol::rename(const KUrl& src, const KUrl& dest, KIO::JobFlags flags)
 {
-    Q_UNUSED(permissions);
-    Q_UNUSED(flags);
+    QList<Tag> srcTags;
+    QUrl fileUrl;
 
-    // We use directory cause the filename would be appended at the end of the path
-    QString path = dest.directory();
-    if( path.isEmpty() || path == QLatin1String("/") ) {
-        error( KIO::ERR_UNSUPPORTED_ACTION, src.prettyUrl() );
-        return;
-    }
+    ParseResult srcResult = parseUrl( src, srcTags, fileUrl );
+    switch( srcResult ) {
+        case InvalidUrl:
+            return;
 
-    if( path.startsWith(QChar::fromLatin1('/')) )
-        path = path.mid( 1 );
+        case RootUrl:
+            error( KIO::ERR_UNSUPPORTED_ACTION, src.prettyUrl() );
+            return;
 
-    QVariantList tagUris;
-    QStringList tags = path.split( QChar::fromLatin1('/') );
-    foreach(const QString& tag, tags) {
-        QUrl uri = fetchUri(tag);
-        if( uri.isEmpty() ) {
-            // FIXME: Give a better error?
-            QString text = QString::fromLatin1("Tag %1 does not exist").arg(tag);
-            error( KIO::ERR_CANNOT_ENTER_DIRECTORY, text );
+        case FileUrl: {
+            // Yes, this is weird, but it is required
+            KUrl destUrl( fileUrl );
+            destUrl.setFileName( dest.fileName() );
+
+            ForwardingSlaveBase::rename( fileUrl, destUrl, flags );
             return;
         }
 
-        tagUris.append( uri );
+        case TagUrl: {
+            Tag fromTag = srcTags.last();
+
+            QString path = dest.path();
+            QStringList tagNames = path.split('/');
+            if( tagNames.isEmpty() ) {
+                error( KIO::ERR_UNSUPPORTED_ACTION, src.prettyUrl() );
+                return;
+            }
+
+            QString toIdentifier = tagNames.last();
+            fromTag.setProperty( NAO::identifier(), toIdentifier );
+            fromTag.setProperty( NAO::prefLabel(), toIdentifier );
+
+            finished();
+        }
     }
-
-    //FIXME: Check the src?
-    KJob* job = Nepomuk2::addProperty( QList<QUrl>() << src, NAO::hasTag(), tagUris );
-    job->exec();
-
-    finished();
 }
 
-
-void Nepomuk2::TagsProtocol::get(const KUrl& url)
+void TagsProtocol::del(const KUrl& url, bool isfile)
 {
-    KIO::SlaveBase::get(url);
-}
+    Q_UNUSED( isfile );
 
+    QList<Tag> tags;
+    QUrl fileUrl;
 
-void Nepomuk2::TagsProtocol::put(const KUrl& url, int permissions, KIO::JobFlags flags)
-{
-    KIO::SlaveBase::put(url, permissions, flags);
-}
+    ParseResult result = parseUrl( url, tags, fileUrl );
+    switch( result ) {
+        case InvalidUrl:
+            return;
 
+        case RootUrl:
+            error( KIO::ERR_UNSUPPORTED_ACTION, url.prettyUrl() );
+            return;
 
-void Nepomuk2::TagsProtocol::rename(const KUrl& src, const KUrl& dest, KIO::JobFlags flags)
-{
-    Q_UNUSED(src);
-    Q_UNUSED(dest);
-    Q_UNUSED(flags);
+        case TagUrl: {
+            const QUrl tagUri = tags.last().uri();
+            KJob* job = Nepomuk2::removeResources( QList<QUrl>() << tagUri );
+            job->exec();
 
-    error( KIO::ERR_UNSUPPORTED_ACTION, src.prettyUrl() );
-}
+            finished();
+            return;
+        }
 
-void Nepomuk2::TagsProtocol::del(const KUrl& url, bool isfile)
-{
-    kDebug() << url;
-    SlaveBase::del( url, isfile );
+        case FileUrl:
+            ForwardingSlaveBase::del( fileUrl, isfile );
+            return;
+    }
 }
 
 
 void Nepomuk2::TagsProtocol::mimetype(const KUrl& url)
 {
-    kDebug() << url;
-    SlaveBase::mimetype( url );
+    QList<Tag> tags;
+    QUrl fileUrl;
+
+    ParseResult result = parseUrl( url, tags, fileUrl );
+    switch( result ) {
+        case InvalidUrl:
+            return;
+
+        case RootUrl:
+        case TagUrl:
+            mimeType( "inode/directory" );
+            finished();
+            return;
+
+        case FileUrl:
+            ForwardingSlaveBase::mimetype( fileUrl );
+            return;
+    }
 }
+
+QUrl Nepomuk2::TagsProtocol::decodeFileUrl(const QString& urlString)
+{
+    return QUrl::fromEncoded( QByteArray::fromPercentEncoding( urlString.toAscii(), '_' ) );
+}
+
+QString Nepomuk2::TagsProtocol::encodeFileUrl(const QUrl& url)
+{
+    return QString::fromAscii( url.toEncoded().toPercentEncoding( QByteArray(), QByteArray(""), '_' ) );
+}
+
+
+Nepomuk2::TagsProtocol::ParseResult Nepomuk2::TagsProtocol::parseUrl(const KUrl& url, QList< Tag >& tags, QUrl& fileUrl, bool ignoreErrors)
+{
+    QString path = url.path();
+    if( path.isEmpty() || path == QLatin1String("/") )
+        return RootUrl;
+
+    QString fileName = url.fileName( KUrl::ObeyTrailingSlash );
+    QString dir = url.directory( KUrl::ObeyTrailingSlash );
+
+    QStringList tagNames = dir.split( '/', QString::SkipEmptyParts );
+    if ( !fileName.isEmpty() ) {
+        Soprano::Model* model = ResourceManager::instance()->mainModel();
+        QString query = QString::fromLatin1("ask where { ?r a nao:Tag ; nao:identifier %1 . }")
+                        .arg( Soprano::Node::literalToN3( fileName ) );
+
+        if( model->executeQuery( query, Soprano::Query::QueryLanguageSparql ).boolValue() ) {
+            tagNames << fileName;
+        }
+        else {
+            fileUrl = decodeFileUrl( fileName );
+        }
+    }
+
+    tags.clear();
+    foreach(const QString& tagName, tagNames) {
+        QUrl uri = fetchUri(tagName);
+        if( uri.isEmpty() && !ignoreErrors ) {
+            QString text = QString::fromLatin1("Tag %1 does not exist").arg(tagName);
+            error( KIO::ERR_CANNOT_ENTER_DIRECTORY, text );
+            return InvalidUrl;
+        }
+        else if( !uri.isEmpty() ) {
+            tags << uri;
+        }
+    }
+
+    if( !fileUrl.isEmpty() )
+        return FileUrl;
+
+    return TagUrl;
+}
+
+bool Nepomuk2::TagsProtocol::rewriteUrl(const KUrl& url, KUrl& newURL)
+{
+    if( url.scheme() != QLatin1String("file") )
+        return false;
+
+    newURL = url;
+    return true;
+}
+
 
 extern "C"
 {
