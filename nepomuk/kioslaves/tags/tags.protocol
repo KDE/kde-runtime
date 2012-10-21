@@ -1,6 +1,6 @@
 [Protocol]
-exec=kio_nepomuktags
-protocol=nepomuktags
+exec=kio_tags
+protocol=tags
 input=none
 output=filesystem
 reading=true

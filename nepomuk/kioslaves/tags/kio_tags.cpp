@@ -55,7 +55,7 @@ using namespace Nepomuk2;
 using namespace Soprano::Vocabulary;
 
 TagsProtocol::TagsProtocol(const QByteArray& pool_socket, const QByteArray& app_socket)
-    : KIO::ForwardingSlaveBase("nepomuktags", pool_socket, app_socket)
+    : KIO::ForwardingSlaveBase("tags", pool_socket, app_socket)
 {
 }
 
@@ -588,11 +588,11 @@ extern "C"
     KDE_EXPORT int kdemain( int argc, char **argv )
     {
         // necessary to use other kio slaves
-        KComponentData( "kio_nepomuktags" );
+        KComponentData( "kio_tags" );
         QCoreApplication app( argc, argv );
 
         if (argc != 4) {
-            kError() << "Usage: kio_nepomuktags protocol domain-socket1 domain-socket2";
+            kError() << "Usage: kio_tags protocol domain-socket1 domain-socket2";
             exit(-1);
         }
 
