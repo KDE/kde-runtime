@@ -20,10 +20,12 @@
  */
 
 #include "appletinterface.h"
-
+#include "../declarative/action.h"
 #include "../declarative/appletcontainer.h"
 
 #include <QAction>
+#include <QDBusInterface>
+#include <QDBusPendingCall>
 #include <QDir>
 #include <QFile>
 #include <QScriptEngine>
@@ -36,6 +38,11 @@
 #include <KIcon>
 #include <KService>
 #include <KServiceTypeTrader>
+//#include <kworkspace/kworkspace.h>
+
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 
 #include <Plasma/Plasma>
 #include <Plasma/Applet>
@@ -614,6 +621,7 @@ ContainmentInterface::ContainmentInterface(AbstractJsAppletScript *parent)
      }
 
     qmlRegisterType<AppletContainer>("org.kde.plasma.containments", 0, 1, "AppletContainer");
+    qmlRegisterType<Action>("org.kde.plasma.containments", 0, 1, "Action");
     loadActions();
 }
 
@@ -740,14 +748,18 @@ QString ContainmentInterface::activityId() const
 
 void ContainmentInterface::loadActions()
 {
-    kDebug() << " == Loading Actions == ";
     m_toolBoxActions.clear();
-    m_toolBoxActions = containment()->corona()->actions();
+    QList<QAction*> as = containment()->corona()->actions();
     if (KAuthorized::authorizeKAction("logout")) {
         QAction *action = new QAction(i18n("Leave..."), this);
         action->setIcon(KIcon("system-shutdown"));
         connect(action, SIGNAL(triggered()), this, SLOT(startLogout()));
         m_toolBoxActions << action;
+        //m_toolActions << action;
+        m_toolActions[action->text()] = action;
+        Action* a = new Action(this);
+        a->setAction(action);
+        m_toolBoxActions2 << a;
     }
 
     if (KAuthorized::authorizeKAction("lock_screen")) {
@@ -755,28 +767,85 @@ void ContainmentInterface::loadActions()
         action->setIcon(KIcon("system-lock-screen"));
         connect(action, SIGNAL(triggered(bool)), this, SLOT(lockScreen()));
         m_toolBoxActions << action;
+        m_toolActions[action->text()] = action;
+        Action* a = new Action(this);
+        a->setAction(action);
+        m_toolBoxActions2 << a;
     }
 
-    foreach (QAction *action, m_toolBoxActions) {
+    foreach (QAction *action, as) {
         kDebug() << " Action from Corona: " << action->text();
+        m_toolBoxActions << action;
+        m_toolActions[action->text()] = action;
+        Action* a = new Action(this);
+        a->setAction(action);
+        m_toolBoxActions2 << a;
     }
+    kDebug() << " == Loaded Actions " << m_toolBoxActions.count() << " ==";
     emit toolBoxActionsChanged();
+    emit toolActionsChanged();
+    emit toolsChanged();
+    emit toolBoxActions2Changed();
+    emit toolBoxActionsListChanged();
 }
 
-QDeclarativeListProperty<QAction> ContainmentInterface::toolBoxActions()
+QStringList ContainmentInterface::tools()
+{
+    return m_toolActions.keys();
+}
+
+//    QAction* toolAction(const QString &t);
+QAction* ContainmentInterface::toolAction(const QString &t)
+{
+    return m_toolActions[t];
+}
+// QDeclarativeListProperty<QAction> ContainmentInterface::toolBoxActions()
+// //QList<QObject*> ContainmentInterface::toolBoxActions()
+// {
+//     kDebug() << "tb actions requested" << m_toolBoxActions.count();
+//     //return m_toolBoxActions;
+//     return QDeclarativeListProperty<QAction>(this, m_toolBoxActions);
+// }
+QDeclarativeListProperty<Action> ContainmentInterface::toolBoxActions2()
+//QList<QObject*> ContainmentInterface::toolBoxActions()
 {
     kDebug() << "tb actions requested" << m_toolBoxActions.count();
-    return QDeclarativeListProperty<QAction>(this, m_toolBoxActions);
+    //return m_toolBoxActions;
+    //QList<Action*> actions;
+    return QDeclarativeListProperty<Action>(this, m_toolBoxActions2);
+}
+
+QList<QObject*> ContainmentInterface::toolBoxActionsList()
+{
+    kDebug() << "tb actions requested" << m_toolBoxActions.count();
+    return m_toolBoxActions;
+    //return QDeclarativeListProperty<QObject>(this, m_toolBoxActions);
 }
 
 void ContainmentInterface::lockScreen()
 {
     kDebug() << " -- Lock Screen.";
+    if (!KAuthorized::authorizeKAction("lock_screen")) {
+        return;
+    }
+
+#ifndef Q_OS_WIN
+    const QString interface("org.freedesktop.ScreenSaver");
+    QDBusInterface screensaver(interface, "/ScreenSaver");
+    screensaver.asyncCall("Lock");
+#else
+    LockWorkStation();
+#endif // !Q_OS_WIN
 }
 
 void ContainmentInterface::startLogout()
 {
     kDebug() << " -- Leave....";
+    if (!KAuthorized::authorizeKAction("logout")) {
+        return;
+    }
+    // We don't want to link to kworkspace, FIXME
+    //KWorkSpace::requestShutDown();
 }
 
 
