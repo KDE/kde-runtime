@@ -613,16 +613,8 @@ ContainmentInterface::ContainmentInterface(AbstractJsAppletScript *parent)
                  this, SIGNAL(availableScreenRegionChanged()));
      }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     qmlRegisterType<AppletContainer>("org.kde.plasma.containments", 0, 1, "AppletContainer");
-=======
-    qmlRegisterType<AppletContainer>("org.kde.plasma.desktop", 0, 1, "AppletContainer");
->>>>>>> Containments expose an AppletContainer
-=======
-    qmlRegisterType<AppletContainer>("org.kde.plasma.desktop", 0, 1, "AppletContainer");
->>>>>>> Containments expose an AppletContainer
-
+    loadActions();
 }
 
 QScriptValue ContainmentInterface::applets()
@@ -745,6 +737,48 @@ QString ContainmentInterface::activityId() const
 {
     return containment()->context()->currentActivityId();
 }
+
+void ContainmentInterface::loadActions()
+{
+    kDebug() << " == Loading Actions == ";
+    m_toolBoxActions.clear();
+    m_toolBoxActions = containment()->corona()->actions();
+    if (KAuthorized::authorizeKAction("logout")) {
+        QAction *action = new QAction(i18n("Leave..."), this);
+        action->setIcon(KIcon("system-shutdown"));
+        connect(action, SIGNAL(triggered()), this, SLOT(startLogout()));
+        m_toolBoxActions << action;
+    }
+
+    if (KAuthorized::authorizeKAction("lock_screen")) {
+        QAction *action = new QAction(i18n("Lock Screen"), this);
+        action->setIcon(KIcon("system-lock-screen"));
+        connect(action, SIGNAL(triggered(bool)), this, SLOT(lockScreen()));
+        m_toolBoxActions << action;
+    }
+
+    foreach (QAction *action, m_toolBoxActions) {
+        kDebug() << " Action from Corona: " << action->text();
+    }
+    emit toolBoxActionsChanged();
+}
+
+QDeclarativeListProperty<QAction> ContainmentInterface::toolBoxActions()
+{
+    kDebug() << "tb actions requested" << m_toolBoxActions.count();
+    return QDeclarativeListProperty<QAction>(this, m_toolBoxActions);
+}
+
+void ContainmentInterface::lockScreen()
+{
+    kDebug() << " -- Lock Screen.";
+}
+
+void ContainmentInterface::startLogout()
+{
+    kDebug() << " -- Leave....";
+}
+
 
 #ifndef USE_JS_SCRIPTENGINE
 #include "appletinterface.moc"

@@ -23,6 +23,7 @@
 #define APPLETINTERFACE_H
 
 #include <QAbstractAnimation>
+#include <QDeclarativeListProperty>
 #include <QObject>
 #include <QSizePolicy>
 #include <QScriptValue>
@@ -417,6 +418,8 @@ class ContainmentInterface : public APPLETSUPERCLASS
     Q_PROPERTY(bool movableApplets READ hasMovableApplets WRITE setMovableApplets)
     Q_PROPERTY(QString activityName READ activityName NOTIFY activityNameChanged)
     Q_PROPERTY(QString activityId READ activityId NOTIFY activityIdChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QAction> toolBoxActions READ toolBoxActions NOTIFY toolBoxActionsChanged)
+
     Q_ENUMS(Type)
 
 public:
@@ -446,9 +449,8 @@ public:
     QString activityName() const;
     QString activityId() const;
 
+    QDeclarativeListProperty<QAction> toolBoxActions();
 
-    Q_INVOKABLE bool lockScreenAllowed() const;
-    Q_INVOKABLE bool logoutAllowed() const;
     Q_INVOKABLE QScriptValue screenGeometry(int id) const;
     Q_INVOKABLE QScriptValue availableScreenRegion(int id) const;
 
@@ -459,13 +461,19 @@ Q_SIGNALS:
     void activityNameChanged();
     void activityIdChanged();
     void availableScreenRegionChanged();
+    void toolBoxActionsChanged();
 
 protected Q_SLOTS:
     void appletAddedForward(Plasma::Applet *applet, const QPointF &pos);
     void appletRemovedForward(Plasma::Applet *applet);
 
+    void lockScreen();
+    void startLogout();
+
 private:
+    void loadActions();
     bool m_movableApplets;
+    QList<QAction*> m_toolBoxActions;
 };
 
 #endif
