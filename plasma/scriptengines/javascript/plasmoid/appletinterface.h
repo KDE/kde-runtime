@@ -419,9 +419,6 @@ class ContainmentInterface : public APPLETSUPERCLASS
     Q_PROPERTY(bool movableApplets READ hasMovableApplets WRITE setMovableApplets)
     Q_PROPERTY(QString activityName READ activityName NOTIFY activityNameChanged)
     Q_PROPERTY(QString activityId READ activityId NOTIFY activityIdChanged)
-    Q_PROPERTY(QDeclarativeListProperty<Action> toolBoxActions2 READ toolBoxActions2 NOTIFY toolBoxActions2Changed)
-    //Q_PROPERTY(QDeclarativeListProperty<OwncloudFolder> folders READ folders NOTIFY foldersChanged)
-    Q_PROPERTY(QList<QObject*> toolBoxActionsList READ toolBoxActionsList NOTIFY toolBoxActionsListChanged)
     Q_PROPERTY(QStringList tools READ tools NOTIFY toolsChanged)
 
     Q_ENUMS(Type)
@@ -471,10 +468,7 @@ Q_SIGNALS:
     void activityIdChanged();
     void availableScreenRegionChanged();
     void toolBoxActionsChanged();
-    void toolActionsChanged();
     void toolsChanged();
-    void toolBoxActions2Changed();
-    void toolBoxActionsListChanged();
 
 protected Q_SLOTS:
     void appletAddedForward(Plasma::Applet *applet, const QPointF &pos);
@@ -486,8 +480,6 @@ protected Q_SLOTS:
 private:
     void loadActions();
     bool m_movableApplets;
-    QList<QObject*> m_toolBoxActions;
-    QList<Action*> m_toolBoxActions2;
     QHash<QString, QAction*> m_toolActions;
 
 };
