@@ -748,45 +748,28 @@ QString ContainmentInterface::activityId() const
 
 void ContainmentInterface::loadActions()
 {
-    m_toolBoxActions.clear();
+    m_toolActions.clear();
     QList<QAction*> as = containment()->corona()->actions();
     if (KAuthorized::authorizeKAction("logout")) {
         QAction *action = new QAction(i18n("Leave..."), this);
         action->setIcon(KIcon("system-shutdown"));
         connect(action, SIGNAL(triggered()), this, SLOT(startLogout()));
-        m_toolBoxActions << action;
-        //m_toolActions << action;
         m_toolActions[action->text()] = action;
-        Action* a = new Action(this);
-        a->setAction(action);
-        m_toolBoxActions2 << a;
     }
 
     if (KAuthorized::authorizeKAction("lock_screen")) {
         QAction *action = new QAction(i18n("Lock Screen"), this);
         action->setIcon(KIcon("system-lock-screen"));
         connect(action, SIGNAL(triggered(bool)), this, SLOT(lockScreen()));
-        m_toolBoxActions << action;
         m_toolActions[action->text()] = action;
-        Action* a = new Action(this);
-        a->setAction(action);
-        m_toolBoxActions2 << a;
     }
 
     foreach (QAction *action, as) {
         kDebug() << " Action from Corona: " << action->text();
-        m_toolBoxActions << action;
         m_toolActions[action->text()] = action;
-        Action* a = new Action(this);
-        a->setAction(action);
-        m_toolBoxActions2 << a;
     }
-    kDebug() << " == Loaded Actions " << m_toolBoxActions.count() << " ==";
-    emit toolBoxActionsChanged();
-    emit toolActionsChanged();
+    kDebug() << " == Loaded Actions " << m_toolActions.count() << " ==";
     emit toolsChanged();
-    emit toolBoxActions2Changed();
-    emit toolBoxActionsListChanged();
 }
 
 QStringList ContainmentInterface::tools()
@@ -794,32 +777,9 @@ QStringList ContainmentInterface::tools()
     return m_toolActions.keys();
 }
 
-//    QAction* toolAction(const QString &t);
 QAction* ContainmentInterface::toolAction(const QString &t)
 {
     return m_toolActions[t];
-}
-// QDeclarativeListProperty<QAction> ContainmentInterface::toolBoxActions()
-// //QList<QObject*> ContainmentInterface::toolBoxActions()
-// {
-//     kDebug() << "tb actions requested" << m_toolBoxActions.count();
-//     //return m_toolBoxActions;
-//     return QDeclarativeListProperty<QAction>(this, m_toolBoxActions);
-// }
-QDeclarativeListProperty<Action> ContainmentInterface::toolBoxActions2()
-//QList<QObject*> ContainmentInterface::toolBoxActions()
-{
-    kDebug() << "tb actions requested" << m_toolBoxActions.count();
-    //return m_toolBoxActions;
-    //QList<Action*> actions;
-    return QDeclarativeListProperty<Action>(this, m_toolBoxActions2);
-}
-
-QList<QObject*> ContainmentInterface::toolBoxActionsList()
-{
-    kDebug() << "tb actions requested" << m_toolBoxActions.count();
-    return m_toolBoxActions;
-    //return QDeclarativeListProperty<QObject>(this, m_toolBoxActions);
 }
 
 void ContainmentInterface::lockScreen()
