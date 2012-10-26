@@ -20,7 +20,7 @@
  */
 
 #include "appletinterface.h"
-#include "../declarative/action.h"
+#include "../declarative/internaltoolbox.h"
 #include "../declarative/appletcontainer.h"
 
 #include <QAction>
@@ -621,7 +621,7 @@ ContainmentInterface::ContainmentInterface(AbstractJsAppletScript *parent)
      }
 
     qmlRegisterType<AppletContainer>("org.kde.plasma.containments", 0, 1, "AppletContainer");
-    qmlRegisterType<Action>("org.kde.plasma.containments", 0, 1, "Action");
+    qmlRegisterType<InternalToolBox>("org.kde.plasma.containments", 0, 1, "InternalToolBox");
     loadActions();
 }
 
