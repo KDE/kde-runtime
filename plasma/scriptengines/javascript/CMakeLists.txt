@@ -12,7 +12,7 @@ set(simple_javascript_engine_SRCS
     common/extension_io.cpp
     common/guiscriptenv.cpp
     common/javascriptaddonpackagestructure.cpp
-    declarative/action.cpp
+    declarative/internaltoolbox.cpp
     declarative/appletcontainer.cpp
     plasmoid/abstractjsappletscript.cpp
     plasmoid/appletauthorization.cpp
@@ -133,7 +133,7 @@ set(declarative_appletscript_SRCS
     common/extension_io.cpp
     common/javascriptaddonpackagestructure.cpp
     common/declarativescriptenv.cpp
-    declarative/action.cpp
+    declarative/internaltoolbox.cpp
     declarative/appletcontainer.cpp
     declarative/declarativeitemcontainer.cpp
     declarative/packageaccessmanager.cpp
