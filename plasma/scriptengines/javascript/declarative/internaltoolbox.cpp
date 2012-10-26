@@ -202,19 +202,29 @@ void InternalToolBox::setIconSize(const QSize newSize)
     m_iconSize = newSize;
 }
 
-bool InternalToolBox::isShowing() const
+bool InternalToolBox::showing() const
 {
     return m_showing;
 }
 
+bool InternalToolBox::isShowing() const
+{
+    return showing();
+}
+
 void InternalToolBox::setShowing(const bool show)
 {
+    if (m_showing == show) {
+        return;
+    }
+    m_showing = show;
+    kDebug() << "Set showing: " << show;
     if (show) {
         showToolBox();
     } else {
         hideToolBox();
     }
-    m_showing = show;
+    emit showingChanged();
 }
 
 QSize InternalToolBox::cornerSize() const
@@ -327,7 +337,6 @@ void InternalToolBox::restore(const KConfigGroup &containmentGroup)
 void InternalToolBox::immutabilityChanged(Plasma::ImmutabilityType immutability)
 {
     const bool unlocked = immutability == (Plasma::Mutable);
-    kDebug() << " locked? " << !unlocked;
 
     setIsMovable(unlocked);
     d->immutable = !unlocked;
@@ -357,13 +366,11 @@ void InternalToolBox::lockScreen()
 
 bool InternalToolBox::immutable() const
 {
-    kDebug() << " locked? " << d->immutable;
     return d->immutable;
 }
 
 void InternalToolBox::setImmutable(bool immutable)
 {
-    kDebug() << " locked? " << immutable;
     d->immutable = immutable;
     emit immutableChanged();
 }
@@ -392,10 +399,11 @@ void InternalToolBox::startLogout()
 
 void InternalToolBox::logout()
 {
+    kDebug() << "Show config";
+    containment()->showConfigurationInterface();
     if (!KAuthorized::authorizeKAction("logout")) {
         return;
     }
-
     //KWorkSpace::requestShutDown();
 }
 
