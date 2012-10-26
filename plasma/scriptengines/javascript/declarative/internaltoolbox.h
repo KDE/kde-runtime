@@ -39,7 +39,10 @@ class InternalToolBoxPrivate;
 class InternalToolBox : public Plasma::AbstractToolBox
 {
     Q_OBJECT
-    Q_INTERFACES(QGraphicsItem)
+    //Q_INTERFACES(QGraphicsItem)
+    Q_PROPERTY(QSize iconSize READ iconSize WRITE setIconSize NOTIFY iconSizeChanged)
+    Q_PROPERTY(bool isMovable READ isMovable WRITE setIsMovable NOTIFY isMovableChanged)
+
 public:
     enum Corner {
         Top = 0,
@@ -73,7 +76,7 @@ public:
     bool isShowing() const;
     void setShowing(const bool show);
 
-    virtual QGraphicsWidget *toolParent();
+    //virtual QGraphicsWidget *toolParent();
 
     virtual void setCorner(const Corner corner);
     virtual Corner corner() const;
@@ -97,15 +100,19 @@ public:
 public Q_SLOTS:
     void save(KConfigGroup &cg) const;
     void restore(const KConfigGroup &containmentGroup);
-    void reposition();
+    //void reposition();
+
+Q_SIGNALS:
+    void iconSizeChanged();
+    void isMovableChanged();
 
 protected:
     Plasma::Containment *containment();
-    QPoint toolPosition(int toolHeight);
+    //QPoint toolPosition(int toolHeight);
 
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+//     void mousePressEvent(QGraphicsSceneMouseEvent *event);
+//     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+//     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 protected Q_SLOTS:
     virtual void toolTriggered(bool);
