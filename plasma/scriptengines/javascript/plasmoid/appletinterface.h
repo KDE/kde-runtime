@@ -36,7 +36,7 @@
 #include <Plasma/ToolTipContent>
 
 #include "abstractjsappletscript.h"
-#include "../declarative/action.h"
+#include "../declarative/internaltoolbox.h"
 
 class QAction;
 class QmlAppletScript;
@@ -420,6 +420,7 @@ class ContainmentInterface : public APPLETSUPERCLASS
     Q_PROPERTY(QString activityName READ activityName NOTIFY activityNameChanged)
     Q_PROPERTY(QString activityId READ activityId NOTIFY activityIdChanged)
     Q_PROPERTY(QStringList tools READ tools NOTIFY toolsChanged)
+    Q_PROPERTY(InternalToolBox* toolBox READ toolBox NOTIFY toolBoxChanged)
 
     Q_ENUMS(Type)
 
@@ -451,11 +452,12 @@ public:
     QString activityId() const;
 
 //     QDeclarativeListProperty<QAction> toolBoxActions();
-    QDeclarativeListProperty<Action> toolBoxActions2();
+    //QDeclarativeListProperty<Action> toolBoxActions2();
     QList<QObject*> toolBoxActionsList();
 
     Q_INVOKABLE QAction* toolAction(const QString &t);
     QStringList tools();
+    InternalToolBox* toolBox();
 
     Q_INVOKABLE QScriptValue screenGeometry(int id) const;
     Q_INVOKABLE QScriptValue availableScreenRegion(int id) const;
@@ -469,6 +471,7 @@ Q_SIGNALS:
     void availableScreenRegionChanged();
     void toolBoxActionsChanged();
     void toolsChanged();
+    void toolBoxChanged();
 
 protected Q_SLOTS:
     void appletAddedForward(Plasma::Applet *applet, const QPointF &pos);
@@ -481,7 +484,7 @@ private:
     void loadActions();
     bool m_movableApplets;
     QHash<QString, QAction*> m_toolActions;
-
+    InternalToolBox* m_toolBox;
 };
 
 #endif

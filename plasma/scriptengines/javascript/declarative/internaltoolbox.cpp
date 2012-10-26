@@ -1,6 +1,7 @@
 /*
  *   Copyright 2007 by Aaron Seigo <aseigo@kde.org>
  *   Copyright 2008 by Marco Martin <notmart@gmail.com>
+ *   Copyright 2012 by Sebastian Kügler <sebas@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -22,19 +23,30 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QDBusInterface>
+#include <QDBusPendingCall>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsView>
 #include <QPainter>
 #include <QRadialGradient>
+#include <QTimer>
 
+#include <KAuthorized>
 #include <KColorScheme>
 #include <KConfigGroup>
+#include <KIcon>
 #include <KIconLoader>
 #include <KDebug>
 
 #include <Plasma/Corona>
 #include <Plasma/Theme>
 #include <Plasma/IconWidget>
+
+class InternalToolBoxPrivate {
+public:
+    bool immutable: true;
+    QHash<QString, QAction*> actions;
+};
 
 
 InternalToolBox::InternalToolBox(Plasma::Containment *parent)
@@ -50,6 +62,8 @@ InternalToolBox::InternalToolBox(Plasma::Containment *parent)
       m_userMoved(false),
       m_iconic(true)
 {
+    kDebug() << "0New InternalToolBox";
+    d = new InternalToolBoxPrivate;
     init();
 }
 
@@ -66,11 +80,14 @@ InternalToolBox::InternalToolBox(QObject *parent, const QVariantList &args)
       m_userMoved(false),
       m_iconic(true)
 {
+    kDebug() << "1New InternalToolBox";
+    d = new InternalToolBoxPrivate;
     init();
 }
 
 InternalToolBox::~InternalToolBox()
 {
+    delete d;
 }
 
 void InternalToolBox::init()
@@ -79,8 +96,28 @@ void InternalToolBox::init()
         connect(m_containment, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
                 this, SLOT(immutabilityChanged(Plasma::ImmutabilityType)));
     }
+    if (KAuthorized::authorizeKAction("logout")) {
+        QAction *action = new QAction(i18n("Leave..."), this);
+        action->setIcon(KIcon("system-shutdown"));
+        connect(action, SIGNAL(triggered()), this, SLOT(startLogout()));
+        addTool(action);
+    }
 
-    setAcceptsHoverEvents(true);
+    if (KAuthorized::authorizeKAction("lock_screen")) {
+        QAction *action = new QAction(i18n("Lock Screen"), this);
+        action->setIcon(KIcon("system-lock-screen"));
+        connect(action, SIGNAL(triggered(bool)), this, SLOT(lockScreen()));
+        addTool(action);
+    }
+    foreach (QAction* a, actions()) {
+        addTool(a);
+        kDebug() << "Loaded tb action: " << a->text();
+    }
+    foreach (QAction *action, containment()->corona()->actions()) {
+        kDebug() << " Action from Corona: " << action->text();
+        addTool(action);
+    }
+    emit actionKeysChanged();
 }
 
 Plasma::Containment *InternalToolBox::containment()
@@ -93,11 +130,23 @@ QList<QAction *> InternalToolBox::actions() const
     return m_actions;
 }
 
+QAction* InternalToolBox::toolAction(const QString& key)
+{
+    return d->actions[key];
+}
+
+QStringList InternalToolBox::actionKeys() const
+{
+    kDebug() << "action keys: " << d->actions.keys();
+    return d->actions.keys();
+}
+
 void InternalToolBox::addTool(QAction *action)
 {
     if (!action) {
         return;
     }
+    kDebug() << "Added action: " << action->text();
 
     if (m_actions.contains(action)) {
         return;
@@ -106,12 +155,17 @@ void InternalToolBox::addTool(QAction *action)
     connect(action, SIGNAL(destroyed(QObject*)), this, SLOT(actionDestroyed(QObject*)));
     connect(action, SIGNAL(triggered(bool)), this, SLOT(toolTriggered(bool)));
     m_actions.append(action);
+    d->actions[action->text()] = action;
+    emit actionKeysChanged();
 }
 
 void InternalToolBox::removeTool(QAction *action)
 {
+    kDebug() << "Removed action: " << action->text();
     disconnect(action, 0, this, 0);
     m_actions.removeAll(action);
+    d->actions.remove(action->text());
+    emit actionKeysChanged();
 }
 
 void InternalToolBox::actionDestroyed(QObject *object)
@@ -273,14 +327,76 @@ void InternalToolBox::restore(const KConfigGroup &containmentGroup)
 void InternalToolBox::immutabilityChanged(Plasma::ImmutabilityType immutability)
 {
     const bool unlocked = immutability == (Plasma::Mutable);
+    kDebug() << " locked? " << !unlocked;
 
-    if (containment() &&
-        (containment()->type() == Plasma::Containment::PanelContainment ||
-         containment()->type() == Plasma::Containment::CustomPanelContainment)) {
-        setVisible(unlocked);
+    setIsMovable(unlocked);
+    d->immutable = !unlocked;
+    emit immutableChanged();
+}
+
+void InternalToolBox::lockScreen()
+{
+    if (m_containment) {
+        m_containment->closeToolBox();
     } else {
-        setIsMovable(unlocked);
+        setShowing(false);
     }
+
+    if (!KAuthorized::authorizeKAction("lock_screen")) {
+        return;
+    }
+
+#ifndef Q_OS_WIN
+    const QString interface("org.freedesktop.ScreenSaver");
+    QDBusInterface screensaver(interface, "/ScreenSaver");
+    screensaver.asyncCall("Lock");
+#else
+    LockWorkStation();
+#endif // !Q_OS_WIN
+}
+
+bool InternalToolBox::immutable() const
+{
+    kDebug() << " locked? " << d->immutable;
+    return d->immutable;
+}
+
+void InternalToolBox::setImmutable(bool immutable)
+{
+    kDebug() << " locked? " << immutable;
+    d->immutable = immutable;
+    emit immutableChanged();
+}
+
+void InternalToolBox::startLogout()
+{
+    if (m_containment) {
+        m_containment->closeToolBox();
+    } else {
+        setShowing(false);
+    }
+
+    // this short delay is due to two issues:
+    // a) KWorkSpace's DBus alls are all syncronous
+    // b) the destrution of the menu that this action is in is delayed
+    //
+    // (a) leads to the menu hanging out where everyone can see it because
+    // the even loop doesn't get returned to allowing it to close.
+    //
+    // (b) leads to a 0ms timer not working since a 0ms timer just appends to
+    // the event queue, and then the menu closing event gets appended to that.
+    //
+    // ergo a timer with small timeout
+    QTimer::singleShot(10, this, SLOT(logout()));
+}
+
+void InternalToolBox::logout()
+{
+    if (!KAuthorized::authorizeKAction("logout")) {
+        return;
+    }
+
+    //KWorkSpace::requestShutDown();
 }
 
 #include "internaltoolbox.moc"
