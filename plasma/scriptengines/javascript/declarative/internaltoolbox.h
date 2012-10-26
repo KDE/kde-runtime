@@ -45,6 +45,7 @@ class InternalToolBox : public Plasma::AbstractToolBox
     Q_PROPERTY(bool isMovable READ isMovable WRITE setIsMovable NOTIFY isMovableChanged)
     Q_PROPERTY(bool immutable READ immutable WRITE setImmutable NOTIFY immutableChanged)
     Q_PROPERTY(QStringList actionKeys READ actionKeys NOTIFY actionKeysChanged)
+    Q_PROPERTY(bool showing READ isShowing WRITE setShowing NOTIFY showingChanged)
 
 public:
     enum Corner {
@@ -81,8 +82,8 @@ public:
     void setSize(const int newSize);
     QSize iconSize() const;
     void  setIconSize(const QSize newSize);
-    bool isShowing() const;
-    void setShowing(const bool show);
+    bool isShowing() const; // satisfy badly named API
+    bool showing() const;
 
     virtual void setCorner(const Corner corner);
     virtual Corner corner() const;
@@ -113,12 +114,14 @@ public Q_SLOTS:
     void lockScreen();
 
     Q_INVOKABLE QAction* toolAction(const QString &key);
+    Q_INVOKABLE void setShowing(const bool show);
 
 Q_SIGNALS:
     void iconSizeChanged();
     void isMovableChanged();
     void actionKeysChanged();
     void immutableChanged();
+    void showingChanged();
 
 protected:
     Plasma::Containment *containment();
