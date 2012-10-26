@@ -131,6 +131,7 @@ Item {
             flickableItem: root.flickableItem
             orientation: Qt.Vertical
             property bool isScrollBar: true
+            z: root.flickableItem.z + 1
             anchors {
                 left: undefined
                 top: parent.top
@@ -144,6 +145,7 @@ Item {
         ScrollBar {
             flickableItem: root.flickableItem
             orientation: Qt.Horizontal
+            z: root.flickableItem.z + 1
             anchors {
                 left: parent.left
                 top: undefined
@@ -157,6 +159,7 @@ Item {
         SectionScroller {
             listView: root.flickableItem
             property bool isScrollBar: false
+            z: root.flickableItem.z + 1
             anchors {
                 left: undefined
                 top: parent.top
