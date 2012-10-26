@@ -604,7 +604,8 @@ void PopupAppletInterface::sourceAppletPopupEvent(bool show)
 
 ContainmentInterface::ContainmentInterface(AbstractJsAppletScript *parent)
     : APPLETSUPERCLASS(parent),
-      m_movableApplets(true)
+      m_movableApplets(true),
+      m_toolBox(0)
 {
     connect(containment(), SIGNAL(appletRemoved(Plasma::Applet *)), this, SLOT(appletRemovedForward(Plasma::Applet *)));
 
@@ -775,6 +776,14 @@ void ContainmentInterface::loadActions()
 QStringList ContainmentInterface::tools()
 {
     return m_toolActions.keys();
+}
+
+InternalToolBox* ContainmentInterface::toolBox()
+{
+    if (!m_toolBox) {
+        m_toolBox = new InternalToolBox(containment());
+    }
+    return m_toolBox;
 }
 
 QAction* ContainmentInterface::toolAction(const QString &t)

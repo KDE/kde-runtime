@@ -1,6 +1,7 @@
 /*
  *   Copyright 2007 by Aaron Seigo <aseigo@kde.org>
  *   Copyright 2008 by Marco Martin <notmart@gmail.com>
+ *   Copyright 2012 by Sebastian Kügler <sebas@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -42,6 +43,8 @@ class InternalToolBox : public Plasma::AbstractToolBox
     //Q_INTERFACES(QGraphicsItem)
     Q_PROPERTY(QSize iconSize READ iconSize WRITE setIconSize NOTIFY iconSizeChanged)
     Q_PROPERTY(bool isMovable READ isMovable WRITE setIsMovable NOTIFY isMovableChanged)
+    Q_PROPERTY(bool immutable READ immutable WRITE setImmutable NOTIFY immutableChanged)
+    Q_PROPERTY(QStringList actionKeys READ actionKeys NOTIFY actionKeysChanged)
 
 public:
     enum Corner {
@@ -59,6 +62,11 @@ public:
     explicit InternalToolBox(QObject *parent = 0, const QVariantList &args = QVariantList());
     ~InternalToolBox();
 
+
+    QStringList actionKeys() const;
+
+    bool immutable() const;
+    void setImmutable(bool immutable);
     /**
      * create a toolbox tool from the given action
      * @p action the action to associate hte tool with
@@ -75,8 +83,6 @@ public:
     void  setIconSize(const QSize newSize);
     bool isShowing() const;
     void setShowing(const bool show);
-
-    //virtual QGraphicsWidget *toolParent();
 
     virtual void setCorner(const Corner corner);
     virtual Corner corner() const;
@@ -100,19 +106,22 @@ public:
 public Q_SLOTS:
     void save(KConfigGroup &cg) const;
     void restore(const KConfigGroup &containmentGroup);
-    //void reposition();
+
+    // basic desktop controls
+    void startLogout();
+    void logout();
+    void lockScreen();
+
+    Q_INVOKABLE QAction* toolAction(const QString &key);
 
 Q_SIGNALS:
     void iconSizeChanged();
     void isMovableChanged();
+    void actionKeysChanged();
+    void immutableChanged();
 
 protected:
     Plasma::Containment *containment();
-    //QPoint toolPosition(int toolHeight);
-
-//     void mousePressEvent(QGraphicsSceneMouseEvent *event);
-//     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-//     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 protected Q_SLOTS:
     virtual void toolTriggered(bool);
@@ -135,6 +144,8 @@ private:
     bool m_dragging : 1;
     bool m_userMoved : 1;
     bool m_iconic : 1;
+
+    InternalToolBoxPrivate* d;
 };
 
 
