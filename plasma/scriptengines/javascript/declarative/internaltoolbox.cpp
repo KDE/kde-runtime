@@ -399,8 +399,6 @@ void InternalToolBox::startLogout()
 
 void InternalToolBox::logout()
 {
-    kDebug() << "Show config";
-    containment()->showConfigurationInterface();
     if (!KAuthorized::authorizeKAction("logout")) {
         return;
     }
