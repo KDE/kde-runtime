@@ -419,7 +419,6 @@ class ContainmentInterface : public APPLETSUPERCLASS
     Q_PROPERTY(bool movableApplets READ hasMovableApplets WRITE setMovableApplets)
     Q_PROPERTY(QString activityName READ activityName NOTIFY activityNameChanged)
     Q_PROPERTY(QString activityId READ activityId NOTIFY activityIdChanged)
-    Q_PROPERTY(QStringList tools READ tools NOTIFY toolsChanged)
     Q_PROPERTY(InternalToolBox* toolBox READ toolBox NOTIFY toolBoxChanged)
 
     Q_ENUMS(Type)
@@ -451,12 +450,6 @@ public:
     QString activityName() const;
     QString activityId() const;
 
-//     QDeclarativeListProperty<QAction> toolBoxActions();
-    //QDeclarativeListProperty<Action> toolBoxActions2();
-    QList<QObject*> toolBoxActionsList();
-
-    Q_INVOKABLE QAction* toolAction(const QString &t);
-    QStringList tools();
     InternalToolBox* toolBox();
 
     Q_INVOKABLE QScriptValue screenGeometry(int id) const;
@@ -469,21 +462,14 @@ Q_SIGNALS:
     void activityNameChanged();
     void activityIdChanged();
     void availableScreenRegionChanged();
-    void toolBoxActionsChanged();
-    void toolsChanged();
     void toolBoxChanged();
 
 protected Q_SLOTS:
     void appletAddedForward(Plasma::Applet *applet, const QPointF &pos);
     void appletRemovedForward(Plasma::Applet *applet);
 
-    void lockScreen();
-    void startLogout();
-
 private:
-    void loadActions();
     bool m_movableApplets;
-    QHash<QString, QAction*> m_toolActions;
     InternalToolBox* m_toolBox;
 };
 

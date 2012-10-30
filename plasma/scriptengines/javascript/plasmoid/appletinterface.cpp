@@ -24,25 +24,17 @@
 #include "../declarative/appletcontainer.h"
 
 #include <QAction>
-#include <QDBusInterface>
-#include <QDBusPendingCall>
 #include <QDir>
 #include <QFile>
 #include <QScriptEngine>
 #include <QSignalMapper>
 #include <QTimer>
 
-#include <KAuthorized>
 #include <KDebug>
 #include <KGlobalSettings>
 #include <KIcon>
 #include <KService>
 #include <KServiceTypeTrader>
-//#include <kworkspace/kworkspace.h>
-
-#ifdef Q_OS_WIN
-#include <windows.h>
-#endif
 
 #include <Plasma/Plasma>
 #include <Plasma/Applet>
@@ -623,7 +615,6 @@ ContainmentInterface::ContainmentInterface(AbstractJsAppletScript *parent)
 
     qmlRegisterType<AppletContainer>("org.kde.plasma.containments", 0, 1, "AppletContainer");
     qmlRegisterType<InternalToolBox>("org.kde.plasma.containments", 0, 1, "InternalToolBox");
-    loadActions();
 }
 
 QScriptValue ContainmentInterface::applets()
@@ -737,37 +728,6 @@ QString ContainmentInterface::activityId() const
     return containment()->context()->currentActivityId();
 }
 
-void ContainmentInterface::loadActions()
-{
-    m_toolActions.clear();
-    QList<QAction*> as = containment()->corona()->actions();
-    if (KAuthorized::authorizeKAction("logout")) {
-        QAction *action = new QAction(i18n("Leave..."), this);
-        action->setIcon(KIcon("system-shutdown"));
-        connect(action, SIGNAL(triggered()), this, SLOT(startLogout()));
-        m_toolActions[action->text()] = action;
-    }
-
-    if (KAuthorized::authorizeKAction("lock_screen")) {
-        QAction *action = new QAction(i18n("Lock Screen"), this);
-        action->setIcon(KIcon("system-lock-screen"));
-        connect(action, SIGNAL(triggered(bool)), this, SLOT(lockScreen()));
-        m_toolActions[action->text()] = action;
-    }
-
-    foreach (QAction *action, as) {
-        kDebug() << " Action from Corona: " << action->text();
-        m_toolActions[action->text()] = action;
-    }
-    kDebug() << " == Loaded Actions " << m_toolActions.count() << " ==";
-    emit toolsChanged();
-}
-
-QStringList ContainmentInterface::tools()
-{
-    return m_toolActions.keys();
-}
-
 InternalToolBox* ContainmentInterface::toolBox()
 {
     if (!m_toolBox) {
@@ -775,38 +735,6 @@ InternalToolBox* ContainmentInterface::toolBox()
     }
     return m_toolBox;
 }
-
-QAction* ContainmentInterface::toolAction(const QString &t)
-{
-    return m_toolActions[t];
-}
-
-void ContainmentInterface::lockScreen()
-{
-    kDebug() << " -- Lock Screen.";
-    if (!KAuthorized::authorizeKAction("lock_screen")) {
-        return;
-    }
-
-#ifndef Q_OS_WIN
-    const QString interface("org.freedesktop.ScreenSaver");
-    QDBusInterface screensaver(interface, "/ScreenSaver");
-    screensaver.asyncCall("Lock");
-#else
-    LockWorkStation();
-#endif // !Q_OS_WIN
-}
-
-void ContainmentInterface::startLogout()
-{
-    kDebug() << " -- Leave....";
-    if (!KAuthorized::authorizeKAction("logout")) {
-        return;
-    }
-    // We don't want to link to kworkspace, FIXME
-    //KWorkSpace::requestShutDown();
-}
-
 
 #ifndef USE_JS_SCRIPTENGINE
 #include "appletinterface.moc"
