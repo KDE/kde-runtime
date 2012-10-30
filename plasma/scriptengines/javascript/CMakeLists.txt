@@ -16,7 +16,6 @@ set(simple_javascript_engine_SRCS
     declarative/appletcontainer.cpp
     plasmoid/abstractjsappletscript.cpp
     plasmoid/appletauthorization.cpp
-    plasmoid/appletcontainer.cpp
     plasmoid/jsappletinterface.cpp
     plasmoid/simplejavascriptapplet.cpp
     plasmoid/themedsvg.cpp
@@ -141,7 +140,6 @@ set(declarative_appletscript_SRCS
     plasmoid/abstractjsappletscript.cpp
     plasmoid/appletauthorization.cpp
     plasmoid/appletinterface.cpp
-    plasmoid/appletcontainer.cpp
     plasmoid/declarativeappletscript.cpp
     plasmoid/themedsvg.cpp
     simplebindings/bytearrayclass.cpp

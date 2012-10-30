@@ -662,16 +662,6 @@ int ContainmentInterface::screen() const
     return containment()->screen();
 }
 
-bool ContainmentInterface::lockScreenAllowed() const
-{
-    return KAuthorized::authorizeKAction("lock_screen");
-}
-
-bool ContainmentInterface::logoutAllowed() const
-{
-    return KAuthorized::authorizeKAction("logout");
-}
-
 QScriptValue ContainmentInterface::screenGeometry(int id) const
 {
     QRectF rect;
