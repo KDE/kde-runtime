@@ -22,6 +22,7 @@
 #ifndef PLASMA_INTERNALTOOLBOX_P_H
 #define PLASMA_INTERNALTOOLBOX_P_H
 
+#include <QDeclarativeListProperty>
 #include <QGraphicsWidget>
 
 #include <Plasma/Plasma>
@@ -44,6 +45,7 @@ class InternalToolBox : public Plasma::AbstractToolBox
     Q_PROPERTY(QSize iconSize READ iconSize WRITE setIconSize NOTIFY iconSizeChanged)
     Q_PROPERTY(bool isMovable READ isMovable WRITE setIsMovable NOTIFY isMovableChanged)
     Q_PROPERTY(bool immutable READ immutable WRITE setImmutable NOTIFY immutableChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QAction> actions READ actions NOTIFY actionsChanged)
     Q_PROPERTY(QStringList actionKeys READ actionKeys NOTIFY actionKeysChanged)
     Q_PROPERTY(bool showing READ isShowing WRITE setShowing NOTIFY showingChanged)
 
@@ -102,7 +104,9 @@ public:
     virtual void showToolBox() {} ;
     virtual void hideToolBox() {} ;
 
-    QList<QAction *> actions() const;
+    //QDeclarativeListProperty<QAction> actionDeclList();
+
+    QDeclarativeListProperty<QAction> actions();
 
 public Q_SLOTS:
     void save(KConfigGroup &cg) const;
@@ -120,6 +124,7 @@ Q_SIGNALS:
     void iconSizeChanged();
     void isMovableChanged();
     void actionKeysChanged();
+    void actionsChanged();
     void immutableChanged();
     void showingChanged();
 

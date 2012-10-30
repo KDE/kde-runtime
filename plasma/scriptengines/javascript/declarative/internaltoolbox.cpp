@@ -109,7 +109,7 @@ void InternalToolBox::init()
         connect(action, SIGNAL(triggered(bool)), this, SLOT(lockScreen()));
         addTool(action);
     }
-    foreach (QAction* a, actions()) {
+    foreach (QAction* a, m_actions) {
         addTool(a);
         kDebug() << "Loaded tb action: " << a->text();
     }
@@ -118,6 +118,7 @@ void InternalToolBox::init()
         addTool(action);
     }
     emit actionKeysChanged();
+    QTimer::singleShot(1000, this, SIGNAL(actionsChanged()));
 }
 
 Plasma::Containment *InternalToolBox::containment()
@@ -125,9 +126,10 @@ Plasma::Containment *InternalToolBox::containment()
     return m_containment;
 }
 
-QList<QAction *> InternalToolBox::actions() const
+QDeclarativeListProperty<QAction> InternalToolBox::actions()
 {
-    return m_actions;
+    kDebug() << " Returning " << m_actions.count() << " Actions";
+    return QDeclarativeListProperty<QAction>(this, m_actions);
 }
 
 QAction* InternalToolBox::toolAction(const QString& key)
@@ -170,6 +172,7 @@ void InternalToolBox::removeTool(QAction *action)
 
 void InternalToolBox::actionDestroyed(QObject *object)
 {
+    kDebug() << "action destroyed";
     m_actions.removeAll(static_cast<QAction*>(object));
 }
 
@@ -385,7 +388,7 @@ void InternalToolBox::startLogout()
 
     // this short delay is due to two issues:
     // a) KWorkSpace's DBus alls are all syncronous
-    // b) the destrution of the menu that this action is in is delayed
+    // b) the destruction of the menu that this action is in is delayed
     //
     // (a) leads to the menu hanging out where everyone can see it because
     // the even loop doesn't get returned to allowing it to close.
