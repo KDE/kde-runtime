@@ -83,10 +83,7 @@ QDeclarativeListProperty<QAction> InternalToolBox::actions()
 
 void InternalToolBox::addTool(QAction *action)
 {
-    if (!action) {
-        return;
-    }
-    if (d->actions.contains(action)) {
+    if (!action || d->actions.contains(action)) {
         return;
     }
     connect(action, SIGNAL(destroyed(QObject*)), this, SLOT(actionDestroyed(QObject*)));
