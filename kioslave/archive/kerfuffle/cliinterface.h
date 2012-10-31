@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2009 Harald Hvaal <haraldhv@stud.ntnu.no>
  * Copyright (C) 2009-2011 Raphael Kubo da Costa <kubito@gmail.com>
+ * Copyright (C) 2012 basysKom GmbH <info@basyskom.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -330,6 +331,7 @@ public:
 
     ParameterList m_param;
     QVariantList m_removedFiles;
+    bool m_alreadyFailed;
 
 private slots:
     void readStdout(bool handleAll = false);

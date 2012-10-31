@@ -698,7 +698,10 @@ QIODevice* KCliArchiveFileEntry::createDevice() const
     QList<QVariant> filesToExtract;
     filesToExtract.append(QVariant::fromValue(path()));
 
-    d->q->copyFiles(filesToExtract, destDir, ExtractionOptions());
+    if (!d->q->copyFiles(filesToExtract, destDir, ExtractionOptions())) {
+        kDebug(7109) << "copyFiles failed for" << filePath;
+        return 0;
+    }
 
     // according to the documentation the caller of this method is responsible
     // for deleting the QIODevice returned here.

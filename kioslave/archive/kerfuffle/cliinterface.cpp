@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2009 Harald Hvaal <haraldhv@stud.ntnu.no>
  * Copyright (C) 2009-2011 Raphael Kubo da Costa <kubito@gmail.com>
+ * Copyright (C) 2012 basysKom GmbH <info@basyskom.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,16 +49,15 @@
 #include <QProcess>
 #include <QThread>
 #include <QTimer>
+#include <QWaitCondition>
 
 namespace Kerfuffle
 {
 CliInterface::CliInterface(QObject *parent, const QVariantList & args)
         : ReadWriteArchiveInterface(parent, args),
-        m_process(0)
+        m_process(0),
+        m_alreadyFailed(false)
 {
-    //because this interface uses the event loop
-    setWaitForFinishedSignal(true);
-
     if (QMetaType::type("QProcess::ExitStatus") == 0) {
         qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");
     }
@@ -349,7 +349,14 @@ bool CliInterface::runProcess(const QString& programName, const QStringList& arg
 
     m_stdOutData.clear();
 
+    m_alreadyFailed = false;
     m_process->start();
+
+    if (!m_process->waitForStarted()) {
+        m_process->deleteLater();
+        m_process = 0;
+        return false;
+    }
 
 #ifdef Q_OS_LINUX
     bool ret = m_process->waitForFinished(-1);
@@ -358,8 +365,17 @@ bool CliInterface::runProcess(const QString& programName, const QStringList& arg
     bool ret = (loop.exec(QEventLoop::WaitForMoreEvents | QEventLoop::ExcludeUserInputEvents) == 0);
 #endif
 
-    delete m_process;
-    m_process = 0;
+    // in case a second runProcess() has been called and the 'delete m_process' line above is called.
+    if (m_process) {
+        kDebug(7109) << "ret" << ret << "exitCode" << m_process->exitCode() << "alreadyFailed" << m_alreadyFailed << QThread::currentThread();
+        ret = ret && (m_process->exitCode() == 0) && !m_alreadyFailed;
+    
+        m_process->deleteLater();
+        m_process = 0;
+    } else {
+        kDebug(7109) << "ret" << ret << "m_process" << m_process << "alreadyFailed" << m_alreadyFailed;
+        ret = ret && !m_alreadyFailed;
+    } 
 
     return ret;
 }
@@ -392,18 +408,19 @@ void CliInterface::processFinished(int exitCode, QProcess::ExitStatus exitStatus
         list();
         return;
     }
-
-    //and we're finished
-    finished(true);
 }
 
 void CliInterface::failOperation()
 {
     kDebug(7109);
 
-    doKill();
+    if (m_alreadyFailed) {
+        kDebug(7109) << "already failed";
+        return;
+    }
+    m_alreadyFailed = true;
 
-    finished(false);
+    doKill();
 }
 
 void CliInterface::readStdout(bool handleAll)
@@ -423,6 +440,11 @@ void CliInterface::readStdout(bool handleAll)
         return;
     }
 
+    if (m_alreadyFailed) {
+        kDebug(7109) << "cleaning buffers";
+        m_process->readAllStandardOutput();
+        m_stdOutData.clear();
+    }
 
     //if the process is still not finished (m_process is appearantly not
     //set to NULL if here), then the operation should definitely not be in
@@ -468,9 +490,13 @@ void CliInterface::readStdout(bool handleAll)
     }
 
     foreach(const QByteArray& line, lines) {
+        if (m_alreadyFailed) {
+            kDebug(7109) << "Breaking loop because operation has already failed";
+            break;
+        }
+
         if (!line.isEmpty()) {
             handleLine(QString::fromLocal8Bit(line));
-        } else {
         }
     }
 }
@@ -674,11 +700,13 @@ bool CliInterface::checkForErrorMessage(const QString& line, int parameterIndex)
 bool CliInterface::doKill()
 {
     if (m_process) {
-        // Give some time for the application to finish gracefully
-        if (!m_process->waitForFinished(5)) {
-            m_process->kill();
-        }
-
+        kDebug(7109);
+        m_process->terminate();
+        QWaitCondition sleep;
+        QMutex mutex;
+        mutex.lock();
+        sleep.wait(&mutex, 2000); // wait two seconds
+        m_process->kill(); // this is required or m_process->waitForFinished(-1) never returns
         return true;
     }
 
