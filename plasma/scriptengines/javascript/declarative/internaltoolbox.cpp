@@ -32,8 +32,8 @@
 
 class InternalToolBoxPrivate {
 public:
-    bool immutable: true;
-    bool showing: 1;
+    bool immutable;
+    bool showing;
     Plasma::Containment *containment;
     QList<QAction*> actions;
 };
@@ -41,8 +41,9 @@ public:
 InternalToolBox::InternalToolBox(Plasma::Containment *parent)
     : AbstractToolBox(parent)
 {
-    kDebug() << "0New InternalToolBox";
     d = new InternalToolBoxPrivate;
+    d->immutable = true;
+    d->showing = false;
     d->containment = parent;
     init();
 }
@@ -50,8 +51,9 @@ InternalToolBox::InternalToolBox(Plasma::Containment *parent)
 InternalToolBox::InternalToolBox(QObject *parent, const QVariantList &args)
     : AbstractToolBox(parent, args)
 {
-    kDebug() << "1New InternalToolBox";
     d = new InternalToolBoxPrivate;
+    d->immutable = true;
+    d->showing = false;
     d->containment = qobject_cast<Plasma::Containment *>(parent);
     init();
 }
@@ -67,26 +69,8 @@ void InternalToolBox::init()
         connect(d->containment, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
                 this, SLOT(immutabilityChanged(Plasma::ImmutabilityType)));
     }
-    if (KAuthorized::authorizeKAction("logout")) {
-        QAction *action = new QAction(i18n("Leave..."), this);
-        action->setIcon(KIcon("system-shutdown"));
-        action->setObjectName("logout");
-        addTool(action);
-    }
-
-    if (KAuthorized::authorizeKAction("lock_screen")) {
-        QAction *action = new QAction(i18n("Lock Screen"), this);
-        action->setObjectName("lock_screen");
-        action->setIcon(KIcon("system-lock-screen"));
-        addTool(action);
-    }
-    foreach (QAction* a, d->actions) {
-        addTool(a);
-        kDebug() << "Loaded tb action: " << a->text();
-    }
     if (d->containment) {
         foreach (QAction *action, d->containment->corona()->actions()) {
-            kDebug() << " Action from Corona: " << action->text();
             addTool(action);
         }
     }
@@ -94,7 +78,6 @@ void InternalToolBox::init()
 
 QDeclarativeListProperty<QAction> InternalToolBox::actions()
 {
-    kDebug() << " Returning " << d->actions.count() << " Actions";
     return QDeclarativeListProperty<QAction>(this, d->actions);
 }
 
@@ -103,12 +86,9 @@ void InternalToolBox::addTool(QAction *action)
     if (!action) {
         return;
     }
-    kDebug() << "Added action: " << action->text();
-
     if (d->actions.contains(action)) {
         return;
     }
-
     connect(action, SIGNAL(destroyed(QObject*)), this, SLOT(actionDestroyed(QObject*)));
     d->actions.append(action);
     actionsChanged();
@@ -147,10 +127,7 @@ void InternalToolBox::setShowing(const bool show)
 
 void InternalToolBox::immutabilityChanged(Plasma::ImmutabilityType immutability)
 {
-    const bool unlocked = immutability == (Plasma::Mutable);
-
-    d->immutable = !unlocked;
-    emit immutableChanged();
+    setImmutable(immutability == Plasma::Mutable);
 }
 
 bool InternalToolBox::immutable() const
