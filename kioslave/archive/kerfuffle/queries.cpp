@@ -28,9 +28,10 @@
 #include "queries.h"
 
 #include <KLocale>
-#include <KPasswordDialog>
+#include <KProcess>
 #include <kdebug.h>
 #include <kio/renamedialog.h>
+#include <KStandardDirs>
 
 #include <QApplication>
 #include <QWeakPointer>
@@ -77,7 +78,7 @@ void OverwriteQuery::execute()
 {
     // If we are being called from the KPart, the cursor is probably Qt::WaitCursor
     // at the moment (#231974)
-    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+    //QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
 
     KIO::RenameDialog_Mode mode = (KIO::RenameDialog_Mode)(KIO::M_OVERWRITE | KIO::M_SKIP);
     if (m_noRenameMode) {
@@ -106,7 +107,7 @@ void OverwriteQuery::execute()
 
     delete dialog.data();
 
-    QApplication::restoreOverrideCursor();
+    //QApplication::restoreOverrideCursor();
 }
 
 bool OverwriteQuery::responseCancelled()
@@ -172,24 +173,35 @@ void PasswordNeededQuery::execute()
 {
     // If we are being called from the KPart, the cursor is probably Qt::WaitCursor
     // at the moment (#231974)
-    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+    //QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
 
-    QWeakPointer<KPasswordDialog> dlg = new KPasswordDialog;
-    dlg.data()->setPrompt(i18nc("@info", "The archive <filename>%1</filename> is password protected. Please enter the password to extract the file.", m_data.value(QLatin1String( "archiveFilename" )).toString()));
+    KProcess * dialogHelper = new KProcess();
+    dialogHelper->setOutputChannelMode(KProcess::SeparateChannels);
+    dialogHelper->setNextOpenMode(QIODevice::ReadWrite | QIODevice::Unbuffered | QIODevice::Text);
 
+    QString programPath = KGlobal::dirs()->findResource("exe", "dialog_helper");
+    QStringList args;
+    args << QLatin1String("--prompt");
+    args << i18nc("@info", "The archive <filename>%1</filename> is password protected. Please enter the password to extract the file.", m_data.value(QLatin1String( "archiveFilename" )).toString());
+    
     if (m_data.value(QLatin1String("incorrectTryAgain")).toBool()) {
-        dlg.data()->showErrorMessage(i18nc("@info", "Incorrect password, please try again."), KPasswordDialog::PasswordError);
+        args << QLatin1String("--error-message");
+        args << i18nc("@info", "Incorrect password, please try again.");
     }
 
-    const bool notCancelled = dlg.data()->exec();
-    const QString password = dlg.data()->password();
+    dialogHelper->setProgram(programPath, args);
+    dialogHelper->start();
+    dialogHelper->waitForFinished(-1);
+
+    const bool notCancelled = (dialogHelper->exitCode() == 0);
+    const QString password = QString::fromLocal8Bit(dialogHelper->readAllStandardOutput());
 
     m_data[QLatin1String("password")] = password;
     setResponse(notCancelled && !password.isEmpty());
 
-    QApplication::restoreOverrideCursor();
+    //QApplication::restoreOverrideCursor();
 
-    delete dlg.data();
+    delete dialogHelper;
 }
 
 QString PasswordNeededQuery::password()

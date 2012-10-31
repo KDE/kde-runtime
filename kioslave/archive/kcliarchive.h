@@ -22,11 +22,12 @@
 #ifndef KCLIARCHIVE_H
 #define KCLIARCHIVE_H
 
+#include "kerfuffle/observer.h"
 #include "kerfuffle/cliinterface.h"
 
 #include <karchive.h>
 
-class KCliArchive: public KArchive, public Kerfuffle::CliInterface
+class KCliArchive: public KArchive, public Kerfuffle::CliInterface, public Kerfuffle::ArchiveObserver
 {
 public:
     KCliArchive(const QString& filename);
@@ -109,6 +110,18 @@ protected:
     QString createTmpDir();
     bool setTimes( const QString & path, const time_t atime, const time_t mtime);
     friend class KCliArchiveFileEntry;
+
+    /**
+     * Kerffufle::ArchiveObserver part
+     */
+
+    virtual void onError(const QString & message, const QString & details);
+    virtual void onEntry(const Kerfuffle::ArchiveEntry & archiveEntry);
+    virtual void onProgress(double);
+    virtual void onInfo(const QString& message);
+    virtual void onEntryRemoved(const QString & path);
+    virtual void onFinished(bool result);
+    virtual void onUserQuery(class Kerfuffle::Query *query);
 
 private:
     class KCliArchivePrivate;

@@ -1,6 +1,8 @@
 macro_optional_find_package(QJSON)
 macro_log_feature(QJSON_FOUND "qjson" "A library for processing and serializing JSON files" "http://qjson.sourceforge.net" FALSE "" "Required for compiling Ark's unit tests")
 
+add_subdirectory(dialog_helper)
+
 ########### next target ###############
 
 set(kerfuffle2_SRCS

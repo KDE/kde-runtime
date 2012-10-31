@@ -21,6 +21,7 @@
 
 #include "kcliarchive.h"
 #include "kerfuffle/archive.h"
+#include "kerfuffle/queries.h"
 #include "temporarypath.h"
 
 #include <unistd.h>
@@ -58,6 +59,7 @@ KCliArchive::KCliArchive(const QString & fileName)
       m_archiveType(ArchiveType7z),
       d(new KCliArchivePrivate)
 {
+    registerObserver(this);
 }
 
 KCliArchive::KCliArchive(QIODevice * dev)
@@ -65,6 +67,7 @@ KCliArchive::KCliArchive(QIODevice * dev)
 {
     // TODO: check if it is possible to implement QIODevice support.
     kDebug(7109) << "QIODevice is not supported";
+    registerObserver(this);
 }
 
 KCliArchive::~KCliArchive()
@@ -578,6 +581,45 @@ bool KCliArchive::setTimes( const QString & path, const time_t atime, const time
         }
     }
     return false;
+}
+
+/**
+ * Kerffufle::ArchiveObserver part
+ */
+
+void KCliArchive::onError(const QString & message, const QString & details)
+{
+     // TODO: implement
+}
+
+void KCliArchive::onEntry(const ArchiveEntry & archiveEntry)
+{
+     // TODO: implement
+}
+
+void KCliArchive::onProgress(double)
+{
+     // TODO: implement
+}
+
+void KCliArchive::onInfo(const QString& message)
+{
+     // TODO: implement
+}
+
+void KCliArchive::onEntryRemoved(const QString & path)
+{
+     // TODO: implement
+}
+
+void KCliArchive::onFinished(bool result)
+{
+     // TODO: implement
+}
+
+void KCliArchive::onUserQuery(class Kerfuffle::Query *query)
+{
+    query->execute();
 }
 
 /***************************/
