@@ -63,7 +63,7 @@ ParameterList KRar::parameterList() const
         p[DeleteProgram] = p[AddProgram] = QLatin1String( "rar" );
 
         p[ListArgs] = QStringList() << QLatin1String( "vt" ) << QLatin1String( "-c-" ) << QLatin1String( "-v" ) << QLatin1String( "$Archive" );
-        p[ExtractArgs] = QStringList() << QLatin1String( "-kb" ) << QLatin1String( "-p-" )
+        p[ExtractArgs] = QStringList() << QLatin1String( "-kb" )
                                        << QLatin1String( "$PreservePathSwitch" )
                                        << QLatin1String( "$PasswordSwitch" )
                                        << QLatin1String( "$RootNodeSwitch" )
