@@ -23,7 +23,6 @@
 #define APPLETINTERFACE_H
 
 #include <QAbstractAnimation>
-#include <QDeclarativeListProperty>
 #include <QObject>
 #include <QSizePolicy>
 #include <QScriptValue>

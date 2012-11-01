@@ -47,11 +47,9 @@ public:
     void setImmutable(bool immutable);
     bool isShowing() const; // satisfy badly named API
     bool showing() const;
+    void setShowing(const bool show);
 
     QDeclarativeListProperty<QAction> actions();
-
-public Q_SLOTS:
-    Q_INVOKABLE void setShowing(const bool show);
 
 Q_SIGNALS:
     void actionsChanged();
