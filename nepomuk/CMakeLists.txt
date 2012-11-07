@@ -8,7 +8,6 @@ include(SopranoAddOntology)
 
 include_directories(
   ${SOPRANO_INCLUDE_DIR}
-  ${STRIGI_INCLUDE_DIR}
   ${NEPOMUK_CORE_INCLUDE_DIR}
   ${nepomuk_SOURCE_DIR}/common
   ${nepomuk_BINARY_DIR}/common
@@ -18,4 +17,3 @@ add_subdirectory(kcm)
 add_subdirectory(kioslaves)
 add_subdirectory(controller)
 
-#add_subdirectory(test)

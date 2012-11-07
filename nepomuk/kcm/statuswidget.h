@@ -28,7 +28,6 @@
 class QShowEvent;
 class QHideEvent;
 class KJob;
-class StrigiService;
 class StatusWidget;
 
 namespace Soprano {
