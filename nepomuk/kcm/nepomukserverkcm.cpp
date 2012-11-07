@@ -175,22 +175,11 @@ Nepomuk2::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVarian
                  this, SLOT( changed() ) );
         connect( m_comboRemovableMediaHandling, SIGNAL( activated(int) ),
                  this, SLOT( changed() ) );
-        connect( m_spinMaxResults, SIGNAL( valueChanged( int ) ),
-                 this, SLOT( changed() ) );
-        connect( m_rootQueryButtonGroup, SIGNAL( buttonClicked( int ) ),
-                 this, SLOT( changed() ) );
 
-        connect( m_checkRootQueryCustom, SIGNAL( toggled(bool) ),
-                 this, SLOT( slotCustomQueryToggled( bool ) ) );
-        connect( m_buttonEditCustomQuery, SIGNAL( leftClickedUrl() ),
-                 this, SLOT( slotCustomQueryButtonClicked() ) );
         connect( m_buttonCustomizeIndexFolders, SIGNAL( leftClickedUrl() ),
                  this, SLOT( slotEditIndexFolders() ) );
         connect( m_buttonDetails, SIGNAL( leftClickedUrl() ),
                  this, SLOT( slotStatusDetailsClicked() ) );
-
-        m_customQueryLabel->hide();
-        m_buttonEditCustomQuery->hide();
 
         // Backup
         m_comboBackupFrequency->addItem(i18nc("@item:inlistbox", "Disable Automatic Backups"));
@@ -277,23 +266,7 @@ void Nepomuk2::ServerConfigModule::load()
     m_editMemoryUsage->setValue( maxMem );
 
 
-    // 4. kio_nepomuksearch settings
-    KConfig kio_nepomuksearchConfig( "kio_nepomuksearchrc" );
-    KConfigGroup kio_nepomuksearchGeneral = kio_nepomuksearchConfig.group( "General" );
-    m_spinMaxResults->setValue( kio_nepomuksearchGeneral.readEntry( "Root query limit", 10 ) );
-
-    // this is a temp solution until we have a proper query builder
-    m_customQuery = kio_nepomuksearchGeneral.readEntry( "Custom query", QString() );
-    m_customQueryLabel->setText( m_customQuery );
-
-    buttonForQuery( Query::Query::fromString(
-                        kio_nepomuksearchGeneral.readEntry(
-                            "Root query",
-                            Nepomuk2::lastModifiedFilesQuery().toString() ) ) )->setChecked( true );
-
-
-
-    // 5. Backup settings
+    // 4. Backup settings
     KConfig backupConfig( "nepomukbackuprc" );
     KConfigGroup backupCfg = backupConfig.group("Backup");
     m_comboBackupFrequency->setCurrentIndex(parseBackupFrequency(backupCfg.readEntry("backup frequency", "disabled")));
@@ -347,15 +320,7 @@ void Nepomuk2::ServerConfigModule::save()
     fileIndexerConfig.group( "RemovableMedia" ).writeEntry( "index newly mounted", m_comboRemovableMediaHandling->currentIndex() > 0 );
     fileIndexerConfig.group( "RemovableMedia" ).writeEntry( "ask user", m_comboRemovableMediaHandling->currentIndex() == 2 );
 
-
-    // 3. update kio_nepomuksearch config
-    KConfig kio_nepomuksearchConfig( "kio_nepomuksearchrc" );
-    kio_nepomuksearchConfig.group( "General" ).writeEntry( "Root query limit", m_spinMaxResults->value() );
-    kio_nepomuksearchConfig.group( "General" ).writeEntry( "Root query", queryForButton( m_rootQueryButtonGroup->checkedButton() ).toString() );
-    kio_nepomuksearchConfig.group( "General" ).writeEntry( "Custom query", m_customQuery );
-
-
-    // 4. Update backup config
+    // 3. Update backup config
     KConfig backup("nepomukbackuprc");
     KConfigGroup backupCfg = backup.group("Backup");
     backupCfg.writeEntry("backup frequency", backupFrequencyToString(BackupFrequency(m_comboBackupFrequency->currentIndex())));
@@ -364,7 +329,7 @@ void Nepomuk2::ServerConfigModule::save()
     backupCfg.writeEntry("max backups", m_spinBackupMax->value());
 
 
-    // 5. update the current state of the nepomuk server
+    // 4. update the current state of the nepomuk server
     if ( m_serverInterface->isValid() ) {
         m_serverInterface->enableNepomuk( m_checkEnableNepomuk->isChecked() );
         m_serverInterface->enableFileIndexer( m_checkEnableFileIndexer->isChecked() );
@@ -379,13 +344,13 @@ void Nepomuk2::ServerConfigModule::save()
     }
 
 
-    // 6. update state
+    // 5. update state
     recreateInterfaces();
     updateFileIndexerStatus();
     updateNepomukServerStatus();
 
 
-    // 7. all values saved -> no changes
+    // 6. all values saved -> no changes
     emit changed(false);
 }
 
@@ -401,8 +366,6 @@ void Nepomuk2::ServerConfigModule::defaults()
     m_indexFolderSelectionDialog->setIndexHiddenFolders( false );
     m_indexFolderSelectionDialog->setExcludeFilters( Nepomuk2::defaultExcludeFilterList() );
     m_indexFolderSelectionDialog->setFolders( defaultFolders(), QStringList() );
-    m_spinMaxResults->setValue( 10 );
-    m_checkRootQueryLastModified->setChecked( true );
 
     // FIXME: set backup config
 }
@@ -488,22 +451,6 @@ void Nepomuk2::ServerConfigModule::recreateInterfaces()
 }
 
 
-void Nepomuk2::ServerConfigModule::slotCustomQueryButtonClicked()
-{
-    // this is a temp solution until we have a proper query builder
-    QString queryString = QInputDialog::getText( this,
-                                                 i18n( "Custom root folder query" ),
-                                                 i18n( "Please enter a query to be listed in the root folder" ),
-                                                 QLineEdit::Normal,
-                                                 m_customQuery );
-    if ( !queryString.isEmpty() ) {
-        m_customQuery = queryString;
-        m_customQueryLabel->setText( queryString );
-        changed();
-    }
-}
-
-
 void Nepomuk2::ServerConfigModule::slotStatusDetailsClicked()
 {
     StatusWidget statusDialog( this );
@@ -531,43 +478,6 @@ void Nepomuk2::ServerConfigModule::slotEditIndexFolders()
     }
 }
 
-
-void Nepomuk2::ServerConfigModule::slotCustomQueryToggled( bool on )
-{
-    if ( on && m_customQuery.isEmpty() ) {
-        slotCustomQueryButtonClicked();
-    }
-}
-
-
-QRadioButton* Nepomuk2::ServerConfigModule::buttonForQuery( const Query::Query& query ) const
-{
-    if ( query == Nepomuk2::neverOpenedFilesQuery() )
-        return m_checkRootQueryNeverOpened;
-    else if ( query == Nepomuk2::lastModifiedFilesQuery() )
-        return m_checkRootQueryLastModified;
-    else if ( query == Nepomuk2::mostImportantFilesQuery() )
-        return m_checkRootQueryFancy;
-    else
-        return m_checkRootQueryCustom;
-}
-
-
-Nepomuk2::Query::Query Nepomuk2::ServerConfigModule::queryForButton( QAbstractButton* button ) const
-{
-    if ( button == m_checkRootQueryNeverOpened )
-        return Nepomuk2::neverOpenedFilesQuery();
-    else if ( button == m_checkRootQueryLastModified )
-        return Nepomuk2::lastModifiedFilesQuery();
-    else if ( button == m_checkRootQueryFancy )
-        return Nepomuk2::mostImportantFilesQuery();
-    else {
-        // force to always only query for files
-        Nepomuk2::Query::FileQuery query = Query::QueryParser::parseQuery( m_customQuery );
-        query.setFileMode( Query::FileQuery::QueryFiles );
-        return query;
-    }
-}
 
 void Nepomuk2::ServerConfigModule::slotBackupFrequencyChanged()
 {

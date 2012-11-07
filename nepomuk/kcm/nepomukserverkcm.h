@@ -52,9 +52,7 @@ namespace Nepomuk2 {
         void updateFileIndexerStatus();
         void updateBackupStatus();
         void recreateInterfaces();
-        void slotCustomQueryButtonClicked();
         void slotEditIndexFolders();
-        void slotCustomQueryToggled( bool );
         void slotStatusDetailsClicked();
         void slotBackupFrequencyChanged();
         void slotManualBackup();
@@ -62,9 +60,6 @@ namespace Nepomuk2 {
 
     private:
         void setFileIndexerStatusText( const QString& text, bool elide );
-
-        QRadioButton* buttonForQuery( const Query::Query& query ) const;
-        Nepomuk2::Query::Query queryForButton( QAbstractButton* button ) const;
 
         bool m_nepomukAvailable;
 

@@ -207,7 +207,7 @@
      </widget>
      <widget class="QWidget" name="tab_4">
       <attribute name="title">
-       <string>Desktop Query</string>
+       <string>Indexing</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
@@ -296,172 +296,6 @@
                 <string>Ask individually when newly mounted</string>
                </property>
               </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_5">
-         <property name="title">
-          <string>Query Base Folder Listing</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_6">
-          <item>
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Please choose what should be listed in the Desktop Query root folder besides the history and the saved queries.</string>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="0" column="2">
-             <widget class="QRadioButton" name="m_checkRootQueryNeverOpened">
-              <property name="toolTip">
-               <string>Show the latest never opened files</string>
-              </property>
-              <property name="text">
-               <string>Never opened</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string>m_rootQueryButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QRadioButton" name="m_checkRootQueryFancy">
-              <property name="toolTip">
-               <string>Tries to show the most important files.</string>
-              </property>
-              <property name="text">
-               <string>Most important files</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string>m_rootQueryButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QRadioButton" name="m_checkRootQueryLastModified">
-              <property name="toolTip">
-               <string>Show the most recently modified files.</string>
-              </property>
-              <property name="text">
-               <string>Last modified files</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-              <attribute name="buttonGroup">
-               <string>m_rootQueryButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
-              <item>
-               <widget class="QRadioButton" name="m_checkRootQueryCustom">
-                <property name="toolTip">
-                 <string>Specify the query that should be listed.</string>
-                </property>
-                <property name="text">
-                 <string>Custom query</string>
-                </property>
-                <attribute name="buttonGroup">
-                 <string>m_rootQueryButtonGroup</string>
-                </attribute>
-               </widget>
-              </item>
-              <item>
-               <widget class="KSqueezedTextLabel" name="m_customQueryLabel">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="font">
-                 <font>
-                  <italic>true</italic>
-                 </font>
-                </property>
-                <property name="text">
-                 <string notr="true"/>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="KUrlLabel" name="m_buttonEditCustomQuery">
-                <property name="text">
-                 <string>Edit...</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>1</width>
-                  <height>1</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item row="1" column="1">
-             <spacer name="horizontalSpacer_4">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>10</width>
-                <height>1</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QFormLayout" name="formLayout_2">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_6">
-              <property name="toolTip">
-               <string>Specify the maximum number of results that should be listed in query folders.</string>
-              </property>
-              <property name="text">
-               <string>Maximum number of results in listing:</string>
-              </property>
-              <property name="buddy">
-               <cstring>m_spinMaxResults</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="KIntNumInput" name="m_spinMaxResults">
-              <property name="value">
-               <number>10</number>
-              </property>
-              <property name="minimum">
-               <number>0</number>
-              </property>
-              <property name="specialValueText">
-               <string>Show all results</string>
-              </property>
              </widget>
             </item>
            </layout>
@@ -737,11 +571,6 @@
    <header>kpushbutton.h</header>
   </customwidget>
   <customwidget>
-   <class>KIntNumInput</class>
-   <extends>QWidget</extends>
-   <header>knuminput.h</header>
-  </customwidget>
-  <customwidget>
    <class>KTabWidget</class>
    <extends>QTabWidget</extends>
    <header>ktabwidget.h</header>
@@ -803,38 +632,6 @@
     <hint type="destinationlabel">
      <x>107</x>
      <y>57</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>m_checkRootQueryCustom</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>m_customQueryLabel</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>99</x>
-     <y>68</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>107</x>
-     <y>68</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>m_checkRootQueryCustom</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>m_buttonEditCustomQuery</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>47</x>
-     <y>68</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>107</x>
-     <y>68</y>
     </hint>
    </hints>
   </connection>
