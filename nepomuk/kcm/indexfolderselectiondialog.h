@@ -34,12 +34,10 @@ namespace Nepomuk2 {
         ~IndexFolderSelectionDialog();
 
         void setFolders( const QStringList& includeDirs, const QStringList& exclude );
-        void setExcludeFilters( const QStringList& filters );
         void setIndexHiddenFolders( bool enable );
 
         QStringList includeFolders() const;
         QStringList excludeFolders() const;
-        QStringList excludeFilters() const;
         bool indexHiddenFolders() const;
 
     private:

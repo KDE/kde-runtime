@@ -23,6 +23,7 @@
 #include "../kioslaves/common/standardqueries.h"
 #include "fileindexerinterface.h"
 #include "indexfolderselectiondialog.h"
+#include "excludefilterselectiondialog.h"
 #include "statuswidget.h"
 
 #include <KPluginFactory>
@@ -35,6 +36,7 @@
 #include <KStandardDirs>
 #include <KCalendarSystem>
 #include <KDirWatch>
+#include <KDebug>
 
 #include <Nepomuk2/Query/QueryParser>
 #include <Nepomuk2/Query/FileQuery>
@@ -56,50 +58,6 @@ K_EXPORT_PLUGIN( NepomukConfigModuleFactory("kcm_nepomuk", "kcm_nepomuk") )
 namespace {
     QStringList defaultFolders() {
         return QStringList() << QDir::homePath();
-    }
-
-    /**
-     * Extracts the top level folders from the include list and optionally adds a hint about
-     * subfolders being excluded to them.
-     */
-    QString buildFolderLabel( const QStringList& includeFolders, const QStringList& excludeFolders ) {
-        QStringList sortedIncludeFolders( includeFolders );
-        qSort( sortedIncludeFolders );
-        QStringList topLevelFolders;
-        Q_FOREACH( const QString& folder, sortedIncludeFolders ) {
-            if ( topLevelFolders.isEmpty() ||
-                 !folder.startsWith( topLevelFolders.first() ) ) {
-                topLevelFolders.append( folder );
-            }
-        }
-        QHash<QString, bool> topLevelFolderExcludeHash;
-        Q_FOREACH( const QString& folder, topLevelFolders ) {
-            topLevelFolderExcludeHash.insert( folder, false );
-        }
-        Q_FOREACH( const QString& folder, excludeFolders ) {
-            QMutableHashIterator<QString, bool> it( topLevelFolderExcludeHash );
-            while ( it.hasNext() ) {
-                it.next();
-                const QString topLevelFolder = it.key();
-                if ( folder.startsWith( topLevelFolder ) ) {
-                    it.setValue( true );
-                    break;
-                }
-            }
-        }
-        QStringList labels;
-        QHashIterator<QString, bool> it( topLevelFolderExcludeHash );
-        while ( it.hasNext() ) {
-            it.next();
-            QString path = it.key();
-            if ( KUrl( path ).equals( KUrl( QDir::homePath() ), KUrl::CompareWithoutTrailingSlash ) )
-                path = i18nc( "'Home' as in 'Home path', i.e. /home/username",  "Home" );
-            QString label = i18n( "<strong><filename>%1</filename></strong>", path );
-            if ( it.value() )
-                label += QLatin1String( " (" ) + i18n( "some subfolders excluded" ) + ')';
-            labels << label;
-        }
-        return labels.join( QLatin1String( ", " ) );
     }
 
     enum BackupFrequency {
@@ -127,14 +85,17 @@ namespace {
         }
         return DisableAutomaticBackups;
     }
+
 }
+
 
 
 Nepomuk2::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVariantList& args )
     : KCModule( NepomukConfigModuleFactory::componentData(), parent, args ),
       m_serverInterface( 0 ),
       m_fileIndexerInterface( 0 ),
-      m_failedToInitialize( false )
+      m_failedToInitialize( false ),
+      m_checkboxesChanged( false )
 {
     KAboutData *about = new KAboutData(
         "kcm_nepomuk", "kcm_nepomuk", ki18n("Desktop Search Configuration Module"),
@@ -151,6 +112,7 @@ Nepomuk2::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVarian
         setupUi( this );
 
         m_indexFolderSelectionDialog = new IndexFolderSelectionDialog( this );
+        m_excludeFilterSelectionDialog = new ExcludeFilterSelectionDialog( this );
 
         QDBusServiceWatcher * watcher = new QDBusServiceWatcher( this );
         watcher->addWatchedService( QLatin1String("org.kde.nepomuk.services.nepomukfileindexer") );
@@ -176,10 +138,23 @@ Nepomuk2::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVarian
         connect( m_comboRemovableMediaHandling, SIGNAL( activated(int) ),
                  this, SLOT( changed() ) );
 
-        connect( m_buttonCustomizeIndexFolders, SIGNAL( leftClickedUrl() ),
+        connect( m_buttonCustomizeIndexFolders, SIGNAL( clicked() ),
                  this, SLOT( slotEditIndexFolders() ) );
+        connect( m_buttonAdvancedFileIndexing, SIGNAL( clicked() ),
+                 this, SLOT( slotAdvancedFileIndexing() ) );
         connect( m_buttonDetails, SIGNAL( leftClickedUrl() ),
                  this, SLOT( slotStatusDetailsClicked() ) );
+
+        connect( m_checkboxAudio, SIGNAL(toggled(bool)),
+                 this, SLOT(slotCheckBoxesChanged()) );
+        connect( m_checkboxImage, SIGNAL(toggled(bool)),
+                 this, SLOT(slotCheckBoxesChanged()) );
+        connect( m_checkboxVideo, SIGNAL(toggled(bool)),
+                 this, SLOT(slotCheckBoxesChanged()) );
+        connect( m_checkboxDocuments, SIGNAL(toggled(bool)),
+                 this, SLOT(slotCheckBoxesChanged()) );
+        connect( m_checkboxSourceCode, SIGNAL(toggled(bool)),
+                 this, SLOT(slotCheckBoxesChanged()) );
 
         // Backup
         m_comboBackupFrequency->addItem(i18nc("@item:inlistbox", "Disable Automatic Backups"));
@@ -250,7 +225,13 @@ void Nepomuk2::ServerConfigModule::load()
     m_indexFolderSelectionDialog->setIndexHiddenFolders( fileIndexerConfig.group( "General" ).readEntry( "index hidden folders", false ) );
     m_indexFolderSelectionDialog->setFolders( fileIndexerConfig.group( "General" ).readPathEntry( "folders", defaultFolders() ),
                                               fileIndexerConfig.group( "General" ).readPathEntry( "exclude folders", QStringList() ) );
-    m_indexFolderSelectionDialog->setExcludeFilters( fileIndexerConfig.group( "General" ).readEntry( "exclude filters", Nepomuk2::defaultExcludeFilterList() ) );
+
+    m_excludeFilterSelectionDialog->setExcludeFilters( fileIndexerConfig.group( "General" ).readEntry( "exclude filters", Nepomuk2::defaultExcludeFilterList() ) );
+
+    // MimeTypes
+    QStringList mimetypes = fileIndexerConfig.group( "General" ).readEntry( "exclude mimetypes", defaultExcludeMimetypes() );
+    m_excludeFilterSelectionDialog->setExcludeMimeTypes( mimetypes );
+    syncCheckBoxesFromMimetypes( mimetypes );
 
     const bool indexNewlyMounted = fileIndexerConfig.group( "RemovableMedia" ).readEntry( "index newly mounted", false );
     const bool askIndividually = fileIndexerConfig.group( "RemovableMedia" ).readEntry( "ask user", false );
@@ -277,14 +258,12 @@ void Nepomuk2::ServerConfigModule::load()
     slotBackupFrequencyChanged();
     updateBackupStatus();
 
-    // 6. update state
-    m_labelIndexFolders->setText( buildFolderLabel( m_indexFolderSelectionDialog->includeFolders(),
-                                                    m_indexFolderSelectionDialog->excludeFolders() ) );
     recreateInterfaces();
     updateFileIndexerStatus();
     updateNepomukServerStatus();
 
     // 7. all values loaded -> no changes
+    m_checkboxesChanged = false;
     emit changed(false);
 }
 
@@ -313,8 +292,16 @@ void Nepomuk2::ServerConfigModule::save()
     KConfig fileIndexerConfig( "nepomukstrigirc" );
     fileIndexerConfig.group( "General" ).writePathEntry( "folders", includeFolders );
     fileIndexerConfig.group( "General" ).writePathEntry( "exclude folders", excludeFolders );
-    fileIndexerConfig.group( "General" ).writeEntry( "exclude filters", m_indexFolderSelectionDialog->excludeFilters() );
     fileIndexerConfig.group( "General" ).writeEntry( "index hidden folders", m_indexFolderSelectionDialog->indexHiddenFolders() );
+    fileIndexerConfig.group( "General" ).writeEntry( "exclude filters", m_excludeFilterSelectionDialog->excludeFilters() );
+
+    QStringList excludeMimetypes = m_excludeFilterSelectionDialog->excludeMimeTypes();
+    if( m_checkboxesChanged ) {
+        excludeMimetypes = mimetypesFromCheckboxes();
+        m_checkboxesChanged = false;
+    }
+
+    fileIndexerConfig.group( "General" ).writeEntry( "exclude mimetypes", excludeMimetypes );
 
     // combobox items: 0 - ignore, 1 - index all, 2 - ask user
     fileIndexerConfig.group( "RemovableMedia" ).writeEntry( "index newly mounted", m_comboRemovableMediaHandling->currentIndex() > 0 );
@@ -351,6 +338,7 @@ void Nepomuk2::ServerConfigModule::save()
 
 
     // 6. all values saved -> no changes
+    m_checkboxesChanged = false;
     emit changed(false);
 }
 
@@ -364,8 +352,8 @@ void Nepomuk2::ServerConfigModule::defaults()
     m_checkEnableNepomuk->setChecked( true );
     m_checkEnableEmailIndexer->setChecked( true );
     m_indexFolderSelectionDialog->setIndexHiddenFolders( false );
-    m_indexFolderSelectionDialog->setExcludeFilters( Nepomuk2::defaultExcludeFilterList() );
     m_indexFolderSelectionDialog->setFolders( defaultFolders(), QStringList() );
+    m_excludeFilterSelectionDialog->setExcludeFilters( Nepomuk2::defaultExcludeFilterList() );
 
     // FIXME: set backup config
 }
@@ -462,19 +450,38 @@ void Nepomuk2::ServerConfigModule::slotEditIndexFolders()
 {
     const QStringList oldIncludeFolders = m_indexFolderSelectionDialog->includeFolders();
     const QStringList oldExcludeFolders = m_indexFolderSelectionDialog->excludeFolders();
-    const QStringList oldExcludeFilters = m_indexFolderSelectionDialog->excludeFilters();
     const bool oldIndexHidden = m_indexFolderSelectionDialog->indexHiddenFolders();
 
     if ( m_indexFolderSelectionDialog->exec() ) {
-        m_labelIndexFolders->setText( buildFolderLabel( m_indexFolderSelectionDialog->includeFolders(),
-                                                        m_indexFolderSelectionDialog->excludeFolders() ) );
         changed();
     }
     else {
         // revert to previous settings
         m_indexFolderSelectionDialog->setFolders( oldIncludeFolders, oldExcludeFolders );
-        m_indexFolderSelectionDialog->setExcludeFilters( oldExcludeFilters );
         m_indexFolderSelectionDialog->setIndexHiddenFolders( oldIndexHidden );
+    }
+}
+
+void Nepomuk2::ServerConfigModule::slotAdvancedFileIndexing()
+{
+    const QStringList oldExcludeFilters = m_excludeFilterSelectionDialog->excludeFilters();
+    QStringList oldExcludeMimeTypes = m_excludeFilterSelectionDialog->excludeMimeTypes();
+
+    if( m_checkboxesChanged ) {
+        oldExcludeMimeTypes = mimetypesFromCheckboxes();
+        m_excludeFilterSelectionDialog->setExcludeMimeTypes( oldExcludeMimeTypes );
+        m_checkboxesChanged = false;
+    }
+
+    if( m_excludeFilterSelectionDialog->exec() ) {
+        changed();
+
+        QStringList mimetypes = m_excludeFilterSelectionDialog->excludeMimeTypes();
+        syncCheckBoxesFromMimetypes( mimetypes );
+    }
+    else {
+        m_excludeFilterSelectionDialog->setExcludeFilters( oldExcludeFilters );
+        m_excludeFilterSelectionDialog->setExcludeMimeTypes( oldExcludeMimeTypes );
     }
 }
 
@@ -496,5 +503,85 @@ void Nepomuk2::ServerConfigModule::slotRestoreBackup()
 {
     KProcess::execute( "nepomukbackup", QStringList() << "--restore" );
 }
+
+namespace {
+    bool containsRegex(const QStringList& list, const QString& regex) {
+        QRegExp exp( regex, Qt::CaseInsensitive, QRegExp::Wildcard );
+        foreach( const QString& string, list ) {
+            if( string.contains( exp ) )
+                return true;;
+        }
+        return false;
+    }
+
+    void syncCheckBox(const QStringList& mimetypes, const QString& type, QCheckBox* checkbox) {
+        if( containsRegex( mimetypes, type ) ) {
+            if( mimetypes.contains( type ) )
+                checkbox->setChecked( false );
+            else
+                checkbox->setCheckState( Qt::PartiallyChecked );
+        }
+        else {
+            checkbox->setChecked( true );
+        }
+    }
+
+    void syncCheckBox(const QStringList& mimetypes, const QStringList& types, QCheckBox* checkbox) {
+        bool containsAll = true;
+        bool containsAny = false;
+
+        foreach( const QString& type, types ) {
+            if( mimetypes.contains(type) ) {
+                containsAny = true;
+            }
+            else {
+                containsAll = false;
+            }
+        }
+
+        if( containsAll )
+            checkbox->setCheckState( Qt::Unchecked );
+        else if( containsAny )
+            checkbox->setCheckState( Qt::PartiallyChecked );
+        else
+            checkbox->setCheckState( Qt::Checked );
+    }
+
+}
+
+void Nepomuk2::ServerConfigModule::syncCheckBoxesFromMimetypes(const QStringList& mimetypes)
+{
+    syncCheckBox( mimetypes, QLatin1String("image/*"), m_checkboxImage );
+    syncCheckBox( mimetypes, QLatin1String("audio/*"), m_checkboxAudio );
+    syncCheckBox( mimetypes, QLatin1String("video/*"), m_checkboxVideo );
+
+    syncCheckBox( mimetypes, documentMimetypes(), m_checkboxDocuments );
+    syncCheckBox( mimetypes, sourceCodeMimeTypes(), m_checkboxSourceCode );
+    m_checkboxesChanged = false;
+}
+
+QStringList Nepomuk2::ServerConfigModule::mimetypesFromCheckboxes()
+{
+    QStringList types;
+    if( !m_checkboxAudio->isChecked() )
+        types << QLatin1String("audio/*");
+    if( !m_checkboxImage->isChecked() )
+        types << QLatin1String("image/*");
+    if( !m_checkboxVideo->isChecked() )
+        types << QLatin1String("video/*");
+    if( !m_checkboxDocuments->isChecked() )
+        types << documentMimetypes();
+    if( !m_checkboxSourceCode->isChecked() )
+        types << sourceCodeMimeTypes();
+
+    return types;
+}
+
+void Nepomuk2::ServerConfigModule::slotCheckBoxesChanged()
+{
+    m_checkboxesChanged = true;;
+    changed( true );
+}
+
 
 #include "nepomukserverkcm.moc"

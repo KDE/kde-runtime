@@ -62,8 +62,6 @@ Nepomuk2::IndexFolderSelectionDialog::IndexFolderSelectionDialog( QWidget* paren
     setupUi( mainWidget() );
     setCaption( i18nc("@title:window Referring to the folders which will be searched for files to index for desktop search", "Customizing Index Folders"));
 
-    m_editExcludeFilters->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
     m_folderModel = new FolderSelectionModel( m_viewIndexFolders );
     m_viewIndexFolders->setModel( m_folderModel );
     m_viewIndexFolders->setHeaderHidden( true );
@@ -105,12 +103,6 @@ void Nepomuk2::IndexFolderSelectionDialog::setFolders( const QStringList& includ
 }
 
 
-void Nepomuk2::IndexFolderSelectionDialog::setExcludeFilters( const QStringList& filters )
-{
-    m_editExcludeFilters->setItems( filters );
-}
-
-
 void Nepomuk2::IndexFolderSelectionDialog::setIndexHiddenFolders( bool enable )
 {
     m_checkShowHiddenFolders->setChecked( enable );
@@ -136,12 +128,6 @@ QStringList Nepomuk2::IndexFolderSelectionDialog::excludeFolders() const
     else {
         return m_folderModel->excludeFolders();
     }
-}
-
-
-QStringList Nepomuk2::IndexFolderSelectionDialog::excludeFilters() const
-{
-    return m_editExcludeFilters->items();
 }
 
 

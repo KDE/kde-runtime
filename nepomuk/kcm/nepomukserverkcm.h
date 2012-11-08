@@ -32,6 +32,7 @@ class QAbstractButton;
 namespace Nepomuk2 {
 
     class IndexFolderSelectionDialog;
+    class ExcludeFilterSelectionDialog;
     class StatusWidget;
 
     class ServerConfigModule : public KCModule, private Ui::NepomukConfigWidget
@@ -53,13 +54,22 @@ namespace Nepomuk2 {
         void updateBackupStatus();
         void recreateInterfaces();
         void slotEditIndexFolders();
+        void slotAdvancedFileIndexing();
         void slotStatusDetailsClicked();
         void slotBackupFrequencyChanged();
         void slotManualBackup();
         void slotRestoreBackup();
 
+        /**
+         * This slot is called when any of the "index documents", "index whatever" checkboxes
+         * status is chanaged
+         */
+        void slotCheckBoxesChanged();
+
     private:
         void setFileIndexerStatusText( const QString& text, bool elide );
+        void syncCheckBoxesFromMimetypes(const QStringList& mimetypes);
+        QStringList mimetypesFromCheckboxes();
 
         bool m_nepomukAvailable;
 
@@ -67,10 +77,11 @@ namespace Nepomuk2 {
         org::kde::nepomuk::FileIndexer* m_fileIndexerInterface;
 
         IndexFolderSelectionDialog* m_indexFolderSelectionDialog;
+        ExcludeFilterSelectionDialog* m_excludeFilterSelectionDialog;
 
         bool m_failedToInitialize;
 
-        QString m_customQuery;
+        bool m_checkboxesChanged;
     };
 }
 

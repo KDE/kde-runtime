@@ -35,6 +35,12 @@ namespace Nepomuk2 {
      * This is increased whenever the list changes.
      */
     int defaultExcludeFilterListVersion();
+
+    QStringList defaultExcludeMimetypes();
+    int defaultExcludeMimetypesVersion();
+
+    QStringList documentMimetypes();
+    QStringList sourceCodeMimeTypes();
 }
 
 #endif

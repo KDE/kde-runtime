@@ -219,34 +219,71 @@
           <item>
            <widget class="QLabel" name="label_7">
             <property name="text">
-             <string>Select the local folders that contain files to be indexed for fast desktop searches</string>
+             <string>Customize the files and folders to be indexed</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="m_checkboxDocuments">
+            <property name="text">
+             <string>Index Documents</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="m_checkboxAudio">
+            <property name="text">
+             <string>Index Audio</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="m_checkboxImage">
+            <property name="text">
+             <string>Index Images</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="m_checkboxVideo">
+            <property name="text">
+             <string>Index Videos</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="m_checkboxSourceCode">
+            <property name="text">
+             <string>Index Source Code</string>
             </property>
            </widget>
           </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_7">
             <item>
-             <widget class="KSqueezedTextLabel" name="m_labelIndexFolders">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>1</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
               </property>
-              <property name="font">
-               <font>
-                <italic>true</italic>
-               </font>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
               </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="m_buttonAdvancedFileIndexing">
               <property name="text">
-               <string notr="true"/>
+               <string>Advanced</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="KUrlLabel" name="m_buttonCustomizeIndexFolders">
+             <widget class="QPushButton" name="m_buttonCustomizeIndexFolders">
               <property name="text">
-               <string>Customize index folders...</string>
+               <string>Customize Folders</string>
               </property>
              </widget>
             </item>
@@ -652,7 +689,4 @@
    </hints>
   </connection>
  </connections>
- <buttongroups>
-  <buttongroup name="m_rootQueryButtonGroup"/>
- </buttongroups>
 </ui>
