@@ -97,8 +97,9 @@ void Nepomuk2::IndexFolderSelectionDialog::setFolders( const QStringList& includ
     }
 
     // make sure that the tree is expanded to show all selected items
+    // expand the parent of each folder, as there is no point expanding the the folder itself
     foreach( const QString& dir, m_folderModel->includeFolders() + m_folderModel->excludeFolders() ) {
-        expandRecursively( m_folderModel->index( dir ), m_viewIndexFolders );
+        expandRecursively( m_folderModel->index( dir ).parent(), m_viewIndexFolders );
     }
 }
 
