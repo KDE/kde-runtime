@@ -80,10 +80,22 @@ Nepomuk2::IndexFolderSelectionDialog::~IndexFolderSelectionDialog()
 {
 }
 
+namespace {
+    QStringList filterNonExistingDirectories(const QStringList& list) {
+        QStringList finalList;
+        foreach(const QString& path, list) {
+            if( QFile::exists(path) )
+                finalList << path;
+        }
+        return finalList;
+    }
+}
 
 void Nepomuk2::IndexFolderSelectionDialog::setFolders( const QStringList& includeDirs, const QStringList& exclude )
 {
-    m_folderModel->setFolders( includeDirs, exclude );
+    QStringList includes = filterNonExistingDirectories( includeDirs );
+    QStringList excludes = filterNonExistingDirectories( exclude );
+    m_folderModel->setFolders( includes, excludes );
 
     // make sure we do not have a hidden folder to expand which would make QFileSystemModel crash
     // + it would be weird to have a hidden folder indexed but not shown
