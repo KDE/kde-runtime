@@ -39,6 +39,7 @@
 
 #include <Nepomuk2/ResourceManager>
 #include <Nepomuk2/Resource>
+#include <Nepomuk2/File>
 
 #include <QtCore/QMutexLocker>
 #include <QTextDocument>
@@ -89,34 +90,7 @@ void Nepomuk2::SearchFolder::list()
     }
 }
 
-namespace {
-    bool statFile( const KUrl& url, const KUrl& fileUrl, KIO::UDSEntry& uds )
-    {
-        if ( !fileUrl.isEmpty() ) {
-            if ( KIO::StatJob* job = KIO::stat( fileUrl, KIO::HideProgressInfo ) ) {
-                // we do not want to wait for the event loop to delete the job
-                QScopedPointer<KIO::StatJob> sp( job );
-                job->setAutoDelete( false );
-                if ( KIO::NetAccess::synchronousRun( job, 0 ) ) {
-                    uds = job->statResult();
-                    return true;
-                }
-            }
-        }
 
-        Nepomuk2::Resource res( url );
-        if ( res.exists() ) {
-            uds = Nepomuk2::statNepomukResource( res );
-            return true;
-        }
-
-        kDebug() << "failed to stat" << url;
-        return false;
-    }
-}
-
-// This method tries to avoid loading the Nepomuk2::Resource as long as possible by only using the
-// request property nie:url in the Result for local files.
 KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
 {
     Resource res( result.resource() );
@@ -151,7 +125,7 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
 
         // since we change the UDS_NAME KFileItem cannot handle mimetype and such anymore
         uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, additionalVars[QLatin1String("mime")].toString() );
-        if( uds.stringValue(KIO::UDSEntry::UDS_MIME_TYPE).isEmpty())
+        if( uds.stringValue(KIO::UDSEntry::UDS_MIME_TYPE).isEmpty() )
             uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, KMimeType::findByUrl(nieUrl)->name() );
     }
     else
@@ -159,68 +133,59 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
     {
         // not a simple local file result
 
+        // Check if we can get a nie:url, otherwise ignore the result, we do not show non file
+        // results in the kioslaves
+
         // check if we have a pimo thing relating to a file
-        if ( nieUrl.isEmpty() )
-            nieUrl = Nepomuk2::nepomukToFileUrl( uri );
-
-        // try to stat the file
-        if ( statFile( uri, nieUrl, uds ) ) {
-            // make sure we have unique names for everything
-            // We encode the resource URL or URI into the name so subsequent calls to stat or
-            // other non-listing commands can easily forward to the appropriate slave.
-            if ( !nieUrl.isEmpty() ) {
-                uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( nieUrl ) );
-            }
-            else {
-                uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( uri ) );
-            }
-
-            // make sure we do not use these ugly names for display
-            if ( !uds.contains( KIO::UDSEntry::UDS_DISPLAY_NAME ) ) {
-                if ( !nieUrl.isEmpty() ) {
-                    uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, nieUrl.fileName() );
-
-                    // since we change the UDS_NAME KFileItem cannot handle mimetype and such anymore
-                    QString mimetype = uds.stringValue( KIO::UDSEntry::UDS_MIME_TYPE );
-                    if ( mimetype.isEmpty() ) {
-                        mimetype = KMimeType::findByUrl(nieUrl)->name();
-                        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, mimetype );
-                    }
-                }
-                else {
-                    uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, res.genericLabel() );
-                }
-            }
+        if ( nieUrl.isEmpty() ) {
+            nieUrl = Resource( uri ).toFile().url();
+            if( nieUrl.isEmpty() )
+                return KIO::UDSEntry();
         }
-        else {
-            kDebug() << "Stating" << result.resource().uri() << "failed";
-            return KIO::UDSEntry();
+
+        KIO::StatJob* job = KIO::stat( nieUrl, KIO::HideProgressInfo );
+        // we do not want to wait for the event loop to delete the job
+        // FIXME: Isn't this very expensive? Woudln't it make sense to just directly read of QFileInfo?
+        QScopedPointer<KIO::StatJob> sp( job );
+        job->setAutoDelete( false );
+        if ( KIO::NetAccess::synchronousRun( job, 0 ) ) {
+            uds = job->statResult();
+        }
+
+        // make sure we have unique names for everything
+        // We encode the resource URL or URI into the name so subsequent calls to stat or
+        // other non-listing commands can easily forward to the appropriate slave.
+        uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( nieUrl ) );
+
+        // make sure we do not use these ugly names for display
+        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, nieUrl.fileName() );
+
+        // since we change the UDS_NAME KFileItem cannot handle mimetype and such anymore
+        QString mimetype = uds.stringValue( KIO::UDSEntry::UDS_MIME_TYPE );
+        if ( mimetype.isEmpty() ) {
+            mimetype = KMimeType::findByUrl(nieUrl)->name();
+            uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, mimetype );
         }
     }
 
-    if( !nieUrl.isEmpty() ) {
-        // There is a trade-off between using UDS_URL or not. The advantage is that we get proper
-        // file names in opening applications and non-KDE apps can handle the URLs properly. The downside
-        // is that we lose the context information, i.e. query results cannot be browsed in the opening
-        // application. We decide pro-filenames and pro-non-kde-apps here.
-        //
-        // Setting UDS_TARGET_URL for directories as well as files fixes bug 293111,
-        // which is about files in subfolders of listings not opening correctly.
-        // It breaks tree listings of search results, but, since KDE 4.9, it is not possible to view search results 
-        // as tree listings in dolphin, so there is no user-visible effect.
-        // If you were to want to do that, you should fix bug 293111 another way, perhaps by adding
-        // more complicated logic to Nepomuk2::SearchProtocol::listDir
-        // which sets UDS_TARGET_URL for members of subdirectories of a search query directory as well.
-        //   if( !uds.isDir() ) {
-            uds.insert( KIO::UDSEntry::UDS_TARGET_URL, nieUrl.url() );
+    // There is a trade-off between using UDS_URL or not. The advantage is that we get proper
+    // file names in opening applications and non-KDE apps can handle the URLs properly. The downside
+    // is that we lose the context information, i.e. query results cannot be browsed in the opening
+    // application. We decide pro-filenames and pro-non-kde-apps here.
+    //
+    // Setting UDS_TARGET_URL for directories as well as files fixes bug 293111,
+    // which is about files in subfolders of listings not opening correctly.
+    // It breaks tree listings of search results, but, since KDE 4.9, it is not possible to view search results 
+    // as tree listings in dolphin, so there is no user-visible effect.
+    // If you were to want to do that, you should fix bug 293111 another way, perhaps by adding
+    // more complicated logic to Nepomuk2::SearchProtocol::listDir
+    // which sets UDS_TARGET_URL for members of subdirectories of a search query directory as well.
+    //   if( !uds.isDir() ) {
+        uds.insert( KIO::UDSEntry::UDS_TARGET_URL, nieUrl.url() );
 
-        // set the local path so that KIO can handle the rest
-        if( nieUrl.isLocalFile() )
-            uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, nieUrl.toLocalFile() );
-    }
-    else {
-        uds.insert( KIO::UDSEntry::UDS_TARGET_URL, uri.url() );
-    }
+    // set the local path so that KIO can handle the rest
+    if( nieUrl.isLocalFile() )
+        uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, nieUrl.toLocalFile() );
 
     // Tell KIO which Nepomuk resource this actually is
     uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, uri.url() );
