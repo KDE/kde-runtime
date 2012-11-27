@@ -279,6 +279,13 @@ bool Nepomuk2::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
     return true;
 }
 
+void Nepomuk2::NepomukProtocol::prepareUDSEntry(KIO::UDSEntry&, bool) const
+{
+    // Do nothing
+    // We do not want the default implemention which tries to change the UDS_NAME and some
+    // other stuff
+}
+
 
 bool Nepomuk2::NepomukProtocol::ensureNepomukRunning()
 {

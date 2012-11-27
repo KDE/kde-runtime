@@ -45,6 +45,12 @@ namespace Nepomuk2 {
          */
         bool rewriteUrl( const KUrl& url, KUrl& newURL );
 
+        /**
+         * Reimplemented so that it does nothing. The default implementation
+         * does some voodoo that we do not want.
+         */
+        void prepareUDSEntry(KIO::UDSEntry& entry, bool listing = false) const;
+
     private:
         bool ensureNepomukRunning();
     };
