@@ -19,7 +19,7 @@
 #ifndef _NEPOMUK_KIO_NEPOMUK_SEARCH_H_
 #define _NEPOMUK_KIO_NEPOMUK_SEARCH_H_
 
-#include <kio/forwardingslavebase.h>
+#include <kio/slavebase.h>
 
 #include "searchfolder.h"
 
@@ -30,9 +30,8 @@ namespace Nepomuk2 {
         class Query;
     }
 
-    class SearchProtocol : public KIO::ForwardingSlaveBase
+    class SearchProtocol : public KIO::SlaveBase
     {
-        Q_OBJECT
 
     public:
         SearchProtocol( const QByteArray& poolSocket, const QByteArray& appSocket );
@@ -42,16 +41,6 @@ namespace Nepomuk2 {
          *
          */
         void listDir( const KUrl& url );
-
-        /**
-         * Will be forwarded for files.
-         */
-        void get( const KUrl& url );
-
-        /**
-         * Not supported.
-         */
-        void put( const KUrl& url, int permissions, KIO::JobFlags flags );
 
         /**
          * Files will be forwarded.
@@ -64,18 +53,6 @@ namespace Nepomuk2 {
          * Folders will be created as virtual folders.
          */
         void stat( const KUrl& url );
-
-        /**
-         * Delete resources
-         */
-        void del(const KUrl&, bool);
-
-    protected:
-        /**
-         * reimplemented from ForwardingSlaveBase
-         */
-        bool rewriteUrl( const KUrl& url, KUrl& newURL );
-        void prepareUDSEntry( KIO::UDSEntry& entry, bool ) const;
 
     private:
         bool ensureNepomukRunning( bool emitError = true );

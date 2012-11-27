@@ -97,15 +97,11 @@ namespace {
                 uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, type.label() );
 
             QString icon = res.genericIcon();
-            if ( !icon.isEmpty() ) {
-                uds.insert( KIO::UDSEntry::UDS_ICON_NAME, icon );
-            }
-            else {
-                // a fallback icon for nepomuk resources
-                uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QLatin1String( "nepomuk" ) );
-            }
+            if( icon.isEmpty() )
+                icon = QLatin1String("nepomuk");
 
-            if ( uds.stringValue( KIO::UDSEntry::UDS_ICON_NAME ) != QLatin1String( "nepomuk" ) )
+            uds.insert( KIO::UDSEntry::UDS_ICON_NAME, icon );
+            if ( icon != QLatin1String( "nepomuk" ) )
                 uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
         }
     }
@@ -177,7 +173,7 @@ namespace {
 
 
 Nepomuk2::SearchProtocol::SearchProtocol( const QByteArray& poolSocket, const QByteArray& appSocket )
-    : KIO::ForwardingSlaveBase( "nepomuksearch", poolSocket, appSocket )
+    : KIO::SlaveBase( "nepomuksearch", poolSocket, appSocket )
 {
 }
 
@@ -235,33 +231,10 @@ void Nepomuk2::SearchProtocol::listDir( const KUrl& url )
         }
     }
 
-    // listing of query results that are folders
     else {
-        ForwardingSlaveBase::listDir(url);
+        error( KIO::ERR_CANNOT_ENTER_DIRECTORY, url.prettyUrl() );
+        return;
     }
-}
-
-
-void Nepomuk2::SearchProtocol::get( const KUrl& url )
-{
-    kDebug() << url;
-
-    if ( !ensureNepomukRunning() )
-        return;
-
-    ForwardingSlaveBase::get( url );
-}
-
-
-void Nepomuk2::SearchProtocol::put( const KUrl& url, int permissions, KIO::JobFlags flags )
-{
-    kDebug() << url << permissions << flags;
-
-    if ( !ensureNepomukRunning() )
-        return;
-
-    // this will work only for existing files (ie. overwrite to allow saving of opened files)
-    ForwardingSlaveBase::put( url, permissions, flags );
 }
 
 
@@ -284,9 +257,9 @@ void Nepomuk2::SearchProtocol::mimetype( const KUrl& url )
         finished();
     }
 
-    // results are forwarded
     else {
-        ForwardingSlaveBase::mimetype( url );
+        error( KIO::ERR_CANNOT_ENTER_DIRECTORY, url.prettyUrl() );
+        return;
     }
 }
 
@@ -320,43 +293,16 @@ void Nepomuk2::SearchProtocol::stat( const KUrl& url )
         finished();
     }
 
-    // results are forwarded
     else {
-        kDebug() << "Stat forward" << url;
-        ForwardingSlaveBase::stat(url);
+        error( KIO::ERR_CANNOT_ENTER_DIRECTORY, url.prettyUrl() );
+        return;
     }
-}
-
-
-void Nepomuk2::SearchProtocol::del(const KUrl& url, bool isFile)
-{
-    ForwardingSlaveBase::del( url, isFile );
-}
-
-
-bool Nepomuk2::SearchProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
-{
-    // we do it the speedy but slightly umpf way: decode the encoded URI from the filename
-    newURL = Nepomuk2::udsNameToResourceUri( url.fileName() );
-    kDebug() << "URL:" << url << "NEW URL:" << newURL << newURL.protocol() << newURL.path() << newURL.fileName();
-    return !newURL.isEmpty();
-}
-
-
-void Nepomuk2::SearchProtocol::prepareUDSEntry( KIO::UDSEntry& uds, bool listing ) const
-{
-    // do nothing - we do everything in SearchFolder::statResult
-    Q_UNUSED(uds);
-    Q_UNUSED(listing);
 }
 
 
 void Nepomuk2::SearchProtocol::listRoot()
 {
     kDebug();
-
-    // flush
-    listEntry( KIO::UDSEntry(), true );
 
     Query::Query query = rootQuery();
     if ( query.isValid() ) {
