@@ -377,34 +377,4 @@ extern "C"
 }
 
 
-#if 0
-void Nepomuk2::SearchProtocol::listUserQueries()
-{
-    UserQueryUrlList userQueries;
-    Q_FOREACH( const KUrl& url, userQueries ) {
-        KIO::UDSEntry uds = statSearchFolder( url );
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, i18n( "Saved Query" ) );
-        listEntry( uds, false );
-    }
-}
-void Nepomuk2::SearchProtocol::listLastQueries()
-{
-    KSharedConfigPtr cfg = KSharedConfig::openConfig( "kio_nepomuksearchrc" );
-    KConfigGroup grp = cfg->group( "Last Queries" );
-
-    // read config
-    const int cnt = grp.readEntry( "count", 0 );
-    QList<QPair<KUrl, QDateTime> > entries;
-    for ( int i = 0; i < cnt; ++i ) {
-        KUrl u = grp.readEntry( QString::fromLatin1( "query_%1_url" ).arg( i ), QString() );
-        QDateTime t = grp.readEntry( QString::fromLatin1( "query_%1_timestamp" ).arg( i ), QDateTime() );
-        if ( !u.isEmpty() && t.isValid() )
-            listEntry( statLastQuery( u, t ), false );
-    }
-
-    listEntry( KIO::UDSEntry(), true );
-    finished();
-}
-#endif
-
 #include "kio_nepomuksearch.moc"
