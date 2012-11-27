@@ -87,8 +87,6 @@ namespace Nepomuk2 {
          */
         KIO::UDSEntry statResult( const Query::Result& result );
 
-        Query::Result extractResult( const Soprano::QueryResultIterator& it ) const;
-
         // folder properties
         KUrl m_url;
 

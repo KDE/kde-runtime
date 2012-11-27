@@ -31,6 +31,7 @@
 #include <Nepomuk2/Types/Class>
 #include <Nepomuk2/Query/Query>
 #include <Nepomuk2/Query/Result>
+#include <Nepomuk2/Query/ResultIterator>
 #include <Nepomuk2/Query/ResourceTypeTerm>
 #include <Nepomuk2/Vocabulary/NFO>
 #include <Nepomuk2/Vocabulary/NIE>
@@ -78,10 +79,9 @@ Nepomuk2::SearchFolder::~SearchFolder()
 void Nepomuk2::SearchFolder::list()
 {
     //FIXME: Do the result count as well?
-    Soprano::Model* model = ResourceManager::instance()->mainModel();
-    Soprano::QueryResultIterator it = model->executeQuery( m_sparqlQuery, Soprano::Query::QueryLanguageSparql );
+    Query::ResultIterator it( m_sparqlQuery );
     while( it.next() ) {
-        Query::Result result = extractResult( it );
+        Query::Result result = it.result();
         KIO::UDSEntry uds = statResult( result );
         if ( uds.count() ) {
             m_slave->listEntry(uds, false);
@@ -200,37 +200,4 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
     }
 
     return uds;
-}
-
-// copied from the QueryService
-Nepomuk2::Query::Result Nepomuk2::SearchFolder::extractResult(const Soprano::QueryResultIterator& it) const
-{
-    Query::Result result( Resource::fromResourceUri( it[0].uri() ) );
-    const Query::RequestPropertyMap map = m_query.requestPropertyMap();
-    for( Query::RequestPropertyMap::const_iterator rit = map.begin(); rit != map.constEnd(); rit++ ) {
-        result.addRequestProperty( rit.value(), it.binding( rit.key() ) );
-    }
-
-    // make sure we do not store values twice
-    QStringList names = it.bindingNames();
-    names.removeAll( QLatin1String( "r" ) );
-
-    static const char* s_scoreVarName = "_n_f_t_m_s_";
-    static const char* s_excerptVarName = "_n_f_t_m_ex_";
-
-    Soprano::BindingSet set;
-    int score = 0;
-    Q_FOREACH( const QString& var, names ) {
-        if ( var == QLatin1String( s_scoreVarName ) )
-            score = it[var].literal().toInt();
-        else if ( var == QLatin1String( s_excerptVarName ) )
-            result.setExcerpt( it[var].toString() );
-        else
-            set.insert( var, it[var] );
-    }
-
-    result.setAdditionalBindings( set );
-    result.setScore( ( double )score );
-
-    return result;
 }
