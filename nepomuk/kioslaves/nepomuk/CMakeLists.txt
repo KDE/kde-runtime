@@ -7,8 +7,7 @@ include_directories(
 
 set(kio_nepomuk_PART_SRCS 
   kio_nepomuk.cpp
-  resourcepagegenerator.cpp
-  ../common/resourcestat.cpp)
+  resourcepagegenerator.cpp)
 
 kde4_add_plugin(kio_nepomuk ${kio_nepomuk_PART_SRCS})
 

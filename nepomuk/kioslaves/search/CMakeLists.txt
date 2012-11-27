@@ -19,7 +19,6 @@ add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DDISABLE_NEPOMUK_LEGACY)
 set(kio_nepomuksearch_PART_SRCS
   kio_nepomuksearch.cpp
   searchfolder.cpp
-  ../common/resourcestat.cpp
 )
 
 soprano_add_ontology(kio_nepomuksearch_PART_SRCS ${NEPOMUK_CORE_ONTOLOGY_DIR}/kde/kext.trig "KExt" "Nepomuk2::Vocabulary" "trig")

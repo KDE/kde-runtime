@@ -21,7 +21,6 @@
 
 #include "searchfolder.h"
 #include "nepomuksearchurltools.h"
-#include "resourcestat.h"
 #include "queryutils.h"
 
 #include <Soprano/Vocabulary/Xesam>

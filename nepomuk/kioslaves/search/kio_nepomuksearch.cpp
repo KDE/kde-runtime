@@ -20,7 +20,6 @@
 #include "searchfolder.h"
 #include "nepomuksearchurltools.h"
 #include "standardqueries.h"
-#include "resourcestat.h"
 
 #include <QtCore/QFile>
 
@@ -58,8 +57,59 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+using namespace Nepomuk2::Vocabulary;
 
 namespace {
+    void addGenericNepomukResourceData( const Nepomuk2::Resource& res, KIO::UDSEntry& uds, bool includeMimeType = true )
+    {
+        //
+        // Add some random values
+        //
+        uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
+        uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
+        if ( res.hasProperty( NIE::lastModified() ) ) {
+            // remotely stored files
+            uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, res.property( NIE::lastModified() ).toDateTime().toTime_t() );
+        }
+        else {
+            // all nepomuk resources
+            uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, res.property( Soprano::Vocabulary::NAO::lastModified() ).toDateTime().toTime_t() );
+            uds.insert( KIO::UDSEntry::UDS_CREATION_TIME, res.property( Soprano::Vocabulary::NAO::created() ).toDateTime().toTime_t() );
+        }
+
+        if ( res.hasProperty( NIE::contentSize() ) ) {
+            // remotely stored files
+            uds.insert( KIO::UDSEntry::UDS_SIZE, res.property( NIE::contentSize() ).toInt() );
+        }
+
+
+        //
+        // Starting with KDE 4.4 we have the pretty UDS_NEPOMUK_URI which makes
+        // everything much cleaner since kio slaves can decide if the resources can be
+        // annotated or not.
+        //
+        uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, KUrl( res.uri() ).url() );
+
+        if ( includeMimeType ) {
+            // Use nice display types like "Person", "Project" and so on
+            Nepomuk2::Types::Class type( res.type() );
+            if (!type.label().isEmpty())
+                uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, type.label() );
+
+            QString icon = res.genericIcon();
+            if ( !icon.isEmpty() ) {
+                uds.insert( KIO::UDSEntry::UDS_ICON_NAME, icon );
+            }
+            else {
+                // a fallback icon for nepomuk resources
+                uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QLatin1String( "nepomuk" ) );
+            }
+
+            if ( uds.stringValue( KIO::UDSEntry::UDS_ICON_NAME ) != QLatin1String( "nepomuk" ) )
+                uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
+        }
+    }
+
     KIO::UDSEntry statSearchFolder( const KUrl& url ) {
         KIO::UDSEntry uds;
         uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
@@ -71,7 +121,8 @@ namespace {
         uds.insert( KIO::UDSEntry::UDS_NAME, Nepomuk2::Query::Query::titleFromQueryUrl( url ) );
         uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, Nepomuk2::Query::Query::titleFromQueryUrl( url ) );
         if ( url.hasQueryItem( QLatin1String( "resource" ) ) ) {
-            Nepomuk2::addGenericNepomukResourceData( Nepomuk2::Resource( KUrl( url.queryItemValue( QLatin1String( "resource" ) ) ) ), uds );
+            Nepomuk2::Resource resource( url.queryItemValue( QLatin1String("resource") ) );
+            addGenericNepomukResourceData( resource, uds );
         }
         Nepomuk2::Query::Query query = Nepomuk2::Query::Query::fromQueryUrl( url );
         if ( query.isValid() )
