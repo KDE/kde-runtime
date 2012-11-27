@@ -158,16 +158,9 @@ namespace {
     }
 
     Nepomuk2::Query::Query rootQuery() {
-        KConfig config( "kio_nepomuksearchrc" );
-        QString queryStr = config.group( "General" ).readEntry( "Root query", QString() );
-        Nepomuk2::Query::Query query;
-        if ( queryStr.isEmpty() )
-            query = Nepomuk2::lastModifiedFilesQuery();
-        else
-            query = Nepomuk2::Query::Query::fromString( queryStr );
-        query.setLimit( config.group( "General" ).readEntry( "Root query limit", 10 ) );
-        return query;
+        return Nepomuk2::lastModifiedFilesQuery();
     }
+
     const int s_historyMax = 10;
 }
 
