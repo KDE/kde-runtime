@@ -46,12 +46,6 @@ namespace Nepomuk2 {
         bool rewriteUrl( const KUrl& url, KUrl& newURL );
 
     private:
-        enum Operation {
-            Get,
-            Stat,
-            Other
-        };
-        Operation m_currentOperation;
         bool ensureNepomukRunning();
     };
 }

@@ -1,5 +1,6 @@
 /*
    Copyright 2008-2010 Sebastian Trueg <trueg@kde.org>
+   Copyright 2012 Vishesh Handa <me@vhanda.in>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -21,7 +22,6 @@
 #include "kio_nepomuk.h"
 #include "resourcepagegenerator.h"
 #include "nepomuksearchurltools.h"
-#include "resourcestat.h"
 
 #include <QtCore/QByteArray>
 #include <QtCore/QDateTime>
@@ -47,6 +47,7 @@
 #include <Nepomuk2/Vocabulary/NFO>
 #include <Nepomuk2/Vocabulary/NIE>
 #include <Nepomuk2/Vocabulary/PIMO>
+#include <Nepomuk2/File>
 
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/NAO>
@@ -58,10 +59,49 @@
 #include <Solid/Device>
 #include <Solid/StorageAccess>
 
+using namespace Nepomuk2::Vocabulary;
+using namespace Soprano::Vocabulary;
 
 namespace {
     bool noFollowSet( const KUrl& url ) {
         return( url.encodedQueryItemValue( "noFollow" ) == "true" );
+    }
+
+    // The nepomuk kio slave accepts urls of the form - nepomuk:/res/uuid along with some additional
+    // query parameters in order to display a web page instead
+    KUrl getNepomukUri(const KUrl& url) {
+        KUrl newUrl( url );
+        newUrl.setEncodedQuery( QByteArray() );
+        return newUrl;
+    }
+
+    KUrl redirectionUrl( const Nepomuk2::Resource& res ) {
+        using namespace Nepomuk2;
+
+        // list folders by forwarding to the actual folder on disk
+        if ( res.hasType( NFO::Folder() ) ) {
+            return res.property( NIE::url() ).toUrl();
+        }
+
+        // list tags by listing everything tagged with that tag
+        else if ( res.hasType( NAO::Tag() ) ) {
+            Query::ComparisonTerm term( NAO::hasTag(), Query::ResourceTerm( res ), Query::ComparisonTerm::Equal );
+            KUrl url = Query::Query( term ).toSearchUrl( i18n( "Things tagged '%1'", res.genericLabel() ) );
+            url.addQueryItem( QLatin1String( "resource" ), KUrl( res.uri() ).url() );
+            return url;
+        }
+
+        // list everything else besides files by querying things related to the resource in some way
+        // this works for music albums or artists but it would also work for tags
+        else if ( !res.hasType( NFO::FileDataObject() ) ) {
+            Query::ComparisonTerm term( QUrl(), Query::ResourceTerm( res ), Query::ComparisonTerm::Equal );
+            KUrl url = Query::Query( term ).toSearchUrl( res.genericLabel() );
+            url.addQueryItem( QLatin1String( "resource" ), KUrl( res.uri() ).url() );
+            return url;
+        }
+
+        // no forwarding done
+        return KUrl();
     }
 }
 
@@ -82,21 +122,20 @@ void Nepomuk2::NepomukProtocol::listDir( const KUrl& url )
     if ( !ensureNepomukRunning() )
         return;
 
-    //
-    // We have two special cases: tags and filesystems
-    // which we redirect. Apart from that we do not list
-    // anything.
-    // See README for details
-    //
-    Nepomuk2::Resource res = Nepomuk2::splitNepomukUrl( url );
-    KUrl reUrl = Nepomuk2::redirectionUrl( res );
-    if ( !reUrl.isEmpty() ) {
-        redirection( reUrl );
+    const Resource res = getNepomukUri( url );
+    if( !res.exists() ) {
+        error( KIO::ERR_DOES_NOT_EXIST, res.uri().toString() );
+        return;
+    }
+
+    const bool noFollow = noFollowSet( url );
+    if( noFollow ) {
+        listEntry( KIO::UDSEntry(), true );
         finished();
+        return;
     }
-    else {
-        error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
-    }
+
+    ForwardingSlaveBase::listDir( url );
 }
 
 
@@ -105,47 +144,24 @@ void Nepomuk2::NepomukProtocol::get( const KUrl& url )
     if ( !ensureNepomukRunning() )
         return;
 
-    kDebug() << url;
+    const Resource res = getNepomukUri( url );
+    if( !res.exists() ) {
+        error( KIO::ERR_DOES_NOT_EXIST, res.uri().toString() );
+        return;
+    }
 
-    m_currentOperation = Get;
     const bool noFollow = noFollowSet( url );
-
-    Nepomuk2::Resource res = splitNepomukUrl( url );
-    if ( !noFollow && Nepomuk2::isRemovableMediaFile( res ) ) {
-        error( KIO::ERR_SLAVE_DEFINED,
-               i18nc( "@info", "Please insert the removable medium <resource>%1</resource> to access this file.",
-                      getFileSystemLabelForRemovableMediaFileUrl( res ) ) );
-    }
-    else if ( !noFollow && !Nepomuk2::nepomukToFileUrl( url ).isEmpty() ) {
-        ForwardingSlaveBase::get( url );
-    }
-    else {
-        // TODO: call the share service for remote files (KDE 4.5)
-
+    if( noFollow ) {
         mimeType( "text/html" );
 
-        const KUrl newUrl = stripQuery( url );
-        if ( !res.exists() ) {
-            error( KIO::ERR_DOES_NOT_EXIST, QLatin1String("get: ") + QString::fromLatin1("%1 (%2)").arg(url.url(), url.queryItem(QLatin1String("resource"))) );
-            return;
-        }
-
-        if ( url.hasQueryItem( QLatin1String( "action") ) &&
-             url.queryItem( QLatin1String( "action" ) ) == QLatin1String( "delete" ) &&
-             messageBox( i18n( "Do you really want to delete the resource and all relations "
-                               "to and from it?" ),
-                         KIO::SlaveBase::QuestionYesNo,
-                         i18n( "Delete Resource" ) ) == KMessageBox::Yes ) {
-            res.remove();
-            data( "<html><body><p>Resource has been deleted from the Nepomuk storage.</p></body></html>" );
-        }
-        else {
-            ResourcePageGenerator gen( res );
-            gen.setFlagsFromUrl( url );
-            data( gen.generatePage() );
-        }
+        ResourcePageGenerator gen( res );
+        gen.setFlagsFromUrl( url );
+        data( gen.generatePage() );
         finished();
+        return;
     }
+
+    ForwardingSlaveBase::get( url );
 }
 
 
@@ -154,9 +170,6 @@ void Nepomuk2::NepomukProtocol::put( const KUrl& url, int permissions, KIO::JobF
     if ( !ensureNepomukRunning() )
         return;
 
-    kDebug() << url;
-
-    m_currentOperation = Other;
     ForwardingSlaveBase::put( url, permissions, flags );
 }
 
@@ -166,25 +179,35 @@ void Nepomuk2::NepomukProtocol::stat( const KUrl& url )
     if ( !ensureNepomukRunning() )
         return;
 
-    kDebug() << url;
+    const Resource res = getNepomukUri( url );
+    if( !res.exists() ) {
+        error( KIO::ERR_DOES_NOT_EXIST, res.uri().toString() );
+        return;
+    }
 
-    m_currentOperation = Stat;
     const bool noFollow = noFollowSet( url );
-    if ( !noFollow && !Nepomuk2::nepomukToFileUrl( url ).isEmpty() ) {
-        ForwardingSlaveBase::stat( url );
-    }
-    else {
-        Nepomuk2::Resource res = splitNepomukUrl( url );
+    if( noFollow ) {
+        KIO::UDSEntry uds;
 
-        if ( !res.exists() ) {
-            error( KIO::ERR_DOES_NOT_EXIST, QLatin1String("stat: ") + stripQuery(url).prettyUrl() );
-        }
-        else {
-            KIO::UDSEntry uds = Nepomuk2::statNepomukResource( res, noFollow );
-            statEntry( uds );
-            finished();
-        }
+        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, res.genericLabel() );
+        uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( res.uri() ) );
+        uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, KUrl( res.uri() ).url() );
+
+        long long modified = res.property( NAO::lastModified() ).toDateTime().toTime_t();
+        long long created = res.property( NAO::created() ).toDateTime().toTime_t();
+
+        uds.insert( KIO::UDSEntry::UDS_CREATION_TIME, created );
+        uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, modified );
+
+        uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
+        uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
+
+        statEntry( uds );
+        finished();
+        return;
     }
+
+    ForwardingSlaveBase::stat( url );
 }
 
 
@@ -193,67 +216,48 @@ void Nepomuk2::NepomukProtocol::mimetype( const KUrl& url )
     if ( !ensureNepomukRunning() )
         return;
 
-    kDebug() << url;
+    const Resource res = getNepomukUri( url );
+    if( !res.exists() ) {
+        error( KIO::ERR_DOES_NOT_EXIST, res.uri().toString() );
+        return;
+    }
 
-    m_currentOperation = Other;
     if ( noFollowSet( url ) ) {
         mimeType( "text/html" );
         finished();
         return;
     }
 
-    QString filename;
-    Nepomuk2::Resource res = Nepomuk2::splitNepomukUrl( url, &filename );
-    if ( filename.isEmpty() &&
-         Nepomuk2::willBeRedirected( res ) ) {
-        kDebug() << res.uri() << "is tag or file system -> mimetype inode/directory";
-        mimeType( QLatin1String( "inode/directory" ) );
-        finished();
-    }
-    else {
-        if ( !Nepomuk2::nepomukToFileUrl( url ).isEmpty() ) {
-            ForwardingSlaveBase::mimetype( url );
-        }
-        else {
-            //
-            // There can still be file resources that have a mimetype but are
-            // stored remotely, thus they do not have a local nie:url
-            //
-            QString m = res.property( Vocabulary::NIE::mimeType() ).toString();
-            if ( !m.isEmpty() ) {
-                mimeType( m );
-                finished();
-            }
-            else {
-                // everything else we list as html file
-                mimeType( "text/html" );
-                finished();
-            }
-        }
-    }
+    ForwardingSlaveBase::mimetype( url );
 }
 
 
-void Nepomuk2::NepomukProtocol::del(const KUrl& url, bool isFile)
+void Nepomuk2::NepomukProtocol::del(const KUrl& url, bool)
 {
     if ( !ensureNepomukRunning() )
         return;
 
-    m_currentOperation = Other;
+    Resource res = getNepomukUri( url );
+    if( !res.exists() ) {
+        error( KIO::ERR_DOES_NOT_EXIST, res.uri().toString() );
+        return;
+    }
 
-    KUrl newUrl;
-    if ( rewriteUrl( url, newUrl ) ) {
-        ForwardingSlaveBase::del( url, isFile );
+    if ( noFollowSet( url ) ) {
+        mimeType( "text/html" );
+        finished();
+        return;
+    }
+
+    // If file, then delete the actual file. 
+    // The file watch service should take care of the metadata
+    if( res.isFile() ) {
+        ForwardingSlaveBase::mimetype( url );
+        return;
     }
     else {
-        Nepomuk2::Resource res( url );
-        if ( !res.exists() ) {
-            error( KIO::ERR_DOES_NOT_EXIST, url.prettyUrl() );
-        }
-        else {
-            res.remove();
-            finished();
-        }
+        res.remove();
+        finished();
     }
 }
 
@@ -263,8 +267,17 @@ bool Nepomuk2::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
     if ( noFollowSet( url ) )
         return false;
 
-    newURL = Nepomuk2::nepomukToFileUrl( url, m_currentOperation == Get );
-    return newURL.isValid();
+    Resource res( url );
+    if( res.isFile() ) {
+        newURL = res.toFile().url();
+    }
+    else {
+        newURL = redirectionUrl( res );
+    }
+
+    kDebug() << "Redirecting " << url << " - > " << newURL;
+
+    return true;
 }
 
 
