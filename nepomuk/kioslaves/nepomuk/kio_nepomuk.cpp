@@ -108,7 +108,6 @@ namespace {
 Nepomuk2::NepomukProtocol::NepomukProtocol( const QByteArray& poolSocket, const QByteArray& appSocket )
     : KIO::ForwardingSlaveBase( "nepomuk", poolSocket, appSocket )
 {
-    ResourceManager::instance()->init();
 }
 
 
@@ -283,13 +282,17 @@ bool Nepomuk2::NepomukProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 
 bool Nepomuk2::NepomukProtocol::ensureNepomukRunning()
 {
-    if ( Nepomuk2::ResourceManager::instance()->init() ) {
-        error( KIO::ERR_SLAVE_DEFINED, i18n( "The desktop search service is not activated. Unable to answer queries without it." ) );
-        return false;
-    }
-    else {
+    ResourceManager* rm = ResourceManager::instance();
+    if ( !rm->initialized() ) {
+        if( rm->init() ) {
+            error( KIO::ERR_SLAVE_DEFINED, i18n( "The desktop search service is not activated. "
+                                                  "Unable to answer queries without it." ) );
+            return false;
+        }
         return true;
     }
+
+    return true;
 }
 
 

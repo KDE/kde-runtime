@@ -189,21 +189,18 @@ Nepomuk2::SearchProtocol::~SearchProtocol()
 
 bool Nepomuk2::SearchProtocol::ensureNepomukRunning( bool emitError )
 {
-    if ( Nepomuk2::ResourceManager::instance()->init() ) {
-        kDebug() << "Failed to init Nepomuk";
-        if ( emitError )
-            error( KIO::ERR_SLAVE_DEFINED, i18n( "The desktop search service is not activated. Unable to answer queries without it." ) );
-        return false;
-    }
-    else if ( !Nepomuk2::Query::QueryServiceClient::serviceAvailable() ) {
-        kDebug() << "Nepomuk Query service is not running.";
-        if ( emitError )
-            error( KIO::ERR_SLAVE_DEFINED, i18n( "The desktop search query service is not running. Unable to answer queries without it." ) );
-        return false;
-    }
-    else {
+    ResourceManager* rm = ResourceManager::instance();
+    if ( !rm->initialized() ) {
+        if( rm->init() ) {
+            if( emitError )
+                error( KIO::ERR_SLAVE_DEFINED, i18n( "The desktop search service is not activated. "
+                                                      "Unable to answer queries without it." ) );
+            return false;
+        }
         return true;
     }
+
+    return true;
 }
 
 
