@@ -41,9 +41,6 @@ namespace Soprano {
 }
 
 namespace Nepomuk2 {
-    namespace Query {
-        class QueryServiceClient;
-    }
 
     /**
      * A SearchFolder lists all results from one query and then deletes
@@ -99,10 +96,6 @@ namespace Nepomuk2 {
 
         // the parent slave used for listing and stating
         KIO::SlaveBase* m_slave;
-
-        Query::QueryServiceClient* m_client;
-
-        QEventLoop m_eventLoop;
     };
 }
 

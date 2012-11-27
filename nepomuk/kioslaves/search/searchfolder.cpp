@@ -101,19 +101,19 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
     // see also parseQueryUrl (queryutils.h)
     const Soprano::BindingSet additionalVars = result.additionalBindings();
 
+    // Check if we can get a nie:url, otherwise ignore the result, we do not show non file
+    // results in the kioslaves
+    if ( nieUrl.isEmpty() ) {
+        nieUrl = res.property( NIE::url() ).toUrl();
+        if( nieUrl.isEmpty() )
+            return KIO::UDSEntry();
+    }
+
     // the UDSEntry that will contain the final result to list
     KIO::UDSEntry uds;
 
 #ifdef Q_OS_UNIX
-    if( !nieUrl.isEmpty() &&
-            nieUrl.isLocalFile() &&
-            additionalVars[QLatin1String("mtime")].isLiteral() ) {
-        // make sure we have unique names for everything
-        uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( nieUrl ) );
-
-        // set the name the user will see
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, nieUrl.fileName() );
-
+    if( nieUrl.isLocalFile() && additionalVars[QLatin1String("mtime")].isLiteral() ) {
         // set the basic file information which we got from Nepomuk
         uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, additionalVars[QLatin1String("mtime")].literal().toDateTime().toTime_t() );
         uds.insert( KIO::UDSEntry::UDS_SIZE, additionalVars[QLatin1String("size")].literal().toInt() );
@@ -124,63 +124,31 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
 
         // since we change the UDS_NAME KFileItem cannot handle mimetype and such anymore
         uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, additionalVars[QLatin1String("mime")].toString() );
-        if( uds.stringValue(KIO::UDSEntry::UDS_MIME_TYPE).isEmpty() )
-            uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, KMimeType::findByUrl(nieUrl)->name() );
     }
     else
 #endif // Q_OS_UNIX
     {
-        // not a simple local file result
-
-        // Check if we can get a nie:url, otherwise ignore the result, we do not show non file
-        // results in the kioslaves
-
-        // check if we have a pimo thing relating to a file
-        if ( nieUrl.isEmpty() ) {
-            nieUrl = Resource( uri ).toFile().url();
-            if( nieUrl.isEmpty() )
-                return KIO::UDSEntry();
-        }
-
+        // not a simple file search
+        // FIXME: Isn't this very expensive? Woudln't it make sense to just directly read of QFileInfo?
         KIO::StatJob* job = KIO::stat( nieUrl, KIO::HideProgressInfo );
         // we do not want to wait for the event loop to delete the job
-        // FIXME: Isn't this very expensive? Woudln't it make sense to just directly read of QFileInfo?
         QScopedPointer<KIO::StatJob> sp( job );
         job->setAutoDelete( false );
         if ( KIO::NetAccess::synchronousRun( job, 0 ) ) {
             uds = job->statResult();
         }
-
-        // make sure we have unique names for everything
-        // We encode the resource URL or URI into the name so subsequent calls to stat or
-        // other non-listing commands can easily forward to the appropriate slave.
-        uds.insert( KIO::UDSEntry::UDS_NAME, resourceUriToUdsName( nieUrl ) );
-
-        // make sure we do not use these ugly names for display
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, nieUrl.fileName() );
-
-        // since we change the UDS_NAME KFileItem cannot handle mimetype and such anymore
-        QString mimetype = uds.stringValue( KIO::UDSEntry::UDS_MIME_TYPE );
-        if ( mimetype.isEmpty() ) {
-            mimetype = KMimeType::findByUrl(nieUrl)->name();
-            uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, mimetype );
-        }
     }
+
+    // We might have multiple files with the same filename, but it's okay since they each have
+    // a unique url
+    uds.insert( KIO::UDSEntry::UDS_NAME, nieUrl.fileName() );
 
     // There is a trade-off between using UDS_URL or not. The advantage is that we get proper
     // file names in opening applications and non-KDE apps can handle the URLs properly. The downside
     // is that we lose the context information, i.e. query results cannot be browsed in the opening
-    // application. We decide pro-filenames and pro-non-kde-apps here.
-    //
-    // Setting UDS_TARGET_URL for directories as well as files fixes bug 293111,
-    // which is about files in subfolders of listings not opening correctly.
-    // It breaks tree listings of search results, but, since KDE 4.9, it is not possible to view search results 
-    // as tree listings in dolphin, so there is no user-visible effect.
-    // If you were to want to do that, you should fix bug 293111 another way, perhaps by adding
-    // more complicated logic to Nepomuk2::SearchProtocol::listDir
-    // which sets UDS_TARGET_URL for members of subdirectories of a search query directory as well.
-    //   if( !uds.isDir() ) {
-        uds.insert( KIO::UDSEntry::UDS_TARGET_URL, nieUrl.url() );
+    // application.
+    // We set the UDS_URL since it works better and the context information was rarely used
+    uds.insert( KIO::UDSEntry::UDS_URL, nieUrl.url() );
 
     // set the local path so that KIO can handle the rest
     if( nieUrl.isLocalFile() )
