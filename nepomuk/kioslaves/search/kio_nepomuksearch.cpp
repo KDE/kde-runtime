@@ -140,22 +140,17 @@ namespace {
                 url.directory() == QLatin1String("/") );
     }
 
-    // Legacy query URLs look like: nepomuksearch:/?query=xyz&title=foobar
-    // i.e. an empty path and a query, new URLs have their title as path
+    // Legacy URLs - nepomuksearch:/SomeQuery
     bool isLegacyQueryUrl( const KUrl& url ) {
         const QString path = url.path(KUrl::RemoveTrailingSlash);
-        return( url.hasQuery() &&
-                ( path.isEmpty() || path == QLatin1String("/") ) );
+        return !path.isEmpty() && !url.hasQuery();
     }
 
     KUrl convertLegacyQueryUrl( const KUrl& url ) {
-        KUrl newUrl(QLatin1String("nepomuksearch:/") + Nepomuk2::Query::Query::titleFromQueryUrl(url));
-        Nepomuk2::Query::Query query = Nepomuk2::Query::Query::fromQueryUrl(url);
-        if(query.isValid())
-            newUrl.addQueryItem(QLatin1String("encodedquery"), query.toString());
-        else
-            newUrl.addQueryItem(QLatin1String("sparql"), Nepomuk2::Query::Query::sparqlFromQueryUrl(url));
-        return newUrl;
+        return KUrl( QLatin1String("nepomuksearch:/") +
+                     Nepomuk2::Query::Query::titleFromQueryUrl(url) +
+                     QLatin1String("?query=") +
+                     url.path().section( '/', 0, 0, QString::SectionSkipEmpty ) );
     }
 
     Nepomuk2::Query::Query rootQuery() {
@@ -192,19 +187,17 @@ bool Nepomuk2::SearchProtocol::ensureNepomukRunning( bool emitError )
 }
 
 
-void Nepomuk2::SearchProtocol::listDir( const KUrl& url )
+void Nepomuk2::SearchProtocol::listDir( const KUrl& url_ )
 {
-    kDebug() << url;
+    kDebug() << url_;
+
+    KUrl url = url_;
+    if( isLegacyQueryUrl(url_) )
+        url = convertLegacyQueryUrl(url_);
 
     // list the root folder
     if ( isRootUrl( url ) ) {
         listRoot();
-    }
-
-    // backwards compatibility with pre-4.6 query URLs
-    else if( isLegacyQueryUrl( url ) ) {
-        redirection( convertLegacyQueryUrl(url) );
-        finished();
     }
 
     // list the actual query folders
@@ -229,9 +222,13 @@ void Nepomuk2::SearchProtocol::listDir( const KUrl& url )
 }
 
 
-void Nepomuk2::SearchProtocol::mimetype( const KUrl& url )
+void Nepomuk2::SearchProtocol::mimetype( const KUrl& url_ )
 {
-    kDebug() << url;
+    kDebug() << url_;
+
+    KUrl url = url_;
+    if( isLegacyQueryUrl(url_) )
+        url = convertLegacyQueryUrl(url_);
 
     // the root url is always a folder
     if ( isRootUrl( url ) ) {
@@ -255,9 +252,13 @@ void Nepomuk2::SearchProtocol::mimetype( const KUrl& url )
 }
 
 
-void Nepomuk2::SearchProtocol::stat( const KUrl& url )
+void Nepomuk2::SearchProtocol::stat( const KUrl& url_ )
 {
-    kDebug() << url;
+    kDebug() << url_;
+
+    KUrl url = url_;
+    if( isLegacyQueryUrl(url_) )
+        url = convertLegacyQueryUrl(url_);
 
     // the root folder
     if ( isRootUrl( url ) ) {
