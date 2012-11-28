@@ -54,6 +54,7 @@
 #include <KMimeType>
 #include <KConfig>
 #include <KConfigGroup>
+#include <kde_file.h>
 
 using namespace Nepomuk2::Vocabulary;
 using namespace Soprano::Vocabulary;
@@ -121,21 +122,40 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
         uds.insert( KIO::UDSEntry::UDS_ACCESS, additionalVars[QLatin1String("mode")].literal().toInt() & 07777 );
         uds.insert( KIO::UDSEntry::UDS_USER, additionalVars[QLatin1String("user")].toString() );
         uds.insert( KIO::UDSEntry::UDS_GROUP, additionalVars[QLatin1String("group")].toString() );
-
-        // since we change the UDS_NAME KFileItem cannot handle mimetype and such anymore
         uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, additionalVars[QLatin1String("mime")].toString() );
     }
     else
 #endif // Q_OS_UNIX
     {
-        // not a simple file search
-        // FIXME: Isn't this very expensive? Woudln't it make sense to just directly read of QFileInfo?
-        KIO::StatJob* job = KIO::stat( nieUrl, KIO::HideProgressInfo );
-        // we do not want to wait for the event loop to delete the job
-        QScopedPointer<KIO::StatJob> sp( job );
-        job->setAutoDelete( false );
-        if ( KIO::NetAccess::synchronousRun( job, 0 ) ) {
-            uds = job->statResult();
+        if( nieUrl.isLocalFile() ) {
+            // Code from kdelibs/kioslaves/file.cpp
+            KDE_struct_stat statBuf;
+            if( KDE_stat( QFile::encodeName(nieUrl.toLocalFile()).data(), &statBuf ) == 0 ) {
+                uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, statBuf.st_mtime );
+                uds.insert( KIO::UDSEntry::UDS_ACCESS_TIME, statBuf.st_atime );
+                uds.insert( KIO::UDSEntry::UDS_SIZE, statBuf.st_size );
+                uds.insert( KIO::UDSEntry::UDS_USER, statBuf.st_uid );
+                uds.insert( KIO::UDSEntry::UDS_GROUP, statBuf.st_gid );
+
+                mode_t type = statBuf.st_mode & S_IFMT;
+                mode_t access = statBuf.st_mode & 07777;
+
+                uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, type );
+                uds.insert( KIO::UDSEntry::UDS_ACCESS, access );
+            }
+            else {
+                return KIO::UDSEntry();
+            }
+        }
+        else {
+            // not a local file
+            KIO::StatJob* job = KIO::stat( nieUrl, KIO::HideProgressInfo );
+            // we do not want to wait for the event loop to delete the job
+            QScopedPointer<KIO::StatJob> sp( job );
+            job->setAutoDelete( false );
+            if ( KIO::NetAccess::synchronousRun( job, 0 ) ) {
+                uds = job->statResult();
+            }
         }
     }
 
