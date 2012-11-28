@@ -161,8 +161,6 @@ namespace {
     Nepomuk2::Query::Query rootQuery() {
         return Nepomuk2::lastModifiedFilesQuery();
     }
-
-    const int s_historyMax = 10;
 }
 
 
@@ -218,7 +216,6 @@ void Nepomuk2::SearchProtocol::listDir( const KUrl& url )
         }
         else {
             SearchFolder folder( url, this );
-            updateQueryUrlHistory( url );
             folder.list();
             listEntry( KIO::UDSEntry(), true );
             finished();
@@ -307,54 +304,6 @@ void Nepomuk2::SearchProtocol::listRoot()
 
     listEntry( KIO::UDSEntry(), true );
     finished();
-}
-
-
-void Nepomuk2::SearchProtocol::updateQueryUrlHistory( const KUrl& url )
-{
-    //
-    // if the url is already in the history update its timestamp
-    // otherwise remove the last item if we reached the max and then
-    // add the url along with its timestamp
-    //
-    KSharedConfigPtr cfg = KSharedConfig::openConfig( "kio_nepomuksearchrc" );
-    KConfigGroup grp = cfg->group( "Last Queries" );
-
-    // read config
-    const int cnt = grp.readEntry( "count", 0 );
-    QList<QPair<KUrl, QDateTime> > entries;
-    for ( int i = 0; i < cnt; ++i ) {
-        KUrl u = grp.readEntry( QString::fromLatin1( "query_%1_url" ).arg( i ), QString() );
-        QDateTime t = grp.readEntry( QString::fromLatin1( "query_%1_timestamp" ).arg( i ), QDateTime() );
-        if ( !u.isEmpty() &&
-             t.isValid() &&
-             u != url ) {
-            int pos = 0;
-            while ( entries.count() > pos &&
-                    entries[pos].second < t ) {
-                ++pos;
-            }
-            entries.insert( pos, qMakePair( u, t ) );
-        }
-    }
-    if ( entries.count() >= s_historyMax ) {
-        entries.removeFirst();
-    }
-    entries.append( qMakePair( url, QDateTime::currentDateTime() ) );
-
-    // write config back
-    grp.deleteGroup();
-    grp = cfg->group( "Last Queries" );
-
-    for ( int i = 0; i < entries.count(); ++i ) {
-        KUrl u = entries[i].first;
-        QDateTime t = entries[i].second;
-        grp.writeEntry( QString::fromLatin1( "query_%1_url" ).arg( i ), u.url() );
-        grp.writeEntry( QString::fromLatin1( "query_%1_timestamp" ).arg( i ), t );
-    }
-    grp.writeEntry( QLatin1String( "count" ), entries.count() );
-
-    cfg->sync();
 }
 
 

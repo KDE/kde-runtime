@@ -57,11 +57,6 @@ namespace Nepomuk2 {
     private:
         bool ensureNepomukRunning( bool emitError = true );
         void listRoot();
-
-        /**
-         * Store \a url in the history of last used queries.
-         */
-        void updateQueryUrlHistory( const KUrl& url );
     };
 }
 
