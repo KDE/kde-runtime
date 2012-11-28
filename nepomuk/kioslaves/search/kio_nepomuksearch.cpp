@@ -97,12 +97,13 @@ namespace {
                 uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, type.label() );
 
             QString icon = res.genericIcon();
-            if( icon.isEmpty() )
-                icon = QLatin1String("nepomuk");
-
-            uds.insert( KIO::UDSEntry::UDS_ICON_NAME, icon );
-            if ( icon != QLatin1String( "nepomuk" ) )
-                uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
+            if( !icon.isEmpty() ) {
+                uds.insert( KIO::UDSEntry::UDS_ICON_NAME, icon );
+            }
+            else {
+                uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QLatin1String("nepomuk") );
+                uds.remove( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES );
+            }
         }
     }
 
