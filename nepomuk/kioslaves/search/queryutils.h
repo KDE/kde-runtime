@@ -57,7 +57,7 @@ namespace Nepomuk2 {
                 query.setRequestProperties( reqProperties );
 #ifdef Q_OS_UNIX
                 // file size
-                ComparisonTerm contentSizeTerm( NIE::contentSize(), Term() );
+                ComparisonTerm contentSizeTerm( NFO::fileSize(), Term() );
                 contentSizeTerm.setVariableName( QLatin1String("size") );
                 // mimetype
                 ComparisonTerm mimetypeTerm( NIE::mimeType(), Term() );
