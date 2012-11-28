@@ -94,7 +94,6 @@ void Nepomuk2::SearchFolder::list()
 KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
 {
     Resource res( result.resource() );
-    const KUrl uri( res.uri() );
     KUrl nieUrl( result[NIE::url()].uri() );
 
     // the additional bindings that we only have on unix systems
@@ -159,9 +158,12 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
         }
     }
 
-    // We might have multiple files with the same filename, but it's okay since they each have
-    // a unique url
-    uds.insert( KIO::UDSEntry::UDS_NAME, nieUrl.fileName() );
+    // We might have multiple files with the same filename or generic label
+    // but it's okay since they each have a unique url
+    if( nieUrl.isLocalFile() )
+        uds.insert( KIO::UDSEntry::UDS_NAME, nieUrl.fileName() );
+    else
+        uds.insert( KIO::UDSEntry::UDS_NAME, res.genericLabel() );
 
     // There is a trade-off between using UDS_URL or not. The advantage is that we get proper
     // file names in opening applications and non-KDE apps can handle the URLs properly. The downside
@@ -175,7 +177,7 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
         uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, nieUrl.toLocalFile() );
 
     // Tell KIO which Nepomuk resource this actually is
-    uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, uri.url() );
+    uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, res.uri().toString() );
 
     // add optional full-text search excerpts
     QString excerpt = result.excerpt();
