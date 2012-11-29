@@ -155,6 +155,9 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
             if ( KIO::NetAccess::synchronousRun( job, 0 ) ) {
                 uds = job->statResult();
             }
+            else {
+                return KIO::UDSEntry();
+            }
         }
     }
 

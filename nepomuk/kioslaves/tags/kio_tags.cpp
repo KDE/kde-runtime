@@ -206,6 +206,9 @@ void TagsProtocol::listDir(const KUrl& url)
                     if( job->exec() ) {
                         uds = job->statResult();
                     }
+                    else {
+                        continue;
+                    }
                 }
 
                 uds.insert( KIO::UDSEntry::UDS_NAME, encodeFileUrl(fileUrl) );
