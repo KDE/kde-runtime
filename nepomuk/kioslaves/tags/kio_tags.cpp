@@ -140,6 +140,8 @@ namespace {
 
 void TagsProtocol::listDir(const KUrl& url)
 {
+    kDebug() << url;
+
     QList<Tag> tags;
     QUrl fileUrl;
 
@@ -149,6 +151,7 @@ void TagsProtocol::listDir(const KUrl& url)
             return;
 
         case RootUrl: {
+            kDebug() << "Root Url";
             QLatin1String query("select distinct ?r ?ident where { ?r a nao:Tag ; nao:identifier ?ident .}");
             Soprano::Model* model = ResourceManager::instance()->mainModel();
             Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparqlNoInference );
@@ -169,6 +172,7 @@ void TagsProtocol::listDir(const KUrl& url)
 
         case TagUrl: {
             // Get the N3
+            kDebug() << "Tag URL: " << tags;
             QStringList tagN3;
             QSet<QUrl> tagUris;
             foreach(const Tag& tag, tags) {
@@ -244,6 +248,7 @@ void TagsProtocol::listDir(const KUrl& url)
         }
 
         case FileUrl:
+            kDebug() << "File URL : " << fileUrl;
             ForwardingSlaveBase::listDir( fileUrl );
             return;
     }
@@ -251,6 +256,8 @@ void TagsProtocol::listDir(const KUrl& url)
 
 void TagsProtocol::stat(const KUrl& url)
 {
+    kDebug() << url;
+
     QList<Tag> tags;
     QUrl fileUrl;
 
@@ -311,6 +318,8 @@ void TagsProtocol::stat(const KUrl& url)
 
 void TagsProtocol::mkdir(const KUrl& url, int permissions)
 {
+    kDebug() << url;
+
     Q_UNUSED( permissions );
 
     QList<Tag> tags;
@@ -345,6 +354,8 @@ void TagsProtocol::mkdir(const KUrl& url, int permissions)
 
 void TagsProtocol::copy(const KUrl& src, const KUrl& dest, int permissions, KIO::JobFlags flags)
 {
+    kDebug() << src << dest;
+
     if( src.scheme() == QLatin1String("file") ) {
         QList<Tag> tags;
         QUrl fileUrl;
@@ -394,6 +405,8 @@ void TagsProtocol::copy(const KUrl& src, const KUrl& dest, int permissions, KIO:
 
 void TagsProtocol::get(const KUrl& url)
 {
+    kDebug() << url;
+
     QList<Tag> tags;
     QUrl fileUrl;
 
@@ -426,6 +439,12 @@ void TagsProtocol::put(const KUrl& url, int permissions, KIO::JobFlags flags)
 
 void TagsProtocol::rename(const KUrl& src, const KUrl& dest, KIO::JobFlags flags)
 {
+    kDebug() << src << dest;
+    if( src.isLocalFile() ) {
+        error( KIO::ERR_CANNOT_DELETE_ORIGINAL, src.prettyUrl() );
+        return;
+    }
+
     QList<Tag> srcTags;
     QUrl fileUrl;
 
@@ -500,6 +519,8 @@ void TagsProtocol::del(const KUrl& url, bool isfile)
 
 void Nepomuk2::TagsProtocol::mimetype(const KUrl& url)
 {
+    kDebug() << url;
+
     QList<Tag> tags;
     QUrl fileUrl;
 
