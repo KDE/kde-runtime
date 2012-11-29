@@ -48,13 +48,14 @@ Nepomuk2::StatusWidget::StatusWidget( QWidget* parent )
 {
     KGlobal::locale()->insertCatalog("kcm_nepomuk");
     setupUi( mainWidget() );
+    mainWidget()->layout()->setContentsMargins( 0, 0, 0, 0 );
 
-    setCaption( m_title->text() );
+    //setCaption( m_labelTitle->text() );
     setButtons( Close );
     setDefaultButton( Close );
 
     KIcon icon( "nepomuk" );
-    iconLabel->setPixmap( icon.pixmap( 32, 32 ) );
+    iconLabel->setPixmap( icon.pixmap( 48, 48 ) );
     setWindowIcon( icon );
 
     m_configureButton->setIcon( KIcon("configure") );
