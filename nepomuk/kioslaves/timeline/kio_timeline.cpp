@@ -98,9 +98,12 @@ namespace {
 
     bool filesInDateRange( const QDate& from, const QDate& to = QDate() )
     {
+        // We avoid inference over here since it speeds up the query by an order of ~110ms
+        // Not sure why it happens, but it is worth it. Specially, since we are just listing
+        // the nie:lastModified. We don't need inference
         return Nepomuk2::ResourceManager::instance()->mainModel()->executeQuery(
                     Nepomuk2::buildTimelineQuery( from, to ).toSparqlQuery(Nepomuk2::Query::Query::CreateAskQuery),
-                    Soprano::Query::QueryLanguageSparql ).boolValue();
+                    Soprano::Query::QueryLanguageSparqlNoInference ).boolValue();
     }
 }
 
