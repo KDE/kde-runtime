@@ -30,7 +30,7 @@ public:
     explicit ApplicationDetailsExamples(QObject * parent);
     bool hasExamples() const;
     QString examples() const;
-    
+
 private:
     QString m_examples;
 };

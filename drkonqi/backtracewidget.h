@@ -56,7 +56,7 @@ private:
     BacktraceRatingWidget *   m_backtraceRatingWidget;
     QSyntaxHighlighter *m_highlighter;
     DebugPackageInstaller * m_debugPackageInstaller;
-    
+
 private Q_SLOTS:
     void loadData();
     void backtraceNewLine(const QString &);
@@ -68,7 +68,7 @@ private Q_SLOTS:
     void copyClicked();
 
     void anotherDebuggerRunning();
-    
+
     void installDebugPackages();
     void debugPackageError(const QString &);
     void debugPackageCanceled();

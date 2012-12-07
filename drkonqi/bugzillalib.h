@@ -189,7 +189,7 @@ public:
     QString versionFixedIn() const {
         return getData("cf_versionfixedin");
     }
-    
+
     void setValid(bool valid) {
         m_isValid = valid;
     }
@@ -296,23 +296,23 @@ public:
 
     void searchBugs(const QStringList & products, const QString & severity,
                     const QString & date_start, const QString & date_end , QString comment);
-    
+
     void sendReport(const BugReport & report);
-    
+
     void attachTextToReport(const QString & text, const QString & filename,
                             const QString & description, int bugId, const QString & comment);
 
     void addMeToCC(int bugId);
 
     void checkVersionsForProduct(const QString &);
-    
+
     /* Misc methods */
     QString urlForBug(int bug_number) const;
 
     void setCustomBugtrackerUrl(const QString &);
 
     void stopCurrentSearch();
-    
+
 private Q_SLOTS:
     /* Slots to handle KJob::finished */
     void fetchBugJobFinished(KJob*);

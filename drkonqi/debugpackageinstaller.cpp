@@ -75,7 +75,7 @@ void DebugPackageInstaller::progressDialogCanceled()
 {
     m_progressDialog->deleteLater();
     m_progressDialog = 0;
-    
+
     if (m_installerProcess) {
         if (m_installerProcess->state() == QProcess::Running) {
             disconnect(m_installerProcess, SIGNAL(finished(int,QProcess::ExitStatus)), 
@@ -86,7 +86,7 @@ void DebugPackageInstaller::progressDialogCanceled()
         }
         m_installerProcess = 0;
     }
-    
+
     emit canceled();
 }
 
@@ -116,12 +116,12 @@ void DebugPackageInstaller::processFinished(int exitCode, QProcess::ExitStatus)
         break;
     }
     }
-    
+
     m_progressDialog->reject();
-    
+
     delete m_progressDialog;
     m_progressDialog = 0;
-    
+
     delete m_installerProcess;
     m_installerProcess = 0;
 }

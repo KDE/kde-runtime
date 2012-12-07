@@ -54,7 +54,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     connect(this, SIGNAL(helpClicked()), this, SLOT(showHelp()));
 
     //Create the assistant pages
-    
+
     //-Introduction Page
     IntroductionPage * m_introduction = new IntroductionPage(this);
 
@@ -63,7 +63,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     m_pageWidgetMap.insert(QLatin1String(PAGE_INTRODUCTION_ID),m_introductionPage);
     m_introductionPage->setHeader(i18nc("@title","Welcome to the Reporting Assistant"));
     m_introductionPage->setIcon(KIcon("tools-report-bug"));
-    
+
     //-Bug Awareness Page
     BugAwarenessPage * m_awareness = new BugAwarenessPage(this);
     connectSignals(m_awareness);
@@ -73,7 +73,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     m_pageWidgetMap.insert(QLatin1String(PAGE_AWARENESS_ID),m_awarenessPage);
     m_awarenessPage->setHeader(i18nc("@title","What do you know about the crash?"));
     m_awarenessPage->setIcon(KIcon("checkbox"));
-    
+
     //-Crash Information Page
     CrashInformationPage * m_backtrace = new CrashInformationPage(this);
     connectSignals(m_backtrace);
@@ -134,7 +134,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     m_pageWidgetMap.insert(QLatin1String(PAGE_BZPREVIEW_ID),m_bugzillaPreviewPage);
     m_bugzillaPreviewPage->setHeader(i18nc("@title","Preview the Report"));
     m_bugzillaPreviewPage->setIcon(KIcon("document-preview"));
-    
+
     //-Bugzilla commit
     BugzillaSendPage * m_bugzillaSend =  new BugzillaSendPage(this);
 
@@ -193,7 +193,7 @@ void ReportAssistantDialog::currentPageChanged_slot(KPageWidgetItem * current , 
     }
 
     //If the current page is the last one, disable all the buttons until the bug is sent
-    if (current->name() == QLatin1String(PAGE_BZSEND_ID)) { 
+    if (current->name() == QLatin1String(PAGE_BZSEND_ID)) {
         enableNextButton(false);
         enableButton(KDialog::User3, false); //Back button
         enableButton(KDialog::User1, false);
@@ -210,12 +210,12 @@ void ReportAssistantDialog::completeChanged(ReportAssistantPage* page, bool isCo
 void ReportAssistantDialog::assistantFinished(bool showBack)
 {
     //The assistant finished: allow the user to close the dialog normally
-    
+
     enableNextButton(false);
     enableButton(KDialog::User3, showBack); //Back button
     enableButton(KDialog::User1, true);
     enableButton(KDialog::Cancel, false);
-    
+
     m_canClose = true;
 }
 
@@ -302,7 +302,7 @@ void ReportAssistantDialog::back()
             return;
         }
     }
-    
+
     if (currentPage()->name() == QLatin1String(PAGE_BZLOGIN_ID))
     {
         if (m_reportInterface->isWorthReporting() &&
@@ -312,10 +312,10 @@ void ReportAssistantDialog::back()
             return;
         }
     }
-    
+
     KAssistantDialog::back();
 }
- 
+
 void ReportAssistantDialog::enableNextButton(bool enabled)
 {
     enableButton(KDialog::User2, enabled);

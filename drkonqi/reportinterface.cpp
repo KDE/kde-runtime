@@ -125,7 +125,7 @@ QString ReportInterface::title() const
 {
     return m_reportTitle;
 }
-    
+
 void ReportInterface::setTitle(const QString & text)
 {
     m_reportTitle = text;
@@ -146,7 +146,7 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
     //Note: no translations must be done in this function's strings
     const CrashedApplication * crashedApp = DrKonqi::crashedApplication();
     const SystemInformation * sysInfo = DrKonqi::systemInformation();
-    
+
     QString report;
 
     //Program name and versions
@@ -170,7 +170,7 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
                                                         sysInfo->bugzillaPlatform()));
     }
     report.append(QLatin1String("\n"));
-    
+
     //Details of the crash situation
     if (isBugAwarenessPageDataUseful()) {
         report.append(QString("-- Information about the crash:\n"));
@@ -233,7 +233,7 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
     if (drKonqiStamp) {
         report.append(QLatin1String("\nReported using DrKonqi"));
     }
-    
+
     return report;
 }
 
@@ -270,9 +270,9 @@ BugReport ReportInterface::newBugReportTemplate() const
 {
     //Generate a new bug report template with some values on it
     BugReport report;
-    
+
     const SystemInformation * sysInfo = DrKonqi::systemInformation();
-    
+
     report.setProduct(m_productMapping->bugzillaProduct());
     report.setComponent(m_productMapping->bugzillaComponent());
     report.setVersion(m_productMapping->bugzillaVersion());
@@ -386,7 +386,7 @@ bool ReportInterface::isWorthReporting() const
 
     BacktraceParser::Usefulness use =
                 DrKonqi::debuggerManager()->backtraceGenerator()->parser()->backtraceUsefulness();
-   
+
     switch (use) {
     case BacktraceParser::ReallyUseful: {
         //Perfect backtrace: require at least one option or a 100%-50% reproducible crash
@@ -408,7 +408,7 @@ bool ReportInterface::isWorthReporting() const
         needToReport =  false;
     }
     }
-    
+
     return needToReport;
 }
 

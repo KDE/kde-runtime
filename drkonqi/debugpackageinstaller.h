@@ -29,25 +29,25 @@ class KProgressDialog;
 class DebugPackageInstaller: public QObject
 {
     Q_OBJECT
-    
+
     enum Results { ResultInstalled = 0, ResultError = 1,
                    ResultSymbolsNotFound = 2, ResultCanceled = 3 };
-    
+
     public:
         explicit DebugPackageInstaller(QObject *parent = 0);
         bool canInstallDebugPackages() const;
         void setMissingLibraries(const QStringList &);
         void installDebugPackages();
-        
+
     private Q_SLOTS:
         void processFinished(int, QProcess::ExitStatus);
         void progressDialogCanceled();
-        
+
     Q_SIGNALS:
         void packagesInstalled();
         void error(const QString &);
         void canceled();
-        
+
     private:
         KProcess *              m_installerProcess;
         KProgressDialog *       m_progressDialog;

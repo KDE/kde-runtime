@@ -27,34 +27,34 @@ class SystemInformation: public QObject
     Q_OBJECT
     public:
         explicit SystemInformation(QObject * parent = 0);
-    
+
         QString bugzillaPlatform() const;
         void setBugzillaPlatform(const QString &);
-        
+
         QString operatingSystem() const;
         QString bugzillaOperatingSystem() const;
-        
+
         QString lsbRelease() const;
-        
+
         bool compiledSources() const;
         void setCompiledSources(bool);
-        
+
         QString kdeVersion() const;
         QString qtVersion() const;
-        
+
     private Q_SLOTS:
         void lsbReleaseFinished();
-        
+
     private:
         void fetchOSInformation();
         void runLsbRelease();
-        
+
         QString     m_operatingSystem;
         QString     m_bugzillaOperatingSystem;
         QString     m_bugzillaPlatform;
-        
+
         QString     m_lsbRelease;
-        
+
         bool        m_compiledSources;
 };
 

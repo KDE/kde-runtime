@@ -48,7 +48,7 @@ class BugzillaLibTest : public QObject
             manager->tryLogin();
             kDebug() << "Login ...";
         }
-        
+
     private Q_SLOTS:
         void loginFinished(bool ok)
         {
@@ -56,15 +56,15 @@ class BugzillaLibTest : public QObject
             if (!ok) {
                 return;
             }
-            
+
             //Uncomment to Test
             //FIXME provide a way to select the test from the command line
-            
+
             //Send a new bug report
             /*
             sendBR();
             */
-            
+
             //Attach a simple text to a report as a file
             /*
             manager->attachTextToReport("Bugzilla Lib Attachment Content Test", "/tmp/var", 
@@ -75,12 +75,12 @@ class BugzillaLibTest : public QObject
             manager->addMeToCC(100005);
             */
         }
-        
+
         void loginError(const QString & msg)
         {
             kDebug() << "Login Error" << msg;
         }
-        
+
         void sendBR()
         {
             BugReport br;
@@ -94,11 +94,11 @@ class BugzillaLibTest : public QObject
             br.setBugSeverity("crash");
             br.setShortDescription("bla bla");
             br.setDescription("bla bla large");
-            
+
             manager->sendReport(br);
             kDebug() << "Trying to send bug report";
         }
-        
+
         void sendBR2()
         {
             BugReport br;
@@ -112,24 +112,24 @@ class BugzillaLibTest : public QObject
             br.setBugSeverity("crash");
             br.setShortDescription("bla bla");
             br.setDescription("bla bla large");
-            
+
             manager->sendReport(br);
             kDebug() << "Trying to send bug report";
         }
-        
+
         void reportSent( int num)
         {
             kDebug() << "BR sent " << num << manager->urlForBug(num);
         }
-        
+
         void sendReportError(const QString & msg)
         {
             kDebug() << "Error sending bug report" << msg;
         }
-        
+
     private:
         BugzillaManager * manager;
-    
+
 };
 
 int main (int argc, char ** argv)
@@ -143,15 +143,15 @@ int main (int argc, char ** argv)
     options.add("user <username>", ki18nc("@info:shell","bugstest.kde.org username"));
     options.add("pass <password>", ki18nc("@info:shell","bugstest.kde.org password"));
     KCmdLineArgs::addCmdLineOptions(options);
-    
+
     KApplication app;
-    
+
     if (!KCmdLineArgs::parsedArgs()->isSet("user") || !KCmdLineArgs::parsedArgs()->isSet("pass")) {
         kDebug() << "Provide bugstest.kde.org username and password. See help";
         return 0;
     }
-    
-    new BugzillaLibTest(KCmdLineArgs::parsedArgs()->getOption("user"), 
+
+    new BugzillaLibTest(KCmdLineArgs::parsedArgs()->getOption("user"),
                                                     KCmdLineArgs::parsedArgs()->getOption("pass") );
     return app.exec();
 }

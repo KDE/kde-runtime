@@ -54,12 +54,12 @@ private Q_SLOTS:
 
 Q_SIGNALS:
     void loggedTurnToNextPage();
- 
+
 private:
     bool kWalletEntryExists();
     void openWallet();
     bool canSetCookies();
-    
+
     Ui::AssistantPageBugzillaLogin      ui;
 
     KWallet::Wallet *                   m_wallet;
@@ -129,15 +129,15 @@ private Q_SLOTS:
 
     void retryClicked();
     void finishClicked();
-    
+
     void openReportContents();
 
 private:
     Ui::AssistantPageBugzillaSend           ui;
     QString                                 reportUrl;
-    
+
     QPointer<KDialog>                       m_contentsDialog;
-    
+
 Q_SIGNALS:
     void finished(bool);
 

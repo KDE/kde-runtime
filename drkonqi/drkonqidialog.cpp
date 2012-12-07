@@ -77,7 +77,7 @@ DrKonqiDialog::~DrKonqiDialog()
 {
     KConfigGroup config(KGlobal::config(), "General");
     saveDialogSize(config);
-    
+
     KGlobal::deref();
 }
 
@@ -94,7 +94,7 @@ void DrKonqiDialog::buildMainWidget()
 
     m_introWidget = new QWidget(this);
     ui.setupUi(m_introWidget);
-    
+
     ui.titleLabel->setText(i18nc("@info", "<para>We are sorry, <application>%1</application> "
                                                "closed unexpectedly.</para>", crashedApp->name()));
 

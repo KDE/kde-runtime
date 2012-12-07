@@ -31,7 +31,7 @@ StatusWidget::StatusWidget(QWidget * parent) :
         m_busy(false)
 {
     setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
-    
+
     //Main layout
     m_statusPage = new QWidget(this);
     m_busyPage = new QWidget(this);
@@ -44,7 +44,7 @@ StatusWidget::StatusWidget(QWidget * parent) :
     m_statusLabel->setOpenExternalLinks(true);
     m_statusLabel->setTextFormat(Qt::RichText);
     //m_statusLabel->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
-    
+
     QHBoxLayout * statusLayout = new QHBoxLayout();
     statusLayout->setContentsMargins(0,0,0,0);
     m_statusPage->setLayout(statusLayout);
@@ -55,10 +55,10 @@ StatusWidget::StatusWidget(QWidget * parent) :
     m_throbberWidget = new KPixmapSequenceWidget();
     m_throbberWidget->setSequence(KPixmapSequence("process-working", 22));
     m_throbberWidget->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    
+
     m_busyLabel = new WrapLabel();
     //m_busyLabel->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
-    
+
     QHBoxLayout * busyLayout = new QHBoxLayout();
     busyLayout->setContentsMargins(0,0,0,0);
     m_busyPage->setLayout(busyLayout);

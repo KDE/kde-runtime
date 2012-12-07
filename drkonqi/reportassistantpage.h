@@ -31,7 +31,7 @@ class BugzillaManager;
 class ReportAssistantPage: public QWidget
 {
     Q_OBJECT
-    
+
 public:
     explicit ReportAssistantPage(ReportAssistantDialog * parent);
 
@@ -41,10 +41,10 @@ public:
     virtual void aboutToHide() {}
     /** Tells the KAssistantDialog to enable the Next button **/
     virtual bool isComplete();
-    
+
     /** Last time checks to see if you can turn the page **/
     virtual bool showNextPage();
-    
+
     ReportInterface *reportInterface() const;
     BugzillaManager *bugzillaManager() const;
     ReportAssistantDialog * assistant() const;

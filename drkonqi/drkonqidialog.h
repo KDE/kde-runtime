@@ -63,7 +63,7 @@ private:
 
     QWidget *                           m_introWidget;
     Ui::MainWidget                      ui;
-    
+
     BacktraceWidget *                   m_backtraceWidget;
 
     KMenu *m_debugMenu;

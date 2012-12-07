@@ -88,7 +88,7 @@ class ConclusionPage : public ReportAssistantPage
 
 public:
     explicit ConclusionPage(ReportAssistantDialog *);
-    
+
     void aboutToShow();
     void aboutToHide();
 
@@ -96,14 +96,14 @@ public:
 
 private Q_SLOTS:
     void finishClicked();
-    
+
     void openReportInformation();
 
 private:
     Ui::AssistantPageConclusions            ui;
-    
+
     QPointer<KDialog>                       m_infoDialog;
-    
+
     bool                                    isBKO;
     bool                                    needToReport;
 

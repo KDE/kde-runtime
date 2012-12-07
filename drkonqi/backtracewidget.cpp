@@ -54,7 +54,7 @@ BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent,
     connect(m_debugPackageInstaller, SIGNAL(error(QString)), this, SLOT(debugPackageError(QString)));
     connect(m_debugPackageInstaller, SIGNAL(packagesInstalled()), this, SLOT(regenerateBacktrace()));
     connect(m_debugPackageInstaller, SIGNAL(canceled()), this, SLOT(debugPackageCanceled()));
-    
+
     connect(m_btGenerator, SIGNAL(done()) , this, SLOT(loadData()));
     connect(m_btGenerator, SIGNAL(someError()) , this, SLOT(loadData()));
     connect(m_btGenerator, SIGNAL(failedToStart()) , this, SLOT(loadData()));
@@ -177,7 +177,7 @@ void BacktraceWidget::generateBacktrace()
         setAsLoading();
         emit stateChanged();
         //Load already generated information
-        loadData(); 
+        loadData();
     }
 }
 
@@ -366,7 +366,7 @@ void BacktraceWidget::debugPackageError(const QString & errorMessage)
 
 void BacktraceWidget::debugPackageCanceled()
 {
-    ui.m_installDebugButton->setVisible(true);    
+    ui.m_installDebugButton->setVisible(true);
 }
 
 bool BacktraceWidget::canInstallDebugPackages() const

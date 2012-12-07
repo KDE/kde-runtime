@@ -174,7 +174,7 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
             //return and do not crash
             return;
         }
-        
+
         KUrl fileUrl = dlg.data()->selectedUrl();
         delete dlg.data();
 

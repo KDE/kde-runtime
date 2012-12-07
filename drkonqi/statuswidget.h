@@ -38,11 +38,11 @@ public:
     void setIdle(QString);
 
     void addCustomStatusWidget(QWidget *);
-   
+
 private:
     void showEvent(QShowEvent *);
     void hideEvent(QHideEvent *);
-    
+
     void setBusyCursor();
     void setIdleCursor();
 
@@ -53,7 +53,7 @@ private:
 
     QWidget *           m_statusPage;
     QWidget *           m_busyPage;
-    
+
     int                 m_cursorStackCount;
     bool                m_busy;
 };
@@ -66,26 +66,26 @@ public:
     explicit WrapLabel(QWidget * parent = 0) : QLabel(parent){
         setWordWrap(true);
     }
-    
+
     void setText(const QString & text) {
         QLabel::setText(text);
         adjustHeight();
     }
-    
+
     bool event(QEvent * e) {
         if (e->type() == QEvent::ApplicationFontChange || e->type() == QEvent::Resize) {
             adjustHeight();
         }
         return QLabel::event(e);
     }
-    
+
 private:
     void adjustHeight() {
         QTextDocument document(text());
         document.setTextWidth(width());
         setMaximumHeight(document.size().height());
     }
-    
+
 };
 
 #endif

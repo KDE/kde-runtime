@@ -31,7 +31,7 @@ class ProductMapping: public QObject
 Q_OBJECT
 public:
     explicit ProductMapping(const QString&, BugzillaManager *, QObject * parent = 0);
-    
+
     QString bugzillaProduct() const;
     QString bugzillaComponent() const;
     QString bugzillaVersion() const;

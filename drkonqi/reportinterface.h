@@ -50,7 +50,7 @@ public:
 
     QString backtrace() const;
     void setBacktrace(const QString & backtrace);
-    
+
     QString title() const;
     void setTitle(const QString & text);
 
@@ -64,7 +64,7 @@ public:
     void sendBugReport() const;
 
     QStringList relatedBugzillaProducts() const;
-    
+
     bool isWorthReporting() const;
 
     //Zero means creating a new bug report
@@ -91,7 +91,7 @@ public:
     bool userCanProvideApplicationConfigDetails() const {
         return m_provideApplicationConfigurationDetails;
     }
-    
+
 private Q_SLOTS:
     void sendUsingDefaultProduct() const;
     void addedToCC();
@@ -108,11 +108,11 @@ private:
     bool        m_provideActionsApplicationDesktop;
     bool        m_provideUnusualBehavior;
     bool        m_provideApplicationConfigurationDetails;
-    
+
 
     QString     m_backtrace;
     QStringList m_firstBacktraceFunctions;
-    
+
     QString     m_reportTitle;
     QString     m_reportDetailText;
     QStringList m_possibleDuplicates;
@@ -121,7 +121,7 @@ private:
 
     uint     m_attachToBugNumber;
     uint     m_duplicate;
-    
+
     ProductMapping *    m_productMapping;
     BugzillaManager *   m_bugzillaManager;
     ApplicationDetailsExamples * m_appDetailsExamples;

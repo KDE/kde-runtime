@@ -126,9 +126,9 @@ void BugzillaLoginPage::aboutToShow()
         ui.m_passwordLabel->setVisible(false);
 
         ui.m_savePasswordCheckBox->setVisible(false);
-        
+
         ui.m_noticeLabel->setVisible(false);
-        
+
         ui.m_statusWidget->setIdle(i18nc("@info:status the user is logged at the bugtracker site "
                                       "as USERNAME",
                                       "Logged in at the KDE bug tracking system (%1) as: %2.",
@@ -190,7 +190,7 @@ void BugzillaLoginPage::walletLogin()
                 m_wallet->readMap(QLatin1String(konquerorKWalletEntryName), values);
                 QString username = values.value(QLatin1String(konquerorKWalletEntryUsername));
                 QString password = values.value(QLatin1String(konquerorKWalletEntryPassword));
-                
+
                 if (!username.isEmpty() && !password.isEmpty()) {
                     //Copy to DrKonqi own entries
                     values.clear();
@@ -199,12 +199,12 @@ void BugzillaLoginPage::walletLogin()
                     m_wallet->writeMap(QLatin1String(kWalletEntryName), values);
 
                     ui.m_savePasswordCheckBox->setCheckState(Qt::Checked);
-                    
+
                     ui.m_userEdit->setText(username);
                     ui.m_passwordEdit->setText(password);
                 }
             }
-            
+
         }
     }
 }
@@ -285,7 +285,7 @@ void BugzillaLoginPage::loginClicked()
         ui.m_userEdit->setEnabled(false);
         ui.m_passwordEdit->setEnabled(false);
         ui.m_savePasswordCheckBox->setEnabled(false);
-        
+
         if (ui.m_savePasswordCheckBox->checkState()==Qt::Checked) { //Wants to save data
             if (!m_wallet) {
                 openWallet();
@@ -293,13 +293,13 @@ void BugzillaLoginPage::loginClicked()
             //Got wallet open ?
             if (m_wallet) {
                 m_wallet->setFolder(KWallet::Wallet::FormDataFolder());
-                
+
                 QMap<QString, QString> values;
                 values.insert(QLatin1String(kWalletEntryUsername), ui.m_userEdit->text());
                 values.insert(QLatin1String(kWalletEntryPassword), ui.m_passwordEdit->text());
                 m_wallet->writeMap(QLatin1String(kWalletEntryName), values);
             }
-            
+
         } else { //User doesn't want to save or wants to remove.
             if (kWalletEntryExists()) {
                 if (!m_wallet) {
@@ -335,7 +335,7 @@ void BugzillaLoginPage::loginFinished(bool logged)
                 m_wallet->lockWallet();
             }
         }
-        
+
         emit loggedTurnToNextPage();
     } else {
         ui.m_statusWidget->setIdle(i18nc("@info:status/rich","<b>Error: Invalid username or "
@@ -346,7 +346,7 @@ void BugzillaLoginPage::loginFinished(bool logged)
         ui.m_userEdit->setEnabled(true);
         ui.m_passwordEdit->setEnabled(true);
         ui.m_savePasswordCheckBox->setEnabled(true);
-        
+
         ui.m_userEdit->setFocus(Qt::OtherFocusReason);
     }
 }
@@ -437,7 +437,7 @@ void BugzillaInformationPage::aboutToShow()
                                                    "Mac OS X"), "MacPorts Packages");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Solaris"), "Solaris Packages");
-            
+
             //Restore previously selected bugzilla platform (distribution)
             KConfigGroup config(KGlobal::config(), "BugzillaInformationPage");
             QString entry = config.readEntry("BugzillaPlatform","unspecified");
@@ -455,7 +455,7 @@ void BugzillaInformationPage::aboutToShow()
     //If attaching to an existent report: minimum 30, maximum 50
     int multiplier = (reportInterface()->attachToBugNumber() == 0) ? 10 : 5;
     m_requiredCharacters = 20 + (reportInterface()->selectedOptionsRating() * multiplier);
-    
+
     //Fill the description textedit with some headings:
     QString descriptionTemplate;
     if (ui.m_detailsEdit->toPlainText().isEmpty()) {
@@ -565,7 +565,7 @@ bool BugzillaInformationPage::showNextPage()
             return true;
         }
     }
-    
+
     return false;
 }
 
@@ -579,7 +579,7 @@ void BugzillaInformationPage::aboutToHide()
     //Save fields data
     reportInterface()->setTitle(ui.m_titleEdit->text());
     reportInterface()->setDetailText(ui.m_detailsEdit->toPlainText());
-    
+
     if (m_distroComboVisible) {
         //Save bugzilla platform (distribution)
         QString bugzillaPlatform = ui.m_distroChooserCombo->itemData(
@@ -590,7 +590,7 @@ void BugzillaInformationPage::aboutToHide()
     }
     bool compiledFromSources = ui.m_compiledSourcesCheckBox->checkState() == Qt::Checked;
     DrKonqi::systemInformation()->setCompiledSources(compiledFromSources);
-    
+
 }
 
 void BugzillaInformationPage::showTitleExamples()
@@ -662,25 +662,25 @@ BugzillaSendPage::BugzillaSendPage(ReportAssistantDialog * parent)
     connect(reportInterface(), SIGNAL(sendReportError(QString,QString)), this, SLOT(sendError(QString,QString)));
 
     ui.setupUi(this);
-    
+
     ui.m_retryButton->setGuiItem(KGuiItem2(i18nc("@action:button", "Retry..."),
                                               KIcon("view-refresh"),
                                               i18nc("@info:tooltip", "Use this button to retry "
                                                   "sending the crash report if it failed before.")));
-    
+
     ui.m_showReportContentsButton->setGuiItem(
                     KGuiItem2(i18nc("@action:button", "Sho&w Contents of the Report"),
                             KIcon("document-preview"),
                             i18nc("@info:tooltip", "Use this button to show the generated "
                             "report information about this crash.")));
     connect(ui.m_showReportContentsButton, SIGNAL(clicked()), this, SLOT(openReportContents()));
-                                                  
+
     ui.m_retryButton->setVisible(false);
     connect(ui.m_retryButton, SIGNAL(clicked()), this , SLOT(retryClicked()));
-    
+
     ui.m_launchPageOnFinish->setVisible(false);
     ui.m_restartAppOnFinish->setVisible(false);
-    
+
     connect(assistant(), SIGNAL(user1Clicked()), this, SLOT(finishClicked()));
 }
 
@@ -701,19 +701,19 @@ void BugzillaSendPage::sent(int bug_id)
     ui.m_statusWidget->setVisible(false);
     ui.m_retryButton->setEnabled(false);
     ui.m_retryButton->setVisible(false);
-    
+
     ui.m_showReportContentsButton->setVisible(false);
-    
+
     ui.m_launchPageOnFinish->setVisible(true);
     ui.m_restartAppOnFinish->setVisible(!DrKonqi::crashedApplication()->hasBeenRestarted());
     ui.m_restartAppOnFinish->setChecked(false);
-    
+
     reportUrl = bugzillaManager()->urlForBug(bug_id);
     ui.m_finishedLabel->setText(i18nc("@info/rich","Crash report sent.<nl/>"
                                              "URL: <link>%1</link><nl/>"
                                              "Thank you for being part of KDE. "
                                              "You can now close this window.", reportUrl));
-    
+
     emit finished(false);
 }
 

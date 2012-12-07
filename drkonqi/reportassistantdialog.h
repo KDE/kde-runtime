@@ -58,13 +58,13 @@ private Q_SLOTS:
 
     //Override default reject method
     void reject();
-    
+
 private:
     void connectSignals(ReportAssistantPage *);
     void closeEvent(QCloseEvent*);
 
     QHash<QLatin1String, KPageWidgetItem*>       m_pageWidgetMap;
-    
+
     QPointer<AboutBugReportingDialog>   m_aboutBugReportingDialog;
     ReportInterface *                m_reportInterface;
 

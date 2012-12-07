@@ -85,7 +85,7 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(ReportAssistantDialog * parent):
                                                         "earlier date."));
     ui.m_searchMoreButton->setGuiItem(m_searchMoreGuiItem);
     connect(ui.m_searchMoreButton, SIGNAL(clicked()), this, SLOT(searchMore()));
-    
+
     m_retrySearchGuiItem = KGuiItem2(i18nc("@action:button", "Retry search"),
                                                    KIcon("edit-find"),
                                                    i18nc("@info:tooltip", "Use this button to "
@@ -102,28 +102,28 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(ReportAssistantDialog * parent):
                                                    KIcon("process-stop"),
                                                    i18nc("@info:tooltip", "Use this button to stop "
                                                    "the current search.")));
-    ui.m_stopSearchButton->setText(QString()); //FIXME 
+    ui.m_stopSearchButton->setText(QString()); //FIXME
     connect(ui.m_stopSearchButton, SIGNAL(clicked()), this, SLOT(stopCurrentSearch()));
-    
+
     //Possible duplicates list and buttons
     connect(ui.m_selectedDuplicatesList, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
              this, SLOT(itemClicked(QListWidgetItem*)));
     connect(ui.m_selectedDuplicatesList, SIGNAL(itemSelectionChanged()),
              this, SLOT(possibleDuplicateSelectionChanged()));
-             
+
     ui.m_removeSelectedDuplicateButton->setGuiItem(
         KGuiItem2(i18nc("@action:button remove the selected item from a list", "Remove"),
                KIcon("list-remove"),
                i18nc("@info:tooltip", "Use this button to remove a selected possible duplicate")));
     ui.m_removeSelectedDuplicateButton->setEnabled(false);
-    connect(ui.m_removeSelectedDuplicateButton, SIGNAL(clicked()), this, 
+    connect(ui.m_removeSelectedDuplicateButton, SIGNAL(clicked()), this,
                                                                 SLOT(removeSelectedDuplicate()));
 
     ui.m_attachToReportIcon->setPixmap(KIcon("mail-attachment").pixmap(16,16));
     ui.m_attachToReportIcon->setFixedSize(16,16);
     ui.m_attachToReportIcon->setVisible(false);
     ui.m_attachToReportLabel->setVisible(false);
-    connect(ui.m_attachToReportLabel, SIGNAL(linkActivated(QString)), this, 
+    connect(ui.m_attachToReportLabel, SIGNAL(linkActivated(QString)), this,
                                                                 SLOT(cancelAttachToBugReport()));
     connect(ui.information, SIGNAL(linkActivated(QString)), this, SLOT(informationClicked(QString)));
     showDuplicatesPanel(false);
@@ -222,7 +222,7 @@ void BugzillaDuplicatesPage::performSearch()
 
     ui.m_statusWidget->setBusy(i18nc("@info:status","Searching for duplicates (from %1 to %2)...",
                                    startDateStr, endDateStr));
-                           
+
     //Bugzilla will not search on Today bugs if we send the date.
     //we need to send "Now"
     if (m_searchingEndDate == QDate::currentDate()) {
@@ -244,9 +244,9 @@ void BugzillaDuplicatesPage::stopCurrentSearch()
 {
     if (m_searching) {
         bugzillaManager()->stopCurrentSearch(); 
-        
+
         markAsSearching(false);
-        
+
         if (m_startDate==m_endDate) { //Never searched
             ui.m_statusWidget->setIdle(i18nc("@info:status","Search stopped."));
         } else {
@@ -261,13 +261,13 @@ void BugzillaDuplicatesPage::markAsSearching(bool searching)
 {
     m_searching = searching;
     emitCompleteChanged();
-    
+
     ui.m_bugListWidget->setEnabled(!searching);
     ui.m_searchMoreButton->setEnabled(!searching);
     ui.m_searchMoreButton->setVisible(!searching);
     ui.m_stopSearchButton->setEnabled(searching);
     ui.m_stopSearchButton->setVisible(searching);
-    
+
     ui.m_selectedDuplicatesList->setEnabled(!searching);
     ui.m_selectedPossibleDuplicatesLabel->setEnabled(!searching);
     ui.m_removeSelectedDuplicateButton->setEnabled(!searching && 
@@ -291,11 +291,11 @@ void BugzillaDuplicatesPage::searchFinished(const BugMapList & list)
 {
     ui.m_searchMoreButton->setGuiItem(m_searchMoreGuiItem);
     m_startDate = m_searchingStartDate;
-    
+
     int results = list.count();
     if (results > 0) {
         markAsSearching(false);
-        
+
         ui.m_statusWidget->setIdle(i18nc("@info:status","Showing results from %1 to %2",
                                      m_startDate.toString("yyyy-MM-dd"),
                                      m_endDate.toString("yyyy-MM-dd")));
@@ -569,7 +569,7 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
     setButtons(KDialog::Close | KDialog::User1);
     setDefaultButton(KDialog::Close);
     setCaption(i18nc("@title:window","Bug Description"));
-    
+
     QWidget * widget = new QWidget(this);
     ui.setupUi(widget);
     setMainWidget(widget);
@@ -586,7 +586,7 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
                                              "the crash you experienced is related to this bug "
                                              "report")));
     connect(this, SIGNAL(user1Clicked()) , this, SLOT(relatedReportClicked()));
-    
+
     connect(ui.m_showOwnBacktraceCheckBox, SIGNAL(toggled(bool)), this, SLOT(toggleShowOwnBacktrace(bool)));
 
     //Connect bugzillalib signals
@@ -594,7 +594,7 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
              this, SLOT(bugFetchFinished(BugReport,QObject*)));
     connect(m_parent->bugzillaManager(), SIGNAL(bugReportError(QString,QObject*)),
              this, SLOT(bugFetchError(QString,QObject*)));
-             
+
     setInitialSize(QSize(800, 600));
     KConfigGroup config(KGlobal::config(), "BugzillaReportInformationDialog");
     restoreDialogSize(config);
@@ -630,7 +630,7 @@ void BugzillaReportInformationDialog::showBugReport(int bugNumber, bool relatedB
 
     ui.m_infoBrowser->setText(i18nc("@info:status","Loading..."));
     ui.m_infoBrowser->setEnabled(false);
-    
+
     ui.m_linkLabel->setText(i18nc("@info","<link url='%1'>Report's webpage</link>",
                                     m_parent->bugzillaManager()->urlForBug(m_bugNumber)));
 
@@ -638,7 +638,7 @@ void BugzillaReportInformationDialog::showBugReport(int bugNumber, bool relatedB
                                                            "<numid>%1</numid> from %2....",
                                             m_bugNumber,
                                             QLatin1String(KDE_BUGZILLA_SHORT_URL)));
-                                            
+
     ui.m_backtraceBrowser->setPlainText(
                     i18nc("@info/plain","Backtrace of the crash I experienced:\n\n") +
                     m_parent->reportInterface()->backtrace());
@@ -749,7 +749,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                 } else {
                     customResolutionString = report.resolution();
                 }
-                
+
                 customStatusString = i18nc("@info bug status, %1 is the resolution", "Closed (%1)",
                                            customResolutionString);
             } else if (status == BugReport::NeedsInfo) {
@@ -808,7 +808,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
 
             ui.m_infoBrowser->setText(text);
             ui.m_infoBrowser->setEnabled(true);
-            
+
             button(KDialog::User1)->setEnabled(m_relatedButtonEnabled);
             button(KDialog::User1)->setVisible(m_relatedButtonEnabled);
 
@@ -971,7 +971,7 @@ void BugzillaReportConfirmationDialog::checkProceed()
 {
     bool yes = ui.proceedRadioYes->isChecked();
     bool no = ui.proceedRadioNo->isChecked();
-    
+
     //Enable/disable labels and controls
     ui.areYouSureLabel->setEnabled(yes);
     ui.markAsDuplicateCheck->setEnabled(yes);

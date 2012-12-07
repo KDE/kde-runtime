@@ -37,7 +37,7 @@ SystemInformation::SystemInformation(QObject * parent)
 {
     fetchOSInformation();
     runLsbRelease();
-    
+
     KConfigGroup config(KGlobal::config(), "SystemInformation");
     m_compiledSources = config.readEntry("CompiledSources", false);
 }
@@ -65,7 +65,7 @@ void SystemInformation::lsbReleaseFinished()
     Q_ASSERT(process);
     m_lsbRelease = QString::fromLocal8Bit(process->readAllStandardOutput().trimmed());
     process->deleteLater();
-    
+
     //Guess distro string
     //TODO cache this value on KConfig ?
     if ( m_lsbRelease.contains("suse",Qt::CaseInsensitive) ) {
@@ -142,7 +142,7 @@ void SystemInformation::fetchOSInformation()
 #else
     m_bugzillaOperatingSystem = QLatin1String("unspecified");
 #endif
-    
+
     //Get complete OS string (and fallback to base string)
 #ifdef HAVE_UNAME
     QString os;
@@ -155,7 +155,7 @@ void SystemInformation::fetchOSInformation()
             + QString::fromLocal8Bit(buf.release) + ' ' 
             + QString::fromLocal8Bit(buf.machine);
     }
-#else    
+#else
     m_operatingSystem = m_bugzillaOperatingSystem;
 #endif
 }
@@ -194,9 +194,9 @@ void SystemInformation::setCompiledSources(bool compiled)
 {
     if (compiled != m_compiledSources) {
         KConfigGroup config(KGlobal::config(), "SystemInformation");
-        config.writeEntry("CompiledSources", compiled);    
+        config.writeEntry("CompiledSources", compiled);
     }
-    m_compiledSources = compiled;    
+    m_compiledSources = compiled;
 }
 
 QString SystemInformation::kdeVersion() const

@@ -78,10 +78,10 @@ void ProductMapping::getRelatedProductsUsingInternalFile(const QString & bugzill
 {
     //ProductGroup ->  kontact=kdepim
     //Groups -> kdepim=kontact|kmail|korganizer|akonadi|pimlibs..etc
-    
+
     KConfig mappingsFile(QString::fromLatin1("mappings"), KConfig::NoGlobals, "appdata");
     const KConfigGroup productGroup = mappingsFile.group("ProductGroup");
-    
+
     //Get groups of the application
     QStringList groups;
     if (productGroup.hasKey(bugzillaProduct)) {

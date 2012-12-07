@@ -59,7 +59,7 @@ private Q_SLOTS:
     void stopCurrentSearch();
 
     void markAsSearching(bool);
-    
+
     bool canSearchMore();
 
     void searchFinished(const BugMapList&);
@@ -67,7 +67,7 @@ private Q_SLOTS:
     void analyzedDuplicates(KJob *job);
 
     void resetDates();
-    
+
     /* Duplicates list related methods */
     void openSelectedReport();
     void itemClicked(QTreeWidgetItem *, int);
@@ -93,14 +93,14 @@ private:
     bool                                        m_foundDuplicate;
 
     Ui::AssistantPageBugzillaDuplicates         ui;
-    
+
     //Dates of current Results
     QDate                                       m_startDate;
     QDate                                       m_endDate;
     //Dates of searching process
     QDate                                       m_searchingStartDate;
     QDate                                       m_searchingEndDate;
-    
+
     KGuiItem                                    m_searchMoreGuiItem;
     KGuiItem                                    m_retrySearchGuiItem;
     DuplicateFinderJob::Result                  m_result;
@@ -130,7 +130,7 @@ private Q_SLOTS:
     void relatedReportClicked();
 
     void toggleShowOwnBacktrace(bool);
-    
+
 Q_SIGNALS:
     void possibleDuplicateSelected(int);
     void attachToBugReportSelected(int);
