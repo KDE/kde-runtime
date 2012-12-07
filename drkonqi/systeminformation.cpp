@@ -151,8 +151,8 @@ void SystemInformation::fetchOSInformation()
         kDebug() << "call to uname failed" << perror;
         m_operatingSystem = m_bugzillaOperatingSystem;
     } else {
-        m_operatingSystem = QString::fromLocal8Bit(buf.sysname) + ' ' 
-            + QString::fromLocal8Bit(buf.release) + ' ' 
+        m_operatingSystem = QString::fromLocal8Bit(buf.sysname) + ' '
+            + QString::fromLocal8Bit(buf.release) + ' '
             + QString::fromLocal8Bit(buf.machine);
     }
 #else

@@ -99,7 +99,7 @@ void ProductMapping::getRelatedProductsUsingInternalFile(const QString & bugzill
 
     //Add the product itself
     m_relatedBugzillaProducts = QStringList() << m_bugzillaProduct;
-    
+
     //Get related products of each related group
     Q_FOREACH( const QString & group, groups ) {
         const KConfigGroup bzGroups = mappingsFile.group("BZGroups");

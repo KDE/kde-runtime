@@ -152,7 +152,7 @@ void BugzillaLoginPage::openWallet()
     //Store if the wallet was previously opened so we can know if we should close it later
     m_walletWasOpenedBefore = KWallet::Wallet::isOpen(KWallet::Wallet::NetworkWallet());
     //Request open the wallet
-    m_wallet = KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(), 
+    m_wallet = KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(),
                                     static_cast<QWidget*>(this->parent())->winId());
 }
 
@@ -355,7 +355,7 @@ BugzillaLoginPage::~BugzillaLoginPage()
 {
     //Close wallet if we close the assistant in this step
     if (m_wallet) {
-        if (m_wallet->isOpen() && !m_walletWasOpenedBefore) { 
+        if (m_wallet->isOpen() && !m_walletWasOpenedBefore) {
             m_wallet->lockWallet();
         }
         delete m_wallet;
@@ -419,7 +419,7 @@ void BugzillaInformationPage::aboutToShow()
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Fedora"), "Fedora RPMs");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
-                                                   "Kubuntu/Ubuntu (and derivatives)"), 
+                                                   "Kubuntu/Ubuntu (and derivatives)"),
                                                    "Ubuntu Packages");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Pardus"), "Pardus Packages");
@@ -615,7 +615,7 @@ void BugzillaInformationPage::showDescriptionHelpExamples()
                                  "application an instant before the crash.");
     }
     if (reportInterface()->userCanProvideUnusualBehavior()) {
-        descriptionHelp += "<br />" + 
+        descriptionHelp += "<br />" +
                            i18nc("@info:tooltip help and examples of good bug descriptions",
                                  "- Note if you noticed any unusual behavior in the application "
                                  "or in the whole environment.");
@@ -745,7 +745,7 @@ void BugzillaSendPage::openReportContents()
     if (!m_contentsDialog)
     {
         QString report = reportInterface()->generateReport(false) + QLatin1Char('\n') +
-                            i18nc("@info/plain report to KDE bugtracker address","Report to %1", 
+                            i18nc("@info/plain report to KDE bugtracker address","Report to %1",
                                   DrKonqi::crashedApplication()->bugReportAddress());
         m_contentsDialog = new ReportInformationDialog(report);
     }

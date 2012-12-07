@@ -218,7 +218,7 @@ ConclusionPage::ConclusionPage(ReportAssistantDialog * parent)
                             KIcon("document-preview"),
                             i18nc("@info:tooltip", "Use this button to show the generated "
                             "report information about this crash.")));
-    connect(ui.m_showReportInformationButton, SIGNAL(clicked()), this, 
+    connect(ui.m_showReportInformationButton, SIGNAL(clicked()), this,
                                                                     SLOT(openReportInformation()));
     ui.m_restartAppOnFinish->setVisible(false);
 }
@@ -300,7 +300,7 @@ void ConclusionPage::aboutToShow()
         if (state == BacktraceGenerator::NotLoaded) {
             backtraceGenerated = false;
             explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","The crash information was "
-                                        "not generated because it was not needed.")); 
+                                        "not generated because it was not needed."));
         } else {
             explanationHTML += QString("<li>%1<br />%2</li>").arg(
                                         i18nc("@info","The automatically generated crash "
@@ -408,7 +408,7 @@ void ConclusionPage::openReportInformation()
 {
     if (!m_infoDialog) {
         QString info = reportInterface()->generateReport(false) + QLatin1Char('\n') +
-                            i18nc("@info/plain report to url/mail address","Report to %1", 
+                            i18nc("@info/plain report to url/mail address","Report to %1",
                                   DrKonqi::crashedApplication()->bugReportAddress());
 
         m_infoDialog = new ReportInformationDialog(info);

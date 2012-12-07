@@ -24,7 +24,7 @@ ReportAssistantPage::ReportAssistantPage(ReportAssistantDialog * parent)
     : QWidget(parent), m_assistant(parent)
 {
 }
-            
+
 bool ReportAssistantPage::isComplete()
 {
     return true;

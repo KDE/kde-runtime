@@ -68,7 +68,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     BugAwarenessPage * m_awareness = new BugAwarenessPage(this);
     connectSignals(m_awareness);
 
-    KPageWidgetItem * m_awarenessPage = new KPageWidgetItem(m_awareness, 
+    KPageWidgetItem * m_awarenessPage = new KPageWidgetItem(m_awareness,
                                                                 QLatin1String(PAGE_AWARENESS_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_AWARENESS_ID),m_awarenessPage);
     m_awarenessPage->setHeader(i18nc("@title","What do you know about the crash?"));
@@ -78,7 +78,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     CrashInformationPage * m_backtrace = new CrashInformationPage(this);
     connectSignals(m_backtrace);
 
-    KPageWidgetItem * m_backtracePage = new KPageWidgetItem(m_backtrace, 
+    KPageWidgetItem * m_backtracePage = new KPageWidgetItem(m_backtrace,
                                                         QLatin1String(PAGE_CRASHINFORMATION_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_CRASHINFORMATION_ID),m_backtracePage);
     m_backtracePage->setHeader(i18nc("@title","Fetching the Backtrace (Automatic Crash Information)"));
@@ -105,12 +105,12 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     m_bugzillaLoginPage->setHeader(i18nc("@title","Login into the KDE Bugtracking System"));
     m_bugzillaLoginPage->setIcon(KIcon("user-identity"));
     connect(m_bugzillaLogin, SIGNAL(loggedTurnToNextPage()), this, SLOT(loginFinished()));
-    
+
     //-Bugzilla duplicates
     BugzillaDuplicatesPage * m_bugzillaDuplicates =  new BugzillaDuplicatesPage(this);
     connectSignals(m_bugzillaDuplicates);
 
-    KPageWidgetItem * m_bugzillaDuplicatesPage = new KPageWidgetItem(m_bugzillaDuplicates, 
+    KPageWidgetItem * m_bugzillaDuplicatesPage = new KPageWidgetItem(m_bugzillaDuplicates,
                                                             QLatin1String(PAGE_BZDUPLICATES_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_BZDUPLICATES_ID),m_bugzillaDuplicatesPage);
     m_bugzillaDuplicatesPage->setHeader(i18nc("@title","Look for Possible Duplicate Reports"));
@@ -120,7 +120,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     BugzillaInformationPage * m_bugzillaInformation =  new BugzillaInformationPage(this);
     connectSignals(m_bugzillaInformation);
 
-    KPageWidgetItem * m_bugzillaInformationPage = new KPageWidgetItem(m_bugzillaInformation, 
+    KPageWidgetItem * m_bugzillaInformationPage = new KPageWidgetItem(m_bugzillaInformation,
                                                                 QLatin1String(PAGE_BZDETAILS_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_BZDETAILS_ID),m_bugzillaInformationPage);
     m_bugzillaInformationPage->setHeader(i18nc("@title","Enter the Details about the Crash"));
@@ -129,7 +129,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     //-Bugzilla Report Preview
     BugzillaPreviewPage * m_bugzillaPreview =  new BugzillaPreviewPage(this);
 
-    KPageWidgetItem * m_bugzillaPreviewPage = new KPageWidgetItem(m_bugzillaPreview, 
+    KPageWidgetItem * m_bugzillaPreviewPage = new KPageWidgetItem(m_bugzillaPreview,
                                                                 QLatin1String(PAGE_BZPREVIEW_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_BZPREVIEW_ID),m_bugzillaPreviewPage);
     m_bugzillaPreviewPage->setHeader(i18nc("@title","Preview the Report"));
@@ -138,7 +138,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     //-Bugzilla commit
     BugzillaSendPage * m_bugzillaSend =  new BugzillaSendPage(this);
 
-    KPageWidgetItem * m_bugzillaSendPage = new KPageWidgetItem(m_bugzillaSend, 
+    KPageWidgetItem * m_bugzillaSendPage = new KPageWidgetItem(m_bugzillaSend,
                                                                     QLatin1String(PAGE_BZSEND_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_BZSEND_ID),m_bugzillaSendPage);
     m_bugzillaSendPage->setHeader(i18nc("@title","Sending the Crash Report"));

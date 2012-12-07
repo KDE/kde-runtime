@@ -64,7 +64,7 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(ReportAssistantDialog * parent):
     //Create manual bug report entry (first one)
     QTreeWidgetItem * customBugItem = new QTreeWidgetItem(
         QStringList() << i18nc("@item:intable custom/manaul bug report number", "Manual")
-                      << i18nc("@item:intable custom bug report number description", 
+                      << i18nc("@item:intable custom bug report number description",
                                                             "Manually enter a bug report ID"));
     customBugItem->setData(0, Qt::UserRole, QLatin1String("custom"));
     customBugItem->setIcon(1, KIcon("edit-rename"));
@@ -232,7 +232,7 @@ void BugzillaDuplicatesPage::performSearch()
 #if 1
     BugReport report = reportInterface()->newBugReportTemplate();
     bugzillaManager()->searchBugs(reportInterface()->relatedBugzillaProducts(),
-                                  report.bugSeverity(), startDateStr, endDateStr, 
+                                  report.bugSeverity(), startDateStr, endDateStr,
                                   reportInterface()->firstBacktraceFunctions().join(" "));
 #else //Test search
     bugzillaManager()->searchBugs(QStringList() << "plasma", "crash", startDateStr, endDateStr,
@@ -243,7 +243,7 @@ void BugzillaDuplicatesPage::performSearch()
 void BugzillaDuplicatesPage::stopCurrentSearch()
 {
     if (m_searching) {
-        bugzillaManager()->stopCurrentSearch(); 
+        bugzillaManager()->stopCurrentSearch();
 
         markAsSearching(false);
 
@@ -270,7 +270,7 @@ void BugzillaDuplicatesPage::markAsSearching(bool searching)
 
     ui.m_selectedDuplicatesList->setEnabled(!searching);
     ui.m_selectedPossibleDuplicatesLabel->setEnabled(!searching);
-    ui.m_removeSelectedDuplicateButton->setEnabled(!searching && 
+    ui.m_removeSelectedDuplicateButton->setEnabled(!searching &&
                                         !ui.m_selectedDuplicatesList->selectedItems().isEmpty());
 
     ui.m_attachToReportLabel->setEnabled(!searching);
@@ -485,7 +485,7 @@ void BugzillaDuplicatesPage::showReportInformationDialog(int bugNumber, bool rel
     }
 
     BugzillaReportInformationDialog * infoDialog = new BugzillaReportInformationDialog(this);
-    connect(infoDialog, SIGNAL(possibleDuplicateSelected(int)), this, 
+    connect(infoDialog, SIGNAL(possibleDuplicateSelected(int)), this,
                                                             SLOT(addPossibleDuplicateNumber(int)));
     connect(infoDialog, SIGNAL(attachToBugReportSelected(int)), this, SLOT(attachToBugReport(int)));
 
@@ -802,7 +802,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                                 report.description().replace('\n', "<br />"));
 
             if (!comments.isEmpty()) {
-                text += i18nc("@label:textbox bug report comments (already formatted)", 
+                text += i18nc("@label:textbox bug report comments (already formatted)",
                                 "<h2>Additional Comments</h2>%1", comments);
             }
 
