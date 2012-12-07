@@ -66,7 +66,7 @@ BugzillaLoginPage::BugzillaLoginPage(ReportAssistantDialog * parent) :
         m_wallet(0), m_walletWasOpenedBefore(false)
 {
     connect(bugzillaManager(), SIGNAL(loginFinished(bool)), this, SLOT(loginFinished(bool)));
-    connect(bugzillaManager(), SIGNAL(loginError(QString, QString)), this, SLOT(loginError(QString, QString)));
+    connect(bugzillaManager(), SIGNAL(loginError(QString,QString)), this, SLOT(loginError(QString,QString)));
 
     ui.setupUi(this);
     ui.m_statusWidget->setIdle(i18nc("@info:status '1' is replaced with \"bugs.kde.org\"",

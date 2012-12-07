@@ -66,9 +66,9 @@ int main(int argc, char *argv[])
     QObject::connect
     (
         &generator,
-        SIGNAL(DebugLine(const QString&)),
+        SIGNAL(DebugLine(QString)),
         &outputter,
-        SLOT(OnDebugLine(const QString&))
+        SLOT(OnDebugLine(QString))
     );
 
     TThreadsMap::const_iterator it;

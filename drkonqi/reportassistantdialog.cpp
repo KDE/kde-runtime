@@ -49,8 +49,8 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     setWindowTitle(i18nc("@title:window","Crash Reporting Assistant"));
     setWindowIcon(KIcon("tools-report-bug"));
 
-    connect(this, SIGNAL(currentPageChanged(KPageWidgetItem *, KPageWidgetItem *)),
-            this, SLOT(currentPageChanged_slot(KPageWidgetItem *, KPageWidgetItem *)));
+    connect(this, SIGNAL(currentPageChanged(KPageWidgetItem*,KPageWidgetItem*)),
+            this, SLOT(currentPageChanged_slot(KPageWidgetItem*,KPageWidgetItem*)));
     connect(this, SIGNAL(helpClicked()), this, SLOT(showHelp()));
 
     //Create the assistant pages
@@ -168,8 +168,8 @@ ReportAssistantDialog::~ReportAssistantDialog()
 void ReportAssistantDialog::connectSignals(ReportAssistantPage * page)
 {
     //React to the changes in the assistant pages
-    connect(page, SIGNAL(completeChanged(ReportAssistantPage*, bool)),
-             this, SLOT(completeChanged(ReportAssistantPage*, bool)));
+    connect(page, SIGNAL(completeChanged(ReportAssistantPage*,bool)),
+             this, SLOT(completeChanged(ReportAssistantPage*,bool)));
 }
 
 void ReportAssistantDialog::currentPageChanged_slot(KPageWidgetItem * current , KPageWidgetItem * before)

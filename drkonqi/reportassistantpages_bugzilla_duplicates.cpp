@@ -53,8 +53,8 @@ BugzillaDuplicatesPage::BugzillaDuplicatesPage(ReportAssistantDialog * parent):
     ui.setupUi(this);
     ui.information->hide();
 
-    connect(ui.m_bugListWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
-             this, SLOT(itemClicked(QTreeWidgetItem*, int)));
+    connect(ui.m_bugListWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+             this, SLOT(itemClicked(QTreeWidgetItem*,int)));
     connect(ui.m_bugListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(itemSelectionChanged()));
 
     QHeaderView * header = ui.m_bugListWidget->header();
@@ -590,10 +590,10 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
     connect(ui.m_showOwnBacktraceCheckBox, SIGNAL(toggled(bool)), this, SLOT(toggleShowOwnBacktrace(bool)));
 
     //Connect bugzillalib signals
-    connect(m_parent->bugzillaManager(), SIGNAL(bugReportFetched(BugReport, QObject *)),
-             this, SLOT(bugFetchFinished(BugReport, QObject *)));
-    connect(m_parent->bugzillaManager(), SIGNAL(bugReportError(QString, QObject *)),
-             this, SLOT(bugFetchError(QString, QObject *)));
+    connect(m_parent->bugzillaManager(), SIGNAL(bugReportFetched(BugReport,QObject*)),
+             this, SLOT(bugFetchFinished(BugReport,QObject*)));
+    connect(m_parent->bugzillaManager(), SIGNAL(bugReportError(QString,QObject*)),
+             this, SLOT(bugFetchError(QString,QObject*)));
              
     setInitialSize(QSize(800, 600));
     KConfigGroup config(KGlobal::config(), "BugzillaReportInformationDialog");
@@ -602,10 +602,10 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
 
 BugzillaReportInformationDialog::~BugzillaReportInformationDialog()
 {
-    disconnect(m_parent->bugzillaManager(), SIGNAL(bugReportFetched(BugReport, QObject *)),
-             this, SLOT(bugFetchFinished(BugReport, QObject *)));
-    disconnect(m_parent->bugzillaManager(), SIGNAL(bugReportError(QString, QObject *)),
-             this, SLOT(bugFetchError(QString, QObject *)));
+    disconnect(m_parent->bugzillaManager(), SIGNAL(bugReportFetched(BugReport,QObject*)),
+             this, SLOT(bugFetchFinished(BugReport,QObject*)));
+    disconnect(m_parent->bugzillaManager(), SIGNAL(bugReportError(QString,QObject*)),
+             this, SLOT(bugFetchError(QString,QObject*)));
 
     KConfigGroup config(KGlobal::config(), "BugzillaReportInformationDialog");
     saveDialogSize(config);

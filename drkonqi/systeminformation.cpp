@@ -52,7 +52,7 @@ void SystemInformation::runLsbRelease()
         process->setOutputChannelMode(KProcess::OnlyStdoutChannel);
         process->setEnv("LC_ALL", "C");
         *process << lsb_release << "-sd";
-        connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(lsbReleaseFinished()));
+        connect(process, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(lsbReleaseFinished()));
         process->start();
     } else {
         setBugzillaPlatform(QLatin1String("unspecified"));

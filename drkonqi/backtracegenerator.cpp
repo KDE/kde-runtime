@@ -95,8 +95,8 @@ bool BacktraceGenerator::start()
     m_proc->setNextOpenMode(QIODevice::ReadWrite | QIODevice::Text);
     connect(m_proc, SIGNAL(readyReadStandardOutput()),
             SLOT(slotReadInput()));
-    connect(m_proc, SIGNAL(finished(int, QProcess::ExitStatus)),
-            SLOT(slotProcessExited(int, QProcess::ExitStatus)));
+    connect(m_proc, SIGNAL(finished(int,QProcess::ExitStatus)),
+            SLOT(slotProcessExited(int,QProcess::ExitStatus)));
 
     m_proc->start();
     if (!m_proc->waitForStarted()) {
