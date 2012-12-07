@@ -33,7 +33,7 @@ class BacktraceRatingWidget: public QWidget
 
 public:
 
-    BacktraceRatingWidget(QWidget *);
+    explicit BacktraceRatingWidget(QWidget *);
     void setUsefulness(BacktraceParser::Usefulness);
     void setState(BacktraceGenerator::State s) {
         m_state = s; update();

@@ -246,7 +246,7 @@ private:
 class BugReportXMLParser
 {
 public:
-    BugReportXMLParser(const QByteArray &);
+    explicit BugReportXMLParser(const QByteArray &);
 
     BugReport parse();
 
@@ -264,7 +264,7 @@ private:
 class BugListCSVParser
 {
 public:
-    BugListCSVParser(const QByteArray&);
+    explicit BugListCSVParser(const QByteArray&);
 
     bool isValid() const {
         return m_isValid;
@@ -282,7 +282,7 @@ class BugzillaManager : public QObject
     Q_OBJECT
 
 public:
-    BugzillaManager(QObject *parent = 0);
+    explicit BugzillaManager(QObject *parent = 0);
 
     /* Login methods */
     void tryLogin();

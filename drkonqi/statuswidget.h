@@ -32,7 +32,7 @@ class StatusWidget: public QStackedWidget
 {
     Q_OBJECT
 public:
-    StatusWidget(QWidget * parent = 0);
+    explicit StatusWidget(QWidget * parent = 0);
 
     void setBusy(QString);
     void setIdle(QString);
@@ -63,7 +63,7 @@ class WrapLabel: public QLabel
 {
     Q_OBJECT
 public:
-    WrapLabel(QWidget * parent = 0) : QLabel(parent){
+    explicit WrapLabel(QWidget * parent = 0) : QLabel(parent){
         setWordWrap(true);
     }
     

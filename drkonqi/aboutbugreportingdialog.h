@@ -29,7 +29,7 @@ class AboutBugReportingDialog: public KDialog
     Q_OBJECT
 
 public:
-    AboutBugReportingDialog(QWidget * parent = 0);
+    explicit AboutBugReportingDialog(QWidget * parent = 0);
     void showSection(const QString&);
 
 private Q_SLOTS:

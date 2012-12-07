@@ -98,7 +98,7 @@ class DBusOldInterfaceAdaptor : public QDBusAbstractAdaptor
     Q_CLASSINFO("D-Bus Interface", "org.kde.Krash")
     friend class DBusOldInterfaceLauncher;
 public:
-    DBusOldInterfaceAdaptor(DBusOldInterfaceLauncher *parent);
+    explicit DBusOldInterfaceAdaptor(DBusOldInterfaceLauncher *parent);
 
 public slots:
     int pid();

@@ -43,7 +43,7 @@ class BugzillaDuplicatesPage : public ReportAssistantPage
     Q_OBJECT
 
 public:
-    BugzillaDuplicatesPage(ReportAssistantDialog *);
+    explicit BugzillaDuplicatesPage(ReportAssistantDialog *);
     ~BugzillaDuplicatesPage();
 
     void aboutToShow();
@@ -112,7 +112,7 @@ class BugzillaReportInformationDialog : public KDialog
     Q_OBJECT
 
 public:
-    BugzillaReportInformationDialog(BugzillaDuplicatesPage*parent=0);
+    explicit BugzillaReportInformationDialog(BugzillaDuplicatesPage*parent=0);
     ~BugzillaReportInformationDialog();
 
     void showBugReport(int bugNumber, bool relatedButtonEnabled = true);

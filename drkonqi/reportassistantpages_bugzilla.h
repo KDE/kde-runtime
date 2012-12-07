@@ -39,7 +39,7 @@ class BugzillaLoginPage: public ReportAssistantPage
     Q_OBJECT
 
 public:
-    BugzillaLoginPage(ReportAssistantDialog *);
+    explicit BugzillaLoginPage(ReportAssistantDialog *);
     ~BugzillaLoginPage();
 
     void aboutToShow();
@@ -72,7 +72,7 @@ class BugzillaInformationPage : public ReportAssistantPage
     Q_OBJECT
 
 public:
-    BugzillaInformationPage(ReportAssistantDialog *);
+    explicit BugzillaInformationPage(ReportAssistantDialog *);
 
     void aboutToShow();
     void aboutToHide();
@@ -105,7 +105,7 @@ class BugzillaPreviewPage : public ReportAssistantPage
     Q_OBJECT
 
 public:
-    BugzillaPreviewPage(ReportAssistantDialog *);
+    explicit BugzillaPreviewPage(ReportAssistantDialog *);
 
     void aboutToShow();
 
@@ -119,7 +119,7 @@ class BugzillaSendPage : public ReportAssistantPage
     Q_OBJECT
 
 public:
-    BugzillaSendPage(ReportAssistantDialog *);
+    explicit BugzillaSendPage(ReportAssistantDialog *);
 
     void aboutToShow();
 

@@ -38,7 +38,7 @@ class IntroductionPage: public ReportAssistantPage
     Q_OBJECT
 
 public:
-    IntroductionPage(ReportAssistantDialog *);
+    explicit IntroductionPage(ReportAssistantDialog *);
 
 private:
     Ui::AssistantPageIntroduction   ui;
@@ -50,7 +50,7 @@ class CrashInformationPage: public ReportAssistantPage
     Q_OBJECT
 
 public:
-    CrashInformationPage(ReportAssistantDialog *);
+    explicit CrashInformationPage(ReportAssistantDialog *);
 
     void aboutToShow();
     void aboutToHide();
@@ -67,7 +67,7 @@ class BugAwarenessPage: public ReportAssistantPage
     Q_OBJECT
 
 public:
-    BugAwarenessPage(ReportAssistantDialog *);
+    explicit BugAwarenessPage(ReportAssistantDialog *);
 
     void aboutToShow();
     void aboutToHide();
@@ -87,7 +87,7 @@ class ConclusionPage : public ReportAssistantPage
     Q_OBJECT
 
 public:
-    ConclusionPage(ReportAssistantDialog *);
+    explicit ConclusionPage(ReportAssistantDialog *);
     
     void aboutToShow();
     void aboutToHide();
@@ -115,7 +115,7 @@ class ReportInformationDialog : public KDialog
 {
     Q_OBJECT
 public:
-    ReportInformationDialog(const QString & reportText);
+    explicit ReportInformationDialog(const QString & reportText);
     ~ReportInformationDialog();
 
 private Q_SLOTS:

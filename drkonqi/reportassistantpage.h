@@ -33,7 +33,7 @@ class ReportAssistantPage: public QWidget
     Q_OBJECT
     
 public:
-    ReportAssistantPage(ReportAssistantDialog * parent);
+    explicit ReportAssistantPage(ReportAssistantDialog * parent);
 
     /** Load the widget data if empty **/
     virtual void aboutToShow() {}

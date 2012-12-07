@@ -27,7 +27,7 @@ class ApplicationDetailsExamples : QObject
 {
 Q_OBJECT
 public:
-    ApplicationDetailsExamples(QObject * parent);
+    explicit ApplicationDetailsExamples(QObject * parent);
     bool hasExamples() const;
     QString examples() const;
     
