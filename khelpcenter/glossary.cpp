@@ -225,7 +225,7 @@ void Glossary::buildGlossaryTree()
 
         QDomNodeList entryNodes = sectionElement.elementsByTagName( QLatin1String( "entry" ) );
         for ( int j = 0; j < entryNodes.count(); j++ ) 
-	{
+        {
             QDomElement entryElement = entryNodes.item( j ).toElement();
 
             QString entryId = entryElement.attribute( QLatin1String( "id" ) );
@@ -239,17 +239,17 @@ void Glossary::buildGlossaryTree()
             m_idDict.insert( entryId, entry );
 
             SectionItem *alphabSection = 0L;
-	    
-	    QTreeWidgetItemIterator it(m_alphabItem);
-	    while(*it)
-	    {
-	      if ( (*it)->text( 0 ) == QString( term[ 0 ].toUpper() ) )
-	      {
-		alphabSection = static_cast<SectionItem *>( (*it) );
-		break;
-	      }
-	      ++it;
-	    }
+
+            QTreeWidgetItemIterator it(m_alphabItem);
+            while(*it)
+            {
+                if ( (*it)->text( 0 ) == QString( term[ 0 ].toUpper() ) )
+                {
+                    alphabSection = static_cast<SectionItem *>( (*it) );
+                    break;
+                }
+                ++it;
+            }
 
             if ( !alphabSection )
                 alphabSection = new SectionItem( m_alphabItem, QString( term[ 0 ].toUpper() ) );
@@ -265,7 +265,7 @@ void Glossary::buildGlossaryTree()
             QDomNodeList referenceNodes = referencesElement.elementsByTagName( QLatin1String( "reference" ) );
             if ( referenceNodes.count() > 0 )
                 for ( int k = 0; k < referenceNodes.count(); k++ ) 
-		{
+                {
                     QDomElement referenceElement = referenceNodes.item( k ).toElement();
 
                     QString term = referenceElement.attribute( QLatin1String( "term" ) );
