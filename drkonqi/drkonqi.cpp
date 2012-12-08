@@ -44,7 +44,7 @@
 #include "crashedapplication.h"
 #include "drkonqibackends.h"
 
-#include <QtCore/QPointer>
+#include <QtCore/QWeakPointer>
 #include <QtCore/QTextStream>
 #include <QtCore/QTimerEvent>
 #include <KMessageBox>
