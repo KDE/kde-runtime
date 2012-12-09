@@ -109,6 +109,7 @@ DateFormat[eo]=%A, la %ea de %B %Y
 DateFormatShort=%d-%m-%Y
 TimeFormat=%H:%M:%S
 WeekStartDay=7
+AddressFormat=%0(%cm\n)%0(%n\n)%0(Caixa Postal %p\n)%0(%s\n)%l%0( - %r)%0(\n%z)
 #DecimalPlaces=2
 #MonetaryDecimalPlaces=2
 CurrencyCodesInUse=BRL

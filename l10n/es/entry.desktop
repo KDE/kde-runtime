@@ -115,6 +115,7 @@ TimeFormat=%H:%M:%S
 WeekStartDay=1
 PageSize=0
 MeasureSystem=0
+AddressFormat=%0(%cm\n)%0(%n\n)%0(Apartado Postal %p\n)%0(%s\n)%z%w%l%0(\n%r)
 #DecimalPlaces=2
 #MonetaryDecimalPlaces=2
 CurrencyCodesInUse=EUR
