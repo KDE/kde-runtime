@@ -20,7 +20,6 @@
 #include "findconfigdatajob.h"
 
 #include <KDebug>
-#include <KIO/StoredTransferJob>
 #include <KIO/Job>
 #include <KLocale>
 

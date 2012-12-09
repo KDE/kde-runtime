@@ -23,7 +23,6 @@
 #include <config-drkonqi.h>
 
 #include <KStandardDirs>
-#include <KShell>
 #include <KDebug>
 #include <KProcess>
 #include <KLocale>

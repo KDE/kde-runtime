@@ -22,8 +22,8 @@
 #include <QSizePolicy>
 #include <QHBoxLayout>
 
-#include <kpixmapsequencewidget.h>
-#include <kpixmapsequence.h>
+#include <KPixmapSequenceWidget>
+#include <KPixmapSequence>
 
 StatusWidget::StatusWidget(QWidget * parent) :
         QStackedWidget(parent),
