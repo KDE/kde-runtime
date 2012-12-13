@@ -151,7 +151,7 @@ void DrKonqiDialog::buildDialogOptions()
     setButtons(KDialog::User3 | KDialog::User2 | KDialog::User1 | KDialog::Close);
 
     //Report bug button button
-    setButtonGuiItem(KDialog::User1, KGuiItem2(i18nc("@action:button", "Report Bug"),
+    setButtonGuiItem(KDialog::User1, KGuiItem2(i18nc("@action:button", "Report &Bug"),
                                                KIcon("tools-report-bug"),
                                                i18nc("@info:tooltip",
                                                      "Starts the bug report assistant.")));
@@ -166,7 +166,7 @@ void DrKonqiDialog::buildDialogOptions()
     DebuggerManager *debuggerManager = DrKonqi::debuggerManager();
     setButtonGuiItem(KDialog::User2, KGuiItem2(i18nc("@action:button this is the debug menu button "
                                                "label which contains the debugging applications",
-                                               "Debug"), KIcon("applications-development"),
+                                               "&Debug"), KIcon("applications-development"),
                                                i18nc("@info:tooltip", "Starts a program to debug "
                                                      "the crashed application.")));
     showButton(KDialog::User2, debuggerManager->showExternalDebuggers());
@@ -186,7 +186,7 @@ void DrKonqiDialog::buildDialogOptions()
     connect(debuggerManager, SIGNAL(debuggerRunning(bool)), SLOT(enableDebugMenu(bool)));
 
     //Restart application button
-    setButtonGuiItem(KDialog::User3, KGuiItem2(i18nc("@action:button", "Restart Application"),
+    setButtonGuiItem(KDialog::User3, KGuiItem2(i18nc("@action:button", "&Restart Application"),
                                                KIcon("system-reboot"),
                                                i18nc("@info:tooltip", "Use this button to restart "
                                                      "the crashed application.")));
