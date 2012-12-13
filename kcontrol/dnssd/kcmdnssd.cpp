@@ -29,12 +29,8 @@
 
 #include <klocale.h>
 #include <kaboutdata.h>
-#include <kglobal.h>
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
-#include <klineedit.h>
-#include <kpassworddialog.h>
-#include <kconfig.h>
 
 #include <dnssd/settings.h>
 #include <dnssd/domainbrowser.h>
