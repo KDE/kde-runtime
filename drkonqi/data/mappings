@@ -149,7 +149,7 @@ kmymoney=kmymoney4|general
 kdevdesigner=kdevelop|Qt Designer Integration
 kdevelop.bin=kdevelop|general
 kscreenlocker=kscreensaver|locker
-gwenview_importer=gwenview|general
+gwenview_importer=gwenview|importer
 kdmgreet=kdm|general
 kaffeine-xbu=kaffeine|general
 
