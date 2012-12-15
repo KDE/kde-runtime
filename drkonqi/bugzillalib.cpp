@@ -491,7 +491,7 @@ BugReport::Status BugReport::parseStatus(const QString &stat)
 {
     if (stat == QLatin1String("UNCONFIRMED")) {
         return Unconfirmed;
-    } else if (stat == QLatin1String("NEW")) {
+    } else if (stat == QLatin1String("CONFIRMED")) {
         return New;
     } else if (stat == QLatin1String("ASSIGNED")) {
         return Assigned;
