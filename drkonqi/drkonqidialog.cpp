@@ -148,7 +148,7 @@ void DrKonqiDialog::buildDialogOptions()
     const CrashedApplication *crashedApp = DrKonqi::crashedApplication();
 
     //Set kdialog buttons
-    setButtons(KDialog::User1 | KDialog::User2 | KDialog::User3 | KDialog::Close);
+    setButtons(KDialog::User3 | KDialog::User2 | KDialog::User1 | KDialog::Close);
 
     //Report bug button button
     setButtonGuiItem(KDialog::User1, KGuiItem2(i18nc("@action:button", "Report Bug"),
