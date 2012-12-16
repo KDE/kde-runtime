@@ -28,12 +28,6 @@
 #include "debuggerlaunchers.h"
 #include "drkonqi_globals.h"
 
-#include <QLabel>
-#include <QGroupBox>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QTreeWidget>
-
 #include <KMenu>
 #include <KIcon>
 #include <KStandardDirs>
