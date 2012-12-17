@@ -47,17 +47,20 @@ plasma-desktop=plasma|general
 plasma-mid=plasma|general
 plasma-overlay=plasma|general
 plasma2jolie=plasma|general
-plasmaengineexplorer=plasma|general
 plasmagik=plasma|general
 plasmapkg=plasma|general
-plasmawallpaperviewer=plasma|general
-plasmoidviewer=plasma|general
 knotificationareaitemtest=plasma|widget-systemtray
 knotificationicontest=plasma|widget-systemtray
 lancelot=plasma|widget-lancelot
 plasma-netbook=plasma|plasma-netbook
 kactivitymanagerd=kactivities|general
 plasma-device=Active|General
+
+#KDE Plasma SDK (Plasmate)
+plasmaengineexplorer=plasmate|general
+plasmawallpaperviewer=plasmate|general
+plasmoidviewer=plasmate|general
+
 #KDE Plasma Desktop (KWin)
 kwin_killer_helper=kwin|general
 kwin_rules_dialog=kwin|general
