@@ -76,6 +76,8 @@ void SystemInformation::lsbReleaseFinished()
         setBugzillaPlatform(QLatin1String("Fedora RPMs"));
     } else if ( m_lsbRelease.contains("redhat",Qt::CaseInsensitive) ) {
         setBugzillaPlatform(QLatin1String("RedHat RPMs"));
+    } else if ( m_lsbRelease.contains("gentoo",Qt::CaseInsensitive) ) {
+        setBugzillaPlatform(QLatin1String("Gentoo Packages"));
     } else if ( m_lsbRelease.contains("mandriva",Qt::CaseInsensitive) ) {
         setBugzillaPlatform(QLatin1String("Mandriva RPMs"));
     } else if ( m_lsbRelease.contains("mageia",Qt::CaseInsensitive) ) {
