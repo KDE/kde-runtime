@@ -397,6 +397,10 @@ void BugzillaInformationPage::aboutToShow()
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Unspecified"),"unspecified");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Archlinux"), "Archlinux Packages");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Chakra"), "Chakra");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Debian stable"), "Debian stable");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Debian testing"), "Debian testing");
@@ -405,28 +409,24 @@ void BugzillaInformationPage::aboutToShow()
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Exherbo"), "Exherbo Packages");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
-                                                   "Gentoo"), "Gentoo Packages");
+                                                   "Fedora"), "Fedora RPMs");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
-                                                   "Mandriva"), "Mandriva RPMs");
+                                                   "Gentoo"), "Gentoo Packages");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Mageia"), "Mageia RPMs");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
-                                                   "Slackware"), "Slackware Packages");
+                                                   "Mandriva"), "Mandriva RPMs");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
-                                                   "SuSE/OpenSUSE"), "openSUSE RPMs");
-            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
-                                                   "RedHat"), "RedHat RPMs");
-            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
-                                                   "Fedora"), "Fedora RPMs");
-            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
-                                                   "Kubuntu/Ubuntu (and derivatives)"),
-                                                   "Ubuntu Packages");
+                                                   "OpenSUSE"), "openSUSE RPMs");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "Pardus"), "Pardus Packages");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
-                                                   "Chakra"), "Chakra");
+                                                   "RedHat"), "RedHat RPMs");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
-                                                   "Archlinux"), "Archlinux Packages");
+                                                   "Slackware"), "Slackware Packages");
+            ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
+                                                   "Ubuntu (and derivatives)"),
+                                                   "Ubuntu Packages");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
                                                    "FreeBSD (Ports)"), "FreeBSD Ports");
             ui.m_distroChooserCombo->addItem(i18nc("@label:listbox KDE distribution method",
