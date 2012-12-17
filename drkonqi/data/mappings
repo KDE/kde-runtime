@@ -151,6 +151,7 @@ kscreenlocker=kscreensaver|locker
 gwenview_importer=gwenview|importer
 kdmgreet=kdm|general
 kaffeine-xbu=kaffeine|general
+networkmanagement_configshell=Network Management|general
 
 #---
 #This section relates a product groupt to a product
