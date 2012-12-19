@@ -165,7 +165,7 @@ Item {
         }
     }
 
-    Item {
+    Row {
         anchors {
             fill: parent
             leftMargin: surface.margins.left
@@ -174,34 +174,20 @@ Item {
             bottomMargin: surface.margins.bottom
         }
 
+        spacing: icon.valid ? surface.margins.left : 0
+
         Private.IconLoader {
             id: icon
-
-            anchors {
-                verticalCenter: parent.verticalCenter
-                left: label.text ? parent.left : undefined
-                horizontalCenter: label.text ? undefined : parent.horizontalCenter
-            }
-            height: roundToStandardSize(parent.height)
+            anchors.verticalCenter: parent.verticalCenter
+            height: valid? roundToStandardSize(parent.height): 0
             width: height
         }
 
         Text {
             id: label
+            width: parent.width - icon.width - parent.spacing
+            height: parent.height
 
-            //FIXME: why this is needed?
-            onPaintedWidthChanged: {
-                icon.anchors.horizontalCenter = label.paintedWidth > 0 ? undefined : icon.parent.horizontalCenter
-                icon.anchors.left = label.paintedWidth > 0 ? icon.parent.left : undefined
-            }
-
-            anchors {
-                top: parent.top
-                bottom: parent.bottom
-                left: icon.valid ? icon.right : parent.left
-                leftMargin: icon.valid ? surface.margins.left : 0
-                right: parent.right
-            }
             font.capitalization: theme.defaultFont.capitalization
             font.family: theme.defaultFont.family
             font.italic: theme.defaultFont.italic
