@@ -196,6 +196,15 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
     m_textBrowser->setText(text);
 
     setMainWidget(m_textBrowser);
+
+    KConfigGroup config(KGlobal::config(), "AboutBugReportingDialog");
+    restoreDialogSize(config);
+}
+
+AboutBugReportingDialog::~AboutBugReportingDialog( )
+{
+    KConfigGroup config(KGlobal::config(), "AboutBugReportingDialog");
+    saveDialogSize(config);
 }
 
 void AboutBugReportingDialog::handleInternalLinks(const QString& url)
