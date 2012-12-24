@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
 	KApplication a;
 
 	KNetAttach na;
-        a.connect( &a, SIGNAL( lastWindowClosed() ), &a, SLOT( quit() ) );
+        a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
 	na.show();
 
 	return a.exec();

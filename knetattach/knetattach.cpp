@@ -41,14 +41,14 @@ KNetAttach::KNetAttach( QWidget* parent )
     setupUi( this );
 
     connect(_recent, SIGNAL(toggled(bool)), _recentConnectionName, SLOT(setEnabled(bool)));
-    connect(_connectionName, SIGNAL(textChanged(const QString&)), this, SLOT(updateParametersPageStatus()));
-    connect(_user, SIGNAL(textChanged(const QString&)), this, SLOT(updateParametersPageStatus()));
-    connect(_host, SIGNAL(textChanged(const QString&)), this, SLOT(updateParametersPageStatus()));
-    connect(_path, SIGNAL(textChanged(const QString&)), this, SLOT(updateParametersPageStatus()));
+    connect(_connectionName, SIGNAL(textChanged(QString)), this, SLOT(updateParametersPageStatus()));
+    connect(_user, SIGNAL(textChanged(QString)), this, SLOT(updateParametersPageStatus()));
+    connect(_host, SIGNAL(textChanged(QString)), this, SLOT(updateParametersPageStatus()));
+    connect(_path, SIGNAL(textChanged(QString)), this, SLOT(updateParametersPageStatus()));
     connect(_useEncryption, SIGNAL(toggled(bool)), this, SLOT(updatePort(bool)));
     connect(_createIcon, SIGNAL(toggled(bool)), this, SLOT(updateFinishButtonText(bool)));
-    connect( this, SIGNAL(helpRequested()), this, SLOT( slotHelpClicked() ) );
-    connect( this, SIGNAL(currentIdChanged(int)), this, SLOT( slotPageChanged(int) ) );
+    connect( this, SIGNAL(helpRequested()), this, SLOT(slotHelpClicked()) );
+    connect( this, SIGNAL(currentIdChanged(int)), this, SLOT(slotPageChanged(int)) );
     setWindowIcon(KIcon("knetattach"));
     setOption(HaveHelpButton, true);
     //setResizeMode(Fixed); FIXME: make the wizard fixed-geometry
