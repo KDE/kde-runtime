@@ -21,17 +21,17 @@
 #include "knetattach.h"
 
 #include <QtCore/QVariant>
-#include <kio/netaccess.h>
-#include <kmessagebox.h>
-#include <kiconloader.h>
-#include <klocale.h>
-#include <kglobalsettings.h>
-#include <kconfig.h>
-#include <kapplication.h>
-#include <kstandarddirs.h>
-#include <kdirnotify.h>
-#include <kcharsets.h>
-#include <kdebug.h>
+
+#include <KIO/NetAccess>
+#include <KMessageBox>
+#include <KIcon>
+#include <KLocale>
+#include <KGlobalSettings>
+#include <KConfig>
+#include <KStandardDirs>
+#include <KDirNotify>
+#include <KCharsets>
+#include <KDebug>
 #include <KRun>
 #include <KToolInvocation>
 

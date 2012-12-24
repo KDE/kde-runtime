@@ -17,11 +17,10 @@
    Boston, MA 02110-1301, USA.
  */
 
-#include <kaboutdata.h>
-#include <kapplication.h>
-#include <kcmdlineargs.h>
-#include <kglobal.h>
-#include <klocale.h>
+#include <KAboutData>
+#include <KApplication>
+#include <KCmdLineArgs>
+#include <KLocale>
 
 #include "knetattach.h"
 
