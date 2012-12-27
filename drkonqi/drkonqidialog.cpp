@@ -100,13 +100,15 @@ void DrKonqiDialog::buildMainWidget()
                                            "risks of failing again.<nl /><nl />"
                                            "Please, manually report this error in "
                                            "the \"drkonqi\" product at %1. Do not forget to include "
-                                           "the backtrace from the Developer Information tab.</para>",
+                                           "the backtrace from the <interface>Developer Information</interface> "
+                                           "tab.</para>",
                                            QLatin1String(KDE_BUGZILLA_URL));
         } else if (KCmdLineArgs::parsedArgs()->isSet("safer")) {
             reportMessage = i18nc("@info", "<para>The reporting assistant is disabled because "
                                            "the crash handler dialog was started in safe mode."
                                            "<nl />You can manually report this bug to %1 "
-                                           "(including the backtrace from the Developer Information "
+                                           "(including the backtrace from the "
+                                           "<interface>Developer Information</interface> "
                                            "tab.)</para>", crashedApp->bugReportAddress());
         } else {
             reportMessage = i18nc("@info", "<para>You can help us improve KDE Software by reporting "
