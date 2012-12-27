@@ -60,7 +60,7 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
     m_backtraceWidget->setMinimumSize(QSize(575, 240));
     m_tabWidget->addTab(m_backtraceWidget, i18nc("@title:tab", "&Developer Information"));
 
-    buildDialogOptions();
+    buildDialogButtons();
 
     resize(minimumSize());
     KConfigGroup config(KGlobal::config(), "General");
@@ -145,7 +145,7 @@ void DrKonqiDialog::buildMainWidget()
                                              ));
 }
 
-void DrKonqiDialog::buildDialogOptions()
+void DrKonqiDialog::buildDialogButtons()
 {
     const CrashedApplication *crashedApp = DrKonqi::crashedApplication();
 
