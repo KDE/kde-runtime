@@ -100,7 +100,7 @@ void DrKonqiDialog::buildMainWidget()
                                            "risks of failing again.<nl /><nl />"
                                            "Please, manually report this error in "
                                            "the \"drkonqi\" product at %1. Do not forget to include "
-                                           "the backtrace from the Developers Information tab.</para>",
+                                           "the backtrace from the Developer Information tab.</para>",
                                            QLatin1String(KDE_BUGZILLA_URL));
         } else if (KCmdLineArgs::parsedArgs()->isSet("safer")) {
             reportMessage = i18nc("@info", "<para>The reporting assistant is disabled because "
