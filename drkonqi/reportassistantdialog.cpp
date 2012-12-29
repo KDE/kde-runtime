@@ -157,7 +157,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     addPage(m_bugzillaSendPage);
 
     setMinimumSize(QSize(600, 400));
-    resize(QSize(600, 400));
+    resize(minimumSize());
 }
 
 ReportAssistantDialog::~ReportAssistantDialog()

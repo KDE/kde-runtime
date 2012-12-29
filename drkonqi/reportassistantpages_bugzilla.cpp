@@ -806,7 +806,7 @@ UnhandledErrorDialog::UnhandledErrorDialog(QWidget * parent, const QString & err
     htmlView->setHtml(extendedMessage);
 
     setMinimumSize(QSize(550, 350));
-    resize(QSize(550, 350));
+    resize(minimumSize());
 
     show();
 }
