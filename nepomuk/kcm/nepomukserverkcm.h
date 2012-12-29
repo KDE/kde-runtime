@@ -59,6 +59,7 @@ namespace Nepomuk2 {
         void slotBackupFrequencyChanged();
         void slotManualBackup();
         void slotRestoreBackup();
+        void slotUpdateAllFolders();
 
         /**
          * This slot is called when any of the "index documents", "index whatever" checkboxes

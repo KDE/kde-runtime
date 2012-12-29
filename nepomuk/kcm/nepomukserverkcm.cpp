@@ -144,6 +144,8 @@ Nepomuk2::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVarian
                  this, SLOT( slotAdvancedFileIndexing() ) );
         connect( m_buttonDetails, SIGNAL( leftClickedUrl() ),
                  this, SLOT( slotStatusDetailsClicked() ) );
+        connect( m_buttonCheckForNewFiles, SIGNAL( clicked() ),
+                 this, SLOT( slotUpdateAllFolders() ) );
 
         connect( m_checkboxAudio, SIGNAL(toggled(bool)),
                  this, SLOT(slotCheckBoxesChanged()) );
@@ -583,5 +585,9 @@ void Nepomuk2::ServerConfigModule::slotCheckBoxesChanged()
     changed( true );
 }
 
+void Nepomuk2::ServerConfigModule::slotUpdateAllFolders()
+{
+     m_fileIndexerInterface->updateAllFolders( true );
+}
 
 #include "nepomukserverkcm.moc"
