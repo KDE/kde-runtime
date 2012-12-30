@@ -1,10 +1,21 @@
-set(PULSEAUDIO_MINIMUM_VERSION "0.9.16")
-macro_optional_find_package(PulseAudio)
-macro_log_feature(PULSEAUDIO_FOUND "PulseAudio" "PulseAudio Audio Server" "http://www.pulseaudio.org/" FALSE "0.9.16" "libpulse is needed for audio setup GUI")
+macro_optional_find_package(PulseAudio 0.9.16)
+set_package_properties(PulseAudio PROPERTIES DESCRIPTION "PulseAudio Audio Server"
+                       URL "http://www.pulseaudio.org/"
+                       TYPE OPTIONAL
+                       PURPOSE "libpulse is needed for audio setup GUI"
+                      )
+
 find_package(GLIB2)
+set_package_properties(GLIB2 PROPERTIES DESCRIPTION "Low-level core library for data structure handling, portability wrappers, etc."
+                       URL "http://www.gtk.org"
+                       TYPE OPTIONAL
+                      )
 
 pkg_check_modules(CANBERRA libcanberra)
-macro_log_feature(CANBERRA_FOUND "libcanberra" "libcanberra audio library" "http://0pointer.de/lennart/projects/libcanberra/" FALSE "" "libcanberra is needed for audio setup GUI")
+add_feature_info ("Audio setup GUI" CANBERRA_FOUND
+                  "libcanberra is needed for audio setup GUI
+                  * http://0pointer.de/lennart/projects/libcanberra"
+                 )
 
 set(kcmphonon_SRCS main.cpp devicepreference.cpp backendselection.cpp)
 kde4_add_ui_files(kcmphonon_SRCS devicepreference.ui backendselection.ui)

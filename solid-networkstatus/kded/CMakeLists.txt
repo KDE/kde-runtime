@@ -9,7 +9,11 @@ set(kded_networkstatus_PART_SRCS
 )
 
 macro_optional_find_package(NetworkManager)
-macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "kded support to NetworkManager" "http://projects.gnome.org/NetworkManager" FALSE "" "Needed for kded's networkstatus module")
+set_package_properties(NetworkManager PROPERTIES DESCRIPTION "The NetworkManager headers"
+                       URL "http://projects.gnome.org/NetworkManager"
+                       TYPE OPTIONAL
+                       PURPOSE "Needed for kded's networkstatus module"
+                      )
 
 if(NETWORKMANAGER_FOUND)
     macro_ensure_version("0.7.0" ${NETWORKMANAGER_VERSION} NM_0_7)
@@ -22,6 +26,11 @@ if(NETWORKMANAGER_FOUND)
 endif(NETWORKMANAGER_FOUND)
 
 macro_optional_find_package(QNtrack)
+set_package_properties(QNtrack PROPERTIES DESCRIPTION "Network status tracking library"
+                       URL "http://launchpad.net/ntrack"
+                       TYPE OPTIONAL
+                       PURPOSE "Provides data input for Solid network status"
+                      )
 
 if(QNTRACK_FOUND)
     MESSAGE(STATUS "Found QNtrack, will use it as a data input for Solid network status")
@@ -30,8 +39,6 @@ if(QNTRACK_FOUND)
 else(QNTRACK_FOUND)
     MESSAGE(STATUS "QNtrack not found.  Can be used as a data input to Solid network status.  See https://launchpad.net/ntrack")
 endif(QNTRACK_FOUND)
-
-macro_log_feature(QNTRACK_FOUND "QNtrack" "Network status tracking library" "http://launchpad.net/ntrack" FALSE "" "Provides data input for Solid network status")
 
 include_directories(${QNTRACK_INCLUDE_DIR})
 

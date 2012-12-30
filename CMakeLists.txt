@@ -13,38 +13,53 @@ if(WINCE)
 endif(WINCE)
 
 #search packages used by KDE
-set(KDE_MIN_VERSION "4.9.95")  # for the < 4.2 macro
 find_package(KDE4 4.9.95 REQUIRED)
+include(KDE4Defaults)
+
 if (WIN32)
-    find_package(Strigi)
+    set (STRIGI_TYPE "OPTIONAL")
 else ()
-    find_package(Strigi REQUIRED)
+    set (STRIGI_TYPE "REQUIRED")
 endif ()
 
-include(KDE4Defaults)
-include(MacroLibrary)
-include(CheckFunctionExists)
-include(CheckIncludeFiles)
+find_package(Strigi)
+set_package_properties(Strigi PROPERTIES DESCRIPTION "Desktop indexing and search support"
+                       URL "http://strigi.sourceforge.net"
+                       TYPE ${STRIGI_TYPE}
+                      )
 
-find_package(KDeclarative REQUIRED)
-macro_log_feature(KDeclarative_FOUND "libkdeclarative" "KDE Declarative (QML) support from kdelibs" "http://www.kde.org" TRUE "" "Required by corebindingsplugin (org.kde.plasma.core).")
+find_package(KDeclarative QUIET CONFIG)
+set_package_properties(KDeclarative PROPERTIES DESCRIPTION "KDE Declarative (QML) support from kdelibs"
+                       URL "http://www.kde.org"
+                       TYPE REQUIRED
+                       PURPOSE "Required by corebindingsplugin (org.kde.plasma.core)"
+                      )
 
 macro_optional_find_package(NepomukCore)
-macro_log_feature(NepomukCore_FOUND "Nepomuk Core" "Nepomuk Core Libraries" "https://projects.kde.org/nepomuk-core" FALSE "" "Required to build Nepomuk.")
+set_package_properties(NepomukCore PROPERTIES DESCRIPTION "Nepomuk Core Libraries"
+                       URL "https://projects.kde.org/nepomuk-core"
+                       TYPE OPTIONAL
+                      )
 
 macro_optional_find_package(SLP)
-macro_log_feature( SLP_FOUND
-  "OpenSLP" "SLP (Service Location Protocol) implementation" "http://www.openslp.org/" FALSE
-  "" "Provides SLP support in the network:/ kioslave."
-)
+set_package_properties(SLP PROPERTIES DESCRIPTION "SLP (Service Location Protocol) implementation"
+                       URL "http://www.openslp.org/"
+                       TYPE OPTIONAL
+                       PURPOSE "Provides SLP support in the network:/ kioslave."
+                      )
 
-set(LIBATTICA_MIN_VERSION "0.1.4")
-find_package(LibAttica)
-macro_log_feature(LIBATTICA_FOUND "libattica" "A library to access Open Collaboration Service providers" "http://websvn.kde.org/trunk/kdesupport/attica/" TRUE "" "Required for Get Hot New Stuff."
-)
+find_package(LibAttica 0.1.4)
+set_package_properties(LibAttica PROPERTIES DESCRIPTION "A library to access Open Collaboration Service providers"
+                       URL "https://projects.kde.org/attica"
+                       TYPE REQUIRED
+                       PURPOSE "Attica is needed for the Get Hot New Stuff support"
+                      )
 
-macro_optional_find_package(QCA2)
-macro_log_feature(QCA2_FOUND "QCA2" "Support for remote plasma widgets" "http://delta.affinix.com/qca" FALSE "2.0.0" "")
+macro_optional_find_package(QCA2 2.0.0)
+set_package_properties(QCA2 PROPERTIES DESCRIPTION "Support for remote plasma widgets"
+                       URL "http://delta.affinix.com/qca"
+                       TYPE OPTIONAL
+                      )
 
 check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
 check_include_files(sys/time.h HAVE_SYS_TIME_H)
@@ -148,9 +163,7 @@ if(LIBATTICA_FOUND)
   macro_optional_add_subdirectory(attica)
 endif(LIBATTICA_FOUND)
 
-if(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
-  macro_display_feature_log()
-endif(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
 ########### install files ###############
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/kde4 DESTINATION ${BIN_INSTALL_DIR})

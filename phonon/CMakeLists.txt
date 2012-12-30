@@ -2,16 +2,8 @@
 # define the cmake variable KDEBASE_DISABLE_MULTIMEDIA, i.e,
 # % cmake -DKDEBASE_DISABLE_MULTIMEDIA=ON
 #
-
 project(PHONON-KDE-RUNTIME)
-find_package(KDE4 REQUIRED)
 
-include(KDE4Defaults)
-include(MacroLibrary)
-include(CheckFunctionExists)
-include(CheckIncludeFiles)
-
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
 
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES})
@@ -29,7 +21,9 @@ if(KDEBASE_DISABLE_MULTIMEDIA)
 else(KDEBASE_DISABLE_MULTIMEDIA)
    set(PHONON_MIN_VERSION "4.4.57")
    macro_ensure_version("${PHONON_MIN_VERSION}" "${PHONON_VERSION}" _phonon_version_ok)
-   macro_log_feature(_phonon_version_ok "Phonon" "Phonon library" "git://anongit.kde.org/phonon.git" TRUE "${PHONON_MIN_VERSION}" "STRONGLY RECOMMENDED: Required for playing audio and video throughout KDE")
+   if(NOT _phonon_version_ok)
+    message(FATAL_ERROR "The installed Phonon is too old. Found version ${PHONON_VERSION}. Required is ${PHONON_MIN_VERSION}")
+   endif()
 
    find_package(Alsa)
    option(WITH_ALSA "Use ALSA, if found" ON)
@@ -54,7 +48,10 @@ else(KDEBASE_DISABLE_MULTIMEDIA)
       endif(ALSA_VERSION_STR AND NOT WIN32)
    endif(ALSA_FOUND)
    if(NOT WIN32)
-      macro_log_feature(HAVE_CURRENT_ALSA "ALSA" "The Advanced Linux Sound Architecture (ALSA) library" "http://www.alsa-project.org/" FALSE "1.0.14a" "A current ALSA library is needed for dmix and virtual device listing")
+      add_feature_info("Dmix and virtual device listing" HAVE_CURRENT_ALSA
+                       "The ALSA library (http://www.alsa-project.org) is needed for building
+                        some additional Phonon features"
+                      )
    endif(NOT WIN32)
 
    add_subdirectory(kded-module)

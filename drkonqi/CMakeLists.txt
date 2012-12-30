@@ -8,7 +8,11 @@ if (NOT DEBUG_PACKAGE_INSTALLER_NAME)
 endif (NOT DEBUG_PACKAGE_INSTALLER_NAME)
 
 find_package(KdepimLibs)
-macro_log_feature(KDEPIMLIBS_FOUND "KdepimLibs" "KDE PIM Libraries" "kdepimlibs" TRUE "" "Required to build Drkonqi")
+set_package_properties(KdepimLibs PROPERTIES DESCRIPTION "The KDE PIM Libraries"
+                       URL "http://www.kde.org"
+                       TYPE REQUIRED
+                       PURPOSE "Required to build Drkonqi"
+                      )
 
 configure_file (config-drkonqi.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-drkonqi.h )
 
@@ -16,11 +20,11 @@ include_directories(${KDEPIMLIBS_INCLUDE_DIRS})
 
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=1410)
 
-add_subdirectory( data ) 
+add_subdirectory( data )
 add_subdirectory( parser )
-add_subdirectory( tests ) 
+add_subdirectory( tests )
 if ( WIN32 )
-    add_subdirectory( kdbgwin ) 
+    add_subdirectory( kdbgwin )
 endif ( WIN32 )
 
 set(drkonqi_SRCS
@@ -29,7 +33,7 @@ set(drkonqi_SRCS
     drkonqidialog.cpp
     statuswidget.cpp
     aboutbugreportingdialog.cpp
-    reportassistantdialog.cpp    
+    reportassistantdialog.cpp
     reportassistantpage.cpp
     reportassistantpages_base.cpp
     reportassistantpages_bugzilla.cpp
@@ -37,7 +41,7 @@ set(drkonqi_SRCS
     reportinterface.cpp
     backtraceratingwidget.cpp
     backtracewidget.cpp
-    backtracegenerator.cpp 
+    backtracegenerator.cpp
     drkonqi.cpp
     drkonqibackends.cpp
     detachedprocessmonitor.cpp
