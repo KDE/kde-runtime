@@ -119,7 +119,7 @@ namespace {
     //FIXME: Find a nice icon for tags?
     //FIXME: Fetch the datetime?
     KIO::UDSEntry createUDSEntryForTag(const QUrl& tagUri, const QString& label) {
-        QDateTime dt;
+        const QDateTime dt = QDateTime::currentDateTime();
 
         KIO::UDSEntry uds;
         uds.insert( KIO::UDSEntry::UDS_NAME, label );

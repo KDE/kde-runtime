@@ -152,6 +152,7 @@ Comment[x-test]=xxWindows Platform Managerxx
 Comment[zh_CN]=Windows 平台管理器
 Comment[zh_TW]=視窗平台管理員
 X-KDE-Keywords=Platform,Windows
+X-KDE-Keywords[ast]=Platform,Windows
 X-KDE-Keywords[bn]=Platform,Windows
 X-KDE-Keywords[bs]=Platform,Windows,platfotma
 X-KDE-Keywords[ca]=Plataforma,Windows
