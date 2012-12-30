@@ -50,10 +50,14 @@ FolderSelectionModel::~FolderSelectionModel()
 
 void FolderSelectionModel::setHiddenFoldersShown( bool shown )
 {
+    // Never show system links. Ideally, we should display them differently
+    // See bug - https://bugs.kde.org/show_bug.cgi?id=287593 for how they should be shown
+    QDir::Filters defaultFilters( QDir::AllDirs | QDir::NoDotAndDotDot | QDir::NoSymLinks );
+
     if ( shown )
-        setFilter( QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden );
+        setFilter( defaultFilters | QDir::Hidden );
     else
-        setFilter( QDir::AllDirs | QDir::NoDotAndDotDot );
+        setFilter( defaultFilters );
 }
 
 
