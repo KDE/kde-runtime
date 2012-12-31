@@ -50,9 +50,7 @@ FolderSelectionModel::~FolderSelectionModel()
 
 void FolderSelectionModel::setHiddenFoldersShown( bool shown )
 {
-    // Never show system links. Ideally, we should display them differently
-    // See bug - https://bugs.kde.org/show_bug.cgi?id=287593 for how they should be shown
-    QDir::Filters defaultFilters( QDir::AllDirs | QDir::NoDotAndDotDot | QDir::NoSymLinks );
+    QDir::Filters defaultFilters( QDir::AllDirs | QDir::NoDotAndDotDot );
 
     if ( shown )
         setFilter( defaultFilters | QDir::Hidden );
@@ -65,8 +63,12 @@ Qt::ItemFlags FolderSelectionModel::flags( const QModelIndex &index ) const
 {
     Qt::ItemFlags flags = QFileSystemModel::flags( index );
     flags |= Qt::ItemIsUserCheckable;
-    if( isForbiddenPath( filePath( index ) ) )
+    QString indexFilePath = filePath( index );
+    if( isForbiddenPath( indexFilePath ) ||
+        QFileInfo( indexFilePath ).isSymLink() ||
+        isInsideSymLinkToDirectory( indexFilePath ) ) {
         flags ^= Qt::ItemIsEnabled; //disabled!
+    }
     return flags;
 }
 
@@ -107,6 +109,10 @@ QVariant FolderSelectionModel::data( const QModelIndex& index, int role ) const
         }
         else if ( role == Qt::ToolTipRole ) {
             IncludeState state = includeState( index );
+            if ( QFileInfo( filePath( index ) ).isSymLink() ) {
+                return i18nc( "@info:tooltip %1 is the path of the folder in a listview",
+                              "<filename>%1</filename><nl/> (symbolic links are <emphasis>not</emphasis> indexed for desktop search)", filePath( index ) );
+            }
             if ( state == StateInclude || state == StateIncludeInherited ) {
                 return i18nc( "@info:tooltip %1 is the path of the folder in a listview",
                               "<filename>%1</filename><nl/>(will be indexed for desktop search)", filePath( index ) );
@@ -239,6 +245,22 @@ inline bool FolderSelectionModel::isForbiddenPath( const QString& path ) const
             !fi.isExecutable() );
 }
 
+bool FolderSelectionModel::isInsideSymLinkToDirectory( const QString& path ) const
+{
+    QFileInfo info( path );
+    QDir parentDir;
+
+    if( info.isRoot() )
+        return false;
+
+    while( !info.isRoot() ) {
+        if( info.isSymLink() )
+            return true;
+        info = QFileInfo( info.absolutePath() );
+    }
+
+    return false;
+}
 
 FolderSelectionModel::IncludeState FolderSelectionModel::includeState( const QModelIndex& index ) const
 {

@@ -79,6 +79,11 @@ public Q_SLOTS:
 private:
     bool isForbiddenPath( const QString& path ) const;
 
+    /**
+     * Returns true if any of the parent directories (direct or indirect) of the path is a symbolic link.
+    */
+    bool isInsideSymLinkToDirectory( const QString& path ) const;
+
     QSet<QString> m_included;
     QSet<QString> m_excluded;
 };
