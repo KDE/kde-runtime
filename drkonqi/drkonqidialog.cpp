@@ -130,18 +130,22 @@ void DrKonqiDialog::buildMainWidget()
 
     ui.detailsTitleLabel->setText(QString("<strong>%1</strong>").arg(i18nc("@label","Details:")));
 
-    ui.detailsLabel->setText(i18nc("@info","<para>Executable: <application>%1"
-                                            "</application> PID: <numid>%2</numid> Signal: %3 (%4)"
-                                            "</para>", crashedApp->executable().fileName(),
+    ui.detailsLabel->setText(i18nc("@info Note the time information is divided into date and time parts",
+                                            "<para>Executable: <application>%1"
+                                            "</application> PID: <numid>%2</numid> Signal: %3 (%4) "
+                                            "Time: %5 %6</para>", crashedApp->executable().fileName(),
                                              crashedApp->pid(),
                                              crashedApp->signalName(),
                                     #if defined(Q_OS_UNIX)
-                                             crashedApp->signalNumber()
+                                             crashedApp->signalNumber(),
                                     #else
                                              //windows uses weird big numbers for exception codes,
                                              //so it doesn't make sense to display them in decimal
-                                             QString().sprintf("0x%8x", crashedApp->signalNumber())
+                                             QString().sprintf("0x%8x", crashedApp->signalNumber()),
                                     #endif
+                                             KGlobal::locale()->formatDate(crashedApp->datetime().date(), KLocale::ShortDate),
+
+                                             KGlobal::locale()->formatTime(crashedApp->datetime().time(), true)
                                              ));
 }
 

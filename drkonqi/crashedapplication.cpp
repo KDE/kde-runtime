@@ -139,6 +139,11 @@ int CrashedApplication::thread() const
     return m_thread;
 }
 
+const QDateTime& CrashedApplication::datetime() const
+{
+    return m_datetime;
+}
+
 void CrashedApplication::restart()
 {
     if (!m_restarted) {

@@ -19,6 +19,7 @@
 
 #include "bugreportaddress.h"
 #include <QtCore/QObject>
+#include <QtCore/QDateTime>
 #include <QtCore/QFileInfo>
 
 class KCrashBackend;
@@ -62,6 +63,8 @@ public:
 
     int thread() const;
 
+    const QDateTime& datetime() const;
+
 public slots:
     void restart();
 
@@ -81,6 +84,7 @@ protected:
     BugReportAddress m_reportAddress;
     bool m_restarted;
     int m_thread;
+    QDateTime m_datetime;
 };
 
 #endif // CRASHEDAPPLICATION_H

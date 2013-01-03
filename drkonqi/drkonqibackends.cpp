@@ -119,6 +119,7 @@ bool KCrashBackend::init()
 CrashedApplication *KCrashBackend::constructCrashedApplication()
 {
     CrashedApplication *a = new CrashedApplication(this);
+    a->m_datetime = QDateTime::currentDateTime();
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     a->m_name = args->getOption("programname");
     a->m_version = args->getOption("appversion").toUtf8();
