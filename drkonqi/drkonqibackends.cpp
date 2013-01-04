@@ -164,7 +164,7 @@ CrashedApplication *KCrashBackend::constructCrashedApplication()
 DebuggerManager *KCrashBackend::constructDebuggerManager()
 {
     QList<Debugger> internalDebuggers = Debugger::availableInternalDebuggers("KCrash");
-    KConfigGroup config(KGlobal::config(), "drkonqi");
+    KConfigGroup config(KGlobal::config(), "DrKonqi");
 #ifndef Q_OS_WIN
     QString defaultDebuggerName = config.readEntry("Debugger", QString("gdb"));
 #else

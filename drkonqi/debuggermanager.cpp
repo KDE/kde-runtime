@@ -75,7 +75,7 @@ bool DebuggerManager::debuggerIsRunning() const
 
 bool DebuggerManager::showExternalDebuggers() const
 {
-    KConfigGroup config(KGlobal::config(), "drkonqi");
+    KConfigGroup config(KGlobal::config(), "DrKonqi");
     bool showDebugger = config.readEntry("ShowDebugButton", false);
 
     //for compatibility with drkonqi 1.0, if "ShowDebugButton" is not specified in the config
