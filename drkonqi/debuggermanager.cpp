@@ -78,11 +78,17 @@ bool DebuggerManager::showExternalDebuggers() const
     KConfigGroup config(KGlobal::config(), "DrKonqi");
     bool showDebugger = config.readEntry("ShowDebugButton", false);
 
+    // TODO: remove all these compatibility code when KDE SC 4.11
+    // is considered as totally outdated
+    //
     //for compatibility with drkonqi 1.0, if "ShowDebugButton" is not specified in the config
     //and the old "ConfigName" key exists and is set to "developer", we show the debug button.
     if (!config.hasKey("ShowDebugButton") &&
         config.readEntry("ConfigName") == "developer") {
         showDebugger = true;
+        // migrate and remove the long deprecated entry
+        config.writeEntry("ShowDebugButton", true);
+        config.deleteEntry("ConfigName");
     }
 
     return showDebugger;
