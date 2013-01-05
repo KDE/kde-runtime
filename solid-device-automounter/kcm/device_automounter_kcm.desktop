@@ -37,6 +37,7 @@ X-KDE-Keywords[km]=ម៉ោន អាច​យក​ចេញបាន ឧប�
 X-KDE-Keywords[ko]=Mount,Removable,Devices,Automatic,마운트,자동,이동식,장치
 X-KDE-Keywords[lt]=Prijungti,Šalinamus,Įrenginius,Automatiškai
 X-KDE-Keywords[lv]=Montēt,noņemams,ierīces,automātiski
+X-KDE-Keywords[mr]=जोड, काढता येणारी, साधने, स्वयंचलित
 X-KDE-Keywords[nb]=Monter,Flyttbare,Enheter,Automatisk
 X-KDE-Keywords[nds]=Inhangen,tuuschbor,Reedschappen,automaatsch
 X-KDE-Keywords[nl]=Aankoppelen,verwijderbaar,apparaten,automatisch
@@ -105,6 +106,7 @@ Name[lt]=Pašalinami įrenginiai
 Name[lv]=Noņemamās iekārtas
 Name[mk]=Подвижни уреди
 Name[ml]=നീക്കം ചെയ്യാവുന്ന ഉപകരണങ്ങള്‍
+Name[mr]=काढता येणारी साधने
 Name[nb]=Flyttbar
 Name[nds]=Tuuschbor Reedschappen
 Name[nl]=Verwijderbare apparaten
@@ -171,6 +173,7 @@ Comment[lt]=Atjungiamų įrenginių automatinio tvarkymo konfigūravimas
 Comment[lv]=Konfigurēt noņemamo datu nesēju automātisku apstrādi
 Comment[mk]=Го конфигурира автоматското ракување со подвижните носачи
 Comment[ml]=നീക്കം ചെയ്യാവുന്ന സംഭരണ മാധ്യമത്തിനെ സ്വയം കൈകാര്യം ചെയ്യുന്നതു് ക്രമീകരിയ്ക്കുക.
+Comment[mr]=काढता येणाऱ्या संचयन साधनांची स्वयंचलितरीत्या हाताळणी संयोजीत करा
 Comment[nb]=Sett opp automatisk håndtering av flyttbare lagringsmedium
 Comment[nds]=Dat automaatsche Hanteren vun tuuschbor Spiekerreedschappen instellen
 Comment[nl]=Automatische behandeling van verwijderbare opslagmedia configureren

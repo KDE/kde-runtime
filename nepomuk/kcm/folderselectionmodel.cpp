@@ -85,6 +85,13 @@ QVariant FolderSelectionModel::data( const QModelIndex& index, int role ) const
                 return Qt::Unchecked;
             case StateInclude:
             case StateIncludeInherited:
+                // Included files with exclude directories as a sub-directory are marked
+                // as PartiallyChecked
+                const QString path = filePath( index );
+                foreach(const QString& ex, m_excluded) {
+                    if( ex.startsWith(path) )
+                        return Qt::PartiallyChecked;
+                }
                 return Qt::Checked;
             }
         }

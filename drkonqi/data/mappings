@@ -37,6 +37,10 @@ solid-powermanagement=solid|control::powermanager
 bluedevil-helper=solid|bluetooth
 #KDE Platform (Nepomuk)
 nepomuk-rcgen=nepomuk|general
+nepomukbackup=nepomuk|backupservice
+nepomukcleaner=nepomuk|general
+nepomukcontroller=nepomuk|controller
+nepomukindexer=nepomuk|fileindexer
 nepomukserver=nepomuk|general
 nepomukservicestub=nepomuk|general
 sopranocmd=nepomuk|general
