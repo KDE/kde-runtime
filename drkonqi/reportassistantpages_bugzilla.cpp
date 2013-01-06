@@ -34,7 +34,7 @@
 #include <KMessageBox>
 #include <KToolInvocation>
 #include <KWallet/Wallet>
-#include <kcapacitybar.h>
+#include <KCapacityBar>
 
 /* Unhandled error dialog includes */
 #include <KFileDialog>
