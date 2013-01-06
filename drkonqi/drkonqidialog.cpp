@@ -199,7 +199,7 @@ void DrKonqiDialog::buildDialogButtons()
     enableButton(KDialog::User3, !crashedApp->hasBeenRestarted() &&
                                  crashedApp->fakeExecutableBaseName() != QLatin1String("drkonqi"));
     connect(this, SIGNAL(user3Clicked()), crashedApp, SLOT(restart()));
-    connect(crashedApp, SIGNAL(restarted()), this, SLOT(applicationRestarted()));
+    connect(crashedApp, SIGNAL(restarted(bool)), this, SLOT(applicationRestarted(bool)));
 
     //Close button
     QString tooltipText = i18nc("@info:tooltip",
@@ -255,7 +255,7 @@ void DrKonqiDialog::aboutBugReporting()
     m_aboutBugReportingDialog->activateWindow();
 }
 
-void DrKonqiDialog::applicationRestarted()
+void DrKonqiDialog::applicationRestarted(bool success)
 {
-    enableButton(KDialog::User3, false);
+    enableButton(KDialog::User3, !success);
 }

@@ -146,20 +146,26 @@ const QDateTime& CrashedApplication::datetime() const
 
 void CrashedApplication::restart()
 {
-    if (!m_restarted) {
-        m_restarted = true;
-
-        //start the application via kdeinit, as it needs to have a pristine environment and
-        //KProcess::startDetached() can't start a new process with custom environment variables.
-        if (!m_fakeBaseName.isEmpty()) {
-            // if m_fakeBaseName is set, this means m_executable is the path to kdeinit4
-            // so we need to use the fakeBaseName to restart the app
-            KToolInvocation::kdeinitExec(m_fakeBaseName);
-        } else {
-            KToolInvocation::kdeinitExec(m_executable.absoluteFilePath());
-        }
-        emit restarted();
+    if (m_restarted) {
+        return;
     }
+
+    int ret = -1;
+
+    //start the application via kdeinit, as it needs to have a pristine environment and
+    //KProcess::startDetached() can't start a new process with custom environment variables.
+    if (!m_fakeBaseName.isEmpty()) {
+        // if m_fakeBaseName is set, this means m_executable is the path to kdeinit4
+        // so we need to use the fakeBaseName to restart the app
+        ret = KToolInvocation::kdeinitExec(m_fakeBaseName);
+    } else {
+        ret = KToolInvocation::kdeinitExec(m_executable.absoluteFilePath());
+    }
+
+    const bool success = (ret == 0);
+
+    m_restarted = success;
+    emit restarted(success);
 }
 
 #include "crashedapplication.moc"

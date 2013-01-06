@@ -69,7 +69,7 @@ public slots:
     void restart();
 
 signals:
-    void restarted();
+    void restarted(bool success);
 
 protected:
     friend class KCrashBackend;
