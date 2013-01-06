@@ -19,13 +19,13 @@
 
 #include "duplicatefinderjob.h"
 
+#include <KDebug>
+
 #include "backtracegenerator.h"
 #include "parser/backtraceparser.h"
 #include "debuggermanager.h"
 #include "drkonqi.h"
 #include "parsebugbacktraces.h"
-
-#include <KDebug>
 
 DuplicateFinderJob::DuplicateFinderJob(const QList<int> &bugIds, BugzillaManager *manager, QObject *parent)
   : KJob(parent),

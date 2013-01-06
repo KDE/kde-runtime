@@ -15,10 +15,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "crashedapplication.h"
-#include <KToolInvocation>
-
 #include <config-drkonqi.h>
+
+#include "crashedapplication.h"
+
 #if defined(HAVE_STRSIGNAL) && defined(Q_OS_UNIX)
 # include <clocale>
 # include <cstring>
@@ -30,6 +30,8 @@
 #  include <windows.h>
 # endif
 #endif
+
+#include <KToolInvocation>
 
 CrashedApplication::CrashedApplication(QObject *parent)
     : QObject(parent), m_restarted(false)

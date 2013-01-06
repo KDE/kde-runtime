@@ -17,8 +17,9 @@
 #ifndef BUGREPORTADDRESS_H
 #define BUGREPORTADDRESS_H
 
-#include "drkonqi_globals.h"
 #include <QtCore/QString>
+
+#include "drkonqi_globals.h"
 
 class BugReportAddress : public QString
 {

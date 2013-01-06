@@ -21,13 +21,12 @@
 #ifndef BUGZILLALIB__H
 #define BUGZILLALIB__H
 
-#include <kxmlrpcclient/client.h>
-
 #include <QtCore/QObject>
 #include <QtCore/QMap>
 #include <QtCore/QStringList>
-
 #include <QtXml/QDomDocument>
+
+#include <kxmlrpcclient/client.h>
 
 namespace KIO { class Job; }
 class KJob;

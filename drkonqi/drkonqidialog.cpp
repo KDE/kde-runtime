@@ -19,6 +19,14 @@
 
 #include "drkonqidialog.h"
 
+#include <KMenu>
+#include <KIcon>
+#include <KStandardDirs>
+#include <KLocale>
+#include <KTabWidget>
+#include <KDebug>
+#include <KCmdLineArgs>
+
 #include "drkonqi.h"
 #include "backtracewidget.h"
 #include "reportassistantdialog.h"
@@ -27,14 +35,6 @@
 #include "debuggermanager.h"
 #include "debuggerlaunchers.h"
 #include "drkonqi_globals.h"
-
-#include <KMenu>
-#include <KIcon>
-#include <KStandardDirs>
-#include <KLocale>
-#include <KTabWidget>
-#include <KDebug>
-#include <KCmdLineArgs>
 
 DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
         KDialog(parent),

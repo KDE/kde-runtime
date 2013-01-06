@@ -20,15 +20,6 @@
 
 #include "reportassistantpages_base.h"
 
-#include "drkonqi.h"
-#include "debuggermanager.h"
-#include "crashedapplication.h"
-#include "reportinterface.h"
-#include "parser/backtraceparser.h"
-#include "backtracegenerator.h"
-#include "drkonqi_globals.h"
-#include "applicationdetailsexamples.h"
-
 #include <QLabel>
 #include <QCheckBox>
 #include <QToolTip>
@@ -37,6 +28,15 @@
 #include <KIcon>
 #include <KUrl>
 #include <KMessageBox>
+
+#include "drkonqi.h"
+#include "debuggermanager.h"
+#include "crashedapplication.h"
+#include "reportinterface.h"
+#include "parser/backtraceparser.h"
+#include "backtracegenerator.h"
+#include "drkonqi_globals.h"
+#include "applicationdetailsexamples.h"
 
 //BEGIN IntroductionPage
 

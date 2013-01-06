@@ -17,9 +17,10 @@
 #ifndef DEBUGGERLAUNCHERS_H
 #define DEBUGGERLAUNCHERS_H
 
+#include <QtDBus/QDBusAbstractAdaptor>
+
 #include "debugger.h"
 #include "debuggermanager.h"
-#include <QtDBus/QDBusAbstractAdaptor>
 
 class DetachedProcessMonitor;
 

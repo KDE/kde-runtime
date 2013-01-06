@@ -20,9 +20,9 @@
 #ifndef REPORTASSISTANTPAGE__H
 #define REPORTASSISTANTPAGE__H
 
-#include "reportassistantdialog.h"
-
 #include <QWidget>
+
+#include "reportassistantdialog.h"
 
 class BugzillaManager;
 

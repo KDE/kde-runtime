@@ -18,7 +18,13 @@
 *
 ******************************************************************/
 
+#include <config-drkonqi.h>
+
 #include "systeminformation.h"
+
+#ifdef HAVE_UNAME
+# include <sys/utsname.h>
+#endif
 
 #include <KStandardDirs>
 #include <KProcess>
@@ -26,11 +32,6 @@
 #include <KConfig>
 #include <KConfigGroup>
 #include <kdeversion.h>
-
-#include <config-drkonqi.h>
-#ifdef HAVE_UNAME
-# include <sys/utsname.h>
-#endif
 
 SystemInformation::SystemInformation(QObject * parent)
     : QObject(parent)

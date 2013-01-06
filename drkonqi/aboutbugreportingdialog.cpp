@@ -19,12 +19,13 @@
 ******************************************************************/
 
 #include "aboutbugreportingdialog.h"
-#include "drkonqi_globals.h"
 
 #include <KLocale>
 #include <KIcon>
 #include <KToolInvocation>
 #include <KTextBrowser>
+
+#include "drkonqi_globals.h"
 
 AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         KDialog(parent)

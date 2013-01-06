@@ -18,15 +18,6 @@
 ******************************************************************/
 
 #include "backtracewidget.h"
-#include "backtraceratingwidget.h"
-
-#include "drkonqi.h"
-#include "crashedapplication.h"
-#include "backtracegenerator.h"
-#include "parser/backtraceparser.h"
-#include "drkonqi_globals.h"
-#include "debuggermanager.h"
-#include "gdbhighlighter.h"
 
 #include <QLabel>
 #include <QHBoxLayout>
@@ -38,6 +29,15 @@
 #include <KLocale>
 #include <KToolInvocation>
 #include <KGlobalSettings>
+
+#include "drkonqi.h"
+#include "backtraceratingwidget.h"
+#include "crashedapplication.h"
+#include "backtracegenerator.h"
+#include "parser/backtraceparser.h"
+#include "drkonqi_globals.h"
+#include "debuggermanager.h"
+#include "gdbhighlighter.h"
 
 const char *extraDetailsLabelMargin = " margin: 5px; ";
 

@@ -19,6 +19,10 @@
 
 #include "reportassistantdialog.h"
 
+#include <QCloseEvent>
+
+#include <KMessageBox>
+
 #include "drkonqi_globals.h"
 #include "drkonqi.h"
 
@@ -33,8 +37,6 @@
 #include "reportassistantpages_bugzilla_duplicates.h"
 #include "reportinterface.h"
 
-#include <QCloseEvent>
-#include <KMessageBox>
 
 ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
         KAssistantDialog(parent),

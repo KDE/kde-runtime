@@ -19,10 +19,10 @@
 
 #include "applicationdetailsexamples.h"
 
+#include <KLocale>
+
 #include "drkonqi.h"
 #include "crashedapplication.h"
-
-#include <KLocale>
 
 ApplicationDetailsExamples::ApplicationDetailsExamples(QObject * parent)
     : QObject(parent)

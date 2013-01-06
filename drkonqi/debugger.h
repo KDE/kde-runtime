@@ -18,6 +18,7 @@
 #define DEBUGGER_H
 
 #include <QtCore/QString>
+
 #include <KSharedConfig>
 
 class Debugger

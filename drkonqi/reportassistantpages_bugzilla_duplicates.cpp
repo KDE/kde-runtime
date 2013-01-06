@@ -19,11 +19,6 @@
 
 #include "reportassistantpages_bugzilla_duplicates.h"
 
-#include "drkonqi_globals.h"
-
-#include "reportinterface.h"
-#include "statuswidget.h"
-
 #include <QtCore/QDate>
 #include <QtCore/QTimer>
 
@@ -35,6 +30,10 @@
 #include <KIcon>
 #include <KMessageBox>
 #include <KInputDialog>
+
+#include "drkonqi_globals.h"
+#include "reportinterface.h"
+#include "statuswidget.h"
 
 //BEGIN BugzillaDuplicatesPage
 

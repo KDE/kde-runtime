@@ -20,6 +20,9 @@
 
 #include "reportinterface.h"
 
+#include <KDebug>
+#include <KLocale>
+
 #include "drkonqi.h"
 #include "bugzillalib.h"
 #include "productmapping.h"
@@ -29,9 +32,6 @@
 #include "parser/backtraceparser.h"
 #include "backtracegenerator.h"
 #include "applicationdetailsexamples.h"
-
-#include <KDebug>
-#include <KLocale>
 
 ReportInterface::ReportInterface(QObject *parent)
     : QObject(parent),

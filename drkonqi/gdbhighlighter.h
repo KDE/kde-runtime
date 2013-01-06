@@ -18,8 +18,9 @@
 #ifndef GDBHIGHLIGHTER_H
 #define GDBHIGHLIGHTER_H
 
-#include "parser/backtraceline.h"
 #include <QSyntaxHighlighter>
+
+#include "parser/backtraceline.h"
 
 class GdbHighlighter : public QSyntaxHighlighter
 {

@@ -40,13 +40,11 @@
     * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include "drkonqi.h"
-#include "systeminformation.h"
-#include "crashedapplication.h"
-#include "drkonqibackends.h"
 
 #include <QtCore/QWeakPointer>
 #include <QtCore/QTextStream>
 #include <QtCore/QTimerEvent>
+
 #include <KMessageBox>
 #include <KFileDialog>
 #include <KTemporaryFile>
@@ -55,6 +53,10 @@
 #include <KCrash>
 #include <KDebug>
 #include <KLocale>
+
+#include "systeminformation.h"
+#include "crashedapplication.h"
+#include "drkonqibackends.h"
 
 DrKonqi::DrKonqi()
 {

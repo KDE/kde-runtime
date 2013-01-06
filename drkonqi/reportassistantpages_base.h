@@ -20,6 +20,8 @@
 #ifndef REPORTASSISTANTPAGES__BASE__H
 #define REPORTASSISTANTPAGES__BASE__H
 
+#include <QtCore/QPointer>
+
 #include "reportassistantdialog.h"
 #include "reportassistantpage.h"
 
@@ -29,8 +31,6 @@
 #include "ui_assistantpage_bugawareness.h"
 #include "ui_assistantpage_conclusions.h"
 #include "ui_assistantpage_conclusions_dialog.h"
-
-#include <QtCore/QPointer>
 
 /** Introduction page **/
 class IntroductionPage: public ReportAssistantPage

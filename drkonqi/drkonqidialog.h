@@ -22,6 +22,7 @@
 
 #include <QtCore/QPointer>
 #include <QtCore/QHash>
+
 #include <KDialog>
 
 #include "ui_maindialog.h"

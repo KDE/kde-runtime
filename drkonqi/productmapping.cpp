@@ -19,14 +19,13 @@
 
 #include "productmapping.h"
 
-#include "bugzillalib.h"
-
-#include "drkonqi.h"
-#include "crashedapplication.h"
-
 #include <KConfig>
 #include <KConfigGroup>
 #include <KDebug>
+
+#include "bugzillalib.h"
+#include "drkonqi.h"
+#include "crashedapplication.h"
 
 ProductMapping::ProductMapping(const QString & appName, BugzillaManager * bzManager, QObject * parent)
     : QObject(parent)

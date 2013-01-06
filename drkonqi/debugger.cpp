@@ -15,8 +15,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "debugger.h"
-#include "crashedapplication.h"
-#include "drkonqi.h"
 
 #include <KConfig>
 #include <KConfigGroup>
@@ -24,6 +22,9 @@
 #include <KStandardDirs>
 #include <KMacroExpanderBase>
 #include <KDebug>
+
+#include "crashedapplication.h"
+#include "drkonqi.h"
 
 //static
 QList<Debugger> Debugger::availableInternalDebuggers(const QString & backend)

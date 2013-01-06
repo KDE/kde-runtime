@@ -19,14 +19,6 @@
 
 #include "reportassistantpages_bugzilla.h"
 
-#include "reportinterface.h"
-#include "systeminformation.h"
-#include "crashedapplication.h"
-#include "statuswidget.h"
-#include "drkonqi.h"
-#include "drkonqi_globals.h"
-#include "applicationdetailsexamples.h"
-
 #include <QtCore/QTimer>
 
 #include <QLabel>
@@ -50,6 +42,14 @@
 #include <KIO/Job>
 #include <KIO/NetAccess>
 #include <KTemporaryFile>
+
+#include "reportinterface.h"
+#include "systeminformation.h"
+#include "crashedapplication.h"
+#include "statuswidget.h"
+#include "drkonqi.h"
+#include "drkonqi_globals.h"
+#include "applicationdetailsexamples.h"
 
 static const char kWalletEntryName[] = "drkonqi_bugzilla";
 static const char kWalletEntryUsername[] = "username";

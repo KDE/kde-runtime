@@ -26,11 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 #include "backtracegenerator.h"
-#include "parser/backtraceparser.h"
 
 #include <KDebug>
 #include <KTemporaryFile>
 #include <KShell>
+
+#include "parser/backtraceparser.h"
 
 BacktraceGenerator::BacktraceGenerator(const Debugger & debugger, QObject *parent)
         : QObject(parent),

@@ -15,13 +15,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "debuggerlaunchers.h"
-#include "detachedprocessmonitor.h"
-#include "drkonqi.h"
-#include "crashedapplication.h"
+
 #include <QtDBus/QDBusConnection>
+
 #include <KShell>
 #include <KProcess>
 #include <KDebug>
+
+#include "detachedprocessmonitor.h"
+#include "drkonqi.h"
+#include "crashedapplication.h"
 
 DefaultDebuggerLauncher::DefaultDebuggerLauncher(const Debugger & debugger, DebuggerManager *parent)
     : AbstractDebuggerLauncher(parent), m_debugger(debugger)

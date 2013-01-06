@@ -15,11 +15,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "debuggermanager.h"
+
+#include <KConfigGroup>
+#include <KGlobal>
+
 #include "debugger.h"
 #include "debuggerlaunchers.h"
 #include "backtracegenerator.h"
-#include <KConfigGroup>
-#include <KGlobal>
 
 struct DebuggerManager::Private
 {

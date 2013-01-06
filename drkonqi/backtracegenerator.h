@@ -28,8 +28,10 @@
 #ifndef BACKTRACEGENERATOR_H
 #define BACKTRACEGENERATOR_H
 
-#include "debugger.h"
 #include <KProcess>
+
+#include "debugger.h"
+
 class KTemporaryFile;
 class BacktraceParser;
 

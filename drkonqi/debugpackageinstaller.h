@@ -20,8 +20,7 @@
 #define DEBUGPACKAGEINSTALLER__H
 
 #include <QtCore/QObject>
-
-#include <QProcess>
+#include <QtCore/QProcess>
 
 class KProcess;
 class KProgressDialog;

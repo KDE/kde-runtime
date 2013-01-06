@@ -16,7 +16,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 #include "gdbhighlighter.h"
+
 #include <QTextDocument>
+
 #include <KColorScheme>
 
 GdbHighlighter::GdbHighlighter(QTextDocument* parent, const QList<BacktraceLine> & gdbLines)

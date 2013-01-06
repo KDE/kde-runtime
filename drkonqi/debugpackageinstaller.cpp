@@ -17,16 +17,18 @@
 *
 ******************************************************************/
 
-#include "debugpackageinstaller.h"
-#include "drkonqi.h"
-#include "crashedapplication.h"
 #include <config-drkonqi.h>
+
+#include "debugpackageinstaller.h"
 
 #include <KStandardDirs>
 #include <KDebug>
 #include <KProcess>
 #include <KLocale>
 #include <KProgressDialog>
+
+#include "drkonqi.h"
+#include "crashedapplication.h"
 
 DebugPackageInstaller::DebugPackageInstaller(QObject *parent)
     : QObject(parent), m_installerProcess(0), m_progressDialog(0)

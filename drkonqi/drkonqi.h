@@ -17,12 +17,13 @@
 #ifndef DRKONQI_H
 #define DRKONQI_H
 
+class QString;
+class QWidget;
+
 class SystemInformation;
 class DebuggerManager;
 class CrashedApplication;
 class AbstractDrKonqiBackend;
-class QString;
-class QWidget;
 
 class DrKonqi
 {

@@ -15,13 +15,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "drkonqibackends.h"
-#include "crashedapplication.h"
-#include "debugger.h"
-#include "debuggermanager.h"
-#include "backtracegenerator.h"
+
+#include <cstdlib>
+#include <cerrno>
+#include <sys/types.h>
+#include <signal.h>
 
 #include <QtCore/QTimer>
 #include <QtCore/QDir>
+
 #include <KCmdLineArgs>
 #include <KStandardDirs>
 #include <KDebug>
@@ -31,11 +33,10 @@
 #include <KStartupInfo>
 #include <KCrash>
 
-#include <cstdlib>
-#include <cerrno>
-#include <sys/types.h>
-#include <signal.h>
-
+#include "crashedapplication.h"
+#include "debugger.h"
+#include "debuggermanager.h"
+#include "backtracegenerator.h"
 
 AbstractDrKonqiBackend::~AbstractDrKonqiBackend()
 {

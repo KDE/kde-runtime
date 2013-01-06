@@ -15,9 +15,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "detachedprocessmonitor.h"
-#include <QtCore/QTimerEvent>
-#include <KDebug>
+
 #include <signal.h>
+
+#include <QtCore/QTimerEvent>
+
+#include <KDebug>
 
 DetachedProcessMonitor::DetachedProcessMonitor(QObject *parent)
         : QObject(parent), m_pid(0)

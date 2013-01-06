@@ -25,8 +25,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************/
 
-#include "drkonqi.h"
-#include "drkonqidialog.h"
+#include <cstdlib>
+#include <unistd.h>
 
 #include <KApplication>
 #include <KCmdLineArgs>
@@ -34,8 +34,8 @@
 #include <KLocalizedString>
 #include <kdefakes.h>
 
-#include <cstdlib>
-#include <unistd.h>
+#include "drkonqi.h"
+#include "drkonqidialog.h"
 
 static const char version[] = "2.1.5";
 static const char description[] = I18N_NOOP("The KDE Crash Handler gives the user feedback "

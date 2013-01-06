@@ -24,7 +24,6 @@
 #include <QtCore/QObject>
 #include <QtCore/QStringList>
 
-
 class BugReport;
 
 class BugzillaManager;

@@ -17,10 +17,11 @@
 #ifndef CRASHEDAPPLICATION_H
 #define CRASHEDAPPLICATION_H
 
-#include "bugreportaddress.h"
 #include <QtCore/QObject>
 #include <QtCore/QDateTime>
 #include <QtCore/QFileInfo>
+
+#include "bugreportaddress.h"
 
 class KCrashBackend;
 

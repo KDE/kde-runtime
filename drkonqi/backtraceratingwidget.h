@@ -20,10 +20,10 @@
 #ifndef BACKTRACERATINGWIDGET__H
 #define BACKTRACERATINGWIDGET__H
 
+#include <QWidget>
+
 #include "parser/backtraceparser.h"
 #include "backtracegenerator.h"
-
-#include <QWidget>
 
 class QPixmap;
 

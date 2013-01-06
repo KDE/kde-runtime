@@ -20,9 +20,6 @@
 
 #include "bugzillalib.h"
 
-#include "drkonqi_globals.h"
-#include "findconfigdatajob.h"
-
 #include <QtCore/QTextStream>
 #include <QtCore/QByteArray>
 #include <QtCore/QString>
@@ -36,6 +33,9 @@
 #include <KUrl>
 #include <KLocale>
 #include <KDebug>
+
+#include "drkonqi_globals.h"
+#include "findconfigdatajob.h"
 
 static const char bugtrackerBKOBaseUrl[] = KDE_BUGZILLA_URL;
 
