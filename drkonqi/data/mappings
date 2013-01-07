@@ -130,6 +130,13 @@ ktp-call-ui=telepathy|call-ui
 ktp-filetransfer-handler=telepathy|filetransfer-handler
 ktp-auth-handler=telepathy|auth-handler
 
+# KDE Kipi-plugins
+dngconverter=kipiplugins|DngConverter
+expoblending=kipiplugins|ExpoBlending
+panoramagui=kipiplugins|Panorama
+photolayoutseditor=kipiplugins|PhotoLayoutsEditor
+scangui=kipiplugins|AcquireImages
+
 #Other KDE Applications and Technologies
 ksysguardd=ksysguard|ksysguardd
 kmixctrl=kmix|general
