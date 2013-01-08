@@ -42,7 +42,6 @@ static const char bugtrackerBKOBaseUrl[] = KDE_BUGZILLA_URL;
 static const char columns[] = "bug_severity,priority,bug_status,product,short_desc,resolution";
 
 //Bugzilla URLs
-static const char loginUrl[] = "index.cgi";
 static const char searchUrl[] =
         "buglist.cgi?query_format=advanced&order=Importance&ctype=csv"
         "&product=%1"
