@@ -68,7 +68,7 @@ namespace HardwareDatabase
             const QString iconName;
 
             /**
-             * Tells the intial preference in the device list. This determines default ordering of
+             * Tells the initial preference in the device list. This determines default ordering of
              * devices and can be used to make sure a default setup uses the correct audio devices.
              */
             const int initialPreference;

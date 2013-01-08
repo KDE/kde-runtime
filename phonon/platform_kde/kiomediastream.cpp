@@ -57,22 +57,22 @@ void KioMediaStream::reset()
         Q_ASSERT(d->kiojob);
         d->open = false;
         setStreamSeekable(true);
-        connect(d->kiojob, SIGNAL(open(KIO::Job *)), this, SLOT(_k_bytestreamFileJobOpen(KIO::Job *)));
-        connect(d->kiojob, SIGNAL(position(KIO::Job *, KIO::filesize_t)),
-                this, SLOT(_k_bytestreamSeekDone(KIO::Job *, KIO::filesize_t)));
+        connect(d->kiojob, SIGNAL(open(KIO::Job*)), this, SLOT(_k_bytestreamFileJobOpen(KIO::Job*)));
+        connect(d->kiojob, SIGNAL(position(KIO::Job*, KIO::filesize_t)),
+                this, SLOT(_k_bytestreamSeekDone(KIO::Job*, KIO::filesize_t)));
     } else {
         d->kiojob = KIO::get(d->url, KIO::NoReload, KIO::HideProgressInfo);
         Q_ASSERT(d->kiojob);
         setStreamSeekable(false);
-        connect(d->kiojob, SIGNAL(totalSize(KJob *, qulonglong)),
-                this, SLOT(_k_bytestreamTotalSize(KJob *,qulonglong)));
+        connect(d->kiojob, SIGNAL(totalSize(KJob*, qulonglong)),
+                this, SLOT(_k_bytestreamTotalSize(KJob*, qulonglong)));
         d->kiojob->suspend();
     }
 
     d->kiojob->addMetaData("UserAgent", QLatin1String("KDE Phonon"));
-    connect(d->kiojob, SIGNAL(data(KIO::Job *,const QByteArray &)),
-            this, SLOT(_k_bytestreamData(KIO::Job *,const QByteArray &)));
-    connect(d->kiojob, SIGNAL(result(KJob *)), this, SLOT(_k_bytestreamResult(KJob *)));
+    connect(d->kiojob, SIGNAL(data(KIO::Job*, QByteArray)),
+            this, SLOT(_k_bytestreamData(KIO::Job*, QByteArray)));
+    connect(d->kiojob, SIGNAL(result(KJob*)), this, SLOT(_k_bytestreamResult(KJob*)));
 }
 
 KioMediaStream::~KioMediaStream()

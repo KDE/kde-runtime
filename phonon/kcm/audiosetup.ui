@@ -19,7 +19,7 @@
      </property>
      <layout class="QGridLayout" name="_3">
       <item row="3" column="1">
-       <widget class="QComboBox" name="profileBox">
+       <widget class="KComboBox" name="profileBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -88,7 +88,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QComboBox" name="portBox">
+       <widget class="KComboBox" name="portBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>

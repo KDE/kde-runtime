@@ -33,7 +33,7 @@ class BackendSelection : public QWidget, private Ui::BackendSelection
 {
     Q_OBJECT
     public:
-        BackendSelection(QWidget *parent = 0);
+        explicit BackendSelection(QWidget *parent = 0);
 
         void load();
         void save();

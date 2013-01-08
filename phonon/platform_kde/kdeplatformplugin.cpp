@@ -122,8 +122,8 @@ QObject *KdePlatformPlugin::createBackend(KService::Ptr newService)
     if (!backend) {
         const QLatin1String suffix("/phonon_backend/");
         const QStringList libFilter(newService->library() + QLatin1String(".*"));
-        foreach (QString libPath, QCoreApplication::libraryPaths()) {
-            libPath += suffix;
+        foreach (const QString &libPathBase, QCoreApplication::libraryPaths()) {
+            const QString libPath = libPathBase + suffix;
             const QDir dir(libPath);
             foreach (const QString &pluginName, dir.entryList(libFilter, QDir::Files)) {
                 QPluginLoader pluginLoader(libPath + pluginName);

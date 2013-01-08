@@ -65,8 +65,8 @@ PhononServer::PhononServer(QObject *parent, const QList<QVariant> &)
     m_config(KSharedConfig::openConfig("phonondevicesrc", KConfig::SimpleConfig))
 {
     findDevices();
-    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)), SLOT(deviceAdded(const QString &)));
-    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)), SLOT(deviceRemoved(const QString &)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)), SLOT(deviceAdded(QString)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(QString)), SLOT(deviceRemoved(QString)));
 }
 
 PhononServer::~PhononServer()
@@ -607,12 +607,12 @@ void PhononServer::findDevices()
         }
 
         kDebug(601) << "Solid video device:" << hwDevice.product() << hwDevice.description();
-        foreach (const QString driverName, videoDevice->supportedDrivers()) {
+        foreach (const QString & driverName, videoDevice->supportedDrivers()) {
             kDebug(601) << "- driver" << driverName << ":" << videoDevice->driverHandle(driverName);
         }
 
         // Iterate through the supported drivers to create different access objects for each one
-        foreach (const QString driverName, videoDevice->supportedDrivers()) {
+        foreach (const QString & driverName, videoDevice->supportedDrivers()) {
             deviceIds.clear();
             accessPreference = 0;
             driver = PS::DeviceAccess::InvalidDriver;

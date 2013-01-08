@@ -27,7 +27,7 @@ class ServiceRegistry : public QDBusAbstractAdaptor
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.kde.Phonon.ServiceRegistry")
 public:
-    ServiceRegistry(QObject *parent);
+    explicit ServiceRegistry(QObject *parent);
     virtual ~ServiceRegistry();
 
 public Q_SLOTS: // METHODS

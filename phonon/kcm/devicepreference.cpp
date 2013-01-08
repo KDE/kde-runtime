@@ -22,6 +22,7 @@
 #include "devicepreference.h"
 
 #include <QtCore/QList>
+#include <QtCore/QPointer>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusReply>
 #include <QtDBus/QDBusInterface>
@@ -246,21 +247,21 @@ DevicePreference::DevicePreference(QWidget *parent)
 
     // Connect all model data change signals to the changed slot
     for (int i = -1; i <= LastCategory; ++i) {
-        connect(m_audioOutputModel[i], SIGNAL(rowsInserted(const QModelIndex &, int, int)), this, SIGNAL(changed()));
-        connect(m_audioOutputModel[i], SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SIGNAL(changed()));
+        connect(m_audioOutputModel[i], SIGNAL(rowsInserted(QModelIndex, int, int)), this, SIGNAL(changed()));
+        connect(m_audioOutputModel[i], SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SIGNAL(changed()));
         connect(m_audioOutputModel[i], SIGNAL(layoutChanged()), this, SIGNAL(changed()));
-        connect(m_audioOutputModel[i], SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SIGNAL(changed()));
+        connect(m_audioOutputModel[i], SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SIGNAL(changed()));
         if (m_audioCaptureModel.contains(i)) {
-            connect(m_audioCaptureModel[i], SIGNAL(rowsInserted(const QModelIndex &, int, int)), this, SIGNAL(changed()));
-            connect(m_audioCaptureModel[i], SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SIGNAL(changed()));
+            connect(m_audioCaptureModel[i], SIGNAL(rowsInserted(QModelIndex, int, int)), this, SIGNAL(changed()));
+            connect(m_audioCaptureModel[i], SIGNAL(rowsRemoved(QModelIndex , int, int)), this, SIGNAL(changed()));
             connect(m_audioCaptureModel[i], SIGNAL(layoutChanged()), this, SIGNAL(changed()));
-            connect(m_audioCaptureModel[i], SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SIGNAL(changed()));
+            connect(m_audioCaptureModel[i], SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SIGNAL(changed()));
         }
         if (m_videoCaptureModel.contains(i)) {
-            connect(m_videoCaptureModel[i], SIGNAL(rowsInserted(const QModelIndex &, int, int)), this, SIGNAL(changed()));
-            connect(m_videoCaptureModel[i], SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SIGNAL(changed()));
+            connect(m_videoCaptureModel[i], SIGNAL(rowsInserted(QModelIndex, int, int)), this, SIGNAL(changed()));
+            connect(m_videoCaptureModel[i], SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SIGNAL(changed()));
             connect(m_videoCaptureModel[i], SIGNAL(layoutChanged()), this, SIGNAL(changed()));
-            connect(m_videoCaptureModel[i], SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SIGNAL(changed()));
+            connect(m_videoCaptureModel[i], SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SIGNAL(changed()));
         }
     }
 
@@ -767,19 +768,19 @@ void DevicePreference::on_applyPreferencesButton_clicked()
         return;
     }
 
-    KDialog dialog(this);
-    dialog.setButtons(KDialog::Ok | KDialog::Cancel);
-    dialog.setDefaultButton(KDialog::Ok);
+    QPointer<KDialog> dialog = new KDialog(this);
+    dialog->setButtons(KDialog::Ok | KDialog::Cancel);
+    dialog->setDefaultButton(KDialog::Ok);
 
-    QWidget mainWidget(&dialog);
-    dialog.setMainWidget(&mainWidget);
+    QWidget *mainWidget = new QWidget(dialog);
+    dialog->setMainWidget(mainWidget);
 
-    QLabel label(&mainWidget);
-    label.setText(i18n("Apply the currently shown device preference list to the following other "
+    QLabel *label = new QLabel(mainWidget);
+    label->setText(i18n("Apply the currently shown device preference list to the following other "
                 "audio playback categories:"));
-    label.setWordWrap(true);
+    label->setWordWrap(true);
 
-    KListWidget list(&mainWidget);
+    KListWidget *list = new KListWidget(mainWidget);
 
     for (catIndex = 0; catIndex < categoryListCount; catIndex ++) {
         Category cat = cap ? NoCategory : categoryList[catIndex];
@@ -788,15 +789,15 @@ void DevicePreference::on_applyPreferencesButton_clicked()
         QListWidgetItem *item = NULL;
         if (cap) {
             if (capcat == NoCaptureCategory) {
-                item = new QListWidgetItem(i18n("Default/Unspecified Category"), &list, capcat);
+                item = new QListWidgetItem(i18n("Default/Unspecified Category"), list, capcat);
             } else {
-                item = new QListWidgetItem(categoryToString(capcat), &list, capcat);
+                item = new QListWidgetItem(categoryToString(capcat), list, capcat);
             }
         } else {
             if (cat == NoCategory) {
-                item = new QListWidgetItem(i18n("Default/Unspecified Category"), &list, cat);
+                item = new QListWidgetItem(i18n("Default/Unspecified Category"), list, cat);
             } else {
-                item = new QListWidgetItem(categoryToString(cat), &list, cat);
+                item = new QListWidgetItem(categoryToString(cat), list, cat);
             }
         }
 
@@ -806,19 +807,19 @@ void DevicePreference::on_applyPreferencesButton_clicked()
         }
     }
 
-    QVBoxLayout layout(&mainWidget);
-    layout.setMargin(0);
-    layout.addWidget(&label);
-    layout.addWidget(&list);
+    QVBoxLayout *layout = new QVBoxLayout(mainWidget);
+    layout->setMargin(0);
+    layout->addWidget(label);
+    layout->addWidget(list);
 
-    switch (dialog.exec()) {
+    switch (dialog->exec()) {
     case QDialog::Accepted:
         for (catIndex = 0; catIndex < categoryListCount; catIndex ++) {
             Category cat = cap ? NoCategory : categoryList[catIndex];
             CaptureCategory capcat = cap ? capCategoryList[catIndex] : NoCaptureCategory;
 
             if (cap ? capcat != catItem->captureCategory() : cat != catItem->category()) {
-                QListWidgetItem *item = list.item(catIndex);
+                QListWidgetItem *item = list->item(catIndex);
                 Q_ASSERT(item->type() == cap ? (int) capcat : (int) cat);
                 if (item->checkState() == Qt::Checked) {
                     switch (catItem->odtype()) {
@@ -847,6 +848,8 @@ void DevicePreference::on_applyPreferencesButton_clicked()
         // nothing to do
         break;
     }
+
+    delete dialog;
 }
 
 void DevicePreference::on_showAdvancedDevicesCheckBox_toggled()

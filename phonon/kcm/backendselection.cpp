@@ -197,7 +197,7 @@ void BackendSelection::selectionChanged()
         m_comment->setText(service->comment());
         const QString website = service->property("X-KDE-PhononBackendInfo-Website").toString();
         m_website->setText(QString("<a href=\"%1\">%1</a>").arg(website));
-        connect(m_website, SIGNAL(linkActivated(const QString &)), SLOT(openWebsite(const QString &)), Qt::UniqueConnection);
+        connect(m_website, SIGNAL(linkActivated(QString)), SLOT(openWebsite(QString)), Qt::UniqueConnection);
         m_version->setText(service->property("X-KDE-PhononBackendInfo-Version").toString());
         showBackendKcm(service);
     }

@@ -53,7 +53,7 @@ class AudioSetup : public QWidget, private Ui::AudioSetup
     Q_OBJECT
 
     public:
-        AudioSetup(QWidget *parent = 0);
+        explicit AudioSetup(QWidget *parent = 0);
         ~AudioSetup();
 
         void load();

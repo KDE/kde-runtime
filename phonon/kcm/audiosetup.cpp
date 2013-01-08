@@ -485,7 +485,7 @@ void AudioSetup::updateSource(const pa_source_info* i)
     if (false && info.ports.size()) {
         int idx = deviceBox->currentIndex();
         if (idx >= 0) {
-            int64_t index = deviceBox->itemData(idx).toInt();
+            qint64 index = deviceBox->itemData(idx).toInt();
             if (index < 0 && ((-1*index) - 1) == i->index) {
                 portBox->blockSignals(true);
                 portBox->setCurrentIndex(portBox->findData(info.activePort));
@@ -661,7 +661,7 @@ void AudioSetup::reallyUpdateVUMeter()
         inputLevels->setValue(val-1);
 }
 
-static deviceInfo &getDeviceInfo(int64_t index)
+static deviceInfo &getDeviceInfo(qint64 index)
 {
     if (index >= 0) {
       Q_ASSERT(s_Sinks.contains(index));
@@ -682,7 +682,7 @@ void AudioSetup::deviceChanged()
         _updatePlacementTester();
         return;
     }
-    int64_t index = deviceBox->itemData(idx).toInt();
+    qint64 index = deviceBox->itemData(idx).toInt();
     deviceInfo &device_info = getDeviceInfo(index);
 
     kDebug() << QString("Updating ports for device '%1' (%2 ports available)")
@@ -718,7 +718,7 @@ void AudioSetup::deviceChanged()
 
 void AudioSetup::portChanged()
 {
-    int64_t index = deviceBox->itemData(deviceBox->currentIndex()).toInt();
+    qint64 index = deviceBox->itemData(deviceBox->currentIndex()).toInt();
 
     QString port = portBox->itemData(portBox->currentIndex()).toString();
     kDebug() << "Changing port to" << port;
@@ -773,7 +773,7 @@ void AudioSetup::_updatePlacementTester()
     if (idx < 0)
       return;
 
-    int64_t index = deviceBox->itemData(idx).toInt();
+    qint64 index = deviceBox->itemData(idx).toInt();
     deviceInfo& sink_info = getDeviceInfo(index);
 
     if (index < 0) {
