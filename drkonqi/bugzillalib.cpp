@@ -425,7 +425,6 @@ BugReport BugReportXMLParser::parse()
         m_valid = d2.isNull();
 
         if (m_valid) {
-            m_valid = true;
             report.setValid(true);
 
             //Get basic fields
