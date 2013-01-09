@@ -151,7 +151,7 @@ Nepomuk2::TimelineFolderType Nepomuk2::parseTimelineUrl( const KUrl& url, QDate*
 
 Nepomuk2::Query::Query Nepomuk2::buildTimelineQuery( const QDate& from, const QDate& to )
 {
-    Nepomuk2::Query::FileQuery query = Nepomuk2::Query::dateRangeQuery( from, to, Query::ModificationDate );
+    Nepomuk2::Query::FileQuery query = Nepomuk2::Query::dateRangeQuery( from, to.isValid() ? to : from, Query::ModificationDate );
     query.setFileMode( Query::FileQuery::QueryFiles );
     return query;
 }
