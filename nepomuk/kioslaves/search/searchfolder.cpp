@@ -25,6 +25,7 @@
 
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
+#include <Soprano/Vocabulary/RDFS>
 #include <Soprano/Node> // for qHash( QUrl )
 
 #include <Nepomuk2/Variant>
@@ -35,6 +36,7 @@
 #include <Nepomuk2/Query/ResourceTypeTerm>
 #include <Nepomuk2/Vocabulary/NFO>
 #include <Nepomuk2/Vocabulary/NIE>
+#include <Nepomuk2/Vocabulary/NCO>
 #include <Nepomuk2/Vocabulary/PIMO>
 
 #include <Nepomuk2/ResourceManager>
@@ -43,6 +45,7 @@
 
 #include <QtCore/QMutexLocker>
 #include <QTextDocument>
+
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Model>
 
@@ -81,6 +84,7 @@ Nepomuk2::SearchFolder::~SearchFolder()
 void Nepomuk2::SearchFolder::list()
 {
     //FIXME: Do the result count as well?
+    kDebug() << m_sparqlQuery;
     Query::ResultIterator it( m_sparqlQuery, m_reqPropertyMap );
     while( it.next() ) {
         Query::Result result = it.result();
@@ -91,15 +95,65 @@ void Nepomuk2::SearchFolder::list()
     }
 }
 
+namespace {
+    Soprano::Node fetchProperyNode( const QString& uriN3, const QUrl& prop ) {
+        QString query = QString::fromLatin1("select ?o where { %1 %2 ?o . } LIMIT 1")
+                        .arg( uriN3, Soprano::Node::resourceToN3(prop) );
+
+        Soprano::Model* model = Nepomuk2::ResourceManager::instance()->mainModel();
+        Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparqlNoInference );
+        if( it.next() )
+            return it[0];
+
+        return Soprano::Node();
+    }
+
+    QString fetchProperty( const QString& uriN3, const QUrl& prop ) {
+        return fetchProperyNode( uriN3, prop ).literal().toString();
+    }
+
+    /**
+     * We avoid using the Resource class cause that loads all the properties of the resource
+     * and then registers with the ResourceWatcher to monitor for changes. We just require the
+     * generic label, which we can get by individually querying the different properties.
+     */
+    QString genericLabel( const QUrl& uri ) {
+        QString uriN3 = Soprano::Node::resourceToN3( uri );
+
+        QString label = fetchProperty( uriN3, NIE::title() );
+        if( !label.isEmpty() )
+            return label;
+
+        label = fetchProperty( uriN3, NFO::fileName() );
+        if( !label.isEmpty() )
+            return label;
+
+        label = fetchProperty( uriN3, RDFS::label() );
+        if( !label.isEmpty() )
+            return label;
+
+        label = fetchProperty( uriN3, NCO::fullname() );
+        if( !label.isEmpty() )
+            return label;
+
+        label = fetchProperty( uriN3, NAO::identifier() );
+        if( !label.isEmpty() )
+            return label;
+
+        return uri.toString();
+    }
+}
 
 KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
 {
-    Resource res( result.resource() );
+    QUrl resUri( result.resource().uri() );
     KUrl nieUrl( result[NIE::url()].uri() );
 
     // We only show results which have a nie:url
     if ( nieUrl.isEmpty() ) {
-        return KIO::UDSEntry();
+        nieUrl = fetchProperyNode( Soprano::Node::resourceToN3(resUri), NIE::url() ).uri();
+        if( nieUrl.isEmpty() )
+            return KIO::UDSEntry();
     }
 
     // the UDSEntry that will contain the final result to list
@@ -144,7 +198,7 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
     if( nieUrl.isLocalFile() )
         uds.insert( KIO::UDSEntry::UDS_NAME, nieUrl.fileName() );
     else
-        uds.insert( KIO::UDSEntry::UDS_NAME, res.genericLabel() );
+        uds.insert( KIO::UDSEntry::UDS_NAME, genericLabel(resUri) );
 
     // There is a trade-off between using UDS_URL or not. The advantage is that we get proper
     // file names in opening applications and non-KDE apps can handle the URLs properly. The downside
@@ -158,7 +212,7 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
         uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, nieUrl.toLocalFile() );
 
     // Tell KIO which Nepomuk resource this actually is
-    uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, res.uri().toString() );
+    uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, resUri.toString() );
 
     // add optional full-text search excerpts
     QString excerpt = result.excerpt();
