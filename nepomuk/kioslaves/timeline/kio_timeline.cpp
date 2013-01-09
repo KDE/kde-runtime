@@ -292,8 +292,9 @@ bool Nepomuk2::TimelineProtocol::rewriteUrl( const KUrl& url, KUrl& newURL )
 void Nepomuk2::TimelineProtocol::prepareUDSEntry( KIO::UDSEntry& entry,
                                                  bool listing ) const
 {
-    kDebug() << entry.stringValue( KIO::UDSEntry::UDS_NEPOMUK_URI) << entry.stringValue( KIO::UDSEntry::UDS_MIME_TYPE) << listing;
-    ForwardingSlaveBase::prepareUDSEntry( entry, listing );
+    // Do nothing
+    // We do not want the default implemention which tries to change the UDS_NAME and some
+    // other stuff
 }
 
 
