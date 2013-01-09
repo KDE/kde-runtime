@@ -93,6 +93,7 @@ namespace Nepomuk2 {
 
         // SPARQL query that is actually sent to the query service
         QString m_sparqlQuery;
+        Query::RequestPropertyMap m_reqPropertyMap;
 
         // the parent slave used for listing and stating
         KIO::SlaveBase* m_slave;

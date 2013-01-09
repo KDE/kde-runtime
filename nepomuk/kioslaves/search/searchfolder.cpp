@@ -69,6 +69,7 @@ Nepomuk2::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
 
     if ( m_query.isValid() ) {
         m_sparqlQuery = m_query.toSparqlQuery();
+        m_reqPropertyMap = m_query.requestPropertyMap();
     }
 }
 
@@ -80,7 +81,7 @@ Nepomuk2::SearchFolder::~SearchFolder()
 void Nepomuk2::SearchFolder::list()
 {
     //FIXME: Do the result count as well?
-    Query::ResultIterator it( m_sparqlQuery );
+    Query::ResultIterator it( m_sparqlQuery, m_reqPropertyMap );
     while( it.next() ) {
         Query::Result result = it.result();
         KIO::UDSEntry uds = statResult( result );
@@ -96,12 +97,9 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
     Resource res( result.resource() );
     KUrl nieUrl( result[NIE::url()].uri() );
 
-    // Check if we can get a nie:url, otherwise ignore the result, we do not show non file
-    // results in the kioslaves
+    // We only show results which have a nie:url
     if ( nieUrl.isEmpty() ) {
-        nieUrl = res.property( NIE::url() ).toUrl();
-        if( nieUrl.isEmpty() )
-            return KIO::UDSEntry();
+        return KIO::UDSEntry();
     }
 
     // the UDSEntry that will contain the final result to list
