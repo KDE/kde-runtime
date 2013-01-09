@@ -47,46 +47,10 @@ namespace Nepomuk2 {
             query = Nepomuk2::Query::Query::fromQueryUrl( url );
 
             if( query.isValid() ) {
-                kDebug() << "Extracted query" << query;
-
-                // request properties to easily create UDSEntry instances
                 QList<Query::RequestProperty> reqProperties;
 
-                // In Nepomuk kioslaves, one only shows results with a nie:urls (not just file queries)
-                reqProperties << Query::RequestProperty( NIE::url(), false /*non optional*/ );
+                reqProperties << Query::RequestProperty( NIE::url(), false );
                 query.setRequestProperties( reqProperties );
-#ifdef Q_OS_UNIX
-                // file size
-                ComparisonTerm contentSizeTerm( NFO::fileSize(), Term() );
-                contentSizeTerm.setVariableName( QLatin1String("size") );
-                // mimetype
-                ComparisonTerm mimetypeTerm( NIE::mimeType(), Term() );
-                mimetypeTerm.setVariableName( QLatin1String("mime") );
-                // mtime
-                ComparisonTerm mtimeTerm( NIE::lastModified(), Term() );
-                mtimeTerm.setVariableName( QLatin1String("mtime") );
-                // mode
-                ComparisonTerm modeTerm( KExt::unixFileMode(), Term() );
-                modeTerm.setVariableName( QLatin1String("mode") );
-                // user
-                ComparisonTerm userTerm( KExt::unixFileOwner(), Term() );
-                userTerm.setVariableName( QLatin1String("user") );
-                // group
-                ComparisonTerm groupTerm( KExt::unixFileGroup(), Term() );
-                groupTerm.setVariableName( QLatin1String("group") );
-
-                // instead of separate request properties we use one optional and term. That way
-                // all or none of the properties will be bound which makes handling the data in
-                // SearchFolder::statResult much simpler.
-                AndTerm filePropertiesTerm;
-                filePropertiesTerm.addSubTerm( contentSizeTerm );
-                filePropertiesTerm.addSubTerm( mimetypeTerm );
-                filePropertiesTerm.addSubTerm( mtimeTerm );
-                filePropertiesTerm.addSubTerm( modeTerm );
-                filePropertiesTerm.addSubTerm( userTerm );
-                filePropertiesTerm.addSubTerm( groupTerm );
-                query = query && OptionalTerm::optionalizeTerm( filePropertiesTerm );
-#endif // Q_OS_UNIX
             }
             else {
                 // the URL contains pure sparql.

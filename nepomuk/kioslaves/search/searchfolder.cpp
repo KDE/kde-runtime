@@ -25,6 +25,7 @@
 
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
+#include <Soprano/Vocabulary/RDFS>
 #include <Soprano/Node> // for qHash( QUrl )
 
 #include <Nepomuk2/Variant>
@@ -35,6 +36,7 @@
 #include <Nepomuk2/Query/ResourceTypeTerm>
 #include <Nepomuk2/Vocabulary/NFO>
 #include <Nepomuk2/Vocabulary/NIE>
+#include <Nepomuk2/Vocabulary/NCO>
 #include <Nepomuk2/Vocabulary/PIMO>
 
 #include <Nepomuk2/ResourceManager>
@@ -43,6 +45,7 @@
 
 #include <QtCore/QMutexLocker>
 #include <QTextDocument>
+
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Model>
 
@@ -69,6 +72,7 @@ Nepomuk2::SearchFolder::SearchFolder( const KUrl& url, KIO::SlaveBase* slave )
 
     if ( m_query.isValid() ) {
         m_sparqlQuery = m_query.toSparqlQuery();
+        m_reqPropertyMap = m_query.requestPropertyMap();
     }
 }
 
@@ -80,7 +84,8 @@ Nepomuk2::SearchFolder::~SearchFolder()
 void Nepomuk2::SearchFolder::list()
 {
     //FIXME: Do the result count as well?
-    Query::ResultIterator it( m_sparqlQuery );
+    kDebug() << m_sparqlQuery;
+    Query::ResultIterator it( m_sparqlQuery, m_reqPropertyMap );
     while( it.next() ) {
         Query::Result result = it.result();
         KIO::UDSEntry uds = statResult( result );
@@ -90,21 +95,63 @@ void Nepomuk2::SearchFolder::list()
     }
 }
 
+namespace {
+    Soprano::Node fetchProperyNode( const QString& uriN3, const QUrl& prop ) {
+        QString query = QString::fromLatin1("select ?o where { %1 %2 ?o . } LIMIT 1")
+                        .arg( uriN3, Soprano::Node::resourceToN3(prop) );
+
+        Soprano::Model* model = Nepomuk2::ResourceManager::instance()->mainModel();
+        Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparqlNoInference );
+        if( it.next() )
+            return it[0];
+
+        return Soprano::Node();
+    }
+
+    QString fetchProperty( const QString& uriN3, const QUrl& prop ) {
+        return fetchProperyNode( uriN3, prop ).literal().toString();
+    }
+
+    /**
+     * We avoid using the Resource class cause that loads all the properties of the resource
+     * and then registers with the ResourceWatcher to monitor for changes. We just require the
+     * generic label, which we can get by individually querying the different properties.
+     */
+    QString genericLabel( const QUrl& uri ) {
+        QString uriN3 = Soprano::Node::resourceToN3( uri );
+
+        QString label = fetchProperty( uriN3, NIE::title() );
+        if( !label.isEmpty() )
+            return label;
+
+        label = fetchProperty( uriN3, NFO::fileName() );
+        if( !label.isEmpty() )
+            return label;
+
+        label = fetchProperty( uriN3, RDFS::label() );
+        if( !label.isEmpty() )
+            return label;
+
+        label = fetchProperty( uriN3, NCO::fullname() );
+        if( !label.isEmpty() )
+            return label;
+
+        label = fetchProperty( uriN3, NAO::identifier() );
+        if( !label.isEmpty() )
+            return label;
+
+        return uri.toString();
+    }
+}
 
 KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
 {
-    Resource res( result.resource() );
+    QUrl resUri( result.resource().uri() );
     KUrl nieUrl( result[NIE::url()].uri() );
 
-    // the additional bindings that we only have on unix systems
-    // Either all are bound or none of them.
-    // see also parseQueryUrl (queryutils.h)
-    const Soprano::BindingSet additionalVars = result.additionalBindings();
-
-    // Check if we can get a nie:url, otherwise ignore the result, we do not show non file
-    // results in the kioslaves
+    // We only show results which have a nie:url
     if ( nieUrl.isEmpty() ) {
-        nieUrl = res.property( NIE::url() ).toUrl();
+        nieUrl = fetchProperyNode( Soprano::Node::resourceToN3(resUri), NIE::url() ).uri();
         if( nieUrl.isEmpty() )
             return KIO::UDSEntry();
     }
@@ -112,52 +159,37 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
     // the UDSEntry that will contain the final result to list
     KIO::UDSEntry uds;
 
-#ifdef Q_OS_UNIX
-    if( nieUrl.isLocalFile() && additionalVars[QLatin1String("mtime")].isLiteral() ) {
-        // set the basic file information which we got from Nepomuk
-        uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, additionalVars[QLatin1String("mtime")].literal().toDateTime().toTime_t() );
-        uds.insert( KIO::UDSEntry::UDS_SIZE, additionalVars[QLatin1String("size")].literal().toInt() );
-        uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, additionalVars[QLatin1String("mode")].literal().toInt() & S_IFMT );
-        uds.insert( KIO::UDSEntry::UDS_ACCESS, additionalVars[QLatin1String("mode")].literal().toInt() & 07777 );
-        uds.insert( KIO::UDSEntry::UDS_USER, additionalVars[QLatin1String("user")].toString() );
-        uds.insert( KIO::UDSEntry::UDS_GROUP, additionalVars[QLatin1String("group")].toString() );
-        uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, additionalVars[QLatin1String("mime")].toString() );
-    }
-    else
-#endif // Q_OS_UNIX
-    {
-        if( nieUrl.isLocalFile() ) {
-            // Code from kdelibs/kioslaves/file.cpp
-            KDE_struct_stat statBuf;
-            if( KDE_stat( QFile::encodeName(nieUrl.toLocalFile()).data(), &statBuf ) == 0 ) {
-                uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, statBuf.st_mtime );
-                uds.insert( KIO::UDSEntry::UDS_ACCESS_TIME, statBuf.st_atime );
-                uds.insert( KIO::UDSEntry::UDS_SIZE, statBuf.st_size );
-                uds.insert( KIO::UDSEntry::UDS_USER, statBuf.st_uid );
-                uds.insert( KIO::UDSEntry::UDS_GROUP, statBuf.st_gid );
+    if( nieUrl.isLocalFile() ) {
+        // Code from kdelibs/kioslaves/file.cpp
+        KDE_struct_stat statBuf;
+        if( KDE_stat( QFile::encodeName(nieUrl.toLocalFile()).data(), &statBuf ) == 0 ) {
+            uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, statBuf.st_mtime );
+            uds.insert( KIO::UDSEntry::UDS_ACCESS_TIME, statBuf.st_atime );
+            uds.insert( KIO::UDSEntry::UDS_SIZE, statBuf.st_size );
+            uds.insert( KIO::UDSEntry::UDS_USER, statBuf.st_uid );
+            uds.insert( KIO::UDSEntry::UDS_GROUP, statBuf.st_gid );
 
-                mode_t type = statBuf.st_mode & S_IFMT;
-                mode_t access = statBuf.st_mode & 07777;
+            mode_t type = statBuf.st_mode & S_IFMT;
+            mode_t access = statBuf.st_mode & 07777;
 
-                uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, type );
-                uds.insert( KIO::UDSEntry::UDS_ACCESS, access );
-            }
-            else {
-                return KIO::UDSEntry();
-            }
+            uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, type );
+            uds.insert( KIO::UDSEntry::UDS_ACCESS, access );
         }
         else {
-            // not a local file
-            KIO::StatJob* job = KIO::stat( nieUrl, KIO::HideProgressInfo );
-            // we do not want to wait for the event loop to delete the job
-            QScopedPointer<KIO::StatJob> sp( job );
-            job->setAutoDelete( false );
-            if ( KIO::NetAccess::synchronousRun( job, 0 ) ) {
-                uds = job->statResult();
-            }
-            else {
-                return KIO::UDSEntry();
-            }
+            return KIO::UDSEntry();
+        }
+    }
+    else {
+        // not a local file
+        KIO::StatJob* job = KIO::stat( nieUrl, KIO::HideProgressInfo );
+        // we do not want to wait for the event loop to delete the job
+        QScopedPointer<KIO::StatJob> sp( job );
+        job->setAutoDelete( false );
+        if ( KIO::NetAccess::synchronousRun( job, 0 ) ) {
+            uds = job->statResult();
+        }
+        else {
+            return KIO::UDSEntry();
         }
     }
 
@@ -166,7 +198,7 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
     if( nieUrl.isLocalFile() )
         uds.insert( KIO::UDSEntry::UDS_NAME, nieUrl.fileName() );
     else
-        uds.insert( KIO::UDSEntry::UDS_NAME, res.genericLabel() );
+        uds.insert( KIO::UDSEntry::UDS_NAME, genericLabel(resUri) );
 
     // There is a trade-off between using UDS_URL or not. The advantage is that we get proper
     // file names in opening applications and non-KDE apps can handle the URLs properly. The downside
@@ -180,7 +212,7 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
         uds.insert( KIO::UDSEntry::UDS_LOCAL_PATH, nieUrl.toLocalFile() );
 
     // Tell KIO which Nepomuk resource this actually is
-    uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, res.uri().toString() );
+    uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, resUri.toString() );
 
     // add optional full-text search excerpts
     QString excerpt = result.excerpt();
