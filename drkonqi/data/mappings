@@ -34,7 +34,15 @@ solid-bluetooth=solid|control::bluetooth
 solid-hardware=solid|general
 solid-network=solid|control::network
 solid-powermanagement=solid|control::powermanager
+bluedevil-audio=solid|bluetooth
 bluedevil-helper=solid|bluetooth
+bluedevil-input=solid|bluetooth
+bluedevil-monolithic=solid|bluetooth
+bluedevil-network-dun=solid|bluetooth
+bluedevil-network-panu=solid|bluetooth
+bluedevil-sendfile=solid|bluetooth
+bluedevil-wizard=solid|bluetooth
+
 #KDE Platform (Nepomuk)
 nepomuk-rcgen=nepomuk|general
 nepomukbackup=nepomuk|backupservice
@@ -45,6 +53,7 @@ nepomukserver=nepomuk|general
 nepomukservicestub=nepomuk|general
 sopranocmd=nepomuk|general
 sopranod=nepomuk|general
+nepomukshell=nepomukshell|Misc
 
 #KDE Plasma Desktop (Plasma & KRunner)
 plasma-desktop=plasma|general
@@ -68,6 +77,7 @@ plasmoidviewer=plasmate|general
 #KDE Plasma Desktop (KWin)
 kwin_killer_helper=kwin|general
 kwin_rules_dialog=kwin|general
+kwin_gles=kwin|general
 
 #KDE Kontact (Akonadi)
 akonadi_archivemail_agent=Akonadi|Archive Mail Agent
@@ -133,6 +143,10 @@ ktp-call-ui=telepathy|call-ui
 ktp-filetransfer-handler=telepathy|filetransfer-handler
 ktp-auth-handler=telepathy|auth-handler
 
+# KDE Calligra Suite
+braindump=braindump|application
+
+
 # KDE Kipi-plugins
 dngconverter=kipiplugins|DngConverter
 expoblending=kipiplugins|ExpoBlending
@@ -145,6 +159,7 @@ ksysguardd=ksysguard|ksysguardd
 kmixctrl=kmix|general
 kwrite=kate|kwrite
 dragon=dragonplayer|general
+kaccess=systemsettings|kcm_accessibility
 kfontinst=systemsettings|kcm_fontinst
 kfontview=systemsettings|kcm_fontinst
 polkit-kde-manager=policykit-kde|manager
@@ -166,6 +181,9 @@ gwenview_importer=gwenview|importer
 kdmgreet=kdm|general
 kaffeine-xbu=kaffeine|general
 networkmanagement_configshell=Network Management|general
+krcdnotifieritem=kremotecontrol|tray
+khipu=khipu|core
+mangonel=Mangonel|mangonel
 
 #---
 #This section relates a product groupt to a product
