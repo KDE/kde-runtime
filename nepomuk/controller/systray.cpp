@@ -39,7 +39,6 @@
 Nepomuk2::SystemTray::SystemTray( QObject* parent )
     : KStatusNotifierItem( parent ),
       m_service( 0 ),
-      m_suspendedManually( false ),
       m_statusWidget( 0 )
 {
     setCategory( SystemServices );
@@ -108,9 +107,14 @@ void Nepomuk2::SystemTray::slotUpdateFileIndexerStatus()
             QDBusConnection::sessionBus().interface()->isServiceRegistered(m_service->service()) &&
             m_serviceControl->isInitialized();
 
-    // a manually suspended service should not be passive
+    QString statusString;
     if ( fileIndexerInitialized ) {
-        if ( m_service->isIndexing() || m_suspendedManually) {
+        statusString = m_service->userStatusString();
+        bool indexing = m_service->isIndexing();
+        bool suspended = m_service->isSuspended();
+
+        // a manually suspended service should not be passive
+        if ( indexing || suspended ) {
             if (!m_updateTimer.isActive()) {
                 m_updateTimer.start(3000);
             }
@@ -120,17 +124,15 @@ void Nepomuk2::SystemTray::slotUpdateFileIndexerStatus()
             newStatus = Passive;
         }
     }
-    else
+    else {
         newStatus = Passive;
+        statusString = i18n("File indexing service not running");
+    }
+
+    // Set the values
     if ( newStatus != status() ) {
         setStatus( newStatus );
     }
-
-    QString statusString;
-    if( fileIndexerInitialized )
-        statusString = m_service->userStatusString();
-    else
-        statusString = i18n("File indexing service not running");
     if ( statusString != m_prevStatus ) {
         m_prevStatus = statusString;
         setToolTip("nepomuk", i18n("Search Service"), statusString );
@@ -152,7 +154,6 @@ void Nepomuk2::SystemTray::slotConfigure()
 
 void Nepomuk2::SystemTray::slotSuspend( bool suspended )
 {
-    m_suspendedManually = suspended;
     if( suspended )
         m_service->suspend();
     else
