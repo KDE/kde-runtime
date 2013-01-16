@@ -204,6 +204,7 @@ void Nepomuk2::SystemTray::slotActivateRequested()
 
 void Nepomuk2::SystemTray::slotActiveStatusTimeout()
 {
-    setStatus(Active);
+    if( QDBusConnection::sessionBus().interface()->isServiceRegistered(m_service->service()) )
+        setStatus(Active);
 } 
 #include "systray.moc"
