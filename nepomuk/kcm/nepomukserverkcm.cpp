@@ -25,6 +25,7 @@
 #include "indexfolderselectiondialog.h"
 #include "excludefilterselectiondialog.h"
 #include "statuswidget.h"
+#include "removablemediacache.h"
 
 #include <KPluginFactory>
 #include <KPluginLoader>
@@ -222,9 +223,43 @@ void Nepomuk2::ServerConfigModule::load()
 
     // 2. file indexer settings
     KConfig fileIndexerConfig( "nepomukstrigirc" );
-    m_indexFolderSelectionDialog->setIndexHiddenFolders( fileIndexerConfig.group( "General" ).readEntry( "index hidden folders", false ) );
-    m_indexFolderSelectionDialog->setFolders( fileIndexerConfig.group( "General" ).readPathEntry( "folders", defaultFolders() ),
-                                              fileIndexerConfig.group( "General" ).readPathEntry( "exclude folders", QStringList() ) );
+    KConfigGroup group = fileIndexerConfig.group("General");
+    m_indexFolderSelectionDialog->setIndexHiddenFolders( group.readEntry( "index hidden folders", false ) );
+
+    QStringList includeFolders = group.readPathEntry( "folders", defaultFolders() );
+    QStringList excludeFolders = group.readPathEntry( "exclude folders", QStringList() );
+
+    QScopedPointer<RemovableMediaCache> rmc( new Nepomuk2::RemovableMediaCache( this ) );
+    QList< const RemovableMediaCache::Entry* > allMedia = rmc->allMedia();
+    foreach( const RemovableMediaCache::Entry* entry, allMedia ) {
+        QByteArray groupName( "Device-" + entry->url().toUtf8() );
+        if( !fileIndexerConfig.hasGroup( groupName ) )
+            continue;
+
+        KConfigGroup grp = fileIndexerConfig.group( groupName );
+
+        QString mountPath = grp.readEntry( "mount path", QString() );
+        if( mountPath.isEmpty() )
+            continue;
+
+        QStringList includes = grp.readPathEntry( "folders", defaultFolders() );
+        foreach( const QString& path, includes ) {
+            if( path == QLatin1String("/") )
+                includeFolders << mountPath;
+            else
+                includeFolders << mountPath + path;
+        }
+
+        QStringList excludes = grp.readPathEntry( "exclude folders", QStringList() );
+        foreach( const QString& path, excludes ) {
+            if( path == QLatin1String("/") )
+                excludeFolders << mountPath;
+            else
+                excludeFolders << mountPath + path;
+        }
+    }
+
+    m_indexFolderSelectionDialog->setFolders( includeFolders, excludeFolders );
 
     m_excludeFilterSelectionDialog->setExcludeFilters( fileIndexerConfig.group( "General" ).readEntry( "exclude filters", Nepomuk2::defaultExcludeFilterList() ) );
 
@@ -290,8 +325,57 @@ void Nepomuk2::ServerConfigModule::save()
 
     // 2. update file indexer config
     KConfig fileIndexerConfig( "nepomukstrigirc" );
+
+    // 2.1 Update all the RemovableMedia paths
+    QScopedPointer<RemovableMediaCache> rmc( new Nepomuk2::RemovableMediaCache( this ) );
+    QList< const RemovableMediaCache::Entry* > allMedia = rmc->allMedia();
+    foreach( const RemovableMediaCache::Entry* entry, allMedia ) {
+        QByteArray groupName( "Device-" + entry->url().toUtf8() );
+        KConfigGroup group = fileIndexerConfig.group( groupName );
+
+        QString mountPath = entry->mountPath();
+        group.writeEntry( "mount path", mountPath );
+
+        QStringList includes;
+        QMutableListIterator<QString> it( includeFolders );
+        while( it.hasNext() ) {
+            QString fullPath = it.next();
+            if( fullPath.startsWith( mountPath ) ) {
+                QString path = fullPath.mid( mountPath.length() );
+                if( !path.isEmpty() )
+                    includes << path;
+                else
+                    includes << QLatin1String("/");
+                it.remove();
+            }
+        }
+
+        QStringList excludes;
+        QMutableListIterator<QString> iter( excludeFolders );
+        while( iter.hasNext() ) {
+            QString fullPath = iter.next();
+            if( fullPath.startsWith( mountPath ) ) {
+                QString path = fullPath.mid( mountPath.length() );
+                if( !path.isEmpty() )
+                    excludes << path;
+                else
+                    excludes << QLatin1String("/");
+                iter.remove();
+            }
+        }
+
+        if( includes.isEmpty() && excludes.isEmpty() )
+            excludes << QString("/");
+
+        group.writePathEntry( "folders", includes );
+        group.writePathEntry( "exclude folders", excludes );
+    }
+
+    // 2.2 Update normals paths
     fileIndexerConfig.group( "General" ).writePathEntry( "folders", includeFolders );
     fileIndexerConfig.group( "General" ).writePathEntry( "exclude folders", excludeFolders );
+
+    // 2.3 Other stuff
     fileIndexerConfig.group( "General" ).writeEntry( "index hidden folders", m_indexFolderSelectionDialog->indexHiddenFolders() );
     fileIndexerConfig.group( "General" ).writeEntry( "exclude filters", m_excludeFilterSelectionDialog->excludeFilters() );
 
