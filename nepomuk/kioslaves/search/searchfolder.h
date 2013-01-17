@@ -97,6 +97,9 @@ namespace Nepomuk2 {
 
         // the parent slave used for listing and stating
         KIO::SlaveBase* m_slave;
+
+        // contains all the listed nie:urls in order to avoid duplicates
+        QSet<QUrl> m_listedUrls;
     };
 }
 

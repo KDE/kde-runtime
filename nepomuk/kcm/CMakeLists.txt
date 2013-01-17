@@ -15,6 +15,7 @@ set(kcmnepomuk_SRCS
   indexfolderselectiondialog.cpp
   excludefilterselectiondialog.cpp
   statuswidget.cpp
+  removablemediacache.cpp
   )
 
 qt4_add_dbus_interface(kcmnepomuk_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.NepomukServer.xml nepomukserverinterface)
@@ -34,6 +35,7 @@ target_link_libraries(kcm_nepomuk
   ${KDE4_KIO_LIBS}
   ${NEPOMUK_CORE_LIBRARY}
   ${SOPRANO_LIBRARIES}
+  ${KDE4_SOLID_LIBRARY}
   )
 # -----------------------------
 

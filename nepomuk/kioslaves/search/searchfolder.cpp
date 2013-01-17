@@ -83,6 +83,8 @@ Nepomuk2::SearchFolder::~SearchFolder()
 
 void Nepomuk2::SearchFolder::list()
 {
+    m_listedUrls.clear();
+
     //FIXME: Do the result count as well?
     kDebug() << m_sparqlQuery;
     Query::ResultIterator it( m_sparqlQuery, m_reqPropertyMap );
@@ -156,6 +158,11 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
             return KIO::UDSEntry();
     }
 
+    // There are some freaky cases where cause of buggy data two resources point to the same resource
+    // in that case we do not want to show the same file twice
+    if( m_listedUrls.contains( nieUrl ) )
+        return KIO::UDSEntry();
+
     // the UDSEntry that will contain the final result to list
     KIO::UDSEntry uds;
 
@@ -223,6 +230,9 @@ KIO::UDSEntry Nepomuk2::SearchFolder::statResult( const Query::Result& result )
         excerpt = doc.toPlainText();
         uds.insert( KIO::UDSEntry::UDS_COMMENT, i18n("Search excerpt: %1", excerpt) );
     }
+
+    // So that we never list it again
+    m_listedUrls.insert( nieUrl );
 
     return uds;
 }

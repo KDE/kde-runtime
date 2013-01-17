@@ -52,7 +52,6 @@ namespace Nepomuk2 {
 
         org::kde::nepomuk::FileIndexer* m_service;
         org::kde::nepomuk::ServiceControl* m_serviceControl;
-        bool m_suspendedManually;
 
         StatusWidget* m_statusWidget;
 
