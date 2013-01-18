@@ -161,6 +161,13 @@ public:
         return getData("bug_severity");
     }
 
+    void setKeywords(const QStringList & keywords) {
+        setData("keywords", keywords.join(","));
+    }
+    QStringList keywords() const {
+        return getData("keywords").split(',');
+    }
+
     void setDescription(const QString & desc) {
         m_commentList.insert(0, desc);
     }
