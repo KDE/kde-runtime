@@ -351,14 +351,13 @@ void ReportInterface::addedToCC()
     BugReport report = newBugReportTemplate();
 
     QString reportText = generateReportFullText(true);
+    QString summary = "New crash information added by DrKonqi";
     QString comment = generateAttachmentComment();
     QString filename = getSuggestedKCrashFilename(DrKonqi::crashedApplication());
 
-    //Attach the report. The description of the attachment also includes the bug description
-    m_bugzillaManager->attachTextToReport(reportText, filename,
-                                  QLatin1String("New crash information added by DrKonqi"),
-                                  m_attachToBugNumber,
-                                  comment);
+    //Attach the report. The comment of the attachment also includes the bug description
+    m_bugzillaManager->attachTextToReport(reportText, filename, summary,
+                                          m_attachToBugNumber, comment);
 }
 
 void ReportInterface::attachSent(int attachId, int bugId)

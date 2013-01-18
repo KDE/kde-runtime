@@ -160,12 +160,12 @@ void BugzillaManager::sendReport(const BugReport & report)
 }
 
 void BugzillaManager::attachTextToReport(const QString & text, const QString & filename,
-    const QString & description, int bugId, const QString & comment)
+    const QString & summary, int bugId, const QString & comment)
 {
     QMap<QString, QVariant> args;
     args.insert(QLatin1String("ids"), QVariantList() << bugId);
     args.insert(QLatin1String("file_name"), filename);
-    args.insert(QLatin1String("summary"), description);
+    args.insert(QLatin1String("summary"), summary);
     args.insert(QLatin1String("comment"), comment);
     args.insert(QLatin1String("content_type"), QString::fromAscii("text/plain"));
 
