@@ -141,7 +141,7 @@ void ReportInterface::setPossibleDuplicates(const QStringList & list)
     m_possibleDuplicates = list;
 }
 
-QString ReportInterface::generateReport(bool drKonqiStamp) const
+QString ReportInterface::generateReportFullText(bool drKonqiStamp) const
 {
     //Note: no translations must be done in this function's strings
     const CrashedApplication * crashedApp = DrKonqi::crashedApplication();
@@ -237,7 +237,7 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
     return report;
 }
 
-QString ReportInterface::generateReportForAttachmentDescription() const
+QString ReportInterface::generateAttachmentComment() const
 {
     QString description;
 
@@ -318,7 +318,7 @@ void ReportInterface::sendBugReport() const
     } else {
         //Creating a new bug report
         BugReport report = newBugReportTemplate();
-        report.setDescription(generateReport(true));
+        report.setDescription(generateReportFullText(true));
         report.setValid(true);
 
         connect(m_bugzillaManager, SIGNAL(sendReportErrorInvalidValues()), this, SLOT(sendUsingDefaultProduct()));
@@ -337,7 +337,7 @@ void ReportInterface::sendUsingDefaultProduct() const
     report.setProduct(QLatin1String("kde"));
     report.setComponent(QLatin1String("general"));
     report.setPlatform(QLatin1String("unspecified"));
-    report.setDescription(generateReport(true));
+    report.setDescription(generateReportFullText(true));
     report.setValid(true);
     m_bugzillaManager->sendReport(report);
 }
@@ -350,14 +350,14 @@ void ReportInterface::addedToCC()
             this, SIGNAL(sendReportError(QString,QString)));
     BugReport report = newBugReportTemplate();
 
-    QString reportText = generateReport(true);
-    QString description = generateReportForAttachmentDescription();
+    QString reportText = generateReportFullText(true);
+    QString comment = generateAttachmentComment();
 
     //Attach the report. The description of the attachment also includes the bug description
     m_bugzillaManager->attachTextToReport(reportText, QLatin1String("/tmp/drkonqireport"), //Fake path
                                   QLatin1String("New crash information added by DrKonqi"),
                                   m_attachToBugNumber,
-                                  description);
+                                  comment);
 }
 
 void ReportInterface::attachSent(int attachId, int bugId)

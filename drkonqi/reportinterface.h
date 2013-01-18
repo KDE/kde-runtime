@@ -56,8 +56,8 @@ public:
     void setDetailText(const QString & text);
     void setPossibleDuplicates(const QStringList & duplicatesList);
 
-    QString generateReport(bool drKonqiStamp) const;
-    QString generateReportForAttachmentDescription() const;
+    QString generateReportFullText(bool drKonqiStamp) const;
+    QString generateAttachmentComment() const;
 
     BugReport newBugReportTemplate() const;
     void sendBugReport() const;

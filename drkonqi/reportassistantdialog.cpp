@@ -359,7 +359,7 @@ void ReportAssistantDialog::closeEvent(QCloseEvent * event)
                 event->accept();
             } else if (ret == KMessageBox::No) {
                 //Save backtrace and accept event (dialog will be closed)
-                DrKonqi::saveReport(reportInterface()->generateReport(false));
+                DrKonqi::saveReport(reportInterface()->generateReportFullText(false));
                 event->accept();
             } else {
                 event->ignore();
