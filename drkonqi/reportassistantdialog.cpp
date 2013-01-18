@@ -58,13 +58,20 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     //Create the assistant pages
 
     //-Introduction Page
-    IntroductionPage * m_introduction = new IntroductionPage(this);
+    KConfigGroup group(KGlobal::config(), "ReportAssistant");
+    const bool skipIntroduction = group.readEntry("SkipIntroduction", false);
 
-    KPageWidgetItem * m_introductionPage = new KPageWidgetItem(m_introduction,
-                                                                QLatin1String(PAGE_INTRODUCTION_ID));
-    m_pageWidgetMap.insert(QLatin1String(PAGE_INTRODUCTION_ID),m_introductionPage);
-    m_introductionPage->setHeader(i18nc("@title","Welcome to the Reporting Assistant"));
-    m_introductionPage->setIcon(KIcon("tools-report-bug"));
+    if (!skipIntroduction) {
+        IntroductionPage * m_introduction = new IntroductionPage(this);
+
+        KPageWidgetItem * m_introductionPage = new KPageWidgetItem(m_introduction,
+                QLatin1String(PAGE_INTRODUCTION_ID));
+        m_pageWidgetMap.insert(QLatin1String(PAGE_INTRODUCTION_ID),m_introductionPage);
+        m_introductionPage->setHeader(i18nc("@title","Welcome to the Reporting Assistant"));
+        m_introductionPage->setIcon(KIcon("tools-report-bug"));
+
+        addPage(m_introductionPage);
+    }
 
     //-Bug Awareness Page
     BugAwarenessPage * m_awareness = new BugAwarenessPage(this);
@@ -148,7 +155,6 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     connect(m_bugzillaSend, SIGNAL(finished(bool)), this, SLOT(assistantFinished(bool)));
 
     //TODO Remember to keep the pages ordered
-    addPage(m_introductionPage);
     addPage(m_awarenessPage);
     addPage(m_backtracePage);
     addPage(m_conclusionsPage);
