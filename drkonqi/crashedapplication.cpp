@@ -170,4 +170,17 @@ void CrashedApplication::restart()
     emit restarted(success);
 }
 
+QString getSuggestedKCrashFilename(const CrashedApplication* app)
+{
+    QString filename = app->fakeExecutableBaseName() + '-' +
+                       app->datetime().toString("yyyyMMdd-hhmmss") +
+                       ".kcrash";
+
+    if (filename.contains('/')) {
+        filename = filename.mid(filename.lastIndexOf('/') + 1);
+    }
+
+    return filename;
+}
+
 #include "crashedapplication.moc"

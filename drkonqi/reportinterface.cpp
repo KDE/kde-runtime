@@ -352,9 +352,10 @@ void ReportInterface::addedToCC()
 
     QString reportText = generateReportFullText(true);
     QString comment = generateAttachmentComment();
+    QString filename = getSuggestedKCrashFilename(DrKonqi::crashedApplication());
 
     //Attach the report. The description of the attachment also includes the bug description
-    m_bugzillaManager->attachTextToReport(reportText, QLatin1String("/tmp/drkonqireport"), //Fake path
+    m_bugzillaManager->attachTextToReport(reportText, filename,
                                   QLatin1String("New crash information added by DrKonqi"),
                                   m_attachToBugNumber,
                                   comment);

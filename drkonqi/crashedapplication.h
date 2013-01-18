@@ -88,4 +88,6 @@ protected:
     QDateTime m_datetime;
 };
 
+QString getSuggestedKCrashFilename(const CrashedApplication* app);
+
 #endif // CRASHEDAPPLICATION_H
