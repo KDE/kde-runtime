@@ -57,7 +57,6 @@ public:
     void setPossibleDuplicates(const QStringList & duplicatesList);
 
     QString generateReportFullText(bool drKonqiStamp) const;
-    QString generateAttachmentComment() const;
 
     BugReport newBugReportTemplate() const;
     void sendBugReport() const;
@@ -101,6 +100,8 @@ Q_SIGNALS:
     void sendReportError(const QString &, const QString &);
 
 private:
+    QString generateAttachmentComment() const;
+
     //Information the user can provide
     bool        m_userRememberCrashSituation;
     Reproducible m_reproducible;
