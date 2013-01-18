@@ -351,9 +351,9 @@ void ReportInterface::addedToCC()
     BugReport report = newBugReportTemplate();
 
     QString reportText = generateReportFullText(true);
-    QString summary = "New crash information added by DrKonqi";
     QString comment = generateAttachmentComment();
     QString filename = getSuggestedKCrashFilename(DrKonqi::crashedApplication());
+    QLatin1String summary("New crash information added by DrKonqi");
 
     //Attach the report. The comment of the attachment also includes the bug description
     m_bugzillaManager->attachTextToReport(reportText, filename, summary,
