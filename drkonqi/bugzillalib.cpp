@@ -53,11 +53,11 @@ static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
 
 //BEGIN BugzillaManager
 
-BugzillaManager::BugzillaManager(const QString &bugTrackerUrl, QObject *parent):
-        QObject(parent),
-        m_bugTrackerUrl(bugTrackerUrl),
-        m_logged(false),
-        m_searchJob(0)
+BugzillaManager::BugzillaManager(const QString &bugTrackerUrl, QObject *parent)
+        : QObject(parent)
+        , m_bugTrackerUrl(bugTrackerUrl)
+        , m_logged(false)
+        , m_searchJob(0)
 {
     m_xmlRpcClient = new KXmlRpc::Client(KUrl(m_bugTrackerUrl + "xmlrpc.cgi"), this);
     m_xmlRpcClient->setUserAgent(QLatin1String("DrKonqi"));
@@ -84,10 +84,10 @@ bool BugzillaManager::getLogged() const
     return m_logged;
 }
 
-void BugzillaManager::setLoginData(const QString & _username, const QString & _password)
+void BugzillaManager::setLoginData(const QString & username, const QString & password)
 {
-    m_username = _username;
-    m_password = _password;
+    m_username = username;
+    m_password = password;
     m_logged = false;
 }
 
