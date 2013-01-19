@@ -37,12 +37,7 @@ ReportInterface::ReportInterface(QObject *parent)
     : QObject(parent),
       m_duplicate(0)
 {
-    m_bugzillaManager = new BugzillaManager(this);
-
-#if 0
-    //Set a custom tracker for testing purposes
-    //m_bugzillaManager->setCustomBugtrackerUrl("http://bugstest.kde.org/");
-#endif
+    m_bugzillaManager = new BugzillaManager(KDE_BUGZILLA_URL, this);
 
     m_productMapping = new ProductMapping(DrKonqi::crashedApplication()->fakeExecutableBaseName(),
                                           m_bugzillaManager, this);

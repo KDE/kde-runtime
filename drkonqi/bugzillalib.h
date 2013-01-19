@@ -288,7 +288,9 @@ class BugzillaManager : public QObject
     Q_OBJECT
 
 public:
-    explicit BugzillaManager(QObject *parent = 0);
+    // Note: it expect the bugTrackerUrl parameter to contain the trailing slash.
+    // so it should be "https://bugs.kde.org/", not "https://bugs.kde.org"
+    explicit BugzillaManager(const QString &bugTrackerUrl, QObject *parent = 0);
 
     /* Login methods */
     void tryLogin();
@@ -314,8 +316,6 @@ public:
 
     /* Misc methods */
     QString urlForBug(int bug_number) const;
-
-    void setCustomBugtrackerUrl(const QString &);
 
     void stopCurrentSearch();
 
@@ -349,14 +349,13 @@ Q_SIGNALS:
     void checkVersionsForProductError();
 
 private:
+    QString     m_bugTrackerUrl;
     QString     m_username;
     QString     m_password;
     bool        m_logged;
 
     KIO::Job *  m_searchJob;
     KXmlRpc::Client *m_xmlRpcClient;
-
-    QString     m_bugTrackerUrl;
 };
 
 #endif

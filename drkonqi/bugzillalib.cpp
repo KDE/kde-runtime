@@ -37,8 +37,6 @@
 #include "drkonqi_globals.h"
 #include "findconfigdatajob.h"
 
-static const char bugtrackerBKOBaseUrl[] = KDE_BUGZILLA_URL;
-
 static const char columns[] = "bug_severity,priority,bug_status,product,short_desc,resolution";
 
 //Bugzilla URLs
@@ -55,13 +53,13 @@ static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
 
 //BEGIN BugzillaManager
 
-BugzillaManager::BugzillaManager(QObject *parent):
+BugzillaManager::BugzillaManager(const QString &bugTrackerUrl, QObject *parent):
         QObject(parent),
+        m_bugTrackerUrl(bugTrackerUrl),
         m_logged(false),
         m_searchJob(0)
 {
-    m_bugTrackerUrl = bugtrackerBKOBaseUrl;
-    m_xmlRpcClient = new KXmlRpc::Client(KUrl(KDE_BUGZILLA_URL "xmlrpc.cgi"), this);
+    m_xmlRpcClient = new KXmlRpc::Client(KUrl(m_bugTrackerUrl + "xmlrpc.cgi"), this);
     m_xmlRpcClient->setUserAgent(QLatin1String("DrKonqi"));
 }
 
@@ -207,11 +205,6 @@ void BugzillaManager::checkVersionsForProduct(const QString & product)
 QString BugzillaManager::urlForBug(int bug_number) const
 {
     return QString(m_bugTrackerUrl) + QString(showBugUrl).arg(bug_number);
-}
-
-void BugzillaManager::setCustomBugtrackerUrl(const QString & customUrl)
-{
-    m_bugTrackerUrl = customUrl;
 }
 
 void BugzillaManager::stopCurrentSearch()

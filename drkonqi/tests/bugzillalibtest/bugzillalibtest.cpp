@@ -37,8 +37,7 @@ class BugzillaLibTest : public QObject
     public:
         BugzillaLibTest(QString user, QString password) : QObject()
         {
-            manager = new BugzillaManager();
-            manager->setCustomBugtrackerUrl("http://bugstest.kde.org/");
+            manager = new BugzillaManager("http://bugstest.kde.org/");
             connect(manager, SIGNAL(loginFinished(bool)), this, SLOT(loginFinished(bool)));
             connect(manager, SIGNAL(loginError(QString)), this, SLOT(loginError(QString)));
             connect(manager, SIGNAL(reportSent(int)), this, SLOT(reportSent(int)));
