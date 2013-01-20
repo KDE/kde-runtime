@@ -35,6 +35,7 @@
 #include "reportinterface.h"
 #include "parser/backtraceparser.h"
 #include "backtracegenerator.h"
+#include "backtracewidget.h"
 #include "drkonqi_globals.h"
 #include "applicationdetailsexamples.h"
 
@@ -181,7 +182,8 @@ void BugAwarenessPage::aboutToHide()
 
 void BugAwarenessPage::updateCheckBoxes()
 {
-    bool rememberSituation = ui.m_rememberCrashSituationYes->isChecked();
+    const bool rememberSituation = ui.m_rememberCrashSituationYes->isChecked();
+
     ui.m_reproducibleLabel->setEnabled(rememberSituation);
     ui.m_reproducibleBox->setEnabled(rememberSituation);
 
@@ -206,8 +208,8 @@ void BugAwarenessPage::showApplicationDetailsExamples()
 //BEGIN ConclusionPage
 
 ConclusionPage::ConclusionPage(ReportAssistantDialog * parent)
-        : ReportAssistantPage(parent),
-        m_needToReport(false)
+        : ReportAssistantPage(parent)
+        , m_needToReport(false)
 {
     m_isBKO = DrKonqi::crashedApplication()->bugReportAddress().isKdeBugzilla();
 
@@ -218,8 +220,9 @@ ConclusionPage::ConclusionPage(ReportAssistantDialog * parent)
                             KIcon("document-preview"),
                             i18nc("@info:tooltip", "Use this button to show the generated "
                             "report information about this crash.")));
-    connect(ui.m_showReportInformationButton, SIGNAL(clicked()), this,
-                                                                    SLOT(openReportInformation()));
+    connect(ui.m_showReportInformationButton, SIGNAL(clicked()),
+            this, SLOT(openReportInformation()));
+
     ui.m_restartAppOnFinish->setVisible(false);
 }
 

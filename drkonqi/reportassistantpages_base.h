@@ -25,12 +25,12 @@
 #include "reportassistantdialog.h"
 #include "reportassistantpage.h"
 
-#include "backtracewidget.h"
-
 #include "ui_assistantpage_introduction.h"
 #include "ui_assistantpage_bugawareness.h"
 #include "ui_assistantpage_conclusions.h"
 #include "ui_assistantpage_conclusions_dialog.h"
+
+class BacktraceWidget;
 
 /** Introduction page **/
 class IntroductionPage: public ReportAssistantPage
