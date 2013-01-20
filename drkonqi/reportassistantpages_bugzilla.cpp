@@ -140,11 +140,11 @@ void BugzillaLoginPage::aboutToShow()
     }
 }
 
-bool BugzillaLoginPage::kWalletEntryExists()
+bool BugzillaLoginPage::kWalletEntryExists(const QString& entryName)
 {
     return !KWallet::Wallet::keyDoesNotExist(KWallet::Wallet::NetworkWallet(),
                                                KWallet::Wallet::FormDataFolder(),
-                                               QLatin1String(kWalletEntryName));
+                                               entryName);
 }
 
 void BugzillaLoginPage::openWallet()
@@ -159,7 +159,7 @@ void BugzillaLoginPage::openWallet()
 void BugzillaLoginPage::walletLogin()
 {
     if (!m_wallet) {
-        if (kWalletEntryExists()) {  //Key exists!
+        if (kWalletEntryExists(QLatin1String(kWalletEntryName))) {  //Key exists!
             openWallet();
             ui.m_savePasswordCheckBox->setCheckState(Qt::Checked);
             //Was the wallet opened?
@@ -177,9 +177,7 @@ void BugzillaLoginPage::walletLogin()
                     ui.m_passwordEdit->setText(password);
                 }
             }
-        } else if (!KWallet::Wallet::keyDoesNotExist(KWallet::Wallet::NetworkWallet(),
-                                               KWallet::Wallet::FormDataFolder(),
-                                               QLatin1String(konquerorKWalletEntryName))) {
+        } else if (kWalletEntryExists(QLatin1String(konquerorKWalletEntryName))) {
             //If the DrKonqi entry is empty, but a Konqueror entry exists, use and copy it.
             openWallet();
             if (m_wallet) {
@@ -301,7 +299,7 @@ void BugzillaLoginPage::loginClicked()
             }
 
         } else { //User doesn't want to save or wants to remove.
-            if (kWalletEntryExists()) {
+            if (kWalletEntryExists(QLatin1String(kWalletEntryName))) {
                 if (!m_wallet) {
                     openWallet();
                 }
