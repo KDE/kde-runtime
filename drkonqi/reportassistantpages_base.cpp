@@ -207,9 +207,9 @@ void BugAwarenessPage::showApplicationDetailsExamples()
 
 ConclusionPage::ConclusionPage(ReportAssistantDialog * parent)
         : ReportAssistantPage(parent),
-        needToReport(false)
+        m_needToReport(false)
 {
-    isBKO = DrKonqi::crashedApplication()->bugReportAddress().isKdeBugzilla();
+    m_isBKO = DrKonqi::crashedApplication()->bugReportAddress().isKdeBugzilla();
 
     ui.setupUi(this);
 
@@ -226,7 +226,7 @@ ConclusionPage::ConclusionPage(ReportAssistantDialog * parent)
 void ConclusionPage::finishClicked()
 {
     //Manual report
-    if (needToReport && !isBKO) {
+    if (m_needToReport && !m_isBKO) {
         const CrashedApplication *crashedApp = DrKonqi::crashedApplication();
         BugReportAddress reportAddress = crashedApp->bugReportAddress();
         QString report = reportInterface()->generateReportFullText(false);
@@ -265,7 +265,7 @@ void ConclusionPage::aboutToShow()
     ui.m_restartAppOnFinish->setChecked(false);
 
     const bool isDuplicate = reportInterface()->duplicateId() && !reportInterface()->attachToBugNumber();
-    needToReport = reportInterface()->isWorthReporting() && !isDuplicate;
+    m_needToReport = reportInterface()->isWorthReporting() && !isDuplicate;
     emitCompleteChanged();
 
     BugReportAddress reportAddress = DrKonqi::crashedApplication()->bugReportAddress();
@@ -339,11 +339,11 @@ void ConclusionPage::aboutToShow()
     //Hide the "Show contents of the report" button if the backtrace was not generated
     ui.m_showReportInformationButton->setVisible(backtraceGenerated);
 
-    if (needToReport) {
+    if (m_needToReport) {
         ui.m_conclusionsLabel->setText(QString("<p><strong>%1</strong>").arg(i18nc("@info","This "
                                            "report is considered helpful.")));
 
-        if (isBKO) {
+        if (m_isBKO) {
             emitCompleteChanged();
             ui.m_howToProceedLabel->setText(i18nc("@info","This application's bugs are reported "
                                             "to the KDE bug tracking system: click <interface>Next"
@@ -365,7 +365,7 @@ void ConclusionPage::aboutToShow()
             emit finished(false);
         }
 
-    } else { // (needToReport)
+    } else { // (m_needToReport)
         if (!DrKonqi::crashedApplication()->hasBeenRestarted()) {
             ui.m_restartAppOnFinish->setVisible(true);
         }
@@ -382,7 +382,7 @@ void ConclusionPage::aboutToShow()
         //"manual reporting" should be ~"manual report using the contents of the report"....
         //FIXME for 4.5 (workflow, see ToDo)
         if (backtraceGenerated) {
-            if (isBKO) {
+            if (m_isBKO) {
                 ui.m_howToProceedLabel->setText(i18nc("@info","You can manually report this bug "
                                                 "at <link>%1</link>. "
                                                 "Click <interface>Finish</interface> to close the "
@@ -420,7 +420,7 @@ void ConclusionPage::openReportInformation()
 
 bool ConclusionPage::isComplete()
 {
-    return (isBKO && needToReport);
+    return (m_isBKO && m_needToReport);
 }
 
 //END ConclusionPage

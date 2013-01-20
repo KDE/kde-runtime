@@ -104,8 +104,8 @@ private:
 
     QPointer<KDialog>                       m_infoDialog;
 
-    bool                                    isBKO;
-    bool                                    needToReport;
+    bool                                    m_isBKO;
+    bool                                    m_needToReport;
 
 Q_SIGNALS:
     void finished(bool);
