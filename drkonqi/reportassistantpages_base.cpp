@@ -243,13 +243,7 @@ void ConclusionPage::finishClicked()
         }
 
         //Show a copy of the bug reported
-        QString info = report + QLatin1Char('\n') +
-                            i18nc("@info/plain","Report to %1", reportAddress);
-
-        ReportInformationDialog * m_infoDialog = new ReportInformationDialog(info);
-        m_infoDialog->show();
-        m_infoDialog->raise();
-        m_infoDialog->activateWindow();
+        openReportInformation();
     }
 
     //Restart application
