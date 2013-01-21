@@ -326,8 +326,7 @@ void BugzillaLoginPage::loginClicked()
                                       "Performing login at %1 as %2...",
                                       QLatin1String(KDE_BUGZILLA_SHORT_URL), ui.m_userEdit->text()));
 
-        bugzillaManager()->setLoginData(ui.m_userEdit->text(), ui.m_passwordEdit->text());
-        bugzillaManager()->tryLogin();
+        bugzillaManager()->tryLogin(ui.m_userEdit->text(), ui.m_passwordEdit->text());
     } else {
         loginFinished(false);
     }

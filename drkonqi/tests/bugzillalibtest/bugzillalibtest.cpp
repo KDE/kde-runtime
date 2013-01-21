@@ -43,8 +43,7 @@ class BugzillaLibTest : public QObject
             connect(manager, SIGNAL(reportSent(int)), this, SLOT(reportSent(int)));
             connect(manager, SIGNAL(sendReportError(QString)), this, SLOT(sendReportError(QString)));
             connect(manager, SIGNAL(sendReportErrorInvalidValues()), this, SLOT(sendBR2()));
-            manager->setLoginData(user, password);
-            manager->tryLogin();
+            manager->tryLogin(user, password);
             kDebug() << "Login ...";
         }
 

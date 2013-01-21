@@ -64,31 +64,25 @@ BugzillaManager::BugzillaManager(const QString &bugTrackerUrl, QObject *parent)
 }
 
 //BEGIN Login methods
-void BugzillaManager::tryLogin()
+void BugzillaManager::tryLogin(const QString& username, const QString& password)
 {
-    if (!m_logged) {
-        QMap<QString, QVariant> args;
-        args.insert(QLatin1String("login"), m_username);
-        args.insert(QLatin1String("password"), m_password);
-        args.insert(QLatin1String("remember"), false);
+    m_username = username;
+    m_logged = false;
 
-        m_xmlRpcClient->call(QLatin1String("User.login"), args,
-                this, SLOT(callMessage(QList<QVariant>,QVariant)),
-                this, SLOT(callFault(int,QString,QVariant)),
-                QString::fromAscii("login"));
-    }
+    QMap<QString, QVariant> args;
+    args.insert(QLatin1String("login"), username);
+    args.insert(QLatin1String("password"), password);
+    args.insert(QLatin1String("remember"), false);
+
+    m_xmlRpcClient->call(QLatin1String("User.login"), args,
+            this, SLOT(callMessage(QList<QVariant>,QVariant)),
+            this, SLOT(callFault(int,QString,QVariant)),
+            QString::fromAscii("login"));
 }
 
 bool BugzillaManager::getLogged() const
 {
     return m_logged;
-}
-
-void BugzillaManager::setLoginData(const QString & username, const QString & password)
-{
-    m_username = username;
-    m_password = password;
-    m_logged = false;
 }
 
 QString BugzillaManager::getUsername() const

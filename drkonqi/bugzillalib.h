@@ -293,10 +293,9 @@ public:
     explicit BugzillaManager(const QString &bugTrackerUrl, QObject *parent = 0);
 
     /* Login methods */
-    void tryLogin();
+    void tryLogin(const QString&, const QString&);
     bool getLogged() const;
 
-    void setLoginData(const QString &, const QString &);
     QString getUsername() const;
 
     /* Bugzilla Action methods */
@@ -351,7 +350,6 @@ Q_SIGNALS:
 private:
     QString     m_bugTrackerUrl;
     QString     m_username;
-    QString     m_password;
     bool        m_logged;
 
     KIO::Job *  m_searchJob;
