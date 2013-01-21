@@ -17,7 +17,6 @@ kglobalaccel=kdelibs|general
 kiconfinder=kdelibs|general
 kshell4=kdelibs|general
 kuiserver=kdelibs|general
-kuiviewer=kdelibs|general
 kded4=kdelibs|kded
 kcmshell4=systemsettings|general
 kwalletd=kdelibs|kwallet
@@ -184,6 +183,8 @@ networkmanagement_configshell=Network Management|general
 krcdnotifieritem=kremotecontrol|tray
 khipu=khipu|core
 mangonel=Mangonel|mangonel
+
+kwatchgnupg=kleopatra|general
 
 #---
 #This section relates a product groupt to a product
