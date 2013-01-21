@@ -78,10 +78,15 @@ BugzillaLoginPage::BugzillaLoginPage(ReportAssistantDialog * parent) :
                                               i18nc("@info:tooltip", "Use this button to login "
                                               "to the KDE bug tracking system using the provided "
                                               "username and password.")));
+    ui.m_loginButton->setEnabled(false);
+
     connect(ui.m_loginButton, SIGNAL(clicked()) , this, SLOT(loginClicked()));
 
     connect(ui.m_userEdit, SIGNAL(returnPressed()) , this, SLOT(loginClicked()));
     connect(ui.m_passwordEdit, SIGNAL(returnPressed()) , this, SLOT(loginClicked()));
+
+    connect(ui.m_userEdit, SIGNAL(textChanged(QString)) , this, SLOT(updateLoginButtonStatus()));
+    connect(ui.m_passwordEdit, SIGNAL(textChanged(QString)) , this, SLOT(updateLoginButtonStatus()));
 
     ui.m_noticeLabel->setText(
                         i18nc("@info/rich","<note>You need a user account on the "
@@ -97,6 +102,12 @@ BugzillaLoginPage::BugzillaLoginPage(ReportAssistantDialog * parent) :
 bool BugzillaLoginPage::isComplete()
 {
     return bugzillaManager()->getLogged();
+}
+
+void BugzillaLoginPage::updateLoginButtonStatus()
+{
+    ui.m_loginButton->setEnabled( !ui.m_userEdit->text().isEmpty() &&
+                                  !ui.m_passwordEdit->text().isEmpty() );
 }
 
 void BugzillaLoginPage::loginError(const QString & err, const QString & extendedMessage)

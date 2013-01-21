@@ -52,6 +52,8 @@ private Q_SLOTS:
 
     void walletLogin();
 
+    void updateLoginButtonStatus();
+
 Q_SIGNALS:
     void loggedTurnToNextPage();
 
