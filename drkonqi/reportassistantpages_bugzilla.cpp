@@ -394,7 +394,6 @@ BugzillaInformationPage::BugzillaInformationPage(ReportAssistantDialog * parent)
     ui.m_compiledSourcesCheckBox->setChecked(
                                     DrKonqi::systemInformation()->compiledSources());
 
-    //ui.m_distributionGroupBox->setVisible(false);  //TODO do this?
 }
 
 void BugzillaInformationPage::aboutToShow()
