@@ -17,7 +17,6 @@ kglobalaccel=kdelibs|general
 kiconfinder=kdelibs|general
 kshell4=kdelibs|general
 kuiserver=kdelibs|general
-kuiviewer=kdelibs|general
 kded4=kdelibs|kded
 kcmshell4=systemsettings|general
 kwalletd=kdelibs|kwallet
