@@ -159,7 +159,7 @@ QString ReportInterface::generateReportFullText(bool drKonqiStamp) const
     //LSB output or manually selected distro
     if ( !sysInfo->lsbRelease().isEmpty() ) {
         report.append(QString("Distribution: %1\n").arg(sysInfo->lsbRelease()));
-    } else if ( !sysInfo->bugzillaPlatform().isEmpty() && 
+    } else if ( !sysInfo->bugzillaPlatform().isEmpty() &&
                         sysInfo->bugzillaPlatform() != QLatin1String("unspecified")) {
         report.append(QString("Distribution (Platform): %1\n").arg(
                                                         sysInfo->bugzillaPlatform()));
