@@ -34,7 +34,6 @@
 #include <KLocale>
 #include <KDebug>
 
-#include "drkonqi_globals.h"
 #include "findconfigdatajob.h"
 
 static const char columns[] = "bug_severity,priority,bug_status,product,short_desc,resolution";

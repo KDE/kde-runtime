@@ -23,7 +23,6 @@
 
 #include <KMessageBox>
 
-#include "drkonqi_globals.h"
 #include "drkonqi.h"
 
 #include "parser/backtraceparser.h"
