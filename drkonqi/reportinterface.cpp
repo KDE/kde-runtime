@@ -344,7 +344,6 @@ void ReportInterface::addedToCC()
     connect(m_bugzillaManager, SIGNAL(attachToReportSent(int,int)), this, SLOT(attachSent(int,int)));
     connect(m_bugzillaManager, SIGNAL(attachToReportError(QString,QString)),
             this, SIGNAL(sendReportError(QString,QString)));
-    BugReport report = newBugReportTemplate();
 
     QString reportText = generateReportFullText(true);
     QString comment = generateAttachmentComment();
