@@ -21,7 +21,7 @@
 #include "reportinterface.h"
 
 #include <KDebug>
-#include <KLocale>
+#include <KLocalizedString>
 
 #include "drkonqi.h"
 #include "bugzillalib.h"

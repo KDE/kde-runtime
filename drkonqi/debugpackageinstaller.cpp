@@ -24,7 +24,7 @@
 #include <KStandardDirs>
 #include <KDebug>
 #include <KProcess>
-#include <KLocale>
+#include <KLocalizedString>
 #include <KProgressDialog>
 
 #include "drkonqi.h"

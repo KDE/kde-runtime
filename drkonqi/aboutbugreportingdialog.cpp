@@ -20,7 +20,9 @@
 
 #include "aboutbugreportingdialog.h"
 
-#include <KLocale>
+#include <KLocalizedString>
+#include <KGlobal>
+#include <KConfig>
 #include <KIcon>
 #include <KToolInvocation>
 #include <KTextBrowser>

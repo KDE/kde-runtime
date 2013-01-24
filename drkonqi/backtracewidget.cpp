@@ -26,7 +26,7 @@
 
 #include <KIcon>
 #include <KMessageBox>
-#include <KLocale>
+#include <KLocalizedString>
 #include <KToolInvocation>
 #include <KGlobalSettings>
 

@@ -19,7 +19,7 @@
 
 #include "applicationdetailsexamples.h"
 
-#include <KLocale>
+#include <KLocalizedString>
 
 #include "drkonqi.h"
 #include "crashedapplication.h"

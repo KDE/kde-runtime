@@ -21,7 +21,7 @@
 
 #include <KDebug>
 #include <KIO/Job>
-#include <KLocale>
+#include <KLocalizedString>
 
 FindConfigDataJob::FindConfigDataJob(const QString &productName, const KUrl &bugtrackerBaseUrl, QObject *parent)
   : KJob(parent),

@@ -31,7 +31,7 @@
 
 #include <KIO/Job>
 #include <KUrl>
-#include <KLocale>
+#include <KLocalizedString>
 #include <KDebug>
 
 #include "findconfigdatajob.h"

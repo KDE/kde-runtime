@@ -52,7 +52,7 @@
 #include <KIO/NetAccess>
 #include <KCrash>
 #include <KDebug>
-#include <KLocale>
+#include <KLocalizedString>
 
 #include "systeminformation.h"
 #include "crashedapplication.h"
