@@ -163,7 +163,7 @@ void DrKonqiDialog::buildDialogButtons()
     //Set kdialog buttons
     setButtons(KDialog::User3 | KDialog::User2 | KDialog::User1 | KDialog::Close);
 
-    //Report bug button button
+    //Report bug button
     setButtonGuiItem(KDialog::User1, KGuiItem2(i18nc("@action:button", "Report &Bug"),
                                                KIcon("tools-report-bug"),
                                                i18nc("@info:tooltip",
