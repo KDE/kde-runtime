@@ -112,7 +112,7 @@ void Debugger::expandString(QString & str, ExpandStringUsage usage, const QStrin
     const CrashedApplication *appInfo = DrKonqi::crashedApplication();
     QHash<QString, QString> map;
     map[QLatin1String("progname")] = appInfo->name();
-    map[QLatin1String("execname")] = appInfo->executable().fileName();
+    map[QLatin1String("execname")] = appInfo->fakeExecutableBaseName();
     map[QLatin1String("execpath")] = appInfo->executable().absoluteFilePath();
     map[QLatin1String("signum")] = QString::number(appInfo->signalNumber());
     map[QLatin1String("signame")] = appInfo->signalName();
