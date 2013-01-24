@@ -125,9 +125,11 @@ void DrKonqiDialog::buildMainWidget()
                                           );
         }
     } else {
-        reportMessage = i18nc("@info", "<para>You cannot report this error, because the "
-                                        "application does not provide a bug reporting "
-                                        "address.</para>");
+        reportMessage = i18nc("@info", "<para>You cannot report this error, because "
+                                        "<application>%1</application> does not provide a bug reporting "
+                                        "address.</para>",
+                                        crashedApp->name()
+                                        );
     }
     ui.infoLabel->setText(reportMessage);
     connect(ui.infoLabel, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
