@@ -173,7 +173,7 @@ void DrKonqiDialog::buildDialogButtons()
                                  crashedApp->fakeExecutableBaseName() != QLatin1String("drkonqi") &&
                                  !KCmdLineArgs::parsedArgs()->isSet("safer");
     enableButton(KDialog::User1, enableReportAssistant);
-    connect(this, SIGNAL(user1Clicked()), this, SLOT(reportBugAssistant()));
+    connect(this, SIGNAL(user1Clicked()), this, SLOT(startBugReportAssistant()));
 
     //Default debugger button and menu (only for developer mode)
     DebuggerManager *debuggerManager = DrKonqi::debuggerManager();
@@ -244,17 +244,17 @@ void DrKonqiDialog::enableDebugMenu(bool debuggerRunning)
     enableButton(KDialog::User2, !debuggerRunning);
 }
 
-void DrKonqiDialog::reportBugAssistant()
+void DrKonqiDialog::startBugReportAssistant()
 {
-    ReportAssistantDialog * m_bugReportAssistant = new ReportAssistantDialog();
+    ReportAssistantDialog * bugReportAssistant = new ReportAssistantDialog();
     close();
-    m_bugReportAssistant->show();
+    bugReportAssistant->show();
 }
 
 void DrKonqiDialog::linkActivated(const QString& link)
 {
     if (link == QLatin1String(ABOUT_BUG_REPORTING_URL)) {
-        aboutBugReporting();
+        showAboutBugReporting();
     } else if (link == QLatin1String(DRKONQI_REPORT_BUG_URL)) {
         KToolInvocation::invokeBrowser(link);
     } else if (link.startsWith(QLatin1String("http"))) {
@@ -263,7 +263,7 @@ void DrKonqiDialog::linkActivated(const QString& link)
     }
 }
 
-void DrKonqiDialog::aboutBugReporting()
+void DrKonqiDialog::showAboutBugReporting()
 {
     if (!m_aboutBugReportingDialog) {
         m_aboutBugReportingDialog = new AboutBugReportingDialog();

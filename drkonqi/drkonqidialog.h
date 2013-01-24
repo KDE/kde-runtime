@@ -43,7 +43,7 @@ public:
 
 private Q_SLOTS:
     void linkActivated(const QString&);
-    void reportBugAssistant();
+    void startBugReportAssistant();
 
     void applicationRestarted(bool success);
 
@@ -58,7 +58,7 @@ private Q_SLOTS:
     void tabIndexChanged(int);
 
 private:
-    void aboutBugReporting();
+    void showAboutBugReporting();
 
     KTabWidget *                        m_tabWidget;
 
