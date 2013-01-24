@@ -26,6 +26,7 @@
 #include <KTabWidget>
 #include <KDebug>
 #include <KCmdLineArgs>
+#include <KToolInvocation>
 
 #include "drkonqi.h"
 #include "backtracewidget.h"
@@ -35,6 +36,10 @@
 #include "debuggermanager.h"
 #include "debuggerlaunchers.h"
 #include "drkonqi_globals.h"
+
+static const char ABOUT_BUG_REPORTING_URL[] = "#aboutbugreporting";
+static const char DRKONQI_REPORT_BUG_URL[] =
+    KDE_BUGZILLA_URL "enter_bug.cgi?product=drkonqi&format=guided";
 
 DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
         KDialog(parent),
@@ -98,11 +103,11 @@ void DrKonqiDialog::buildMainWidget()
             reportMessage = i18nc("@info", "<para>As the Crash Handler itself has failed, the "
                                            "automatic reporting process is disabled to reduce the "
                                            "risks of failing again.<nl /><nl />"
-                                           "Please, manually report this error in "
-                                           "the \"drkonqi\" product at %1. Do not forget to include "
+                                           "Please, <link url='%1'>manually report</link> this error "
+                                           "to the KDE bug tracking system. Do not forget to include "
                                            "the backtrace from the <interface>Developer Information</interface> "
                                            "tab.</para>",
-                                           QLatin1String(KDE_BUGZILLA_URL));
+                                           QLatin1String(DRKONQI_REPORT_BUG_URL));
         } else if (KCmdLineArgs::parsedArgs()->isSet("safer")) {
             reportMessage = i18nc("@info", "<para>The reporting assistant is disabled because "
                                            "the crash handler dialog was started in safe mode."
@@ -112,10 +117,12 @@ void DrKonqiDialog::buildMainWidget()
                                            "tab.)</para>", crashedApp->bugReportAddress());
         } else {
             reportMessage = i18nc("@info", "<para>You can help us improve KDE Software by reporting "
-                                          "this error.<nl /><link url='#aboutbugreporting'>Learn "
+                                          "this error.<nl /><link url='%1'>Learn "
                                           "more about bug reporting.</link></para><para><note>It is "
                                           "safe to close this dialog if you do not want to report "
-                                          "this bug.</note></para>");
+                                          "this bug.</note></para>",
+                                          QLatin1String(ABOUT_BUG_REPORTING_URL)
+                                          );
         }
     } else {
         reportMessage = i18nc("@info", "<para>You cannot report this error, because the "
@@ -123,7 +130,7 @@ void DrKonqiDialog::buildMainWidget()
                                         "address.</para>");
     }
     ui.infoLabel->setText(reportMessage);
-    connect(ui.infoLabel, SIGNAL(linkActivated(QString)), this, SLOT(aboutBugReporting()));
+    connect(ui.infoLabel, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
 
     ui.iconLabel->setPixmap(
                         QPixmap(KStandardDirs::locate("appdata", QLatin1String("pics/crash.png"))));
@@ -242,6 +249,18 @@ void DrKonqiDialog::reportBugAssistant()
     ReportAssistantDialog * m_bugReportAssistant = new ReportAssistantDialog();
     close();
     m_bugReportAssistant->show();
+}
+
+void DrKonqiDialog::linkActivated(const QString& link)
+{
+    if (link == QLatin1String(ABOUT_BUG_REPORTING_URL)) {
+        aboutBugReporting();
+    } else if (link == QLatin1String(DRKONQI_REPORT_BUG_URL)) {
+        KToolInvocation::invokeBrowser(link);
+    } else if (link.startsWith(QLatin1String("http"))) {
+        kWarning() << "unexpected link";
+        KToolInvocation::invokeBrowser(link);
+    }
 }
 
 void DrKonqiDialog::aboutBugReporting()
