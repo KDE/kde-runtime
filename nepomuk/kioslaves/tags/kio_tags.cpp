@@ -513,9 +513,20 @@ void TagsProtocol::del(const KUrl& url, bool isfile)
             return;
         }
 
-        case FileUrl:
-            ForwardingSlaveBase::del( fileUrl, isfile );
+        case FileUrl: {
+            kDebug() << "Removing file url : " << fileUrl;
+            const QUrl tagUri = tags.last().uri();
+            KJob* job = Nepomuk2::removeProperty( QList<QUrl>() << fileUrl, NAO::hasTag(), QVariantList() << tagUri );
+            job->exec();
+            if( job->error() ) {
+                kError() << job->errorString();
+                error( KIO::ERR_CANNOT_DELETE, job->errorString() );
+            }
+            else {
+                finished();
+            }
             return;
+        }
     }
 }
 
