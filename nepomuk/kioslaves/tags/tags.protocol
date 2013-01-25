@@ -11,6 +11,7 @@ makedir=true
 moving=true
 copyFromFile=true
 renameFromFile=true
+deleteRecursive=true
 listing=Name,Type,Size,Date,AccessDate,Access,Owner,Group,Link
 source=false
 Icon=nepomuk
