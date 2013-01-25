@@ -57,81 +57,38 @@ using namespace Soprano::Vocabulary;
 TagsProtocol::TagsProtocol(const QByteArray& pool_socket, const QByteArray& app_socket)
     : KIO::ForwardingSlaveBase("tags", pool_socket, app_socket)
 {
+    // Load all the tag uris on start so that they are always there in the cache
+    m_allTags = Tag::allTags();
 }
 
 TagsProtocol::~TagsProtocol()
 {
 }
 
-QString TagsProtocol::fetchIdentifer(const QUrl& uri)
-{
-    QHash< QUrl, QString >::const_iterator it = m_tagUriIdentHash.constFind( uri );
-    if( it != m_tagUriIdentHash.constEnd() ) {
-        return it.value();
-    }
-    else {
-        QString query = QString::fromLatin1("select ?i where { %1 nao:identifier ?i . }")
-                        .arg( Soprano::Node::resourceToN3( uri ) );
-
-        Soprano::Model* model = ResourceManager::instance()->mainModel();
-        Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparqlNoInference );
-        if( it.next() ) {
-            QString ident = it[0].literal().toString();
-
-            m_tagIdentUriHash.insert( ident, uri );
-            m_tagUriIdentHash.insert( uri, ident );
-
-            return ident;
-        }
-
-        return QString();
-    }
-}
-
-QUrl TagsProtocol::fetchUri(const QString& label)
-{
-    QHash< QString, QUrl >::const_iterator it = m_tagIdentUriHash.constFind( label );
-    if( it != m_tagIdentUriHash.constEnd() ) {
-        return it.value();
-    }
-    else {
-        QString query = QString::fromLatin1("select ?r where { ?r a nao:Tag; nao:identifier %1 . }")
-                        .arg( Soprano::Node::literalToN3( Soprano::LiteralValue(label) ) );
-
-        Soprano::Model* model = ResourceManager::instance()->mainModel();
-        Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparqlNoInference );
-        if( it.next() ) {
-            QUrl uri = it[0].uri();
-
-            m_tagIdentUriHash.insert( label, uri );
-            m_tagUriIdentHash.insert( uri, label );
-
-            return uri;
-        }
-
-        return QUrl();
-    }
-}
-
-
 
 namespace {
     //FIXME: Find a nice icon for tags?
-    //FIXME: Fetch the datetime?
-    KIO::UDSEntry createUDSEntryForTag(const QUrl& tagUri, const QString& label) {
-        const QDateTime dt = QDateTime::currentDateTime();
+    KIO::UDSEntry createUDSEntryForTag(const Tag& tag) {
+        //
+        // WARNING: This could cause some problems, the user will choose the display name, but
+        // the url will show the nao:identifier.
+        // Most of the times the nao:identifier and genericLabel are the same, however, there
+        // are a few cases when they aren't. What to do?
+        //
+        const QDateTime creationDt = tag.property( NAO::created() ).toDateTime();
+        const QDateTime modDt = tag.property( NAO::lastModified() ).toDateTime();
 
         KIO::UDSEntry uds;
-        uds.insert( KIO::UDSEntry::UDS_NAME, label );
-        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, label );
+        uds.insert( KIO::UDSEntry::UDS_NAME, tag.property( NAO::identifier() ).toString() );
+        uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, tag.genericLabel() );
         uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
         uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
         uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, i18n( "Tag" ) );
-        uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, dt.toTime_t() );
-        uds.insert( KIO::UDSEntry::UDS_CREATION_TIME, dt.toTime_t() );
+        uds.insert( KIO::UDSEntry::UDS_MODIFICATION_TIME, modDt.toTime_t() );
+        uds.insert( KIO::UDSEntry::UDS_CREATION_TIME, creationDt.toTime_t() );
         uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
         uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
-        uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, tagUri.toString() );
+        uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, tag.uri().toString() );
         uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QLatin1String("nepomuk") );
 
         return uds;
@@ -152,17 +109,8 @@ void TagsProtocol::listDir(const KUrl& url)
 
         case RootUrl: {
             kDebug() << "Root Url";
-            QLatin1String query("select distinct ?r ?ident where { ?r a nao:Tag ; nao:identifier ?ident .}");
-            Soprano::Model* model = ResourceManager::instance()->mainModel();
-            Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparqlNoInference );
-            while( it.next() ) {
-                QString tagLabel = it["ident"].literal().toString();
-                QUrl tagUri = it["r"].uri();
-
-                m_tagUriIdentHash.insert( tagUri, tagLabel );
-                m_tagIdentUriHash.insert( tagLabel, tagUri );
-
-                listEntry( createUDSEntryForTag( tagUri, tagLabel ), false );
+            foreach( const Tag& tag, m_allTags ) {
+                listEntry( createUDSEntryForTag(tag), false );
             }
 
             listEntry( KIO::UDSEntry(), true );
@@ -243,7 +191,7 @@ void TagsProtocol::listDir(const KUrl& url)
 
             // List each of the tags
             foreach(const QUrl& tagUri, tagsToList) {
-                listEntry( createUDSEntryForTag( tagUri, fetchIdentifer(tagUri) ), false );
+                listEntry( createUDSEntryForTag( Tag(tagUri) ), false );
             }
 
             listEntry( KIO::UDSEntry(), true );
@@ -288,27 +236,7 @@ void TagsProtocol::stat(const KUrl& url)
         }
 
         case TagUrl: {
-            QString displayName;
-            QString path = url.path();
-            QStringList tagnames = path.split( QChar::fromLatin1('/') );
-            foreach(const QString& tag, tagnames) {
-                displayName.append( tag + QLatin1Char(' ') );
-            }
-
-            KIO::UDSEntry uds;
-            uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
-            uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
-            uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
-            uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
-
-            uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
-            uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, i18n( "Tag" ) );
-
-            uds.insert( KIO::UDSEntry::UDS_NAME, path );
-            uds.insert( KIO::UDSEntry::UDS_DISPLAY_NAME, displayName );
-            uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, tags.last().uri().toString() );
-
-            statEntry( uds );
+            statEntry( createUDSEntryForTag( tags.last() ) );
             finished();
             return;
         }
@@ -347,7 +275,7 @@ void TagsProtocol::mkdir(const KUrl& url, int permissions)
         case FileUrl: {
             const QString label = url.fileName();
             Tag tag( label );
-            tag.setProperty( NAO::prefLabel(), label );
+            tag.setLabel( label );
 
             finished();
             return;
@@ -462,6 +390,8 @@ void TagsProtocol::rename(const KUrl& src, const KUrl& dest, KIO::JobFlags flags
 
         case FileUrl: {
             // Yes, this is weird, but it is required
+            // It is required cause the dest url is of the form tags:/tag1/tag2/file_url_with_new_filename
+            // So we extract the new fileUrl from the 'src', and apply the new file to the dest
             KUrl destUrl( fileUrl );
             destUrl.setFileName( dest.fileName() );
 
@@ -505,9 +435,7 @@ void TagsProtocol::del(const KUrl& url, bool isfile)
             return;
 
         case TagUrl: {
-            const QUrl tagUri = tags.last().uri();
-            KJob* job = Nepomuk2::removeResources( QList<QUrl>() << tagUri );
-            job->exec();
+            tags.last().remove();
 
             finished();
             return;
@@ -591,7 +519,7 @@ Nepomuk2::TagsProtocol::ParseResult Nepomuk2::TagsProtocol::parseUrl(const KUrl&
 
     tags.clear();
     foreach(const QString& tagName, tagNames) {
-        QUrl uri = fetchUri(tagName);
+        QUrl uri = Tag(tagName).uri();
         if( uri.isEmpty() && !ignoreErrors ) {
             QString text = QString::fromLatin1("Tag %1 does not exist").arg(tagName);
             error( KIO::ERR_CANNOT_ENTER_DIRECTORY, text );

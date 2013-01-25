@@ -95,11 +95,7 @@ namespace Nepomuk2 {
         virtual bool rewriteUrl(const KUrl& url, KUrl& newURL);
 
     private:
-        QHash<QUrl, QString> m_tagUriIdentHash;
-        QHash<QString, QUrl> m_tagIdentUriHash;
-
-        QUrl fetchUri( const QString& label );
-        QString fetchIdentifer( const QUrl& uri );
+        QList<Tag> m_allTags;
 
         enum ParseResult {
             RootUrl,
