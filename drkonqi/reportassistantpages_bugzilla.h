@@ -33,7 +33,7 @@
 namespace KWallet { class Wallet; }
 class KCapacityBar;
 
-/** Bugs.kde.org login **/
+/** Bugzilla login **/
 class BugzillaLoginPage: public ReportAssistantPage
 {
     Q_OBJECT

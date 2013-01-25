@@ -69,7 +69,7 @@ BugzillaLoginPage::BugzillaLoginPage(ReportAssistantDialog * parent) :
     connect(bugzillaManager(), SIGNAL(loginError(QString,QString)), this, SLOT(loginError(QString,QString)));
 
     ui.setupUi(this);
-    ui.m_statusWidget->setIdle(i18nc("@info:status '1' is replaced with \"bugs.kde.org\"",
+    ui.m_statusWidget->setIdle(i18nc("@info:status '1' is replaced with the short URL of the bugzilla ",
                                    "You need to login with your %1 account in order to proceed.",
                                    QLatin1String(KDE_BUGZILLA_SHORT_URL)));
 
@@ -257,7 +257,7 @@ bool BugzillaLoginPage::canSetCookies()
                               "Allow %1 to set cookies", KDE_BUGZILLA_URL));
 
         KGuiItem noItem = KStandardGuiItem::no();
-        noItem.setText(i18nc("@action:button do not allow bugs.kde.org "
+        noItem.setText(i18nc("@action:button do not allow the bugzilla website "
                              "to set cookies", "No, do not allow"));
 
         if (KMessageBox::warningYesNo(this, msg, QString(), yesItem, noItem) == KMessageBox::Yes) {
