@@ -110,7 +110,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     KPageWidgetItem * m_bugzillaLoginPage = new KPageWidgetItem(m_bugzillaLogin,
                                                                 QLatin1String(PAGE_BZLOGIN_ID));
     m_pageWidgetMap.insert(QLatin1String(PAGE_BZLOGIN_ID),m_bugzillaLoginPage);
-    m_bugzillaLoginPage->setHeader(i18nc("@title","Login into the KDE Bugtracking System"));
+    m_bugzillaLoginPage->setHeader(i18nc("@title","Login into the KDE Bug Tracking System"));
     m_bugzillaLoginPage->setIcon(KIcon("user-identity"));
     connect(m_bugzillaLogin, SIGNAL(loggedTurnToNextPage()), this, SLOT(loginFinished()));
 
