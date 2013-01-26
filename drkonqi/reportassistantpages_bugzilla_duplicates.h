@@ -23,7 +23,6 @@
 #include "reportassistantpage.h"
 
 #include "duplicatefinderjob.h"
-#include "reportassistantpages_base.h"
 #include "bugzillalib.h"
 
 #include "ui_assistantpage_bugzilla_duplicates.h"
