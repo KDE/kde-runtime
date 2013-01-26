@@ -305,8 +305,8 @@ void BacktraceWidget::loadData()
         ui.m_backtraceEdit->setPlainText(i18nc("@info:status",
                                                "The crash information could not be generated."));
         ui.m_extraDetailsLabel->setVisible(true);
-        ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "<strong>You need to install the debugger "
-                                              "package (%1) and click the <interface>Reload"
+        ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "<strong>You need to first install the debugger "
+                                              "application (%1) then click the <interface>Reload"
                                               "</interface> button.</strong>",
                                               m_btGenerator->debugger().name()));
     }
