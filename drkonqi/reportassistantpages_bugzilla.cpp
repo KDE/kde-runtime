@@ -46,6 +46,7 @@
 #include "reportinterface.h"
 #include "systeminformation.h"
 #include "crashedapplication.h"
+#include "bugzillalib.h"
 #include "statuswidget.h"
 #include "drkonqi.h"
 #include "drkonqi_globals.h"

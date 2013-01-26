@@ -23,7 +23,6 @@
 #include "reportassistantpage.h"
 
 #include "reportassistantpages_base.h"
-#include "bugzillalib.h"
 
 #include "ui_assistantpage_bugzilla_login.h"
 #include "ui_assistantpage_bugzilla_information.h"
