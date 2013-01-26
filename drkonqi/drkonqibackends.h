@@ -71,4 +71,4 @@ private:
     State m_state;
 };
 
-#endif // KCRASHBACKEND_H
+#endif // DRKONQIBACKENDS_H
