@@ -299,15 +299,15 @@ void BacktraceWidget::loadData()
         //Tell the user to install it.
         m_backtraceRatingWidget->setUsefulness(BacktraceParser::Useless);
 
-        ui.m_statusWidget->setIdle(i18nc("@info:status", "The debugger application is missing or "
-                                                         "could not be launched."));
+        ui.m_statusWidget->setIdle(i18nc("@info:status", "<strong>The debugger application is missing or "
+                                                         "could not be launched.</strong>"));
 
         ui.m_backtraceEdit->setPlainText(i18nc("@info:status",
                                                "The crash information could not be generated."));
         ui.m_extraDetailsLabel->setVisible(true);
-        ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "You need to install the debugger "
+        ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "<strong>You need to install the debugger "
                                               "package (%1) and click the <interface>Reload"
-                                              "</interface> button.",
+                                              "</interface> button.</strong>",
                                               m_btGenerator->debugger().name()));
     }
 
