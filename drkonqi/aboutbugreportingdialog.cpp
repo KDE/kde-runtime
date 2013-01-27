@@ -62,7 +62,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         QString("<h1>%1</h1>").arg(i18nc("@title","Bug Reporting Assistant Guide")) +
         QString("<p>%1</p>").arg(
             i18nc("@info/rich","This assistant will guide you through the crash "
-                            "reporting process for the KDE Bug Reports Database Site. All the "
+                            "reporting process for the KDE bug tracking system. All the "
                             "information you enter on the bug report <strong>must be written "
                             "in English</strong>, if possible, as KDE is formed internationally.")) +
 
@@ -144,7 +144,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                                 i18nc("@title","List of possible duplicate reports")) +
         QString("<p>%1</p><p>%2</p><p>%3</p><p>%4</p><p><strong>%5</strong></p>").arg(
         //needs some more string cleanup below
-            i18nc("@info/rich","This page will search the bug report database for "
+            i18nc("@info/rich","This page will search the bug report system for "
                             "similar crashes which are possible duplicates of your bug. If "
                             "there are similar bug reports found, you can double click on them "
                             "to see details. Then, read the current bug report information so "
@@ -187,7 +187,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                             "so that you can look at the report later."),
             i18nc("@info/rich","If the process fails, you can click "
                             "<interface>Retry</interface> to try sending the bug report again. "
-                            "If the report cannot be sent because the bug tracking database has a "
+                            "If the report cannot be sent because the bug tracking system has a "
                             "problem, you can save it to a file to manually report later.")) +
 
         QString("<h1>%1</h1><p>%2</p>").arg(
