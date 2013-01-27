@@ -295,12 +295,16 @@ void BugzillaManager::callMessage(const QList<QVariant> & result, const QVariant
         Q_ASSERT(bug_id != 0);
         Q_EMIT reportSent(bug_id);
     } else if (id.toString() == QLatin1String("Bug.add_attachment")) {
-        QVariantMap map = result.at(0).toMap().value(QLatin1String("attachments")).toMap();
-        map = map.constBegin()->toMap();
-        int attachment_id = map.value(QLatin1String("id")).toInt();
-        int bug_id = map.value(QLatin1String("bug_id")).toInt();
-        Q_ASSERT(bug_id != 0);
-        Q_EMIT attachToReportSent(attachment_id, bug_id);
+        QVariantMap map = result.at(0).toMap();
+        if (map.contains(QLatin1String("attachments"))){  // for bugzilla 4.2
+            map = map.value(QLatin1String("attachments")).toMap();
+            map = map.constBegin()->toMap();
+            const int attachment_id = map.value(QLatin1String("id")).toInt();
+            Q_EMIT attachToReportSent(attachment_id);
+        } else if (map.contains(QLatin1String("ids"))) {  // for bugzilla 4.4
+            const int attachment_id = map.value(QLatin1String("ids")).toList().at(0).toInt();
+            Q_EMIT attachToReportSent(attachment_id);
+        }
     } else if (id.toString() == QLatin1String("Bug.update.cc")) {
         QVariantMap map = result.at(0).toMap().value(QLatin1String("bugs")).toList().at(0).toMap();
         int bug_id = map.value(QLatin1String("id")).toInt();

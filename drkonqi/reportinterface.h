@@ -95,7 +95,7 @@ public:
 private Q_SLOTS:
     void sendUsingDefaultProduct() const;
     void addedToCC();
-    void attachSent(int, int);
+    void attachSent(int);
 
 Q_SIGNALS:
     void reportSent(int);
