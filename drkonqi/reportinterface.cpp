@@ -355,11 +355,12 @@ void ReportInterface::addedToCC()
                                           m_attachToBugNumber, comment);
 }
 
-void ReportInterface::attachSent(int attachId, int bugId)
+void ReportInterface::attachSent(int attachId)
 {
     Q_UNUSED(attachId);
+
     //The bug was attached, consider it "sent"
-    emit reportSent(bugId);
+    emit reportSent(m_attachToBugNumber);
 }
 
 QStringList ReportInterface::relatedBugzillaProducts() const

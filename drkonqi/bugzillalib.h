@@ -333,7 +333,7 @@ Q_SIGNALS:
     void bugReportFetched(BugReport, QObject *);
     void searchFinished(const BugMapList &);
     void reportSent(int);
-    void attachToReportSent(int, int);
+    void attachToReportSent(int);
     void addMeToCCFinished(int);
     void checkVersionsForProductFinished(const QStringList);
 
