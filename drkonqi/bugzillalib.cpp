@@ -34,7 +34,6 @@
 #include <KLocalizedString>
 #include <KDebug>
 
-#include "findconfigdatajob.h"
 
 static const char columns[] = "bug_severity,priority,bug_status,product,short_desc,resolution";
 
@@ -49,6 +48,10 @@ static const char searchUrl[] =
 // short_desc, product, long_desc(possible backtraces lines), searchFrom, searchTo, severity, columnList
 static const char showBugUrl[] = "show_bug.cgi?id=%1";
 static const char fetchBugUrl[] = "show_bug.cgi?id=%1&ctype=xml";
+
+static inline Component buildComponent(const QVariantMap& map);
+static inline Version buildVersion(const QVariantMap& map);
+static inline Product buildProduct(const QVariantMap& map);
 
 //BEGIN BugzillaManager
 
@@ -185,12 +188,24 @@ void BugzillaManager::addMeToCC(int bugId)
             QString::fromAscii("Bug.update.cc"));
 }
 
-void BugzillaManager::checkVersionsForProduct(const QString & product)
+void BugzillaManager::fetchProductInfo(const QString & product)
 {
-    FindConfigDataJob *job = new FindConfigDataJob(product, KUrl(m_bugTrackerUrl));
-    connect(job, SIGNAL(finished(KJob*)) , this, SLOT(checkVersionJobFinished(KJob*)));
-    job->start();
+    QMap<QString, QVariant> args;
+
+    args.insert("names", (QStringList() << product) ) ;
+
+    QStringList includeFields;
+    // currently we only need these informations
+    includeFields << "name" << "is_active" << "components" << "versions";
+
+    args.insert("include_fields", includeFields) ;
+
+    m_xmlRpcClient->call(QLatin1String("Product.get"), args,
+            this, SLOT(callMessage(QList<QVariant>,QVariant)),
+            this, SLOT(callFault(int,QString,QVariant)),
+            QString::fromAscii("Product.get.versions"));
 }
+
 
 //END Bugzilla Action methods
 
@@ -256,14 +271,56 @@ void BugzillaManager::searchBugsJobFinished(KJob * job)
     m_searchJob = 0;
 }
 
-void BugzillaManager::checkVersionJobFinished(KJob * job)
+static inline Component buildComponent(const QVariantMap& map)
 {
-    if (!job->error()) {
-        FindConfigDataJob *checkVersionJob = static_cast<FindConfigDataJob*>(job);
-        emit checkVersionsForProductFinished(checkVersionJob->data(FindConfigDataJob::Version));
-    } else {
-        emit checkVersionsForProductError();
+    QString name = map.value("name").toString();
+    bool active = map.value("is_active").toBool();
+
+    return Component(name, active);
+}
+
+static inline Version buildVersion(const QVariantMap& map)
+{
+    QString name = map.value("name").toString();
+    bool active = map.value("is_active").toBool();
+
+    return Version(name, active);
+}
+
+static inline Product buildProduct(const QVariantMap& map)
+{
+    QString name = map.value("name").toString();
+    bool active = map.value("is_active").toBool();
+
+    Product product(name, active);
+
+    QVariantList components = map.value("components").toList();
+    foreach (const QVariant& c, components) {
+        Component component = buildComponent(c.toMap());
+        product.addComponent(component);
+
     }
+
+    QVariantList versions = map.value("versions").toList();
+    foreach (const QVariant& v, versions) {
+        Version version = buildVersion(v.toMap());
+        product.addVersion(version);
+    }
+
+    return product;
+}
+
+void BugzillaManager::fetchProductInfoFinished(const QVariantMap & map)
+{
+    QList<Product> products;
+
+    QVariantList plist = map.value("products").toList();
+    foreach (const QVariant& p, plist) {
+        Product product = buildProduct(p.toMap());
+        products.append(product);
+    }
+
+    emit productInfoFetched(products.at(0));
 }
 
 //END Slots to handle KJob::finished
@@ -275,6 +332,9 @@ void BugzillaManager::callMessage(const QList<QVariant> & result, const QVariant
     if (id.toString() == QLatin1String("login")) {
         m_logged = true;
         Q_EMIT loginFinished(true);
+    } else if (id.toString() == QLatin1String("Product.get.versions")) {
+        QVariantMap map = result.at(0).toMap();
+        fetchProductInfoFinished(map);
     } else if (id.toString() == QLatin1String("Bug.create")) {
         QVariantMap map = result.at(0).toMap();
         int bug_id = map.value(QLatin1String("id")).toInt();
@@ -315,6 +375,8 @@ void BugzillaManager::callFault(int errorCode, const QString & errorString, cons
             Q_EMIT loginError(genericError);
             break;
         }
+    } else if (id.toString() == QLatin1String("Product.get.versions")) {
+        Q_EMIT productInfoError();
     } else if (id.toString() == QLatin1String("Bug.create")) {
         switch (errorCode) {
         case 105: //invalid component

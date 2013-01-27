@@ -283,6 +283,73 @@ private:
     QByteArray  m_data;
 };
 
+class Component
+{
+public:
+    Component(const QString& name, bool active): m_name(name), m_active(active) {}
+
+    QString name() const { return m_name; }
+    bool active() const { return m_active; }
+
+private:
+    QString m_name;
+    bool m_active;
+};
+
+class Version
+{
+public:
+
+    Version(const QString& name, bool active): m_name(name), m_active(active) {}
+
+    QString name() const { return m_name; }
+    bool active() const { return m_active; }
+
+private:
+    QString m_name;
+    bool m_active;
+};
+
+
+class Product
+{
+public:
+
+    Product(const QString& name, bool active): m_name(name), m_active(active) {}
+
+    void addComponent(const Component& component) {
+        m_allComponents.append(component.name());
+    }
+
+    void addVersion(const Version& version) {
+        m_allVersions.append(version.name());
+
+        if (version.active()) {
+            m_activeVersions.append(version.name());
+        } else {
+            m_inactiveVersions.append(version.name());
+        }
+    }
+
+    QStringList components() const { return m_allComponents; }
+
+    QStringList allVersions() const { return m_allVersions; }
+    QStringList activeVersions() const { return m_activeVersions; }
+    QStringList inactiveVersions() const { return m_inactiveVersions; }
+
+private:
+
+    QString m_name;
+    bool m_active;
+
+    QStringList m_allComponents;
+
+    QStringList m_allVersions;
+    QStringList m_activeVersions;
+    QStringList m_inactiveVersions;
+
+};
+
 class BugzillaManager : public QObject
 {
     Q_OBJECT
@@ -311,7 +378,7 @@ public:
 
     void addMeToCC(int bugId);
 
-    void checkVersionsForProduct(const QString &);
+    void fetchProductInfo(const QString &);
 
     /* Misc methods */
     QString urlForBug(int bug_number) const;
@@ -322,7 +389,7 @@ private Q_SLOTS:
     /* Slots to handle KJob::finished */
     void fetchBugJobFinished(KJob*);
     void searchBugsJobFinished(KJob*);
-    void checkVersionJobFinished(KJob*);
+    void fetchProductInfoFinished(const QVariantMap&);
 
     void callMessage(const QList<QVariant> & result, const QVariant & id);
     void callFault(int errorCode, const QString & errorString, const QVariant &id);
@@ -335,7 +402,7 @@ Q_SIGNALS:
     void reportSent(int);
     void attachToReportSent(int);
     void addMeToCCFinished(int);
-    void checkVersionsForProductFinished(const QStringList);
+    void productInfoFetched(Product);
 
     /* Bugzilla actions had errors */
     void loginError(const QString & errorMsg, const QString & extendedErrorMsg = QString());
@@ -345,7 +412,7 @@ Q_SIGNALS:
     void sendReportErrorInvalidValues(); //To use default values
     void attachToReportError(const QString & errorMsg, const QString & extendedErrorMsg = QString());
     void addMeToCCError(const QString & errorMsg, const QString & extendedErrorMsg = QString());
-    void checkVersionsForProductError();
+    void productInfoError();
 
 private:
     QString     m_bugTrackerUrl;

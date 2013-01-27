@@ -33,8 +33,8 @@ ProductMapping::ProductMapping(const QString & appName, BugzillaManager * bzMana
     m_bugzillaManagerPtr = bzManager;
     //Get valid versions using a delayed check after login
     connect(m_bugzillaManagerPtr, SIGNAL(loginFinished(bool)), this, SLOT(delayedLoginCheck(bool)));
-    connect(m_bugzillaManagerPtr, SIGNAL(checkVersionsForProductFinished(QStringList)), this,
-                                                            SLOT(checkValidVersions(QStringList)));
+    connect(m_bugzillaManagerPtr, SIGNAL(productInfoFetched(Product)), this,
+                                                            SLOT(checkProductInfo(Product)));
 
     //Default "fallback" values
     m_bugzillaProduct = appName;
@@ -120,12 +120,14 @@ void ProductMapping::getRelatedProductsUsingInternalFile(const QString & bugzill
 void ProductMapping::delayedLoginCheck(bool logged)
 {
     if (logged) {
-        m_bugzillaManagerPtr->checkVersionsForProduct(m_bugzillaProduct);
+        m_bugzillaManagerPtr->fetchProductInfo(m_bugzillaProduct);
     }
 }
 
-void ProductMapping::checkValidVersions(const QStringList & versionList)
+void ProductMapping::checkProductInfo(const Product & product)
 {
+    const QStringList& versionList = product.allVersions();
+
     const QString version = DrKonqi::crashedApplication()->version();
     if (versionList.contains(version)) {
         //The version the crash application provided is a valid bugzilla version: use it !

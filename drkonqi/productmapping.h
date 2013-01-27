@@ -24,6 +24,7 @@
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 
+class Product;
 class BugzillaManager;
 
 class ProductMapping: public QObject
@@ -39,7 +40,7 @@ public:
 
 private Q_SLOTS:
     void delayedLoginCheck(bool);
-    void checkValidVersions(const QStringList &);
+    void checkProductInfo(const Product &);
 
 private:
     void map(const QString&);
