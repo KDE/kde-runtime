@@ -63,8 +63,8 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         QString("<p>%1</p>").arg(
             i18nc("@info/rich","This assistant will guide you through the crash "
                             "reporting process for the KDE Bug Reports Database Site. All the "
-                            "information you enter on the bug report must be in English, if "
-                            "possible, as KDE is formed internationally.")) +
+                            "information you enter on the bug report <strong>must be written "
+                            "in English</strong>, if possible, as KDE is formed internationally.")) +
 
         //Bug Awareness Page
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_AWARENESS_ID),
@@ -175,7 +175,7 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
             i18nc("@info/rich", "You can also specify your distribution method (GNU/Linux "
                                 "distribution or packaging system) or if you compiled the KDE "
                                 "Platform from sources."),
-            i18nc("@info/rich", "<note>You should write in English.</note>")) +
+            i18nc("@info/rich", "<note>You should <strong>write those information in English</strong>.</note>")) +
 
         //Bugzilla Send Page
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_BZSEND_ID),
