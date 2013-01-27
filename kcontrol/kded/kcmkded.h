@@ -42,8 +42,8 @@ protected Q_SLOTS:
 	void slotStartService();
 	void slotStopService();
 	void slotServiceRunningToggled();
-	void slotEvalItem(QTreeWidgetItem *item);
-	void slotLodItemSelected(QTreeWidgetItem *item);
+	void slotStartupItemSelected();
+	void slotLodItemSelected();
 	void slotItemChecked(QTreeWidgetItem *item, int column);
 	void getServiceStatus();
 

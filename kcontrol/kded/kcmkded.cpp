@@ -142,8 +142,8 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
 
 	connect(_pbStart, SIGNAL(clicked()), SLOT(slotStartService()));
 	connect(_pbStop, SIGNAL(clicked()), SLOT(slotStopService()));
-	connect(_lvLoD, SIGNAL(itemClicked(QTreeWidgetItem*, int)), SLOT(slotLodItemSelected(QTreeWidgetItem*)) );
-	connect(_lvStartup, SIGNAL(itemClicked(QTreeWidgetItem*, int)), SLOT(slotEvalItem(QTreeWidgetItem*)) );
+	connect(_lvLoD, SIGNAL(itemSelectionChanged()), SLOT(slotLodItemSelected()));
+	connect(_lvStartup, SIGNAL(itemSelectionChanged()), SLOT(slotStartupItemSelected()));
 	connect(_lvStartup, SIGNAL(itemChanged(QTreeWidgetItem*, int)), SLOT(slotItemChecked(QTreeWidgetItem*, int)) );
 
 }
@@ -371,8 +371,8 @@ void KDEDConfig::getServiceStatus()
 void KDEDConfig::slotReload()
 {
 	QString current;
-	if ( _lvStartup->currentItem() )
-		current = _lvStartup->currentItem()->data( StartupService, LibraryRole ).toString();
+	if ( !_lvStartup->selectedItems().isEmpty() )
+		current = _lvStartup->selectedItems().at(0)->data( StartupService, LibraryRole ).toString();
 	load();
 	if ( !current.isEmpty() )
 	{
@@ -382,16 +382,16 @@ void KDEDConfig::slotReload()
 			QTreeWidgetItem *treeitem = _lvStartup->topLevelItem( i );
 			if ( treeitem->data( StartupService, LibraryRole ).toString() == current )
 			{
-				_lvStartup->setCurrentItem( treeitem );
+				_lvStartup->setCurrentItem( treeitem, 0, QItemSelectionModel::ClearAndSelect );
 				break;
 			}
 		}
 	}
 }
 
-void KDEDConfig::slotEvalItem(QTreeWidgetItem * item)
+void KDEDConfig::slotStartupItemSelected()
 {
-	if (!item) {
+	if ( _lvStartup->selectedItems().isEmpty() ) {
 		// Disable the buttons
 		_pbStart->setEnabled( false );
 		_pbStop->setEnabled( false );
@@ -399,8 +399,9 @@ void KDEDConfig::slotEvalItem(QTreeWidgetItem * item)
 	}
 
 	// Deselect a currently selected element in the "load on demand" treeview
-	_lvLoD->setCurrentItem(NULL);
+	_lvLoD->setCurrentItem(NULL, 0, QItemSelectionModel::Clear);
 
+	QTreeWidgetItem *item = _lvStartup->selectedItems().at(0);
 	if ( item->text(StartupStatus) == RUNNING ) {
 		_pbStart->setEnabled( false );
 		_pbStop->setEnabled( true );
@@ -418,27 +419,24 @@ void KDEDConfig::slotEvalItem(QTreeWidgetItem * item)
 	getServiceStatus();
 }
 
-void KDEDConfig::slotLodItemSelected(QTreeWidgetItem * item)
+void KDEDConfig::slotLodItemSelected()
 {
-	if (!item)
+	if ( _lvLoD->selectedItems().isEmpty() )
 		return;
 
 	// Deselect a currently selected element in the "load on startup" treeview
-	_lvStartup->setCurrentItem(NULL);
-	// The above line doesn't trigger itemClicked. So call that handler
-	// ourselve
-	slotEvalItem(NULL);
+	_lvStartup->setCurrentItem(NULL, 0, QItemSelectionModel::Clear);
 }
 
 void KDEDConfig::slotServiceRunningToggled()
 {
 	getServiceStatus();
-	slotEvalItem(_lvStartup->currentItem());
+	slotStartupItemSelected();
 }
 
 void KDEDConfig::slotStartService()
 {
-	QString service = _lvStartup->currentItem()->data( StartupService, LibraryRole ).toString();
+	QString service = _lvStartup->selectedItems().at(0)->data( StartupService, LibraryRole ).toString();
 
 	QDBusInterface kdedInterface( "org.kde.kded", "/kded","org.kde.kded" );
 	QDBusReply<bool> reply = kdedInterface.call( "loadModule", service  );
@@ -457,7 +455,7 @@ void KDEDConfig::slotStartService()
 
 void KDEDConfig::slotStopService()
 {
-	QString service = _lvStartup->currentItem()->data( StartupService, LibraryRole ).toString();
+	QString service = _lvStartup->selectedItems().at(0)->data( StartupService, LibraryRole ).toString();
 	kDebug() << "Stopping: " << service;
 
 	QDBusInterface kdedInterface( "org.kde.kded", "/kded", "org.kde.kded" );
