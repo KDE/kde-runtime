@@ -112,9 +112,10 @@ void Nepomuk2::SystemTray::slotUpdateFileIndexerStatus()
         statusString = m_service->userStatusString();
         bool indexing = m_service->isIndexing();
         bool suspended = m_service->isSuspended();
+        bool cleaning = m_service->isCleaning();
 
         // a manually suspended service should not be passive
-        if ( indexing || suspended ) {
+        if ( indexing || suspended || cleaning ) {
             if (!m_updateTimer.isActive()) {
                 m_updateTimer.start(3000);
             }
