@@ -54,7 +54,6 @@ set(drkonqi_SRCS
     debuggermanager.cpp
     applicationdetailsexamples.cpp
     gdbhighlighter.cpp
-    findconfigdatajob.cpp
     parsebugbacktraces.cpp
     duplicatefinderjob.cpp
 )
