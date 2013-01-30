@@ -187,6 +187,12 @@ mangonel=Mangonel|mangonel
 kwatchgnupg=kleopatra|general
 homerunviewer=homerun|general
 
+# applicaitons not using bugs.kde.org
+kbibtex=unknown|general
+kdesudo=unknown|general
+kguitar=unknown|general
+synaptiks=unknown|general
+
 #---
 #This section relates a product groupt to a product
 #---
