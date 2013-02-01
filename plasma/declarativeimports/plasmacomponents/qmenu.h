@@ -71,6 +71,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void itemTriggered(QAction *item);
+    void markAsClosed();
 
 private:
     QList<QMenuItem*> m_items;
