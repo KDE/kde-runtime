@@ -216,7 +216,7 @@ ConclusionPage::ConclusionPage(ReportAssistantDialog * parent)
     ui.setupUi(this);
 
     ui.m_showReportInformationButton->setGuiItem(
-                    KGuiItem2(i18nc("@action:button", "Sho&w Contents of the Report"),
+                    KGuiItem2(i18nc("@action:button", "&Show Contents of the Report"),
                             KIcon("document-preview"),
                             i18nc("@info:tooltip", "Use this button to show the generated "
                             "report information about this crash.")));
