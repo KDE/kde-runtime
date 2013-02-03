@@ -320,7 +320,11 @@ void BugzillaManager::fetchProductInfoFinished(const QVariantMap & map)
         products.append(product);
     }
 
-    emit productInfoFetched(products.at(0));
+    if ( products.size() > 0 ) {
+        emit productInfoFetched(products.at(0));
+    } else {
+        emit productInfoError();
+    }
 }
 
 //END Slots to handle KJob::finished
@@ -375,8 +379,6 @@ void BugzillaManager::callFault(int errorCode, const QString & errorString, cons
             Q_EMIT loginError(genericError);
             break;
         }
-    } else if (id.toString() == QLatin1String("Product.get.versions")) {
-        Q_EMIT productInfoError();
     } else if (id.toString() == QLatin1String("Bug.create")) {
         switch (errorCode) {
         case 105: //invalid component
