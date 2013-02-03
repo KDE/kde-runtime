@@ -39,7 +39,6 @@ public:
     QStringList relatedBugzillaProducts() const;
 
 private Q_SLOTS:
-    void delayedLoginCheck(bool);
     void checkProductInfo(const Product &);
 
 private:
