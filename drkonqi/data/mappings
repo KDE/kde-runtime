@@ -15,24 +15,20 @@ keditfiletype=kdelibs|general
 kfmclient=kdelibs|general
 kglobalaccel=kdelibs|general
 kiconfinder=kdelibs|general
-kshell4=kdelibs|general
 kuiserver=kdelibs|general
 kded4=kdelibs|kded
 kcmshell4=systemsettings|general
 kwalletd=kdelibs|kwallet
-kwriteconfig=kdelibs|general
 kwrited=konsole|kwrited
 kbuildsycoca4=kdelibs|ksycoca
 knotify4=kdelibs|knotify
+
 #KDE Platform (KIO)
 kioclient=kio|general
 ktrash=kio|trash
+
 #KDE Platform (Solid)
 solid-action-desktop-gen=solid|general
-solid-bluetooth=solid|control::bluetooth
-solid-hardware=solid|general
-solid-network=solid|control::network
-solid-powermanagement=solid|control::powermanager
 bluedevil-audio=solid|bluetooth
 bluedevil-helper=solid|bluetooth
 bluedevil-input=solid|bluetooth
@@ -43,15 +39,12 @@ bluedevil-sendfile=solid|bluetooth
 bluedevil-wizard=solid|bluetooth
 
 #KDE Platform (Nepomuk)
-nepomuk-rcgen=nepomuk|general
 nepomukbackup=nepomuk|backupservice
 nepomukcleaner=nepomuk|general
 nepomukcontroller=nepomuk|controller
 nepomukindexer=nepomuk|fileindexer
 nepomukserver=nepomuk|general
 nepomukservicestub=nepomuk|general
-sopranocmd=nepomuk|general
-sopranod=nepomuk|general
 nepomukshell=nepomukshell|Misc
 
 #KDE Plasma Desktop (Plasma & KRunner)
@@ -74,8 +67,6 @@ plasmawallpaperviewer=plasmate|general
 plasmoidviewer=plasmate|general
 
 #KDE Plasma Desktop (KWin)
-kwin_killer_helper=kwin|general
-kwin_rules_dialog=kwin|general
 kwin_gles=kwin|general
 
 #KDE Kontact (Akonadi)
@@ -118,10 +109,9 @@ akonadictl=Akonadi|general
 akonadiserver=Akonadi|server
 akonaditest=Akonadi|general
 akonaditray=Akonadi|general
-backupmail=kdepim|backupmail
-importwizard=kdepim|importwizard
 
 #KDE Kontact (PIM)
+importwizard=kdepim|importwizard
 kalarmautostart=kalarm|general
 kpilotDaemon=kpilot|kpilotDaemon
 korgac=korgac|general
@@ -154,7 +144,6 @@ photolayoutseditor=kipiplugins|PhotoLayoutsEditor
 scangui=kipiplugins|AcquireImages
 
 #Other KDE Applications and Technologies
-ksysguardd=ksysguard|ksysguardd
 kmixctrl=kmix|general
 kwrite=kate|kwrite
 dragon=dragonplayer|general
