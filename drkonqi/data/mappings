@@ -7,8 +7,6 @@
 #KDE Platform (kdelibs)
 kdebugdialog=kdelibs|general
 kdeinit4=kdelibs|general
-kdeinit4_shutdown=kdelibs|general
-kdeinit4_wrapper=kdelibs|general
 kdepasswd=kdelibs|kpasswdserver
 kdialog=kdelibs|general
 keditfiletype=kdelibs|general
@@ -119,7 +117,6 @@ kmail=kmail2|general
 kmailcvt=kmail2|general
 
 #KDE Konqueror
-kjs=konqueror|kjs
 kjscmd=konqueror|kjs
 nspluginscan=konqueror|nsplugins
 nspluginviewer=konqueror|nspluginviewer
