@@ -174,11 +174,21 @@ kwatchgnupg=kleopatra|general
 homerunviewer=homerun|general
 
 # applicaitons not using bugs.kde.org
+aku=unknown|general
+compiz=unknown|general
+firefox=unknown|general
+iqfile=unknown|general
 kbibtex=unknown|general
+kde4-window-decorator=unknown|general
 kdesudo=unknown|general
 kguitar=unknown|general
-synaptiks=unknown|general
+kmozillahelper=unknown|general
+konstructor=unknown|general
 kuroo=unknown|general
+kvirc=unknown|general
+leechcraft=unknown|general
+qutim=unknown|general
+synaptiks=unknown|general
 
 #---
 #This section relates a product groupt to a product
