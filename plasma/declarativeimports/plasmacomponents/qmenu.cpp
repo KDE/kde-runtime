@@ -34,6 +34,7 @@ QMenuProxy::QMenuProxy (QObject *parent)
     m_menu = new QMenu(0);
     connect(m_menu, SIGNAL(triggered(QAction *)),
             this, SLOT(itemTriggered(QAction *)));
+    connect(m_menu, SIGNAL(aboutToHide()), SLOT(markAsClosed()));
 }
 
 QMenuProxy::~QMenuProxy()
@@ -293,6 +294,10 @@ void QMenuProxy::open()
 void QMenuProxy::close()
 {
     m_menu->hide();
+}
+
+void QMenuProxy::markAsClosed()
+{
     m_status = DialogStatus::Closed;
     emit statusChanged();
 }
