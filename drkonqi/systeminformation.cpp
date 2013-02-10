@@ -143,6 +143,8 @@ QString SystemInformation::guessBugzillaPlatform(const QString& distroInfo) cons
         return (QLatin1String("Solaris Packages"));
     } else if ( distroInfo.contains("chakra",Qt::CaseInsensitive) ) {
         return (QLatin1String("Chakra"));
+    } else if ( distroInfo.contains("ms windows",Qt::CaseInsensitive) ) {
+        return (QLatin1String("MS Windows"));
     } else if ( distroInfo.contains("arch",Qt::CaseInsensitive) ) {
         return (QLatin1String("Archlinux Packages"));
     } else if ( distroInfo.contains("debian",Qt::CaseInsensitive) ) {
