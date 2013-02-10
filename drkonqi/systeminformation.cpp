@@ -35,19 +35,43 @@
 #include <KConfigGroup>
 #include <kdeversion.h>
 
+static const QString OS_UNSPECIFIED = "unspecified";
+static const QString PLATFORM_UNSPECIFIED = "unspecified";
+
 SystemInformation::SystemInformation(QObject * parent)
     : QObject(parent)
+    , m_bugzillaOperatingSystem(OS_UNSPECIFIED)
+    , m_bugzillaPlatform(PLATFORM_UNSPECIFIED)
 {
-    fetchOSInformation();
-    runLsbRelease();
+    // NOTE: the relative order is important here
+    m_bugzillaOperatingSystem = fetchOSBasicInformation();
+    m_operatingSystem = fetchOSDetailInformation();
+
+    tryToSetBugzillaPlatform();
 
     KConfigGroup config(KGlobal::config(), "SystemInformation");
     m_compiledSources = config.readEntry("CompiledSources", false);
 }
 
-void SystemInformation::runLsbRelease()
+
+void SystemInformation::tryToSetBugzillaPlatform()
 {
-    //Run lsbrelease async
+    QString platform = PLATFORM_UNSPECIFIED;
+    // first, try to guess bugzilla platfrom from the internal OS information
+    // this should work for BSDs, solaris and windows.
+    platform = guessBugzillaPlatform(m_bugzillaOperatingSystem);
+
+    // if the internal information is not enough, refer to external information
+    if (platform == PLATFORM_UNSPECIFIED) {
+        tryToSetBugzillaPlatformFromExternalInfo();
+    } else {
+        setBugzillaPlatform(platform);
+    }
+}
+
+void SystemInformation::tryToSetBugzillaPlatformFromExternalInfo()
+{
+    //Run lsb_release async
     QString lsb_release = KStandardDirs::findExe(QLatin1String("lsb_release"));
     if ( !lsb_release.isEmpty() ) {
         kDebug() << "found lsb_release";
@@ -76,7 +100,7 @@ void SystemInformation::lsbReleaseFinished()
     QString platform = guessBugzillaPlatform(m_lsbRelease);
 
     // if lsb_release doesn't work well, turn to the /etc/os-release file
-    if (platform == "unspecified") {
+    if (platform == PLATFORM_UNSPECIFIED) {
         const QString& osReleaseInfo = fetchOSReleaseInformation();
         platform = guessBugzillaPlatform(osReleaseInfo);
     }
@@ -130,59 +154,63 @@ QString SystemInformation::guessBugzillaPlatform(const QString& distroInfo) cons
             return (QLatin1String("Debian stable"));
         }
     } else {
-        return (QLatin1String("unspecified"));
+        return PLATFORM_UNSPECIFIED;
     }
 }
 
 //this function maps the operating system to an OS value that is accepted by bugs.kde.org.
 //if the values change on the server side, they need to be updated here as well.
-void SystemInformation::fetchOSInformation()
+QString SystemInformation::fetchOSBasicInformation() const
 {
     //krazy:excludeall=cpp
     //Get the base OS string (bugzillaOS)
 #if defined(Q_OS_LINUX)
-    m_bugzillaOperatingSystem = QLatin1String("Linux");
+    return QLatin1String("Linux");
 #elif defined(Q_OS_FREEBSD)
-    m_bugzillaOperatingSystem = QLatin1String("FreeBSD");
+    return QLatin1String("FreeBSD");
 #elif defined(Q_OS_NETBSD)
-    m_bugzillaOperatingSystem = QLatin1String("NetBSD");
+    return QLatin1String("NetBSD");
 #elif defined(Q_OS_OPENBSD)
-    m_bugzillaOperatingSystem = QLatin1String("OpenBSD");
+    return QLatin1String("OpenBSD");
 #elif defined(Q_OS_AIX)
-    m_bugzillaOperatingSystem = QLatin1String("AIX");
+    return QLatin1String("AIX");
 #elif defined(Q_OS_HPUX)
-    m_bugzillaOperatingSystem = QLatin1String("HP-UX");
+    return QLatin1String("HP-UX");
 #elif defined(Q_OS_IRIX)
-    m_bugzillaOperatingSystem = QLatin1String("IRIX");
+    return QLatin1String("IRIX");
 #elif defined(Q_OS_OSF)
-    m_bugzillaOperatingSystem = QLatin1String("Tru64");
+    return QLatin1String("Tru64");
 #elif defined(Q_OS_SOLARIS)
-    m_bugzillaOperatingSystem = QLatin1String("Solaris");
+    return QLatin1String("Solaris");
 #elif defined(Q_OS_CYGWIN)
-    m_bugzillaOperatingSystem = QLatin1String("Cygwin");
+    return QLatin1String("Cygwin");
 #elif defined(Q_OS_DARWIN)
-    m_bugzillaOperatingSystem = QLatin1String("OS X");
+    return QLatin1String("OS X");
 #elif defined(Q_OS_WIN32)
-    m_bugzillaOperatingSystem = QLatin1String("MS Windows");
+    return QLatin1String("MS Windows");
 #else
-    m_bugzillaOperatingSystem = QLatin1String("unspecified");
+    return OS_UNSPECIFIED;
 #endif
 
+}
+
+QString SystemInformation::fetchOSDetailInformation() const
+{
     //Get complete OS string (and fallback to base string)
+    QString operatingSystem = m_bugzillaOperatingSystem;
+
 #ifdef HAVE_UNAME
-    QString os;
     struct utsname buf;
     if (uname(&buf) == -1) {
         kDebug() << "call to uname failed" << perror;
-        m_operatingSystem = m_bugzillaOperatingSystem;
     } else {
-        m_operatingSystem = QString::fromLocal8Bit(buf.sysname) + ' '
+        operatingSystem = QString::fromLocal8Bit(buf.sysname) + ' '
             + QString::fromLocal8Bit(buf.release) + ' '
             + QString::fromLocal8Bit(buf.machine);
     }
-#else
-    m_operatingSystem = m_bugzillaOperatingSystem;
 #endif
+
+    return operatingSystem;
 }
 
 QString SystemInformation::fetchOSReleaseInformation() const

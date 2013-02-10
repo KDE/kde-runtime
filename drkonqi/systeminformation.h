@@ -46,11 +46,14 @@ class SystemInformation: public QObject
         void lsbReleaseFinished();
 
     private:
-        void fetchOSInformation();
-        void runLsbRelease();
+        QString fetchOSBasicInformation() const;
+        QString fetchOSDetailInformation() const;
         QString fetchOSReleaseInformation() const;
 
         QString guessBugzillaPlatform(const QString&) const;
+
+        void tryToSetBugzillaPlatform();
+        void tryToSetBugzillaPlatformFromExternalInfo();
 
         QString     m_operatingSystem;
         QString     m_bugzillaOperatingSystem;
