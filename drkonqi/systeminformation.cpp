@@ -53,6 +53,12 @@ SystemInformation::SystemInformation(QObject * parent)
     m_compiledSources = config.readEntry("CompiledSources", false);
 }
 
+SystemInformation::~SystemInformation()
+{
+    KConfigGroup config(KGlobal::config(), "SystemInformation");
+    config.writeEntry("CompiledSources", m_compiledSources);
+    config.sync();
+}
 
 void SystemInformation::tryToSetBugzillaPlatform()
 {
@@ -276,10 +282,6 @@ bool SystemInformation::compiledSources() const
 
 void SystemInformation::setCompiledSources(bool compiled)
 {
-    if (compiled != m_compiledSources) {
-        KConfigGroup config(KGlobal::config(), "SystemInformation");
-        config.writeEntry("CompiledSources", compiled);
-    }
     m_compiledSources = compiled;
 }
 
