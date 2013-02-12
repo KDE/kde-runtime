@@ -111,15 +111,16 @@ Item {
 
         function incrementValue(increment)
         {
-            if (!flickableItem)
+            if (!flickableItem) {
                 return;
+            }
 
             if (internalLoader.isVertical) {
                 flickableItem.contentY = Math.max(0, Math.min(flickableItem.contentHeight - flickableItem.height,
-                    flickableItem.contentY + increment))
+                                                              flickableItem.contentY + increment));
             } else {
                 flickableItem.contentX = Math.max(0, Math.min(flickableItem.contentWidth - flickableItem.width,
-                    flickableItem.contentX + increment))
+                                                              flickableItem.contentX + increment));
             }
         }
 
@@ -127,16 +128,16 @@ Item {
         Connections {
             target: flickableItem
             onContentHeightChanged: {
-                range.value = flickableItem.contentY
+                range.value = flickableItem.contentY;
             }
             onContentYChanged: {
                 if (internalLoader.isVertical) {
-                    range.value = flickableItem.contentY
+                    range.value = flickableItem.contentY;
                 }
             }
             onContentXChanged: {
                 if (!internalLoader.isVertical) {
-                    range.value = flickableItem.contentX
+                    range.value = flickableItem.contentX;
                 }
             }
         }
@@ -152,12 +153,12 @@ Item {
             maximumValue: {
                 var diff;
                 if (internalLoader.isVertical) {
-                    diff = flickableItem.contentHeight - flickableItem.height
+                    diff = flickableItem.contentHeight - flickableItem.height;
                 } else {
-                    diff = flickableItem.contentWidth - flickableItem.width
+                    diff = flickableItem.contentWidth - flickableItem.width;
                 }
 
-                return Math.max(0, diff)
+                return Math.max(0, diff);
             }
 
             stepSize: 10
@@ -165,35 +166,34 @@ Item {
             positionAtMinimum: 0
             positionAtMaximum: {
                 if (internalLoader.isVertical) {
-                    internalLoader.item.contents.height - internalLoader.item.handle.height
+                    internalLoader.item.contents.height - internalLoader.item.handle.height;
                 } else {
-                    internalLoader.item.contents.width - internalLoader.item.handle.width
+                    internalLoader.item.contents.width - internalLoader.item.handle.width;
                 }
             }
 
             onValueChanged: {
                 if (flickableItem.moving) {
-                    return
+                    return;
                 }
 
                 if (internalLoader.isVertical) {
-                    flickableItem.contentY = value
+                    flickableItem.contentY = value;
                 } else {
-                    flickableItem.contentX = value
+                    flickableItem.contentX = value;
                 }
             }
 
 
             onPositionChanged: {
                 if (internalLoader.item.mouseArea && internalLoader.item.mouseArea.pressed) {
-                    return
+                    return;
                 }
 
                 if (internalLoader.isVertical) {
-                    internalLoader.item.handle.y = position
+                    internalLoader.item.handle.y = position;
                 } else {
-                    internalLoader.item.handle.x = position
-                }
+                    internalLoader.item.handle.x = position;                }
             }
         }
 
@@ -201,13 +201,14 @@ Item {
             id: updateFromHandleTimer
             interval: 10
             onTriggered: {
-                if(!enabled || !interactive)
+                if (!enabled || !interactive) {
                     return;
-                
+                }
+
                 if (internalLoader.isVertical) {
-                    range.position = internalLoader.item.handle.y
+                    range.position = internalLoader.item.handle.y;
                 } else {
-                    range.position = internalLoader.item.handle.x
+                    range.position = internalLoader.item.handle.x;
                 }
             }
         }
