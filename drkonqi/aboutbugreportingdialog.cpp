@@ -192,9 +192,10 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
 
         QString("<h1>%1</h1><p>%2</p>").arg(
             i18nc("@info/rich", "Thank you for being part of KDE!"),
-            i18nc("@info/rich", "If you are interested into helping us to organize bug reports "
-                                "allowing the developers to focus on fixing the real issues, join the BugSquad (#kde-bugs on FreeNode IRC) "));
-            //I feel like we should now congratulate them and ask them to join BugSquad.
+            i18nc("@info/rich", "If you are interested in helping us to keep the KDE bug tracker system "
+                                "clean and useful, which allows the developers to be more focused on "
+                                "fixing the real issues,  you are welcome to "
+                                "<link url='http://techbase.kde.org/Contribute/Bugsquad'>join the BugSquad team</link>."));
 
     m_textBrowser->setText(text);
 
