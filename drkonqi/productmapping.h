@@ -26,12 +26,13 @@
 
 class Product;
 class BugzillaManager;
+class CrashedApplication;
 
 class ProductMapping: public QObject
 {
 Q_OBJECT
 public:
-    explicit ProductMapping(const QString&, BugzillaManager *, QObject * parent = 0);
+    explicit ProductMapping(const CrashedApplication *, BugzillaManager *, QObject * parent = 0);
 
     QString bugzillaProduct() const;
     QString bugzillaComponent() const;
@@ -52,6 +53,7 @@ private:
 
     QString     m_bugzillaVersionString;
 
+    const CrashedApplication *   m_crashedAppPtr;
     BugzillaManager *   m_bugzillaManagerPtr;
 };
 

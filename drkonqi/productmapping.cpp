@@ -24,21 +24,20 @@
 #include <KDebug>
 
 #include "bugzillalib.h"
-#include "drkonqi.h"
 #include "crashedapplication.h"
 
-ProductMapping::ProductMapping(const QString & appName, BugzillaManager * bzManager, QObject * parent)
+ProductMapping::ProductMapping(const CrashedApplication * crashedApp, BugzillaManager * bzManager, QObject * parent)
     : QObject(parent)
+    , m_crashedAppPtr(crashedApp)
+    , m_bugzillaManagerPtr(bzManager)
 {
-    m_bugzillaManagerPtr = bzManager;
-
     //Default "fallback" values
-    m_bugzillaProduct = appName;
+    m_bugzillaProduct = crashedApp->fakeExecutableBaseName();
     m_bugzillaComponent = QLatin1String("general");
     m_bugzillaVersionString = QLatin1String("unspecified");
     m_relatedBugzillaProducts = QStringList() << m_bugzillaProduct;
 
-    map(appName);
+    map(crashedApp->fakeExecutableBaseName());
 
     //Get valid versions
     connect(m_bugzillaManagerPtr, SIGNAL(productInfoFetched(Product)),
@@ -123,7 +122,7 @@ void ProductMapping::checkProductInfo(const Product & product)
 {
     const QStringList& versionList = product.allVersions();
 
-    const QString version = DrKonqi::crashedApplication()->version();
+    const QString version = m_crashedAppPtr->version();
     if (versionList.contains(version)) {
         //The version the crash application provided is a valid bugzilla version: use it !
         m_bugzillaVersionString = version;

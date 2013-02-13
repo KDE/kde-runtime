@@ -39,8 +39,7 @@ ReportInterface::ReportInterface(QObject *parent)
 {
     m_bugzillaManager = new BugzillaManager(KDE_BUGZILLA_URL, this);
 
-    m_productMapping = new ProductMapping(DrKonqi::crashedApplication()->fakeExecutableBaseName(),
-                                          m_bugzillaManager, this);
+    m_productMapping = new ProductMapping(DrKonqi::crashedApplication(), m_bugzillaManager, this);
 
     m_appDetailsExamples = new ApplicationDetailsExamples(this);
 
