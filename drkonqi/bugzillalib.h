@@ -317,6 +317,8 @@ public:
 
     Product(const QString& name, bool active): m_name(name), m_active(active) {}
 
+    bool isActive() const { return m_active; }
+
     void addComponent(const Component& component) {
         m_allComponents.append(component.name());
     }

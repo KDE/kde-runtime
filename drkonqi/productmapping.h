@@ -39,6 +39,9 @@ public:
     QString bugzillaVersion() const;
     QStringList relatedBugzillaProducts() const;
 
+    bool bugzillaProductDisabled() const;
+    bool bugzillaVersionDisabled() const;
+
 private Q_SLOTS:
     void checkProductInfo(const Product &);
 
@@ -55,6 +58,10 @@ private:
 
     const CrashedApplication *   m_crashedAppPtr;
     BugzillaManager *   m_bugzillaManagerPtr;
+
+    bool m_bugzillaProductDisabled;
+    bool m_bugzillaVersionDisabled;
+
 };
 
 #endif
