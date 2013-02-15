@@ -137,7 +137,8 @@ void ReportInterface::setPossibleDuplicates(const QStringList & list)
 
 QString ReportInterface::generateReportFullText(bool drKonqiStamp) const
 {
-    //Note: no translations must be done in this function's strings
+    //Note: no translations should be done in this function's strings
+
     const CrashedApplication * crashedApp = DrKonqi::crashedApplication();
     const SystemInformation * sysInfo = DrKonqi::systemInformation();
 
@@ -233,11 +234,12 @@ QString ReportInterface::generateReportFullText(bool drKonqiStamp) const
 
 QString ReportInterface::generateAttachmentComment() const
 {
-    QString comment;
+    //Note: no translations should be done in this function's strings
 
-    //Note: no translations must be done in this function's strings
     const CrashedApplication * crashedApp = DrKonqi::crashedApplication();
     const SystemInformation * sysInfo = DrKonqi::systemInformation();
+
+    QString comment;
 
     //Program name and versions
     comment.append(QString("%1 (%2) on KDE Platform %3 using Qt %4\n\n")
