@@ -57,8 +57,6 @@ using namespace Soprano::Vocabulary;
 TagsProtocol::TagsProtocol(const QByteArray& pool_socket, const QByteArray& app_socket)
     : KIO::ForwardingSlaveBase("tags", pool_socket, app_socket)
 {
-    // Load all the tag uris on start so that they are always there in the cache
-    m_allTags = Tag::allTags();
 }
 
 TagsProtocol::~TagsProtocol()
@@ -109,8 +107,15 @@ void TagsProtocol::listDir(const KUrl& url)
 
         case RootUrl: {
             kDebug() << "Root Url";
-            foreach( const Tag& tag, m_allTags ) {
+
+            QLatin1String query("select ?r where { ?r a nao:Tag . }");
+            Soprano::Model* model = ResourceManager::instance()->mainModel();
+            Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+            while( it.next() ) {
+                Tag tag( it[0].uri() );
                 listEntry( createUDSEntryForTag(tag), false );
+
+                m_allTags << tag;
             }
 
             listEntry( KIO::UDSEntry(), true );
