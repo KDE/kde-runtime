@@ -3170,6 +3170,8 @@ void KCMLocale::initPageSize()
                                     QVariant( QPrinter::A4 ) );
     m_ui->m_comboPageSize->addItem( ki18nc("Page size", "US Letter").toString( m_kcmLocale ),
                                     QVariant( QPrinter::Letter ) );
+    m_ui->m_comboPageSize->insertSeparator( m_ui->m_comboPageSize->count() );
+
     m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A0").toString( m_kcmLocale ),
                                     QVariant( QPrinter::A0 ) );
     m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A1").toString( m_kcmLocale ),
