@@ -233,31 +233,31 @@ QString ReportInterface::generateReportFullText(bool drKonqiStamp) const
 
 QString ReportInterface::generateAttachmentComment() const
 {
-    QString description;
+    QString comment;
 
     //Note: no translations must be done in this function's strings
     const CrashedApplication * crashedApp = DrKonqi::crashedApplication();
     const SystemInformation * sysInfo = DrKonqi::systemInformation();
 
     //Program name and versions
-    description.append(QString("%1 (%2) on KDE Platform %3 using Qt %4\n\n")
-                       .arg(crashedApp->fakeExecutableBaseName())
-                       .arg(crashedApp->version())
-                       .arg(sysInfo->kdeVersion())
-                       .arg(sysInfo->qtVersion()));
+    comment.append(QString("%1 (%2) on KDE Platform %3 using Qt %4\n\n")
+                   .arg(crashedApp->fakeExecutableBaseName())
+                   .arg(crashedApp->version())
+                   .arg(sysInfo->kdeVersion())
+                   .arg(sysInfo->qtVersion()));
 
     //Details of the crash situation
     if (isBugAwarenessPageDataUseful()) {
-        description.append(QString("%1\n\n").arg(m_reportDetailText.trimmed()));
+        comment.append(QString("%1\n\n").arg(m_reportDetailText.trimmed()));
     }
 
     //Backtrace (only 6 lines)
-    description.append(QString("-- Backtrace (Reduced):\n"));
+    comment.append(QString("-- Backtrace (Reduced):\n"));
     QString reducedBacktrace =
                 DrKonqi::debuggerManager()->backtraceGenerator()->parser()->simplifiedBacktrace();
-    description.append(reducedBacktrace.trimmed());
+    comment.append(reducedBacktrace.trimmed());
 
-    return description;
+    return comment;
 }
 
 BugReport ReportInterface::newBugReportTemplate() const
