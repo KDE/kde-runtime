@@ -2423,6 +2423,7 @@ void KCMLocale::initWeekNumberSystem()
     m_ui->m_comboWeekNumberSystem->setToolTip( helpText );
     m_ui->m_comboWeekNumberSystem->setWhatsThis( helpText );
 
+    m_ui->m_comboWeekNumberSystem->clear();
     m_ui->m_comboWeekNumberSystem->addItem( ki18n( "ISO Week" ).toString( m_kcmLocale ),
                                             QVariant( KLocale::IsoWeekNumber ) );
     m_ui->m_comboWeekNumberSystem->addItem( ki18n( "Full First Week" ).toString( m_kcmLocale ),
@@ -2640,6 +2641,7 @@ void KCMLocale::initTimeFormat()
                              "pH:MM:SS AMPM").toString( m_kcmLocale );
     formatList.append( formats.split( QString::fromLatin1("\n") ) );
     formatList.removeDuplicates();
+    m_ui->m_comboTimeFormat->clear();
     m_ui->m_comboTimeFormat->addItems( formatList );
 
     setTimeFormat( m_kcmSettings.readEntry( "TimeFormat", QString() ) );
@@ -2723,12 +2725,14 @@ void KCMLocale::initAmPmSymbols()
     formatList.append( m_kcmLocale->dayPeriodText( QTime( 0, 0, 0 ) ) );
     formatList.append( m_defaultLocale->dayPeriodText( QTime( 0, 0, 0 ) ) );
     formatList.removeDuplicates();
+    m_ui->m_comboAmSymbol->clear();
     m_ui->m_comboAmSymbol->addItems( formatList );
 
     formatList.clear();
     formatList.append( m_kcmLocale->dayPeriodText( QTime( 12, 0, 0 ) ) );
     formatList.append( m_defaultLocale->dayPeriodText( QTime( 12, 0, 0 ) ) );
     formatList.removeDuplicates();
+    m_ui->m_comboPmSymbol->clear();
     m_ui->m_comboPmSymbol->addItems( formatList );
 
     setAmPmPeriods( m_kcmSettings.readEntry( "DayPeriod1", QString() ),
@@ -2921,6 +2925,7 @@ void KCMLocale::initDateFormat()
                              "SHORTWEEKDAY MONTH dD YYYY").toString( m_kcmLocale );
     formatList.append( formats.split( QString::fromLatin1("\n") ) );
     formatList.removeDuplicates();
+    m_ui->m_comboDateFormat->clear();
     m_ui->m_comboDateFormat->addItems( formatList );
 
     setDateFormat( m_kcmSettings.readEntry( "DateFormat", QString() ) );
@@ -3165,6 +3170,8 @@ void KCMLocale::initPageSize()
                                     QVariant( QPrinter::A4 ) );
     m_ui->m_comboPageSize->addItem( ki18nc("Page size", "US Letter").toString( m_kcmLocale ),
                                     QVariant( QPrinter::Letter ) );
+    m_ui->m_comboPageSize->insertSeparator( m_ui->m_comboPageSize->count() );
+
     m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A0").toString( m_kcmLocale ),
                                     QVariant( QPrinter::A0 ) );
     m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A1").toString( m_kcmLocale ),

@@ -89,7 +89,7 @@ namespace {
         uds.insert( KIO::UDSEntry::UDS_ACCESS, 0700 );
         uds.insert( KIO::UDSEntry::UDS_USER, KUser().loginName() );
         uds.insert( KIO::UDSEntry::UDS_NEPOMUK_URI, tag.uri().toString() );
-        uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QLatin1String("nepomuk") );
+        uds.insert( KIO::UDSEntry::UDS_ICON_NAME, QLatin1String("feed-subscribe") );
 
         return uds;
     }
@@ -224,7 +224,7 @@ void TagsProtocol::stat(const KUrl& url)
             uds.insert( KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR );
             uds.insert( KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1( "inode/directory" ) );
 
-            uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "nepomuk" ) );
+            uds.insert( KIO::UDSEntry::UDS_ICON_OVERLAY_NAMES, QLatin1String( "feed-subscribe" ) );
             uds.insert( KIO::UDSEntry::UDS_DISPLAY_TYPE, i18n( "Tag" ) );
 
             uds.insert( KIO::UDSEntry::UDS_NAME, QLatin1String(".") );
