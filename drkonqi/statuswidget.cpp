@@ -88,7 +88,7 @@ void StatusWidget::setIdle(const QString& idleMessage)
 
 void StatusWidget::addCustomStatusWidget(QWidget * widget)
 {
-    QVBoxLayout * statusLayout = static_cast<QVBoxLayout*>(m_statusPage->layout());
+    QHBoxLayout * statusLayout = static_cast<QHBoxLayout*>(m_statusPage->layout());
 
     statusLayout->addWidget(widget);
     statusLayout->setAlignment(widget,Qt::AlignVCenter);
