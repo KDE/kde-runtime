@@ -34,8 +34,8 @@ class StatusWidget: public QStackedWidget
 public:
     explicit StatusWidget(QWidget * parent = 0);
 
-    void setBusy(QString);
-    void setIdle(QString);
+    void setBusy(const QString&);
+    void setIdle(const QString&);
 
     void addCustomStatusWidget(QWidget *);
 

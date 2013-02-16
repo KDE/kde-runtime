@@ -68,7 +68,7 @@ StatusWidget::StatusWidget(QWidget * parent) :
     busyLayout->setAlignment(m_throbberWidget,Qt::AlignVCenter);
 }
 
-void StatusWidget::setBusy(QString busyMessage)
+void StatusWidget::setBusy(const QString& busyMessage)
 {
     m_statusLabel->clear();
     m_busyLabel->setText(busyMessage);
@@ -77,7 +77,7 @@ void StatusWidget::setBusy(QString busyMessage)
     m_busy = true;
 }
 
-void StatusWidget::setIdle(QString idleMessage)
+void StatusWidget::setIdle(const QString& idleMessage)
 {
     m_busyLabel->clear();
     m_statusLabel->setText(idleMessage);
