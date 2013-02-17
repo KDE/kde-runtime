@@ -119,8 +119,6 @@ void SystemInformation::lsbReleaseFinished()
 //side, they need to be updated here as well                                   .
 QString SystemInformation::guessBugzillaPlatform(const QString& distroInfo) const
 {
-    //TODO cache this value on KConfig ?
-
     if ( distroInfo.contains("suse",Qt::CaseInsensitive) ) {
         return (QLatin1String("openSUSE RPMs"));
     } else if ( distroInfo.contains("ubuntu",Qt::CaseInsensitive) ) {
