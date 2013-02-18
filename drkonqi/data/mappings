@@ -74,6 +74,8 @@ plasma-device=Active|General
 kwin_killer_helper=kwin|general
 kwin_rules_dialog=kwin|general
 kwin_gles=kwin|general
+kwinactive=kwin|general
+kwinactive_gles=kwin|general
 
 #KDE Kontact (Akonadi)
 akonadi_archivemail_agent=Akonadi|Archive Mail Agent
