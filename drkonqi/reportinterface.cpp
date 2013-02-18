@@ -190,7 +190,7 @@ QString ReportInterface::generateReport(bool drKonqiStamp) const
         if (m_reproducible == ReproducibleEverytime) {
             report.append(QString("The crash can be reproduced every time.\n\n"));
         } else if (m_reproducible == ReproducibleSometimes) {
-            report.append(QString("The crash can be reproduced some of the time.\n\n"));
+            report.append(QString("The crash can be reproduced sometimes.\n\n"));
         } else if (m_reproducible == ReproducibleNever) {
             report.append(QString("The crash does not seem to be reproducible.\n\n"));
         }
