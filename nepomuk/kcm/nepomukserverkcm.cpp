@@ -334,6 +334,9 @@ void Nepomuk2::ServerConfigModule::save()
         KConfigGroup group = fileIndexerConfig.group( groupName );
 
         QString mountPath = entry->mountPath();
+        if( mountPath.isEmpty() )
+            continue;
+
         group.writeEntry( "mount path", mountPath );
 
         QStringList includes;
