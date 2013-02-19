@@ -66,6 +66,8 @@ plasmoidviewer=plasmate|general
 
 #KDE Plasma Desktop (KWin)
 kwin_gles=kwin|general
+kwinactive=kwin|general
+kwinactive_gles=kwin|general
 
 #KDE Kontact (Akonadi)
 akonadi_archivemail_agent=Akonadi|Archive Mail Agent
