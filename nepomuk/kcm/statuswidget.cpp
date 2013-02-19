@@ -108,12 +108,15 @@ void Nepomuk2::StatusWidget::slotUpdateStoreStatus()
 
         // update file count
         // ========================================
+        QLatin1String queryStr("select count(distinct ?r) where { ?r a nfo:FileDataObject ;"
+                               " kext:indexingLevel ?l . }");
+
+        Soprano::Model* model = ResourceManager::instance()->mainModel();
         Soprano::Util::AsyncQuery* query
-        = Soprano::Util::AsyncQuery::executeQuery( ResourceManager::instance()->mainModel(),
-                QString::fromLatin1( "select count(distinct ?r) where { ?r a %1 . }" )
-                .arg( Soprano::Node::resourceToN3( Nepomuk2::Vocabulary::NFO::FileDataObject() ) ),
-                Soprano::Query::QueryLanguageSparql );
-        connect( query, SIGNAL( nextReady(Soprano::Util::AsyncQuery*) ), this, SLOT( slotFileCountFinished(Soprano::Util::AsyncQuery*) ) );
+        = Soprano::Util::AsyncQuery::executeQuery( model, queryStr, Soprano::Query::QueryLanguageSparql );
+
+        connect( query, SIGNAL( nextReady(Soprano::Util::AsyncQuery*) ),
+                 this, SLOT( slotFileCountFinished(Soprano::Util::AsyncQuery*) ) );
     }
     else {
         m_updateRequested = true;
