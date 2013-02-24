@@ -52,7 +52,7 @@ private Q_SLOTS:
     void enableDebugMenu(bool);
 
     //GUI
-    void buildMainWidget();
+    void buildIntroWidget();
     void buildDialogButtons();
 
     void tabIndexChanged(int);

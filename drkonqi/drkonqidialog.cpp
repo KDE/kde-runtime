@@ -58,7 +58,7 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
 
     connect(m_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabIndexChanged(int)));
 
-    buildMainWidget();
+    buildIntroWidget();
     m_tabWidget->addTab(m_introWidget, i18nc("@title:tab general information", "&General"));
 
     m_backtraceWidget = new BacktraceWidget(DrKonqi::debuggerManager()->backtraceGenerator(), this);
@@ -87,7 +87,7 @@ void DrKonqiDialog::tabIndexChanged(int index)
     }
 }
 
-void DrKonqiDialog::buildMainWidget()
+void DrKonqiDialog::buildIntroWidget()
 {
     const CrashedApplication *crashedApp = DrKonqi::crashedApplication();
 
