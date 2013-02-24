@@ -62,6 +62,7 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
 
     buildDialogOptions();
 
+    setMinimumSize(QSize(640,320));
     resize(minimumSize());
     KConfigGroup config(KGlobal::config(), "General");
     restoreDialogSize(config);
