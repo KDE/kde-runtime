@@ -139,8 +139,6 @@ BugAwarenessPage::BugAwarenessPage(ReportAssistantDialog * parent)
 
     ui.m_appSpecificDetailsExamples->setVisible(reportInterface()->appDetailsExamples()->hasExamples());
 
-    connect(ui.m_appSpecificDetailsExamples, SIGNAL(linkHovered(QString)), this,
-            SLOT(showApplicationDetailsExamples()));
     connect(ui.m_appSpecificDetailsExamples, SIGNAL(linkActivated(QString)), this,
             SLOT(showApplicationDetailsExamples()));
 }
