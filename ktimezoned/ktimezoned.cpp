@@ -380,22 +380,27 @@ void KTimeZoned::findLocalZone()
         checkDefaultInit();
     }
 
-    if (!mLocalZone.isEmpty())
+    if (mLocalZone.isEmpty())
     {
-        // The local time zone is defined by a file.
-        // Watch for changes in the file so as to be notified of any change
-        // in local time zone.
-        mDirWatch = new KDirWatch(this);
-        mDirWatch->addFile(mLocalIdFile);
-        if (!mLocalIdFile2.isEmpty())
-            mDirWatch->addFile(mLocalIdFile2);
-        if (!mLocalZoneDataFile.isEmpty())
-            mDirWatch->addFile(mLocalZoneDataFile);
-        connect(mDirWatch, SIGNAL(dirty(const QString&)), SLOT(localChanged(const QString&)));
-        connect(mDirWatch, SIGNAL(deleted(const QString&)), SLOT(localChanged(const QString&)));
-        connect(mDirWatch, SIGNAL(created(const QString&)), SLOT(localChanged(const QString&)));
+        // The local time zone is not defined by a file.
+        // Watch for creation of /etc/localtime in case it gets created later.
+        // TODO: If under BSD it is possible for /etc/timezone to be missing but
+        //       created later, we should also watch for its creation.
+        mLocalIdFile = QLatin1String("/etc/localtime");
     }
-    else if (!mZoneinfoDir.isEmpty())
+    // Watch for changes in the file defining the local time zone so as to be
+    // notified of any change in it.
+    mDirWatch = new KDirWatch(this);
+    mDirWatch->addFile(mLocalIdFile);
+    if (!mLocalIdFile2.isEmpty())
+        mDirWatch->addFile(mLocalIdFile2);
+    if (!mLocalZoneDataFile.isEmpty())
+        mDirWatch->addFile(mLocalZoneDataFile);
+    connect(mDirWatch, SIGNAL(dirty(const QString&)), SLOT(localChanged(const QString&)));
+    connect(mDirWatch, SIGNAL(deleted(const QString&)), SLOT(localChanged(const QString&)));
+    connect(mDirWatch, SIGNAL(created(const QString&)), SLOT(localChanged(const QString&)));
+
+    if (mLocalZone.isEmpty() && !mZoneinfoDir.isEmpty())
     {
         // SOLUTION 7: HEURISTIC.
         // None of the deterministic stuff above has worked: try a heuristic. We
@@ -503,6 +508,10 @@ void KTimeZoned::localChanged(const QString& path)
             // Fall through to LocaltimeLink
         case LocaltimeLink:
         case LocaltimeCopy:
+        // The fallback methods below also set a watch for /etc/localtime in
+        // case it gets created.
+        case TzName:
+        case Utc:
             matchZoneFile(mLocalIdFile);
             break;
         case Timezone:
