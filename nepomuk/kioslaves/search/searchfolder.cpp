@@ -98,12 +98,14 @@ void Nepomuk2::SearchFolder::list()
 }
 
 namespace {
-    Soprano::Node fetchProperyNode( const QString& uriN3, const QUrl& prop ) {
+    Soprano::Node fetchProperyNode( const QString& uriN3, const QUrl& prop,
+                                    Soprano::Query::QueryLanguage lang = Soprano::Query::QueryLanguageSparqlNoInference )
+    {
         QString query = QString::fromLatin1("select ?o where { %1 %2 ?o . } LIMIT 1")
                         .arg( uriN3, Soprano::Node::resourceToN3(prop) );
 
         Soprano::Model* model = Nepomuk2::ResourceManager::instance()->mainModel();
-        Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparqlNoInference );
+        Soprano::QueryResultIterator it = model->executeQuery( query, lang );
         if( it.next() )
             return it[0];
 
@@ -111,7 +113,11 @@ namespace {
     }
 
     QString fetchProperty( const QString& uriN3, const QUrl& prop ) {
-        return fetchProperyNode( uriN3, prop ).literal().toString();
+        return fetchProperyNode( uriN3, prop, Soprano::Query::QueryLanguageSparqlNoInference ).literal().toString();
+    }
+
+    QString fetchPropertyInf( const QString& uriN3, const QUrl& prop ) {
+        return fetchProperyNode( uriN3, prop, Soprano::Query::QueryLanguageSparql ).literal().toString();
     }
 
     /**
@@ -122,19 +128,15 @@ namespace {
     QString genericLabel( const QUrl& uri ) {
         QString uriN3 = Soprano::Node::resourceToN3( uri );
 
-        QString label = fetchProperty( uriN3, NIE::title() );
+        QString label = fetchPropertyInf( uriN3, NAO::prefLabel() );
         if( !label.isEmpty() )
             return label;
 
-        label = fetchProperty( uriN3, NFO::fileName() );
+        label = fetchPropertyInf( uriN3, RDFS::label() );
         if( !label.isEmpty() )
             return label;
 
-        label = fetchProperty( uriN3, RDFS::label() );
-        if( !label.isEmpty() )
-            return label;
-
-        label = fetchProperty( uriN3, NCO::fullname() );
+        label = fetchPropertyInf( uriN3, NIE::title() );
         if( !label.isEmpty() )
             return label;
 
