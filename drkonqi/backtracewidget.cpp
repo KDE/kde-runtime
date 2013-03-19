@@ -39,7 +39,7 @@
 #include "debuggermanager.h"
 #include "gdbhighlighter.h"
 
-const char *extraDetailsLabelMargin = " margin: 5px; ";
+static const char extraDetailsLabelMargin[] = " margin: 5px; ";
 
 BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent,
     bool showToggleBacktrace) :
