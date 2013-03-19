@@ -57,11 +57,12 @@ private:
     QSyntaxHighlighter *m_highlighter;
     DebugPackageInstaller * m_debugPackageInstaller;
 
+    void setAsLoading();
+
 private Q_SLOTS:
     void loadData();
     void backtraceNewLine(const QString &);
 
-    void setAsLoading();
     void regenerateBacktrace();
 
     void saveClicked();
