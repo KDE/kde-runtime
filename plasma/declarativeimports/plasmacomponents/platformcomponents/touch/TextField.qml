@@ -97,12 +97,6 @@ Item {
     //     disabled text fields
     opacity: enabled ? 1.0 : 0.5
 
-    TextFieldFocus {
-        id: hover
-        state: textInput.activeFocus ? "focus" : (mouseWatcher.containsMouse ? "hover" : "hidden")
-        anchors.fill: base
-    }
-
     PlasmaCore.FrameSvgItem {
         id: base
 
@@ -110,6 +104,12 @@ Item {
         anchors.fill: parent
         imagePath: "widgets/lineedit"
         prefix: "base"
+    }
+
+    TextFieldFocus {
+        id: hover
+        state: textInput.activeFocus ? "focus" : (mouseWatcher.containsMouse ? "hover" : "hidden")
+        anchors.fill: base
     }
 
     MouseArea {
@@ -175,9 +175,10 @@ Item {
         parent: mouseEventListener // reparent to the MouseFilter for MouseArea to work
         id: clearButton
         source: "edit-clear-locationbar-rtl"
-        height: Math.max(textInput.height, theme.smallIconSize)
+        height: Math.max(textInput.height, theme.mediumIconSize)
         width: height
         opacity: (textInput.text != "" && clearButtonShown) ? 1 : 0
+
         Behavior on opacity {
             NumberAnimation {
                 duration: 250
@@ -190,7 +191,10 @@ Item {
             verticalCenter: textInput.verticalCenter
         }
         MouseArea {
-            anchors.fill: parent
+            anchors {
+                fill: parent
+                margins: -5
+            }
             onClicked: {
                 textInput.text = ""
                 textInput.forceActiveFocus()
