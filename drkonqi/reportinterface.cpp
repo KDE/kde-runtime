@@ -342,7 +342,7 @@ void ReportInterface::sendUsingDefaultProduct() const
 void ReportInterface::addedToCC()
 {
     //The user was added to the CC list, proceed with the attachment
-    connect(m_bugzillaManager, SIGNAL(attachToReportSent(int,int)), this, SLOT(attachSent(int,int)));
+    connect(m_bugzillaManager, SIGNAL(attachToReportSent(int)), this, SLOT(attachSent(int)));
     connect(m_bugzillaManager, SIGNAL(attachToReportError(QString,QString)),
             this, SIGNAL(sendReportError(QString,QString)));
 
