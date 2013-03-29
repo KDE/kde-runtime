@@ -66,7 +66,7 @@ Item {
     property bool inverted: false
 
     /**
-     * type:bool
+     * type:real
      * How many steps exist while moving the handler. If you want the
      * ScrollBar buttons to appear you must set this property to a value
      * bigger than 0.
