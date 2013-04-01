@@ -33,6 +33,15 @@ void ThemedSvg::setThemedImagePath(const QString &path)
     setImagePath(findSvg(engine(), path));
 }
 
+static QString findLocalSvgFile(AppletInterface *interface, const QString &dir, const QString &file)
+{
+    QString path = interface->file(dir, file % QLatin1Literal(".svg"));
+    if (path.isEmpty()) {
+        path = interface->file(dir, file % QLatin1Literal(".svgz"));
+    }
+    return path;
+}
+
 QString ThemedSvg::findSvg(QScriptEngine *engine, const QString &file)
 {
     AppletInterface *interface = AppletInterface::extract(engine);
@@ -40,15 +49,24 @@ QString ThemedSvg::findSvg(QScriptEngine *engine, const QString &file)
         return QString();
     }
 
-    QString path = interface->file("images", file + ".svg");
-    if (path.isEmpty()) {
-        path = interface->file("images", file + ".svgz");
-
-        if (path.isEmpty()) {
-            path = Plasma::Theme::defaultTheme()->imagePath(file);
-        }
+    QString path = findLocalSvgFile(interface, "images", file);
+    if (!path.isEmpty()) {
+        return path;
     }
 
+    path = Plasma::Theme::defaultTheme()->imagePath(file);
+    if (!path.isEmpty()) {
+        return path;
+    }
+
+    // FIXME: this isn't particularly helpful, as we can't look in the fallback themes
+    QString themeName = Plasma::Theme::defaultTheme()->themeName();
+    path = findLocalSvgFile(interface, "theme", themeName % QLatin1Literal("/") % file);
+    if (!path.isEmpty()) {
+        return path;
+    }
+
+    path = findLocalSvgFile(interface, "theme", file);
     return path;
 }
 
