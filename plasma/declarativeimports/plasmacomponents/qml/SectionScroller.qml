@@ -76,7 +76,7 @@ Item {
         }
     }
 
-    width: 18
+    implicitWidth: scrollBar.implicitWidth
     Behavior on opacity {
         NumberAnimation {
             duration: 250
