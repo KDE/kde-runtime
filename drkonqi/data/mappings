@@ -53,6 +53,7 @@ nepomukservicestub=nepomuk|general
 sopranocmd=nepomuk|general
 sopranod=nepomuk|general
 nepomukshell=nepomukshell|Misc
+metadataextractor=nepomuk|general
 
 #KDE Plasma Desktop (Plasma & KRunner)
 plasma-desktop=plasma|general
@@ -117,8 +118,8 @@ akonadictl=Akonadi|general
 akonadiserver=Akonadi|server
 akonaditest=Akonadi|general
 akonaditray=Akonadi|general
-backupmail=kdepim|backupmail
-importwizard=kdepim|importwizard
+accountwizard=akonadi|Account Wizard
+kres-migrator=akonadi|Migration
 
 #KDE Kontact (PIM)
 kalarmautostart=kalarm|general
@@ -126,6 +127,10 @@ kpilotDaemon=kpilot|kpilotDaemon
 korgac=korgac|general
 kmail=kmail2|general
 kmailcvt=kmail2|general
+kmail-migrator=|kmail2|general
+kaddressbook-mobile=KDE PIM Mobile|general
+backupmail=kdepim|backupmail
+importwizard=kdepim|importwizard
 
 #KDE Konqueror
 kjs=konqueror|kjs
@@ -151,6 +156,12 @@ expoblending=kipiplugins|ExpoBlending
 panoramagui=kipiplugins|Panorama
 photolayoutseditor=kipiplugins|PhotoLayoutsEditor
 scangui=kipiplugins|AcquireImages
+
+
+# Gluon
+gluoncreator=gluon|gluoncreator
+gluon_kdeplayer=gluon|gluonplayer
+gluon_kdeextplayer=gluon|gluonplayer
 
 #Other KDE Applications and Technologies
 ksysguardd=ksysguard|ksysguardd
@@ -184,6 +195,10 @@ mangonel=Mangonel|mangonel
 
 kwatchgnupg=kleopatra|general
 homerunviewer=homerun|general
+
+ksecretsync=ksecretservice|ksecretsync
+cvsservice=cervisia|general
+
 
 # applicaitons not using bugs.kde.org
 aku=unknown|general
