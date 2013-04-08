@@ -47,6 +47,7 @@ nepomukstorage=nepomuk|storageservice
 nepomukserver=nepomuk|general
 nepomukservicestub=nepomuk|general
 nepomukshell=nepomukshell|Misc
+metadataextractor=nepomuk|general
 
 #KDE Plasma Desktop (Plasma & KRunner)
 plasma-desktop=plasma|general
@@ -112,6 +113,8 @@ akonadictl=Akonadi|general
 akonadiserver=Akonadi|server
 akonaditest=Akonadi|general
 akonaditray=Akonadi|general
+accountwizard=akonadi|Account Wizard
+kres-migrator=akonadi|Migration
 
 #KDE Kontact (PIM)
 importwizard=kdepim|importwizard
@@ -120,6 +123,10 @@ kpilotDaemon=kpilot|kpilotDaemon
 korgac=korgac|general
 kmail=kmail2|general
 kmailcvt=kmail2|general
+kmail-migrator=|kmail2|general
+kaddressbook-mobile=KDE PIM Mobile|general
+backupmail=kdepim|backupmail
+importwizard=kdepim|importwizard
 
 #KDE Konqueror
 kjscmd=konqueror|kjs
@@ -144,6 +151,12 @@ expoblending=kipiplugins|ExpoBlending
 panoramagui=kipiplugins|Panorama
 photolayoutseditor=kipiplugins|PhotoLayoutsEditor
 scangui=kipiplugins|AcquireImages
+
+
+# Gluon
+gluoncreator=gluon|gluoncreator
+gluon_kdeplayer=gluon|gluonplayer
+gluon_kdeextplayer=gluon|gluonplayer
 
 #Other KDE Applications and Technologies
 kmixctrl=kmix|general
@@ -177,6 +190,10 @@ mangonel=Mangonel|mangonel
 
 kwatchgnupg=kleopatra|general
 homerunviewer=homerun|general
+
+ksecretsync=ksecretservice|ksecretsync
+cvsservice=cervisia|general
+
 
 # applicaitons not using bugs.kde.org
 aku=unknown|general
