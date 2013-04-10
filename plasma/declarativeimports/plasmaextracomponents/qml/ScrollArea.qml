@@ -92,7 +92,7 @@ Item {
 
         function checkVerticalScrollBarMargins() {
             //undefined in case of SectionScroller
-            if ((flickableItem.contentHeight > flickableItem.height) &&
+            if ((flickableItem.contentHeight > flickableItem.height) && verticalScrollBar && 
                 ((verticalScrollBar.interactive && verticalScrollBar.visible) || (verticalScrollBar.orientation === undefined &&
                 //FIXME: heuristic on width to distinguish the touch sectionscroller
                 verticalScrollBar.width < 30))) {
@@ -117,7 +117,7 @@ Item {
 
         function checkHorizontalScrollBarMargins() {
             if ((flickableItem.contentWidth > flickableItem.width) &&
-                horizontalScrollBar.interactive && horizontalScrollBar.visible) {
+                horizontalScrollBar && horizontalScrollBar.interactive && horizontalScrollBar.visible) {
                 flickableItem.anchors.bottomMargin = horizontalScrollBar.height
             } else {
                 flickableItem.anchors.bottomMargin = 0
