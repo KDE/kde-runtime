@@ -672,6 +672,7 @@ public:
     };
 
     Q_DECLARE_FLAGS(DateTimeComponents, DateTimeComponent)
+    Q_FLAGS(DateTimeComponents)
 
     /**
      * Format for date string.
@@ -710,6 +711,7 @@ public:
     };
 
     Q_DECLARE_FLAGS(DateTimeFormatOptions, DateTimeFormatOption)
+    Q_FLAGS(DateTimeFormatOptions)
 
     /**
      * Returns a string formatted to the current locale's conventions
@@ -757,6 +759,7 @@ public:
     };
 
     Q_DECLARE_FLAGS(TimeFormatOptions, TimeFormatOption)
+    Q_FLAGS(TimeFormatOptions)
 
     /**
      *
@@ -938,6 +941,7 @@ public:
     };
 
     Q_DECLARE_FLAGS(TimeProcessingOptions, TimeProcessingOption)
+    Q_FLAGS(TimeProcessingOptions)
 
     /**
      *
