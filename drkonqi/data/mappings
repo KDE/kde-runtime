@@ -140,6 +140,7 @@ ktp-text-ui=telepathy|text-ui
 ktp-call-ui=telepathy|call-ui
 ktp-filetransfer-handler=telepathy|filetransfer-handler
 ktp-auth-handler=telepathy|auth-handler
+ktp-log-viewer=telepathy|log-viewer
 
 # KDE Calligra Suite
 braindump=braindump|application
