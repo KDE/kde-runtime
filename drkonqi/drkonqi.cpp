@@ -141,7 +141,7 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
 {
     if (KCmdLineArgs::parsedArgs()->isSet("safer")) {
         KTemporaryFile tf;
-        tf.setSuffix(".kcrash");
+        tf.setSuffix(".kcrash.txt");
         tf.setAutoRemove(false);
 
         if (tf.open()) {
@@ -156,7 +156,7 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
         }
     } else {
         QString defname = crashedApplication()->fakeExecutableBaseName() + '-'
-                            + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss") + ".kcrash";
+                            + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss") + ".kcrash.txt";
         if (defname.contains('/')) {
             defname = defname.mid(defname.lastIndexOf('/') + 1);
         }
