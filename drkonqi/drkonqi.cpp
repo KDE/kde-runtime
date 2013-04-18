@@ -143,7 +143,7 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
 {
     if (KCmdLineArgs::parsedArgs()->isSet("safer")) {
         KTemporaryFile tf;
-        tf.setSuffix(".kcrash");
+        tf.setSuffix(".kcrash.txt");
         tf.setAutoRemove(false);
 
         if (tf.open()) {
