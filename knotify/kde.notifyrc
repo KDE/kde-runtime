@@ -1601,7 +1601,7 @@ Comment[wa]=KDE s' enonder
 Comment[x-test]=xxKDE is starting upxx
 Comment[zh_CN]=KDE 正在启动
 Comment[zh_TW]=KDE 啟動中
-Action=Sound
+Action=
 Sound=KDE-Sys-Log-In-Short.ogg
 
 [Event/exitkde]
@@ -1778,7 +1778,7 @@ Comment[wa]=KDE mousse foû
 Comment[x-test]=xxKDE is exitingxx
 Comment[zh_CN]=KDE 正在退出
 Comment[zh_TW]=KDE 結束中
-Action=Sound
+Action=
 Sound=KDE-Sys-Log-Out.ogg
 
 [Event/cancellogout]
