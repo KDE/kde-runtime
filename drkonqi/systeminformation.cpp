@@ -121,6 +121,8 @@ QString SystemInformation::guessBugzillaPlatform(const QString& distroInfo) cons
 {
     if ( distroInfo.contains("suse",Qt::CaseInsensitive) ) {
         return (QLatin1String("openSUSE RPMs"));
+    } else if ( distroInfo.contains("mint",Qt::CaseInsensitive) ) {
+        return (QLatin1String("Ubuntu Packages"));
     } else if ( distroInfo.contains("ubuntu",Qt::CaseInsensitive) ) {
         return (QLatin1String("Ubuntu Packages"));
     } else if ( distroInfo.contains("fedora",Qt::CaseInsensitive) ) {
