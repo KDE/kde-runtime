@@ -32,7 +32,7 @@
 #include <QtDBus/qdbusabstractinterface.h>
 
 ProgressListModel::ProgressListModel(QObject *parent)
-        : QAbstractItemModel(parent), m_jobId(1),
+        : QAbstractItemModel(parent), QDBusContext(), m_jobId(1),
           m_uiServer(0)
 {
     m_serviceWatcher = new QDBusServiceWatcher(this);
@@ -195,6 +195,10 @@ QDBusObjectPath ProgressListModel::newJob(const QString &appName, const QString 
     JobView *newJob = new JobView(m_jobId);
     ++m_jobId;
 
+    QString callerService = message().service();
+    m_jobViewsOwners.insertMulti(callerService, newJob);
+    m_serviceWatcher->addWatchedService(callerService);
+
     newJob->setAppName(appName);
     newJob->setAppIconName(appIcon);
     newJob->setCapabilities(capabilities);
@@ -317,6 +321,14 @@ void ProgressListModel::serviceUnregistered(const QString &name)
             m_uiServer = new UiServer(this);
         }
          */
+    }
+
+    QList<JobView*> jobs = m_jobViewsOwners.values(name);
+    if (!jobs.isEmpty()) {
+        m_jobViewsOwners.remove(name);
+        Q_FOREACH(JobView *job, jobs) {
+            job->terminate(QString());
+        }
     }
 }
 

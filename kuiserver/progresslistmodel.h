@@ -24,11 +24,13 @@
 #include "uiserver.h"
 #include "jobview.h"
 
+#include <QDBusContext>
+
 
 class QDBusAbstractInterface;
 class QDBusServiceWatcher;
 
-class ProgressListModel: public QAbstractItemModel
+class ProgressListModel: public QAbstractItemModel, protected QDBusContext
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.kde.JobViewServer")
@@ -172,6 +174,11 @@ private:
     uint m_jobId;
 
     QList<JobView*> m_jobViews;
+    /**
+     * Stores a relationship between the process that requested the job and
+     * the job itself by using the dbus service and he jobview.
+     */
+    QHash<QString, JobView*> m_jobViewsOwners;
 
     /**
      * Contains the list of registered services. In other words, the clients
