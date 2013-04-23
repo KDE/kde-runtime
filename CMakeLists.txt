@@ -5,6 +5,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_P
 
 include(CTest)
 include(CTestConfig.cmake)
+include(CheckIncludeFiles)
+include(CheckFunctionExists)
 
 if(WINCE)
     #Needs to be set because otherwise he wouldn't find kde parts
