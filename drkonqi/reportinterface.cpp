@@ -282,6 +282,7 @@ BugReport ReportInterface::newBugReportTemplate() const
     } else {
         report.setPlatform(sysInfo->bugzillaPlatform());
     }
+    report.setKeywords(QStringList() << "drkonqi");
     report.setPriority(QLatin1String("NOR"));
     report.setBugSeverity(QLatin1String("crash"));
 

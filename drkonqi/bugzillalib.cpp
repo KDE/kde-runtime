@@ -151,6 +151,7 @@ void BugzillaManager::sendReport(const BugReport & report)
     args.insert(QLatin1String("description"), report.description());
     args.insert(QLatin1String("op_sys"), report.operatingSystem());
     args.insert(QLatin1String("platform"), report.platform());
+    args.insert(QLatin1String("keywords"), report.keywords());
     args.insert(QLatin1String("priority"), report.priority());
     args.insert(QLatin1String("severity"), report.bugSeverity());
 
