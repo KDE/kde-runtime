@@ -118,6 +118,11 @@ void Nepomuk2::SearchUrlListener::slotQueryServiceInitialized( bool success )
     kDebug() << m_queryUrl << success;
 
     if ( success ) {
+
+        // remove old query.
+        delete m_queryInterface;
+        m_queryInterface = 0;
+
         // reconnect to our query
         createInterface();
 
@@ -130,8 +135,6 @@ void Nepomuk2::SearchUrlListener::slotQueryServiceInitialized( bool success )
 void Nepomuk2::SearchUrlListener::createInterface()
 {
     kDebug() << m_queryUrl;
-
-    delete m_queryInterface;
 
     const QString queryService = QLatin1String( "org.kde.nepomuk.services.nepomukqueryservice" );
     org::kde::nepomuk::QueryService queryServiceInterface( queryService,
