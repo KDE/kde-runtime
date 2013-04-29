@@ -1027,8 +1027,8 @@ void KCMLocale::initSample()
     m_ui->m_textMoneyPositiveSample->setToolTip( helpText );
     m_ui->m_textMoneyPositiveSample->setWhatsThis( helpText );
     helpText = ki18n( "This is how negative monetary values will be displayed.").toString( m_kcmLocale );
-    m_ui->m_textMoneyPositiveSample->setToolTip( helpText );
-    m_ui->m_textMoneyPositiveSample->setWhatsThis( helpText );
+    m_ui->m_textMoneyNegativeSample->setToolTip( helpText );
+    m_ui->m_textMoneyNegativeSample->setWhatsThis( helpText );
 
     m_ui->m_labelDateSample->setText( ki18n( "Date:" ).toString( m_kcmLocale ) );
     helpText = ki18n( "This is how long dates will be displayed.").toString( m_kcmLocale );
