@@ -36,6 +36,7 @@
 #include "qmenu.h"
 #include "qmenuitem.h"
 #include "fullscreensheet.h"
+#include "units.h"
 
 Q_EXPORT_PLUGIN2(plasmacomponentsplugin, PlasmaComponentsPlugin)
 
@@ -84,6 +85,10 @@ void PlasmaComponentsPlugin::initializeEngine(QDeclarativeEngine *engine, const 
 {
     QDeclarativeExtensionPlugin::initializeEngine(engine, uri);
     EngineBookKeeping::self()->insertEngine(engine);
+
+    QDeclarativeContext *context = engine->rootContext();
+    Units *units = new Units(context);
+    context->setContextProperty("units", units);
 }
 
 void PlasmaComponentsPlugin::registerTypes(const char *uri)
@@ -104,6 +109,7 @@ void PlasmaComponentsPlugin::registerTypes(const char *uri)
     qmlRegisterUncreatableType<DialogStatus>(uri, 0, 1, "DialogStatus", "");
     qmlRegisterUncreatableType<PageOrientation>(uri, 0, 1, "PageOrientation", "");
     qmlRegisterUncreatableType<PageStatus>(uri, 0, 1, "PageStatus", "");
+    qmlRegisterUncreatableType<Units>(uri, 0, 1, "Units", "");
 }
 
 
