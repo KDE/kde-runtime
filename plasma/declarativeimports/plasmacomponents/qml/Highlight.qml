@@ -41,6 +41,8 @@ Item {
     property bool pressed: false
     width: ListView.view ? ListView.view.width : undefined
 
+    property alias marginHints: background.margins;
+
     Connections {
         target: highlight.ListView.view
         onCurrentIndexChanged: {
