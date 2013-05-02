@@ -19,11 +19,14 @@
 
 #include "units.h"
 
+#include <QApplication>
+#include <QDebug>
+#include <QDesktopWidget>
 
 Units::Units (QObject *parent)
-    : QObject(parent),
-      m_gridUnit(10)
+    : QObject(parent)
 {
+    m_gridUnit = QApplication::desktop()->physicalDpiY()/10;
 }
 
 Units::~Units()
@@ -42,7 +45,7 @@ qreal Units::dp(qreal value) const
 
 qreal Units::gu(qreal value) const
 {
-    return m_gridUnit * value;
+    return qRound(m_gridUnit * value);
 }
 
 #include "units.moc"
