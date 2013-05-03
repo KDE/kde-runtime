@@ -22,11 +22,14 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDesktopWidget>
+#include <QtGlobal>
+#include <cmath>
 
 Units::Units (QObject *parent)
     : QObject(parent)
 {
-    m_gridUnit = QApplication::desktop()->physicalDpiY()/10;
+    //dividing by 25.4 gives pixels per one millimeter
+    m_gridUnit = QApplication::desktop()->physicalDpiY()/25.4;
 }
 
 Units::~Units()
@@ -40,7 +43,13 @@ qreal Units::gridUnit() const
 
 qreal Units::dp(qreal value) const
 {
-    return value / m_gridUnit;
+    //Usual "default" is 96 dpi
+    const qreal ratio = m_gridUnit / (96/25.4);
+    if (value <= 2.0) {
+        return qRound(value * floor(ratio));
+    } else {
+        return qRound(value * ratio);
+    }
 }
 
 qreal Units::gu(qreal value) const
