@@ -28,6 +28,10 @@ class Units : public QObject
 {
     Q_OBJECT
 
+    /**
+     * The fundamental unit of space that should be used for sizes, expressed in pixels.
+     * Given the screen has an accurate DPI settings, it corresponds to a millimeter
+     */
     Q_PROPERTY(qreal gridUnit READ gridUnit NOTIFY gridUnitChanged())
 
 public:
@@ -35,7 +39,15 @@ public:
     ~Units();
 
     qreal gridUnit() const;
+
+    /**
+     * @returns the number of pixels value density independent pixels correspond to.
+     */
     Q_INVOKABLE qreal dp(qreal value) const;
+
+    /**
+     * @returns the number of pixels value grid units correspond to.
+     */
     Q_INVOKABLE qreal gu(qreal value) const;
 
 
