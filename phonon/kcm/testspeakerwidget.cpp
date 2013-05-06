@@ -27,6 +27,7 @@ static TestSpeakerWidget *s_CurrentWidget = NULL;
 static void finish_cb(ca_context *, uint32_t id, int, void *)
 {
   Q_ASSERT(id == 0);
+  Q_UNUSED(id); // Suppress compiler warning if QT_NO_DEBUG
   if (s_CurrentWidget && s_CurrentWidget->isChecked()) {
     s_CurrentIndex = PA_INVALID_INDEX;
     s_CurrentWidget->setChecked(false);

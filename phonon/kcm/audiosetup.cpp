@@ -598,8 +598,7 @@ void AudioSetup::profileChanged()
     QString profile = profileBox->itemData(profileBox->currentIndex()).toString();
     kDebug() << "Changing profile to" << profile;
 
-    cardInfo &card_info = s_Cards[card_index];
-    Q_ASSERT(card_info.profiles.size());
+    Q_ASSERT(s_Cards[card_index].profiles.size());
 
     pa_operation *operation =
             pa_context_set_card_profile_by_index(s_context,
@@ -723,8 +722,10 @@ void AudioSetup::portChanged()
     QString port = portBox->itemData(portBox->currentIndex()).toString();
     kDebug() << "Changing port to" << port;
 
+#ifndef QT_NO_DEBUG
     deviceInfo &device_info = getDeviceInfo(index);
     Q_ASSERT(device_info.ports.size());
+#endif /* QT_NO_DEBUG */
 
     pa_operation *o;
     if (index >= 0) {
