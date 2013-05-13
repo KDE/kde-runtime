@@ -441,6 +441,13 @@ bool NotifyByPopup::sendNotificationDBus(int id, int replacesId, KNotifyConfig* 
 	args.append( actionList ); // actions
 
 	QVariantMap map;
+	// Add the application name to the hints.
+	// According to fdo spec, the app_name is supposed to be the applicaton's "pretty name"
+	// but in some places it's handy to know the application name itself
+	if (!config->appname.isEmpty()) {
+			map["x-kde-appname"] = config->appname;
+	}
+
 	// let's see if we've got an image, and store the image in the hints map
 	if (!config->image.isNull()) {
 		QImage image = config->image.toImage();
