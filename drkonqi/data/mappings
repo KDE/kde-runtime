@@ -61,6 +61,7 @@ knotificationicontest=plasma|widget-systemtray
 lancelot=plasma|widget-lancelot
 plasma-netbook=plasma|plasma-netbook
 kactivitymanagerd=kactivities|general
+plasma-windowed=plasma|general
 plasma-device=Active|General
 
 #KDE Plasma SDK (Plasmate)

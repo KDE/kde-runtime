@@ -98,22 +98,6 @@ QVariant FolderSelectionModel::data( const QModelIndex& index, int role ) const
         else if( role == IncludeStateRole ) {
             return includeState( index );
         }
-        else if( role == Qt::ForegroundRole ) {
-            IncludeState state = includeState( index );
-            QBrush brush = QFileSystemModel::data( index, role ).value<QBrush>();
-            switch( state ) {
-            case StateInclude:
-            case StateIncludeInherited:
-                brush = QPalette().brush( QPalette::Active, QPalette::Text );
-                break;
-            case StateNone:
-            case StateExclude:
-            case StateExcludeInherited:
-                brush = QPalette().brush( QPalette::Disabled, QPalette::Text );
-                break;
-            }
-            return QVariant::fromValue( brush );
-        }
         else if ( role == Qt::ToolTipRole ) {
             IncludeState state = includeState( index );
             if ( QFileInfo( filePath( index ) ).isSymLink() ) {
