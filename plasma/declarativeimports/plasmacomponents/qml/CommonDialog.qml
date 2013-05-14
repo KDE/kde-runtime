@@ -66,7 +66,7 @@ Dialog {
 
     /**
      * Emitted when the use clicks on a button
-     * @param index the index of the clicked button: buttonTexts[index] will hold the text of the clicked button.
+     * @param type:int index the index of the clicked button: buttonTexts[index] will hold the text of the clicked button.
      */
     signal buttonClicked(int index)
 

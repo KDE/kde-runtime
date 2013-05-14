@@ -212,8 +212,8 @@ FocusScope {
      * selectionEnd will become the greater (regardless of the order passed to
      * this method).
      *
-     * @param int start Start of selection
-     * @param int end End of selection
+     * @param type:int start Start of selection
+     * @param type:int end End of selection
      */
     function select(start, end) {
         textInput.select(start, end);
@@ -243,8 +243,8 @@ FocusScope {
      * the first character this function returns 0, and for all x values after
      * the last character this function returns text.length.
      *
-     * @param int pos x-coordinate we are interested in.
-     * @return int the character position
+     * @param type:int pos x-coordinate we are interested in.
+     * @return type:int the character position
      */
     function positionAt(pos) {
         return textInput.positionAt(pos);
@@ -256,7 +256,7 @@ FocusScope {
      * The x, y, and height properties correspond to the cursor that would
      * describe that position.
      *
-     * @param int pos the text position
+     * @param type:int pos the text position
      * @param type:rectangle the cursor rectangle
      */
     function positionToRectangle(pos) {
