@@ -54,6 +54,9 @@ public:
 Q_SIGNALS:
     void gridUnitChanged();
 
+private Q_SLOTS:
+    void themeChanged();
+
 private:
     int m_gridUnit;
 };

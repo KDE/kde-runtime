@@ -25,11 +25,15 @@
 #include <QtGlobal>
 #include <cmath>
 
+#include <Plasma/Theme>
+
 Units::Units (QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      m_gridUnit(-1)
 {
-    //dividing by 25.4 gives pixels per one millimeter
-    m_gridUnit = QApplication::desktop()->physicalDpiY()/25.4;
+    themeChanged();
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SLOT(themeChanged()));
 }
 
 Units::~Units()
@@ -44,7 +48,9 @@ qreal Units::gridUnit() const
 qreal Units::dp(qreal value) const
 {
     //Usual "default" is 96 dpi
-    const qreal ratio = m_gridUnit / (96/25.4);
+    //that magic ratio follows the definition of "device independent pixel" by Microsoft
+    const qreal ratio = (qreal)QApplication::desktop()->physicalDpiX() / (qreal)96;
+
     if (value <= 2.0) {
         return qRound(value * floor(ratio));
     } else {
@@ -55,6 +61,15 @@ qreal Units::dp(qreal value) const
 qreal Units::gu(qreal value) const
 {
     return qRound(m_gridUnit * value);
+}
+
+void Units::themeChanged()
+{
+    const int gridUnit = QFontMetrics(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont)).boundingRect("M").width();
+    if (gridUnit != m_gridUnit) {
+        m_gridUnit = gridUnit;
+        emit gridUnitChanged();
+    }
 }
 
 #include "units.moc"
