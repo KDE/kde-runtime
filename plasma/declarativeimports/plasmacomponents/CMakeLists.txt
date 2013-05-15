@@ -8,6 +8,7 @@ set(plasmacomponents_SRCS
     enums.cpp
     qmenu.cpp
     qmenuitem.cpp
+    units.cpp
     ../core/declarativeitemcontainer.cpp
     )
 
