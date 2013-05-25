@@ -10,7 +10,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=audio-and-video
 X-DocPath=kcontrol/phonon/index.html
 
-Name=Phonon
+Name=Audio and Video Settings
 Name[ar]=فونون
 Name[ast]=Phonon
 Name[bg]=Phonon
@@ -78,7 +78,7 @@ Name[wa]=Phonon
 Name[x-test]=xxPhononxx
 Name[zh_CN]=Phonon
 Name[zh_TW]=Phonon
-Comment=Sound and Video Configuration
+Comment=Settings for the Phonon multimedia framework
 Comment[ar]=ضبط الصوت و الفيديو
 Comment[ast]=Configuración del sistema de soníu y video
 Comment[be@latin]=Nałady huku j videa
