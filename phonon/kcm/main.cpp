@@ -72,7 +72,6 @@ PhononKcm::PhononKcm(QWidget *parent, const QVariantList &args)
     m_speakerSetup = new AudioSetup(this);
     m_speakerSetup->setVisible(false);
     connect(m_speakerSetup, SIGNAL(ready()), SLOT(speakerSetupReady()));
-    connect(m_speakerSetup, SIGNAL(changed()), SLOT(changed()));
 #endif
 }
 
@@ -99,7 +98,7 @@ void PhononKcm::speakerSetupReady()
 {
   m_tabs->insertTab(1, m_speakerSetup, i18n("Audio Hardware Setup"));
   m_devicePreferenceWidget->pulseAudioEnabled();
-  emit changed();
+  connect(m_speakerSetup, SIGNAL(changed()), SLOT(changed()));
 }
 #endif
 
