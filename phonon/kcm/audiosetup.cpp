@@ -543,7 +543,7 @@ void AudioSetup::updateFromPulse()
         }
 
         if (setupReady) {
-            emit changed();
+            emit ready();
         }
     }
 }
