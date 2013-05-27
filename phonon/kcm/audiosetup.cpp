@@ -509,12 +509,13 @@ void AudioSetup::removeSource(uint32_t index)
 
 void AudioSetup::updateFromPulse()
 {
+    bool setupReady = false;
     if (m_OutstandingRequests > 0) {
         if (0 == --m_OutstandingRequests) {
             // Work out which seclector to pick by default (we want to choose a real Card if possible)
             if (s_Cards.size() != cardBox->count())
                 cardBox->setCurrentIndex(1);
-            emit ready();
+            setupReady = true;
         }
     }
 
@@ -539,6 +540,10 @@ void AudioSetup::updateFromPulse()
             deviceLabel->setEnabled(true);
             deviceBox->setEnabled(true);
             deviceChanged();
+        }
+
+        if (setupReady) {
+            emit changed();
         }
     }
 }
