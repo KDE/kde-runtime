@@ -381,6 +381,7 @@ void BugzillaManager::callFault(int errorCode, const QString & errorString, cons
         }
     } else if (id.toString() == QLatin1String("Bug.create")) {
         switch (errorCode) {
+        case 51:  //invalid object (one example is invalid platform value)
         case 105: //invalid component
         case 106: //invalid product
             Q_EMIT sendReportErrorInvalidValues();
