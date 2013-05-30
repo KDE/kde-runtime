@@ -20,6 +20,8 @@ qt4_add_dbus_interface(controller_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.k
 
 kde4_add_ui_files(controller_SRCS ../kcm/statuswidget.ui)
 
+kde4_add_app_icon(controller_SRCS "${KDE4_INSTALL_DIR}/share/icons/oxygen/*/apps/nepomuk.png")
+
 kde4_add_executable(nepomukcontroller ${controller_SRCS})
 
 target_link_libraries(nepomukcontroller
