@@ -444,9 +444,7 @@ void DialogProxy::setAttribute(int attribute, bool on)
     m_dialog->setAttribute((Qt::WidgetAttribute)attribute, on);
 
     if (attribute == Qt::WA_X11NetWmWindowTypeDock) {
-        KWindowSystem::setOnAllDesktops(m_dialog->winId(), true);
-    } else {
-        KWindowSystem::setOnAllDesktops(m_dialog->winId(), false);
+        KWindowSystem::setOnAllDesktops(m_dialog->winId(), on);
     }
 }
 
