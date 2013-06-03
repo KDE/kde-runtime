@@ -212,12 +212,6 @@ Item {
                 spacing: -100
                 width: childrenRect.width - 100
                 height: parent.height
-                Behavior on width {
-                    NumberAnimation {
-                        duration: internal.transitionDuration
-                        easing.type: Easing.InOutQuad
-                    }
-                }
             }
             onMovementEnded: {
                 scrollToLevel(Math.round(contentX/columnWidth)+1)
