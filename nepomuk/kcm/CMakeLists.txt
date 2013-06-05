@@ -14,7 +14,7 @@ set(kcmnepomuk_SRCS
   folderselectionmodel.cpp
   indexfolderselectiondialog.cpp
   excludefilterselectiondialog.cpp
-  statuswidget.cpp
+  detailswidget.cpp
   removablemediacache.cpp
   )
 
@@ -25,8 +25,7 @@ qt4_add_dbus_interface(kcmnepomuk_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.k
 kde4_add_ui_files(kcmnepomuk_SRCS
   nepomukconfigwidget.ui
   indexfolderselectionwidget.ui
-  excludefilterselectiondialog.ui
-  statuswidget.ui)
+  excludefilterselectiondialog.ui)
 
 kde4_add_plugin(kcm_nepomuk ${kcmnepomuk_SRCS})
 

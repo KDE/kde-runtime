@@ -24,7 +24,7 @@
 #include "fileindexerinterface.h"
 #include "indexfolderselectiondialog.h"
 #include "excludefilterselectiondialog.h"
-#include "statuswidget.h"
+#include "detailswidget.h"
 #include "removablemediacache.h"
 
 #include <KPluginFactory>
@@ -532,8 +532,8 @@ void Nepomuk2::ServerConfigModule::recreateInterfaces()
 
 void Nepomuk2::ServerConfigModule::slotStatusDetailsClicked()
 {
-    StatusWidget statusDialog( this );
-    statusDialog.exec();
+    DetailsWidget dialog( this );
+    dialog.exec();
 }
 
 
