@@ -515,7 +515,9 @@ void Nepomuk2::ServerConfigModule::updateEmailIndexerStatus()
     if ( QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.freedesktop.Akonadi.Agent.akonadi_nepomuk_feeder" ) ) {
         bool isOnline = m_akonadiInterface->isOnline();
         if( isOnline ) {
-            QString status= m_akonadiInterface->statusMessage();
+            QString statusMessage = m_akonadiInterface->statusMessage();
+            int percent = m_akonadiInterface->progress();
+            QString status = statusMessage + QString::fromLatin1(" (%1%)").arg( percent );
 
             if ( status.isEmpty() ) {
                 setEmailIndexerStatusText( i18nc( "@info:status %1 is an error message returned by a dbus interface.",

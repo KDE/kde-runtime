@@ -7,6 +7,9 @@
     <method name="isOnline" >
       <arg type="b" direction="out"/>
     </method>
+    <method name="progress" >
+      <arg type="i" direction="out"/>
+    </method>
     <signal name="status" >
       <arg name="state" type="i" />
       <arg name="msg" type="s" />
