@@ -1,5 +1,6 @@
 /* This file is part of the KDE Project
    Copyright (c) 2007-2010 Sebastian Trueg <trueg@kde.org>
+   Copyright (c) 2012-2013 Vishesh Handa <me@vhanda.in>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -95,6 +96,7 @@ Nepomuk2::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVarian
     : KCModule( NepomukConfigModuleFactory::componentData(), parent, args ),
       m_serverInterface( 0 ),
       m_fileIndexerInterface( 0 ),
+      m_akonadiInterface( 0 ),
       m_failedToInitialize( false ),
       m_checkboxesChanged( false )
 {
@@ -118,6 +120,7 @@ Nepomuk2::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVarian
         QDBusServiceWatcher * watcher = new QDBusServiceWatcher( this );
         watcher->addWatchedService( QLatin1String("org.kde.nepomuk.services.nepomukfileindexer") );
         watcher->addWatchedService( QLatin1String("org.kde.NepomukServer") );
+        watcher->addWatchedService( QLatin1String("org.freedesktop.Akonadi.Agent.akonadi_nepomuk_feeder") );
         watcher->setConnection( QDBusConnection::sessionBus() );
         watcher->setWatchMode( QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration );
 
@@ -206,6 +209,7 @@ Nepomuk2::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVarian
 Nepomuk2::ServerConfigModule::~ServerConfigModule()
 {
     delete m_fileIndexerInterface;
+    delete m_akonadiInterface;
     delete m_serverInterface;
 }
 
@@ -299,6 +303,7 @@ void Nepomuk2::ServerConfigModule::load()
 
     recreateInterfaces();
     updateFileIndexerStatus();
+    updateEmailIndexerStatus();
     updateNepomukServerStatus();
 
     // 7. all values loaded -> no changes
@@ -425,6 +430,7 @@ void Nepomuk2::ServerConfigModule::save()
     // 5. update state
     recreateInterfaces();
     updateFileIndexerStatus();
+    updateEmailIndexerStatus();
     updateNepomukServerStatus();
 
 
@@ -497,6 +503,37 @@ void Nepomuk2::ServerConfigModule::updateFileIndexerStatus()
     }
 }
 
+void Nepomuk2::ServerConfigModule::setEmailIndexerStatusText( const QString& text, bool elide )
+{
+    m_labelEmailIndexerStatus->setWordWrap( !elide );
+    m_labelEmailIndexerStatus->setTextElideMode( elide ? Qt::ElideMiddle : Qt::ElideNone );
+    m_labelEmailIndexerStatus->setText( text );
+}
+
+void Nepomuk2::ServerConfigModule::updateEmailIndexerStatus()
+{
+    if ( QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.freedesktop.Akonadi.Agent.akonadi_nepomuk_feeder" ) ) {
+        bool isOnline = m_akonadiInterface->isOnline();
+        if( isOnline ) {
+            QString status= m_akonadiInterface->statusMessage();
+
+            if ( status.isEmpty() ) {
+                setEmailIndexerStatusText( i18nc( "@info:status %1 is an error message returned by a dbus interface.",
+                                                 "Failed to contact Email Indexer service (%1)",
+                                                 m_akonadiInterface->lastError().message() ), false );
+            }
+            else {
+                setEmailIndexerStatusText( status, true );
+            }
+        }
+        else {
+            setEmailIndexerStatusText( i18nc( "@info:status", "Email Indexing service is offline" ), false );
+        }
+    }
+    else {
+        setEmailIndexerStatusText( i18nc( "@info:status", "Email indexing service not running." ), false );
+    }
+}
 
 void Nepomuk2::ServerConfigModule::updateBackupStatus()
 {
@@ -520,13 +557,19 @@ void Nepomuk2::ServerConfigModule::updateBackupStatus()
 void Nepomuk2::ServerConfigModule::recreateInterfaces()
 {
     delete m_fileIndexerInterface;
+    delete m_akonadiInterface;
     delete m_serverInterface;
 
     m_fileIndexerInterface = new org::kde::nepomuk::FileIndexer( "org.kde.nepomuk.services.nepomukfileindexer", "/nepomukfileindexer", QDBusConnection::sessionBus() );
     m_serverInterface = new org::kde::NepomukServer( "org.kde.NepomukServer", "/nepomukserver", QDBusConnection::sessionBus() );
+    m_akonadiInterface = new org::freedesktop::Akonadi::Agent::Status( "org.freedesktop.Akonadi.Agent.akonadi_nepomuk_feeder", "/", QDBusConnection::sessionBus() );
 
     connect( m_fileIndexerInterface, SIGNAL( statusChanged() ),
              this, SLOT( updateFileIndexerStatus() ) );
+    connect( m_akonadiInterface, SIGNAL(percent(int)),
+             this, SLOT(updateEmailIndexerStatus()) );
+    connect( m_akonadiInterface, SIGNAL(status(int,QString)),
+             this, SLOT(updateEmailIndexerStatus()) );
 }
 
 

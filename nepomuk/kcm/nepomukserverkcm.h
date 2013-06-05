@@ -23,6 +23,7 @@
 #include "ui_nepomukconfigwidget.h"
 #include "nepomukserverinterface.h"
 #include "fileindexerinterface.h"
+#include "akonadifeederinterface.h"
 
 class QRadioButton;
 class QAbstractButton;
@@ -49,6 +50,7 @@ namespace Nepomuk2 {
     private Q_SLOTS:
         void updateNepomukServerStatus();
         void updateFileIndexerStatus();
+        void updateEmailIndexerStatus();
         void updateBackupStatus();
         void recreateInterfaces();
         void slotEditIndexFolders();
@@ -69,6 +71,8 @@ namespace Nepomuk2 {
 
     private:
         void setFileIndexerStatusText( const QString& text, bool elide );
+        void setEmailIndexerStatusText( const QString& text, bool elide );
+
         void syncCheckBoxesFromMimetypes(const QStringList& mimetypes);
         QStringList mimetypesFromCheckboxes();
 
@@ -76,6 +80,7 @@ namespace Nepomuk2 {
 
         org::kde::NepomukServer* m_serverInterface;
         org::kde::nepomuk::FileIndexer* m_fileIndexerInterface;
+        org::freedesktop::Akonadi::Agent::Status* m_akonadiInterface;
 
         IndexFolderSelectionDialog* m_indexFolderSelectionDialog;
         ExcludeFilterSelectionDialog* m_excludeFilterSelectionDialog;

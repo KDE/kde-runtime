@@ -21,6 +21,7 @@ set(kcmnepomuk_SRCS
 qt4_add_dbus_interface(kcmnepomuk_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.NepomukServer.xml nepomukserverinterface)
 qt4_add_dbus_interface(kcmnepomuk_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.ServiceControl.xml servicecontrol)
 qt4_add_dbus_interface(kcmnepomuk_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.FileIndexer.xml fileindexerinterface)
+qt4_add_dbus_interface(kcmnepomuk_SRCS ./org.freedesktop.Akonadi.NepomukFeeder.xml akonadifeederinterface)
 
 kde4_add_ui_files(kcmnepomuk_SRCS
   nepomukconfigwidget.ui
