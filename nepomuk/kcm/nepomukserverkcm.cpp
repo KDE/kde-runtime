@@ -146,6 +146,10 @@ Nepomuk2::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVarian
                  this, SLOT( slotEditIndexFolders() ) );
         connect( m_buttonAdvancedFileIndexing, SIGNAL( clicked() ),
                  this, SLOT( slotAdvancedFileIndexing() ) );
+        connect( m_fileIndexerSuspendResumeButtom, SIGNAL(clicked(bool)),
+                 this, SLOT(slotFileIndexerSuspendResumeClicked()) );
+        connect( m_emailIndexerSuspendResumeButtom, SIGNAL(clicked(bool)),
+                 this, SLOT(slotEmailIndexerSuspendResumeClicked()) );
         connect( m_buttonDetails, SIGNAL( leftClickedUrl() ),
                  this, SLOT( slotStatusDetailsClicked() ) );
         connect( m_buttonCheckForNewFiles, SIGNAL( clicked() ),
@@ -490,6 +494,7 @@ void Nepomuk2::ServerConfigModule::updateFileIndexerStatus()
             else {
                 m_failedToInitialize = false;
                 setFileIndexerStatusText( status, true );
+                updateFileIndexerSuspendResumeButtonText( m_fileIndexerInterface->isSuspended() );
             }
         }
         else {
@@ -500,6 +505,31 @@ void Nepomuk2::ServerConfigModule::updateFileIndexerStatus()
     }
     else if ( !m_failedToInitialize ) {
         setFileIndexerStatusText( i18nc( "@info:status", "File indexing service not running." ), false );
+    }
+}
+
+void Nepomuk2::ServerConfigModule::updateFileIndexerSuspendResumeButtonText(bool isSuspended)
+{
+    if( isSuspended ) {
+        m_fileIndexerSuspendResumeButtom->setText( i18nc("Resumes the Nepomuk file indexing service.","Resume") );
+        m_fileIndexerSuspendResumeButtom->setIcon( KIcon("media-playback-start") );
+    }
+    else {
+        m_fileIndexerSuspendResumeButtom->setText( i18nc("Suspends the Nepomuk file indexing service.","Suspend") );
+        m_fileIndexerSuspendResumeButtom->setIcon( KIcon("media-playback-pause") );
+    }
+}
+
+void Nepomuk2::ServerConfigModule::slotFileIndexerSuspendResumeClicked()
+{
+    bool suspended = m_fileIndexerInterface->isSuspended();
+    if( !suspended ) {
+        m_fileIndexerInterface->suspend();
+        updateFileIndexerSuspendResumeButtonText( true );
+    }
+    else {
+        m_fileIndexerInterface->resume();
+        updateFileIndexerSuspendResumeButtonText( false );
     }
 }
 
@@ -526,14 +556,40 @@ void Nepomuk2::ServerConfigModule::updateEmailIndexerStatus()
             }
             else {
                 setEmailIndexerStatusText( status, true );
+                updateEmailIndexerSuspendResumeButtonText( !isOnline );
             }
         }
         else {
-            setEmailIndexerStatusText( i18nc( "@info:status", "Email Indexing service is offline" ), false );
+            setEmailIndexerStatusText( i18nc( "@info:status", "Email Indexing service is suspended" ), false );
         }
     }
     else {
         setEmailIndexerStatusText( i18nc( "@info:status", "Email indexing service not running." ), false );
+    }
+}
+
+void Nepomuk2::ServerConfigModule::updateEmailIndexerSuspendResumeButtonText(bool isSuspended)
+{
+    if( isSuspended ) {
+        m_emailIndexerSuspendResumeButtom->setText( i18n("Resume") );
+        m_emailIndexerSuspendResumeButtom->setIcon( KIcon("media-playback-start") );
+    }
+    else {
+        m_emailIndexerSuspendResumeButtom->setText( i18n("Suspend") );
+        m_emailIndexerSuspendResumeButtom->setIcon( KIcon("media-playback-pause") );
+    }
+}
+
+void Nepomuk2::ServerConfigModule::slotEmailIndexerSuspendResumeClicked()
+{
+    bool suspended = !m_akonadiInterface->isOnline();
+    if( !suspended ) {
+        m_akonadiInterface->setOnline(false);
+        updateEmailIndexerSuspendResumeButtonText( true );
+    }
+    else {
+        m_akonadiInterface->setOnline(true);
+        updateEmailIndexerSuspendResumeButtonText( false );
     }
 }
 

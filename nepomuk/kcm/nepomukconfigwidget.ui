@@ -167,6 +167,16 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QPushButton" name="m_fileIndexerSuspendResumeButtom">
+              <property name="text">
+               <string>Suspend</string>
+              </property>
+              <property name="clicked" stdset="0">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>
@@ -230,6 +240,16 @@
               </property>
               <property name="text">
                <string notr="true">KSqueezedTextLabel</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="m_emailIndexerSuspendResumeButtom">
+              <property name="text">
+               <string>Suspend</string>
+              </property>
+              <property name="clicked" stdset="0">
+               <bool>false</bool>
               </property>
              </widget>
             </item>

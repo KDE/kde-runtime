@@ -56,6 +56,8 @@ namespace Nepomuk2 {
         void slotEditIndexFolders();
         void slotAdvancedFileIndexing();
         void slotStatusDetailsClicked();
+        void slotFileIndexerSuspendResumeClicked();
+        void slotEmailIndexerSuspendResumeClicked();
         void slotBackupFrequencyChanged();
         void slotManualBackup();
         void slotRestoreBackup();
@@ -72,6 +74,9 @@ namespace Nepomuk2 {
     private:
         void setFileIndexerStatusText( const QString& text, bool elide );
         void setEmailIndexerStatusText( const QString& text, bool elide );
+
+        void updateFileIndexerSuspendResumeButtonText(bool isSuspended);
+        void updateEmailIndexerSuspendResumeButtonText(bool isSuspended);
 
         void syncCheckBoxesFromMimetypes(const QStringList& mimetypes);
         QStringList mimetypesFromCheckboxes();

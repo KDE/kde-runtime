@@ -7,6 +7,9 @@
     <method name="isOnline" >
       <arg type="b" direction="out"/>
     </method>
+    <method name="setOnline" >
+      <arg name="state" type="b" direction="in"/>
+    </method>
     <method name="progress" >
       <arg type="i" direction="out"/>
     </method>
