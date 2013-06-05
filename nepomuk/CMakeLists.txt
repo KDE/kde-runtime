@@ -13,5 +13,4 @@ include_directories(
 
 add_subdirectory(kcm)
 add_subdirectory(kioslaves)
-add_subdirectory(controller)
 
