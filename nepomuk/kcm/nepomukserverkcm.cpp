@@ -38,10 +38,10 @@
 #include <KStandardDirs>
 #include <KCalendarSystem>
 #include <KDirWatch>
-#include <KJob>
-#include <KToolInvocation>
+#include <KDebug>
 
-#include <Nepomuk2/DataManagement>
+#include <Nepomuk2/Query/QueryParser>
+#include <Nepomuk2/Query/FileQuery>
 
 #include <QRadioButton>
 #include <QInputDialog>
@@ -154,8 +154,6 @@ Nepomuk2::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVarian
                  this, SLOT( slotStatusDetailsClicked() ) );
         connect( m_buttonCheckForNewFiles, SIGNAL( clicked() ),
                  this, SLOT( slotUpdateAllFolders() ) );
-        connect( m_buttonClearIndexedData, SIGNAL( clicked() ),
-                this, SLOT( slotClearIndexedData() ) );
 
         connect( m_checkboxAudio, SIGNAL(toggled(bool)),
                  this, SLOT(slotCheckBoxesChanged()) );
@@ -778,26 +776,6 @@ void Nepomuk2::ServerConfigModule::slotCheckBoxesChanged()
 void Nepomuk2::ServerConfigModule::slotUpdateAllFolders()
 {
      m_fileIndexerInterface->updateAllFolders( true );
-}
-
-void Nepomuk2::ServerConfigModule::slotClearIndexFinished()
-{
-    m_buttonClearIndexedData->setEnabled(true);
-}
-
-void Nepomuk2::ServerConfigModule::slotClearIndexedData()
-{
-    KComponentData component = KComponentData( QByteArray("nepomukindexer"),
-            QByteArray(), KComponentData::SkipMainComponentRegistration );
-
-    KJob *job = Nepomuk2::removeDataByApplication( Nepomuk2::RemoveSubResoures, component );
-
-    connect(job, SIGNAL(result(KJob*)), this, SLOT(slotClearIndexFinished()));
-
-    m_buttonClearIndexedData->setEnabled(false);
-
-    job->start();
-
 }
 
 #include "nepomukserverkcm.moc"

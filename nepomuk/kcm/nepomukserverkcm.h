@@ -25,6 +25,8 @@
 #include "fileindexerinterface.h"
 #include "akonadifeederinterface.h"
 
+#include <Nepomuk2/Query/Query>
+
 class QRadioButton;
 class QAbstractButton;
 
@@ -62,8 +64,6 @@ namespace Nepomuk2 {
         void slotManualBackup();
         void slotRestoreBackup();
         void slotUpdateAllFolders();
-        void slotClearIndexedData();
-        void slotClearIndexFinished();
 
         /**
          * This slot is called when any of the "index documents", "index whatever" checkboxes
