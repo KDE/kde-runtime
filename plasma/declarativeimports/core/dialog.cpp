@@ -213,7 +213,7 @@ void DialogProxy::setVisible(const bool visible)
         }
 
         m_dialog->setVisible(visible);
-        if (visible) {
+        if (visible && !m_dialog->testAttribute(Qt::WA_X11NetWmWindowTypeDock)) {
             m_dialog->raise();
         }
     }
