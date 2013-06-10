@@ -108,7 +108,7 @@ void TagsProtocol::listDir(const KUrl& url)
         case RootUrl: {
             kDebug() << "Root Url";
 
-            QLatin1String query("select ?r where { ?r a nao:Tag . }");
+            QLatin1String query("select distinct ?r where { ?r a nao:Tag . ?f a nfo:FileDataObject ; nao:hasTag ?r . }");
             Soprano::Model* model = ResourceManager::instance()->mainModel();
             Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
             while( it.next() ) {
