@@ -602,7 +602,7 @@ void Nepomuk2::ServerConfigModule::updateBackupStatus()
         text += QLatin1String(" (");
         text += i18nc("@info %1 is the creation date of a backup formatted vi KLocale::formatDateTime",
                       "Oldest: %1",
-                      KGlobal::locale()->formatDateTime(QFileInfo(backupUrl+QLatin1String("/")+backupFiles.last()).created(), KLocale::FancyShortDate));
+                      KGlobal::locale()->formatDateTime(QFileInfo(backupUrl+QLatin1String("/")+backupFiles.first()).created(), KLocale::FancyShortDate));
         text += QLatin1String(")");
     }
 
