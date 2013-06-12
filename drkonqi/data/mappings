@@ -107,6 +107,7 @@ akonadi_nepomuktag_resource=Akonadi|Nepomuk Feeder Agents
 akonadi_nntp_resource=Akonadi|general
 akonadi_pop3_resource=Akonadi|POP3 Resource
 akonadi_strigi_feeder=Akonadi|general
+akonadi_sendlater_agent=Akonadi|SendLaterAgent
 akonadi_vcard_resource=Akonadi|VCard file resource
 akonadi_vcarddir_resource=Akonadi|VCard dir resource
 akonadiconsole=Akonadi|akonadiconsole
@@ -127,7 +128,7 @@ kmailcvt=kmail2|general
 kmail-migrator=|kmail2|general
 kaddressbook-mobile=KDE PIM Mobile|general
 backupmail=kdepim|backupmail
-importwizard=kdepim|importwizard
+
 
 #KDE Konqueror
 kjscmd=konqueror|kjs
