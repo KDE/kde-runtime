@@ -115,8 +115,9 @@ akonadictl=Akonadi|general
 akonadiserver=Akonadi|server
 akonaditest=Akonadi|general
 akonaditray=Akonadi|general
-accountwizard=akonadi|Account Wizard
-kres-migrator=akonadi|Migration
+accountwizard=Akonadi|Account Wizard
+kres-migrator=Akonadi|Migration
+akonadi_openxchange_resource=Akonadi|OpenXchange Resource
 
 #KDE Kontact (PIM)
 importwizard=kdepim|importwizard
