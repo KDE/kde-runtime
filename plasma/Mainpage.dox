@@ -29,7 +29,7 @@ The classes documented here are not C++ public libraries: they are intended to b
 @maintainers
 
 @licenses
-@gpl
+@lgpl
 
 */
 
