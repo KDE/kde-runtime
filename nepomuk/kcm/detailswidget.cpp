@@ -109,6 +109,7 @@ void Nepomuk2::DetailsWidget::slotFileCountFinished(Soprano::Util::AsyncQuery* q
 {
     int num = query->binding(0).literal().toInt();
     m_fileCountLabel->setText( i18n("%1", num) );
+    query->close();
 
     QLatin1String queryStr("select count(distinct ?r) where { ?r a aneo:AkonadiDataObject . }");
 
@@ -124,5 +125,7 @@ void Nepomuk2::DetailsWidget::slotEmailCountFinished(Soprano::Util::AsyncQuery* 
 {
     int num = query->binding(0).literal().toInt();
     m_emailCountLabel->setText( i18n("%1", num) );
+
+    query->close();
 }
 
