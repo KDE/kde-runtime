@@ -20,6 +20,7 @@ kwalletd=kdelibs|kwallet
 kwrited=konsole|kwrited
 kbuildsycoca4=kdelibs|ksycoca
 knotify4=kdelibs|knotify
+kcminit=kde|general
 
 #KDE Platform (KIO)
 kioclient=kio|general
