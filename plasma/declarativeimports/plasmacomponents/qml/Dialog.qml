@@ -224,6 +224,7 @@ Item {
     Component {
         id: dialogComponent
         PlasmaCore.Dialog {
+            id: dialogItem
             windowFlags: Qt.Popup
 
             //state: "Hidden"
@@ -239,7 +240,7 @@ Item {
             mainItem: Item {
                 id: dialogMainItem
                 width: dialogLayout.width
-                height: dialogLayout.height
+                height: dialogLayout.height + theme.defaultFont.mSize.height * 2
             }
 
             Component.onCompleted: dialogLayout.parent = dialogMainItem
