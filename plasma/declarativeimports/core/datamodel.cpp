@@ -133,6 +133,10 @@ QString SortFilterModel::sortRole() const
 
 void SortFilterModel::setSortOrder(const Qt::SortOrder order)
 {
+    if (order != sortOrder()) {
+        emit sortOrderChanged(order);
+    }
+
     sort(0, order);
 }
 

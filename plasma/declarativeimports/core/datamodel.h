@@ -61,7 +61,12 @@ class SortFilterModel : public QSortFilterProxyModel
     /**
      * One of Qt.Ascending or Qt.Descending
      */
-    Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder WRITE setSortOrder)
+    Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder WRITE setSortOrder NOTIFY sortOrderChanged)
+
+    /**
+     * One of Qt.CaseInsensitive or Qt.CaseSensitive
+     */
+    Q_PROPERTY(Qt::CaseSensitivity sortCaseSensitivity READ sortCaseSensitivity WRITE setSortCaseSensitivity)
 
     /**
      * How many items are in this model
@@ -106,6 +111,7 @@ Q_SIGNALS:
     void countChanged();
     void sourceModelChanged(QObject *);
     void filterRegExpChanged(const QString &);
+    void sortOrderChanged(const Qt::SortOrder);
 
 protected:
     int roleNameToId(const QString &name);
