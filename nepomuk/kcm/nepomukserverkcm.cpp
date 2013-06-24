@@ -137,8 +137,6 @@ Nepomuk2::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVarian
                  this, SLOT( changed() ) );
         connect( m_checkEnableEmailIndexer, SIGNAL( toggled(bool) ),
                  this, SLOT( changed() ) );
-        connect( m_sliderMemoryUsage, SIGNAL( valueChanged(int) ),
-                 this, SLOT( changed() ) );
         connect( m_comboRemovableMediaHandling, SIGNAL( activated(int) ),
                  this, SLOT( changed() ) );
 
@@ -152,8 +150,6 @@ Nepomuk2::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVarian
                  this, SLOT(slotEmailIndexerSuspendResumeClicked()) );
         connect( m_buttonDetails, SIGNAL( leftClickedUrl() ),
                  this, SLOT( slotStatusDetailsClicked() ) );
-        connect( m_buttonCheckForNewFiles, SIGNAL( clicked() ),
-                 this, SLOT( slotUpdateAllFolders() ) );
 
         connect( m_checkboxAudio, SIGNAL(toggled(bool)),
                  this, SLOT(slotCheckBoxesChanged()) );
@@ -285,13 +281,6 @@ void Nepomuk2::ServerConfigModule::load()
 
     groupBox->setEnabled(m_checkEnableNepomuk->isChecked());
 
-    // 3. storage service
-    KConfig serverConfig( "nepomukserverrc" );
-    const int maxMem = qMax( 20, serverConfig.group( "main Settings" ).readEntry( "Maximum memory", 50 ) );
-    m_sliderMemoryUsage->setValue( maxMem );
-    m_editMemoryUsage->setValue( maxMem );
-
-
     // 4. Backup settings
     KConfig backupConfig( "nepomukbackuprc" );
     KConfigGroup backupCfg = backupConfig.group("Backup");
@@ -326,7 +315,6 @@ void Nepomuk2::ServerConfigModule::save()
     KConfig config( "nepomukserverrc" );
     config.group( "Basic Settings" ).writeEntry( "Start Nepomuk", m_checkEnableNepomuk->isChecked() );
     config.group( "Service-nepomukfileindexer" ).writeEntry( "autostart", m_checkEnableFileIndexer->isChecked() );
-    config.group( "main Settings" ).writeEntry( "Maximum memory", m_sliderMemoryUsage->value() );
 
     KConfig akonadiConfig( "akonadi_nepomuk_feederrc" );
     akonadiConfig.group( "akonadi_nepomuk_email_feeder" ).writeEntry( "Enabled", m_checkEnableEmailIndexer->isChecked() );
@@ -771,11 +759,6 @@ void Nepomuk2::ServerConfigModule::slotCheckBoxesChanged()
 {
     m_checkboxesChanged = true;;
     changed( true );
-}
-
-void Nepomuk2::ServerConfigModule::slotUpdateAllFolders()
-{
-     m_fileIndexerInterface->updateAllFolders( true );
 }
 
 #include "nepomukserverkcm.moc"
