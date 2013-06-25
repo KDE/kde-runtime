@@ -119,6 +119,7 @@ akonaditray=Akonadi|general
 accountwizard=Akonadi|Account Wizard
 kres-migrator=Akonadi|Migration
 akonadi_openxchange_resource=Akonadi|OpenXchange Resource
+akonadi_newmailnotifier_agent=Akonadi|New Mail Notifier
 
 #KDE Kontact (PIM)
 importwizard=kdepim|importwizard
