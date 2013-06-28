@@ -164,7 +164,7 @@ if(LIBATTICA_FOUND)
   macro_optional_add_subdirectory(attica)
 endif(LIBATTICA_FOUND)
 
-feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
+feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
 ########### install files ###############
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/kde4 DESTINATION ${BIN_INSTALL_DIR})
