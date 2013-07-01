@@ -58,7 +58,7 @@ Name[nb]=Wiktionary – den frie ordboka
 Name[nds]=Wiktionary - dat fre'e Wöörbook (engl.)
 Name[ne]=विक्सनरी - नि:शुल्क शब्दकोश
 Name[nl]=Wiktionary - het vrije woordenboek
-Name[nn]=Wikipedia – det frie oppslagsverket
+Name[nn]=Wiktionary – den frie ordboka
 Name[or]=Wiktionary - ମୁକ୍ତ ଅଭିଧାନ
 Name[pa]=ਵਿੱਕੀਸ਼ਨਰੀ - ਮੁਫਤ ਡਿਕਸ਼ਨਰੀ
 Name[pl]=Wiktionary - Otwarty słownik
@@ -146,7 +146,7 @@ Query[nb]=http://no.wiktionary.org/wiki/Special:Search?search=\\{@}&go=Go
 Query[nds]=http://en.wiktionary.org/wiki/Special:Search?search=\\{@}&go=Go
 Query[ne]=http://en.wiktionary.org/wiki/Special:Search?search=\\{@}&go=Go
 Query[nl]=http://nl.wiktionary.org/wiki/Special:Search?search=\\{@}&go=Go
-Query[nn]=http://en.wiktionary.org/wiki/Special:Search?search=\\{@}&go=Go
+Query[nn]=http://nn.wiktionary.org/wiki/Special:Search?search=\\{@}&go=Go
 Query[oc]=http://oc.wiktionary.org/wiki/Special:Search?search=\\{@}&go=Go
 Query[or]=http://en.wiktionary.org/wiki/Special:Search?search=\\{@}&go=Go
 Query[pa]=http://en.wiktionary.org/wiki/Special:Search?search=\\{@}&go=Go
