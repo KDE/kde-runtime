@@ -1097,11 +1097,15 @@ void PhononServer::askToRemoveDevices(const QStringList &devList, int type, cons
     if (!areAudio && !areVideo)
         return;
 
+    const QString &dontEverAsk = QLatin1String("phonon_always_forget_devices");
     const QString &dontAskAgainName = QLatin1String("phonon_forget_devices_") +
         devList.join(QLatin1String("_"));
 
+    // Please note that dontEverAsk overrides the device specific lists
+    // i.e. if it is set we always return
     KMessageBox::ButtonCode result;
-    if (!KMessageBox::shouldBeShownYesNo(dontAskAgainName, result)) {
+    if (!KMessageBox::shouldBeShownYesNo(dontEverAsk, result) ||
+            !KMessageBox::shouldBeShownYesNo(dontAskAgainName, result)) {
         if (result == KMessageBox::Yes) {
             if (areAudio) {
                 kDebug(601) << "removeAudioDevices" << indexes;
