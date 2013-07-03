@@ -1,5 +1,6 @@
-/*  This file is part of the KDE project
+/*
     Copyright (C) 2008 Matthias Kretz <kretz@kde.org>
+    Copyright (C) 2013 Harald Sitter <sitter@kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License as
@@ -15,7 +16,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     02110-1301, USA.
-
 */
 
 #include "phononserver.h"
@@ -432,6 +432,8 @@ void PhononServer::findDevices()
         int cardNum = -1;
         int deviceNum = -1;
 
+        kDebug(601) << "looking at device:" << audioIface->name() << audioIface->driverHandle();
+
         bool capture = audioIface->deviceType() & Solid::AudioInterface::AudioInput;
         bool playback = audioIface->deviceType() & Solid::AudioInterface::AudioOutput;
 
@@ -701,10 +703,15 @@ void PhononServer::findDevices()
     QList<int> askToRemoveAudioIndexes;
     QList<int> askToRemoveVideoIndexes;
 
+    kDebug(601) << "groups:" << groupList;
+    kDebug(601) << "already found devices:" << alreadyFoundCards;
+
     foreach (const QString &groupName, groupList) {
         if (alreadyFoundCards.contains(groupName)) {
             continue;
         }
+
+        kDebug(601) << "group not found:" << groupName;
 
         const bool isAudio = groupName.startsWith(QLatin1String("AudioDevice_"));
         const bool isVideo = groupName.startsWith(QLatin1String("VideoDevice_"));
