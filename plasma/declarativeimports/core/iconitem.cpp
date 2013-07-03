@@ -85,22 +85,23 @@ void IconItem::setSource(const QVariant &source)
         if (!m_svgIcon) {
             m_svgIcon = new Plasma::Svg(this);
         }
+        const QString element = source.toString();
+        const QString filename = element.split('-').first();
         //try as a svg toolbar icon
-        m_svgIcon->setImagePath("toolbar-icons/" + source.toString().split("-").first());
+        m_svgIcon->setImagePath("toolbar-icons/" + filename);
 
         //try as a svg normal icon (like systray)
-        if (!m_svgIcon->isValid() || !m_svgIcon->hasElement(m_source.toString())) {
-            m_svgIcon->setImagePath("icons/" + source.toString().split("-").first());
+        if (!m_svgIcon->isValid() || !m_svgIcon->hasElement(element)) {
+            m_svgIcon->setImagePath("icons/" + filename);
         }
         m_svgIcon->setContainsMultipleImages(true);
 
         //success?
-        if (m_svgIcon->isValid() && m_svgIcon->hasElement(m_source.toString())) {
+        if (m_svgIcon->isValid() && m_svgIcon->hasElement(element)) {
             m_icon = QIcon();
-
-        //ok, svg not available
         } else {
-            m_icon = KIcon(source.toString());
+            //ok, svg not available
+            m_icon = KIcon(element);
             delete m_svgIcon;
             m_svgIcon = 0;
         }
