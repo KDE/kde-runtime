@@ -76,7 +76,7 @@ Item {
     Loader {
         id: shadowLoader
         anchors.fill: surfaceLoader
-        state: (dualButton.enabled && (dualButton.focus || mouseArea.containsMouse)) ? "hover" : "shadow"
+        state: (dualButton.enabled && (dualButton.activeFocus || mouseArea.containsMouse)) ? "hover" : "shadow"
     }
 
     Loader {
