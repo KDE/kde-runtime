@@ -525,12 +525,6 @@ Item {
                     if (page.status == PageStatus.Active) {
                         internal.setPageStatus(page, PageStatus.Inactive)
                     }
-                    if (owner != container) {
-                        // container is not the owner of the page - re-parent back to original owner
-                        page.visible = false;
-                        page.anchors.fill = undefined
-                        page.parent = owner;
-                    }
                 }
 
                 container.destroy();
