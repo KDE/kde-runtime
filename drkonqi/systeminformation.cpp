@@ -137,6 +137,8 @@ QString SystemInformation::guessBugzillaPlatform(const QString& distroInfo) cons
         return (QLatin1String("Mageia RPMs"));
     } else if ( distroInfo.contains("slack",Qt::CaseInsensitive) ) {
         return (QLatin1String("Slackware Packages"));
+    } else if ( distroInfo.contains("pclinuxos",Qt::CaseInsensitive) ) {
+        return (QLatin1String("PCLinuxOS"));
     } else if ( distroInfo.contains("pardus",Qt::CaseInsensitive) ) {
         return (QLatin1String("Pardus Packages"));
     } else if ( distroInfo.contains("freebsd",Qt::CaseInsensitive) ) {
