@@ -122,7 +122,9 @@ QString SystemInformation::guessBugzillaPlatform(const QString& distroInfo) cons
     if ( distroInfo.contains("suse",Qt::CaseInsensitive) ) {
         return (QLatin1String("openSUSE RPMs"));
     } else if ( distroInfo.contains("mint",Qt::CaseInsensitive) ) {
-        return (QLatin1String("Ubuntu Packages"));
+        return (QLatin1String("Mint (Ubuntu Based)"));
+    } else if ( distroInfo.contains("lmde",Qt::CaseInsensitive) ) {
+        return (QLatin1String("Mint (Debian Based)"));
     } else if ( distroInfo.contains("ubuntu",Qt::CaseInsensitive) ) {
         return (QLatin1String("Ubuntu Packages"));
     } else if ( distroInfo.contains("fedora",Qt::CaseInsensitive) ) {
@@ -137,6 +139,8 @@ QString SystemInformation::guessBugzillaPlatform(const QString& distroInfo) cons
         return (QLatin1String("Mageia RPMs"));
     } else if ( distroInfo.contains("slack",Qt::CaseInsensitive) ) {
         return (QLatin1String("Slackware Packages"));
+    } else if ( distroInfo.contains("pclinuxos",Qt::CaseInsensitive) ) {
+        return (QLatin1String("PCLinuxOS"));
     } else if ( distroInfo.contains("pardus",Qt::CaseInsensitive) ) {
         return (QLatin1String("Pardus Packages"));
     } else if ( distroInfo.contains("freebsd",Qt::CaseInsensitive) ) {
