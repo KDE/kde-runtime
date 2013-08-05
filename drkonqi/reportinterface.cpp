@@ -208,7 +208,7 @@ QString ReportInterface::generateReportFullText(bool drKonqiStamp) const
             duplicatesString += QLatin1String("bug ") + dupe + QLatin1String(", ");
         }
         duplicatesString = duplicatesString.left(duplicatesString.length()-2) + '.';
-        report.append(QString("This bug may be a duplicate of or related to %1\n")
+        report.append(QString("The reporter indicates this bug may be a duplicate of or related to %1\n")
                         .arg(duplicatesString));
     }
 
