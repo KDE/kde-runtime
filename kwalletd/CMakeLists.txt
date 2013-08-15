@@ -40,6 +40,8 @@ if (QGPGME_FOUND)
         knewwalletdialog.cpp
     )
     kde4_add_ui_files(kwalletd_KDEINIT_SRCS
+        kwalletwizardpagepasswordgpg.ui
+        kwalletwizardpagegpgkey.ui
         knewwalletdialogintro.ui
         knewwalletdialoggpg.ui
     )
