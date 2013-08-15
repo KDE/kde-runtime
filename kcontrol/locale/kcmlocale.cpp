@@ -1310,6 +1310,8 @@ void KCMLocale::initNumericDigitGrouping()
     setNumericDigitGrouping( m_kcmSettings.readEntry( "DigitGroupFormat", "3" ) );
 
     m_ui->m_comboNumericDigitGrouping->blockSignals( false );
+
+    updateSample();
 }
 
 void KCMLocale::defaultNumericDigitGrouping()
@@ -1330,6 +1332,8 @@ void KCMLocale::setNumericDigitGrouping( const QString &newValue )
     // No api to set, so need to force reload the locale
     m_kcmConfig->markAsClean();
     m_kcmLocale->setCountry( m_kcmSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
+
+    updateSample();
 }
 
 void KCMLocale::initNumericThousandsSeparator()
@@ -1785,6 +1789,7 @@ void KCMLocale::setMonetaryDigitGrouping( const QString &newValue )
     // No api to set, so need to force reload the locale
     m_kcmConfig->markAsClean();
     m_kcmLocale->setCountry( m_kcmSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
+    updateSample();
 }
 
 void KCMLocale::initMonetaryThousandsSeparator()
@@ -1833,6 +1838,7 @@ void KCMLocale::changedMonetaryThousandsSeparator( const QString &newValue )
     initMonetaryDigitGrouping();
     initMonetaryPositiveFormat();
     initMonetaryNegativeFormat();
+    updateSample();
 }
 
 void KCMLocale::setMonetaryThousandsSeparator( const QString &newValue )
@@ -2206,6 +2212,8 @@ void KCMLocale::setMonetaryNegativeFormat( bool prefixCurrencySymbol, KLocale::S
     options.append( QVariant( signPosition ) );
     int index = m_ui->m_comboMonetaryNegativeFormat->findData( options );
     m_ui->m_comboMonetaryNegativeFormat->setCurrentIndex( index );
+
+    updateSample();
 }
 
 void KCMLocale::initMonetaryDigitSet()
@@ -2305,6 +2313,7 @@ void KCMLocale::setCalendarSystem( const QString &newValue )
     initWorkingWeekStartDay();
     initWorkingWeekEndDay();
     initWeekDayOfPray();
+    updateSample();
 }
 
 void KCMLocale::initUseCommonEra()
@@ -2659,6 +2668,7 @@ void KCMLocale::changedTimeFormat( const QString &newValue )
     setItem( "TimeFormat", userToPosixTime( newValue ),
              m_ui->m_comboTimeFormat, m_ui->m_buttonDefaultTimeFormat );
     m_kcmLocale->setTimeFormat( m_kcmSettings.readEntry( "TimeFormat", QString() ) );
+    updateSample();
 }
 
 void KCMLocale::setTimeFormat( const QString &newValue )
@@ -2668,6 +2678,7 @@ void KCMLocale::setTimeFormat( const QString &newValue )
     QString value = m_kcmSettings.readEntry( "TimeFormat", QString() );
     m_ui->m_comboTimeFormat->setEditText( posixToUserTime( value ) );
     m_kcmLocale->setTimeFormat( value );
+    updateSample();
 }
 
 QString KCMLocale::dayPeriodText( const QString &dayPeriod )
@@ -2789,6 +2800,8 @@ void KCMLocale::setAmPmPeriods( const QString &amPeriod, const QString &pmPeriod
         m_kcmLocale->setCountry( m_kcmSettings.readEntry( "Country", QString() ), m_kcmConfig.data() );
         m_kcmLocale->setCalendar( m_kcmSettings.readEntry( "CalendarSystem", QString() ) );
     }
+
+    updateSample();
 }
 
 void KCMLocale::defaultAmSymbol()
@@ -2943,6 +2956,7 @@ void KCMLocale::changedDateFormat( const QString &newValue )
     setItem( "DateFormat", userToPosixDate( newValue ),
              m_ui->m_comboDateFormat, m_ui->m_buttonDefaultDateFormat );
     m_kcmLocale->setDateFormat( m_kcmSettings.readEntry( "DateFormat", QString() ) );
+    updateSample();
 }
 
 void KCMLocale::setDateFormat( const QString &newValue )
@@ -2952,6 +2966,7 @@ void KCMLocale::setDateFormat( const QString &newValue )
     QString value = m_kcmSettings.readEntry( "DateFormat", QString() );
     m_ui->m_comboDateFormat->setEditText( posixToUserDate( value ) );
     m_kcmLocale->setDateFormat( value );
+    updateSample();
 }
 
 void KCMLocale::initShortDateFormat()
@@ -3063,6 +3078,7 @@ void KCMLocale::changedShortDateFormat( const QString &newValue )
     setItem( "DateFormatShort", userToPosixDate( newValue ),
              m_ui->m_comboShortDateFormat, m_ui->m_buttonDefaultShortDateFormat );
     m_kcmLocale->setDateFormatShort( m_kcmSettings.readEntry( "DateFormatShort", QString() ) );
+    updateSample();
 }
 
 void KCMLocale::setShortDateFormat( const QString &newValue )
@@ -3072,6 +3088,7 @@ void KCMLocale::setShortDateFormat( const QString &newValue )
     QString value = m_kcmSettings.readEntry( "DateFormatShort", QString() );
     m_ui->m_comboShortDateFormat->setEditText( posixToUserDate( value ) );
     m_kcmLocale->setDateFormatShort( value );
+    updateSample();
 }
 
 void KCMLocale::initMonthNamePossessive()
@@ -3113,6 +3130,7 @@ void KCMLocale::setMonthNamePossessive( bool newValue )
     setCheckItem( "DateMonthNamePossessive", newValue,
                   m_ui->m_checkMonthNamePossessive, m_ui->m_buttonDefaultMonthNamePossessive );
     m_kcmLocale->setDateMonthNamePossessive( m_kcmSettings.readEntry( "DateMonthNamePossessive", 0 ) );
+    updateSample();
 }
 
 void KCMLocale::initDateTimeDigitSet()
