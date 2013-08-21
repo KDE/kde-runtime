@@ -71,12 +71,6 @@ find_package(KDE4Support REQUIRED NO_MODULE)
 #                        TYPE ${STRIGI_TYPE}
 #                       )
 # 
-# find_package(KDeclarative QUIET CONFIG)
-# set_package_properties(KDeclarative PROPERTIES DESCRIPTION "KDE Declarative (QML) support from kdelibs"
-#                        URL "http://www.kde.org"
-#                        TYPE REQUIRED
-#                        PURPOSE "Required by corebindingsplugin (org.kde.plasma.core)"
-#                       )
 
 # find_package(NepomukCore)
 # set_package_properties(NepomukCore PROPERTIES DESCRIPTION "Nepomuk Core Libraries"
