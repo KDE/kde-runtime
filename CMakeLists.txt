@@ -30,6 +30,8 @@ find_package(Qt5X11Extras REQUIRED NO_MODULE)
 #include(ConfigureChecks.cmake)
 
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0)
+add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DHAVE_CONFIG_H=1)
+add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
 
 find_package(kdeqt5staging REQUIRED NO_MODULE)
 # Load CMake, Compiler and InstallDirs settings from KF5 and the following are already somewhat "done" tier1/tier2 libs from kdelibs:
@@ -109,6 +111,7 @@ configure_file (config-runtime.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-runtim
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
+remove_definitions(-DQT_NO_CAST_FROM_ASCII -DQT_STRICT_ITERATORS -DQT_NO_CAST_FROM_BYTEARRAY -DQT_NO_KEYWORDS)
 
 # include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES})
 
@@ -142,7 +145,7 @@ endif(NepomukCore_FOUND)
 if ( NOT WINCE )
 #     add_subdirectory(kcontrol)
 endif ( NOT WINCE )
-# add_subdirectory(kioslave)
+add_subdirectory(kioslave)
 # add_subdirectory(kurifilter-plugins)
 # add_subdirectory(phonon)
 # add_subdirectory(kimgio)
