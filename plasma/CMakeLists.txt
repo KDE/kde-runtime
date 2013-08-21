@@ -1,6 +1,0 @@
-add_subdirectory(containments)
-add_subdirectory(declarativeimports)
-add_subdirectory(kpart)
-add_subdirectory(remotewidgetshelper)
-add_subdirectory(scriptengines)
-add_subdirectory(tools)

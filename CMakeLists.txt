@@ -173,9 +173,6 @@ if (Q_WS_X11)
 endif (Q_WS_X11)
 # add_subdirectory(kquitapp)
 # add_subdirectory(menu)
-if ( NOT WINCE )
-#     add_subdirectory(plasma)
-endif ( NOT WINCE )
 # add_subdirectory(solid-hardware)
 
 # Platform-specific integration
