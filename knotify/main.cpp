@@ -27,6 +27,7 @@
 #include <klocale.h>
 #include <kmessage.h>
 #include <kpassivepopupmessagehandler.h>
+#include <kdeversion.h>
 #include <kdefakes.h>
 
 #include "knotify.h"
@@ -35,7 +36,7 @@
 int main(int argc, char **argv)
 {
     KAboutData aboutdata("knotify", "knotify4", ki18n("KNotify"),
-                         "4.0", ki18n("KDE Notification Daemon"),
+                         KDE_VERSION_STRING, ki18n("KDE Notification Daemon"),
                          KAboutData::License_GPL, ki18n("(C) 1997-2008, KDE Developers"));
     aboutdata.addAuthor(ki18n("Olivier Goffart"),ki18n("Current Maintainer"),"ogoffart@kde.org");
     aboutdata.addAuthor(ki18n("Carsten Pfeiffer"),ki18n("Previous Maintainer"),"pfeiffer@kde.org");
