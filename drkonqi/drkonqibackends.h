@@ -57,7 +57,7 @@ protected:
     virtual CrashedApplication *constructCrashedApplication();
     virtual DebuggerManager *constructDebuggerManager();
 
-private slots:
+private Q_SLOTS:
     void stopAttachedProcess();
     void continueAttachedProcess();
     void onDebuggerStarting();

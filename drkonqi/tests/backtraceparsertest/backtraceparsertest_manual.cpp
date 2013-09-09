@@ -21,13 +21,13 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QMetaEnum>
 #include <QtCore/QCoreApplication>
-#include <KAboutData>
+#include <k4aboutdata.h>
 #include <KCmdLineOptions>
 #include <KLocalizedString>
 
 int main(int argc, char **argv)
 {
-    KAboutData aboutData("backtraceparsertest_manual", 0,
+    K4AboutData aboutData("backtraceparsertest_manual", 0,
                          ki18n("backtraceparsertest_manual"), "1.0");
     KCmdLineArgs::init(argc, argv, &aboutData);
 

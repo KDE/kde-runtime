@@ -66,10 +66,10 @@ public:
 
     const QDateTime& datetime() const;
 
-public slots:
+public Q_SLOTS:
     void restart();
 
-signals:
+Q_SIGNALS:
     void restarted(bool success);
 
 protected:

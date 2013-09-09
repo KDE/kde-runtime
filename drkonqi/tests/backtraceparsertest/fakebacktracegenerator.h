@@ -28,7 +28,7 @@ public:
     FakeBacktraceGenerator(QObject *parent = 0) : QObject(parent) {}
     void sendData(const QString & filename);
 
-signals:
+Q_SIGNALS:
     void starting();
     void newLine(const QString & line);
 };

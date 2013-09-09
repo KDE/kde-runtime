@@ -15,6 +15,8 @@ include(CMakePackageConfigHelpers)
 include(FeatureSummary)
 include(WriteBasicConfigVersionFile)
 
+add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0)
+
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
 
@@ -33,6 +35,10 @@ add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0)
 add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DHAVE_CONFIG_H=1)
 add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
 
+# Executables fail to build with Qt 5 in the default configuration
+# without -fPIE. We add that here.
+set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+
 find_package(kdeqt5staging REQUIRED NO_MODULE)
 # Load CMake, Compiler and InstallDirs settings from KF5 and the following are already somewhat "done" tier1/tier2 libs from kdelibs:
 find_package(KF5 MODULE REQUIRED COMPONENTS CMake Compiler InstallDirs
@@ -41,6 +47,7 @@ find_package(KF5 MODULE REQUIRED COMPONENTS CMake Compiler InstallDirs
     KI18n KGuiAddons KService KConfigWidgets ItemViews KNotifications KIconThemes KStyle KCompletion KJobWidgets KTextWidgets XmlGui KCrash
     KIO KUnitConversion KDE4Attic)
 
+find_package(KBookmarks REQUIRED NO_MODULE)
 find_package(Plasma REQUIRED NO_MODULE)
 find_package(kdeclarative REQUIRED NO_MODULE)
 find_package(KInterProcessWindowing REQUIRED NO_MODULE)
@@ -107,7 +114,7 @@ add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
 remove_definitions(-DQT_NO_CAST_FROM_ASCII -DQT_STRICT_ITERATORS -DQT_NO_CAST_FROM_BYTEARRAY -DQT_NO_KEYWORDS)
 
-# include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES})
+include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES} ${KF5_INCLUDE_DIRS})
 
 # Build infrastructure
 # add_subdirectory(cmake)
@@ -146,7 +153,7 @@ add_subdirectory(kioslave)
 # macro_optional_add_subdirectory(renamedlgplugins)
 
 # UI Helper applications
-# add_subdirectory(drkonqi)
+add_subdirectory(drkonqi)
 # add_subdirectory(kcmshell)
 # add_subdirectory(kdebugdialog)
 # add_subdirectory(khelpcenter)

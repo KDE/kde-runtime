@@ -1,5 +1,7 @@
 project(drkonqi)
 
+include (CheckFunctionExists)
+
 check_function_exists("strsignal" HAVE_STRSIGNAL)
 check_function_exists("uname" HAVE_UNAME)
 
@@ -29,23 +31,23 @@ endif ( WIN32 )
 
 set(drkonqi_SRCS
     main.cpp
-    bugzillalib.cpp
+#     bugzillalib.cpp
     drkonqidialog.cpp
     statuswidget.cpp
     aboutbugreportingdialog.cpp
-    reportassistantdialog.cpp
-    reportassistantpage.cpp
-    reportassistantpages_base.cpp
-    reportassistantpages_bugzilla.cpp
-    reportassistantpages_bugzilla_duplicates.cpp
-    reportinterface.cpp
+#     reportassistantdialog.cpp
+#     reportassistantpage.cpp
+#     reportassistantpages_base.cpp
+#     reportassistantpages_bugzilla.cpp
+#     reportassistantpages_bugzilla_duplicates.cpp
+#     reportinterface.cpp
     backtraceratingwidget.cpp
     backtracewidget.cpp
     backtracegenerator.cpp
     drkonqi.cpp
     drkonqibackends.cpp
     detachedprocessmonitor.cpp
-    productmapping.cpp
+#    productmapping.cpp
     debugpackageinstaller.cpp
     systeminformation.cpp
     crashedapplication.cpp
@@ -55,7 +57,7 @@ set(drkonqi_SRCS
     applicationdetailsexamples.cpp
     gdbhighlighter.cpp
     parsebugbacktraces.cpp
-    duplicatefinderjob.cpp
+#    duplicatefinderjob.cpp
 )
 
 kde4_add_ui_files(drkonqi_SRCS
@@ -83,9 +85,16 @@ kde4_add_executable(drkonqi ${drkonqi_SRCS})
 
 target_link_libraries(drkonqi
     ${KDE4_KIO_LIBS}
+    KF5::KI18n
+    KF5::KIconThemes
+    KF5::KWindowSystem
+    KF5::KCrash
+    ${KDE4Support_LIBRARIES}
+    ${KDE4Attic_LIBRARIES}
+    ${KCore_LIBRARIES}
     ${QT_QTWEBKIT_LIBRARY}
     ${KDE4_KDEWEBKIT_LIBRARY}
-    ${KDEPIMLIBS_KXMLRPCCLIENT_LIBRARY}
+#    ${KDEPIMLIBS_KXMLRPCCLIENT_LIBRARY}
     drkonqi_backtrace_parser
 )
 

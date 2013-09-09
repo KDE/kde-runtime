@@ -37,14 +37,14 @@ public:
     QList<AbstractDebuggerLauncher*> availableExternalDebuggers() const;
     BacktraceGenerator *backtraceGenerator() const;
 
-signals:
+Q_SIGNALS:
     void debuggerStarting();
     void debuggerFinished();
     void debuggerRunning(bool running);
     void externalDebuggerAdded(AbstractDebuggerLauncher *launcher);
     void externalDebuggerRemoved(AbstractDebuggerLauncher *launcher);
 
-private slots:
+private Q_SLOTS:
     void onDebuggerStarting();
     void onDebuggerFinished();
     void onDebuggerInvalidated();

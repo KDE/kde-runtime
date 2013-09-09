@@ -28,6 +28,8 @@
 #include <KCmdLineArgs>
 #include <KToolInvocation>
 
+#include <KGlobal>
+
 #include "drkonqi.h"
 #include "backtracewidget.h"
 #include "reportassistantdialog.h"
@@ -250,9 +252,11 @@ void DrKonqiDialog::enableDebugMenu(bool debuggerRunning)
 
 void DrKonqiDialog::startBugReportAssistant()
 {
+/*TODO: port bugzilla manager to KF5: needs kdepimlibs
     ReportAssistantDialog * bugReportAssistant = new ReportAssistantDialog();
     close();
     bugReportAssistant->show();
+*/
 }
 
 void DrKonqiDialog::linkActivated(const QString& link)

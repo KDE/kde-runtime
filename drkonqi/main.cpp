@@ -30,9 +30,10 @@
 
 #include <KApplication>
 #include <KCmdLineArgs>
-#include <KAboutData>
+#include <k4aboutdata.h>
 #include <KLocalizedString>
 #include <kdefakes.h>
+#include <kglobal.h>
 
 #include "drkonqi.h"
 #include "drkonqidialog.h"
@@ -56,9 +57,9 @@ int main(int argc, char* argv[])
     // Session management is not needed, do not even connect in order to survive longer than ksmserver.
     unsetenv("SESSION_MANAGER");
 
-    KAboutData aboutData("drkonqi", 0, ki18n("The KDE Crash Handler"),
+    K4AboutData aboutData("drkonqi", "drkonqi", ki18n("The KDE Crash Handler"),
                          version, ki18n(description),
-                         KAboutData::License_GPL,
+                         K4AboutData::License_GPL,
                          ki18n("(C) 2000-2009, The DrKonqi Authors"));
     aboutData.addAuthor(ki18nc("@info:credit","Hans Petter Bieker"), KLocalizedString(),
                          "bieker@kde.org");

@@ -32,10 +32,10 @@ public:
     explicit AbstractDebuggerLauncher(DebuggerManager *parent = 0) : QObject(parent) {}
     virtual QString name() const = 0;
 
-public slots:
+public Q_SLOTS:
     virtual void start() = 0;
 
-signals:
+Q_SIGNALS:
     void starting();
     void finished();
     void invalidated();
@@ -48,10 +48,10 @@ public:
     explicit DefaultDebuggerLauncher(const Debugger & debugger, DebuggerManager *parent = 0);
     virtual QString name() const;
 
-public slots:
+public Q_SLOTS:
     virtual void start();
 
-private slots:
+private Q_SLOTS:
     void onProcessFinished();
 
 private:
@@ -82,10 +82,10 @@ public:
     explicit DBusOldInterfaceLauncher(DebuggerManager *parent = 0);
     virtual QString name() const;
 
-public slots:
+public Q_SLOTS:
     virtual void start();
 
-signals:
+Q_SIGNALS:
     void available();
 
 private:
@@ -101,11 +101,11 @@ class DBusOldInterfaceAdaptor : public QDBusAbstractAdaptor
 public:
     explicit DBusOldInterfaceAdaptor(DBusOldInterfaceLauncher *parent);
 
-public slots:
+public Q_SLOTS:
     int pid();
     Q_NOREPLY void registerDebuggingApplication(const QString & name);
 
-signals:
+Q_SIGNALS:
     void acceptDebuggingApplication();
 };
 

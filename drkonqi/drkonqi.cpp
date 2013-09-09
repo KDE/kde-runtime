@@ -53,6 +53,7 @@
 #include <KCrash>
 #include <KDebug>
 #include <KLocalizedString>
+#include <KUrl>
 
 #include "systeminformation.h"
 #include "crashedapplication.h"
@@ -159,9 +160,9 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
     } else {
         QString defname = getSuggestedKCrashFilename(crashedApplication());
 
-        QWeakPointer<KFileDialog> dlg = new KFileDialog(defname, QString(), parent);
+        QWeakPointer<KFileDialog> dlg = new KFileDialog(QUrl(), defname, parent);
         dlg.data()->setSelection(defname);
-        dlg.data()->setCaption(i18nc("@title:window","Select Filename"));
+        dlg.data()->setWindowTitle(i18nc("@title:window","Select Filename"));
         dlg.data()->setOperationMode(KFileDialog::Saving);
         dlg.data()->setMode(KFile::File);
         dlg.data()->setConfirmOverwrite(true);

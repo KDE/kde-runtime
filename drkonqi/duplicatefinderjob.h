@@ -79,7 +79,7 @@ class DuplicateFinderJob : public KJob
          */
         Result result() const;
 
-    private slots:
+    private Q_SLOTS:
         void slotBugReportFetched(const BugReport &bug, QObject *owner);
         void slotBugReportError(const QString &message, QObject *owner);
 

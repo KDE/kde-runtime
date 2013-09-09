@@ -34,6 +34,7 @@
 #include <KConfig>
 #include <KConfigGroup>
 #include <kdeversion.h>
+#include <KGlobal>
 
 static const QString OS_UNSPECIFIED = "unspecified";
 static const QString PLATFORM_UNSPECIFIED = "unspecified";

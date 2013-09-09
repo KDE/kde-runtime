@@ -26,7 +26,7 @@ public:
     explicit DetachedProcessMonitor(QObject *parent = 0);
     void startMonitoring(int pid);
 
-signals:
+Q_SIGNALS:
     void processFinished();
 
 protected:

@@ -40,7 +40,7 @@ QList<Debugger> Debugger::availableExternalDebuggers(const QString & backend)
 
 bool Debugger::isValid() const
 {
-    return !m_config.isNull();
+    return m_config;
 }
 
 bool Debugger::isInstalled() const

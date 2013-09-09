@@ -47,7 +47,7 @@ class ParseBugBacktraces : QObject
 
         DuplicateRating findDuplicate(const QList<BacktraceLine> &backtrace);
 
-    signals:
+    Q_SIGNALS:
         void starting();
         void newLine(const QString &line);
 
