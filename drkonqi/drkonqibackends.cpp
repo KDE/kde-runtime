@@ -136,7 +136,9 @@ CrashedApplication *KCrashBackend::constructCrashedApplication()
         kDebug() << "Using /proc to determine executable path";
         a->m_executable.setFile(QFile::symLinkTarget(QString("/proc/%1/exe").arg(a->m_pid)));
 
-        if ( args->isSet("kdeinit") ) {
+        if (args->isSet("kdeinit") ||
+            a->m_executable.fileName().startsWith("python") ) {
+
             a->m_fakeBaseName = args->getOption("appname");
         }
     } else {
