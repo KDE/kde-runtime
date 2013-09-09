@@ -183,6 +183,9 @@ class KWalletD : public QObject, protected QDBusContext {
 		void notifyFailures();
 		void processTransactions();
 		void activatePasswordDialog();
+#ifdef Q_WS_X11
+        void connectToScreenSaver();
+#endif
 
 	private:
 		// Internal - open a wallet
