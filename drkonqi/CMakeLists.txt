@@ -9,7 +9,7 @@ if (NOT DEBUG_PACKAGE_INSTALLER_NAME)
     set (DEBUG_PACKAGE_INSTALLER_NAME "installdbgsymbols.sh")
 endif (NOT DEBUG_PACKAGE_INSTALLER_NAME)
 
-find_package(KdepimLibs)
+# find_package(KdepimLibs)
 set_package_properties(KdepimLibs PROPERTIES DESCRIPTION "The KDE PIM Libraries"
                        URL "http://www.kde.org"
                        TYPE REQUIRED
