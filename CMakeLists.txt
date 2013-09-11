@@ -39,7 +39,6 @@ add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
 # without -fPIE. We add that here.
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
-find_package(kdeqt5staging REQUIRED NO_MODULE)
 # Load CMake, Compiler and InstallDirs settings from KF5 and the following are already somewhat "done" tier1/tier2 libs from kdelibs:
 find_package(KF5 MODULE REQUIRED COMPONENTS CMake Compiler InstallDirs
     KIdleTime ItemModels KWidgetsAddons KWindowSystem KCodecs KArchive KCoreAddons Solid ThreadWeaver
@@ -153,7 +152,7 @@ add_subdirectory(kioslave)
 # macro_optional_add_subdirectory(renamedlgplugins)
 
 # UI Helper applications
-add_subdirectory(drkonqi)
+# add_subdirectory(drkonqi)
 # add_subdirectory(kcmshell)
 # add_subdirectory(kdebugdialog)
 # add_subdirectory(khelpcenter)
