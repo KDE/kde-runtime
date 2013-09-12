@@ -24,21 +24,28 @@
 #include <QtCore/QFile>
 #include <QtCore/Q_PID>
 
-#include <kapplication.h>
+#include <QtWidgets/QApplication>
 #include <kdeversion.h>
-#include <kstandarddirs.h>
-#include <kdebug.h>
+//#include <kstandarddirs.h>
+#include <qdebug.h>
 #include <kmessagebox.h>
+#include <kaboutdata.h>
 #include <kio/job.h>
 #include <krun.h>
+#include <kglobal.h>
 #include <kio/netaccess.h>
 #include <kservice.h>
 #include <klocale.h>
-#include <kcmdlineargs.h>
+#include <KLocalizedString>
+#include <KStandardDirs>
+#include <kcmdlineargs.h>//remove it 
+#include <kdeversion.h>
 #include <kaboutdata.h>
 #include <kstartupinfo.h>
 #include <kshell.h>
 #include <kde_file.h>
+#include <qcommandlineparser.h>
+#include <qcommandlineoption.h>
 
 static const char description[] =
         I18N_NOOP("KIO Exec - Opens remote files, watches modifications, asks for upload");
@@ -57,11 +64,11 @@ KIOExec::KIOExec()
     expectedCounter = 0;
     jobCounter = 0;
     command = args->arg(0);
-    kDebug() << "command=" << command;
+    qDebug() << "command=" << command;
 
     for ( int i = 1; i < args->count(); i++ )
     {
-        KUrl url = args->url(i);
+        QUrl url = args->url(i);
 	url = KIO::NetAccess::mostLocalUrl( url, 0 );
 
         //kDebug() << "url=" << url.url() << " filename=" << url.fileName();
@@ -98,9 +105,9 @@ KIOExec::KIOExec()
                 fileList.append(file);
 
                 expectedCounter++;
-                KUrl dest;
+                QUrl dest;
                 dest.setPath( tmp );
-                kDebug() << "Copying " << url.prettyUrl() << " to " << dest;
+                qDebug() << "Copying " << url.path() << " to " << dest;
                 KIO::Job *job = KIO::file_copy( url, dest );
                 jobList.append( job );
 
@@ -142,7 +149,7 @@ void KIOExec::slotResult( KJob * job )
         if ( it != fileList.end() )
            fileList.erase( it );
         else
-           kDebug() <<  path << " not found in list";
+           qDebug() <<  path << " not found in list";
     }
 
     counter++;
@@ -150,7 +157,7 @@ void KIOExec::slotResult( KJob * job )
     if ( counter < expectedCounter )
         return;
 
-    kDebug() << "All files downloaded, will call slotRunApp shortly";
+    qDebug() << "All files downloaded, will call slotRunApp shortly";
     // We know we can run the app now - but let's finish the job properly first.
     QTimer::singleShot( 0, this, SLOT( slotRunApp() ) );
 
@@ -160,7 +167,7 @@ void KIOExec::slotResult( KJob * job )
 void KIOExec::slotRunApp()
 {
     if ( fileList.isEmpty() ) {
-        kDebug() << "No files downloaded -> exiting";
+        qDebug() << "No files downloaded -> exiting";
         mExited = true;
         QApplication::exit(1);
         return;
@@ -168,21 +175,21 @@ void KIOExec::slotRunApp()
 
     KService service("dummy", command, QString());
 
-    KUrl::List list;
+    QList<QUrl> list;
     // Store modification times
     QList<FileInfo>::Iterator it = fileList.begin();
     for ( ; it != fileList.end() ; ++it )
     {
         KDE_struct_stat buff;
         (*it).time = KDE_stat( QFile::encodeName((*it).path), &buff ) ? 0 : buff.st_mtime;
-        KUrl url;
+        QUrl url;
         url.setPath((*it).path);
         list << url;
     }
 
     QStringList params = KRun::processDesktopExec(service, list);
 
-    kDebug() << "EXEC " << KShell::joinArgs( params );
+    qDebug() << "EXEC " << KShell::joinArgs( params );
 
 #ifdef Q_WS_X11
     // propagate the startup identification to the started process
@@ -198,7 +205,7 @@ void KIOExec::slotRunApp()
     KStartupInfo::resetStartupEnv();
 #endif
 
-    kDebug() << "EXEC done";
+    qDebug() << "EXEC done";
 
     // Test whether one of the files changed
     it = fileList.begin();
@@ -206,24 +213,24 @@ void KIOExec::slotRunApp()
     {
         KDE_struct_stat buff;
         QString src = (*it).path;
-        KUrl dest = (*it).url;
+        QUrl dest = (*it).url;
         if ( (KDE::stat( src, &buff ) == 0) &&
              ((*it).time != buff.st_mtime) )
         {
             if ( tempfiles )
             {
                 if ( KMessageBox::questionYesNo( 0L,
-                                                 i18n( "The supposedly temporary file\n%1\nhas been modified.\nDo you still want to delete it?" , dest.prettyUrl()),
+                                                 i18n( "The supposedly temporary file\n%1\nhas been modified.\nDo you still want to delete it?" , dest.path()),
                                                  i18n( "File Changed" ), KStandardGuiItem::del(), KGuiItem(i18n("Do Not Delete")) ) != KMessageBox::Yes )
                     continue; // don't delete the temp file
             }
             else if ( ! dest.isLocalFile() )  // no upload when it's already a local file
             {
                 if ( KMessageBox::questionYesNo( 0L,
-                                                 i18n( "The file\n%1\nhas been modified.\nDo you want to upload the changes?" , dest.prettyUrl()),
+                                                 i18n( "The file\n%1\nhas been modified.\nDo you want to upload the changes?" , dest.toString()),
                                                  i18n( "File Changed" ), KGuiItem(i18n("Upload")), KGuiItem(i18n("Do Not Upload")) ) == KMessageBox::Yes )
                 {
-                    kDebug() << "src='" << src << "'  dest='" << dest << "'";
+                    qDebug() << "src='" << src << "'  dest='" << dest << "'";
                     // Do it the synchronous way.
                     if ( !KIO::NetAccess::upload( src, dest, 0 ) )
                     {
@@ -237,9 +244,9 @@ void KIOExec::slotRunApp()
         if ((!dest.isLocalFile() || tempfiles) && exit_code == 0) {
             // Wait for a reasonable time so that even if the application forks on startup (like OOo or amarok)
             // it will have time to start up and read the file before it gets deleted. #130709.
-            kDebug() << "sleeping...";
+            qDebug() << "sleeping...";
             sleep(180); // 3 mn
-            kDebug() << "about to delete " << src;
+            qDebug() << "about to delete " << src;
             unlink( QFile::encodeName(src) );
         }
     }
@@ -250,26 +257,23 @@ void KIOExec::slotRunApp()
 
 int main( int argc, char **argv )
 {
-    KAboutData aboutData( "kioexec", "kioexec", ki18n("KIOExec"),
-        KDE_VERSION_STRING, ki18n(description), KAboutData::License_GPL,
-        ki18n("(c) 1998-2000,2003 The KFM/Konqueror Developers"));
-    aboutData.addAuthor(ki18n("David Faure"),KLocalizedString(), "faure@kde.org");
-    aboutData.addAuthor(ki18n("Stephan Kulow"),KLocalizedString(), "coolo@kde.org");
-    aboutData.addAuthor(ki18n("Bernhard Rosenkraenzer"),KLocalizedString(), "bero@arklinux.org");
-    aboutData.addAuthor(ki18n("Waldo Bastian"),KLocalizedString(), "bastian@kde.org");
-    aboutData.addAuthor(ki18n("Oswald Buddenhagen"),KLocalizedString(), "ossi@kde.org");
-
-    KCmdLineArgs::init( argc, argv, &aboutData );
-
-    KCmdLineOptions options;
-    options.add("tempfiles", ki18n("Treat URLs as local files and delete them afterwards"));
-    options.add("suggestedfilename <file name>", ki18n("Suggested file name for the downloaded file"));
-    options.add("+command", ki18n("Command to execute"));
-    options.add("+[URLs]", ki18n("URL(s) or local file(s) used for 'command'"));
-    KCmdLineArgs::addCmdLineOptions( options );
-
-    KApplication app;
+    /*  K4AboutData aboutData( "kioexec", "kioexec", ki18n("KIOExec"),
+     *        KDE_VERSION_STRING, ki18n(description), KAboutData::License_GPL,
+     *        ki18n("(c) 1998-2000,2003 The KFM/Konqueror Developers"));
+     *    aboutData.addAuthor(ki18n("David Faure"),KLocalizedString(), "faure@kde.org");
+     *    aboutData.addAuthor(ki18n("Stephan Kulow"),KLocalizedString(), "coolo@kde.org");
+     *    aboutData.addAuthor(ki18n("Bernhard Rosenkraenzer"),KLocalizedString(), "bero@arklinux.org");
+     *    aboutData.addAuthor(ki18n("Waldo Bastian"),KLocalizedString(), "bastian@kde.org");
+     *    aboutData.addAuthor(ki18n("Oswald Buddenhagen"),KLocalizedString(), "ossi@kde.org");
+     */
+    QCommandLineParser *parser = new QCommandLineParser;
+    /*parser->addOption(QCommandLineOption(QStringList() << "tempfiles" , i18n("Treat URLs as local files and delete them afterwards")));
+    parser->addOption(QCommandLineOption(QStringList() << "suggestedfilename <file name>" , ki18n("Suggested file name for the downloaded file")));
+    parser->addOption(QCommandLineOption(QStringList() << "+command", i18n("Command to execute")));
+    parser->addOption(QCommandLineOption(QStringList() << "+[URLs]", i18n("URL(s) or local file(s) used for 'command'"))); */
+    QApplication app( argc, argv);
     app.setQuitOnLastWindowClosed(false);
+    parser->process(app);
 
     KIOExec exec;
 

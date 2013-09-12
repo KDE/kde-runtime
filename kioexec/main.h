@@ -28,7 +28,7 @@
 #include <QList>
 #include <QtCore/QTimer>
 
-#include <KUrl>
+#include <QUrl>
 
 namespace KIO { class Job; }
 
@@ -55,7 +55,7 @@ protected:
     QString command;
     struct FileInfo {
        QString path;
-       KUrl url;
+       QUrl url;
        int time;
     };
     QList<FileInfo> fileList;
