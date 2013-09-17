@@ -32,7 +32,6 @@
 #include <KCmdLineArgs>
 #include <k4aboutdata.h>
 #include <KLocalizedString>
-#include <kdefakes.h>
 #include <kglobal.h>
 
 #include "drkonqi.h"
