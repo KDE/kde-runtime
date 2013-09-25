@@ -76,7 +76,10 @@ DeviceAutomounter::automountDevice(Solid::Device &dev, AutomounterSettings::Auto
         AutomounterSettings::setDeviceLastSeenMounted(dev.udi(), sa->isAccessible());
         AutomounterSettings::saveDevice(dev);
 		kDebug() << "Saving as" << dev.description();
-        if (AutomounterSettings::shouldAutomountDevice(dev.udi(), type)) {
+        if (!AutomounterSettings::automountUnknownDevices()) {
+			if(!AutomounterSettings::shouldAutomountDevice(dev.udi(), type)) {
+				return;
+			}
             Solid::StorageVolume *sv = dev.as<Solid::StorageVolume>();
             if (!sv->isIgnored()) {
                 kDebug() << "Mounting" << dev.udi();

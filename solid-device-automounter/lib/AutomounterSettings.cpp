@@ -63,7 +63,6 @@ AutomounterSettings::shouldAutomountDevice(const QString &udi, AutomountType typ
      */
     bool known = deviceIsKnown(udi);
     bool enabled = automountEnabled();
-    bool automountKnown = !automountUnknownDevices();
     bool deviceAutomount = deviceAutomountIsForced(udi, type);
     bool lastSeenMounted = deviceSettings(udi).readEntry("LastSeenMounted", false);
     bool typeCondition = false;
@@ -75,12 +74,11 @@ AutomounterSettings::shouldAutomountDevice(const QString &udi, AutomountType typ
             typeCondition = automountOnPlugin();
             break;
     }
-    bool shouldAutomount = deviceAutomount || (enabled && typeCondition && ((automountKnown && known) || lastSeenMounted));
+    bool shouldAutomount = deviceAutomount || (enabled && typeCondition && (known || lastSeenMounted));
 
     kDebug() << "Processing" << udi;
     kDebug() << "type:" << type;
     kDebug() << "typeCondition:" << typeCondition;
-    kDebug() << "automountKnownDevices:" << automountKnown;
     kDebug() << "deviceIsKnown:" << known;
     kDebug() << "AutomountEnabled:" << enabled;
     kDebug() << "Automount:" << deviceAutomount;
