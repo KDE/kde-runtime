@@ -130,9 +130,9 @@ DeviceAutomounterKCM::load()
         automountEnabled->setCheckState(Qt::Unchecked);
 
     if (AutomounterSettings::automountUnknownDevices())
-        automountUnknownDevices->setCheckState(Qt::Unchecked);
-    else
         automountUnknownDevices->setCheckState(Qt::Checked);
+    else
+        automountUnknownDevices->setCheckState(Qt::Unchecked);
 
     if (AutomounterSettings::automountOnLogin())
         automountOnLogin->setCheckState(Qt::Checked);
@@ -159,9 +159,9 @@ DeviceAutomounterKCM::save()
         AutomounterSettings::setAutomountEnabled(false);
 
     if (this->automountUnknownDevices->checkState() == Qt::Checked)
-        AutomounterSettings::setAutomountUnknownDevices(false);
-    else
         AutomounterSettings::setAutomountUnknownDevices(true);
+    else
+        AutomounterSettings::setAutomountUnknownDevices(false);
 
     if (this->automountOnLogin->checkState() == Qt::Checked)
         AutomounterSettings::setAutomountOnLogin(true);
