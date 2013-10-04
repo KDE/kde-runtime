@@ -167,7 +167,7 @@ private:
     bool m_pressed;
     KDeclarativeMouseEvent* m_pressAndHoldEvent;
     QPointF m_pressAndHoldPosition;
-    //Important: used only for comparison. If you will ever need to access this pointer, make it a QWekapointer
+    //Important: used only for comparison. If you will ever need to access this pointer, make it a QWeakPointer
     QEvent *m_lastEvent;
     QTimer *m_pressAndHoldTimer;
     bool m_containsMouse;
