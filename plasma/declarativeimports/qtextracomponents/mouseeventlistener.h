@@ -125,12 +125,13 @@ class MouseEventListener : public QDeclarativeItem
     Q_OBJECT
     /**
      * This property holds whether hover events are handled.
-     * By default hover events are disabled
+     * By default hover events are disabled.
      */
     Q_PROPERTY(bool hoverEnabled READ hoverEnabled WRITE setHoverEnabled NOTIFY hoverEnabledChanged)
 
     /**
-     * True if this MouseEventListener or any of its children contains the mouse cursor: this property will change only when the mouse button is pressed if hoverEnabled is false
+     * True if this MouseEventListener or any of its children contains the mouse cursor.
+     * If hoverEnabled is false, this property will change only when the mouse button is pressed.
      */
     Q_PROPERTY(bool containsMouse READ containsMouse NOTIFY containsMouseChanged)
 
