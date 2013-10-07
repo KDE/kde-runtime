@@ -26,7 +26,7 @@ if ( Q_WS_QWS )
   set( kglobalaccel_SRCS ${kglobalaccel_SRCS} kglobalaccel_qws.cpp )
 endif ( Q_WS_QWS )
 
-kde4_add_kdeinit_executable( kglobalaccel NOGUI ${kglobalaccel_SRCS} )
+kf5_add_kdeinit_executable( kglobalaccel NOGUI ${kglobalaccel_SRCS} )
 target_link_libraries(kdeinit_kglobalaccel ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES})
 if(Q_WS_MAC)
    target_link_libraries(kdeinit_kglobalaccel ${CARBON_LIBRARY})

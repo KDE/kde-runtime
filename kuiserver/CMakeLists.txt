@@ -52,7 +52,7 @@ dbus_add_activation_service(org.kde.kuiserver.service.in)
 
 kde4_add_kcfg_files(kuiserver_KDEINIT_SRCS kuiserversettings.kcfgc)
 
-kde4_add_kdeinit_executable( kuiserver ${kuiserver_KDEINIT_SRCS})
+kf5_add_kdeinit_executable( kuiserver ${kuiserver_KDEINIT_SRCS})
 
 if (Q_WS_MAC)
     set_target_properties(kuiserver PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/Info.plist.template)
