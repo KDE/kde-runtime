@@ -213,7 +213,7 @@ void KIOExec::slotRunApp()
             if ( tempfiles )
             {
                 if ( KMessageBox::questionYesNo( 0L,
-                                                 i18n( "The supposedly temporary file\n%1\nhas been modified.\nDo you still want to delete it?" , dest.prettyUrl()),
+                                                 i18n( "The supposedly temporary file\n%1\nhas been modified.\nDo you still want to delete it?" , dest.pathOrUrl()),
                                                  i18n( "File Changed" ), KStandardGuiItem::del(), KGuiItem(i18n("Do Not Delete")) ) != KMessageBox::Yes )
                     continue; // don't delete the temp file
             }
@@ -258,7 +258,7 @@ int main( int argc, char **argv )
     aboutData.addAuthor(ki18n("Bernhard Rosenkraenzer"),KLocalizedString(), "bero@arklinux.org");
     aboutData.addAuthor(ki18n("Waldo Bastian"),KLocalizedString(), "bastian@kde.org");
     aboutData.addAuthor(ki18n("Oswald Buddenhagen"),KLocalizedString(), "ossi@kde.org");
-
+    aboutData.setProgramIconName("kde");
     KCmdLineArgs::init( argc, argv, &aboutData );
 
     KCmdLineOptions options;
