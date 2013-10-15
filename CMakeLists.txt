@@ -42,9 +42,9 @@ set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 # Load CMake, Compiler and InstallDirs settings from KF5 and the following are already somewhat "done" tier1/tier2 libs from kdelibs:
 find_package(KF5 MODULE REQUIRED COMPONENTS CMake Compiler InstallDirs
     KIdleTime ItemModels KWidgetsAddons KWindowSystem KCodecs KArchive KCoreAddons Solid ThreadWeaver
-    KConfig KAuth KJS KWallet KDBusAddons Sonnet
+    KConfig KAuth KJS KWallet KDBusAddons Sonnet KBookmarks
     KI18n KGuiAddons KService KConfigWidgets ItemViews KNotifications KIconThemes KStyle KCompletion KJobWidgets KTextWidgets XmlGui KCrash
-    KCMUtils KUnitConversion KDE4Attic Kross)
+    KCMUtils KUnitConversion KDE4Attic Kross KIO)
 
 find_package(KBookmarks REQUIRED NO_MODULE)
 find_package(Plasma REQUIRED NO_MODULE)
