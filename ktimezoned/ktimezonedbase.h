@@ -47,6 +47,8 @@ class KTimeZonedBase : public KDEDModule
                 init(true);
         }
 
+        Q_SCRIPTABLE QString localZone() const { return mLocalZone; }
+
     Q_SIGNALS:
         /** D-Bus signal emitted when the time zone configuration has changed. */
         void configChanged();
