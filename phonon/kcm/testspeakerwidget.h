@@ -35,6 +35,9 @@ class TestSpeakerWidget: public KPushButton
         TestSpeakerWidget(const pa_channel_position_t pos, ca_context *canberra, AudioSetup* ss);
         ~TestSpeakerWidget();
 
+    public slots:
+        void onFinish();
+
     private slots:
         void toggled(bool);
 

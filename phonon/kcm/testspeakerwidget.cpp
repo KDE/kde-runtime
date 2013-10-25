@@ -26,13 +26,10 @@ static TestSpeakerWidget *s_CurrentWidget = NULL;
 
 static void finish_cb(ca_context *, uint32_t id, int, void *)
 {
-  Q_ASSERT(id == 0);
-  Q_UNUSED(id); // Suppress compiler warning if QT_NO_DEBUG
-  if (s_CurrentWidget && s_CurrentWidget->isChecked()) {
-    s_CurrentIndex = PA_INVALID_INDEX;
-    s_CurrentWidget->setChecked(false);
-    s_CurrentWidget = NULL;
-  }
+    Q_ASSERT(id == 0);
+    Q_UNUSED(id); // Suppress compiler warning if QT_NO_DEBUG
+    // Mustn't access QWidgets from a foreign thread, so queue a slot call.
+    QMetaObject::invokeMethod(s_CurrentWidget, "onFinish", Qt::QueuedConnection);
 }
 
 TestSpeakerWidget::TestSpeakerWidget(const pa_channel_position_t pos, ca_context *canberra, AudioSetup* ss)
@@ -99,6 +96,15 @@ void TestSpeakerWidget::toggled(bool state)
 
     ca_context_change_device(m_Canberra, NULL);
     ca_proplist_destroy(proplist);
+}
+
+void TestSpeakerWidget::onFinish()
+{
+    if (s_CurrentWidget && s_CurrentWidget->isChecked()) {
+        s_CurrentIndex = PA_INVALID_INDEX;
+        s_CurrentWidget->setChecked(false);
+        s_CurrentWidget = NULL;
+    }
 }
 
 const char* TestSpeakerWidget::_positionAsString()
