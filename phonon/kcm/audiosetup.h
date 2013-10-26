@@ -76,6 +76,7 @@ class AudioSetup : public QWidget, private Ui::AudioSetup
         void deviceChanged();
         void portChanged();
         void reallyUpdateVUMeter();
+        bool connectToDaemon();
 
     Q_SIGNALS:
         void changed();
