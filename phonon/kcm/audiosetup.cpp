@@ -205,16 +205,14 @@ static void context_state_callback(pa_context *c, void *userdata)
         ss->load();
 
     } else if (!PA_CONTEXT_IS_GOOD(state)) {
-        /// @todo Deal with reconnection...
-        //logMessage(QString("Connection to PulseAudio lost: %1").arg(pa_strerror(pa_context_errno(c))));
-
         // If this is our probe phase, exit our context immediately
         if (s_context != c)
             pa_context_disconnect(c);
         else {
+            kWarning() << "PulseAudio context lost. Scheduling reconnect in eventloop.";
             pa_context_unref(s_context);
-            s_context = NULL;
-            //QTimer::singleShot(50, PulseSupport::getInstance(), SLOT(connectToDaemon()));
+            s_context = 0;
+            QMetaObject::invokeMethod(ss, "connectToDaemon", Qt::QueuedConnection);
         }
     }
 }
@@ -313,22 +311,8 @@ AudioSetup::AudioSetup(QWidget *parent)
         m_Canberra = 0;
         return;
     }
-    pa_mainloop_api *api = pa_glib_mainloop_get_api(s_mainloop);
 
-    s_context = pa_context_new(api, i18n("KDE Audio Hardware Setup").toUtf8().constData());
-    ret = pa_context_connect(s_context, NULL, PA_CONTEXT_NOFAIL, 0);
-    if (ret < 0) {
-        kDebug() << "Disabling PulseAudio integration. Context connection failed: " << pa_strerror(pa_context_errno(s_context));
-        pa_context_unref(s_context);
-        s_context = 0;
-        pa_glib_mainloop_free(s_mainloop);
-        s_mainloop = 0;
-        ca_context_destroy(m_Canberra);
-        m_Canberra = 0;
-        return;
-    }
-
-    pa_context_set_state_callback(s_context, &context_state_callback, this);
+    connectToDaemon();
 }
 
 AudioSetup::~AudioSetup()
@@ -664,6 +648,28 @@ void AudioSetup::reallyUpdateVUMeter()
     int val = inputLevels->value();
     if (val > m_VURealValue)
         inputLevels->setValue(val-1);
+}
+
+bool AudioSetup::connectToDaemon()
+{
+    pa_mainloop_api *api = pa_glib_mainloop_get_api(s_mainloop);
+
+    s_context = pa_context_new(api, i18n("KDE Audio Hardware Setup").toUtf8().constData());
+    if (pa_context_connect(s_context, NULL, PA_CONTEXT_NOFAIL, 0) < 0) {
+        kDebug() << "Disabling PulseAudio integration. Context connection failed: " << pa_strerror(pa_context_errno(s_context));
+        pa_context_unref(s_context);
+        s_context = 0;
+        pa_glib_mainloop_free(s_mainloop);
+        s_mainloop = 0;
+        ca_context_destroy(m_Canberra);
+        m_Canberra = 0;
+        setEnabled(false);
+        return false;
+    }
+
+    pa_context_set_state_callback(s_context, &context_state_callback, this);
+    setEnabled(true);
+    return true;
 }
 
 static deviceInfo &getDeviceInfo(qint64 index)
