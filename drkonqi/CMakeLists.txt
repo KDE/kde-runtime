@@ -89,7 +89,7 @@ target_link_libraries(drkonqi
     KF5::KIconThemes
     KF5::KWindowSystem
     KF5::KCrash
-    ${KDE4Support_LIBRARIES}
+    KF5::KDE4Support
     ${KDE4Attic_LIBRARIES}
     ${KCore_LIBRARIES}
     ${QT_QTWEBKIT_LIBRARY}
