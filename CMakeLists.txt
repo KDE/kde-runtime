@@ -53,8 +53,8 @@ find_package(KDeclarative REQUIRED NO_MODULE)
 #find_package(KInterProcessWindowing REQUIRED NO_MODULE)
 
 # needed for set_package_properties macro
-find_package(KDELibs4 REQUIRED NO_MODULE)
 find_package(KDE4Support REQUIRED NO_MODULE)
+find_package(KDELibs4 REQUIRED NO_MODULE)
 # 
 # if(WINCE)
 #     #Needs to be set because otherwise he wouldn't find kde parts
