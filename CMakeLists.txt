@@ -28,6 +28,9 @@ include(ECMOptionalAddSubdirectory)
 
 find_package(Qt5Core REQUIRED NO_MODULE)
 find_package(Qt5DBus REQUIRED NO_MODULE)
+find_package(Qt5PrintSupport REQUIRED NO_MODULE)
+find_package(Qt5Test REQUIRED NO_MODULE)
+find_package(Qt5Svg REQUIRED NO_MODULE)
 find_package(Qt5Quick REQUIRED NO_MODULE)
 find_package(Qt5Widgets REQUIRED NO_MODULE)
 find_package(Qt5X11Extras REQUIRED NO_MODULE)
@@ -47,12 +50,11 @@ find_package(KF5 CONFIG REQUIRED COMPONENTS
     KIdleTime ItemModels KWidgetsAddons KWindowSystem KCodecs KArchive KCoreAddons Solid ThreadWeaver
     KConfig KAuth KJS KWallet KDBusAddons Sonnet
     KI18n KGuiAddons KService KConfigWidgets ItemViews KNotifications KIconThemes KStyle KCompletion KJobWidgets KTextWidgets XmlGui KCrash
-    KCMUtils KUnitConversion Kross KBookmarks KIO)
+    KCMUtils KUnitConversion Kross KBookmarks KIO KParts KDeclarative)
 
 find_package(Plasma REQUIRED NO_MODULE)
 find_package(KIO REQUIRED NO_MODULE)
 find_package(KInit REQUIRED NO_MODULE)
-find_package(KDeclarative REQUIRED NO_MODULE)
 #find_package(KInterProcessWindowing REQUIRED NO_MODULE)
 
 # needed for set_package_properties macro
