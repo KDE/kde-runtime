@@ -27,6 +27,9 @@
        <string>Country</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_6">
+        <property name="verticalSpacing">
+        <number>0</number>
+        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="m_labelCountry">
          <property name="text">
@@ -154,6 +157,9 @@
        <string>Numbers</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_2">
+        <property name="verticalSpacing">
+        <number>0</number>
+        </property>
        <property name="fieldGrowthPolicy">
         <enum>QFormLayout::ExpandingFieldsGrow</enum>
        </property>
@@ -437,6 +443,9 @@
        <string>Money</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout">
+        <property name="verticalSpacing">
+        <number>0</number>
+        </property>
        <property name="fieldGrowthPolicy">
         <enum>QFormLayout::ExpandingFieldsGrow</enum>
        </property>
@@ -792,6 +801,9 @@
        <string>Calendar</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_3">
+        <property name="verticalSpacing">
+        <number>0</number>
+        </property>
        <property name="fieldGrowthPolicy">
         <enum>QFormLayout::ExpandingFieldsGrow</enum>
        </property>
@@ -1128,6 +1140,9 @@
        <string>Date &amp;&amp; Time</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_4">
+    <property name="verticalSpacing">
+      <number>0</number>
+    </property>
        <property name="fieldGrowthPolicy">
         <enum>QFormLayout::ExpandingFieldsGrow</enum>
        </property>
@@ -1406,6 +1421,9 @@
        <string>Other</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_5">
+    <property name="verticalSpacing">
+      <number>0</number>
+    </property>
        <item row="0" column="0">
         <widget class="QLabel" name="m_labelPageSize">
          <property name="toolTip">

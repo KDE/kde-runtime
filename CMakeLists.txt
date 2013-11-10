@@ -145,7 +145,7 @@ endif(NepomukCore_FOUND)
 
 # Plugins/components required for basic utility
 if ( NOT WINCE )
-#     add_subdirectory(kcontrol)
+     add_subdirectory(kcontrol)
 endif ( NOT WINCE )
 add_subdirectory(kioslave)
 # add_subdirectory(kurifilter-plugins)

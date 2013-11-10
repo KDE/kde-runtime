@@ -33,20 +33,23 @@
 #include <KCalendarSystem>
 #include <KDateTime>
 #include <KDebug>
+#include <KGlobal>
+#include <KGlobalSettings>
+#include <KIcon>
 #include <KLocale>
 #include <KLocalizedString>
 #include <KMessageBox>
 #include <KPluginFactory>
 #include <KStandardDirs>
-#include <KCurrencyCode>
+//#include <KCurrencyCode>
+#include <kunitconversion/kcurrencycode.h>
 
 #include "ui_kcmlocalewidget.h"
 
 K_PLUGIN_FACTORY( KCMLocaleFactory, registerPlugin<KCMLocale>(); )
-K_EXPORT_PLUGIN( KCMLocaleFactory( "kcmlocale" ) )
 
 KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
-         : KCModule( KCMLocaleFactory::componentData(), parent, args ),
+         : KCModule(parent, args ),
            m_userConfig( 0 ),
            m_kcmConfig( 0 ),
            m_currentConfig( 0 ),
@@ -58,11 +61,19 @@ KCMLocale::KCMLocale( QWidget *parent, const QVariantList &args )
            m_defaultLocale( 0 ),
            m_ui( new Ui::KCMLocaleWidget )
 {
-    KAboutData *about = new KAboutData( "kcmlocale", 0, ki18n( "Localization options for KDE applications" ),
-                                        0, KLocalizedString(), KAboutData::License_GPL,
-                                        ki18n( "Copyright 2010 John Layt" ) );
+    KAboutData *about = new KAboutData( I18N_NOOP("kcmlocale"), QString(),
+                                        i18n( "Localization options for KDE applications" ),
+                                        QString(), QString(), KAboutData::License_GPL,
+                                        i18n( "Copyright 2010 John Layt" ) );
 
-    about->addAuthor( ki18n( "John Layt" ), ki18n( "Maintainer" ), "john@layt.net" );
+//     KAboutData *about =
+//         new KAboutData( I18N_NOOP("kcmstyle"), QString(),
+//                         i18n("KDE Style Module"),
+//                         QString(), QString(), KAboutData::License_GPL,
+//                         i18n("(c) 2002 Karol Szwed, Daniel Molkentin"));
+//
+
+    about->addAuthor( ki18n( "John Layt" ).toString(), ki18n( "Maintainer" ).toString(), QStringLiteral("john@layt.net") );
 
     setAboutData( about );
 
@@ -349,8 +360,8 @@ void KCMLocale::initSettings()
 
     initCalendarSettings();
 
-    m_kcmLocale = new KLocale( QLatin1String("kcmlocale"), m_kcmConfig );
-    m_defaultLocale = new KLocale( QLatin1String("kcmlocale"), m_defaultConfig );
+    m_kcmLocale = new KLocale( m_kcmConfig );
+    m_defaultLocale = new KLocale( m_defaultConfig );
 
     // Find out the system country using a null config
     m_systemCountry = m_kcmLocale->country();
@@ -465,7 +476,7 @@ void KCMLocale::load()
                                              "language has been removed from your configuration. "
                                              "If you want to add it again please install the "
                                              "localization files for it and add the language again.")
-                                             .subs( languageCode ).toString( m_kcmLocale ) );
+                                             .subs( languageCode ).toString() );
     }
 }
 
@@ -651,8 +662,8 @@ void KCMLocale::save()
         KMessageBox::information(this, ki18n("Changed language settings apply only to "
                                             "newly started applications.\nTo change the "
                                             "language of all programs, you will have to "
-                                            "logout first.").toString(m_kcmLocale),
-                                ki18n("Applying Language Settings").toString(m_kcmLocale),
+                                            "logout first.").toString(),
+                                ki18n("Applying Language Settings").toString(),
                                 QLatin1String("LanguageChangesApplyOnlyToNewlyStartedPrograms"));
         KBuildSycocaProgressDialog::rebuildKSycoca(this);
     }
@@ -671,7 +682,7 @@ QString KCMLocale::quickHelp() const
                  "set even if you change the country.  The reset buttons allow you "
                  "to easily see where you have personal settings and to restore "
                  "those items to the country's default value.</p>"
-                 ).toString(m_kcmLocale);
+                 ).toString();
 }
 
 void KCMLocale::initAllWidgets()
@@ -737,7 +748,7 @@ void KCMLocale::initSettingsWidgets()
 
 void KCMLocale::initResetButtons()
 {
-    KGuiItem defaultItem( QString(), "document-revert", ki18n( "Reset item to its default value" ).toString( m_kcmLocale ) );
+    KGuiItem defaultItem( QString(), "document-revert", ki18n( "Reset item to its default value" ).toString() );
 
     //Country tab
     m_ui->m_buttonDefaultCountry->setGuiItem( defaultItem );
@@ -956,10 +967,10 @@ void KCMLocale::initWeekDayCombo( KComboBox *dayCombo )
 void KCMLocale::initSeparatorCombo( KComboBox *seperatorCombo )
 {
     seperatorCombo->clear();
-    seperatorCombo->addItem( ki18nc( "No separator symbol" , "None" ).toString( m_kcmLocale ), QString() );
+    seperatorCombo->addItem( ki18nc( "No separator symbol" , "None" ).toString(), QString() );
     seperatorCombo->addItem( QString(','), QString(',') );
     seperatorCombo->addItem( QString('.'), QString('.') );
-    seperatorCombo->addItem( ki18nc( "Space separator symbol", "Single Space" ).toString( m_kcmLocale ), QString(' ') );
+    seperatorCombo->addItem( ki18nc( "Space separator symbol", "Single Space" ).toString(), QString(' ') );
 }
 
 // Generic utility to set up a DigitSet combo, used for numbers, dates, money
@@ -978,7 +989,7 @@ void KCMLocale::insertDigitGroupingItem( KComboBox *digitGroupingCombo,
                                          const QString &digitGroupingKey, const QString &digitGroupingFormat)
 {
     groupingSettings->writeEntry( digitGroupingKey, digitGroupingFormat );
-    KLocale *customLocale = new KLocale( QLatin1String("kcmlocale"), groupingConfig );
+    KLocale *customLocale = new KLocale( groupingConfig );
     if ( digitGroupingKey == "DigitGroupFormat" ) {
         digitGroupingCombo->addItem( customLocale->formatNumber( 123456789.12 ), digitGroupingFormat );
     } else {
@@ -1003,45 +1014,45 @@ void KCMLocale::initDigitGroupingCombo( KComboBox *digitGroupingCombo, const QSt
 
 void KCMLocale::initTabs()
 {
-    m_ui->m_tabWidgetSettings->setTabText( 0, ki18n( "Country" ).toString( m_kcmLocale ) );
-    m_ui->m_tabWidgetSettings->setTabText( 1, ki18n( "Languages" ).toString( m_kcmLocale ) );
-    m_ui->m_tabWidgetSettings->setTabText( 2, ki18n( "Numbers" ).toString( m_kcmLocale ) );
-    m_ui->m_tabWidgetSettings->setTabText( 3, ki18n( "Money" ).toString( m_kcmLocale ) );
-    m_ui->m_tabWidgetSettings->setTabText( 4, ki18n( "Calendar" ).toString( m_kcmLocale ) );
-    m_ui->m_tabWidgetSettings->setTabText( 5, ki18n( "Date && Time" ).toString( m_kcmLocale ) );
-    m_ui->m_tabWidgetSettings->setTabText( 6, ki18n( "Other" ).toString( m_kcmLocale ) );
+    m_ui->m_tabWidgetSettings->setTabText( 0, ki18n( "Country" ).toString() );
+    m_ui->m_tabWidgetSettings->setTabText( 1, ki18n( "Languages" ).toString() );
+    m_ui->m_tabWidgetSettings->setTabText( 2, ki18n( "Numbers" ).toString() );
+    m_ui->m_tabWidgetSettings->setTabText( 3, ki18n( "Money" ).toString() );
+    m_ui->m_tabWidgetSettings->setTabText( 4, ki18n( "Calendar" ).toString() );
+    m_ui->m_tabWidgetSettings->setTabText( 5, ki18n( "Date && Time" ).toString() );
+    m_ui->m_tabWidgetSettings->setTabText( 6, ki18n( "Other" ).toString() );
 }
 
 void KCMLocale::initSample()
 {
-    m_ui->m_labelNumbersSample->setText( ki18n( "Numbers:" ).toString( m_kcmLocale ) );
-    QString helpText = ki18n( "This is how positive numbers will be displayed.").toString( m_kcmLocale );
+    m_ui->m_labelNumbersSample->setText( ki18n( "Numbers:" ).toString() );
+    QString helpText = ki18n( "This is how positive numbers will be displayed.").toString();
     m_ui->m_textNumbersPositiveSample->setToolTip( helpText );
     m_ui->m_textNumbersPositiveSample->setWhatsThis( helpText );
-    helpText = ki18n( "This is how negative numbers will be displayed.").toString( m_kcmLocale );
+    helpText = ki18n( "This is how negative numbers will be displayed.").toString();
     m_ui->m_textNumbersNegativeSample->setToolTip( helpText );
     m_ui->m_textNumbersNegativeSample->setWhatsThis( helpText );
 
-    m_ui->m_labelMoneySample->setText( ki18n( "Money:" ).toString( m_kcmLocale ) );
-    helpText = ki18n( "This is how positive monetary values will be displayed.").toString( m_kcmLocale );
+    m_ui->m_labelMoneySample->setText( ki18n( "Money:" ).toString() );
+    helpText = ki18n( "This is how positive monetary values will be displayed.").toString();
     m_ui->m_textMoneyPositiveSample->setToolTip( helpText );
     m_ui->m_textMoneyPositiveSample->setWhatsThis( helpText );
-    helpText = ki18n( "This is how negative monetary values will be displayed.").toString( m_kcmLocale );
+    helpText = ki18n( "This is how negative monetary values will be displayed.").toString();
     m_ui->m_textMoneyNegativeSample->setToolTip( helpText );
     m_ui->m_textMoneyNegativeSample->setWhatsThis( helpText );
 
-    m_ui->m_labelDateSample->setText( ki18n( "Date:" ).toString( m_kcmLocale ) );
-    helpText = ki18n( "This is how long dates will be displayed.").toString( m_kcmLocale );
+    m_ui->m_labelDateSample->setText( ki18n( "Date:" ).toString() );
+    helpText = ki18n( "This is how long dates will be displayed.").toString();
     m_ui->m_textDateSample->setToolTip( helpText );
     m_ui->m_textDateSample->setWhatsThis( helpText );
 
-    m_ui->m_labelShortDateSample->setText( ki18n( "Short date:" ).toString( m_kcmLocale ) );
-    helpText = ki18n( "This is how short dates will be displayed.").toString( m_kcmLocale );
+    m_ui->m_labelShortDateSample->setText( ki18n( "Short date:" ).toString() );
+    helpText = ki18n( "This is how short dates will be displayed.").toString();
     m_ui->m_textShortDateSample->setToolTip( helpText );
     m_ui->m_textShortDateSample->setWhatsThis( helpText );
 
-    m_ui->m_labelTimeSample->setText( ki18n( "Time:" ).toString( m_kcmLocale ) );
-    helpText = ki18n( "This is how time will be displayed.").toString( m_kcmLocale );
+    m_ui->m_labelTimeSample->setText( ki18n( "Time:" ).toString() );
+    helpText = ki18n( "This is how time will be displayed.").toString();
     m_ui->m_textTimeSample->setToolTip( helpText );
     m_ui->m_textTimeSample->setWhatsThis( helpText );
 
@@ -1069,9 +1080,9 @@ void KCMLocale::initCountry()
 {
     m_ui->m_comboCountry->blockSignals( true );
 
-    m_ui->m_labelCountry->setText( ki18n( "Country:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelCountry->setText( ki18n( "Country:" ).toString() );
     QString helpText = ki18n( "<p>This is the country where you live.  The KDE Workspace will use "
-                              "the settings for this country or region.</p>" ).toString( m_kcmLocale );
+                              "the settings for this country or region.</p>" ).toString();
     m_ui->m_comboCountry->setToolTip( helpText );
     m_ui->m_comboCountry->setWhatsThis( helpText );
 
@@ -1086,10 +1097,10 @@ void KCMLocale::initCountry()
     }
 
     QString systemCountryName = m_kcmLocale->countryCodeToName( m_systemCountry );
-    QString systemCountry = ki18nc( "%1 is the system country name", "System Country (%1)" ).subs( systemCountryName ).toString( m_kcmLocale );
+    QString systemCountry = ki18nc( "%1 is the system country name", "System Country (%1)" ).subs( systemCountryName ).toString();
     m_ui->m_comboCountry->addItem( systemCountry , QString() );
 
-    QString defaultLocale = ki18n( "No Country (Default Settings)" ).toString( m_kcmLocale );
+    QString defaultLocale = ki18n( "No Country (Default Settings)" ).toString();
     m_ui->m_comboCountry->addItem( defaultLocale , "C" );
 
     QMapIterator<QString, QString> it( countryNames );
@@ -1129,10 +1140,10 @@ void KCMLocale::initCountryDivision()
 {
     m_ui->m_comboCountryDivision->blockSignals( true );
 
-    m_ui->m_labelCountryDivision->setText( ki18n( "Subdivision:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelCountryDivision->setText( ki18n( "Subdivision:" ).toString() );
     QString helpText = ki18n( "<p>This is the country subdivision where you live, e.g. your state "
                               "or province.  The KDE Workspace will use this setting for local "
-                              "information services such as holidays.</p>" ).toString( m_kcmLocale );
+                              "information services such as holidays.</p>" ).toString();
     m_ui->m_comboCountryDivision->setToolTip( helpText );
     m_ui->m_comboCountryDivision->setWhatsThis( helpText );
 
@@ -1167,28 +1178,28 @@ void KCMLocale::initTranslations()
 {
     m_ui->m_selectTranslations->blockSignals( true );
 
-    m_ui->m_selectTranslations->setAvailableLabel( ki18n( "Available Languages:" ).toString( m_kcmLocale ) );
+    m_ui->m_selectTranslations->setAvailableLabel( ki18n( "Available Languages:" ).toString() );
     QString availableHelp = ki18n( "<p>This is the list of installed KDE Workspace language "
                                    "translations not currently being used.  To use a language "
                                    "translation move it to the 'Preferred Languages' list in "
                                    "the order of preference.  If no suitable languages are "
                                    "listed, then you may need to install more language packages "
-                                   "using your usual installation method.</p>" ).toString( m_kcmLocale );
+                                   "using your usual installation method.</p>" ).toString();
     m_ui->m_selectTranslations->availableListWidget()->setToolTip( availableHelp );
     m_ui->m_selectTranslations->availableListWidget()->setWhatsThis( availableHelp );
 
-    m_ui->m_selectTranslations->setSelectedLabel( ki18n( "Preferred Languages:" ).toString( m_kcmLocale ) );
+    m_ui->m_selectTranslations->setSelectedLabel( ki18n( "Preferred Languages:" ).toString() );
     QString selectedHelp = ki18n( "<p>This is the list of installed KDE Workspace language "
                                   "translations currently being used, listed in order of "
                                   "preference.  If a translation is not available for the "
                                   "first language in the list, the next language will be used.  "
                                   "If no other translations are available then US English will "
-                                  "be used.</p>").toString( m_kcmLocale );
+                                  "be used.</p>").toString();
     m_ui->m_selectTranslations->selectedListWidget()->setToolTip( selectedHelp );
     m_ui->m_selectTranslations->selectedListWidget()->setWhatsThis( selectedHelp );
 
     QString enUS;
-    QString defaultLang = ki18nc( "%1 = default language name", "%1 (Default)" ).subs( enUS ).toString( m_kcmLocale );
+    QString defaultLang = ki18nc( "%1 = default language name", "%1 (Default)" ).subs( enUS ).toString();
 
     // Clear the selector before reloading
     m_ui->m_selectTranslations->availableListWidget()->clear();
@@ -1282,8 +1293,8 @@ void KCMLocale::setTranslations( const QString &newValue )
 void KCMLocale::initTranslationsInstall()
 {
     m_ui->m_buttonTranslationsInstall->blockSignals( true );
-    m_ui->m_buttonTranslationsInstall->setText( ki18n( "Install more languages" ).toString( m_kcmLocale ) );
-    QString helpText = ki18n( "<p>Click here to install more languages</p>" ).toString( m_kcmLocale );
+    m_ui->m_buttonTranslationsInstall->setText( ki18n( "Install more languages" ).toString() );
+    QString helpText = ki18n( "<p>Click here to install more languages</p>" ).toString();
     m_ui->m_buttonTranslationsInstall->setToolTip( helpText );
     m_ui->m_buttonTranslationsInstall->setWhatsThis( helpText );
     m_ui->m_buttonTranslationsInstall->blockSignals( false );
@@ -1298,10 +1309,10 @@ void KCMLocale::initNumericDigitGrouping()
 {
     m_ui->m_comboNumericDigitGrouping->blockSignals( true );
 
-    m_ui->m_labelNumericDigitGrouping->setText( ki18n( "Digit grouping:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelNumericDigitGrouping->setText( ki18n( "Digit grouping:" ).toString() );
     QString helpText = ki18n( "<p>Here you can define the digit grouping used to display "
                               "numbers.</p><p>Note that the digit grouping used to display "
-                              "monetary values has to be set separately (see the 'Money' tab).</p>" ).toString( m_kcmLocale );
+                              "monetary values has to be set separately (see the 'Money' tab).</p>" ).toString();
     m_ui->m_comboNumericDigitGrouping->setToolTip( helpText );
     m_ui->m_comboNumericDigitGrouping->setWhatsThis( helpText );
 
@@ -1340,10 +1351,10 @@ void KCMLocale::initNumericThousandsSeparator()
 {
     m_ui->m_comboThousandsSeparator->blockSignals( true );
 
-    m_ui->m_labelThousandsSeparator->setText( ki18n( "Group separator:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelThousandsSeparator->setText( ki18n( "Group separator:" ).toString() );
     QString helpText = ki18n( "<p>Here you can define the digit group separator used to display "
                               "numbers.</p><p>Note that the digit group separator used to display "
-                              "monetary values has to be set separately (see the 'Money' tab).</p>" ).toString( m_kcmLocale );
+                              "monetary values has to be set separately (see the 'Money' tab).</p>" ).toString();
     m_ui->m_comboThousandsSeparator->setToolTip( helpText );
     m_ui->m_comboThousandsSeparator->setWhatsThis( helpText );
 
@@ -1397,11 +1408,11 @@ void KCMLocale::initNumericDecimalSymbol()
 {
     m_ui->m_comboDecimalSymbol->blockSignals( true );
 
-    m_ui->m_labelDecimalSymbol->setText( ki18n( "Decimal separator:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelDecimalSymbol->setText( ki18n( "Decimal separator:" ).toString() );
     QString helpText = ki18n( "<p>Here you can define the decimal separator used to display "
                               "numbers (i.e. a dot or a comma in most countries).</p><p>Note "
                               "that the decimal separator used to display monetary values has "
-                              "to be set separately (see the 'Money' tab).</p>" ).toString( m_kcmLocale );
+                              "to be set separately (see the 'Money' tab).</p>" ).toString();
     m_ui->m_comboDecimalSymbol->setToolTip( helpText );
     m_ui->m_comboDecimalSymbol->setWhatsThis( helpText );
 
@@ -1448,12 +1459,12 @@ void KCMLocale::initNumericDecimalPlaces()
 {
     m_ui->m_intDecimalPlaces->blockSignals( true );
 
-    m_ui->m_labelDecimalPlaces->setText( ki18n( "Decimal places:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelDecimalPlaces->setText( ki18n( "Decimal places:" ).toString() );
     QString helpText = ki18n( "<p>Here you can set the number of decimal places displayed for "
                               "numeric values, i.e. the number of digits <em>after</em> the "
                               "decimal separator.</p><p>Note that the decimal places used "
                               "to display monetary values has to be set separately (see the "
-                              "'Money' tab).</p>" ).toString( m_kcmLocale );
+                              "'Money' tab).</p>" ).toString();
     m_ui->m_intDecimalPlaces->setToolTip( helpText );
     m_ui->m_intDecimalPlaces->setWhatsThis( helpText );
 
@@ -1486,16 +1497,16 @@ void KCMLocale::initNumericPositiveSign()
 {
     m_ui->m_comboPositiveSign->blockSignals( true );
 
-    m_ui->m_labelPositiveFormat->setText( ki18n( "Positive sign:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelPositiveFormat->setText( ki18n( "Positive sign:" ).toString() );
     QString helpText = ki18n( "<p>Here you can specify text used to prefix positive numbers. "
                               "Most locales leave this blank.</p><p>Note that the positive sign "
                               "used to display monetary values has to be set separately (see the "
-                              "'Money' tab).</p>" ).toString( m_kcmLocale );
+                              "'Money' tab).</p>" ).toString();
     m_ui->m_comboPositiveSign->setToolTip( helpText );
     m_ui->m_comboPositiveSign->setWhatsThis( helpText );
 
     m_ui->m_comboPositiveSign->clear();
-    m_ui->m_comboPositiveSign->addItem( ki18nc( "No positive symbol", "None" ).toString( m_kcmLocale ), QString() );
+    m_ui->m_comboPositiveSign->addItem( ki18nc( "No positive symbol", "None" ).toString(), QString() );
     m_ui->m_comboPositiveSign->addItem( QString('+'), QString('+') );
 
     setNumericPositiveSign( m_kcmSettings.readEntry( "PositiveSign", QString() ) );
@@ -1543,17 +1554,17 @@ void KCMLocale::initNumericNegativeSign()
 {
     m_ui->m_comboNegativeSign->blockSignals( true );
 
-    m_ui->m_labelNegativeFormat->setText( ki18n( "Negative sign:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelNegativeFormat->setText( ki18n( "Negative sign:" ).toString() );
     QString helpText = ki18n( "<p>Here you can specify text used to prefix negative numbers. "
                               "This should not be empty, so you can distinguish positive and "
                               "negative numbers. It is normally set to minus (-).</p><p>Note "
                               "that the negative sign used to display monetary values has to "
-                              "be set separately (see the 'Money' tab).</p>" ).toString( m_kcmLocale );
+                              "be set separately (see the 'Money' tab).</p>" ).toString();
     m_ui->m_comboNegativeSign->setToolTip( helpText );
     m_ui->m_comboNegativeSign->setWhatsThis( helpText );
 
     m_ui->m_comboNegativeSign->clear();
-    m_ui->m_comboNegativeSign->addItem( ki18nc("No negative symbol", "None" ).toString( m_kcmLocale ), QString() );
+    m_ui->m_comboNegativeSign->addItem( ki18nc("No negative symbol", "None" ).toString(), QString() );
     m_ui->m_comboNegativeSign->addItem( QString('-'), QString('-') );
 
     setNumericNegativeSign( m_kcmSettings.readEntry( "NegativeSign", QString() ) );
@@ -1597,13 +1608,13 @@ void KCMLocale::initNumericDigitSet()
 {
     m_ui->m_comboDigitSet->blockSignals( true );
 
-    m_ui->m_labelDigitSet->setText( ki18n( "Digit set:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelDigitSet->setText( ki18n( "Digit set:" ).toString() );
     QString helpText = ki18n( "<p>Here you can define the set of digits used to display numbers. "
                               "If digits other than Arabic are selected, they will appear only if "
                               "used in the language of the application or the piece of text where "
                               "the number is shown.</p> <p>Note that the set of digits used to "
                               "display monetary values has to be set separately (see the 'Money' "
-                              "tab).</p>" ).toString( m_kcmLocale );
+                              "tab).</p>" ).toString();
     m_ui->m_comboDigitSet->setToolTip( helpText );
     m_ui->m_comboDigitSet->setWhatsThis( helpText );
 
@@ -1638,9 +1649,9 @@ void KCMLocale::initCurrencyCode()
 {
     m_ui->m_comboCurrencyCode->blockSignals( true );
 
-    m_ui->m_labelCurrencyCode->setText( ki18n( "Currency:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelCurrencyCode->setText( ki18n( "Currency:" ).toString() );
     QString helpText = ki18n( "<p>Here you can choose the currency to be used when displaying "
-                              "monetary values, e.g. United States Dollar or Pound Sterling.</p>" ).toString( m_kcmLocale );
+                              "monetary values, e.g. United States Dollar or Pound Sterling.</p>" ).toString();
     m_ui->m_comboCurrencyCode->setToolTip( helpText );
     m_ui->m_comboCurrencyCode->setWhatsThis( helpText );
 
@@ -1653,7 +1664,7 @@ void KCMLocale::initCurrencyCode()
         QString text = ki18nc( "@item currency name and currency code", "%1 (%2)")
                        .subs( m_kcmLocale->currency()->currencyCodeToName( currencyCode ) )
                        .subs( currencyCode )
-                       .toString( m_kcmLocale );
+                       .toString();
         m_ui->m_comboCurrencyCode->addItem( text, QVariant( currencyCode ) );
     }
     //Next put all currencies available in alphabetical name order
@@ -1664,7 +1675,7 @@ void KCMLocale::initCurrencyCode()
         currencyNameList.append( ki18nc( "@item currency name and currency code", "%1 (%2)")
                                  .subs( m_kcmLocale->currency()->currencyCodeToName( currencyCode ) )
                                  .subs( currencyCode )
-                                 .toString( m_kcmLocale ) );
+                                 .toString() );
     }
     currencyNameList.sort();
     foreach ( const QString &name, currencyNameList ) {
@@ -1699,9 +1710,9 @@ void KCMLocale::initCurrencySymbol()
 {
     m_ui->m_comboCurrencySymbol->blockSignals( true );
 
-    m_ui->m_labelCurrencySymbol->setText( ki18n( "Currency symbol:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelCurrencySymbol->setText( ki18n( "Currency symbol:" ).toString() );
     QString helpText = ki18n( "<p>Here you can choose the symbol to be used when displaying "
-                              "monetary values, e.g. $, US$ or USD.</p>" ).toString( m_kcmLocale );
+                              "monetary values, e.g. $, US$ or USD.</p>" ).toString();
     m_ui->m_comboCurrencySymbol->setToolTip( helpText );
     m_ui->m_comboCurrencySymbol->setWhatsThis( helpText );
 
@@ -1756,11 +1767,11 @@ void KCMLocale::initMonetaryDigitGrouping()
 {
     m_ui->m_comboMonetaryDigitGrouping->blockSignals( true );
 
-    m_ui->m_labelMonetaryDigitGrouping->setText( ki18n( "Digit grouping:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelMonetaryDigitGrouping->setText( ki18n( "Digit grouping:" ).toString() );
     QString helpText = ki18n( "<p>Here you can define the digit grouping used to display monetary "
                               "values.</p><p>Note that the digit grouping used to display "
                               "other numbers has to be defined separately (see the 'Numbers' tab)."
-                              "</p>" ).toString( m_kcmLocale );
+                              "</p>" ).toString();
     m_ui->m_comboMonetaryDigitGrouping->setToolTip( helpText );
     m_ui->m_comboMonetaryDigitGrouping->setWhatsThis( helpText );
 
@@ -1796,11 +1807,11 @@ void KCMLocale::initMonetaryThousandsSeparator()
 {
     m_ui->m_comboMonetaryThousandsSeparator->blockSignals( true );
 
-    m_ui->m_labelMonetaryThousandsSeparator->setText( ki18n( "Group separator:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelMonetaryThousandsSeparator->setText( ki18n( "Group separator:" ).toString() );
     QString helpText = ki18n( "<p>Here you can define the group separator used to display monetary "
                               "values.</p><p>Note that the thousands separator used to display "
                               "other numbers has to be defined separately (see the 'Numbers' tab)."
-                              "</p>" ).toString( m_kcmLocale );
+                              "</p>" ).toString();
     m_ui->m_comboMonetaryThousandsSeparator->setToolTip( helpText );
     m_ui->m_comboMonetaryThousandsSeparator->setWhatsThis( helpText );
 
@@ -1852,11 +1863,11 @@ void KCMLocale::initMonetaryDecimalSymbol()
 {
     m_ui->m_comboMonetaryDecimalSymbol->blockSignals( true );
 
-    m_ui->m_labelMonetaryDecimalSymbol->setText( ki18n( "Decimal separator:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelMonetaryDecimalSymbol->setText( ki18n( "Decimal separator:" ).toString() );
     QString helpText = ki18n( "<p>Here you can define the decimal separator used to display "
                               "monetary values.</p><p>Note that the decimal separator used to "
                               "display other numbers has to be defined separately (see the "
-                              "'Numbers' tab).</p>" ).toString( m_kcmLocale );
+                              "'Numbers' tab).</p>" ).toString();
     m_ui->m_comboMonetaryDecimalSymbol->setToolTip( helpText );
     m_ui->m_comboMonetaryDecimalSymbol->setWhatsThis( helpText );
 
@@ -1905,12 +1916,12 @@ void KCMLocale::initMonetaryDecimalPlaces()
 {
     m_ui->m_intMonetaryDecimalPlaces->blockSignals( true );
 
-    m_ui->m_labelMonetaryDecimalPlaces->setText( ki18n( "Decimal places:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelMonetaryDecimalPlaces->setText( ki18n( "Decimal places:" ).toString() );
     QString helpText = ki18n( "<p>Here you can set the number of decimal places displayed for "
                               "monetary values, i.e. the number of digits <em>after</em> the "
                               "decimal separator.</p><p>Note that the decimal places used to "
                               "display other numbers has to be defined separately (see the "
-                              "'Numbers' tab).</p>" ).toString( m_kcmLocale );
+                              "'Numbers' tab).</p>" ).toString();
     m_ui->m_intMonetaryDecimalPlaces->setToolTip( helpText );
     m_ui->m_intMonetaryDecimalPlaces->setWhatsThis( helpText );
 
@@ -1956,10 +1967,10 @@ void KCMLocale::initMonetaryPositiveFormat()
 {
     m_ui->m_comboMonetaryPositiveFormat->blockSignals( true );
 
-    m_ui->m_labelMonetaryPositiveFormat->setText( ki18n( "Positive format:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelMonetaryPositiveFormat->setText( ki18n( "Positive format:" ).toString() );
     QString helpText = ki18n( "<p>Here you can set the format of positive monetary values.</p>"
                               "<p>Note that the positive sign used to display other numbers has "
-                              "to be defined separately (see the 'Numbers' tab).</p>" ).toString( m_kcmLocale );
+                              "to be defined separately (see the 'Numbers' tab).</p>" ).toString();
     m_ui->m_comboMonetaryPositiveFormat->setToolTip( helpText );
     m_ui->m_comboMonetaryPositiveFormat->setWhatsThis( helpText );
 
@@ -2008,20 +2019,20 @@ void KCMLocale::initMonetaryPositiveFormat()
                                (KLocale::SignPosition) m_defaultSettings.readEntry( "PositiveMonetarySignPosition", 0 ) );
 
     // These are the old strings, keep around for now in case new implementation isn't usable
-    QString format = ki18n( "Sign position:" ).toString( m_kcmLocale );
-    format = ki18n( "Parentheses Around" ).toString( m_kcmLocale );
-    format = ki18n( "Before Quantity Money" ).toString( m_kcmLocale );
-    format = ki18n( "After Quantity Money" ).toString( m_kcmLocale );
-    format = ki18n( "Before Money" ).toString( m_kcmLocale );
-    format = ki18n( "After Money" ).toString( m_kcmLocale );
+    QString format = ki18n( "Sign position:" ).toString();
+    format = ki18n( "Parentheses Around" ).toString();
+    format = ki18n( "Before Quantity Money" ).toString();
+    format = ki18n( "After Quantity Money" ).toString();
+    format = ki18n( "Before Money" ).toString();
+    format = ki18n( "After Money" ).toString();
     format = ki18n( "Here you can select how a positive sign will be "
-                    "positioned. This only affects monetary values." ).toString( m_kcmLocale );
+                    "positioned. This only affects monetary values." ).toString();
 
-    QString check = ki18n( "Prefix currency symbol" ).toString( m_kcmLocale );
+    QString check = ki18n( "Prefix currency symbol" ).toString();
     check = ki18n( "If this option is checked, the currency sign "
                     "will be prefixed (i.e. to the left of the "
                     "value) for all positive monetary values. If "
-                    "not, it will be postfixed (i.e. to the right)." ).toString( m_kcmLocale );
+                    "not, it will be postfixed (i.e. to the right)." ).toString();
 
     m_ui->m_comboMonetaryPositiveFormat->blockSignals( false );
 }
@@ -2111,28 +2122,28 @@ void KCMLocale::initMonetaryNegativeFormat()
 {
     m_ui->m_comboMonetaryNegativeFormat->blockSignals( true );
 
-    m_ui->m_labelMonetaryNegativeFormat->setText( ki18n( "Negative format:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelMonetaryNegativeFormat->setText( ki18n( "Negative format:" ).toString() );
     QString helpText = ki18n( "<p>Here you can set the format of negative monetary values.</p>"
                               "<p>Note that the negative sign used to display other numbers has "
-                              "to be defined separately (see the 'Numbers' tab).</p>" ).toString( m_kcmLocale );
+                              "to be defined separately (see the 'Numbers' tab).</p>" ).toString();
     m_ui->m_comboMonetaryNegativeFormat->setToolTip( helpText );
     m_ui->m_comboMonetaryNegativeFormat->setWhatsThis( helpText );
 
-    QString format = ki18n( "Sign position:" ).toString( m_kcmLocale );
-    format = ki18n( "Parentheses Around" ).toString( m_kcmLocale );
-    format = ki18n( "Before Quantity Money" ).toString( m_kcmLocale );
-    format = ki18n( "After Quantity Money" ).toString( m_kcmLocale );
-    format = ki18n( "Before Money" ).toString( m_kcmLocale );
-    format = ki18n( "After Money" ).toString( m_kcmLocale );
+    QString format = ki18n( "Sign position:" ).toString();
+    format = ki18n( "Parentheses Around" ).toString();
+    format = ki18n( "Before Quantity Money" ).toString();
+    format = ki18n( "After Quantity Money" ).toString();
+    format = ki18n( "Before Money" ).toString();
+    format = ki18n( "After Money" ).toString();
     format = ki18n( "Here you can select how a negative sign will "
                     "be positioned. This only affects monetary "
-                    "values." ).toString( m_kcmLocale );
+                    "values." ).toString();
 
-    QString check = ki18n( "Prefix currency symbol" ).toString( m_kcmLocale );
+    QString check = ki18n( "Prefix currency symbol" ).toString();
     check = ki18n( "If this option is checked, the currency sign "
                     "will be prefixed (i.e. to the left of the "
                     "value) for all negative monetary values. If "
-                    "not, it will be postfixed (i.e. to the right)." ).toString( m_kcmLocale );
+                    "not, it will be postfixed (i.e. to the right)." ).toString();
 
     m_ui->m_comboMonetaryNegativeFormat->clear();
     // If the negative sign is null, then all the sign options will look the same, so only show a
@@ -2220,13 +2231,13 @@ void KCMLocale::initMonetaryDigitSet()
 {
     m_ui->m_comboMonetaryDigitSet->blockSignals( true );
 
-    m_ui->m_labelMonetaryDigitSet->setText( ki18n( "Digit set:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelMonetaryDigitSet->setText( ki18n( "Digit set:" ).toString() );
     QString helpText = ki18n( "<p>Here you can define the set of digits used to display monetary "
                               "values. If digits other than Arabic are selected, they will appear "
                               "only if used in the language of the application or the piece of "
                               "text where the number is shown.</p><p>Note that the set of digits "
                               "used to display other numbers has to be defined separately (see the "
-                              "'Numbers' tab).</p>" ).toString( m_kcmLocale );
+                              "'Numbers' tab).</p>" ).toString();
     m_ui->m_comboMonetaryDigitSet->setToolTip( helpText );
     m_ui->m_comboMonetaryDigitSet->setWhatsThis( helpText );
 
@@ -2263,21 +2274,21 @@ void KCMLocale::initCalendarSystem()
 {
     m_ui->m_comboCalendarSystem->blockSignals( true );
 
-    m_ui->m_labelCalendarSystem->setText( ki18n( "Calendar system:" ).toString( m_kcmLocale ) );
-    QString helpText = ki18n( "<p>Here you can set the Calendar System to use to display dates.</p>" ).toString( m_kcmLocale );
+    m_ui->m_labelCalendarSystem->setText( ki18n( "Calendar system:" ).toString() );
+    QString helpText = ki18n( "<p>Here you can set the Calendar System to use to display dates.</p>" ).toString();
     m_ui->m_comboCalendarSystem->setToolTip( helpText );
     m_ui->m_comboCalendarSystem->setWhatsThis( helpText );
 
     m_ui->m_comboCalendarSystem->clear();
 
-    QStringList calendarSystems = KCalendarSystem::calendarSystems();
-
-    foreach ( const QString &calendarType, calendarSystems ) {
-        m_ui->m_comboCalendarSystem->addItem( KCalendarSystem::calendarLabel(
-                                              KCalendarSystem::calendarSystemForCalendarType( calendarType ), m_kcmLocale ),
-                                              QVariant( calendarType ) );
-    }
-
+//     QStringList calendarSystems = KCalendarSystem::calendarSystems();
+//
+//     foreach ( const QString &calendarType, calendarSystems ) {
+//         m_ui->m_comboCalendarSystem->addItem( KCalendarSystem::calendarLabel(
+//                                               KCalendarSystem::calendarSystemForCalendarType( calendarType ), m_kcmLocale ),
+//                                               QVariant( calendarType ) );
+//     }
+#warning "FIXME: Port calendar sytems"
     setCalendarSystem( m_kcmSettings.readEntry( "CalendarSystem", QString() ) );
 
     m_ui->m_comboCalendarSystem->blockSignals( false );
@@ -2320,9 +2331,9 @@ void KCMLocale::initUseCommonEra()
 {
     m_ui->m_checkCalendarGregorianUseCommonEra->blockSignals( true );
 
-    m_ui->m_checkCalendarGregorianUseCommonEra->setText( ki18n( "Use Common Era" ).toString( m_kcmLocale ) );
+    m_ui->m_checkCalendarGregorianUseCommonEra->setText( ki18n( "Use Common Era" ).toString() );
     QString helpText = ki18n( "<p>This option determines if the Common Era (CE/BCE) should be used "
-                              "instead of the Christian Era (AD/BC).</p>" ).toString( m_kcmLocale );
+                              "instead of the Christian Era (AD/BC).</p>" ).toString();
     m_ui->m_checkCalendarGregorianUseCommonEra->setToolTip( helpText );
     m_ui->m_checkCalendarGregorianUseCommonEra->setWhatsThis( helpText );
 
@@ -2364,12 +2375,12 @@ void KCMLocale::initShortYearWindow()
 {
     m_ui->m_intShortYearWindowStartYear->blockSignals( true );
 
-    m_ui->m_labelShortYearWindow->setText( ki18n( "Short year window:" ).toString( m_kcmLocale ) );
-    m_ui->m_labelShortYearWindowTo->setText( ki18nc( "label between two year inputs, i.e. 1930 to 2029", "to" ).toString( m_kcmLocale ) );
+    m_ui->m_labelShortYearWindow->setText( ki18n( "Short year window:" ).toString() );
+    m_ui->m_labelShortYearWindowTo->setText( ki18nc( "label between two year inputs, i.e. 1930 to 2029", "to" ).toString() );
     QString helpText = ki18n( "<p>This option determines what year range a two digit date is "
                               "interpreted as, for example with a range of 1950 to 2049 the "
                               "value 10 is interpreted as 2010.  This range is only applied when "
-                              "reading the Short Year (YY) date format.</p>" ).toString( m_kcmLocale );
+                              "reading the Short Year (YY) date format.</p>" ).toString();
     m_ui->m_intShortYearWindowStartYear->setToolTip( helpText );
     m_ui->m_intShortYearWindowStartYear->setWhatsThis( helpText );
     m_ui->m_spinShortYearWindowEndYear->setToolTip( helpText );
@@ -2408,7 +2419,7 @@ void KCMLocale::initWeekNumberSystem()
 {
     m_ui->m_comboWeekNumberSystem->blockSignals( true );
 
-    m_ui->m_labelWeekNumberSystem->setText( ki18n( "Week number system:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelWeekNumberSystem->setText( ki18n( "Week number system:" ).toString() );
     QString helpText = ki18n( "<p>This option determines how the Week Number will be calculated. "
                               "There are four options available:</p> "
                               "<ul>"
@@ -2428,18 +2439,18 @@ void KCMLocale::initWeekNumberSystem()
                               "year and lasts seven days, with all new weeks starting on the same "
                               "weekday as the first day of the year.</li>"
                               "</ul>"
-                            ).toString( m_kcmLocale );
+                            ).toString();
     m_ui->m_comboWeekNumberSystem->setToolTip( helpText );
     m_ui->m_comboWeekNumberSystem->setWhatsThis( helpText );
 
     m_ui->m_comboWeekNumberSystem->clear();
-    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "ISO Week" ).toString( m_kcmLocale ),
+    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "ISO Week" ).toString(),
                                             QVariant( KLocale::IsoWeekNumber ) );
-    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "Full First Week" ).toString( m_kcmLocale ),
+    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "Full First Week" ).toString(),
                                             QVariant( KLocale::FirstFullWeek ) );
-    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "Partial First Week" ).toString( m_kcmLocale ),
+    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "Partial First Week" ).toString(),
                                             QVariant( KLocale::FirstPartialWeek ) );
-    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "Simple Week" ).toString( m_kcmLocale ),
+    m_ui->m_comboWeekNumberSystem->addItem( ki18n( "Simple Week" ).toString(),
                                             QVariant( KLocale::SimpleWeek ) );
 
     setWeekNumberSystem( (KLocale::WeekNumberSystem) m_kcmSettings.readEntry( "WeekNumberSystem", 0 ) );
@@ -2468,10 +2479,10 @@ void KCMLocale::initWeekStartDay()
 {
     m_ui->m_comboWeekStartDay->blockSignals( true );
 
-    m_ui->m_labelWeekStartDay->setText( ki18n( "First day of week:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelWeekStartDay->setText( ki18n( "First day of week:" ).toString() );
     QString helpText = ki18n( "<p>This option determines which day will be considered as the first "
                               "one of the week.  This value may affect the Week Number System.</p> "
-                            ).toString( m_kcmLocale );
+                            ).toString();
     m_ui->m_comboWeekStartDay->setToolTip( helpText );
     m_ui->m_comboWeekStartDay->setWhatsThis( helpText );
 
@@ -2503,9 +2514,9 @@ void KCMLocale::initWorkingWeekStartDay()
 {
     m_ui->m_comboWorkingWeekStartDay->blockSignals( true );
 
-    m_ui->m_labelWorkingWeekStartDay->setText( ki18n( "First working day of week:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelWorkingWeekStartDay->setText( ki18n( "First working day of week:" ).toString() );
     QString helpText = ki18n( "<p>This option determines which day will be considered as the first "
-                              "working day of the week.</p>" ).toString( m_kcmLocale );
+                              "working day of the week.</p>" ).toString();
     m_ui->m_comboWorkingWeekStartDay->setToolTip( helpText );
     m_ui->m_comboWorkingWeekStartDay->setWhatsThis( helpText );
 
@@ -2537,9 +2548,9 @@ void KCMLocale::initWorkingWeekEndDay()
 {
     m_ui->m_comboWorkingWeekEndDay->blockSignals( true );
 
-    m_ui->m_labelWorkingWeekEndDay->setText( ki18n( "Last working day of week:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelWorkingWeekEndDay->setText( ki18n( "Last working day of week:" ).toString() );
     QString helpText = ki18n( "<p>This option determines which day will be considered as the last "
-                              "working day of the week.</p>" ).toString( m_kcmLocale );
+                              "working day of the week.</p>" ).toString();
     m_ui->m_comboWorkingWeekEndDay->setToolTip( helpText );
     m_ui->m_comboWorkingWeekEndDay->setWhatsThis( helpText );
 
@@ -2571,14 +2582,14 @@ void KCMLocale::initWeekDayOfPray()
 {
     m_ui->m_comboWeekDayOfPray->blockSignals( true );
 
-    m_ui->m_labelWeekDayOfPray->setText( ki18n( "Week day for special religious observance:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelWeekDayOfPray->setText( ki18n( "Week day for special religious observance:" ).toString() );
     QString helpText = ki18n( "<p>This option determines which day if any will be considered as "
-                              "the day of the week for special religious observance.</p>" ).toString( m_kcmLocale );
+                              "the day of the week for special religious observance.</p>" ).toString();
     m_ui->m_comboWeekDayOfPray->setToolTip( helpText );
     m_ui->m_comboWeekDayOfPray->setWhatsThis( helpText );
 
     initWeekDayCombo( m_ui->m_comboWeekDayOfPray );
-    m_ui->m_comboWeekDayOfPray->insertItem( 0, ki18nc( "Day name list, option for no special day of religious observance", "None / None in particular" ).toString( m_kcmLocale ) );
+    m_ui->m_comboWeekDayOfPray->insertItem( 0, ki18nc( "Day name list, option for no special day of religious observance", "None / None in particular" ).toString() );
 
     setWeekDayOfPray( m_kcmSettings.readEntry( "WeekDayOfPray", 0 ) );
 
@@ -2606,7 +2617,7 @@ void KCMLocale::initTimeFormat()
 {
     m_ui->m_comboTimeFormat->blockSignals( true );
 
-    m_ui->m_labelTimeFormat->setText( ki18n( "Time format:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelTimeFormat->setText( ki18n( "Time format:" ).toString() );
     QString helpText = ki18n( "<p>The text in this textbox will be used to format time strings. "
                               "The sequences below will be replaced:</p>"
                               "<table>"
@@ -2625,18 +2636,18 @@ void KCMLocale::initTimeFormat()
                               "<tr><td><b>AMPM</b></td>"
                                   "<td>Either 'AM' or 'PM' according to the given time value. "
                                       "Noon is treated as 'PM' and midnight as 'AM'.</td></tr>"
-                              "</table>" ).toString( m_kcmLocale );
+                              "</table>" ).toString();
     m_ui->m_comboTimeFormat->setToolTip( helpText );
     m_ui->m_comboTimeFormat->setWhatsThis( helpText );
 
     m_timeFormatMap.clear();
-    m_timeFormatMap.insert( QString( 'H' ), ki18n( "HH" ).toString( m_kcmLocale ) );
-    m_timeFormatMap.insert( QString( 'k' ), ki18n( "hH" ).toString( m_kcmLocale ) );
-    m_timeFormatMap.insert( QString( 'I' ), ki18n( "PH" ).toString( m_kcmLocale ) );
-    m_timeFormatMap.insert( QString( 'l' ), ki18n( "pH" ).toString( m_kcmLocale ) );
-    m_timeFormatMap.insert( QString( 'M' ), ki18nc( "Minute", "MM" ).toString( m_kcmLocale ) );
-    m_timeFormatMap.insert( QString( 'S' ), ki18n( "SS" ).toString( m_kcmLocale ) );
-    m_timeFormatMap.insert( QString( 'p' ), ki18n( "AMPM" ).toString( m_kcmLocale ) );
+    m_timeFormatMap.insert( QString( 'H' ), ki18n( "HH" ).toString() );
+    m_timeFormatMap.insert( QString( 'k' ), ki18n( "hH" ).toString() );
+    m_timeFormatMap.insert( QString( 'I' ), ki18n( "PH" ).toString() );
+    m_timeFormatMap.insert( QString( 'l' ), ki18n( "pH" ).toString() );
+    m_timeFormatMap.insert( QString( 'M' ), ki18nc( "Minute", "MM" ).toString() );
+    m_timeFormatMap.insert( QString( 'S' ), ki18n( "SS" ).toString() );
+    m_timeFormatMap.insert( QString( 'p' ), ki18n( "AMPM" ).toString() );
 
     QStringList formatList;
     QString cValue = m_cSettings.readEntry( "TimeFormat", QString() );
@@ -2647,7 +2658,7 @@ void KCMLocale::initTimeFormat()
     // TODO convert these to POSIX and US format!
     QString formats =ki18nc( "some reasonable time formats for the language",
                              "HH:MM:SS\n"
-                             "pH:MM:SS AMPM").toString( m_kcmLocale );
+                             "pH:MM:SS AMPM").toString();
     formatList.append( formats.split( QString::fromLatin1("\n") ) );
     formatList.removeDuplicates();
     m_ui->m_comboTimeFormat->clear();
@@ -2722,13 +2733,13 @@ void KCMLocale::initAmPmSymbols()
     m_ui->m_comboAmSymbol->blockSignals( true );
     m_ui->m_comboPmSymbol->blockSignals( true );
 
-    m_ui->m_labelAmSymbol->setText( ki18n( "AM symbol:" ).toString( m_kcmLocale ) );
-    QString helpText = ki18n( "<p>Here you can set the text to be displayed for AM.</p>" ).toString( m_kcmLocale );
+    m_ui->m_labelAmSymbol->setText( ki18n( "AM symbol:" ).toString() );
+    QString helpText = ki18n( "<p>Here you can set the text to be displayed for AM.</p>" ).toString();
     m_ui->m_comboAmSymbol->setToolTip( helpText );
     m_ui->m_comboAmSymbol->setWhatsThis( helpText );
 
-    m_ui->m_labelPmSymbol->setText( ki18n( "PM symbol:" ).toString( m_kcmLocale ) );
-    helpText = ki18n( "<p>Here you can set the text to be displayed for PM.</p>" ).toString( m_kcmLocale );
+    m_ui->m_labelPmSymbol->setText( ki18n( "PM symbol:" ).toString() );
+    helpText = ki18n( "<p>Here you can set the text to be displayed for PM.</p>" ).toString();
     m_ui->m_comboPmSymbol->setToolTip( helpText );
     m_ui->m_comboPmSymbol->setWhatsThis( helpText );
 
@@ -2836,7 +2847,7 @@ void KCMLocale::initDateFormat()
 {
     m_ui->m_comboDateFormat->blockSignals( true );
 
-    m_ui->m_labelDateFormat->setText( ki18n( "Long date format:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelDateFormat->setText( ki18n( "Long date format:" ).toString() );
     QString helpText = ki18n( "<p>The text in this textbox will be used to format long dates. "
                               "The sequences below will be replaced:</p>"
                               "<table>"
@@ -2904,27 +2915,27 @@ void KCMLocale::initDateFormat()
                                   "<td><b>DAYOFISOWEEK</b></td>"
                                   "<td>The Day of the ISO Week as a decimal number.</td>"
                               "</tr>"
-                              "</table>" ).toString( m_kcmLocale );
+                              "</table>" ).toString();
     m_ui->m_comboDateFormat->setToolTip( helpText );
     m_ui->m_comboDateFormat->setWhatsThis( helpText );
 
     m_dateFormatMap.clear();
-    m_dateFormatMap.insert( QString( 'Y' ), ki18n("YYYY").toString( m_kcmLocale ) );
-    m_dateFormatMap.insert( QString( 'y' ), ki18n( "YY" ).toString( m_kcmLocale ) );
-    m_dateFormatMap.insert( QString( 'n' ), ki18n( "mM" ).toString( m_kcmLocale ) );
-    m_dateFormatMap.insert( QString( 'm' ), ki18nc( "Month", "MM" ).toString( m_kcmLocale ) );
-    m_dateFormatMap.insert( QString( 'b' ), ki18n( "SHORTMONTH" ).toString( m_kcmLocale ) );
-    m_dateFormatMap.insert( QString( 'B' ), ki18n( "MONTH" ).toString( m_kcmLocale ) );
-    m_dateFormatMap.insert( QString( 'e' ), ki18n( "dD" ).toString( m_kcmLocale ) );
-    m_dateFormatMap.insert( QString( 'd' ), ki18n( "DD" ).toString( m_kcmLocale ) );
-    m_dateFormatMap.insert( QString( 'a' ), ki18n( "SHORTWEEKDAY" ).toString( m_kcmLocale ) );
-    m_dateFormatMap.insert( QString( 'A' ), ki18n( "WEEKDAY" ).toString( m_kcmLocale ) );
-    m_dateFormatMap.insert( "EY", ki18n( "ERAYEAR" ).toString( m_kcmLocale ) );
-    m_dateFormatMap.insert( "Ey", ki18n( "YEARINERA" ).toString( m_kcmLocale ) );
-    m_dateFormatMap.insert( "EC", ki18n( "SHORTERANAME" ).toString( m_kcmLocale ) );
-    m_dateFormatMap.insert( QString( 'j' ), ki18n( "DAYOFYEAR" ).toString( m_kcmLocale ) );
-    m_dateFormatMap.insert( QString( 'V' ), ki18n( "ISOWEEK" ).toString( m_kcmLocale ) );
-    m_dateFormatMap.insert( QString( 'u' ), ki18n( "DAYOFISOWEEK" ).toString( m_kcmLocale ) );
+    m_dateFormatMap.insert( QString( 'Y' ), ki18n("YYYY").toString() );
+    m_dateFormatMap.insert( QString( 'y' ), ki18n( "YY" ).toString() );
+    m_dateFormatMap.insert( QString( 'n' ), ki18n( "mM" ).toString() );
+    m_dateFormatMap.insert( QString( 'm' ), ki18nc( "Month", "MM" ).toString() );
+    m_dateFormatMap.insert( QString( 'b' ), ki18n( "SHORTMONTH" ).toString() );
+    m_dateFormatMap.insert( QString( 'B' ), ki18n( "MONTH" ).toString() );
+    m_dateFormatMap.insert( QString( 'e' ), ki18n( "dD" ).toString() );
+    m_dateFormatMap.insert( QString( 'd' ), ki18n( "DD" ).toString() );
+    m_dateFormatMap.insert( QString( 'a' ), ki18n( "SHORTWEEKDAY" ).toString() );
+    m_dateFormatMap.insert( QString( 'A' ), ki18n( "WEEKDAY" ).toString() );
+    m_dateFormatMap.insert( "EY", ki18n( "ERAYEAR" ).toString() );
+    m_dateFormatMap.insert( "Ey", ki18n( "YEARINERA" ).toString() );
+    m_dateFormatMap.insert( "EC", ki18n( "SHORTERANAME" ).toString() );
+    m_dateFormatMap.insert( QString( 'j' ), ki18n( "DAYOFYEAR" ).toString() );
+    m_dateFormatMap.insert( QString( 'V' ), ki18n( "ISOWEEK" ).toString() );
+    m_dateFormatMap.insert( QString( 'u' ), ki18n( "DAYOFISOWEEK" ).toString() );
 
     QStringList formatList;
     QString cValue = m_cSettings.readEntry( "DateFormat", QString() );
@@ -2935,7 +2946,7 @@ void KCMLocale::initDateFormat()
     // TODO convert these to POSIX and US format!
     QString formats = ki18nc("some reasonable date formats for the language",
                              "WEEKDAY MONTH dD YYYY\n"
-                             "SHORTWEEKDAY MONTH dD YYYY").toString( m_kcmLocale );
+                             "SHORTWEEKDAY MONTH dD YYYY").toString();
     formatList.append( formats.split( QString::fromLatin1("\n") ) );
     formatList.removeDuplicates();
     m_ui->m_comboDateFormat->clear();
@@ -2973,7 +2984,7 @@ void KCMLocale::initShortDateFormat()
 {
     m_ui->m_comboShortDateFormat->blockSignals( true );
 
-    m_ui->m_labelShortDateFormat->setText( ki18n( "Short date format:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelShortDateFormat->setText( ki18n( "Short date format:" ).toString() );
     QString helpText = ki18n( "<p>The text in this textbox will be used to format short dates. "
                               "For instance, this is used when listing files. The sequences below "
                               "will be replaced:</p>"
@@ -3042,7 +3053,7 @@ void KCMLocale::initShortDateFormat()
                                   "<td><b>DAYOFISOWEEK</b></td>"
                                   "<td>The Day of the ISO Week as a decimal number.</td>"
                               "</tr>"
-                              "</table>" ).toString( m_kcmLocale );
+                              "</table>" ).toString();
     m_ui->m_comboShortDateFormat->setToolTip( helpText );
     m_ui->m_comboShortDateFormat->setWhatsThis( helpText );
 
@@ -3057,7 +3068,7 @@ void KCMLocale::initShortDateFormat()
     QString formats = ki18nc("some reasonable short date formats for the language",
                              "YYYY-MM-DD\n"
                              "dD.mM.YYYY\n"
-                             "DD.MM.YYYY").toString( m_kcmLocale );
+                             "DD.MM.YYYY").toString();
     formatList.append( formats.split( QString::fromLatin1("\n") ) );
     formatList.removeDuplicates();
     m_ui->m_comboShortDateFormat->clear();
@@ -3095,9 +3106,9 @@ void KCMLocale::initMonthNamePossessive()
 {
     m_ui->m_checkMonthNamePossessive->blockSignals( true );
 
-    m_ui->m_labelMonthNamePossessive->setText( ki18n( "Possessive month names:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelMonthNamePossessive->setText( ki18n( "Possessive month names:" ).toString() );
     QString helpText = ki18n( "<p>This option determines whether possessive form of month names "
-                              "should be used in dates.</p>" ).toString( m_kcmLocale );
+                              "should be used in dates.</p>" ).toString();
     m_ui->m_checkMonthNamePossessive->setToolTip( helpText );
     m_ui->m_checkMonthNamePossessive->setWhatsThis( helpText );
 
@@ -3137,13 +3148,13 @@ void KCMLocale::initDateTimeDigitSet()
 {
     m_ui->m_comboDateTimeDigitSet->blockSignals( true );
 
-    m_ui->m_labelDateTimeDigitSet->setText( ki18n( "Digit set:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelDateTimeDigitSet->setText( ki18n( "Digit set:" ).toString() );
     QString helpText = ki18n( "<p>Here you can define the set of digits used to display dates and "
                               "times.  If digits other than Arabic are selected, they will appear "
                               "only if used in the language of the application or the piece of "
                               "text where the date or time is shown.</p><p>Note that the set of "
                               "digits used to display numeric and monetary values have to be set "
-                              "separately (see the 'Numbers' or 'Money' tabs).</p>" ).toString( m_kcmLocale );
+                              "separately (see the 'Numbers' or 'Money' tabs).</p>" ).toString();
     m_ui->m_comboDateTimeDigitSet->setToolTip( helpText );
     m_ui->m_comboDateTimeDigitSet->setWhatsThis( helpText );
 
@@ -3175,82 +3186,82 @@ void KCMLocale::initPageSize()
 {
     m_ui->m_comboPageSize->blockSignals( true );
 
-    m_ui->m_labelPageSize->setText( ki18n( "Page size:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelPageSize->setText( ki18n( "Page size:" ).toString() );
     QString helpText = ki18n( "<p>Here you can define the default page size to be used in new "
                               "documents.</p><p>Note that this setting has no effect on printer "
-                              "paper size.</p>" ).toString( m_kcmLocale );
+                              "paper size.</p>" ).toString();
     m_ui->m_comboPageSize->setToolTip( helpText );
     m_ui->m_comboPageSize->setWhatsThis( helpText );
 
     m_ui->m_comboPageSize->clear();
 
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A4").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A4").toString(),
                                     QVariant( QPrinter::A4 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "US Letter").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "US Letter").toString(),
                                     QVariant( QPrinter::Letter ) );
     m_ui->m_comboPageSize->insertSeparator( m_ui->m_comboPageSize->count() );
 
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A0").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A0").toString(),
                                     QVariant( QPrinter::A0 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A1").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A1").toString(),
                                     QVariant( QPrinter::A1 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A2").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A2").toString(),
                                     QVariant( QPrinter::A2 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A3").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A3").toString(),
                                     QVariant( QPrinter::A3 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A4").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A4").toString(),
                                     QVariant( QPrinter::A4 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A5").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A5").toString(),
                                     QVariant( QPrinter::A5 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A6").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A6").toString(),
                                     QVariant( QPrinter::A6 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A7").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A7").toString(),
                                     QVariant( QPrinter::A7 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A8").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A8").toString(),
                                     QVariant( QPrinter::A8 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A9").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "A9").toString(),
                                     QVariant( QPrinter::A9 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B0").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B0").toString(),
                                     QVariant( QPrinter::B0 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B1").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B1").toString(),
                                     QVariant( QPrinter::B1 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B2").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B2").toString(),
                                     QVariant( QPrinter::B2 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B3").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B3").toString(),
                                     QVariant( QPrinter::B3 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B4").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B4").toString(),
                                     QVariant( QPrinter::B4 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B5").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B5").toString(),
                                     QVariant( QPrinter::B5 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B6").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B6").toString(),
                                     QVariant( QPrinter::B6 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B7").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B7").toString(),
                                     QVariant( QPrinter::B7 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B8").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B8").toString(),
                                     QVariant( QPrinter::B8 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B9").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B9").toString(),
                                     QVariant( QPrinter::B9 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B10").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "B10").toString(),
                                     QVariant( QPrinter::B10 ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "C5 Envelope").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "C5 Envelope").toString(),
                                     QVariant( QPrinter::C5E ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "US Common 10 Envelope").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "US Common 10 Envelope").toString(),
                                     QVariant( QPrinter::Comm10E ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "DLE Envelope").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "DLE Envelope").toString(),
                                     QVariant( QPrinter::DLE ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "Executive").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "Executive").toString(),
                                     QVariant( QPrinter::Executive ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "Folio").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "Folio").toString(),
                                     QVariant( QPrinter::Folio ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "Ledger").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "Ledger").toString(),
                                     QVariant( QPrinter::Ledger ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "US Legal").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "US Legal").toString(),
                                     QVariant( QPrinter::Legal ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "US Letter").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "US Letter").toString(),
                                     QVariant( QPrinter::Letter ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "Tabloid").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "Tabloid").toString(),
                                     QVariant( QPrinter::Tabloid ) );
-    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "Custom").toString( m_kcmLocale ),
+    m_ui->m_comboPageSize->addItem( ki18nc("Page size", "Custom").toString(),
                                     QVariant( QPrinter::Custom ) );
 
     setPageSize( m_kcmSettings.readEntry( "PageSize", 0 ) );
@@ -3279,15 +3290,15 @@ void KCMLocale::initMeasureSystem()
 {
     m_ui->m_comboMeasureSystem->blockSignals( true );
 
-    m_ui->m_labelMeasureSystem->setText( ki18n( "Measurement system:" ).toString( m_kcmLocale ) );
-    QString helpText = ki18n( "<p>Here you can define the measurement system to use.</p>" ).toString( m_kcmLocale );
+    m_ui->m_labelMeasureSystem->setText( ki18n( "Measurement system:" ).toString() );
+    QString helpText = ki18n( "<p>Here you can define the measurement system to use.</p>" ).toString();
     m_ui->m_comboMeasureSystem->setToolTip( helpText );
     m_ui->m_comboMeasureSystem->setWhatsThis( helpText );
 
     m_ui->m_comboMeasureSystem->clear();
 
-    m_ui->m_comboMeasureSystem->addItem( ki18n("Metric System").toString( m_kcmLocale ), (int) KLocale::Metric );
-    m_ui->m_comboMeasureSystem->addItem( ki18n("Imperial System").toString( m_kcmLocale ), (int) KLocale::Imperial );
+    m_ui->m_comboMeasureSystem->addItem( ki18n("Metric System").toString(), (int) KLocale::Metric );
+    m_ui->m_comboMeasureSystem->addItem( ki18n("Imperial System").toString(), (int) KLocale::Imperial );
 
     setMeasureSystem( m_kcmSettings.readEntry( "MeasureSystem", 0 ) );
 
@@ -3315,7 +3326,7 @@ void KCMLocale::initBinaryUnitDialect()
 {
     m_ui->m_comboBinaryUnitDialect->blockSignals( true );
 
-    m_ui->m_labelBinaryUnitDialect->setText( ki18n( "Byte size units:" ).toString( m_kcmLocale ) );
+    m_ui->m_labelBinaryUnitDialect->setText( ki18n( "Byte size units:" ).toString() );
     QString helpText = ki18n( "<p>This changes the units used by most KDE programs to display "
                               "numbers counted in bytes. Traditionally \"kilobytes\" meant units "
                               "of 1024, instead of the metric 1000, for most (but not all) byte "
@@ -3327,16 +3338,16 @@ void KCMLocale::initBinaryUnitDialect()
                               "<li>Selecting JEDEC restores the older-style units used in KDE 3.5 "
                                   "and some other operating systems.</li>"
 			      "</ul>"
-                              "</p>" ).toString( m_kcmLocale );
+                              "</p>" ).toString();
     m_ui->m_comboBinaryUnitDialect->setToolTip( helpText );
     m_ui->m_comboBinaryUnitDialect->setWhatsThis( helpText );
 
     m_ui->m_comboBinaryUnitDialect->clear(),
-    m_ui->m_comboBinaryUnitDialect->addItem( ki18nc("Unit of binary measurement", "IEC Units (KiB, MiB, etc)").toString( m_kcmLocale ),
+    m_ui->m_comboBinaryUnitDialect->addItem( ki18nc("Unit of binary measurement", "IEC Units (KiB, MiB, etc)").toString(),
                                              QVariant( KLocale::IECBinaryDialect ) );
-    m_ui->m_comboBinaryUnitDialect->addItem( ki18nc("Unit of binary measurement", "JEDEC Units (KB, MB, etc)").toString( m_kcmLocale ),
+    m_ui->m_comboBinaryUnitDialect->addItem( ki18nc("Unit of binary measurement", "JEDEC Units (KB, MB, etc)").toString(),
                                              QVariant( KLocale::JEDECBinaryDialect ) );
-    m_ui->m_comboBinaryUnitDialect->addItem( ki18nc("Unit of binary measurement", "Metric Units (kB, MB, etc)").toString( m_kcmLocale ),
+    m_ui->m_comboBinaryUnitDialect->addItem( ki18nc("Unit of binary measurement", "Metric Units (kB, MB, etc)").toString(),
                                              QVariant( KLocale::MetricBinaryDialect ) );
 
     setBinaryUnitDialect( m_kcmSettings.readEntry( "BinaryUnitDialect", 0 ) );
@@ -3363,7 +3374,7 @@ void KCMLocale::setBinaryUnitDialect( int newValue )
     m_ui->m_labelBinaryUnitSample->setText( ki18nc("Example test for binary unit dialect",
                                                    "Example: 2000 bytes equals %1")
                                                   .subs( m_kcmLocale->formatByteSize( 2000, 2 ) )
-                                                  .toString( m_kcmLocale ) );
+                                                  .toString() );
 }
 
 QString KCMLocale::posixToUserTime( const QString &posixFormat ) const
