@@ -43,11 +43,10 @@
 #include <Windows.h>
 #endif
 
-K_PLUGIN_FACTORY(KTimeZonedFactory,
-                 registerPlugin<KTimeZoned>();
-    )
-K_EXPORT_PLUGIN(KTimeZonedFactory("ktimezoned"))
-
+K_PLUGIN_FACTORY_WITH_JSON(KTimeZonedFactory,
+                           "ktimezoned.json",
+                           registerPlugin<KTimeZoned>();
+)
 
 // Config file entry names
 const char LOCAL_ZONE[]     = "LocalZone";     // name of local time zone
@@ -106,7 +105,7 @@ void KTimeZoned::init(bool restart)
 {
     if (restart)
     {
-        kDebug(1221) << "KTimeZoned::init(restart)";
+        qDebug() << "KTimeZoned::init(restart)";
         delete mRegistryWatcherThread;
         mRegistryWatcherThread = 0;
     }
@@ -139,14 +138,14 @@ void KTimeZoned::updateLocalZone()
 
     if (mConfigLocalZone != mLocalZone)
     {
-        kDebug(1221) << "Local timezone is now: " << mLocalZone;
+        qDebug() << "Local timezone is now: " << mLocalZone;
         KConfig config(QLatin1String("ktimezonedrc"));
         KConfigGroup group(&config, "TimeZones");
         mConfigLocalZone = mLocalZone;
         group.writeEntry(LOCAL_ZONE, mConfigLocalZone);
         group.sync();
 
-        QDBusMessage message = QDBusMessage::createSignal("/Daemon", "org.kde.KTimeZoned", "configChanged");
+        QDBusMessage message = QDBusMessage::createSignal("/Daemon", "org.kde.KTimeZoned", "timeZoneChanged");
         QDBusConnection::sessionBus().send(message);
     }
 }

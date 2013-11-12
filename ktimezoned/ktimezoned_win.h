@@ -27,19 +27,19 @@ class RegistryWatcherThread;
 
 class KTimeZoned : public KTimeZonedBase
 {
-        Q_OBJECT
-        friend class RegistryWatcherThread;
+    Q_OBJECT
+    friend class RegistryWatcherThread;
 
-    public:
-        KTimeZoned(QObject* parent, const QList<QVariant>&);
-        ~KTimeZoned();
+public:
+    KTimeZoned(QObject *parent, const QList<QVariant>&);
+    ~KTimeZoned();
 
-    private:
-        /** reimp */
-        void init(bool);
-        void updateLocalZone();
+private:
+    /** reimp */
+    void init(bool);
+    void updateLocalZone();
 
-        RegistryWatcherThread     *mRegistryWatcherThread; // thread that watches the timezone registry key
+    RegistryWatcherThread *mRegistryWatcherThread; // thread that watches the timezone registry key
 };
 
 #endif

@@ -27,46 +27,40 @@
 
 class KTimeZonedBase : public KDEDModule
 {
-        Q_OBJECT
-        Q_CLASSINFO("D-Bus Interface", "org.kde.KTimeZoned")
-    public:
-        KTimeZonedBase(QObject* parent, const QList<QVariant>&)
-        :KDEDModule(parent) {}
-        virtual ~KTimeZonedBase() {};
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.kde.KTimeZoned")
 
-    public Q_SLOTS:
-        /** D-Bus call to initialize the module.
-         *  @param reinit determines whether to reinitialize if the module has already
-         *                initialized itself
-         */
-        Q_SCRIPTABLE void initialize(bool reinit)
-        {
-            // If we reach here, the module has already been constructed and therefore
-            // initialized. So only do anything if reinit is true.
-            if (reinit)
-                init(true);
-        }
+public:
+    KTimeZonedBase(QObject *parent, const QList<QVariant>&)
+        : KDEDModule(parent) {}
+    virtual ~KTimeZonedBase() {};
 
-    Q_SIGNALS:
-        /** D-Bus signal emitted when the time zone configuration has changed. */
-        void configChanged();
+public Q_SLOTS:
+    /** D-Bus call to initialize the module.
+        *  @param reinit determines whether to reinitialize if the module has already
+        *                initialized itself
+        */
+    Q_SCRIPTABLE void initialize(bool reinit)
+    {
+        // If we reach here, the module has already been constructed and therefore
+        // initialized. So only do anything if reinit is true.
+        if (reinit)
+            init(true);
+    }
 
-	/** D-Bus signal emitted when zone.tab contents have changed.
-	 *  @param zonetab path to zone.tab
-	 */
-        void zonetabChanged(const QString &zonetab);
+Q_SIGNALS:
+    /** D-Bus signal emitted when the time zone configuration has changed. */
+    void timeZoneChanged();
 
-	/** D-Bus signal emitted when the definition (not the identity) of the local
-	 *  system time zone has changed.
-	 *  @param zone path to time zone definition file
-	 */
-	void zoneDefinitionChanged(const QString &zone);
+    /** D-Bus signal emitted when the definition (not the identity) of the local
+     *  system time zone has changed.
+     */
+    void timeZoneDatabaseUpdated();
 
-    protected:
-        virtual void init(bool) = 0;
+protected:
+    virtual void init(bool) = 0;
 
-        QString     mLocalZone;         // local system time zone name
-        QString     mConfigLocalZone;   // local system time zone name as stored in config file
+    QString m_localZone; // local system time zone name
 };
 
 

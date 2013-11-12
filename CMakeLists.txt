@@ -125,7 +125,7 @@ include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCL
 # add_subdirectory(kdontchangethehostname)
 # add_subdirectory(kglobalaccel)
 # add_subdirectory(knotify)
-# add_subdirectory(ktimezoned)
+add_subdirectory(ktimezoned)
 
 if(NOT WINCE)
 # add_subdirectory(kuiserver)
