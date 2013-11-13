@@ -22,7 +22,7 @@
 #include "kglobalacceld.h"
 
 #include <kuniqueapplication.h>
-#include <kaboutdata.h>
+#include <k4aboutdata.h>
 #include <kcmdlineargs.h>
 #include <kcrash.h>
 #include <kde_file.h>
@@ -55,13 +55,13 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
     // ksmserver tries to register with kglobalaccel).
     unsetenv( "SESSION_MANAGER" );
 
-    KAboutData aboutdata(
+    K4AboutData aboutdata(
             "kglobalaccel",
             0,
             ki18n("KDE Global Shortcuts Service"),
             "0.2",
             ki18n("KDE Global Shortcuts Service"),
-            KAboutData::License_LGPL,
+            K4AboutData::License_LGPL,
             ki18n("(C) 2007-2009  Andreas Hartmetz, Michael Jansen"));
     aboutdata.addAuthor(ki18n("Andreas Hartmetz"),ki18n("Maintainer"),"ahartmetz@gmail.com");
     aboutdata.addAuthor(ki18n("Michael Jansen"),ki18n("Maintainer"),"kde@michael-jansen.biz");
