@@ -32,7 +32,7 @@
 #include <QtDBus/QDBusMetaType>
 #include <QtDBus/QDBusObjectPath>
 
-#include "klocale.h"
+#include <KLocalizedString>
 #include "kglobalaccel.h"
 #include "kglobalsettings.h"
 #include "knotification.h"

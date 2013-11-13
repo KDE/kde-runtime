@@ -18,7 +18,7 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "kglobalshortcutinfo_p.h"
+#include <KGlobalShortcutInfo>
 
 #include <QtCore/QObject>
 
