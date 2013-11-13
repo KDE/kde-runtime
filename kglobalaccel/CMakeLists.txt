@@ -3,8 +3,6 @@ project(kglobalaccel)
 ###############################################################################
 ### KDED Global Accel Daemon
 
-include_directories( ${KDE4_KDEUI_INCLUDES} )
-
 set(kglobalaccel_SRCS
     main.cpp
     kglobalacceld.cpp
@@ -13,9 +11,10 @@ set(kglobalaccel_SRCS
     globalshortcutsregistry.cpp
     globalshortcutcontext.cpp)
 
-if ( Q_WS_X11 )
+if (${XCB_XCB_FOUND} AND ${XCB_KEYSYMS_FOUND})
+  include_directories(${XCB_INCLUDE_DIRS})
   set( kglobalaccel_SRCS ${kglobalaccel_SRCS} kglobalaccel_x11.cpp )
-endif ( Q_WS_X11 )
+endif()
 if ( Q_WS_MAC )
   set( kglobalaccel_SRCS ${kglobalaccel_SRCS} kglobalaccel_mac.cpp )
 endif ( Q_WS_MAC )
@@ -26,8 +25,14 @@ if ( Q_WS_QWS )
   set( kglobalaccel_SRCS ${kglobalaccel_SRCS} kglobalaccel_qws.cpp )
 endif ( Q_WS_QWS )
 
-kf5_add_kdeinit_executable( kglobalaccel NOGUI ${kglobalaccel_SRCS} )
-target_link_libraries(kdeinit_kglobalaccel ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES})
+# kf5_add_kdeinit_executable( kglobalaccel NOGUI ${kglobalaccel_SRCS} )
+kf5_add_kdeinit_executable( kglobalaccel ${kglobalaccel_SRCS} )
+target_link_libraries(kdeinit_kglobalaccel Qt5::DBus KF5::KCMUtils KF5::KI18n KF5::XmlGui KF5::KDE4Support)
+
+if (${XCB_XCB_FOUND} AND ${XCB_KEYSYMS_FOUND})
+    target_link_libraries(kdeinit_kglobalaccel Qt5::X11Extras ${XCB_XCB_LIBRARY} ${XCB_KEYSYMS_LIBRARY})
+endif()
+
 if(Q_WS_MAC)
    target_link_libraries(kdeinit_kglobalaccel ${CARBON_LIBRARY})
 endif(Q_WS_MAC)
