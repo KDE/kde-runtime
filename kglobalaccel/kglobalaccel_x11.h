@@ -20,8 +20,11 @@
 #ifndef _KGLOBALACCEL_X11_H
 #define _KGLOBALACCEL_X11_H
 
-#include <QWidget>
+#include <QObject>
+#include <QAbstractNativeEventFilter>
 
+struct xcb_key_press_event_t;
+typedef struct _XCBKeySymbols xcb_key_symbols_t;
 class GlobalShortcutsRegistry;
 /**
  * @internal
@@ -29,12 +32,13 @@ class GlobalShortcutsRegistry;
  * The KGlobalAccel private class handles grabbing of global keys,
  * and notification of when these keys are pressed.
  */
-class KGlobalAccelImpl : public QWidget
+class KGlobalAccelImpl : public QObject, public QAbstractNativeEventFilter
 {
 	Q_OBJECT
 
 public:
     KGlobalAccelImpl( GlobalShortcutsRegistry *owner);
+    virtual ~KGlobalAccelImpl();
 
 public:
 	/**
@@ -54,6 +58,8 @@ public:
 	/// Enable/disable all shortcuts. There will not be any grabbed shortcuts at this point.
 	void setEnabled(bool);
 
+        virtual bool nativeEventFilter(const QByteArray &eventType, void *message, long *) Q_DECL_OVERRIDE;
+
 private:
 	/**
 	 * Filters X11 events ev for key bindings in the accelerator dictionary.
@@ -62,11 +68,11 @@ private:
 	 *
 	 * This is public for compatibility only. You do not need to call it.
 	 */
-	virtual bool x11Event( XEvent* );
 	void x11MappingNotify();
-	bool x11KeyPress( const XEvent *pEvent );
+        bool x11KeyPress(xcb_key_press_event_t *event);
 	
     GlobalShortcutsRegistry *m_owner;
+    xcb_key_symbols_t *m_keySymbols;
 };
 
 #endif // _KGLOBALACCEL_X11_H
