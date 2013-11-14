@@ -24,7 +24,7 @@ add_definitions(-DKDE_DEFAULT_DEBUG_AREA=1410)
 
 add_subdirectory( data )
 add_subdirectory( parser )
-add_subdirectory( tests )
+# add_subdirectory( tests )
 if ( WIN32 )
     add_subdirectory( kdbgwin )
 endif ( WIN32 )
@@ -56,7 +56,7 @@ set(drkonqi_SRCS
     debuggermanager.cpp
     applicationdetailsexamples.cpp
     gdbhighlighter.cpp
-    parsebugbacktraces.cpp
+#     parsebugbacktraces.cpp # Requires kxmlrpcclient
 #    duplicatefinderjob.cpp
 )
 
@@ -84,16 +84,11 @@ kde4_add_ui_files(drkonqi_SRCS
 kde4_add_executable(drkonqi ${drkonqi_SRCS})
 
 target_link_libraries(drkonqi
-    ${KDE4_KIO_LIBS}
     KF5::KI18n
     KF5::KIconThemes
     KF5::KWindowSystem
     KF5::KCrash
     KF5::KDE4Support
-    ${KDE4Attic_LIBRARIES}
-    ${KCore_LIBRARIES}
-    ${QT_QTWEBKIT_LIBRARY}
-    ${KDE4_KDEWEBKIT_LIBRARY}
 #    ${KDEPIMLIBS_KXMLRPCCLIENT_LIBRARY}
     drkonqi_backtrace_parser
 )

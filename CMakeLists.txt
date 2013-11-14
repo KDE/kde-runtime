@@ -154,7 +154,7 @@ add_subdirectory(kioslave)
 # macro_optional_add_subdirectory(renamedlgplugins)
 
 # UI Helper applications
-# add_subdirectory(drkonqi)
+add_subdirectory(drkonqi)
 add_subdirectory(kcmshell)
 # add_subdirectory(kdebugdialog)
 # add_subdirectory(khelpcenter)
