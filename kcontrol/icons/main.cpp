@@ -54,7 +54,7 @@ IconModule::IconModule(QWidget *parent, const QVariantList &)
   tab2->setObjectName( QLatin1String( "effects" ) );
   tab->addTab(tab2, i18n("Ad&vanced"));
   connect(tab2, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
-  
+
   KAboutData* about = new KAboutData("kcmicons", 0, i18n("Icons"), QString(),
                                      i18n("Icons Control Panel Module"),
                                      KAboutData::License_GPL,

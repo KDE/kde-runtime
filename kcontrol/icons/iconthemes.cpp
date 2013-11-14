@@ -285,7 +285,7 @@ bool IconThemesConfig::installThemes(const QStringList &themes, const QString &a
   }
 
   archive.close();
-  return everythingOk; 
+  return everythingOk;
 }
 
 QStringList IconThemesConfig::findThemeDirs(const QString &archiveName)
@@ -419,7 +419,7 @@ void loadPreview(QLabel *label, KIconTheme& icontheme, const QStringList& iconna
     foreach(const QString &iconthemename, QStringList() << icontheme.internalName() << icontheme.inherits()) {
       foreach(const QString &name, iconnames) {
         //load the icon image
-        QString path = KIconTheme(iconthemename).iconPath(QString("%1.png").arg(name), size, KIconLoader::MatchBest);        
+        QString path = KIconTheme(iconthemename).iconPath(QString("%1.png").arg(name), size, KIconLoader::MatchBest);
         if (path != QString()) {
             label->setPixmap(QPixmap(path).scaled(size, size));
             return;
@@ -492,7 +492,7 @@ void IconThemesConfig::save()
 
   for (int i=0; i<KIconLoader::LastGroup; i++)
   {
-    KGlobalSettings::self()->emitChange(KGlobalSettings::IconChanged, i);
+    KIconLoader::emitChange(KIconLoader::Group(i));
   }
 
   KBuildSycocaProgressDialog::rebuildKSycoca(this);

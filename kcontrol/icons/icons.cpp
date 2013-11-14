@@ -125,7 +125,6 @@ QPushButton *KIconConfig::addPreviewIcon(int i, const QString &str, QWidget *par
 void KIconConfig::init()
 {
     mpLoader = KIconLoader::global();
-    //FIXMEmpConfig = KGlobal::config();
     mpConfig = KSharedConfig::openConfig();
     mpEffect = new KIconEffect;
     mUsage = 0;
@@ -393,7 +392,7 @@ void KIconConfig::save()
     {
 	if (mbChanged[i])
 	{
-	    KGlobalSettings::self()->emitChange(KGlobalSettings::IconChanged, i);
+            KIconLoader::emitChange(KIconLoader::Group(i));
 	    mbChanged[i] = false;
 	}
     }
@@ -528,7 +527,6 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     mpEffectBox->addItem(i18n("Desaturate"));
     mpEffectBox->addItem(i18n("To Monochrome"));
 
-    mpEffectBox->setCurrentRow(0); //BOOM!
     connect(mpEffectBox, SIGNAL(currentRowChanged(int)), SLOT(slotEffectType(int)));
     top->addWidget(mpEffectBox, 1, 0, 2, 1, Qt::AlignLeft);
     lbl->setBuddy(mpEffectBox);
@@ -548,37 +546,30 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     mpPreview->setMinimumSize(105, 105);
     grid->addWidget(mpPreview, 1, 0);
 
-    
     mpEffectGroup = new QGroupBox(i18n("Effect Parameters"), page);
     top->addWidget(mpEffectGroup, 2, 1, 2, 1);
-    //This used to use a QFormLayout but that caused an assert crash during KF5 porting
-    QGridLayout *gridLayout = new QGridLayout(mpEffectGroup);
+    QFormLayout *form = new QFormLayout(mpEffectGroup);
+    form->setVerticalSpacing(1); //workaround for crash QTBUG-34731
 
     mpEffectSlider = new QSlider(Qt::Horizontal, mpEffectGroup);
     mpEffectSlider->setMinimum(0);
     mpEffectSlider->setMaximum(100);
     mpEffectSlider->setPageStep(5);
     connect(mpEffectSlider, SIGNAL(valueChanged(int)), SLOT(slotEffectValue(int)));
-    mpEffectLabel = new QLabel(i18n("&Amount:"));
-    mpEffectLabel->setBuddy(mpEffectSlider);
-    gridLayout->addWidget(mpEffectLabel, 0, 0);
-    gridLayout->addWidget(mpEffectSlider, 0,1);
+    form->addRow(i18n("&Amount:"), mpEffectSlider);
+    mpEffectLabel = static_cast<QLabel *>(form->labelForField(mpEffectSlider));
 
     mpEColButton = new KColorButton(mpEffectGroup);
     connect(mpEColButton, SIGNAL(changed(const QColor &)),
-            SLOT(slotEffectColor(const QColor &)));
-    mpEffectColor = new QLabel(i18n("Co&lor:"));
-    mpEffectColor->setBuddy(mpEColButton);
-    gridLayout->addWidget(mpEffectColor, 1, 0);
-    gridLayout->addWidget(mpEColButton, 1,1);
+                SLOT(slotEffectColor(const QColor &)));
+    form->addRow(i18n("Co&lor:"), mpEColButton);
+    mpEffectColor = static_cast<QLabel *>(form->labelForField(mpEColButton));
 
     mpECol2Button = new KColorButton(mpEffectGroup);
     connect(mpECol2Button, SIGNAL(changed(const QColor &)),
-            SLOT(slotEffectColor2(const QColor &)));
-    mpEffectColor2 = new QLabel(i18n("&Second color:"));
-    mpEffectColor2->setBuddy(mpECol2Button);
-    gridLayout->addWidget(mpEffectColor2, 2, 0);
-    gridLayout->addWidget(mpECol2Button, 2,1);
+                SLOT(slotEffectColor2(const QColor &)));
+    form->addRow(i18n("&Second color:"), mpECol2Button);
+    mpEffectColor2 = static_cast<QLabel *>(form->labelForField(mpECol2Button));
 
     init();
     preview();
