@@ -1,18 +1,25 @@
 
-add_subdirectory(tests)
+#FIXME add_subdirectory(tests)
 
 ########### next target ###############
 
 set(kcm_icons_PART_SRCS iconthemes.cpp icons.cpp main.cpp )
 
-
 kde4_add_plugin(kcm_icons ${kcm_icons_PART_SRCS})
 
-
-target_link_libraries(kcm_icons ${KDE4_KIO_LIBS} ${KDE4_KNEWSTUFF3_LIBS})
+target_link_libraries(kcm_icons
+    Qt5::Widgets
+    Qt5::Svg
+    KF5::KCMUtils
+    KF5::KI18n
+    KF5::KUnitConversion
+    KF5::KArchive
+    ${X11_LIBRARIES}
+    KF5::KDE4Support
+    knewstuff3
+)
 
 install(TARGETS kcm_icons  DESTINATION ${PLUGIN_INSTALL_DIR} )
-
 
 ########### install files ###############
 

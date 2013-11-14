@@ -2,6 +2,7 @@
  * main.h
  *
  * Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+ * KDE Frameworks 5 port Copyright (C) 2013 Jonathan Riddell <jr@jriddell.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -27,7 +28,7 @@
 
 
 #include <QTabWidget>
-#include <kcmodule.h>
+#include <KCModule>
 
 class IconModule : public KCModule
 {

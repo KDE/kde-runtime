@@ -2,6 +2,7 @@
  * main.cpp
  *
  * Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+ * KDE Frameworks 5 port Copyright (C) 2013 Jonathan Riddell <jr@jriddell.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -23,27 +24,20 @@
 
 #include "main.h"
 
-//Added by qt3to4:
 #include <QVBoxLayout>
 
-#include <kaboutdata.h>
+#include <KAboutData>
 #include <KPluginFactory>
 #include <KPluginLoader>
-#include <KLocale>
+#include <KLocalizedString>
 
 #include "icons.h"
 #include "iconthemes.h"
 
-/**** DLL Interface ****/
-K_PLUGIN_FACTORY(IconsFactory,
-        registerPlugin<IconModule>();
-        )
-K_EXPORT_PLUGIN(IconsFactory("kcmicons"))
-
-/**** IconModule ****/
+K_PLUGIN_FACTORY(IconsFactory, registerPlugin<IconModule>();)
 
 IconModule::IconModule(QWidget *parent, const QVariantList &)
-  : KCModule(IconsFactory::componentData(), parent)
+  : KCModule(parent)
 {
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->setMargin(0);
@@ -51,23 +45,24 @@ IconModule::IconModule(QWidget *parent, const QVariantList &)
   tab = new QTabWidget(this);
   layout->addWidget(tab);
 
-  tab1 = new IconThemesConfig(IconsFactory::componentData(), this);
+  tab1 = new IconThemesConfig(this);
   tab1->setObjectName( QLatin1String( "themes" ) );
   tab->addTab(tab1, i18n("&Theme"));
   connect(tab1, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-  tab2 = new KIconConfig(IconsFactory::componentData(), this);
+  tab2 = new KIconConfig(this);
   tab2->setObjectName( QLatin1String( "effects" ) );
   tab->addTab(tab2, i18n("Ad&vanced"));
   connect(tab2, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
-
-  KAboutData* about = new KAboutData("kcmicons", 0, ki18n("Icons"), "3.0",
-	      ki18n("Icons Control Panel Module"),
-	      KAboutData::License_GPL,
- 	      ki18n("(c) 2000-2003 Geert Jansen"));
-  about->addAuthor(ki18n("Geert Jansen"), KLocalizedString(), "jansen@kde.org");
-  about->addAuthor(ki18n("Antonio Larrosa Jimenez"), KLocalizedString(), "larrosa@kde.org");
-  about->addCredit(ki18n("Torsten Rahn"), KLocalizedString(), "torsten@kde.org");
+  
+  KAboutData* about = new KAboutData("kcmicons", 0, i18n("Icons"), QString(),
+                                     i18n("Icons Control Panel Module"),
+                                     KAboutData::License_GPL,
+                                     i18n("(c) 2000-2003 Geert Jansen"));
+  about->addAuthor(i18n("Geert Jansen"), QString(), "jansen@kde.org");
+  about->addAuthor(i18n("Antonio Larrosa Jimenez"), QString(), "larrosa@kde.org");
+  about->addCredit(i18n("Torsten Rahn"), QString(), "torsten@kde.org");
+  about->addAuthor(i18n("Jonathan Riddell"), QString(), "jr@jriddell.org");
   setAboutData( about );
 }
 

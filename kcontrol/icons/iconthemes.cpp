@@ -1,5 +1,6 @@
 /**
  *  Copyright (c) 2000 Antonio Larrosa <larrosa@kde.org>
+ *  KDE Frameworks 5 port Copyright (C) 2013 Jonathan Riddell <jr@jriddell.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,7 +26,6 @@
 
 #include <QFileInfo>
 #include <QLabel>
-//Added by qt3to4:
 #include <QPixmap>
 #include <QVBoxLayout>
 #include <QFrame>
@@ -33,37 +33,39 @@
 #include <QTreeWidget>
 #include <QPainter>
 #include <QSvgRenderer>
+#include <QLoggingCategory>
+#include <QPushButton>
+#include <QUrl>
 
-#include <kdebug.h>
-#include <kapplication.h>
-#include <kbuildsycocaprogressdialog.h>
-#include <klocale.h>
-#include <kshareddatacache.h>
-#include <kicon.h>
-#include <kpushbutton.h>
-#include <kstandarddirs.h>
-#include <kservice.h>
-#include <kconfig.h>
-#include <knewstuff3/downloaddialog.h>
+#include <KApplication>
+#include <KBuildSycocaProgressDialog>
+#include <KLocalizedString>
+#include <KSharedDataCache>
+#include <KIconTheme>
+#include <KStandardDirs> //FIXME KDE4Support
+#include <KService>
+#include <KConfig>
+#include <KNS3/DownloadDialog>
+#include <KTar>
 
-#undef Unsorted
-
-#include <kurlrequesterdialog.h>
-#include <kmessagebox.h>
-#include <kiconloader.h>
-#include <k3icon_p.h>  // this private header is only installed for us!
-#include <kprogressdialog.h>
-#include <kio/job.h>
-#include <kio/deletejob.h>
-#include <kio/netaccess.h>
-#include <ktar.h>
-#include <kglobalsettings.h>
+#include <KUrlRequesterDialog>
+#include <KMessageBox>
+#include <KIconLoader>
+#include <KProgressDialog> //FIXME use qprogressdialog?
+#include <KIO/Job>
+#include <KIO/DeleteJob>
+#include <KIO/NetAccess>
+#include <KTar>
+#include <KGlobalSettings> //FIXME KDE4Support
 
 static const int ThemeNameRole = Qt::UserRole + 1;
 
-IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
-  : KCModule(inst, parent)
+Q_LOGGING_CATEGORY(KCM_ICONS, "kcm_icons")
+
+IconThemesConfig::IconThemesConfig(QWidget *parent)
+  : KCModule(parent)
 {
+  QLoggingCategory::setFilterRules(QStringLiteral("kcm_icons.debug = true"));
   QVBoxLayout *topLayout = new QVBoxLayout(this);
 
   QFrame *m_preview=new QFrame(this);
@@ -99,19 +101,19 @@ IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   connect(m_iconThemes,SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
 		SLOT(themeSelected(QTreeWidgetItem *)));
 
-  KPushButton *installButton=new KPushButton( KIcon("document-import"), i18n("Install Theme File..."), this);
+  QPushButton *installButton=new QPushButton( QIcon::fromTheme("document-import"), i18n("Install Theme File..."), this);
   installButton->setObjectName( QLatin1String("InstallNewTheme" ));
   installButton->setToolTip(i18n("Install a theme archive file you already have locally"));
   installButton->setWhatsThis(i18n("If you already have a theme archive locally, this button will unpack it and make it available for KDE applications"));
   connect(installButton,SIGNAL(clicked()),SLOT(installNewTheme()));
 
-  KPushButton *newButton=new KPushButton( KIcon("get-hot-new-stuff"), i18n("Get New Themes..."), this);
+  QPushButton *newButton=new QPushButton( QIcon::fromTheme("get-hot-new-stuff"), i18n("Get New Themes..."), this);
   newButton->setObjectName( QLatin1String("GetNewTheme" ));
   newButton->setToolTip(i18n("Get new themes from the Internet"));
   newButton->setWhatsThis(i18n("You need to be connected to the Internet to use this action. A dialog will display a list of themes from the http://www.kde.org website. Clicking the Install button associated with a theme will install this theme locally."));
   connect(newButton,SIGNAL(clicked()),SLOT(getNewTheme()));
 
-  m_removeButton=new KPushButton( KIcon("edit-delete"), i18n("Remove Theme"), this);
+  m_removeButton=new QPushButton( QIcon::fromTheme("edit-delete"), i18n("Remove Theme"), this);
   m_removeButton->setObjectName( QLatin1String("RemoveTheme" ));
   m_removeButton->setToolTip(i18n("Remove the selected theme from your disk"));
   m_removeButton->setWhatsThis(i18n("This will remove the selected theme from your disk."));
@@ -159,10 +161,11 @@ void IconThemesConfig::loadThemes()
   QString tname;
   QStringList::const_iterator it;
   QMap <QString, QString> themeNames;
+  qCDebug(KCM_ICONS) << "Theme list:" << themelist << "<<"; // this is empty when I run it - jr
   for (it=themelist.constBegin(); it != themelist.constEnd(); ++it)
   {
     KIconTheme icontheme(*it);
-    if (!icontheme.isValid()) kDebug() << "notvalid\n";
+    if (!icontheme.isValid()) qCDebug(KCM_ICONS) << "not a valid theme" << *it;
     if (icontheme.isHidden()) continue;
 
     name=icontheme.name();
@@ -185,12 +188,11 @@ void IconThemesConfig::loadThemes()
 
 void IconThemesConfig::installNewTheme()
 {
-  KUrl themeURL = KUrlRequesterDialog::getUrl(QString(), this,
+  QUrl themeURL = KUrlRequesterDialog::getUrl(QUrl(), this,
                                            i18n("Drag or Type Theme URL"));
-
   if (themeURL.url().isEmpty()) return;
 
-  kDebug() << themeURL.prettyUrl();
+  qCDebug(KCM_ICONS) << themeURL;
   QString themeTmpFile;
   // themeTmpFile contains the name of the downloaded file
 
@@ -198,11 +200,11 @@ void IconThemesConfig::installNewTheme()
     QString sorryText;
     if (themeURL.isLocalFile())
        sorryText = i18n("Unable to find the icon theme archive %1.",
-                        themeURL.prettyUrl());
+                        themeURL.toString());
     else
        sorryText = i18n("Unable to download the icon theme archive;\n"
                         "please check that address %1 is correct.",
-                        themeURL.prettyUrl());
+                        themeURL.toString());
     KMessageBox::sorry(this, sorryText);
     return;
   }
@@ -283,7 +285,7 @@ bool IconThemesConfig::installThemes(const QStringList &themes, const QString &a
   }
 
   archive.close();
-  return everythingOk;
+  return everythingOk; 
 }
 
 QStringList IconThemesConfig::findThemeDirs(const QString &archiveName)
@@ -325,7 +327,7 @@ void IconThemesConfig::getNewTheme()
          && !dialog.changedEntries().at(i).installedFiles().isEmpty()) {
           const QString themeTmpFile = dialog.changedEntries().at(i).installedFiles().at(0);
           const QString name = dialog.changedEntries().at(i).installedFiles().at(0).section('/', -2, -2);
-          kDebug()<<"IconThemesConfig::getNewTheme() themeTmpFile="<<themeTmpFile<<"name="<<name;
+          qCDebug(KCM_ICONS)<<"IconThemesConfig::getNewTheme() themeTmpFile="<<themeTmpFile<<"name="<<name;
           QStringList themeNames = findThemeDirs(themeTmpFile);
           if (themeNames.isEmpty()) {
               //dialog.changedEntries().at(i)->setStatus(KNS3::Entry::Invalid);
@@ -370,7 +372,7 @@ void IconThemesConfig::removeSelectedTheme()
   // ignore that dir.
   unlink(QFile::encodeName(icontheme.dir()+"/index.theme").data());
   unlink(QFile::encodeName(icontheme.dir()+"/index.desktop").data());
-  KIO::del(KUrl( icontheme.dir() ));
+  KIO::del(QUrl( icontheme.dir() ));
 
   KIconLoader::global()->newIconLoader();
 
@@ -411,23 +413,26 @@ void IconThemesConfig::updateRemoveButton()
 
 void loadPreview(QLabel *label, KIconTheme& icontheme, const QStringList& iconnames)
 {
+    //Given the icontheme loads a preview of an icon (several names are allowed for old theme standards) into the pixmap of the given label
     const int size = qMin(48, icontheme.defaultSize(KIconLoader::Desktop));
     QSvgRenderer renderer;
     foreach(const QString &iconthemename, QStringList() << icontheme.internalName() << icontheme.inherits()) {
       foreach(const QString &name, iconnames) {
-        K3Icon icon = KIconTheme(iconthemename).iconPath(QString("%1.png").arg(name), size, KIconLoader::MatchBest);
-        if (icon.isValid()) {
-            label->setPixmap(QPixmap(icon.path).scaled(size, size));
+        //load the icon image
+        QString path = KIconTheme(iconthemename).iconPath(QString("%1.png").arg(name), size, KIconLoader::MatchBest);        
+        if (path != QString()) {
+            label->setPixmap(QPixmap(path).scaled(size, size));
             return;
         }
-        icon = KIconTheme(iconthemename).iconPath(QString("%1.svg").arg(name), size, KIconLoader::MatchBest);
-        if( ! icon.isValid() ) {
-            icon = KIconTheme(iconthemename).iconPath(QString("%1.svgz").arg(name), size, KIconLoader::MatchBest);
-            if( ! icon.isValid() ) {
+        //could not find the .png, try loading the .svg or .svgz
+        path = KIconTheme(iconthemename).iconPath(QString("%1.svg").arg(name), size, KIconLoader::MatchBest);
+        if( path == QString() ) {
+            path = KIconTheme(iconthemename).iconPath(QString("%1.svgz").arg(name), size, KIconLoader::MatchBest);
+            if( path == QString() ) {
                 continue;
             }
         }
-        if (renderer.load(icon.path)) {
+        if (renderer.load(path)) {
             QPixmap pix(size, size);
             pix.fill(label->palette().color(QPalette::Background));
             QPainter p(&pix);
@@ -447,7 +452,7 @@ void IconThemesConfig::themeSelected(QTreeWidgetItem *item)
 
   QString dirName(item->data(0, ThemeNameRole).toString());
   KIconTheme icontheme(dirName);
-  if (!icontheme.isValid()) kDebug() << "notvalid\n";
+  if (!icontheme.isValid()) qCDebug(KCM_ICONS) << "notvalid\n";
 
   updateRemoveButton();
 

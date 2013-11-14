@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2000 Antonio Larrosa <larrosa@kde.org>
+ * KDE Frameworks 5 port Copyright (C) 2013 Jonathan Riddell <jr@jriddell.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,24 +20,23 @@
 #ifndef ICONTHEMES_H
 #define ICONTHEMES_H
 
-#define KDE3_SUPPORT
-#include <kcmodule.h>
-#undef KDE3_SUPPORT
-//Added by qt3to4:
+#include <KCModule>
 #include <QLabel>
+#include <QLoggingCategory>
 
-class KPushButton;
 class QStringList;
+class QPushButton;
 class QTreeWidget;
 class QTreeWidgetItem;
 
+Q_DECLARE_LOGGING_CATEGORY(KCM_ICONS)
 
 class IconThemesConfig : public KCModule
 {
   Q_OBJECT
 
 public:
-  IconThemesConfig(const KComponentData &inst, QWidget *parent);
+  IconThemesConfig(QWidget *parent);
   virtual ~IconThemesConfig();
 
   void loadThemes();
@@ -61,7 +61,7 @@ private:
   QTreeWidgetItem *iconThemeItem(const QString &name);
 
   QTreeWidget *m_iconThemes;
-  KPushButton *m_removeButton;
+  QPushButton *m_removeButton;
 
   QLabel *m_previewExec;
   QLabel *m_previewFolder;

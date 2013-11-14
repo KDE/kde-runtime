@@ -1,4 +1,4 @@
-#add_subdirectory(icons)
+add_subdirectory(icons)
 add_subdirectory(locale)
 #add_subdirectory( kded )
 #add_subdirectory( knotify )

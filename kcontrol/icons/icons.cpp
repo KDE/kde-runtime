@@ -4,9 +4,10 @@
  * Copyright (C) 2000 Geert Jansen <jansen@kde.org>
  * with minor additions and based on ideas from
  * Torsten Rahn <torsten@kde.org>                                                *
+ * KDE Frameworks 5 port Copyright (C) 2013 Jonathan Riddell <jr@jriddell.org>
  *
  * You can Freely distribute this program under the GNU General Public
- * License. See the file "COPYING" for the exact licensing terms.
+ * License version 2 or later. See the file "COPYING" for the exact licensing terms.
  */
 
 #include "icons.h"
@@ -19,26 +20,28 @@
 #include <QFormLayout>
 #include <QSlider>
 #include <QGroupBox>
-//Added by qt3to4:
 #include <QPixmap>
 #include <QGridLayout>
 #include <QBoxLayout>
 #include <QVBoxLayout>
 #include <QListWidget>
+#include <QLoggingCategory>
 
-#include <kcolorbutton.h>
-#include <kconfig.h>
-#include <kdebug.h>
-#include <kiconeffect.h>
-#include <kiconloader.h>
-#include <klocale.h>
-#include <kseparator.h>
-#include <kglobalsettings.h>
+#include <KColorButton>
+#include <KConfig>
+#include <KIconEffect>
+#include <KIconLoader>
+#include <KIconTheme>
+#include <KLocalizedString>
+#include <KSeparator>
+#include <KSharedConfig>
+#include <KGlobalSettings> //FIXME kde4support
 
-/**** KIconConfig ****/
+Q_DECLARE_LOGGING_CATEGORY(KCM_ICONS)
 
-KIconConfig::KIconConfig(const KComponentData &inst, QWidget *parent)
-    : KCModule(inst, parent)
+
+KIconConfig::KIconConfig(QWidget *parent)
+    : KCModule(parent)
 {
 
     QGridLayout *top = new QGridLayout(this );
@@ -122,7 +125,8 @@ QPushButton *KIconConfig::addPreviewIcon(int i, const QString &str, QWidget *par
 void KIconConfig::init()
 {
     mpLoader = KIconLoader::global();
-    mpConfig = KGlobal::config();
+    //FIXMEmpConfig = KGlobal::config();
+    mpConfig = KSharedConfig::openConfig();
     mpEffect = new KIconEffect;
     mUsage = 0;
     for (int i=0; i<KIconLoader::LastGroup; i++)
@@ -523,6 +527,8 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     mpEffectBox->addItem(i18n("Gamma"));
     mpEffectBox->addItem(i18n("Desaturate"));
     mpEffectBox->addItem(i18n("To Monochrome"));
+
+    mpEffectBox->setCurrentRow(0); //BOOM!
     connect(mpEffectBox, SIGNAL(currentRowChanged(int)), SLOT(slotEffectType(int)));
     top->addWidget(mpEffectBox, 1, 0, 2, 1, Qt::AlignLeft);
     lbl->setBuddy(mpEffectBox);
@@ -542,29 +548,37 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     mpPreview->setMinimumSize(105, 105);
     grid->addWidget(mpPreview, 1, 0);
 
+    
     mpEffectGroup = new QGroupBox(i18n("Effect Parameters"), page);
     top->addWidget(mpEffectGroup, 2, 1, 2, 1);
-    QFormLayout *form = new QFormLayout(mpEffectGroup);
+    //This used to use a QFormLayout but that caused an assert crash during KF5 porting
+    QGridLayout *gridLayout = new QGridLayout(mpEffectGroup);
 
     mpEffectSlider = new QSlider(Qt::Horizontal, mpEffectGroup);
     mpEffectSlider->setMinimum(0);
     mpEffectSlider->setMaximum(100);
     mpEffectSlider->setPageStep(5);
     connect(mpEffectSlider, SIGNAL(valueChanged(int)), SLOT(slotEffectValue(int)));
-    form->addRow(i18n("&Amount:"), mpEffectSlider);
-    mpEffectLabel = static_cast<QLabel *>(form->labelForField(mpEffectSlider));
+    mpEffectLabel = new QLabel(i18n("&Amount:"));
+    mpEffectLabel->setBuddy(mpEffectSlider);
+    gridLayout->addWidget(mpEffectLabel, 0, 0);
+    gridLayout->addWidget(mpEffectSlider, 0,1);
 
     mpEColButton = new KColorButton(mpEffectGroup);
     connect(mpEColButton, SIGNAL(changed(const QColor &)),
-		SLOT(slotEffectColor(const QColor &)));
-    form->addRow(i18n("Co&lor:"), mpEColButton);
-    mpEffectColor = static_cast<QLabel *>(form->labelForField(mpEColButton));
+            SLOT(slotEffectColor(const QColor &)));
+    mpEffectColor = new QLabel(i18n("Co&lor:"));
+    mpEffectColor->setBuddy(mpEColButton);
+    gridLayout->addWidget(mpEffectColor, 1, 0);
+    gridLayout->addWidget(mpEColButton, 1,1);
 
     mpECol2Button = new KColorButton(mpEffectGroup);
     connect(mpECol2Button, SIGNAL(changed(const QColor &)),
-		SLOT(slotEffectColor2(const QColor &)));
-    form->addRow(i18n("&Second color:"), mpECol2Button);
-    mpEffectColor2 = static_cast<QLabel *>(form->labelForField(mpECol2Button));
+            SLOT(slotEffectColor2(const QColor &)));
+    mpEffectColor2 = new QLabel(i18n("&Second color:"));
+    mpEffectColor2->setBuddy(mpECol2Button);
+    gridLayout->addWidget(mpEffectColor2, 2, 0);
+    gridLayout->addWidget(mpECol2Button, 2,1);
 
     init();
     preview();
@@ -609,7 +623,6 @@ void KIconEffectSetupDialog::slotEffectType(int type)
 {
     if (type == -1)
         return;
-
     mEffect.type = type;
     mpEffectGroup->setEnabled(mEffect.type != KIconEffect::NoEffect);
     mpEffectSlider->setEnabled(mEffect.type != KIconEffect::NoEffect);

@@ -4,6 +4,7 @@
  * Copyright (C) 2000 Geert Jansen <jansen@kde.org>
  * with minor additions and based on ideas from
  * Torsten Rahn <torsten@kde.org>
+ * KDE Frameworks 5 port Copyright (C) 2013 Jonathan Riddell <jr@jriddell.org>
  *
  * You can Freely distribute this program under the GNU General Public
  * License. See the file "COPYING" for the exact licensing terms.
@@ -15,9 +16,9 @@
 #include <QColor>
 #include <QImage>
 
-#include <kcmodule.h>
-#include <kdialog.h>
-#include <kconfig.h>
+#include <KCModule>
+#include <KDialog>
+#include <KConfig>
 #include <KSharedConfig>
 
 class QCheckBox;
@@ -54,7 +55,7 @@ class KIconConfig: public KCModule
     Q_OBJECT
 
 public:
-    KIconConfig(const KComponentData &inst, QWidget *parent);
+    KIconConfig(QWidget *parent);
     ~KIconConfig();
 
     virtual void load();
