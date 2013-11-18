@@ -16,7 +16,7 @@ target_link_libraries(kcm_icons
     KF5::KArchive
     ${X11_LIBRARIES}
     KF5::KDE4Support
-    knewstuff3
+    KF5::KNewStuff
 )
 
 install(TARGETS kcm_icons  DESTINATION ${PLUGIN_INSTALL_DIR} )
