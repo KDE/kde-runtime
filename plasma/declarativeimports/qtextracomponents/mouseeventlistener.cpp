@@ -164,6 +164,11 @@ bool MouseEventListener::sceneEventFilter(QGraphicsItem *item, QEvent *event)
         return false;
     }
 
+    // If we already processed this event for another child, don't do it again.
+    if (m_lastEvent == event) {
+        return false;
+    }
+
     switch (event->type()) {
     case QEvent::GraphicsSceneMousePress: {
         m_lastEvent = event;
