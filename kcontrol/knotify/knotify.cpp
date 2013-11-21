@@ -28,16 +28,20 @@
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
 
-#include <kapplication.h>
-#include <kaboutdata.h>
-#include <kcombobox.h>
-#include <kconfig.h>
-#include <knotifyconfigwidget.h>
-#include <kpluginfactory.h>
-#include <kpluginloader.h>
-#include <kstandarddirs.h>
-#include <kurlcompletion.h>
-#include <kurlrequester.h>
+#include <KApplication>
+#include <KAboutData>
+#include <KComboBox>
+#include <KConfig>
+#include <KConfigGroup>
+
+#include <KNotifyConfigWidget>
+#include <KPluginFactory>
+#include <KPluginLoader>
+#include <KStandardDirs>
+#include <KUrlCompletion>
+#include <KUrlRequester>
+#include <KLocalizedString>
+#include <KGlobal>
 
 #include "ui_playersettings.h"
 
@@ -47,7 +51,7 @@ K_PLUGIN_FACTORY( NotifyFactory, registerPlugin<KCMKNotify>(); )
 K_EXPORT_PLUGIN( NotifyFactory("kcmnotify") )
 
 KCMKNotify::KCMKNotify(QWidget *parent, const QVariantList & )
-    : KCModule(NotifyFactory::componentData(), parent/*, name*/),
+    : KCModule(parent),
       m_playerSettings( 0L )
 {
     setButtons( Help | Default | Apply );
@@ -107,13 +111,13 @@ KCMKNotify::KCMKNotify(QWidget *parent, const QVariantList & )
              SLOT( slotAppActivated( int )) );
 
     KAboutData* ab = new KAboutData(
-        "kcmknotify", 0, ki18n("KNotify"), "4.0",
-        ki18n("System Notification Control Panel Module"),
-        KAboutData::License_GPL, ki18n("(c) 2002-2006 KDE Team"));
+        "kcmknotify", 0, i18n("KNotify"), "4.0",
+        i18n("System Notification Control Panel Module"),
+        KAboutData::License_GPL, i18n("(c) 2002-2006 KDE Team"));
 
-    ab->addAuthor( ki18n("Olivier Goffart"), KLocalizedString(), "ogoffart@kde.org" );
-    ab->addAuthor( ki18n("Carsten Pfeiffer"), KLocalizedString(), "pfeiffer@kde.org" );
-    ab->addCredit( ki18n("Charles Samuels"), ki18n("Original implementation"),
+    ab->addAuthor( i18n("Olivier Goffart"), QString(), "ogoffart@kde.org" );
+    ab->addAuthor( i18n("Carsten Pfeiffer"), QString(), "pfeiffer@kde.org" );
+    ab->addCredit( i18n("Charles Samuels"), i18n("Original implementation"),
         "charles@altair.dhs.org" );
     setAboutData( ab );
 }
@@ -161,11 +165,11 @@ void KCMKNotify::load()
         QString appname= slash2 < 0 ? QString() :  fullPath.mid( slash2+1 , slash-slash2  );
         if ( !appname.isEmpty() )
         {
-            KConfig config(fullPath, KConfig::NoGlobals, "data" );
+            KConfig config(fullPath, KConfig::NoGlobals, QStandardPaths::DataLocation);
             KConfigGroup globalConfig( &config, QString::fromLatin1("Global") );
             QString icon = globalConfig.readEntry(QString::fromLatin1("IconName"), QString::fromLatin1("misc"));
             QString description = globalConfig.readEntry( QString::fromLatin1("Comment"), appname );
-            m_appCombo->addItem( SmallIcon( icon ), description, appname );
+            m_appCombo->addItem( QIcon::fromTheme( icon ), description, appname );
         }
     }
 
@@ -236,7 +240,7 @@ void PlayerSettingsDialog::load()
     KConfigGroup config(&_config, "Sounds" );
     bool useExternal = config.readEntry( "Use external player", false );
     m_ui->cbExternal->setChecked( useExternal );
-    m_ui->reqExternal->setUrl( config.readPathEntry( "External player", QString() ) );
+    m_ui->reqExternal->setUrl( QUrl(config.readPathEntry( "External player", QString() )) );
     m_ui->volumeSlider->setValue( config.readEntry( "Volume", 100 ) );
 
     if ( !m_ui->cbExternal->isChecked() )
