@@ -32,7 +32,7 @@
 #include <klocale.h>
 #include <kdebug.h>
 #include <kvbox.h>
-
+#include <KLocalizedString>
 #include "ktimerdialog.moc"
 
 KTimerDialog::KTimerDialog( int msec, TimerStyle style, QWidget *parent,

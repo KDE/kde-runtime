@@ -18,6 +18,8 @@
 #include <kglobalsettings.h>
 #include <kconfiggroup.h>
 
+#include <KLocalizedString>
+
 #include <KUrl>
 
 CfgBrowser::CfgBrowser(QWidget *parent)

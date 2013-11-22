@@ -17,7 +17,6 @@
 #include "componentchooserterminal.moc"
 
 #include <ktoolinvocation.h>
-#include <klauncher_iface.h>
 #include <QtDBus/QtDBus>
 #include <QCheckBox>
 
@@ -31,6 +30,9 @@
 #include <kmimetypetrader.h>
 #include <kurlrequester.h>
 #include <kconfiggroup.h>
+#include <KLocalizedString>
+#include <KGlobalSettings>
+#include <KToolInvocation>
 
 #include <KUrl>
 
@@ -84,8 +86,12 @@ void CfgTerminalEmulator::save(KConfig *)
 	config.sync();
 
 	KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
-	KToolInvocation::klauncher()->reparseConfiguration();
 
+        QDBusMessage message  = QDBusMessage::createMethodCall(QStringLiteral("org.kde.klauncher5"),
+                                                      QStringLiteral("/KLauncher"),
+                                                      QStringLiteral("org.kde.KLauncher"),
+                                                      QStringLiteral("reparseConfiguration"));
+        QDBusConnection::sessionBus().send(message);
 	emit changed(false);
 }
 

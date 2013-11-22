@@ -24,8 +24,7 @@ if(Q_WS_X11)
      componentchooserwm.cpp )
 endif(Q_WS_X11)
 
-
-kde4_add_ui_files(kcm_componentchooser_SRCS 
+qt5_wrap_ui(kcm_componentchooser_SRCS
   browserconfig_ui.ui
   filemanagerconfig_ui.ui
   emailclientconfig_ui.ui
@@ -34,13 +33,16 @@ kde4_add_ui_files(kcm_componentchooser_SRCS
 )
 
 if(NOT WIN32)
-  kde4_add_ui_files(kcm_componentchooser_SRCS terminalemulatorconfig_ui.ui wmconfig_ui.ui)
+  qt5_wrap_ui(kcm_componentchooser_SRCS terminalemulatorconfig_ui.ui wmconfig_ui.ui)
 endif(NOT WIN32)
 
 kde4_add_plugin(kcm_componentchooser ${kcm_componentchooser_SRCS})
 
 
-target_link_libraries(kcm_componentchooser  ${KDE4_KIO_LIBS})
+
+target_link_libraries(kcm_componentchooser
+                      KF5::KDE4Support
+                      )
 
 install(TARGETS kcm_componentchooser  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

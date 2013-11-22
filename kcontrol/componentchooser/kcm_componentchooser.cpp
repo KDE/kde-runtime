@@ -23,8 +23,8 @@
 #include <kglobal.h>
 #include <kcomponentdata.h>
 #include <KPluginFactory>
+#include <KLocalizedString>
 
-#include "kcm_componentchooser.moc"
 
 K_PLUGIN_FACTORY(KCMComponentChooserFactory,
         registerPlugin<KCMComponentChooser>();
@@ -32,7 +32,7 @@ K_PLUGIN_FACTORY(KCMComponentChooserFactory,
 K_EXPORT_PLUGIN(KCMComponentChooserFactory("kcmcomponentchooser"))
 
 KCMComponentChooser::KCMComponentChooser(QWidget *parent, const QVariantList &):
-	KCModule(KCMComponentChooserFactory::componentData(), parent) {
+	KCModule(parent) {
 
 	QVBoxLayout *lay = new QVBoxLayout(this);
     lay->setMargin(0);
@@ -43,11 +43,11 @@ KCMComponentChooser::KCMComponentChooser(QWidget *parent, const QVariantList &):
 	setButtons( Default|Apply|Help );
 
 	KAboutData *about =
-	new KAboutData(I18N_NOOP("kcmcomponentchooser"), 0, ki18n("Component Chooser"),
-			0, KLocalizedString(), KAboutData::License_GPL,
-			ki18n("(c), 2002 Joseph Wenninger"));
+	new KAboutData( "kcmcomponentchooser", 0, i18n("Component Chooser"),
+			0, QString(), KAboutData::License_GPL,
+			i18n("(c), 2002 Joseph Wenninger"));
 
-	about->addAuthor(ki18n("Joseph Wenninger"), KLocalizedString() , "jowenn@kde.org");
+	about->addAuthor(i18n("Joseph Wenninger"), QString() , "jowenn@kde.org");
 	setAboutData( about );
 
 }
@@ -63,3 +63,5 @@ void KCMComponentChooser::save(){
 void KCMComponentChooser::defaults(){
 	m_chooser->restoreDefault();
 }
+
+#include "kcm_componentchooser.moc"

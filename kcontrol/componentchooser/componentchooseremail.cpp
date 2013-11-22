@@ -19,6 +19,9 @@
 #include <QCheckBox>
 #include <kopenwithdialog.h>
 #include <kstandarddirs.h>
+#include <KLocalizedString>
+#include <KGlobal>
+#include <KConfigGroup>
 
 #include <KUrl>
 
