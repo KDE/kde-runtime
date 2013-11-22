@@ -24,18 +24,23 @@
 #include <QIcon>
 #include <QLabel>
 #include <QListWidgetItem>
+
+#include <KGlobal>
+#include <KUrl>
 #include <KMessageBox>
 #include <KDebug>
 #include <KIcon>
 #include <KAboutData>
 #include <KStandardDirs>
 #include <KFileDialog>
+#include <KPluginFactory>
+#include <KPluginLoader>
 #include <KInputDialog>
 #include <KUrlRequesterDialog>
-#include <kdecore_export.h>
+#include <kmessagebox_queued.h>
 #include <kio/netaccess.h>
-#include <kpluginfactory.h>
 #include <KNS3/DownloadDialog>
+#include <KLocalizedString>
 
 EditDialog::EditDialog(QWidget *parent, const QString &name)
         : KDialog(parent)
@@ -100,12 +105,11 @@ void EditDialog::updateOkButton()
 }
 
 K_PLUGIN_FACTORY(EmoticonsFactory, registerPlugin<EmoticonList>();)
-K_EXPORT_PLUGIN(EmoticonsFactory("emoticons", "kcm_emoticons"))
 
 EmoticonList::EmoticonList(QWidget *parent, const QVariantList &args)
-        : KCModule(EmoticonsFactory::componentData(), parent, args)
+        : KCModule(parent, args)
 {
-    KAboutData *about = new KAboutData("kcm_emoticons", 0, ki18n("Emoticons"), "1.0");
+    KAboutData *about = new KAboutData("kcm_emoticons", 0, i18n("Emoticons"), "1.0");
     setAboutData(about);
 //     setButtons(Apply | Help);
     setupUi(this);
@@ -170,7 +174,7 @@ void EmoticonList::load()
 void EmoticonList::save()
 {
     for (int i = 0; i < delFiles.size(); i++) {
-        KIO::NetAccess::del(delFiles.at(i), this);
+        KIO::NetAccess::del(QUrl(delFiles.at(i)), this);
     }
 
     foreach (KEmoticonsTheme t, emoMap) {
@@ -252,7 +256,7 @@ void EmoticonList::btRemoveThemeClicked()
 
 void EmoticonList::installEmoticonTheme()
 {
-    KUrl themeURL = KUrlRequesterDialog::getUrl(QString(), this, i18n("Drag or Type Emoticon Theme URL"));
+    QUrl themeURL = KUrlRequesterDialog::getUrl(QUrl(), this, i18n("Drag or Type Emoticon Theme URL"));
     if (themeURL.isEmpty())
         return;
 
@@ -367,7 +371,7 @@ void EmoticonList::newTheme()
         return;
     QString path = KGlobal::dirs()->saveLocation("emoticons", name, false);
 
-    if (KIO::NetAccess::exists(path, KIO::NetAccess::SourceSide, this)) {
+    if (KIO::NetAccess::exists(QUrl(path), KIO::NetAccess::SourceSide, this)) {
         KMessageBox::error(this, i18n("%1 theme already exists", name));
     } else {
         QString constraint("(exist Library)");
@@ -484,5 +488,7 @@ bool EmoticonList::canEditTheme()
 
     return inf.isWritable();
 }
+
+#include "emoticonslist.moc"
 
 // kate: space-indent on; indent-width 4; replace-tabs on;

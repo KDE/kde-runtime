@@ -1,8 +1,11 @@
 set(kcmemoticons_SRCS emoticonslist.cpp)
-kde4_add_ui_files(kcmemoticons_SRCS emoticonslist.ui)
+qt5_wrap_ui(kcmemoticons_SRCS emoticonslist.ui)
 
 kde4_add_plugin(kcm_emoticons ${kcmemoticons_SRCS})
-target_link_libraries(kcm_emoticons ${KDE4_KDEUI_LIBS} ${KDE4_KPARTS_LIBS} ${KDE4_KNEWSTUFF3_LIBS} ${KDE4_KEMOTICONS_LIBRARY})
+target_link_libraries(kcm_emoticons
+                      KF5::KNewStuff
+                      KF5::KDE4Support
+                      KF5::KEmoticons)
 
 install(TARGETS kcm_emoticons  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
