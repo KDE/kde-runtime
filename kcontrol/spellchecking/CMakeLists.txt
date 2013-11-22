@@ -1,13 +1,13 @@
-ADD_DEFINITIONS (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-INCLUDE_DIRECTORIES (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
-
-SET(kcm_spellchecking_SRCS
+set(kcm_spellchecking_SRCS
    spellchecking.cpp
    )
 
-KDE4_ADD_PLUGIN(kcmspellchecking ${kcm_spellchecking_SRCS})
+kde4_add_plugin(kcmspellchecking ${kcm_spellchecking_SRCS})
 
-TARGET_LINK_LIBRARIES(kcmspellchecking   ${KDE4_KDEUI_LIBS} )
+target_link_libraries(kcmspellchecking
+                      KF5::SonnetUi
+                      KF5::KDE4Support
+                     )
 
-INSTALL(TARGETS kcmspellchecking   DESTINATION ${PLUGIN_INSTALL_DIR} )
-INSTALL( FILES spellchecking.desktop   DESTINATION  ${SERVICES_INSTALL_DIR} )
+install(TARGETS kcmspellchecking   DESTINATION ${PLUGIN_INSTALL_DIR} )
+install( FILES spellchecking.desktop   DESTINATION  ${SERVICES_INSTALL_DIR} )
