@@ -10,7 +10,13 @@ add_library(kded_ktimezoned MODULE ${kded_ktimezoned_SRCS})
 
 #qt4_add_dbus_adaptor(kded_ktimezoned_SRCS org.kde.KTimeZoned ktimezonedbus.h DBusHandler)
 
-target_link_libraries(kded_ktimezoned Qt5::Core Qt5::DBus KF5::KService KF5::KCoreAddons KF5::KDBusAddons)
+target_link_libraries(kded_ktimezoned
+   Qt5::Core
+   Qt5::DBus
+   KF5::KService    # plugin factory
+   KF5::KCoreAddons # KDirWatch
+   KF5::KDBusAddons # kdedmodule
+)
 
 install(TARGETS kded_ktimezoned DESTINATION ${PLUGIN_INSTALL_DIR})
 
