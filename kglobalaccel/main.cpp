@@ -45,7 +45,7 @@ static void sighandler(int /*sig*/)
 }
 
 
-extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
+extern "C" Q_DECL_EXPORT int kdemain(int argc, char **argv)
     {
     // Disable Session Management the right way (C)
     //
