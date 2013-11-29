@@ -110,12 +110,17 @@ set_package_properties(SLP PROPERTIES DESCRIPTION "SLP (Service Location Protoco
 # check_include_files(sys/time.h HAVE_SYS_TIME_H)
 
 
-find_package(XCB MODULE COMPONENTS XCB KEYSYMS)
+find_package(XCB MODULE COMPONENTS XCB)
 set_package_properties(XCB PROPERTIES DESCRIPTION "X protocol C-language Binding"
                        URL "http://xcb.freedesktop.org"
                        TYPE OPTIONAL
                        PURPOSE "XCB is needed for X11 backend of KGlobalAccel"
                        )
+if(XCB_FOUND)
+    # If we are building with XCB, we want to have all required components
+    # installed
+    find_package(XCB MODULE REQUIRED COMPONENTS KEYSYMS)
+endif()
 
 configure_file (config-runtime.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-runtime.h )
 
