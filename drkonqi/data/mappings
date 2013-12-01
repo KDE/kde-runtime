@@ -148,6 +148,8 @@ ktp-log-viewer=telepathy|log-viewer
 
 # KDE Calligra Suite
 braindump=braindump|application
+kritagemini=krita|general
+kritasketch=krita|krita sketch
 
 
 # KDE Kipi-plugins
@@ -179,6 +181,8 @@ muon-discover=muon|discover
 muon-installer=muon|installer
 muon-updater=muon|updater
 printer-applet-kde=printer-applet|general
+kde-add-printer=print-manager|general
+kde-print-queue=print-manager|general
 partitionmanager-bin=partitionmanager|general
 krandrtray=krandr|krandrtray
 kmymoney=kmymoney4|general
@@ -208,6 +212,7 @@ compiz=unknown|general
 firefox=unknown|general
 firefox-bin=unknown|general
 iqfile=unknown|general
+kanyremote=unknown|general
 kbibtex=unknown|general
 kde4-window-decorator=unknown|general
 kdesudo=unknown|general

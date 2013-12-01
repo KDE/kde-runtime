@@ -188,20 +188,20 @@
           <bool>false</bool>
          </property>
          <property name="title">
-          <string>Email Indexing</string>
+          <string>PIM Data Indexing</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_11">
           <item>
            <widget class="QLabel" name="label_12">
             <property name="text">
-             <string>Email indexing allows full text search in email and their attachments.</string>
+             <string>PIM data indexing allows full text search in events, contacts, email and their attachments.</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QCheckBox" name="m_checkEnableEmailIndexer">
             <property name="text">
-             <string>Enable Email Indexer</string>
+             <string>Enable PIM Data Indexer</string>
             </property>
            </widget>
           </item>

@@ -220,14 +220,14 @@ void KIOExec::slotRunApp()
             if ( tempfiles )
             {
                 if ( KMessageBox::questionYesNo( 0L,
-                                                 i18n( "The supposedly temporary file\n%1\nhas been modified.\nDo you still want to delete it?" , dest.path()),
+                                                 i18n( "The supposedly temporary file\n%1\nhas been modified.\nDo you still want to delete it?", dest.toDisplayString(QUrl::PreferLocalFile)),
                                                  i18n( "File Changed" ), KStandardGuiItem::del(), KGuiItem(i18n("Do Not Delete")) ) != KMessageBox::Yes )
                     continue; // don't delete the temp file
             }
             else if ( ! dest.isLocalFile() )  // no upload when it's already a local file
             {
                 if ( KMessageBox::questionYesNo( 0L,
-                                                 i18n( "The file\n%1\nhas been modified.\nDo you want to upload the changes?" , dest.toString()),
+                                                 i18n( "The file\n%1\nhas been modified.\nDo you want to upload the changes?" , dest.toDisplayString()),
                                                  i18n( "File Changed" ), KGuiItem(i18n("Upload")), KGuiItem(i18n("Do Not Upload")) ) == KMessageBox::Yes )
                 {
                     qDebug() << "src='" << src << "'  dest='" << dest << "'";
@@ -265,12 +265,13 @@ int main( int argc, char **argv )
      *    aboutData.addAuthor(ki18n("Bernhard Rosenkraenzer"),KLocalizedString(), "bero@arklinux.org");
      *    aboutData.addAuthor(ki18n("Waldo Bastian"),KLocalizedString(), "bastian@kde.org");
      *    aboutData.addAuthor(ki18n("Oswald Buddenhagen"),KLocalizedString(), "ossi@kde.org");
+     *    aboutData.setProgramIconName("kde");
      */
-    QCommandLineParser *parser = new QCommandLineParser;
-    /*parser->addOption(QCommandLineOption(QStringList() << "tempfiles" , i18n("Treat URLs as local files and delete them afterwards")));
-    parser->addOption(QCommandLineOption(QStringList() << "suggestedfilename <file name>" , ki18n("Suggested file name for the downloaded file")));
-    parser->addOption(QCommandLineOption(QStringList() << "+command", i18n("Command to execute")));
-    parser->addOption(QCommandLineOption(QStringList() << "+[URLs]", i18n("URL(s) or local file(s) used for 'command'"))); */
+    QCommandLineParser parser;
+    /*parser.addOption(QCommandLineOption(QStringList() << "tempfiles" , i18n("Treat URLs as local files and delete them afterwards")));
+    parser.addOption(QCommandLineOption(QStringList() << "suggestedfilename <file name>" , ki18n("Suggested file name for the downloaded file")));
+    parser.addOption(QCommandLineOption(QStringList() << "+command", i18n("Command to execute")));
+    parser.addOption(QCommandLineOption(QStringList() << "+[URLs]", i18n("URL(s) or local file(s) used for 'command'"))); */
     QApplication app( argc, argv);
     app.setQuitOnLastWindowClosed(false);
     parser->process(app);

@@ -381,8 +381,8 @@ void KGlobalAccelD::activateGlobalShortcutContext(
 {
     KdeDGlobalAccel::Component *const comp =
         GlobalShortcutsRegistry::self()->getComponent(component);
-
-    comp->activateGlobalShortcutContext(uniqueName);
+    if (comp)
+        comp->activateGlobalShortcutContext(uniqueName);
 }
 
 

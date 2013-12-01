@@ -537,7 +537,7 @@ void Nepomuk2::ServerConfigModule::updateEmailIndexerStatus()
 
             if ( status.isEmpty() ) {
                 setEmailIndexerStatusText( i18nc( "@info:status %1 is an error message returned by a dbus interface.",
-                                                 "Failed to contact Email Indexer service (%1)",
+                                                 "Failed to contact PIM Data Indexer service (%1)",
                                                  m_akonadiInterface->lastError().message() ), false );
             }
             else {
@@ -546,11 +546,11 @@ void Nepomuk2::ServerConfigModule::updateEmailIndexerStatus()
             }
         }
         else {
-            setEmailIndexerStatusText( i18nc( "@info:status", "Email Indexing service is suspended" ), false );
+            setEmailIndexerStatusText( i18nc( "@info:status", "PIM Data Indexing service is suspended" ), false );
         }
     }
     else {
-        setEmailIndexerStatusText( i18nc( "@info:status", "Email indexing service not running." ), false );
+        setEmailIndexerStatusText( i18nc( "@info:status", "PIM Data indexing service not running." ), false );
     }
 }
 
