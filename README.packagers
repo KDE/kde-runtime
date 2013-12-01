@@ -28,3 +28,12 @@ Nepomuk has four runtime dependancies:
   <http://soprano.sf.net>
 * Virtuoso server and ODBC driver (recommended version >= 6.1.2)
   <http://www.sf.net/projects/virtuoso-opensource>
+
+thumbnail:/ kio-slave (windows exe and ico thumbnailers)
+--------------------------------------------------------
+On non-windows this thumbnailer requires the icoutils package:
+ * Icoutils <http://www.nongnu.org/icoutils/>
+   The icoutils are a set of command-line programs for extracting and 
+   converting images in Microsoft Windows(R) icon and cursor files.
+   These files usually have the extension .ico or .cur, but they can
+   also be embedded in executables and libraries (.dll-files).
