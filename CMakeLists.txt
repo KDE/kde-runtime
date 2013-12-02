@@ -34,6 +34,7 @@ find_package(Qt5Svg REQUIRED NO_MODULE)
 find_package(Qt5Quick REQUIRED NO_MODULE)
 find_package(Qt5Widgets REQUIRED NO_MODULE)
 find_package(Qt5X11Extras REQUIRED NO_MODULE)
+find_package(Qt5Concurrent REQUIRED NO_MODULE)
 
 #include(ConfigureChecks.cmake)
 
