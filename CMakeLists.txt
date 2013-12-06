@@ -142,7 +142,7 @@ add_subdirectory(kglobalaccel)
 add_subdirectory(ktimezoned)
 
 if(NOT WINCE)
-# add_subdirectory(kuiserver)
+	add_subdirectory(kuiserver)
 endif(NOT WINCE)
 # add_subdirectory(kwalletd)
 
