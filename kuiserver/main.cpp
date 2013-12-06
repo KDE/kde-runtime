@@ -23,15 +23,13 @@
 
 #include "uiserver.h"
 #include "uiserver_p.h"
-
 #include "progresslistmodel.h"
 
-#include <knotifications_export.h>
 #include <kdbusservice.h>
 
 #include <QCommandLineParser>
 
-extern "C" KNOTIFICATIONS_EXPORT int kdemain(int argc, char **argv)
+extern "C" Q_DECL_EXPORT int kdemain(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
     app.setApplicationName(QStringLiteral("kuiserver"));
