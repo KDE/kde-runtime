@@ -34,7 +34,6 @@
 
 #include <KLocalizedString>
 #include "kglobalaccel.h"
-#include "kglobalsettings.h"
 #include "knotification.h"
 #include "kdebug.h"
 
@@ -298,9 +297,6 @@ bool KGlobalAccelD::init()
     GlobalShortcutsRegistry::self()->setDBusPath(QDBusObjectPath("/"));
     GlobalShortcutsRegistry::self()->loadSettings();
 
-    connect(KGlobalSettings::self(), SIGNAL(blockShortcuts(int)),
-            SLOT(blockGlobalShortcuts(int)));
-
     return true;
 }
 
@@ -400,7 +396,7 @@ QList<QDBusObjectPath> KGlobalAccelD::allComponents() const
     }
 
 
-void KGlobalAccelD::blockGlobalShortcuts(int block)
+void KGlobalAccelD::blockGlobalShortcuts(bool block)
     {
 #ifdef KDEDGLOBALACCEL_TRACE
     kDebug() << block;

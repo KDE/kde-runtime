@@ -136,13 +136,11 @@ public Q_SLOTS:
             const QString &componentUnique,
             const QString &shortcutUnique);
 
+    Q_SCRIPTABLE void blockGlobalShortcuts(bool);
+
 Q_SIGNALS:
 
     Q_SCRIPTABLE void yourShortcutGotChanged(const QStringList &actionId, const QList<int> &newKeys);
-
-private Q_SLOTS:
-
-    void blockGlobalShortcuts(int);
 
 
 private:
