@@ -27,13 +27,9 @@
 #include "progresslistmodel.h"
 
 #include <knotifications_export.h>
+#include <kdbusservice.h>
 
-#include <kuniqueapplication.h>
-#include <k4aboutdata.h>
-#include <kcmdlineargs.h>
-#include <klocale.h>
-#include <kdebug.h>
-
+#include <QCommandLineParser>
 
 extern "C" KNOTIFICATIONS_EXPORT int kdemain(int argc, char **argv)
 {
@@ -41,33 +37,12 @@ extern "C" KNOTIFICATIONS_EXPORT int kdemain(int argc, char **argv)
     app.setApplicationName(QStringLiteral("kuiserver"));
     app.setApplicationVersion(QStringLiteral("2.0"));
     app.setOrganizationDomain(QStringLiteral("kde.org"));
-    /*
-    //  GS 5/2001 - I changed the name to "KDE" to make it look better
-    //              in the titles of dialogs which are displayed.
-    K4AboutData aboutdata("kuiserver", "kdelibs4", ki18n("Job Manager"),
-                         "0.8", ki18n("KDE Job Manager"),
-                         KAboutData::License_GPL_V2, ki18n("(C) 2000-2009, KDE Team"));
 
-    aboutdata.addAuthor(ki18n("Shaun Reich"), ki18n("Maintainer"), "shaun.reich@kdemail.net");
-    aboutdata.addAuthor(ki18n("Rafael Fernández López"), ki18n("Former Maintainer"), "ereslibre@kde.org");
-    aboutdata.addAuthor(ki18n("David Faure"), ki18n("Former maintainer"), "faure@kde.org");
-    aboutdata.addAuthor(ki18n("Matej Koss"), ki18n("Developer"), "koss@miesto.sk");
-
-    KCmdLineArgs::init(argc, argv, &aboutdata);
-    KUniqueApplication::addCmdLineOptions();
-
-    if (!KUniqueApplication::start()) {
-        kDebug(7024) << "kuiserver is already running!";
-        return 0;
-    }
-
-    KUniqueApplication app;
-
-    // This app is started automatically, no need for session management
-    app.disableSessionManagement();
-    app.setQuitOnLastWindowClosed(false);
-    */
-    //ProgressListModel model;
+    QCommandLineParser parser;
+    parser.addHelpOption();
+    parser.addVersionOption();
+    ProgressListModel model;
+    KDBusService service(KDBusService::Unique);
 
     return app.exec();
 }
