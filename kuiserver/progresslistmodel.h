@@ -26,6 +26,10 @@
 
 #include <QDBusContext>
 
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(KUISERVER)
+
 
 class QDBusAbstractInterface;
 class QDBusServiceWatcher;

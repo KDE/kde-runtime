@@ -29,8 +29,12 @@
 
 #include <QCommandLineParser>
 
+Q_LOGGING_CATEGORY(KUISERVER, "kuiserver")
+
 extern "C" Q_DECL_EXPORT int kdemain(int argc, char **argv)
 {
+    QLoggingCategory::setFilterRules(QStringLiteral("kuiserver.debug = true"));
+
     QCoreApplication app(argc, argv);
     app.setApplicationName(QStringLiteral("kuiserver"));
     app.setApplicationVersion(QStringLiteral("2.0"));
