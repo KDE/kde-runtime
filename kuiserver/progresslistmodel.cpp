@@ -22,8 +22,6 @@
 
 #include <QDBusServiceWatcher>
 
-#include <KDebug>
-
 #include "jobviewserveradaptor.h"
 #include "kuiserveradaptor.h"
 #include "jobviewserver_interface.h"
@@ -47,17 +45,17 @@ ProgressListModel::ProgressListModel(QObject *parent)
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
 
     if (!sessionBus.registerService(QLatin1String("org.kde.kuiserver"))) {
-        kDebug(7024) <<
+        qCDebug(KUISERVER) <<
         "********** Error, we have failed to register service org.kde.kuiserver. Perhaps something  has already taken it?";
     }
 
     if (!sessionBus.registerService(QLatin1String("org.kde.JobViewServer"))) {
-        kDebug(7024) <<
+        qCDebug(KUISERVER) <<
         "********** Error, we have failed to register service JobViewServer. Perhaps something already has taken it?";
     }
 
     if (!sessionBus.registerObject(QLatin1String("/JobViewServer"), this)) {
-        kDebug(7024) <<
+        qCDebug(KUISERVER) <<
         "********** Error, we have failed to register object /JobViewServer.";
     }
 
@@ -242,7 +240,7 @@ void ProgressListModel::jobFinished(JobView *jobView)
         // Job finished, delete it if we are not in self-ui mode, *and* the config option to keep finished jobs is set
         //TODO: does not check for case for the config
         if (!m_uiServer) {
-            kDebug(7024) << "removing jobview from list, it finished";
+            qCDebug(KUISERVER) << "removing jobview from list, it finished";
             m_jobViews.removeOne(jobView);
             //job dies, dest. URL's change..
             emit jobUrlsChanged(gatherJobUrls());

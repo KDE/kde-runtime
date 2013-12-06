@@ -29,6 +29,10 @@
 
 #include <kuiserversettings.h>
 
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(KUISERVER)
+
 class QDBusAbstractInterface;
 class RequestViewCallWatcher;
 

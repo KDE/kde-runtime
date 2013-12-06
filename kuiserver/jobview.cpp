@@ -26,7 +26,6 @@
 
 #include <klocale.h>
 #include <KGlobal>
-#include <kdebug.h>
 
 #include <QtDBus/QDBusPendingReply>
 #include <qdbusabstractinterface.h>
@@ -58,7 +57,7 @@ void JobView::terminate(const QString &errorMessage)
 
     typedef QPair<QString, QDBusAbstractInterface*> iFacePair;
     foreach(const iFacePair &pair, m_objectPaths) {
-        kDebug(7024) << "making async call of terminate for: " << pair.first;
+        qCDebug(KUISERVER) << "making async call of terminate for: " << pair.first;
         pair.second->asyncCall(QLatin1String("terminate"), errorMessage);
     }
 
@@ -392,8 +391,8 @@ void JobView::pendingCallFinished(RequestViewCallWatcher* watcher)
     QString address = watcher->service();
 
     if (reply.isError()) { // this happens if plasma crashed meanwhile
-        kWarning() << "got error from" << address << ":" << reply.error();
-        kWarning() << "app name was" << watcher->jobView()->appName();
+        qWarning() << "got error from" << address << ":" << reply.error();
+        qWarning() << "app name was" << watcher->jobView()->appName();
         return;
     }
 
@@ -411,22 +410,22 @@ void JobView::pendingCallFinished(RequestViewCallWatcher* watcher)
 
         org::kde::JobViewV2 *client = new org::kde::JobViewV2(address, objectPath.path(), QDBusConnection::sessionBus());
 
-        kDebug(7024) << "making async terminate call to objectPath: " << objectPath.path();
-        kDebug(7024) << "this was because a pending call was finished, but the job was already terminated before it returned.";
-        kDebug(7024) << "current pending calls left: " << m_currentPendingCalls;
+        qCDebug(KUISERVER) << "making async terminate call to objectPath: " << objectPath.path();
+        qCDebug(KUISERVER) << "this was because a pending call was finished, but the job was already terminated before it returned.";
+        qCDebug(KUISERVER) << "current pending calls left: " << m_currentPendingCalls;
 
         // forcibly set the percent (should be 100). Since the job missed out on that too.
         client->asyncCall(QLatin1String("setPercent"), m_percent);
         client->asyncCall(QLatin1String("terminate"), m_error);
 
         if (m_currentPendingCalls < 1) {
-            kDebug() << "no more async calls left pending..emitting finished so we can have ourselves deleted.";
+            qCDebug(KUISERVER) << "no more async calls left pending..emitting finished so we can have ourselves deleted.";
             emit finished(this);
         }
     } else {
         // add this job contact because we are _not_ just terminating here.
         // we'll need it for regular things like speed changes, etc.
-        kDebug(7024) << "adding job contact for address: " << address << " objectPath: " << objectPath.path();
+        qCDebug(KUISERVER) << "adding job contact for address: " << address << " objectPath: " << objectPath.path();
         addJobContact(objectPath.path(), address);
     }
 }
