@@ -5,15 +5,15 @@
   <!ENTITY % English "INCLUDE">
 ]>
 <article id="phonon" lang="&language;">
-<title>Phonon</title>
+<title>Audio and Video Settings</title>
 <articleinfo>
 <authorgroup>
 <author><firstname>Matthias</firstname><surname>Kretz</surname></author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2009-11-30</date>
-<releaseinfo>&kde; 4.4</releaseinfo>
+<date>2013-12-05</date>
+<releaseinfo>&kde; 4.12</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -34,9 +34,9 @@ preference and the backends used by Phonon.
 <variablelist>
 <varlistentry><term><guilabel>Device Preference</guilabel> tab</term>
 <listitem><para>
-On the left you are presented a tree list with various categories of outputs and capture. 
+On the left you are presented a tree list with various categories of playback and recording. 
 For each category you may choose what device you wish to use.</para>
-<para>The <guilabel>Audio Output</guilabel> and <guilabel>Audio Capture</guilabel>
+<para>The <guilabel>Audio Playback</guilabel> and <guilabel>Audio Recording</guilabel>
 items define the default ordering of devices which can be overridden by 
 each sub items.</para>
 <para>Clicking the <guibutton>Apply Device List To</guibutton> button shows a dialog 
@@ -49,13 +49,35 @@ and the <guibutton>Test</guibutton> button to play a test sound on the selected 
 </para></listitem>
 </varlistentry>
 
-<!-- new since 4.6 
 <varlistentry><term><guilabel>Audio Hardware Setup</guilabel> tab</term>
 <listitem><para>
-http://colin.guthr.ie/2010/07/speaker-setup-now-or-forever-hold-your-peace/
-</para></listitem>
+The various drop down boxes an this tab allow fully control over all cards that are attached 
+to the system.</para>
+
+<variablelist>
+<varlistentry><term><guilabel>Hardware</guilabel></term>
+<listitem><para>Select the <guilabel>Sound Card</guilabel> and an available 
+<guilabel>Profile</guilabel> to be used.</para>
+</listitem></varlistentry>
+
+<varlistentry><term><guilabel>Device Configuration</guilabel></term>
+<listitem><para>Select the <guilabel>Sound Device</guilabel> and a <guilabel>Connector</guilabel>.</para>
+</listitem></varlistentry>
+
+<varlistentry><term><guilabel>Speaker Placement and Testing</guilabel> or <guilabel>Input Levels</guilabel></term>
+<listitem>
+<para>For a playback device: The buttons on this pane allow you to test each speaker separately.
+</para>
+<para>For a recording device: A slider shows the <guilabel>Input Levels</guilabel> 
+of the selected <guilabel>Connector</guilabel>.
+</para>
+</listitem></varlistentry>
+</variablelist>
+
+
+
+</listitem>
 </varlistentry>
--->
 
 <varlistentry><term><guilabel>Backend</guilabel> tab</term>
 <listitem><para>
@@ -63,11 +85,7 @@ On the left side of this module a list of Phonon backends found on your system i
 The order here determines the order Phonon will use the backends.
 Use the <guibutton>Prefer</guibutton> and <guibutton>Defer</guibutton> buttons 
 to change this order.</para>
-<para>
-<!-- no longer in 4.7 or Xine ? -->
-Depending on the selected backend additional settings might be enabled like &eg; Deinterlacing 
-(Media and method) for Xine.
-</para></listitem>
+</listitem>
 </varlistentry>
 
 </variablelist>
