@@ -6,13 +6,12 @@ include_directories( ${KDE4_KIO_INCLUDES} )
 include(MacroDBusAddActivationService)
 
 set(kuiserver_KDEINIT_SRCS
-main.cpp
-uiserver.cpp
-jobview.cpp
-progresslistmodel.cpp
-progresslistdelegate.cpp
-requestviewcallwatcher.cpp
-
+    main.cpp
+    uiserver.cpp
+    jobview.cpp
+    progresslistmodel.cpp
+    progresslistdelegate.cpp
+    requestviewcallwatcher.cpp
 )
 
 set(kuiserver_KDEINIT_PRIVATE
@@ -61,7 +60,17 @@ if (Q_WS_MAC)
 endif (Q_WS_MAC)
 
 
-target_link_libraries(kdeinit_kuiserver  ${KDE4_KIO_LIBS} )
+target_link_libraries(kdeinit_kuiserver
+    Qt5::DBus
+    KF5::KConfigWidgets
+    KF5::KDBusAddons
+    KF5::ItemViews
+    KF5::KNotifications
+    KF5::KIOCore
+    KF5::KIOWidgets
+    KF5::KDE4Support
+
+)
 install(TARGETS kdeinit_kuiserver ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 target_link_libraries( kuiserver kdeinit_kuiserver )
