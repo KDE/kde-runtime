@@ -26,18 +26,25 @@
 
 #include "progresslistmodel.h"
 
+#include <knotifications_export.h>
+
 #include <kuniqueapplication.h>
-#include <kaboutdata.h>
+#include <k4aboutdata.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>
 #include <kdebug.h>
 
 
-extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
+extern "C" KNOTIFICATIONS_EXPORT int kdemain(int argc, char **argv)
 {
+    QCoreApplication app(argc, argv);
+    app.setApplicationName(QStringLiteral("kuiserver"));
+    app.setApplicationVersion(QStringLiteral("2.0"));
+    app.setOrganizationDomain(QStringLiteral("kde.org"));
+    /*
     //  GS 5/2001 - I changed the name to "KDE" to make it look better
     //              in the titles of dialogs which are displayed.
-    KAboutData aboutdata("kuiserver", "kdelibs4", ki18n("Job Manager"),
+    K4AboutData aboutdata("kuiserver", "kdelibs4", ki18n("Job Manager"),
                          "0.8", ki18n("KDE Job Manager"),
                          KAboutData::License_GPL_V2, ki18n("(C) 2000-2009, KDE Team"));
 
@@ -59,8 +66,8 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
     // This app is started automatically, no need for session management
     app.disableSessionManagement();
     app.setQuitOnLastWindowClosed(false);
-
-    ProgressListModel model;
+    */
+    //ProgressListModel model;
 
     return app.exec();
 }
