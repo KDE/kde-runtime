@@ -47,7 +47,7 @@ public:
     void setEditorHeight(int editorHeight);
 
 protected:
-    virtual QList<QWidget*> createItemWidgets() const;
+    virtual QList<QWidget*> createItemWidgets(const QModelIndex &index) const;
     virtual void updateItemWidgets(const QList<QWidget*> widgets,
                                    const QStyleOptionViewItem &option,
                                    const QPersistentModelIndex &index) const;

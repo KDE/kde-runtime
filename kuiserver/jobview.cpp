@@ -25,6 +25,7 @@
 #include "requestviewcallwatcher.h"
 
 #include <klocale.h>
+#include <KGlobal>
 #include <kdebug.h>
 
 #include <QtDBus/QDBusPendingReply>

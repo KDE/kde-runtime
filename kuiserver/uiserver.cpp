@@ -133,7 +133,7 @@ void UiServer::showConfigurationDialog()
 
     connect(dialog, SIGNAL(settingsChanged(const QString&)), this,
             SLOT(updateConfiguration()));
-    dialog->button(KDialog::Help)->hide();
+    //dialog->button(KDialog::Help)->hide();
     dialog->show();
 }
 
@@ -156,4 +156,4 @@ UIConfigurationDialog::~UIConfigurationDialog()
 
 
 #include "uiserver.moc"
-#include "uiserver_p.moc"
+//#include "uiserver_p.moc"

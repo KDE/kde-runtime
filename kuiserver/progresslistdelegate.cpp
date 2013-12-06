@@ -229,8 +229,9 @@ void ProgressListDelegate::setEditorHeight(int editorHeight)
     d->editorHeight = editorHeight;
 }
 
-QList<QWidget*> ProgressListDelegate::createItemWidgets() const
+QList<QWidget*> ProgressListDelegate::createItemWidgets(const QModelIndex &index) const
 {
+    Q_UNUSED( index )
     QList<QWidget*> widgetList;
 
     KPushButton *pauseResumeButton = new KPushButton();

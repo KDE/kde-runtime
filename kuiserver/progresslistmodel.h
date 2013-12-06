@@ -191,6 +191,6 @@ private:
     QDBusServiceWatcher *m_serviceWatcher;
 };
 
-Q_DECLARE_METATYPE(JobView*)
+//Q_DECLARE_METATYPE(JobView*)
 
 #endif // PROGRESSLISTMODEL_H
