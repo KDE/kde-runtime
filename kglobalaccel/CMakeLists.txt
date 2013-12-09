@@ -2,6 +2,8 @@ project(kglobalaccel)
 
 ###############################################################################
 ### KDED Global Accel Daemon
+# for dbus_add_activation_service
+include(MacroDBusAddActivationService)
 
 set(kglobalaccel_SRCS
     main.cpp
@@ -72,6 +74,7 @@ if(KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_PLUGIN)
     install(CODE "file(REMOVE ${KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_PLUGIN})")
 endif(KDEBASE_KGLOBALACCEL_REMOVE_OBSOLETE_KDED_PLUGIN)
 
+dbus_add_activation_service(org.kde.kglobalaccel.service.in)
 ###
 ### KDE 4.2 > 4.3 Migration End
 ###
