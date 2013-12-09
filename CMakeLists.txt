@@ -45,7 +45,7 @@ add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
 # Load CMake, Compiler and InstallDirs settings from KF5 and the following are already somewhat "done" tier1/tier2 libs from kdelibs:
 find_package(KF5 CONFIG REQUIRED COMPONENTS
     KIdleTime ItemModels KWidgetsAddons KWindowSystem KCodecs KArchive KCoreAddons Solid ThreadWeaver
-    KConfig KAuth KJS KWallet KDBusAddons Sonnet KInit
+    KConfig KAuth KJS KWallet KDBusAddons Sonnet KInit KF5GlobalAccel
     KI18n KGuiAddons KService KConfigWidgets ItemViews KNotifications KIconThemes KStyle KCompletion KJobWidgets KTextWidgets XmlGui KCrash
     KCMUtils KUnitConversion KBookmarks KIO KParts Kross KDeclarative KNewStuff KNotifyConfig KEmoticons Sonnet)
 
