@@ -10,7 +10,7 @@ kde4_add_plugin(kcm_knotify ${kcm_knotify_PART_SRCS})
 
 
 target_link_libraries(kcm_knotify
-                        KF5::KNotifyConfig
+                        KF5::NotifyConfig
                         KF5::KDE4Support
                         )
 

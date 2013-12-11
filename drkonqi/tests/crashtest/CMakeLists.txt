@@ -6,6 +6,6 @@ set(crashtest_SRCS crashtest.cpp )
 kde4_add_executable(crashtest TEST ${crashtest_SRCS})
 
 target_link_libraries(crashtest
-    KF5::KI18n KF5::KCrash KF5::KDE4Support
+    KF5::I18n KF5::Crash KF5::KDE4Support
     Qt5::Concurrent)
 

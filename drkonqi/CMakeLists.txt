@@ -84,10 +84,10 @@ kde4_add_ui_files(drkonqi_SRCS
 kde4_add_executable(drkonqi ${drkonqi_SRCS})
 
 target_link_libraries(drkonqi
-    KF5::KI18n
-    KF5::KIconThemes
-    KF5::KWindowSystem
-    KF5::KCrash
+    KF5::I18n
+    KF5::IconThemes
+    KF5::WindowSystem
+    KF5::Crash
     KF5::KDE4Support
 #    ${KDEPIMLIBS_KXMLRPCCLIENT_LIBRARY}
     drkonqi_backtrace_parser

@@ -44,15 +44,15 @@ add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
 
 # Load CMake, Compiler and InstallDirs settings from KF5 and the following are already somewhat "done" tier1/tier2 libs from kdelibs:
 find_package(KF5 CONFIG REQUIRED COMPONENTS
-    KIdleTime ItemModels KWidgetsAddons KWindowSystem KCodecs KArchive KCoreAddons Solid ThreadWeaver
-    KConfig KAuth KJS KWallet KDBusAddons Sonnet KInit KF5GlobalAccel
-    KI18n KGuiAddons KService KConfigWidgets ItemViews KNotifications KIconThemes KStyle KCompletion KJobWidgets KTextWidgets XmlGui KCrash
-    KCMUtils KUnitConversion KBookmarks KIO KParts Kross KDeclarative KNewStuff KNotifyConfig KEmoticons Sonnet)
+    IdleTime ItemModels WidgetsAddons WindowSystem Codecs Archive CoreAddons Solid ThreadWeaver
+    Config Auth JS Wallet DBusAddons Sonnet Init GlobalAccel
+    I18n GuiAddons Service ConfigWidgets ItemViews Notifications IconThemes Style Completion JobWidgets TextWidgets XmlGui Crash
+    KCMUtils UnitConversion Bookmarks KIO Parts Kross Declarative NewStuff NotifyConfig Emoticons Sonnet)
 
-find_package(Plasma REQUIRED NO_MODULE)
+find_package(KF5Plasma REQUIRED NO_MODULE)
 
 # needed for set_package_properties macro
-find_package(KDE4Support REQUIRED NO_MODULE)
+find_package(KF5KDE4Support REQUIRED NO_MODULE)
 
 # needed for forwarding headers, for now
 include_directories($<TARGET_PROPERTY:KF5::KDE4Support,INTERFACE_INCLUDE_DIRECTORIES>)

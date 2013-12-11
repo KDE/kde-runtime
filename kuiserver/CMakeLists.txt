@@ -62,10 +62,10 @@ endif (Q_WS_MAC)
 
 target_link_libraries(kdeinit_kuiserver
     Qt5::DBus
-    KF5::KConfigWidgets
-    KF5::KDBusAddons
+    KF5::ConfigWidgets
+    KF5::DBusAddons
     KF5::ItemViews
-    KF5::KNotifications
+    KF5::Notifications
     KF5::KIOCore
     KF5::KIOWidgets
     KF5::KDE4Support

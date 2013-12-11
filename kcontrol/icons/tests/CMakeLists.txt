@@ -9,7 +9,7 @@ kde4_add_executable(testicons TEST ${testicons_SRCS})
 target_link_libraries(testicons
     Qt5::Widgets
     KF5::KCMUtils
-    KF5::KI18n
+    KF5::I18n
     KF5::KDE4Support
     ${X11_LIBRARIES}
 )

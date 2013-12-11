@@ -13,9 +13,9 @@ add_library(kded_ktimezoned MODULE ${kded_ktimezoned_SRCS})
 target_link_libraries(kded_ktimezoned
    Qt5::Core
    Qt5::DBus
-   KF5::KService    # plugin factory
-   KF5::KCoreAddons # KDirWatch
-   KF5::KDBusAddons # kdedmodule
+   KF5::Service    # plugin factory
+   KF5::CoreAddons # KDirWatch
+   KF5::DBusAddons # kdedmodule
 )
 
 install(TARGETS kded_ktimezoned DESTINATION ${PLUGIN_INSTALL_DIR})

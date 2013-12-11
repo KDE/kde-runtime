@@ -29,7 +29,7 @@ endif ( Q_WS_QWS )
 
 # kf5_add_kdeinit_executable( kglobalaccel NOGUI ${kglobalaccel_SRCS} )
 kf5_add_kdeinit_executable( kglobalaccel ${kglobalaccel_SRCS} )
-target_link_libraries(kdeinit_kglobalaccel Qt5::DBus KF5::GlobalAccel KF5::KCMUtils KF5::KI18n KF5::XmlGui KF5::KDE4Support)
+target_link_libraries(kdeinit_kglobalaccel Qt5::DBus KF5::GlobalAccel KF5::KCMUtils KF5::I18n KF5::XmlGui KF5::KDE4Support)
 
 if (${XCB_XCB_FOUND} AND ${XCB_KEYSYMS_FOUND})
     target_link_libraries(kdeinit_kglobalaccel Qt5::X11Extras ${XCB_XCB_LIBRARY} ${XCB_KEYSYMS_LIBRARY})

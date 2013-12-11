@@ -12,8 +12,8 @@ kde4_add_plugin(kcm_locale ${kcm_locale_PART_SRCS})
 target_link_libraries(kcm_locale
     Qt5::Widgets
     KF5::KCMUtils
-    KF5::KI18n
-    KF5::KUnitConversion
+    KF5::I18n
+    KF5::UnitConversion
     ${X11_LIBRARIES}
     KF5::KDE4Support
 )

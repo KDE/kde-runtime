@@ -2,7 +2,7 @@ kde4_add_unit_test( backtraceparsertest fakebacktracegenerator.cpp backtracepars
 target_link_libraries( backtraceparsertest ${QT_QTTEST_LIBRARY} ${QT_QTCORE_LIBRARY} KF5::KDE4Support ${KDE4_KIO_LIBS} drkonqi_backtrace_parser)
 
 kde4_add_executable(backtraceparsertest_manual TEST fakebacktracegenerator.cpp backtraceparsertest_manual.cpp)
-target_link_libraries(backtraceparsertest_manual ${QT_QTCORE_LIBRARY} KF5::KI18n KF5::KDE4Support ${KDE4_KIO_LIBS} drkonqi_backtrace_parser)
+target_link_libraries(backtraceparsertest_manual ${QT_QTCORE_LIBRARY} KF5::I18n KF5::KDE4Support ${KDE4_KIO_LIBS} drkonqi_backtrace_parser)
 
 # create a link so that the data directory can be accessed from the build directory, where the test runs
 if( NOT WIN32 )
