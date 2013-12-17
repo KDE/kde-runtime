@@ -32,8 +32,8 @@
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 
-#include <dnssd/settings.h>
-#include <dnssd/domainbrowser.h>
+#include <kdnssd/settings.h>
+#include <kdnssd/domainbrowser.h>
 
 #define MDNSD_CONF "/etc/mdnsd.conf"
 #define MDNSD_PID "/var/run/mdnsd.pid"
@@ -65,7 +65,7 @@ void KCMDnssd::save()
 
 	// Send signal to all kde applications which have a DNSSD::DomainBrowserPrivate instance
 	QDBusMessage message =
-            QDBusMessage::createSignal("/libdnssd", "org.kde.DNSSD.DomainBrowser", "domainListChanged");
+            QDBusMessage::createSignal("/libkdnssd", "org.kde.KDNSSD.DomainBrowser", "domainListChanged");
 	QDBusConnection::sessionBus().send(message);
 }
 
