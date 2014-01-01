@@ -25,7 +25,7 @@ qt5_wrap_ui(kuiserver_KDEINIT_SRCS configdialog.ui)
 #<DBus Stuff>
 
 #<JobView>
-  set(jobview_xml ${KNOTIFICATIONS_DBUS_INTERFACES_DIR}/org.kde.JobViewV2.xml)
+  set(jobview_xml ${KJOBWIDGETS_DBUS_INTERFACES_DIR}/org.kde.JobViewV2.xml)
 
   qt5_add_dbus_adaptor(kuiserver_KDEINIT_SRCS ${jobview_xml} jobview.h JobView jobviewadaptor )
 
@@ -34,7 +34,7 @@ qt5_wrap_ui(kuiserver_KDEINIT_SRCS configdialog.ui)
 
 
 #<JobViewServer>
-  set(jobviewserver_xml ${KNOTIFICATIONS_DBUS_INTERFACES_DIR}/org.kde.JobViewServer.xml)
+  set(jobviewserver_xml ${KJOBWIDGETS_DBUS_INTERFACES_DIR}/org.kde.JobViewServer.xml)
 
   qt5_add_dbus_adaptor(kuiserver_KDEINIT_SRCS ${jobviewserver_xml} progresslistmodel.h ProgressListModel jobviewserveradaptor )
 
