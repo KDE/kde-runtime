@@ -11,4 +11,4 @@ add_executable(kuiservertest ${kuiservertest_SRCS})
 
 target_link_libraries(kuiservertest KF5::KIOCore KF5::I18n KF5::KDE4Support)
 
-ecm_mark_as_test(kuiserver)
+ecm_mark_as_test(kuiservertest)
