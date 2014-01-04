@@ -41,8 +41,7 @@
 #include <KMessageBox>
 #include <KPluginFactory>
 #include <KStandardDirs>
-//#include <KCurrencyCode>
-#include <kunitconversion/kcurrencycode.h>
+#include <KCurrencyCode>
 
 #include "ui_kcmlocalewidget.h"
 
