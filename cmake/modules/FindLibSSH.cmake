@@ -43,7 +43,7 @@ set(LIBSSH_LIBRARIES
     ${SSH_LIBRARY}
 )
 
-if (LibSSH_FIND_VERSION)
+if (LIBSSH_INCLUDE_DIR AND LibSSH_FIND_VERSION)
   file(STRINGS ${LIBSSH_INCLUDE_DIR}/libssh/libssh.h LIBSSH_VERSION_MAJOR
     REGEX "#define[ ]+LIBSSH_VERSION_MAJOR[ ]+[0-9]+")
 
@@ -63,14 +63,12 @@ if (LibSSH_FIND_VERSION)
     message(STATUS "LIBSSH_VERSION_MAJOR not found in ${LIBSSH_INCLUDE_DIR}/libssh/libssh.h, assuming libssh is too old")
     set(LIBSSH_FOUND FALSE)
   endif (LIBSSH_VERSION_MAJOR)
-endif (LibSSH_FIND_VERSION)
+endif (LIBSSH_INCLUDE_DIR AND LibSSH_FIND_VERSION)
 
 # If the version is too old, but libs and includes are set,
 # find_package_handle_standard_args will set LIBSSH_FOUND to TRUE again,
 # so we need this if() here.
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(LibSSH DEFAULT_MSG LIBSSH_LIBRARIES LIBSSH_INCLUDE_DIR)
-
 find_package_handle_standard_args(LibSSH
                                   FOUND_VAR
                                     LIBSSH_FOUND
