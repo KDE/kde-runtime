@@ -90,7 +90,7 @@ BugzillaLoginPage::BugzillaLoginPage(ReportAssistantDialog * parent) :
     connect(ui.m_passwordEdit, SIGNAL(textChanged(QString)) , this, SLOT(updateLoginButtonStatus()));
 
     ui.m_noticeLabel->setText(
-                        i18nc("@info/rich","<note>You need a user account on the "
+                        xi18nc("@info/rich","<note>You need a user account on the "
                             "<link url='%1'>KDE bug tracking system</link> in order to "
                             "file a bug report, because we may need to contact you later "
                             "for requesting further information. If you do not have "
@@ -114,7 +114,7 @@ void BugzillaLoginPage::updateLoginButtonStatus()
 void BugzillaLoginPage::loginError(const QString & err, const QString & extendedMessage)
 {
     loginFinished(false);
-    ui.m_statusWidget->setIdle(i18nc("@info:status","Error when trying to login: "
+    ui.m_statusWidget->setIdle(xi18nc("@info:status","Error when trying to login: "
                                                  "<message>%1.</message>", err));
     if (!extendedMessage.isEmpty()) {
         new UnhandledErrorDialog(this, err, extendedMessage);
@@ -717,7 +717,7 @@ void BugzillaSendPage::sent(int bug_id)
     ui.m_restartAppOnFinish->setChecked(false);
 
     reportUrl = bugzillaManager()->urlForBug(bug_id);
-    ui.m_finishedLabel->setText(i18nc("@info/rich","Crash report sent.<nl/>"
+    ui.m_finishedLabel->setText(xi18nc("@info/rich","Crash report sent.<nl/>"
                                              "URL: <link>%1</link><nl/>"
                                              "Thank you for being part of KDE. "
                                              "You can now close this window.", reportUrl));
@@ -727,7 +727,7 @@ void BugzillaSendPage::sent(int bug_id)
 
 void BugzillaSendPage::sendError(const QString & errorString, const QString & extendedMessage)
 {
-    ui.m_statusWidget->setIdle(i18nc("@info:status","Error sending the crash report:  "
+    ui.m_statusWidget->setIdle(xi18nc("@info:status","Error sending the crash report:  "
                                   "<message>%1.</message>", errorString));
 
     ui.m_retryButton->setEnabled(true);
@@ -845,8 +845,8 @@ void UnhandledErrorDialog::saveErrorMessage()
                 ts << m_extendedHTMLError;
                 ts.flush();
             } else {
-                KMessageBox::sorry(this, i18nc("@info","Cannot open file <filename>%1</filename> "
-                                               "for writing.", tf.fileName()));
+                KMessageBox::sorry(this, xi18nc("@info","Cannot open file <filename>%1</filename> "
+                                                "for writing.", tf.fileName()));
                 return;
             }
 

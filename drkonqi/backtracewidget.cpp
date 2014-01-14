@@ -191,7 +191,7 @@ void BacktraceWidget::anotherDebuggerRunning()
     m_backtraceRatingWidget->setUsefulness(BacktraceParser::Useless);
     ui.m_statusWidget->setIdle(i18nc("@info:status", "The crash information could not be fetched."));
     ui.m_extraDetailsLabel->setVisible(true);
-    ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "Another debugging process is attached to "
+    ui.m_extraDetailsLabel->setText(xi18nc("@info/rich", "Another debugging process is attached to "
                                     "the crashed application. Therefore, the DrKonqi debugger cannot "
                                     "fetch the backtrace. Please close the other debugger and "
                                     "click <interface>Reload</interface>."));
@@ -252,7 +252,7 @@ void BacktraceWidget::loadData()
             ui.m_extraDetailsLabel->setVisible(true);
             if (canInstallDebugPackages()) {
                 //The script to install the debug packages is available
-                ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "You can click the <interface>"
+                ui.m_extraDetailsLabel->setText(xi18nc("@info/rich", "You can click the <interface>"
                                     "Install Debug Symbols</interface> button in order to automatically "
                                     "install the missing debugging information packages. If this method "
                                     "does not work: please read <link url='%1'>How to "
@@ -269,7 +269,7 @@ void BacktraceWidget::loadData()
             } else {
                 //No automated method to install the missing debug info
                 //Tell the user to read the howto and reload
-                ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "Please read <link url='%1'>How to "
+                ui.m_extraDetailsLabel->setText(xi18nc("@info/rich", "Please read <link url='%1'>How to "
                                     "create useful crash reports</link> to learn how to get a useful "
                                     "backtrace; install the needed packages (<link url='%2'>"
                                     "list of files</link>) and click the "
@@ -291,7 +291,7 @@ void BacktraceWidget::loadData()
                                                "The crash information could not be generated."));
 
         ui.m_extraDetailsLabel->setVisible(true);
-        ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "You could try to regenerate the "
+        ui.m_extraDetailsLabel->setText(xi18nc("@info/rich", "You could try to regenerate the "
                                             "backtrace by clicking the <interface>Reload"
                                             "</interface> button."));
     } else if (m_btGenerator->state() == BacktraceGenerator::FailedToStart) {
@@ -300,15 +300,15 @@ void BacktraceWidget::loadData()
         m_backtraceRatingWidget->setUsefulness(BacktraceParser::Useless);
 
         ui.m_statusWidget->setIdle(i18nc("@info:status", "<strong>The debugger application is missing or "
-                                                         "could not be launched.</strong>"));
+                                                          "could not be launched.</strong>"));
 
         ui.m_backtraceEdit->setPlainText(i18nc("@info:status",
                                                "The crash information could not be generated."));
         ui.m_extraDetailsLabel->setVisible(true);
-        ui.m_extraDetailsLabel->setText(i18nc("@info/rich", "<strong>You need to first install the debugger "
-                                              "application (%1) then click the <interface>Reload"
-                                              "</interface> button.</strong>",
-                                              m_btGenerator->debugger().name()));
+        ui.m_extraDetailsLabel->setText(xi18nc("@info/rich", "<strong>You need to first install the debugger "
+                                               "application (%1) then click the <interface>Reload"
+                                               "</interface> button.</strong>",
+                                               m_btGenerator->debugger().name()));
     }
 
     ui.m_reloadBacktraceButton->setEnabled(true);

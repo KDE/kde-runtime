@@ -51,17 +51,17 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         QString("<a name=\"%1\" /><h1>%2</h1>").arg(QLatin1String(PAGE_HELP_BEGIN_ID),
                                 i18nc("@title","Information about bug reporting")) +
         QString("<p>%1</p><p>%2</p><p>%3</p>").arg(
-            i18nc("@info/rich", "You can help us improve this software by filing a bug report."),
-            i18nc("@info/rich","<note>It is safe to close this dialog. If you do not "
+            xi18nc("@info/rich", "You can help us improve this software by filing a bug report."),
+            xi18nc("@info/rich","<note>It is safe to close this dialog. If you do not "
                             "want to, you do not have to file a bug report.</note>"),
-            i18nc("@info/rich","In order to generate a useful bug report we need some "
+            xi18nc("@info/rich","In order to generate a useful bug report we need some "
                             "information about both the crash and your system. (You may also "
                             "need to install some debug packages.)")) +
 
         //Sub-introduction
         QString("<h1>%1</h1>").arg(i18nc("@title","Bug Reporting Assistant Guide")) +
         QString("<p>%1</p>").arg(
-            i18nc("@info/rich","This assistant will guide you through the crash "
+            xi18nc("@info/rich","This assistant will guide you through the crash "
                             "reporting process for the KDE bug tracking system. All the "
                             "information you enter on the bug report <strong>must be written "
                             "in English</strong>, if possible, as KDE is formed internationally.")) +
@@ -71,51 +71,51 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                                 i18nc("@title","What do you know about the crash?")) +
         QString("<p>%1</p><p>%2<ul><li>%3</li><li>%4</li><li>%5</li><li>%6</li><li>%7</li><li>%8</li>"
         "</ul>%9</p>").arg(
-            i18nc("@info/rich","In this page you need to describe how much do you know about "
+            xi18nc("@info/rich","In this page you need to describe how much do you know about "
                                 "the desktop and the application state before it crashed."),
-            i18nc("@info/rich","If you can, describe in as much detail as possible the crash "
+            xi18nc("@info/rich","If you can, describe in as much detail as possible the crash "
                                "circumstances, and what you were doing when the application crashed "
                                "(this information is going to be requested later.) You can mention: "),
-            i18nc("@info/rich crash situation example","actions you were taking inside or outside "
+            xi18nc("@info/rich crash situation example","actions you were taking inside or outside "
                             "the application"),
-            i18nc("@info/rich crash situation example","documents or images that you were using "
+            xi18nc("@info/rich crash situation example","documents or images that you were using "
                             "and their type/format (later if you go to look at the report in the "
                             "bug tracking system, you can attach a file to the report)"),
-            i18nc("@info/rich crash situation example","widgets that you were running"),
-            i18nc("@info/rich crash situation example","the URL of a web site you were browsing"),
-            i18nc("@info/rich crash situation example","configuration details of the application"),
-            i18nc("@info/rich crash situation example","or other strange things you notice before "
+            xi18nc("@info/rich crash situation example","widgets that you were running"),
+            xi18nc("@info/rich crash situation example","the URL of a web site you were browsing"),
+            xi18nc("@info/rich crash situation example","configuration details of the application"),
+            xi18nc("@info/rich crash situation example","or other strange things you notice before "
                             "or after the crash. "),
-            i18nc("@info/rich","Screenshots can be very helpful sometimes. You can attach them to "
+            xi18nc("@info/rich","Screenshots can be very helpful sometimes. You can attach them to "
                             "the bug report after it is posted to the bug tracking system.")) +
 
         //Crash Information Page
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_CRASHINFORMATION_ID),
                                 i18nc("@title","Crash Information (backtrace)")) +
         QString("<p>%1</p><p>%2</p><p>%3</p><p>%4</p>").arg(
-            i18nc("@info/rich","This page will generate a \"backtrace\" of the crash. This "
+            xi18nc("@info/rich","This page will generate a \"backtrace\" of the crash. This "
                             "is information that tells the developers where the application "
                             "crashed."),
-            i18nc("@info/rich", "If the crash information is not detailed enough, you may "
+            xi18nc("@info/rich", "If the crash information is not detailed enough, you may "
                             "need to install some debug packages and reload it (if the "
                             "<interface>Install Debug Symbols</interface> button is available you "
                             "can use it to automatically install the missing information.)"),
-            i18nc("@info/rich", "You can find more information about backtraces, what they mean, "
+            xi18nc("@info/rich", "You can find more information about backtraces, what they mean, "
                             "and how they are useful at <link>%1</link>",QString(TECHBASE_HOWTO_DOC) ),
-            i18nc("@info/rich","Once you get a useful backtrace (or if you do not want to "
+            xi18nc("@info/rich","Once you get a useful backtrace (or if you do not want to "
                             "install the missing debugging packages) you can continue.")) +
 
         //Conclusions Page
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_CONCLUSIONS_ID),
                                 i18nc("@title","Conclusions")) +
         QString("<p>%1</p><p>%2</p><p>%3</p>").arg(
-            i18nc("@info/rich","Using the quality of the crash information gathered, "
+            xi18nc("@info/rich","Using the quality of the crash information gathered, "
                             "and your answers on the previous page, the assistant will "
                             "tell you if the crash is worth reporting or not."),
-            i18nc("@info/rich","If the crash is worth reporting but the application "
+            xi18nc("@info/rich","If the crash is worth reporting but the application "
                             "is not supported in the KDE bug tracking system, you "
                             "will need to directly contact the maintainer of the application."),
-            i18nc("@info/rich","If the crash is listed as being not worth reporting, "
+            xi18nc("@info/rich","If the crash is listed as being not worth reporting, "
                             "and you think the assistant has made a mistake, "
                             "you can still manually report the bug by logging into the "
                             "bug tracking system. You can also go back and change information "
@@ -125,16 +125,16 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_BZLOGIN_ID),
                                     i18nc("@title","Login into the bug tracking system")) +
         QString("<p>%1</p><p>%2</p><p>%3</p>").arg(
-            i18nc("@info/rich","We may need to contact you in the future to ask for "
+            xi18nc("@info/rich","We may need to contact you in the future to ask for "
                             "further information. As we need to keep track of the bug reports, "
                             "you "
                             "need to have an account on the KDE bug tracking system. If you do "
                             "not have one, you can create one here: <link>%1</link>",
                             QString(KDE_BUGZILLA_CREATE_ACCOUNT_URL)),
-            i18nc("@info/rich","Then, enter your username and password and "
+            xi18nc("@info/rich","Then, enter your username and password and "
                             "press the Login button. You can use this login to directly access the "
                             "KDE bug tracking system later."),
-            i18nc("@info/rich","The KWallet dialog may appear when pressing Login to "
+            xi18nc("@info/rich","The KWallet dialog may appear when pressing Login to "
                             "save your password in the KWallet password system. Also, it will "
                             "prompt you for the KWallet password upon loading to autocomplete "
                             "the login fields if you use this assistant again.")) +
@@ -144,22 +144,22 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
                                 i18nc("@title","List of possible duplicate reports")) +
         QString("<p>%1</p><p>%2</p><p>%3</p><p>%4</p><p><strong>%5</strong></p>").arg(
         //needs some more string cleanup below
-            i18nc("@info/rich","This page will search the bug report system for "
+            xi18nc("@info/rich","This page will search the bug report system for "
                             "similar crashes which are possible duplicates of your bug. If "
                             "there are similar bug reports found, you can double click on them "
                             "to see details. Then, read the current bug report information so "
                             "you can check to see if they are similar. "),
-            i18nc("@info/rich","If you are very sure your bug is the same as another that is "
+            xi18nc("@info/rich","If you are very sure your bug is the same as another that is "
                             "previously reported, you can set your information to be attached to "
                             "the existing report."),
-            i18nc("@info/rich","If you are unsure whether your report is the same, follow the main "
+            xi18nc("@info/rich","If you are unsure whether your report is the same, follow the main "
                             "options to tentatively mark your crash as a duplicate of that "
                             "report. This is usually the safest thing to do. We cannot "
                             "uncombine bug reports, but we can easily merge them."),
-            i18nc("@info/rich","If not enough possible duplicates are found, or you "
+            xi18nc("@info/rich","If not enough possible duplicates are found, or you "
                             "did not find a similar report, then you can force it to search "
                             "for more bug reports (only if the date range limit is not reached.)"),
-            i18nc("@info/rich","If you do not find any related reports, your crash information "
+            xi18nc("@info/rich","If you do not find any related reports, your crash information "
                                 "is not useful enough, and you really cannot give additional "
                                 "information about the crash context, then it is better to "
                                 "not file the bug report, thereby closing the assistant.")) +
@@ -168,34 +168,34 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_BZDETAILS_ID),
                                         i18nc("@title","Details of the bug report and your system")) +
         QString("<p>%1<a href=\"#%2\">%3</a></p><p>%4</p><p>%5</p>").arg(
-            i18nc("@info/rich","In this case you need to write a title and description "
+            xi18nc("@info/rich","In this case you need to write a title and description "
                             "of the crash. Explain as best you can. "),
             QLatin1String(PAGE_AWARENESS_ID),
             i18nc("@title","What do you know about the crash?"),
-            i18nc("@info/rich", "You can also specify your distribution method (GNU/Linux "
+            xi18nc("@info/rich", "You can also specify your distribution method (GNU/Linux "
                                 "distribution or packaging system) or if you compiled the KDE "
                                 "Platform from sources."),
-            i18nc("@info/rich", "<note>You should <strong>write those information in English</strong>.</note>")) +
+            xi18nc("@info/rich", "<note>You should <strong>write those information in English</strong>.</note>")) +
 
         //Bugzilla Send Page
         QString("<a name=\"%1\" /><h2>%2</h2>").arg(QLatin1String(PAGE_BZSEND_ID),
                                        i18nc("@title","Sending the Crash Report")) +
         QString("<p>%1</p><p>%2</p>").arg(
-            i18nc("@info/rich","The last page will send the bug report to the bug tracking "
+            xi18nc("@info/rich","The last page will send the bug report to the bug tracking "
                             "system and will notify you when it is done. It will then show "
                             "the web address of the bug report in the KDE bug tracking system, "
                             "so that you can look at the report later."),
-            i18nc("@info/rich","If the process fails, you can click "
+            xi18nc("@info/rich","If the process fails, you can click "
                             "<interface>Retry</interface> to try sending the bug report again. "
                             "If the report cannot be sent because the bug tracking system has a "
                             "problem, you can save it to a file to manually report later.")) +
 
         QString("<h1>%1</h1><p>%2</p>").arg(
-            i18nc("@info/rich", "Thank you for being part of KDE!"),
-            i18nc("@info/rich", "If you are interested in helping us to keep the KDE bug tracker system "
-                                "clean and useful, which allows the developers to be more focused on "
-                                "fixing the real issues,  you are welcome to "
-                                "<link url='http://techbase.kde.org/Contribute/Bugsquad'>join the BugSquad team</link>."));
+            xi18nc("@info/rich", "Thank you for being part of KDE!"),
+            xi18nc("@info/rich", "If you are interested in helping us to keep the KDE bug tracker system "
+                                 "clean and useful, which allows the developers to be more focused on "
+                                 "fixing the real issues,  you are welcome to "
+                                 "<link url='http://techbase.kde.org/Contribute/Bugsquad'>join the BugSquad team</link>."));
 
     m_textBrowser->setText(text);
 

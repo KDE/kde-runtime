@@ -174,8 +174,8 @@ QString ReportInterface::generateReportFullText(bool drKonqiStamp) const
         } else {
             //If the user manual reports this crash, he/she should know what to put in here.
             //This message is the only one translated in this function
-            report.append(i18nc("@info/plain","<placeholder>In detail, tell us what you were doing "
-                                              " when the application crashed.</placeholder>"));
+            report.append(xi18nc("@info/plain","<placeholder>In detail, tell us what you were doing "
+                                               " when the application crashed.</placeholder>"));
         }
         report.append(QLatin1String("\n\n"));
     }

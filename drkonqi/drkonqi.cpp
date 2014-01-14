@@ -151,9 +151,9 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
             QTextStream textStream(&tf);
             textStream << reportText;
             textStream.flush();
-            KMessageBox::information(parent, i18nc("@info",
-                                                   "Report saved to <filename>%1</filename>.",
-                                                   tf.fileName()));
+            KMessageBox::information(parent, xi18nc("@info",
+                                                    "Report saved to <filename>%1</filename>.",
+                                                    tf.fileName()));
         } else {
             KMessageBox::sorry(parent, i18nc("@info","Could not create a file in which to save the report."));
         }
@@ -184,8 +184,8 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
                 ts << reportText;
                 ts.flush();
             } else {
-                KMessageBox::sorry(parent, i18nc("@info","Cannot open file <filename>%1</filename> "
-                                                         "for writing.", tf.fileName()));
+                KMessageBox::sorry(parent, xi18nc("@info","Cannot open file <filename>%1</filename> "
+                                                          "for writing.", tf.fileName()));
                 return;
             }
 

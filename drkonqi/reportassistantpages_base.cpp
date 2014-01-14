@@ -302,7 +302,7 @@ void ConclusionPage::aboutToShow()
                                         i18nc("@info","The automatically generated crash "
                                         "information does not contain enough information to be "
                                         "helpful."),
-                                        i18nc("@info","<note>You can improve it by "
+                                        xi18nc("@info","<note>You can improve it by "
                                         "installing debugging packages and reloading the crash on "
                                         "the Crash Information page. You can get help with the Bug "
                                         "Reporting Guide by clicking on the "
@@ -324,7 +324,7 @@ void ConclusionPage::aboutToShow()
     }
 
     if (isDuplicate) {
-        explanationHTML += QString("<li>%1</li>").arg(i18nc("@info","Your problem has already been "
+        explanationHTML += QString("<li>%1</li>").arg(xi18nc("@info","Your problem has already been "
                                                             "reported as bug <numid>%1</numid>.", reportInterface()->duplicateId()));
     }
 
@@ -341,7 +341,7 @@ void ConclusionPage::aboutToShow()
 
         if (m_isBKO) {
             emitCompleteChanged();
-            ui.m_howToProceedLabel->setText(i18nc("@info","This application's bugs are reported "
+            ui.m_howToProceedLabel->setText(xi18nc("@info","This application's bugs are reported "
                                             "to the KDE bug tracking system: click <interface>Next"
                                             "</interface> to start the reporting process. "
                                             "You can manually report at <link>%1</link>",
@@ -352,7 +352,7 @@ void ConclusionPage::aboutToShow()
                 ui.m_restartAppOnFinish->setVisible(true);
             }
 
-            ui.m_howToProceedLabel->setText(i18nc("@info","This application is not supported in the "
+            ui.m_howToProceedLabel->setText(xi18nc("@info","This application is not supported in the "
                                                 "KDE bug tracking system. Click <interface>"
                                                 "Finish</interface> to report this bug to "
                                                 "the application maintainer. Also, you can manually "
@@ -379,13 +379,13 @@ void ConclusionPage::aboutToShow()
         //FIXME for 4.5 (workflow, see ToDo)
         if (backtraceGenerated) {
             if (m_isBKO) {
-                ui.m_howToProceedLabel->setText(i18nc("@info","You can manually report this bug "
+                ui.m_howToProceedLabel->setText(xi18nc("@info","You can manually report this bug "
                                                 "at <link>%1</link>. "
                                                 "Click <interface>Finish</interface> to close the "
                                                 "assistant.",
                                                 reportAddress));
             } else {
-                ui.m_howToProceedLabel->setText(i18nc("@info","You can manually report this "
+                ui.m_howToProceedLabel->setText(xi18nc("@info","You can manually report this "
                                                   "bug to its maintainer at <link>%1</link>. "
                                                   "Click <interface>Finish</interface> to close the "
                                                   "assistant.", reportAddress));

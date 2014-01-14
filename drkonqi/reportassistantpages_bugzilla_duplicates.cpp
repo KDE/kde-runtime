@@ -434,7 +434,7 @@ void BugzillaDuplicatesPage::searchError(QString err)
 
     ui.m_statusWidget->setIdle(i18nc("@info:status","Error fetching the bug report list"));
 
-    KMessageBox::error(this , i18nc("@info/rich","Error fetching the bug report list<nl/>"
+    KMessageBox::error(this , xi18nc("@info/rich","Error fetching the bug report list<nl/>"
                                                  "<message>%1.</message><nl/>"
                                                  "Please wait some time and try again.", err));
 }
@@ -537,7 +537,7 @@ void BugzillaDuplicatesPage::possibleDuplicateSelectionChanged()
 //BEGIN Attach to bug related methods
 void BugzillaDuplicatesPage::attachToBugReport(int bugNumber)
 {
-    ui.m_attachToReportLabel->setText(i18nc("@label", "The report is going to be "
+    ui.m_attachToReportLabel->setText(xi18nc("@label", "The report is going to be "
                             "<strong>attached</strong> to bug <numid>%1</numid>. "
                             "<a href=\"#\">Cancel</a>", bugNumber));
     ui.m_attachToReportLabel->setVisible(true);
@@ -630,10 +630,10 @@ void BugzillaReportInformationDialog::showBugReport(int bugNumber, bool relatedB
     ui.m_infoBrowser->setText(i18nc("@info:status","Loading..."));
     ui.m_infoBrowser->setEnabled(false);
 
-    ui.m_linkLabel->setText(i18nc("@info","<link url='%1'>Report's webpage</link>",
+    ui.m_linkLabel->setText(xi18nc("@info","<link url='%1'>Report's webpage</link>",
                                     m_parent->bugzillaManager()->urlForBug(m_bugNumber)));
 
-    ui.m_statusWidget->setBusy(i18nc("@info:status","Loading information about bug "
+    ui.m_statusWidget->setBusy(xi18nc("@info:status","Loading information about bug "
                                                            "<numid>%1</numid> from %2....",
                                             m_bugNumber,
                                             QLatin1String(KDE_BUGZILLA_SHORT_URL)));
@@ -674,7 +674,7 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
                     "report", "No, let me read the report I selected"));
 
                     if (KMessageBox::questionYesNo(this,
-                       i18nc("@info","The report you selected (bug <numid>%1</numid>) is already "
+                       xi18nc("@info","The report you selected (bug <numid>%1</numid>) is already "
                        "marked as duplicate of bug <numid>%2</numid>. "
                        "Do you want to read that report instead? (recommended)",
                        report.bugNumber(), dupId),
@@ -811,8 +811,8 @@ void BugzillaReportInformationDialog::bugFetchFinished(BugReport report, QObject
             button(KDialog::User1)->setEnabled(m_relatedButtonEnabled);
             button(KDialog::User1)->setVisible(m_relatedButtonEnabled);
 
-            ui.m_statusWidget->setIdle(i18nc("@info:status", "Showing bug <numid>%1</numid>",
-                                                            report.bugNumberAsInt()));
+            ui.m_statusWidget->setIdle(xi18nc("@info:status", "Showing bug <numid>%1</numid>",
+                                                              report.bugNumberAsInt()));
         } else {
             bugFetchError(i18nc("@info", "Invalid report information (malformed data). This could "
                                 "mean that the bug report does not exist, or the bug tracking site "
@@ -850,9 +850,9 @@ void BugzillaReportInformationDialog::relatedReportClicked()
 void BugzillaReportInformationDialog::bugFetchError(QString err, QObject * jobOwner)
 {
     if (jobOwner == this && isVisible()) {
-        KMessageBox::error(this , i18nc("@info/rich","Error fetching the bug report<nl/>"
-                                        "<message>%1.</message><nl/>"
-                                        "Please wait some time and try again.", err));
+        KMessageBox::error(this , xi18nc("@info/rich","Error fetching the bug report<nl/>"
+                                         "<message>%1.</message><nl/>"
+                                         "Please wait some time and try again.", err));
         button(KDialog::User1)->setEnabled(false);
         ui.m_infoBrowser->setText(i18nc("@info","Error fetching the bug report"));
         ui.m_statusWidget->setIdle(i18nc("@info:status","Error fetching the bug report"));
