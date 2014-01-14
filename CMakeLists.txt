@@ -144,7 +144,6 @@ add_subdirectory(ktimezoned)
 if(NOT WINCE)
 	add_subdirectory(kuiserver)
 endif(NOT WINCE)
-# add_subdirectory(kwalletd)
 
 if ( UNIX )
 #    add_subdirectory(soliduiserver)
