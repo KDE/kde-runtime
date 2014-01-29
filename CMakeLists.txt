@@ -18,18 +18,6 @@ endif(WINCE)
 find_package(KDE4 4.9.95 REQUIRED)
 include(KDE4Defaults)
 
-if (WIN32)
-    set (STRIGI_TYPE "OPTIONAL")
-else ()
-    set (STRIGI_TYPE "REQUIRED")
-endif ()
-
-find_package(Strigi)
-set_package_properties(Strigi PROPERTIES DESCRIPTION "Desktop indexing and search support"
-                       URL "http://strigi.sourceforge.net"
-                       TYPE ${STRIGI_TYPE}
-                      )
-
 find_package(KDeclarative QUIET CONFIG)
 set_package_properties(KDeclarative PROPERTIES DESCRIPTION "KDE Declarative (QML) support from kdelibs"
                        URL "http://www.kde.org"
