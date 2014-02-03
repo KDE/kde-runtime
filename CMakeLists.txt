@@ -51,6 +51,9 @@ set_package_properties(QCA2 PROPERTIES DESCRIPTION "Support for remote plasma wi
                        TYPE OPTIONAL
                       )
 
+# Build options
+option(KDERUNTIME_BUILD_NEPOMUK "Build the Nepomuk KCM and kioslaves" FALSE)
+
 check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
 check_include_files(sys/time.h HAVE_SYS_TIME_H)
 
@@ -83,9 +86,9 @@ if ( UNIX )
    add_subdirectory(solid-networkstatus)
 endif ( UNIX )
 
-if(NepomukCore_FOUND)
+if(NepomukCore_FOUND AND KDERUNTIME_BUILD_NEPOMUK)
     macro_optional_add_subdirectory(nepomuk)
-endif(NepomukCore_FOUND)
+endif()
 
 # Plugins/components required for basic utility
 if ( NOT WINCE )
