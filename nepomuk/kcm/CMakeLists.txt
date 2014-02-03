@@ -43,7 +43,7 @@ target_link_libraries(kcm_nepomuk
 # Installation
 # -----------------------------
 install(
-  FILES kcm_nepomuk.desktop desktop-search.desktop
+  FILES kcm_nepomuk.desktop
   DESTINATION ${SERVICES_INSTALL_DIR})
 
 install(

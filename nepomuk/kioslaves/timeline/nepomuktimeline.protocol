@@ -1,6 +1,6 @@
 [Protocol]
-exec=kio_timeline
-protocol=timeline
+exec=kio_nepomuktimeline
+protocol=nepomuktimeline
 input=none
 output=filesystem
 reading=true

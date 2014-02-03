@@ -109,7 +109,7 @@ namespace {
 
 
 Nepomuk2::TimelineProtocol::TimelineProtocol( const QByteArray& poolSocket, const QByteArray& appSocket )
-    : KIO::ForwardingSlaveBase( "timeline", poolSocket, appSocket )
+    : KIO::ForwardingSlaveBase( "nepomuktimeline", poolSocket, appSocket )
 {
     kDebug();
 }
@@ -339,7 +339,7 @@ extern "C"
     KDE_EXPORT int kdemain( int argc, char **argv )
     {
         // necessary to use other kio slaves
-        KComponentData( "kio_timeline" );
+        KComponentData( "kio_nepomuktimeline" );
         QCoreApplication app( argc, argv );
 
         kDebug(7102) << "Starting timeline slave " << getpid();
