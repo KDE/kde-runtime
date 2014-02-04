@@ -66,7 +66,12 @@ static void initKWalletDir()
     KGlobal::dirs()->addResourceType("kwallet", 0, "share/apps/kwallet");
 }
 
-Backend::Backend(const QString& name, bool isPath) : d(0), _name(name), _ref(0), _cipherType(KWallet::BACKEND_CIPHER_UNKNOWN) {
+Backend::Backend(const QString& name, bool isPath)
+    : d(0)
+    , _name(name)
+    , _ref(0)
+    , _cipherType(KWallet::BACKEND_CIPHER_UNKNOWN)
+{
 	initKWalletDir();
 	if (isPath) {
 		_path = name;
