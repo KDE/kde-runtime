@@ -12,6 +12,12 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=workspace-appearance-and-behavior
 
 Name=Nepomuk
+Name[de]=Nepomuk
+Name[nl]=Nepomuk
+Name[pt]=Nepomuk
+Name[sv]=Nepomuk
+Name[uk]=Nepomuk
+Name[x-test]=xxNepomukxx
 Name[zh_TW]=Nepomuk
 Comment=Nepomuk Server Configuration
 Comment[ast]=Configuración del sirvidor Nepomuk
