@@ -4,9 +4,9 @@ else (WIN32)
     set(kded_ktimezoned_SRCS ktimezoned.cpp)
 endif (WIN32)
 
-kservice_desktop_to_json(ktimezoned.desktop)
-
 add_library(kded_ktimezoned MODULE ${kded_ktimezoned_SRCS})
+
+kservice_desktop_to_json(kded_ktimezoned ktimezoned.desktop)
 
 #qt4_add_dbus_adaptor(kded_ktimezoned_SRCS org.kde.KTimeZoned ktimezonedbus.h DBusHandler)
 
