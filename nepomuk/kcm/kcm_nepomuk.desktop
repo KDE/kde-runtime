@@ -12,6 +12,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=workspace-appearance-and-behavior
 
 Name=Nepomuk
+Name[ca]=Nepomuk
 Name[cs]=Nepomuk
 Name[de]=Nepomuk
 Name[el]=Nepomuk
