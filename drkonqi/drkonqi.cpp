@@ -48,7 +48,6 @@
 #include <KMessageBox>
 #include <KFileDialog>
 #include <KTemporaryFile>
-#include <KCmdLineArgs>
 #include <KIO/NetAccess>
 #include <KCrash>
 #include <KDebug>
@@ -60,6 +59,13 @@
 #include "drkonqibackends.h"
 
 DrKonqi::DrKonqi()
+    : m_signal(0)
+    , m_pid(0)
+    , m_kdeinit(false)
+    , m_safer(false)
+    , m_restarted(false)
+    , m_keepRunning(false)
+    , m_thread(0)
 {
     m_backend = new KCrashBackend();
     m_systemInformation = new SystemInformation();
@@ -142,7 +148,7 @@ CrashedApplication *DrKonqi::crashedApplication()
 //static
 void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
 {
-    if (KCmdLineArgs::parsedArgs()->isSet("safer")) {
+    if (isSafer()) {
         KTemporaryFile tf;
         tf.setSuffix(".kcrash.txt");
         tf.setAutoRemove(false);
@@ -196,3 +202,132 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
     }
 }
 
+void DrKonqi::setSignal(int signal)
+{
+    instance()->m_signal = signal;
+}
+
+void DrKonqi::setAppName(const QString &appName)
+{
+    instance()->m_appName = appName;
+}
+
+void DrKonqi::setAppPath(const QString &appPath)
+{
+    instance()->m_appPath = appPath;
+}
+
+void DrKonqi::setAppVersion(const QString &appVersion)
+{
+    instance()->m_appVersion = appVersion;
+}
+
+void DrKonqi::setBugAddress(const QString &bugAddress)
+{
+    instance()->m_bugAddress = bugAddress;
+}
+
+void DrKonqi::setProgramName(const QString &programName)
+{
+    instance()->m_programName = programName;
+}
+
+void DrKonqi::setPid(int pid)
+{
+    instance()->m_pid = pid;
+}
+
+void DrKonqi::setStartupId(const QString &startupId)
+{
+    instance()->m_startupId = startupId;
+}
+
+void DrKonqi::setKdeinit(bool kdeinit)
+{
+    instance()->m_kdeinit = kdeinit;
+}
+
+void DrKonqi::setSafer(bool safer)
+{
+    instance()->m_safer = safer;
+}
+
+void DrKonqi::setRestarted(bool restarted)
+{
+    instance()->m_restarted = restarted;
+}
+
+void DrKonqi::setKeepRunning(bool keepRunning)
+{
+    instance()->m_keepRunning = keepRunning;
+}
+
+void DrKonqi::setThread(int thread)
+{
+    instance()->m_thread = thread;
+}
+
+int DrKonqi::signal()
+{
+    return instance()->m_signal;
+}
+
+const QString &DrKonqi::appName()
+{
+    return instance()->m_appName;
+}
+
+const QString &DrKonqi::appPath()
+{
+    return instance()->m_appPath;
+}
+
+const QString &DrKonqi::appVersion()
+{
+    return instance()->m_appVersion;
+}
+
+const QString &DrKonqi::bugAddress()
+{
+    return instance()->m_bugAddress;
+}
+
+const QString &DrKonqi::programName()
+{
+    return instance()->m_programName;
+}
+
+int DrKonqi::pid()
+{
+    return instance()->m_pid;
+}
+
+const QString &DrKonqi::startupId()
+{
+    return instance()->m_startupId;
+}
+
+bool DrKonqi::isKdeinit()
+{
+    return instance()->m_kdeinit;
+}
+
+bool DrKonqi::isSafer()
+{
+    return instance()->m_safer;
+}
+
+bool DrKonqi::isRestarted()
+{
+    return instance()->m_restarted;
+}
+
+bool DrKonqi::isKeepRunning()
+{
+    return instance()->m_keepRunning;
+}
+
+int DrKonqi::thread()
+{
+    return instance()->m_thread;
+}

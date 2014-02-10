@@ -25,7 +25,6 @@
 #include <KLocale>
 #include <KTabWidget>
 #include <KDebug>
-#include <KCmdLineArgs>
 #include <KToolInvocation>
 
 #include <KGlobal>
@@ -111,7 +110,7 @@ void DrKonqiDialog::buildIntroWidget()
                                             "the backtrace from the <interface>Developer Information</interface> "
                                             "tab.</para>",
                                             QLatin1String(DRKONQI_REPORT_BUG_URL));
-        } else if (KCmdLineArgs::parsedArgs()->isSet("safer")) {
+        } else if (DrKonqi::isSafer()) {
             reportMessage = xi18nc("@info", "<para>The reporting assistant is disabled because "
                                             "the crash handler dialog was started in safe mode."
                                             "<nl />You can manually report this bug to %1 "
@@ -176,7 +175,7 @@ void DrKonqiDialog::buildDialogButtons()
 
     bool enableReportAssistant = !crashedApp->bugReportAddress().isEmpty() &&
                                  crashedApp->fakeExecutableBaseName() != QLatin1String("drkonqi") &&
-                                 !KCmdLineArgs::parsedArgs()->isSet("safer");
+                                 !DrKonqi::isSafer();
     enableButton(KDialog::User1, enableReportAssistant);
     connect(this, SIGNAL(user1Clicked()), this, SLOT(startBugReportAssistant()));
 

@@ -28,11 +28,10 @@
 #include <cstdlib>
 #include <unistd.h>
 
-#include <KApplication>
-#include <KCmdLineArgs>
 #include <k4aboutdata.h>
 #include <KLocalizedString>
 #include <kglobal.h>
+#include <QCommandLineParser>
 
 #include "drkonqi.h"
 #include "drkonqidialog.h"
@@ -50,6 +49,10 @@ int main(int argc, char* argv[])
         exit(255);
     }
 #endif
+
+    QApplication qa(argc, argv);
+    QCoreApplication::setApplicationName(QStringLiteral("drkonqi"));
+    QCoreApplication::setApplicationVersion(version);
 
     // Prevent KApplication from setting the crash handler. We will set it later...
     setenv("KDE_DEBUG", "true", 1);
@@ -70,45 +73,67 @@ int main(int argc, char* argv[])
                          "spehr@kde.org");
     aboutData.setProgramIconName("tools-report-bug");
 
-    KCmdLineArgs::init(argc, argv, &aboutData);
+    QCommandLineParser parser;
+    parser.setApplicationDescription(description);
+    parser.addHelpOption();
+    parser.addVersionOption();
 
-    KCmdLineOptions options;
-    options.add("signal <number>", ki18nc("@info:shell","The signal number that was caught"));
-    options.add("appname <name>", ki18nc("@info:shell","Name of the program"));
-    options.add("apppath <path>", ki18nc("@info:shell","Path to the executable"));
-    options.add("appversion <version>", ki18nc("@info:shell","The version of the program"));
-    options.add("bugaddress <address>", ki18nc("@info:shell","The bug address to use"));
-    options.add("programname <name>", ki18nc("@info:shell","Translated name of the program"));
-    options.add("pid <pid>", ki18nc("@info:shell","The PID of the program"));
-    options.add("startupid <id>", ki18nc("@info:shell","Startup ID of the program"));
-    options.add("kdeinit", ki18nc("@info:shell","The program was started by kdeinit"));
-    options.add("safer", ki18nc("@info:shell","Disable arbitrary disk access"));
-    options.add("restarted", ki18nc("@info:shell","The program has already been restarted"));
-    options.add("keeprunning", ki18nc("@info:shell","Keep the program running and generate "
+    QCommandLineOption signalOption(QStringLiteral("signal"), i18nc("@info:shell","The signal <number> that was caught"), QStringLiteral("number"));
+    QCommandLineOption appNameOption(QStringLiteral("appname"), i18nc("@info:shell","<Name> of the program"), QStringLiteral("name"));
+    QCommandLineOption appPathOption(QStringLiteral("apppath"), i18nc("@info:shell","<Path> to the executable"), QStringLiteral("path"));
+    QCommandLineOption appVersionOption(QStringLiteral("appversion"), i18nc("@info:shell","The <version> of the program"), QStringLiteral("version"));
+    QCommandLineOption bugAddressOption(QStringLiteral("bugaddress"), i18nc("@info:shell","The bug <address> to use"), QStringLiteral("address"));
+    QCommandLineOption programNameOption(QStringLiteral("programname"), i18nc("@info:shell","Translated <name> of the program"), QStringLiteral("name"));
+    QCommandLineOption pidOption(QStringLiteral("pid"), i18nc("@info:shell","The <PID> of the program"), QStringLiteral("pid"));
+    QCommandLineOption startupIdOption(QStringLiteral("startupid"), i18nc("@info:shell","Startup <ID> of the program"), QStringLiteral("id"));
+    QCommandLineOption kdeinitOption(QStringLiteral("kdeinit"), i18nc("@info:shell","The program was started by kdeinit"));
+    QCommandLineOption saferOption(QStringLiteral("safer"), i18nc("@info:shell","Disable arbitrary disk access"));
+    QCommandLineOption restartedOption(QStringLiteral("restarted"), i18nc("@info:shell","The program has already been restarted"));
+    QCommandLineOption keepRunningOption(QStringLiteral("keeprunning"), i18nc("@info:shell","Keep the program running and generate "
                                                     "the backtrace at startup"));
-    options.add("thread <threadid>", ki18nc("@info:shell","The thread id of the failing thread"));
-    KCmdLineArgs::addCmdLineOptions(options);
+    QCommandLineOption threadOption(QStringLiteral("thread"), i18nc("@info:shell","The <thread id> of the failing thread"), QStringLiteral("threadid"));
 
-    KComponentData inst(KCmdLineArgs::aboutData());
-    QApplication *qa =
-        KCmdLineArgs::parsedArgs()->isSet("safer") ?
-        new QApplication(KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv()) :
-        new KApplication;
-    qa->setApplicationName(inst.componentName());
+    parser.addOption(signalOption);
+    parser.addOption(appNameOption);
+    parser.addOption(appPathOption);
+    parser.addOption(appVersionOption);
+    parser.addOption(bugAddressOption);
+    parser.addOption(programNameOption);
+    parser.addOption(pidOption);
+    parser.addOption(startupIdOption);
+    parser.addOption(kdeinitOption);
+    parser.addOption(saferOption);
+    parser.addOption(restartedOption);
+    parser.addOption(keepRunningOption);
+    parser.addOption(threadOption);
+
+    parser.process(qa);
+
+    DrKonqi::setSignal(parser.value(signalOption).toInt());
+    DrKonqi::setAppName(parser.value(appNameOption));
+    DrKonqi::setAppPath(parser.value(appPathOption));
+    DrKonqi::setAppVersion(parser.value(appVersionOption));
+    DrKonqi::setBugAddress(parser.value(bugAddressOption));
+    DrKonqi::setProgramName(parser.value(programNameOption));
+    DrKonqi::setPid(parser.value(pidOption).toInt());
+    DrKonqi::setStartupId(parser.value(startupIdOption));
+    DrKonqi::setKdeinit(parser.isSet(kdeinitOption));
+    DrKonqi::setSafer(parser.isSet(saferOption));
+    DrKonqi::setRestarted(parser.isSet(restartedOption));
+    DrKonqi::setKeepRunning(parser.isSet(keepRunningOption));
+    DrKonqi::setThread(parser.value(threadOption).toInt());
 
     if (!DrKonqi::init()) {
-        delete qa;
         return 1;
     }
 
-    qa->setQuitOnLastWindowClosed(false);
+    qa.setQuitOnLastWindowClosed(false);
     KGlobal::setAllowQuit(true);
 
     DrKonqiDialog *w = new DrKonqiDialog();
     w->show();
-    int ret = qa->exec();
+    int ret = qa.exec();
 
     DrKonqi::cleanup();
-    delete qa;
     return ret;
 }

@@ -24,7 +24,6 @@
 #include <QtCore/QTimer>
 #include <QtCore/QDir>
 
-#include <KCmdLineArgs>
 #include <KStandardDirs>
 #include <KDebug>
 #include <KConfig>
@@ -37,6 +36,7 @@
 #include "debugger.h"
 #include "debuggermanager.h"
 #include "backtracegenerator.h"
+#include "drkonqi.h"
 
 AbstractDrKonqiBackend::~AbstractDrKonqiBackend()
 {
@@ -64,7 +64,7 @@ bool KCrashBackend::init()
 {
     AbstractDrKonqiBackend::init();
 
-    QString startupId(KCmdLineArgs::parsedArgs()->getOption("startupid"));
+    QString startupId(DrKonqi::startupId());
     if (!startupId.isEmpty()) { // stop startup notification
         KStartupInfoId id;
         id.initId(startupId.toLocal8Bit());
@@ -93,7 +93,7 @@ bool KCrashBackend::init()
     }
 
     //--keeprunning means: generate backtrace instantly and let the process continue execution
-    if(KCmdLineArgs::parsedArgs()->isSet("keeprunning")) {
+    if(DrKonqi::isKeepRunning()) {
         stopAttachedProcess();
         debuggerManager()->backtraceGenerator()->start();
         connect(debuggerManager(), SIGNAL(debuggerFinished()), SLOT(continueAttachedProcess()));
@@ -121,14 +121,13 @@ CrashedApplication *KCrashBackend::constructCrashedApplication()
 {
     CrashedApplication *a = new CrashedApplication(this);
     a->m_datetime = QDateTime::currentDateTime();
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    a->m_name = args->getOption("programname");
-    a->m_version = args->getOption("appversion").toUtf8();
-    a->m_reportAddress = BugReportAddress(args->getOption("bugaddress").toUtf8());
-    a->m_pid = args->getOption("pid").toInt();
-    a->m_signalNumber = args->getOption("signal").toInt();
-    a->m_restarted = args->isSet("restarted");
-    a->m_thread = args->getOption("thread").toInt();
+    a->m_name = DrKonqi::programName();
+    a->m_version = DrKonqi::appVersion().toUtf8();
+    a->m_reportAddress = BugReportAddress(DrKonqi::bugAddress().toUtf8());
+    a->m_pid = DrKonqi::pid();
+    a->m_signalNumber = DrKonqi::signal();
+    a->m_restarted = DrKonqi::isRestarted();
+    a->m_thread = DrKonqi::thread();
 
     //try to determine the executable that crashed
     if ( QFileInfo(QString("/proc/%1/exe").arg(a->m_pid)).exists() ) {
@@ -136,21 +135,21 @@ CrashedApplication *KCrashBackend::constructCrashedApplication()
         kDebug() << "Using /proc to determine executable path";
         a->m_executable.setFile(QFile::symLinkTarget(QString("/proc/%1/exe").arg(a->m_pid)));
 
-        if (args->isSet("kdeinit") ||
+        if (DrKonqi::isKdeinit() ||
             a->m_executable.fileName().startsWith("python") ) {
 
-            a->m_fakeBaseName = args->getOption("appname");
+            a->m_fakeBaseName = DrKonqi::appName();
         }
     } else {
-        if ( args->isSet("kdeinit") ) {
+        if ( DrKonqi::isKdeinit() ) {
             a->m_executable = QFileInfo(KStandardDirs::findExe("kdeinit4"));
-            a->m_fakeBaseName = args->getOption("appname");
+            a->m_fakeBaseName = DrKonqi::appName();
         } else {
-            QFileInfo execPath(args->getOption("appname"));
+            QFileInfo execPath(DrKonqi::appName());
             if ( execPath.isAbsolute() ) {
                 a->m_executable = execPath;
-            } else if ( !args->getOption("apppath").isEmpty() ) {
-                QDir execDir(args->getOption("apppath"));
+            } else if ( !DrKonqi::appPath().isEmpty() ) {
+                QDir execDir(DrKonqi::appPath());
                 a->m_executable = execDir.absoluteFilePath(execPath.fileName());
             } else {
                 a->m_executable = QFileInfo(KStandardDirs::findExe(execPath.fileName()));
