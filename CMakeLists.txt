@@ -25,6 +25,7 @@ include(KDECMakeSettings)
 include(KDECompilerSettings)
 
 include(ECMOptionalAddSubdirectory)
+include(ECMMarkNonGuiExecutable)
 
 find_package(Qt5Core REQUIRED NO_MODULE)
 find_package(Qt5DBus REQUIRED NO_MODULE)
@@ -192,7 +193,7 @@ add_subdirectory(ktraderclient)
 if (Q_WS_X11)
 #   add_subdirectory(kstart)
 endif (Q_WS_X11)
-# add_subdirectory(kquitapp)
+add_subdirectory(kquitapp)
 # add_subdirectory(menu)
 # add_subdirectory(solid-hardware)
 

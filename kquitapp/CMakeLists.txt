@@ -1,8 +1,6 @@
-set(kquitapp_SRCS kquitapp.cpp)
-
-set(kquitapp_OUTPUT_NAME kquitapp)
-kde4_add_executable(kquitapp_executable NOGUI ${kquitapp_SRCS})
+add_executable(kquitapp_executable kquitapp.cpp)
+ecm_mark_nongui_executable(kquitapp_executable)
 set_target_properties(kquitapp_executable PROPERTIES OUTPUT_NAME kquitapp)
-target_link_libraries(kquitapp_executable  ${KDE4_KDECORE_LIBS})
+target_link_libraries(kquitapp_executable Qt5::DBus KF5::I18n KF5::CoreAddons)
 
 install(TARGETS kquitapp_executable ${INSTALL_TARGETS_DEFAULT_ARGS})
