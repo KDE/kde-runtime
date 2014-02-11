@@ -193,7 +193,6 @@ add_subdirectory(ktraderclient)
 if (Q_WS_X11)
 #   add_subdirectory(kstart)
 endif (Q_WS_X11)
-add_subdirectory(kquitapp)
 # add_subdirectory(menu)
 # add_subdirectory(solid-hardware)
 
