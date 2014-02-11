@@ -1,6 +1,0 @@
-add_executable(kquitapp_executable kquitapp.cpp)
-ecm_mark_nongui_executable(kquitapp_executable)
-set_target_properties(kquitapp_executable PROPERTIES OUTPUT_NAME kquitapp)
-target_link_libraries(kquitapp_executable Qt5::DBus)
-
-install(TARGETS kquitapp_executable ${INSTALL_TARGETS_DEFAULT_ARGS})
