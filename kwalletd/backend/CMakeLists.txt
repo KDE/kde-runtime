@@ -22,7 +22,7 @@ set(kwalletbackend_LIB_SRCS
 
 kde4_add_library(kwalletbackend SHARED ${kwalletbackend_LIB_SRCS})
 
-target_link_libraries(kwalletbackend ${KDE4_KDEUI_LIBS} )
+target_link_libraries(kwalletbackend ${KDE4_KDEUI_LIBS} ${LIBGCRYPT_LIBRARIES})
 if(QGPGME_FOUND)
 target_link_libraries(kwalletbackend ${QGPGME_LIBRARIES} )
 endif(QGPGME_FOUND)
