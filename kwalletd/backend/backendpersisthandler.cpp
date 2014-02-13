@@ -52,6 +52,7 @@
 
 #define KWALLET_HASH_SHA1       0
 #define KWALLET_HASH_MD5        1 // unsupported
+#define KWALLET_HASH_PBKDF2_SHA512 2 // used when using kwallet with pam or since 4.13 version
 
 namespace KWallet {
 
@@ -168,7 +169,7 @@ BackendPersistHandler *BackendPersistHandler::getPersistHandler(BackendCipherTyp
 BackendPersistHandler *BackendPersistHandler::getPersistHandler(char magicBuf[12])
 {
     if ((magicBuf[2] == KWALLET_CIPHER_BLOWFISH_ECB || magicBuf[2] == KWALLET_CIPHER_BLOWFISH_CBC) &&
-        (magicBuf[3] == KWALLET_HASH_SHA1)) {
+        (magicBuf[3] == KWALLET_HASH_SHA1 || magicBuf[3] == KWALLET_HASH_PBKDF2_SHA512)) {
         if (0 == blowfishHandler) {
             bool useECBforReading = magicBuf[2] == KWALLET_CIPHER_BLOWFISH_ECB;
             if (useECBforReading) {
@@ -199,7 +200,12 @@ int BlowfishPersistHandler::write(Backend* wb, KSaveFile& sf, QByteArray& versio
     }
 
     version[2] = KWALLET_CIPHER_BLOWFISH_CBC;
-    version[3] = KWALLET_HASH_SHA1;
+    if(!wb->_useNewHash) {
+        version[3] = KWALLET_HASH_SHA1;
+    } else {
+        version[3] = KWALLET_HASH_PBKDF2_SHA512;//Since 4.13 we always use PBKDF2_SHA512
+    }
+
     if (sf.write(version, 4) != 4) {
         sf.abort();
         return -4; // write error

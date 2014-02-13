@@ -63,6 +63,12 @@ set_package_properties(QCA2 PROPERTIES DESCRIPTION "Support for remote plasma wi
                        TYPE OPTIONAL
                       )
 
+find_package(LibGcrypt 1.6.1 REQUIRED QUIET)
+set_package_properties(LibGcrypt PROPERTIES DESCRIPTION "Libgcrypt is a general purpose cryptographic library based on the code from GnuPG."
+                       URL "http://www.gnu.org/software/libgcrypt/"
+                       TYPE REQUIRED
+                       PURPOSE "kwalletd needs libgcrypt to perform PBKDF2-SHA512 hashing"
+                      )
 check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
 check_include_files(sys/time.h HAVE_SYS_TIME_H)
 

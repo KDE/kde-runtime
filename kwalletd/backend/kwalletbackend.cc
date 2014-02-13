@@ -31,6 +31,7 @@
 #ifdef HAVE_QGPGME
 #include <gpgme++/key.h>
 #endif
+#include <gcrypt.h>
 #include <knotification.h>
 
 #include <QtCore/QFile>
@@ -50,8 +51,10 @@
 #endif
 
 #define KWALLET_VERSION_MAJOR		0
-#define KWALLET_VERSION_MINOR		0
-
+#define KWALLET_VERSION_MINOR		1
+#define PBKDF2_SHA512_KEYSIZE 56
+#define PBKDF2_SHA512_SALTSIZE 56
+#define PBKDF2_SHA512_ITERATIONS 50000
 
 using namespace KWallet;
 
@@ -66,7 +69,13 @@ static void initKWalletDir()
     KGlobal::dirs()->addResourceType("kwallet", 0, "share/apps/kwallet");
 }
 
-Backend::Backend(const QString& name, bool isPath) : d(0), _name(name), _ref(0), _cipherType(KWallet::BACKEND_CIPHER_UNKNOWN) {
+Backend::Backend(const QString& name, bool isPath)
+    : d(0)
+    , _name(name)
+    , _useNewHash(false)
+    , _ref(0)
+    , _cipherType(KWallet::BACKEND_CIPHER_UNKNOWN)
+{
 	initKWalletDir();
 	if (isPath) {
 		_path = name;
@@ -90,6 +99,34 @@ void Backend::setCipherType(BackendCipherType ct)
     // changing cipher type on already initialed wallets is not permitted
     assert(_cipherType == KWallet::BACKEND_CIPHER_UNKNOWN);
     _cipherType = ct;
+}
+
+static int password2PBKDF2_SHA512(const QByteArray &password, QByteArray& hash, const QByteArray &salt)
+{
+    if (!gcry_check_version("1.6.1")) {
+        printf("libcrypt version is too old \n");
+        return GPG_ERR_USER_2;
+    }
+
+    gcry_error_t error;
+    bool static gcry_secmem_init = false;
+    if (!gcry_secmem_init) {
+        error = gcry_control(GCRYCTL_INIT_SECMEM, 32768, 0);
+        if (error != 0) {
+            kWarning() << "Can't get secure memory:" << error;
+            return error;
+        }
+        gcry_secmem_init = true;
+    }
+
+    gcry_control (GCRYCTL_INITIALIZATION_FINISHED, 0);
+
+    error = gcry_kdf_derive(password.constData(), password.size(),
+                            GCRY_KDF_PBKDF2, GCRY_MD_SHA512,
+                            salt.data(), salt.size(),
+                            PBKDF2_SHA512_ITERATIONS, PBKDF2_SHA512_KEYSIZE, hash.data());
+
+    return error;
 }
 
 // this should be SHA-512 for release probably
@@ -232,7 +269,7 @@ int Backend::open(const QByteArray& password, WId w) {
 	if (_open) {
 		return -255;  // already open
 	}
-	
+
 	setPassword(password);
    return openInternal(w);
 }
@@ -253,17 +290,20 @@ int Backend::openPreHashed(const QByteArray &passwordHash)
    if (_open) {
       return -255;  // already open
    }
-   
+
    // check the password hash for correct size (currently fixed)
    if (passwordHash.size() != 20 && passwordHash.size() != 40 &&
 	   passwordHash.size() != 56) {
       return -42; // unsupported encryption scheme
    }
-   
+
    _passhash = passwordHash;
+   _newPassHash = passwordHash;
+   _useNewHash = true;//Only new hash is supported
+
    return openInternal();
 }
- 
+
 int Backend::openInternal(WId w)
 {
 	// No wallet existed.  Let's create it.
@@ -302,9 +342,14 @@ int Backend::openInternal(WId w)
 		return -4;         // unknown version
 	}
 
-	if (magicBuf[1] != KWALLET_VERSION_MINOR) {
-		return -4;	   // unknown version
-	}
+	//0 has been the MINOR version until 4.13, from that point we use it to upgrade the hash
+	if (magicBuf[1] == 1) {
+        kDebug() << "Wallet new enough, using new hash";
+        swapToNewHash();
+	} else if (magicBuf[1] != 0){
+        kDebug() << "Wallet is old, sad panda :(";
+        return -4;  // unknown version
+    }
 
 	BackendPersistHandler *phandler = BackendPersistHandler::getPersistHandler(magicBuf);
     if (0 == phandler){
@@ -313,6 +358,38 @@ int Backend::openInternal(WId w)
     return phandler->read(this, db, w);
 }
 
+void Backend::swapToNewHash()
+{
+    //Runtime error happened and we can't use the new hash
+    if (!_useNewHash) {
+        kDebug() << "Runtime error on the new hash";
+        return;
+    }
+    _passhash.fill(0);//Making sure the old passhash is not around in memory
+    _passhash = _newPassHash;//Use the new hash, means the wallet is modern enough
+}
+
+QByteArray Backend::createAndSaveSalt(const QString& path) const
+{
+    QFile saltFile(path);
+    saltFile.remove();
+
+    if (!saltFile.open(QIODevice::WriteOnly)) {
+        return QByteArray();
+    }
+
+    char *randomData = (char*) gcry_random_bytes(PBKDF2_SHA512_SALTSIZE, GCRY_STRONG_RANDOM);
+    QByteArray salt(randomData, PBKDF2_SHA512_SALTSIZE);
+    free(randomData);
+
+    if (saltFile.write(salt) != PBKDF2_SHA512_SALTSIZE) {
+        return QByteArray();
+    }
+
+    saltFile.close();
+
+    return salt;
+}
 
 int Backend::sync(WId w) {
 	if (!_open) {
@@ -334,7 +411,14 @@ int Backend::sync(WId w) {
 	// Write the version number
 	QByteArray version(4, 0);
 	version[0] = KWALLET_VERSION_MAJOR;
-	version[1] = KWALLET_VERSION_MINOR;
+    if (_useNewHash) {
+        version[1] = KWALLET_VERSION_MINOR;
+        //Use the sync to update the hash to PBKDF2_SHA512
+        swapToNewHash();
+    } else {
+        version[1] = 0; //was KWALLET_VERSION_MINOR before the new hash
+    }
+
 
     BackendPersistHandler *phandler = BackendPersistHandler::getPersistHandler(_cipherType);
     if (0 == phandler) {
@@ -360,7 +444,7 @@ int Backend::close(bool save) {
 			return rc;
 		}
 	}
-	
+
 	// do the actual close
 	for (FolderMap::ConstIterator i = _entries.constBegin(); i != _entries.constEnd(); ++i) {
 		for (EntryMap::ConstIterator j = i.value().constBegin(); j != i.value().constEnd(); ++j) {
@@ -368,12 +452,13 @@ int Backend::close(bool save) {
 		}
 	}
 	_entries.clear();
-	
+
 	// empty the password hash
 	_passhash.fill(0);
+    _newPassHash.fill(0);
 
 	_open = false;
-	
+
 	return 0;
 }
 
@@ -575,7 +660,27 @@ void Backend::setPassword(const QByteArray &password) {
 	BlowFish _bf;
 	CipherBlockChain bf(&_bf);
 	_passhash.resize(bf.keyLen()/8);
+    _newPassHash.resize(bf.keyLen()/8);
+    _newPassHash.fill(0);
+
 	password2hash(password, _passhash);
+
+    QByteArray salt;
+    QFile saltFile(KGlobal::dirs()->saveLocation("kwallet") + _name + ".salt");
+    if (!saltFile.exists() || saltFile.size() == 0) {
+        salt = createAndSaveSalt(saltFile.fileName());
+    } else {
+        if (!saltFile.open(QIODevice::ReadOnly)) {
+            salt = createAndSaveSalt(saltFile.fileName());
+        } else {
+            salt = saltFile.readAll();
+        }
+    }
+
+    if (!salt.isEmpty() && password2PBKDF2_SHA512(password, _newPassHash,  salt) == 0) {
+        kDebug() << "Setting useNewHash to true";
+        _useNewHash = true;
+    }
 }
 
 #ifdef HAVE_QGPGME
