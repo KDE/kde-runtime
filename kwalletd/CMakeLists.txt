@@ -70,6 +70,7 @@ install(TARGETS kwalletd  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 install( FILES kwalletd.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES kwalletd.notifyrc DESTINATION  ${DATA_INSTALL_DIR}/kwalletd )
+install( FILES kwallet-4.13.upd DESTINATION ${DATA_INSTALL_DIR}/kconf_update)
 
 add_subdirectory(tests)
 
