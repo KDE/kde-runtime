@@ -36,6 +36,7 @@
 #include <klauncher_iface.h>
 #include <kde_file.h>
 #include <QtDBus/QtDBus>
+#include <QStandardPaths>
 
 static const char appName[] = "kdontchangethehostname";
 static const char appVersion[] = "1.1";
@@ -189,7 +190,7 @@ void KHostName::changeStdDirs(const QByteArray &type)
    }
    if (result != 0)
    {
-       const QString lnusertemp = KGlobal::dirs()->findExe( "lnusertemp" );
+       const QString lnusertemp = QStandardPaths::findExecutable( "lnusertemp" );
        QProcess::execute( lnusertemp, QStringList() << type );
    }
 }

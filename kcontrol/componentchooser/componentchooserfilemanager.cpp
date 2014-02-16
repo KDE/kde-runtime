@@ -26,6 +26,7 @@
 #include <kopenwithdialog.h>
 #include <kglobalsettings.h>
 #include <kconfiggroup.h>
+#include <QStandardPaths>
 
 CfgFileManager::CfgFileManager(QWidget *parent)
     : QWidget(parent), Ui::FileManagerConfig_UI(),CfgPlugin()

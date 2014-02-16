@@ -21,7 +21,7 @@
 #include "klistdebugdialog.h"
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
-#include <kstandarddirs.h>
+
 #include <QTextStream>
 #include <klocale.h>
 #include <kdebug.h>
@@ -30,6 +30,7 @@
 #include <kconfiggroup.h>
 
 #include <QFile>
+#include <QStandardPaths>
 
 static KAbstractDebugDialog::AreaMap readAreas()
 {
@@ -37,7 +38,7 @@ static KAbstractDebugDialog::AreaMap readAreas()
     // Group 0 is not used anymore. kDebug() uses the area named after the appname.
     //areas.insert( "      0" /*cf rightJustified below*/, "0 (generic)" );
 
-    const QString confAreasFile = KStandardDirs::locate("config", "kdebug.areas");
+    const QString confAreasFile = QStandardPaths::locate(QStandardPaths::ConfigLocation, "kdebug.areas");
     QFile file( confAreasFile );
     if (!file.open(QIODevice::ReadOnly)) {
         kWarning() << "Couldn't open" << confAreasFile;

@@ -77,7 +77,7 @@ bool DebuggerManager::debuggerIsRunning() const
 
 bool DebuggerManager::showExternalDebuggers() const
 {
-    KConfigGroup config(KGlobal::config(), "DrKonqi");
+    KConfigGroup config(KSharedConfig::openConfig(), "DrKonqi");
     bool showDebugger = config.readEntry("ShowDebugButton", false);
 
     // TODO: remove all these compatibility code when KDE SC 4.11

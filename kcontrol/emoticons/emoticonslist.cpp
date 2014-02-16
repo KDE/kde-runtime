@@ -248,7 +248,7 @@ void EmoticonList::btRemoveThemeClicked()
 
     QString name = themeList->currentItem()->text();
 
-    delFiles.append(KGlobal::dirs()->findResource("emoticons", name + QDir::separator()));
+    delFiles.append(KStandardDirs::locate("emoticons", name + QDir::separator()));
     delete themeList->currentItem();
     emoMap.remove(name);
     emit changed();

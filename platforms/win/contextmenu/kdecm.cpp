@@ -45,6 +45,7 @@
 #define INITGUID
 #include <initguid.h>
 #include <shlguid.h>
+#include <QStandardPaths>
 
 #include "resource.h"
 #include "kdecm.h"
@@ -132,7 +133,7 @@ STDAPI_(BOOL) DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
             return TRUE; // whoever held the lock has already started it
     }
     // Try to launch kdeinit.
-    QString srv = KStandardDirs::findExe(QLatin1String("kdeinit4"));
+    QString srv = QStandardPaths::findExecutable(QLatin1String("kdeinit4"));
     if (srv.isEmpty())
         return FALSE;
 

@@ -57,6 +57,7 @@
 #include <KIO/NetAccess>
 #include <KTar>
 #include <KGlobalSettings> //FIXME KDE4Support
+#include <QStandardPaths>
 
 static const int ThemeNameRole = Qt::UserRole + 1;
 
@@ -241,7 +242,7 @@ void IconThemesConfig::installNewTheme()
 bool IconThemesConfig::installThemes(const QStringList &themes, const QString &archiveName)
 {
   bool everythingOk = true;
-  QString localThemesDir(KStandardDirs::locateLocal("icon", "./"));
+  QString localThemesDir(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1String("/icons/") + "./");
 
   KProgressDialog progressDiag(this,
                                i18n("Installing icon themes"),

@@ -58,7 +58,7 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
     //Create the assistant pages
 
     //-Introduction Page
-    KConfigGroup group(KGlobal::config(), "ReportAssistant");
+    KConfigGroup group(KSharedConfig::openConfig(), "ReportAssistant");
     const bool skipIntroduction = group.readEntry("SkipIntroduction", false);
 
     if (!skipIntroduction) {

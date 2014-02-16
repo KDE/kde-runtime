@@ -18,6 +18,7 @@
 #include <QKeyEvent>
 #include <QListView>
 #include <QScrollBar>
+#include <QStandardPaths>
 
 struct CountryModelItem
 {
@@ -284,7 +285,7 @@ bool CountrySelectorDialog::editCountry(KControlLocale *locale)
         index = tag.lastIndexOf('/');
         tag = tag.mid(index + 1);
 
-        QString flag( KStandardDirs::locate( "locale", QString::fromLatin1( "l10n/%1/flag.png" ).arg(tag) ) );
+        QString flag( QStandardPaths::locate(QStandardPaths::GenericDataLocation, QLatin1String("locale/") + QString::fromLatin1( "l10n/%1/flag.png" ).arg(tag) ) );
         cm->addSubRegion(KIcon(flag), name, tag, parentRegion);
         if (tag == country) region = parentRegion;
     }

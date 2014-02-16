@@ -34,7 +34,7 @@
 #include <krun.h>
 #include <kmessagebox.h>
 #include <kstandardguiitem.h>
-#include <kstandarddirs.h>
+
 #include <kdesktopfileactions.h>
 #include <kwindowsystem.h>
 #include <kpassworddialog.h>
@@ -50,6 +50,7 @@
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
+#include <QStandardPaths>
 
 K_PLUGIN_FACTORY(SolidUiServerFactory,
                  registerPlugin<SolidUiServer>();
@@ -79,7 +80,7 @@ void SolidUiServer::showActionsDialog(const QString &udi,
     QList<DeviceAction*> actions;
 
     foreach (const QString &desktop, desktopFiles) {
-        QString filePath = KStandardDirs::locate("data", "solid/actions/"+desktop);
+        QString filePath = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "solid/actions/"+desktop);
 
         QList<KServiceAction> services
             = KDesktopFileActions::userDefinedServices(filePath, true);

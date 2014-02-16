@@ -201,13 +201,13 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
 
     setMainWidget(m_textBrowser);
 
-    KConfigGroup config(KGlobal::config(), "AboutBugReportingDialog");
+    KConfigGroup config(KSharedConfig::openConfig(), "AboutBugReportingDialog");
     restoreDialogSize(config);
 }
 
 AboutBugReportingDialog::~AboutBugReportingDialog( )
 {
-    KConfigGroup config(KGlobal::config(), "AboutBugReportingDialog");
+    KConfigGroup config(KSharedConfig::openConfig(), "AboutBugReportingDialog");
     saveDialogSize(config);
 }
 

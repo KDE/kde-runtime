@@ -28,7 +28,7 @@
 #include <kdebug.h>
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
-#include <kstandarddirs.h>
+
 #include <ksycoca.h>
 
 K_PLUGIN_FACTORY(WinStartMenuFactory,

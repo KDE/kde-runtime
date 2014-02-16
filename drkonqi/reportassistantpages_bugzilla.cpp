@@ -447,7 +447,7 @@ void BugzillaInformationPage::aboutToShow()
                                                    "Solaris"), "Solaris Packages");
 
             //Restore previously selected bugzilla platform (distribution)
-            KConfigGroup config(KGlobal::config(), "BugzillaInformationPage");
+            KConfigGroup config(KSharedConfig::openConfig(), "BugzillaInformationPage");
             QString entry = config.readEntry("BugzillaPlatform","unspecified");
             int index = ui.m_distroChooserCombo->findData(entry);
             if ( index == -1 ) index = 0;
@@ -592,7 +592,7 @@ void BugzillaInformationPage::aboutToHide()
         //Save bugzilla platform (distribution)
         QString bugzillaPlatform = ui.m_distroChooserCombo->itemData(
                                         ui.m_distroChooserCombo->currentIndex()).toString();
-        KConfigGroup config(KGlobal::config(), "BugzillaInformationPage");
+        KConfigGroup config(KSharedConfig::openConfig(), "BugzillaInformationPage");
         config.writeEntry("BugzillaPlatform", bugzillaPlatform);
         DrKonqi::systemInformation()->setBugzillaPlatform(bugzillaPlatform);
     }

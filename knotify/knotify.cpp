@@ -102,7 +102,7 @@ void KNotify::addPlugin( KNotifyPlugin * p )
 
 void KNotify::reconfigure()
 {
-	KGlobal::config()->reparseConfiguration();
+	KSharedConfig::openConfig()->reparseConfiguration();
 	KNotifyConfig::reparseConfiguration();
 	loadConfig();
 }

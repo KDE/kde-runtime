@@ -52,6 +52,7 @@
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>
+#include <QStandardPaths>
 
 #ifndef METATYPE_QLIST_INT_DEFINED
 #define METATYPE_QLIST_INT_DEFINED
@@ -180,7 +181,7 @@ DevicePreference::DevicePreference(QWidget *parent)
                 "background-repeat: no-repeat;"
                 "background-clip: padding;"
                 "}")
-            .arg(KStandardDirs::locate("data", "kcm_phonon/listview-background.png")));
+            .arg(QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kcm_phonon/listview-background.png")));
     deviceList->setAlternatingRowColors(false);
 
     // The root item for the categories

@@ -35,6 +35,7 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QSet>
 #include <QtCore/QString>
+#include <QStandardPaths>
 
 static const char CACHE_MAGIC[] = "PHwdbC";
 static const quint32 CACHE_VERSION = 2;
@@ -65,7 +66,7 @@ K_GLOBAL_STATIC(HardwareDatabasePrivate, s_globalDB)
 HardwareDatabasePrivate::HardwareDatabasePrivate()
     : m_cacheFile()
 {
-    const QString dbFileName = KStandardDirs::locate("data", QLatin1String("libphonon/hardwaredatabase"));
+    const QString dbFileName = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QLatin1String("libphonon/hardwaredatabase"));
     if (dbFileName.isEmpty()) {
         // no database, we're useless
         return;

@@ -31,6 +31,7 @@
 #include <KGlobal>
 #include <KStartupInfo>
 #include <KCrash>
+#include <QStandardPaths>
 
 #include "crashedapplication.h"
 #include "debugger.h"
@@ -142,7 +143,7 @@ CrashedApplication *KCrashBackend::constructCrashedApplication()
         }
     } else {
         if ( DrKonqi::isKdeinit() ) {
-            a->m_executable = QFileInfo(KStandardDirs::findExe("kdeinit4"));
+            a->m_executable = QFileInfo(QStandardPaths::findExecutable("kdeinit4"));
             a->m_fakeBaseName = DrKonqi::appName();
         } else {
             QFileInfo execPath(DrKonqi::appName());
@@ -166,7 +167,7 @@ CrashedApplication *KCrashBackend::constructCrashedApplication()
 DebuggerManager *KCrashBackend::constructDebuggerManager()
 {
     QList<Debugger> internalDebuggers = Debugger::availableInternalDebuggers("KCrash");
-    KConfigGroup config(KGlobal::config(), "DrKonqi");
+    KConfigGroup config(KSharedConfig::openConfig(), "DrKonqi");
 #ifndef Q_OS_WIN
     QString defaultDebuggerName = config.readEntry("Debugger", QString("gdb"));
 #else

@@ -445,13 +445,13 @@ ReportInformationDialog::ReportInformationDialog(const QString & reportText)
     connect(this, SIGNAL(user1Clicked()), this, SLOT(saveReport()));
 
     setInitialSize(QSize(800, 600));
-    KConfigGroup config(KGlobal::config(), "ReportInformationDialog");
+    KConfigGroup config(KSharedConfig::openConfig(), "ReportInformationDialog");
     restoreDialogSize(config);
 }
 
 ReportInformationDialog::~ReportInformationDialog()
 {
-    KConfigGroup config(KGlobal::config(), "ReportInformationDialog");
+    KConfigGroup config(KSharedConfig::openConfig(), "ReportInformationDialog");
     saveDialogSize(config);
     KGlobal::deref();
 }

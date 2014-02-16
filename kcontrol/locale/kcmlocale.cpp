@@ -42,6 +42,7 @@
 #include <KPluginFactory>
 #include <KStandardDirs>
 #include <KCurrencyCode>
+#include <QStandardPaths>
 
 #include "ui_kcmlocalewidget.h"
 
@@ -1105,7 +1106,7 @@ void KCMLocale::initCountry()
     QMapIterator<QString, QString> it( countryNames );
     while ( it.hasNext() ) {
         it.next();
-        KIcon flag( KStandardDirs::locate( "locale", QString::fromLatin1( "l10n/%1/flag.png" ).arg( it.value() ) ) );
+        KIcon flag( QStandardPaths::locate(QStandardPaths::GenericDataLocation, QLatin1String("locale/") + QString::fromLatin1( "l10n/%1/flag.png" ).arg( it.value() ) ) );
         m_ui->m_comboCountry->addItem( flag, it.key(), it.value() );
     }
 

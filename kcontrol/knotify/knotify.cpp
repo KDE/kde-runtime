@@ -42,6 +42,7 @@
 #include <KUrlRequester>
 #include <KLocalizedString>
 #include <KGlobal>
+#include <QStandardPaths>
 
 #include "ui_playersettings.h"
 

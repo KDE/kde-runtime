@@ -41,6 +41,7 @@
 #undef _WIN32_IE
 #define _WIN32_IE 0x0400
 #include <windows.h>
+#include <QStandardPaths>
 #endif
 
 #if defined(__MINGW32__)
@@ -56,7 +57,7 @@ file we're defining the KConfig object's filename*/
 RegistryManager::RegistryManager(QWidget *parentPtr)
     : nativeSettings("HKEY_LOCAL_MACHINE", QSettings::NativeFormat)
 {
-    iniSettings = KSharedConfig::openConfig("kdeplatformrc", KConfig::SimpleConfig, "config");
+    iniSettings = KSharedConfig::openConfig("kdeplatformrc", KConfig::SimpleConfig, QStandardPaths::ConfigLocation);
     KConfigGroup shellGrp( iniSettings , "Custom Shell Options");
     customShell = shellGrp.entryMap();
     parentWidgetPtr = parentPtr;
@@ -189,9 +190,9 @@ void RegistryManager::installCPlEntry() const
         settingsHKCR.setValue("CLSID/{FADD6487-C270-4fae-A6C5-7BCF90E47C56}/InfoTip", i18n("All KDE settings in one place"));
         settingsHKCR.setValue("CLSID/{FADD6487-C270-4fae-A6C5-7BCF90E47C56}/System.ApplicationName", "KDE.systemsettings");
         settingsHKCR.setValue("CLSID/{FADD6487-C270-4fae-A6C5-7BCF90E47C56}/System.ControlPanel.Category", "1,6");
-        settingsHKCR.setValue("CLSID/{FADD6487-C270-4fae-A6C5-7BCF90E47C56}/DefaultIcon/Default", QDir::toNativeSeparators(KStandardDirs::locate("exe", "systemsettings")));
-        settingsHKCR.setValue("CLSID/{FADD6487-C270-4fae-A6C5-7BCF90E47C56}/Shell/Open/Command/Default", QDir::toNativeSeparators(KStandardDirs::locate("exe", "systemsettings")));
-        qDebug() << QDir::toNativeSeparators(KStandardDirs::locate("exe", "systemsettings"));
+        settingsHKCR.setValue("CLSID/{FADD6487-C270-4fae-A6C5-7BCF90E47C56}/DefaultIcon/Default", QDir::toNativeSeparators(QStandardPaths::findExecutable("systemsettings")));
+        settingsHKCR.setValue("CLSID/{FADD6487-C270-4fae-A6C5-7BCF90E47C56}/Shell/Open/Command/Default", QDir::toNativeSeparators(QStandardPaths::findExecutable("systemsettings")));
+        qDebug() << QDir::toNativeSeparators(QStandardPaths::findExecutable("systemsettings"));
     } else {
         qDebug() << "There's already a Control Panel entry";
     }
@@ -312,7 +313,7 @@ void RegistryManager::setLoadAtLogin(bool startAtLogin)
     QSettings settingsHKCU("HKEY_CURRENT_USER", QSettings::NativeFormat);
     if (!isLoadedAtLogin()){
         qDebug() << "KDE isn't set up to be started at user login! Setting...";
-        settingsHKCU.setValue("SOFTWARE/Microsoft/Windows/CurrentVersion/Run/KDE", QString("\""+QDir::toNativeSeparators ( KStandardDirs::locate("exe", "kdeinit4"))+"\""));
+        settingsHKCU.setValue("SOFTWARE/Microsoft/Windows/CurrentVersion/Run/KDE", QString("\""+QDir::toNativeSeparators ( KStandardDirs::findExe("kdeinit4"))+"\""));
     } else {
         qDebug() << "KDE is set up to be started at user login! Removing...";
         settingsHKCU.remove("SOFTWARE/Microsoft/Windows/CurrentVersion/Run/KDE");
@@ -347,7 +348,7 @@ RegistryManager::Shell RegistryManager::getCurShell()
 
     if(shellCmd.toLower() == "explorer.exe"){
         currentShell = Native;
-    } else if (shellCmd == KStandardDirs::locate("exe", "plasma")) {
+    } else if (shellCmd == KStandardDirs::findExe("plasma")) {
         currentShell = Plasma;
     } else {
         currentShell = Custom;
@@ -362,7 +363,7 @@ void RegistryManager::setCurShell(Shell shell)
     if(shell == Native){
         shellCmd = "explorer.exe";
     } else if (shell == Plasma) {
-        shellCmd = KStandardDirs::locate("exe", "plasma");
+        shellCmd = KStandardDirs::findExe("plasma");
     } else {
         shellCmd = customShell.value("Command");
     }
@@ -390,7 +391,7 @@ void RegistryManager::setCurShell(Shell shell)
 
 void RegistryManager::setCustomShell(QMap<QString, QString> custShell)
 {
-    iniSettings = KSharedConfig::openConfig("kdeplatformrc", KConfig::SimpleConfig, "config");
+    iniSettings = KSharedConfig::openConfig("kdeplatformrc", KConfig::SimpleConfig, QStandardPaths::ConfigLocation);
     KConfigGroup shellGrp;
 
     QMap<QString, QString>::const_iterator i = custShell.constBegin();

@@ -35,6 +35,7 @@
 #include <KConfigGroup>
 #include <kdeversion.h>
 #include <KGlobal>
+#include <QStandardPaths>
 
 static const QString OS_UNSPECIFIED = "unspecified";
 static const QString PLATFORM_UNSPECIFIED = "unspecified";
@@ -50,13 +51,13 @@ SystemInformation::SystemInformation(QObject * parent)
 
     tryToSetBugzillaPlatform();
 
-    KConfigGroup config(KGlobal::config(), "SystemInformation");
+    KConfigGroup config(KSharedConfig::openConfig(), "SystemInformation");
     m_compiledSources = config.readEntry("CompiledSources", false);
 }
 
 SystemInformation::~SystemInformation()
 {
-    KConfigGroup config(KGlobal::config(), "SystemInformation");
+    KConfigGroup config(KSharedConfig::openConfig(), "SystemInformation");
     config.writeEntry("CompiledSources", m_compiledSources);
     config.sync();
 }
@@ -79,7 +80,7 @@ void SystemInformation::tryToSetBugzillaPlatform()
 void SystemInformation::tryToSetBugzillaPlatformFromExternalInfo()
 {
     //Run lsb_release async
-    QString lsb_release = KStandardDirs::findExe(QLatin1String("lsb_release"));
+    QString lsb_release = QStandardPaths::findExecutable(QLatin1String("lsb_release"));
     if ( !lsb_release.isEmpty() ) {
         kDebug() << "found lsb_release";
         KProcess *process = new KProcess();

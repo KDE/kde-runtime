@@ -28,6 +28,7 @@
 #include <KToolInvocation>
 
 #include <KGlobal>
+#include <QStandardPaths>
 
 #include "drkonqi.h"
 #include "backtracewidget.h"
@@ -70,13 +71,13 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
 
     setMinimumSize(QSize(640,320));
     resize(minimumSize());
-    KConfigGroup config(KGlobal::config(), "General");
+    KConfigGroup config(KSharedConfig::openConfig(), "General");
     restoreDialogSize(config);
 }
 
 DrKonqiDialog::~DrKonqiDialog()
 {
-    KConfigGroup config(KGlobal::config(), "General");
+    KConfigGroup config(KSharedConfig::openConfig(), "General");
     saveDialogSize(config);
 
     KGlobal::deref();
@@ -136,7 +137,7 @@ void DrKonqiDialog::buildIntroWidget()
     connect(ui.infoLabel, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
 
     ui.iconLabel->setPixmap(
-                        QPixmap(KStandardDirs::locate("appdata", QLatin1String("pics/crash.png"))));
+                        QPixmap(QStandardPaths::locate(QStandardPaths::DataLocation, QLatin1String("pics/crash.png"))));
 
     ui.detailsTitleLabel->setText(QString("<strong>%1</strong>").arg(i18nc("@label","Details:")));
 

@@ -26,7 +26,7 @@
 #include <kmessagebox.h>
 #include <kopenwithdialog.h>
 #include <kconfig.h>
-#include <kstandarddirs.h>
+
 #include <kmimetypetrader.h>
 #include <kurlrequester.h>
 #include <kconfiggroup.h>

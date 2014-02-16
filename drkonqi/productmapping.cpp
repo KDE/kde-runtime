@@ -22,6 +22,7 @@
 #include <KConfig>
 #include <KConfigGroup>
 #include <KDebug>
+#include <QStandardPaths>
 
 #include "bugzillalib.h"
 #include "crashedapplication.h"

@@ -164,7 +164,7 @@ NotifyBySound::~NotifyBySound()
 void NotifyBySound::loadConfig()
 {
     // load external player settings
-	KSharedConfig::Ptr kc = KGlobal::config();
+	KSharedConfig::Ptr kc = KSharedConfig::openConfig();
 	KConfigGroup cg(kc, "Sounds");
 
 	d->playerMode = Private::UsePhonon;

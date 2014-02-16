@@ -595,7 +595,7 @@ BugzillaReportInformationDialog::BugzillaReportInformationDialog(BugzillaDuplica
              this, SLOT(bugFetchError(QString,QObject*)));
 
     setInitialSize(QSize(800, 600));
-    KConfigGroup config(KGlobal::config(), "BugzillaReportInformationDialog");
+    KConfigGroup config(KSharedConfig::openConfig(), "BugzillaReportInformationDialog");
     restoreDialogSize(config);
 }
 
@@ -606,7 +606,7 @@ BugzillaReportInformationDialog::~BugzillaReportInformationDialog()
     disconnect(m_parent->bugzillaManager(), SIGNAL(bugReportError(QString,QObject*)),
              this, SLOT(bugFetchError(QString,QObject*)));
 
-    KConfigGroup config(KGlobal::config(), "BugzillaReportInformationDialog");
+    KConfigGroup config(KSharedConfig::openConfig(), "BugzillaReportInformationDialog");
     saveDialogSize(config);
 }
 
@@ -642,7 +642,7 @@ void BugzillaReportInformationDialog::showBugReport(int bugNumber, bool relatedB
                     i18nc("@info/plain","Backtrace of the crash I experienced:\n\n") +
                     m_parent->reportInterface()->backtrace());
 
-    KConfigGroup config(KGlobal::config(), "BugzillaReportInformationDialog");
+    KConfigGroup config(KSharedConfig::openConfig(), "BugzillaReportInformationDialog");
     bool showOwnBacktrace = config.readEntry("ShowOwnBacktrace", false);
     ui.m_showOwnBacktraceCheckBox->setChecked(showOwnBacktrace);
     if (!showOwnBacktrace) { //setChecked(false) will not emit toggled(false)
@@ -872,7 +872,7 @@ void BugzillaReportInformationDialog::toggleShowOwnBacktrace(bool show)
     ui.m_reportSplitter->setSizes(sizes);
 
     //Save the current show value
-    KConfigGroup config(KGlobal::config(), "BugzillaReportInformationDialog");
+    KConfigGroup config(KSharedConfig::openConfig(), "BugzillaReportInformationDialog");
     config.writeEntry("ShowOwnBacktrace", show);
 }
 

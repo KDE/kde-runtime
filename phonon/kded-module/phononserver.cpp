@@ -23,7 +23,7 @@
 
 #include <kconfiggroup.h>
 #include <kprocess.h>
-#include <kstandarddirs.h>
+
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kdebug.h>

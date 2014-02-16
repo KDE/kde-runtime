@@ -151,7 +151,7 @@ int main(int argc, char **argv)
       if (reply.type() != QDBusMessage::ReplyMessage)
       {
          qWarning("Can not talk to klauncher!");
-         command = KGlobal::dirs()->findExe(command);
+         command = KStandardDirs::findExe(command);
          command += ' ' + args.join(" ");
          system(command.toLocal8Bit());
       }

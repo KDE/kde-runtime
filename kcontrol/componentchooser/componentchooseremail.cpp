@@ -18,7 +18,7 @@
 #include <kemailsettings.h>
 #include <QCheckBox>
 #include <kopenwithdialog.h>
-#include <kstandarddirs.h>
+
 #include <KLocalizedString>
 #include <KGlobal>
 #include <KConfigGroup>
@@ -28,6 +28,7 @@
 // for chmod:
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <QStandardPaths>
 
 
 CfgEmailClient::CfgEmailClient(QWidget *parent)
@@ -86,7 +87,7 @@ void CfgEmailClient::selectEmailClient()
     QString client = dlg.text();
 
     // get the preferred Terminal Application
-    KConfigGroup confGroup( KGlobal::config(), QLatin1String("General") );
+    KConfigGroup confGroup( KSharedConfig::openConfig(), QLatin1String("General") );
     QString preferredTerminal = confGroup.readPathEntry("TerminalApplication", QLatin1String("konsole"));
     preferredTerminal += QLatin1String(" -e ");
 
@@ -115,7 +116,7 @@ void CfgEmailClient::save(KConfig *)
     }
 
     // insure proper permissions -- contains sensitive data
-    QString cfgName(KGlobal::dirs()->findResource("config", "emails"));
+    QString cfgName(QStandardPaths::locate(QStandardPaths::ConfigLocation, "emails"));
     if (!cfgName.isEmpty())
         ::chmod(QFile::encodeName(cfgName), 0600);
     QDBusMessage message = QDBusMessage::createSignal("/Component", "org.kde.Kcontrol", "KDE_emailSettingsChanged" );

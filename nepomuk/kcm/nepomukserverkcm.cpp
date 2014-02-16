@@ -51,6 +51,7 @@
 
 #include <Soprano/PluginManager>
 #include <Soprano/Backend>
+#include <QStandardPaths>
 
 
 K_PLUGIN_FACTORY( NepomukConfigModuleFactory, registerPlugin<Nepomuk2::ServerConfigModule>(); )
@@ -187,7 +188,7 @@ Nepomuk2::ServerConfigModule::ServerConfigModule( QWidget* parent, const QVarian
                  this, SLOT(slotRestoreBackup()) );
 
         // update backup status whenever manual backups are created
-        KDirWatch::self()->addDir( KStandardDirs::locateLocal( "data", "nepomuk/backupsync/backups/" ) );
+        KDirWatch::self()->addDir( QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + "nepomuk/backupsync/backups/" ) ;
         connect( KDirWatch::self(), SIGNAL(dirty(QString)), this, SLOT(updateBackupStatus()) );
 
         // args[0] can be the page index allowing to open the config with a specific page
@@ -222,7 +223,7 @@ void Nepomuk2::ServerConfigModule::load()
     m_checkEnableNepomuk->setChecked( config.group( "Basic Settings" ).readEntry( "Start Nepomuk", true ) );
     m_checkEnableFileIndexer->setChecked( config.group( "Service-nepomukfileindexer" ).readEntry( "autostart", true ) );
 
-    const QString akonadiCtlExe = KStandardDirs::findExe( "akonadictl" );
+    const QString akonadiCtlExe = QStandardPaths::findExecutable( "akonadictl" );
     m_emailIndexingBox->setVisible( !akonadiCtlExe.isEmpty() );
     KConfig akonadiConfig( "akonadi_nepomuk_feederrc" );
     m_checkEnableEmailIndexer->setChecked( akonadiConfig.group( "akonadi_nepomuk_email_feeder" ).readEntry( "Enabled", true ) );
@@ -581,7 +582,7 @@ void Nepomuk2::ServerConfigModule::slotEmailIndexerSuspendResumeClicked()
 
 void Nepomuk2::ServerConfigModule::updateBackupStatus()
 {
-    const QString backupUrl = KStandardDirs::locateLocal( "data", "nepomuk/backupsync/backups/" );
+    const QString backupUrl = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + "nepomuk/backupsync/backups/" ;
     QDir dir( backupUrl );
     const QStringList backupFiles = dir.entryList( QDir::Files | QDir::NoDotAndDotDot, QDir::Name );
 
