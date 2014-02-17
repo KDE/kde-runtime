@@ -1446,7 +1446,7 @@ void KWalletD::reconfigure() {
 	KConfigGroup walletGroup(&cfg, "Wallet");
 	_firstUse = walletGroup.readEntry("First Use", true);
 	_enabled = walletGroup.readEntry("Enabled", true);
-	_launchManager = walletGroup.readEntry("Launch Manager", true);
+	_launchManager = walletGroup.readEntry("Launch Manager", false);
 	_leaveOpen = walletGroup.readEntry("Leave Open", false);
 	bool idleSave = _closeIdle;
 	_closeIdle = walletGroup.readEntry("Close When Idle", false);
