@@ -1617,7 +1617,6 @@ int KWalletD::pamOpen(const QString &wallet, const QByteArray &passwordHash, int
     }
 
     if (!QRegExp("^[\\w\\^\\&\\'\\@\\{\\}\\[\\]\\,\\$\\=\\!\\-\\#\\(\\)\\%\\.\\+\\_\\s]+$").exactMatch(wallet)) {
-        std::cout << "EXISTS !" << std::endl;
         return -1;
     }
 
