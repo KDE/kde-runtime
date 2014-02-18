@@ -14,7 +14,7 @@
 # libgcrypt is moving to pkg-config, but earlier version don't have it
 
 if(NOT LibGcrypt_FIND_VERSION)
-    set(LibGcrypt_FIND_VERSION "1.6.1")
+    set(LibGcrypt_FIND_VERSION "1.5.0")
 endif()
 
 #search in typical paths for libgcrypt-config

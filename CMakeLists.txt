@@ -51,7 +51,7 @@ set_package_properties(QCA2 PROPERTIES DESCRIPTION "Support for remote plasma wi
                        TYPE OPTIONAL
                       )
 
-find_package(LibGcrypt 1.6.1 REQUIRED QUIET)
+find_package(LibGcrypt 1.5.0 REQUIRED QUIET)
 set_package_properties(LibGcrypt PROPERTIES DESCRIPTION "Libgcrypt is a general purpose cryptographic library based on the code from GnuPG."
                        URL "http://www.gnu.org/software/libgcrypt/"
                        TYPE REQUIRED

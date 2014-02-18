@@ -103,7 +103,7 @@ void Backend::setCipherType(BackendCipherType ct)
 
 static int password2PBKDF2_SHA512(const QByteArray &password, QByteArray& hash, const QByteArray &salt)
 {
-    if (!gcry_check_version("1.6.1")) {
+    if (!gcry_check_version("1.5.0")) {
         printf("libcrypt version is too old \n");
         return GPG_ERR_USER_2;
     }
