@@ -164,7 +164,6 @@ endif ( NOT WINCE )
 add_subdirectory(kioslave)
 # add_subdirectory(kurifilter-plugins)
 # add_subdirectory(phonon)
-# add_subdirectory(kimgio)
 # macro_optional_add_subdirectory(renamedlgplugins)
 
 # UI Helper applications
