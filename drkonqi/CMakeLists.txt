@@ -81,7 +81,7 @@ kde4_add_ui_files(drkonqi_SRCS
 # Comment this out for release.
 #add_definitions(-DBACKTRACE_PARSER_DEBUG)
 
-kde4_add_executable(drkonqi ${drkonqi_SRCS})
+add_executable(drkonqi ${drkonqi_SRCS})
 
 target_link_libraries(drkonqi
     KF5::I18n

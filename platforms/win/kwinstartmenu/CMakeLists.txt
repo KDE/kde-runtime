@@ -28,12 +28,8 @@ install( FILES kwinstartmenurc DESTINATION  ${CONFIG_INSTALL_DIR} )
 
 ########### next target ###############
 
-set(winstartmenu_SRCS 
-    main.cpp 
-    ${shared_SOURCES}
-)
-
-kde4_add_executable(kwinstartmenu NOGUI ${winstartmenu_SRCS})
+add_executable(kwinstartmenu main.cpp ${shared_SOURCES})
+ecm_mark_nongui_executable(kwinstartmenu)
 target_link_libraries(kwinstartmenu ${KDE4_KIO_LIBS} ole32 uuid )
 
 ########### install ###############

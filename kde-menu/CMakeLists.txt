@@ -1,5 +1,6 @@
 
-kde4_add_executable(kde4-menu NOGUI kde-menu.cpp)
+add_executable(kde4-menu kde-menu.cpp)
+ecm_mark_nongui_executable(kde4-menu)
 
 target_link_libraries(kde4-menu ${KDE4_KIO_LIBS})
 

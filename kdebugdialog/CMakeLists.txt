@@ -10,9 +10,9 @@ set(kdebugdialog_SRCS
    kdebugdialog.cpp 
    klistdebugdialog.cpp )
 
-kde4_add_ui_files(kdebugdialog_SRCS kdebugdialog.ui)
+qt5_wrap_ui_files(kdebugdialog_SRCS kdebugdialog.ui)
 
-kde4_add_executable(kdebugdialog ${kdebugdialog_SRCS})
+add_executable(kdebugdialog ${kdebugdialog_SRCS})
 
 target_link_libraries(kdebugdialog  ${KDE4_KDEUI_LIBS} )
 

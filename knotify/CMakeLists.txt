@@ -31,7 +31,7 @@ qt4_add_dbus_interfaces(knotify_SRCS ${KDE4_DBUS_INTERFACES_DIR}/org.kde.KSpeech
 kde4_add_app_icon(knotify_SRCS "${CMAKE_SOURCE_DIR}/pics/oxygen/*/apps/preferences-desktop-notification.png")
 
 set (knotify_OUTPUT_NAME knotify4)
-kde4_add_executable( knotify ${knotify_SRCS})
+add_executable( knotify ${knotify_SRCS})
 
 kde4_add_library( knotifyplugin SHARED ${knotifyplugin_SRCS})
 

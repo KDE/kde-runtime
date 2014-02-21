@@ -8,7 +8,8 @@ set(bugzillalibtest_SRCS
     ../../debugpackageinstaller.h
 )
 
-kde4_add_executable(bugzillalibtest TEST ${bugzillalibtest_SRCS})
+add_executable(bugzillalibtest ${bugzillalibtest_SRCS})
+ecm_mark_as_test(bugzillalibtest)
 
 target_link_libraries(bugzillalibtest ${KDE4_KIO_LIBS} ${KDEPIMLIBS_KXMLRPCCLIENT_LIBRARY})
 
