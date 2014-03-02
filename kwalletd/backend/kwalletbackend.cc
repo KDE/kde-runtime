@@ -316,10 +316,8 @@ int Backend::openInternal(WId w)
 		}
 		newfile.close();
 		_open = true;
-		if (sync(w)) {
+		if (sync(w) != 0) {
             return -2;
-        } else {
-            return 1;          // new file opened, but OK
         }
 	}
 
