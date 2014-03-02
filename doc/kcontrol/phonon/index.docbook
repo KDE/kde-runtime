@@ -51,7 +51,7 @@ and the <guibutton>Test</guibutton> button to play a test sound on the selected 
 
 <varlistentry><term><guilabel>Audio Hardware Setup</guilabel> tab</term>
 <listitem><para>
-The various drop down boxes in this tab allow fully control over all cards that are attached 
+The various drop down boxes in this tab allow full control over all cards that are attached 
 to the system.</para>
 
 <variablelist>
