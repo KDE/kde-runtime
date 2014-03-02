@@ -34,6 +34,10 @@
 #include <gpgme++/key.h>
 #endif // HAVE_QGPGME
 
+#define PBKDF2_SHA512_KEYSIZE 56
+#define PBKDF2_SHA512_SALTSIZE 56
+#define PBKDF2_SHA512_ITERATIONS 50000
+
 namespace KWallet {
 
 /**
