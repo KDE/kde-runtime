@@ -20,7 +20,7 @@
 #include "kdebugdialog.h"
 #include "klistdebugdialog.h"
 #include <kcmdlineargs.h>
-#include <kaboutdata.h>
+#include <k4aboutdata.h>
 
 #include <QTextStream>
 #include <klocale.h>
@@ -96,9 +96,9 @@ static KAbstractDebugDialog::AreaMap readAreas()
 
 int main(int argc, char ** argv)
 {
-    KAboutData data( "kdebugdialog", 0, ki18n( "KDebugDialog"),
+    K4AboutData data( "kdebugdialog", 0, ki18n( "KDebugDialog"),
             "1.0", ki18n("A dialog box for setting preferences for debug output"),
-            KAboutData::License_GPL, ki18n("Copyright 1999-2009, David Faure <email>faure@kde.org</email>"));
+            K4AboutData::License_GPL, ki18n("Copyright 1999-2009, David Faure <email>faure@kde.org</email>"));
     data.addAuthor(ki18n("David Faure"), ki18n("Maintainer"), "faure@kde.org");
     data.setProgramIconName("tools-report-bug");
     KCmdLineArgs::init( argc, argv, &data );

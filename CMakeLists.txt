@@ -156,7 +156,7 @@ add_subdirectory(kioslave)
 # UI Helper applications
 add_subdirectory(drkonqi)
 add_subdirectory(kcmshell)
-# add_subdirectory(kdebugdialog)
+add_subdirectory(kdebugdialog)
 add_subdirectory(khelpcenter)
 # add_subdirectory(knetattach)
 # add_subdirectory(knewstuff)

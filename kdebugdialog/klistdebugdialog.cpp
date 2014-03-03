@@ -24,6 +24,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <ktreewidgetsearchline.h>
+#include <ktreewidgetsearchlinewidget.h>
 
 #include <QtDBus/QtDBus>
 #include <QLayout>
@@ -40,7 +41,7 @@ KListDebugDialog::KListDebugDialog(const AreaMap& areaMap, QWidget *parent)
     lay->setSpacing( KDialog::spacingHint() );
 
     m_incrSearch = new KTreeWidgetSearchLineWidget();
-    m_incrSearch->searchLine()->setClearButtonShown(true);
+    m_incrSearch->searchLine()->setClearButtonEnabled(true);
     lay->addWidget( m_incrSearch );
     //  connect( m_incrSearch, SIGNAL( textChanged( const QString& ) ),
     //           SLOT( filterCheckBoxes( const QString& ) ) );

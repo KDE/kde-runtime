@@ -25,6 +25,8 @@
 #include <klocale.h>
 #include <kstandardguiitem.h>
 #include <ktoolinvocation.h>
+#include <qdesktopservices.h>
+#include <QUrl>
 
 KAbstractDebugDialog::KAbstractDebugDialog(QWidget *parent)
     : KDialog(parent)
@@ -49,7 +51,7 @@ void KAbstractDebugDialog::buildButtons()
 
 void KAbstractDebugDialog::slotShowHelp()
 {
-    KToolInvocation::invokeHelp();
+    QDesktopServices::openUrl(QUrl("help:/"));
 }
 
 void KAbstractDebugDialog::slotApply()

@@ -35,6 +35,7 @@
 #include <kdialog.h>
 #include <kconfig.h>
 #include <kseparator.h>
+#include "ktreewidgetsearchline.h"
 
 KDebugDialog::KDebugDialog(const AreaMap& areaMap, QWidget* parent)
     : KAbstractDebugDialog(parent)
