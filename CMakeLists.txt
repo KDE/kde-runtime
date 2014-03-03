@@ -55,9 +55,6 @@ find_package(KF5Plasma REQUIRED NO_MODULE)
 # needed for set_package_properties macro
 find_package(KF5KDE4Support REQUIRED NO_MODULE)
 
-# needed for forwarding headers, for now
-include_directories($<TARGET_PROPERTY:KF5::KDE4Support,INTERFACE_INCLUDE_DIRECTORIES>)
-
 # 
 # if(WINCE)
 #     #Needs to be set because otherwise he wouldn't find kde parts
