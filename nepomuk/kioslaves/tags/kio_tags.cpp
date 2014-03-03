@@ -553,7 +553,7 @@ bool Nepomuk2::TagsProtocol::rewriteUrl(const KUrl& url, KUrl& newURL)
 
 extern "C"
 {
-    KDE_EXPORT int kdemain( int argc, char **argv )
+    Q_DECL_EXPORT int kdemain( int argc, char **argv )
     {
         // necessary to use other kio slaves
         KComponentData( "kio_tags" );

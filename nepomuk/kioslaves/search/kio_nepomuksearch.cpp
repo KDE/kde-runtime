@@ -310,7 +310,7 @@ void Nepomuk2::SearchProtocol::listRoot()
 
 extern "C"
 {
-    KDE_EXPORT int kdemain( int argc, char **argv )
+    Q_DECL_EXPORT int kdemain( int argc, char **argv )
     {
         // necessary to use other kio slaves
         KComponentData comp( "kio_nepomuksearch" );

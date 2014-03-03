@@ -336,7 +336,7 @@ void Nepomuk2::TimelineProtocol::listPreviousYears()
 
 extern "C"
 {
-    KDE_EXPORT int kdemain( int argc, char **argv )
+    Q_DECL_EXPORT int kdemain( int argc, char **argv )
     {
         // necessary to use other kio slaves
         KComponentData( "kio_timeline" );

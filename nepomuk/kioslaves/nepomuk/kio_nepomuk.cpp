@@ -306,7 +306,7 @@ bool Nepomuk2::NepomukProtocol::ensureNepomukRunning()
 
 extern "C"
 {
-    int KDE_EXPORT kdemain( int argc, char **argv ) {
+    int Q_DECL_EXPORT kdemain( int argc, char **argv ) {
 
         KComponentData componentData("kio_nepomuk");
         QCoreApplication app( argc, argv );
