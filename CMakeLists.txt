@@ -155,7 +155,7 @@ add_subdirectory(knetattach)
 add_subdirectory(knewstuff)
 add_subdirectory(keditfiletype)
 if ( UNIX )
-   add_subdirectory(kdesu)
+#   add_subdirectory(kdesu)
 endif ( UNIX )
 
 # Command-line tools (e.g. for shell scripts)
