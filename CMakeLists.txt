@@ -52,12 +52,6 @@ find_package(KF5Plasma REQUIRED NO_MODULE)
 find_package(KF5KDE4Support REQUIRED NO_MODULE)
 
 # 
-# if(WINCE)
-#     #Needs to be set because otherwise he wouldn't find kde parts
-#     set(KDE4_DATA_DIR "${CMAKE_PREFIX_PATH}/share/apps")
-#     add_definitions(-DKDELIBS_STATIC_LIBS)
-# endif(WINCE)
-# 
 # #search packages used by KDE
 # find_package(KDE4 4.9.95 REQUIRED)
 # include(KDE4Defaults)
@@ -131,9 +125,7 @@ add_subdirectory(kglobalaccel)
 # add_subdirectory(knotify)
 add_subdirectory(ktimezoned)
 
-if(NOT WINCE)
-	add_subdirectory(kuiserver)
-endif(NOT WINCE)
+add_subdirectory(kuiserver)
 
 if ( UNIX )
 #    add_subdirectory(soliduiserver)
@@ -187,16 +179,12 @@ endif (Q_WS_X11)
 # Default settings, content and config
 # add_subdirectory(l10n)
 # add_subdirectory(localization)
-if(NOT WINCE)
-#   add_subdirectory(kde-menu)
+# add_subdirectory(kde-menu)
 # macro_optional_add_subdirectory(doc)
-endif(NOT WINCE)
 
 # Artwork
 # add_subdirectory(desktoptheme)
-if ( NOT WINCE )
-#   add_subdirectory(pics)
-endif ( NOT WINCE )
+# add_subdirectory(pics)
 
 # KDE integration for attica
 if(LIBATTICA_FOUND)
