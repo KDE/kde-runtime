@@ -26,7 +26,7 @@
 #include <QPushButton>
 #include <QTimer>
 
-#include <KAboutData>
+#include <k4aboutdata.h>
 #include <KApplication>
 #include <KCmdLineArgs>
 #include <KDebug>
@@ -212,7 +212,7 @@ static const char version[] = "v0.1";
 
 int main( int argc, char** argv )
 {
-    KAboutData about("KNetworkStatusTestService", 0, ki18n("knetworkstatustestservice"), version, ki18n(description), KAboutData::License_GPL, ki18n("(C) 2007 Will Stephenson"), KLocalizedString(), 0, "wstephenson@kde.org");
+    K4AboutData about("KNetworkStatusTestService", 0, ki18n("knetworkstatustestservice"), version, ki18n(description), K4AboutData::License_GPL, ki18n("(C) 2007 Will Stephenson"), KLocalizedString(), 0, "wstephenson@kde.org");
     about.addAuthor( ki18n("Will Stephenson"), KLocalizedString(), "wstephenson@kde.org" );
     KCmdLineArgs::init(argc, argv, &about);
 

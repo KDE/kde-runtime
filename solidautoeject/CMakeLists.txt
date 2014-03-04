@@ -6,7 +6,7 @@ set(kded_solidautoeject_SRCS
 
 kde4_add_plugin(kded_solidautoeject ${kded_solidautoeject_SRCS})
 
-target_link_libraries(kded_solidautoeject ${KDE4_SOLID_LIBS} ${KDE4_KDECORE_LIBS})
+target_link_libraries(kded_solidautoeject KF5::Solid KF5::DBusAddons KF5::KDE4Support)
 
 install(TARGETS kded_solidautoeject DESTINATION ${PLUGIN_INSTALL_DIR})
 

@@ -11,7 +11,7 @@ kde4_add_kcfg_files(kcm_device_automounter_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../l
 
 kde4_add_plugin(kcm_device_automounter ${kcm_device_automounter_SRCS} ${device_automounter_lib_SRCS})
 
-target_link_libraries(kcm_device_automounter ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS})
+target_link_libraries(kcm_device_automounter KF5::Solid KF5::KDE4Support)
 
 install(TARGETS kcm_device_automounter DESTINATION ${PLUGIN_INSTALL_DIR})
 

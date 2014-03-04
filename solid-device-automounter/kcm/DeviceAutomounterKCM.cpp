@@ -45,12 +45,12 @@ DeviceAutomounterKCM::DeviceAutomounterKCM(QWidget *parent, const QVariantList &
 {
     KAboutData *about = new KAboutData("kcm_device_automounter",
                                        0,
-                                       ki18n("Device Automounter"),
+                                       i18n("Device Automounter"),
                                        "0.1",
-                                       ki18n("Automatically mounts devices at login or when attached"),
+                                       i18n("Automatically mounts devices at login or when attached"),
                                        KAboutData::License_GPL_V2,
-                                       ki18n("(c) 2009 Trever Fischer"));
-    about->addAuthor(ki18n("Trever Fischer"));
+                                       i18n("(c) 2009 Trever Fischer"));
+    about->addAuthor(i18n("Trever Fischer"));
 
     setAboutData(about);
     setupUi(this);

@@ -23,7 +23,7 @@
 #include <kdedmodule.h>
 #include <kfileitem.h>
 #include <kio/job.h>
-
+#include <QWidget>
 
 #include <QMap>
 

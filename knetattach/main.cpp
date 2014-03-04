@@ -17,7 +17,7 @@
    Boston, MA 02110-1301, USA.
  */
 
-#include <KAboutData>
+#include <k4aboutdata.h>
 #include <KApplication>
 #include <KCmdLineArgs>
 #include <KLocale>
@@ -25,9 +25,9 @@
 #include "knetattach.h"
 
 int main(int argc, char **argv) {
-	KAboutData about("knetattach", 0, ki18n("KDE Network Wizard"), "1.0",
+	K4AboutData about("knetattach", 0, ki18n("KDE Network Wizard"), "1.0",
 		ki18n("KDE Network Wizard"),
-		KAboutData::License_GPL,
+		K4AboutData::License_GPL,
 		ki18n("(c) 2004 George Staikos"), KLocalizedString(),
 		"http://www.kde.org/");
 

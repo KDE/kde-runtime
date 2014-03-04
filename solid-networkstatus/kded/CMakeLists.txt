@@ -8,7 +8,7 @@ set(kded_networkstatus_PART_SRCS
    wicdcustomtypes.cpp
 )
 
-macro_optional_find_package(NetworkManager)
+find_package(NetworkManager 0.7.0)
 set_package_properties(NetworkManager PROPERTIES DESCRIPTION "The NetworkManager headers"
                        URL "http://projects.gnome.org/NetworkManager"
                        TYPE OPTIONAL
@@ -16,7 +16,6 @@ set_package_properties(NetworkManager PROPERTIES DESCRIPTION "The NetworkManager
                       )
 
 if(NETWORKMANAGER_FOUND)
-    macro_ensure_version("0.7.0" ${NETWORKMANAGER_VERSION} NM_0_7)
     if(NM_0_7)
         MESSAGE(STATUS "Adding in-process NetworkManager service-wart to kded module")
         set(kded_networkstatus_PART_SRCS ${kded_networkstatus_PART_SRCS} networkmanagerstatus.cpp)
@@ -25,7 +24,7 @@ if(NETWORKMANAGER_FOUND)
     endif(NM_0_7)
 endif(NETWORKMANAGER_FOUND)
 
-macro_optional_find_package(QNtrack)
+find_package(QNtrack)
 set_package_properties(QNtrack PROPERTIES DESCRIPTION "Network status tracking library"
                        URL "http://launchpad.net/ntrack"
                        TYPE OPTIONAL
@@ -41,19 +40,17 @@ else(QNTRACK_FOUND)
 endif(QNTRACK_FOUND)
 
 include_directories(${QNTRACK_INCLUDE_DIR})
-
-qt4_add_dbus_adaptor(kded_networkstatus_PART_SRCS ../org.kde.Solid.Networking.Service.xml
-        networkstatus.h NetworkStatusModule)
+qt5_add_dbus_adaptor(kded_networkstatus_PART_SRCS ../org.kde.Solid.Networking.Service.xml networkstatus.h NetworkStatusModule)
 
 # we need one of the interfaces installed by kdelibs:
-qt4_add_dbus_adaptor(kded_networkstatus_PART_SRCS
-        ${KDE4_DBUS_INTERFACES_DIR}/org.kde.Solid.Networking.Client.xml
+qt5_add_dbus_adaptor(kded_networkstatus_PART_SRCS
+        ${SOLID_DBUS_INTERFACES_DIR}/kf5_org.kde.Solid.Networking.Client.xml
         networkstatus.h NetworkStatusModule)
 
 
-kde4_add_plugin(kded_networkstatus ${kded_networkstatus_PART_SRCS})
+add_library(kded_networkstatus MODULE ${kded_networkstatus_PART_SRCS})
 
-target_link_libraries(kded_networkstatus ${KDE4_KDECORE_LIBS})
+target_link_libraries(kded_networkstatus KF5::DBusAddons KF5::Solid KF5::KDE4Support)
 
 if(QNTRACK_FOUND)
    target_link_libraries(kded_networkstatus ${QNTRACK_LIBRARIES})

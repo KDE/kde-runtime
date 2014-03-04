@@ -28,12 +28,17 @@
 #include <KLocale>
 #include <KGlobalSettings>
 #include <KConfig>
+#include <KConfigGroup>
 #include <KStandardDirs>
 #include <KDirNotify>
 #include <KCharsets>
 #include <KDebug>
+#include <KUrl>
 #include <KRun>
 #include <KToolInvocation>
+#include <KGlobal>
+#include <QDesktopServices>
+#include <QTextCodec>
 
 KNetAttach::KNetAttach( QWidget* parent )
     : QWizard( parent ), Ui_KNetAttach()
@@ -66,7 +71,7 @@ KNetAttach::KNetAttach( QWidget* parent )
 	_recentConnectionName->addItems(idx);
     }
     _encoding->clear();
-    _encoding->addItems(KGlobal::charsets()->descriptiveEncodingNames());
+    _encoding->addItems(KCharsets::charsets()->descriptiveEncodingNames());
     const int codecForLocaleIdx = _encoding->findText(QTextCodec::codecForLocale()->name(), Qt::MatchContains);
     _encoding->setCurrentIndex(codecForLocaleIdx != -1 ? codecForLocaleIdx : 0);
 }
@@ -78,7 +83,7 @@ void KNetAttach::slotPageChanged( int )
 
 void KNetAttach::slotHelpClicked()
 {
-    KToolInvocation::invokeHelp(QString(), "knetattach" );
+    QDesktopServices::openUrl(QUrl("help:/knetattach"));
 }
 
 void KNetAttach::setInformationText( const QString &type )
@@ -180,7 +185,7 @@ bool KNetAttach::validateCurrentPage()
       } else if (_type == "Fish") {
       KConfig config("kio_fishrc");
       KConfigGroup cg(&config, _host->text().trimmed());
-      cg.writeEntry("Charset", KGlobal::charsets()->encodingForName(_encoding->currentText()));
+      cg.writeEntry("Charset", KCharsets::charsets()->encodingForName(_encoding->currentText()));
 	  url.setProtocol(_protocolText->currentText());
 	  url.setPort(_port->value());
       } else if (_type == "FTP") {
@@ -188,7 +193,7 @@ bool KNetAttach::validateCurrentPage()
 	  url.setPort(_port->value());
       KConfig config("kio_ftprc");
       KConfigGroup cg(&config, _host->text().trimmed());
-      cg.writeEntry("Charset", KGlobal::charsets()->encodingForName(_encoding->currentText()));
+      cg.writeEntry("Charset", KCharsets::charsets()->encodingForName(_encoding->currentText()));
       config.sync();
       } else if (_type == "SMB") {
 	  url.setProtocol("smb");
@@ -231,7 +236,7 @@ bool KNetAttach::validateCurrentPage()
 	  desktopFile.writeEntry("URL", url.prettyUrl());
       desktopFile.writeEntry("Charset", url.fileEncoding());
 	  desktopFile.sync();
-	  org::kde::KDirNotify::emitFilesAdded( "remote:/" );
+	  org::kde::KDirNotify::emitFilesAdded( QUrl("remote:/") );
       }
 
       if (!name.isEmpty()) {

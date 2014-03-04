@@ -26,6 +26,7 @@ include(KDECompilerSettings)
 
 include(ECMOptionalAddSubdirectory)
 include(ECMMarkNonGuiExecutable)
+include(ECMInstallIcons)
 
 find_package(Qt5Core REQUIRED NO_MODULE)
 find_package(Qt5DBus REQUIRED NO_MODULE)
@@ -44,7 +45,7 @@ find_package(KF5 CONFIG REQUIRED COMPONENTS
     IdleTime ItemModels WidgetsAddons WindowSystem Codecs Archive CoreAddons Solid ThreadWeaver
     Config Auth JS Wallet DBusAddons Sonnet Init GlobalAccel
     I18n GuiAddons Service ConfigWidgets ItemViews Notifications IconThemes Completion JobWidgets TextWidgets XmlGui Crash
-    KCMUtils UnitConversion Bookmarks KIO Parts Kross Declarative NewStuff NotifyConfig Emoticons Sonnet KHtml KCMUtils)
+    KCMUtils UnitConversion Bookmarks KIO Parts Kross Declarative NewStuff NotifyConfig Emoticons Sonnet KHtml KCMUtils Su)
 
 find_package(KF5Plasma REQUIRED NO_MODULE)
 
@@ -120,7 +121,7 @@ include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 # Background processes
 # add_subdirectory(kpasswdserver)
-# add_subdirectory(kdontchangethehostname)
+add_subdirectory(kdontchangethehostname)
 add_subdirectory(kglobalaccel)
 # add_subdirectory(knotify)
 add_subdirectory(ktimezoned)
@@ -128,10 +129,10 @@ add_subdirectory(ktimezoned)
 add_subdirectory(kuiserver)
 
 if ( UNIX )
-#    add_subdirectory(soliduiserver)
-#    add_subdirectory(solidautoeject)
+   add_subdirectory(soliduiserver)
+   add_subdirectory(solidautoeject)
 #    add_subdirectory(solid-device-automounter)
-#    add_subdirectory(solid-networkstatus)
+   add_subdirectory(solid-networkstatus)
 endif ( UNIX )
 
 if(NepomukCore_FOUND)
@@ -150,11 +151,11 @@ add_subdirectory(drkonqi)
 add_subdirectory(kcmshell)
 add_subdirectory(kdebugdialog)
 add_subdirectory(khelpcenter)
-# add_subdirectory(knetattach)
-# add_subdirectory(knewstuff)
+add_subdirectory(knetattach)
+add_subdirectory(knewstuff)
 add_subdirectory(keditfiletype)
 if ( UNIX )
-#    add_subdirectory(kdesu)
+   add_subdirectory(kdesu)
 endif ( UNIX )
 
 # Command-line tools (e.g. for shell scripts)
@@ -168,10 +169,10 @@ add_subdirectory(ktraderclient)
 add_subdirectory(kreadconfig)
 # add_subdirectory(kmimetypefinder)
 if (Q_WS_X11)
-#   add_subdirectory(kstart)
+  add_subdirectory(kstart)
 endif (Q_WS_X11)
-# add_subdirectory(menu)
-# add_subdirectory(solid-hardware)
+add_subdirectory(menu)
+add_subdirectory(solid-hardware)
 
 # Platform-specific integration
 # add_subdirectory(platforms)

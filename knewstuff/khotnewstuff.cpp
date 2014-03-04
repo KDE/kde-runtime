@@ -24,13 +24,13 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kcmdlineargs.h>
-#include <kaboutdata.h>
+#include <k4aboutdata.h>
 
 #include <knewstuff3/downloaddialog.h>
 
 int main(int argc, char **argv)
 {
-    KAboutData about("khotnewstuff", 0, ki18n("KHotNewStuff"), "0.4");
+    K4AboutData about("khotnewstuff", 0, ki18n("KHotNewStuff"), "0.4");
     about.setProgramIconName("get-hot-new-stuff");
     KCmdLineArgs *args;
 

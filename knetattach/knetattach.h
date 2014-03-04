@@ -22,6 +22,7 @@
 
 #include "ui_knetattach.h"
 
+class KUrl;
 class KNetAttach : public QWizard, private Ui_KNetAttach
 {
     Q_OBJECT

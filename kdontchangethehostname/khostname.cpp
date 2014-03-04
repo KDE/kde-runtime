@@ -29,11 +29,10 @@
 #include <kcmdlineargs.h>
 #include <kapplication.h>
 #include <klocale.h>
-#include <kaboutdata.h>
+#include <k4aboutdata.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
-#include <klauncher_iface.h>
 #include <kde_file.h>
 #include <QtDBus/QtDBus>
 #include <QStandardPaths>
@@ -210,14 +209,14 @@ void KHostName::changeSessionManager()
       return;
    }
    sm = "local/"+newName+sm.mid(i);
-   KToolInvocation::klauncher()->call(QDBus::NoBlock, "setLaunchEnv", QByteArray("SESSION_MANAGER"), sm);
+   KToolInvocation::ensureKdeinitRunning();
 }
 
 int main(int argc, char **argv)
 {
-   KAboutData d(appName, "kdelibs4", ki18n("KDontChangeTheHostName"), appVersion,
+   K4AboutData d(appName, "kdelibs4", ki18n("KDontChangeTheHostName"), appVersion,
                 ki18n("Informs KDE about a change in hostname"),
-                KAboutData::License_GPL, ki18n("(c) 2001 Waldo Bastian"));
+                K4AboutData::License_GPL, ki18n("(c) 2001 Waldo Bastian"));
    d.addAuthor(ki18n("Waldo Bastian"), ki18n("Author"), "bastian@kde.org");
 
    KCmdLineOptions options;
