@@ -149,7 +149,7 @@ endif(NepomukCore_FOUND)
 # Plugins/components required for basic utility
 add_subdirectory(kcontrol)
 add_subdirectory(kioslave)
-# add_subdirectory(kurifilter-plugins)
+add_subdirectory(kurifilter-plugins)
 # add_subdirectory(phonon)
 # macro_optional_add_subdirectory(renamedlgplugins)
 
