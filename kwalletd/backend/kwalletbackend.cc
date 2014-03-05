@@ -52,9 +52,6 @@
 
 #define KWALLET_VERSION_MAJOR		0
 #define KWALLET_VERSION_MINOR		1
-#define PBKDF2_SHA512_KEYSIZE 56
-#define PBKDF2_SHA512_SALTSIZE 56
-#define PBKDF2_SHA512_ITERATIONS 50000
 
 using namespace KWallet;
 
@@ -316,10 +313,8 @@ int Backend::openInternal(WId w)
 		}
 		newfile.close();
 		_open = true;
-		if (sync(w)) {
+		if (sync(w) != 0) {
             return -2;
-        } else {
-            return 1;          // new file opened, but OK
         }
 	}
 
