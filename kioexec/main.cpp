@@ -38,7 +38,6 @@
 #include <klocale.h>
 #include <KLocalizedString>
 #include <KStandardDirs>
-#include <kcmdlineargs.h>//remove it 
 #include <kdeversion.h>
 #include <kaboutdata.h>
 #include <kstartupinfo.h>
@@ -52,24 +51,19 @@ static const char description[] =
         I18N_NOOP("KIO Exec - Opens remote files, watches modifications, asks for upload");
 
 
-KIOExec::KIOExec()
+KIOExec::KIOExec(const QStringList &args, bool tempFiles, const QString &suggestedFileName)
     : mExited(false)
 {
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    if (args->count() < 1)
-        KCmdLineArgs::usageError(i18n("'command' expected.\n"));
-
-    tempfiles = args->isSet("tempfiles");
-    if ( args->isSet( "suggestedfilename" ) )
-        suggestedFileName = args->getOption( "suggestedfilename" );
+    mTempFiles = tempFiles;
+    mSuggestedFileName = suggestedFileName;
     expectedCounter = 0;
     jobCounter = 0;
-    command = args->arg(0);
+    command = args.first();
     qDebug() << "command=" << command;
 
-    for ( int i = 1; i < args->count(); i++ )
+    for ( int i = 1; i < args.count(); i++ )
     {
-        QUrl url = args->url(i);
+        QUrl url(args.value(i));
 	url = KIO::NetAccess::mostLocalUrl( url, 0 );
 
         //kDebug() << "url=" << url.url() << " filename=" << url.fileName();
@@ -87,7 +81,7 @@ KIOExec::KIOExec()
         {
             if ( !url.isValid() )
                 KMessageBox::error( 0L, i18n( "The URL %1\nis malformed" ,  url.url() ) );
-            else if ( tempfiles )
+            else if ( mTempFiles )
                 KMessageBox::error( 0L, i18n( "Remote URL %1\nnot allowed with --tempfiles switch" ,  url.url() ) );
             else
             // We must fetch the file
@@ -116,9 +110,8 @@ KIOExec::KIOExec()
             }
         }
     }
-    args->clear();
 
-    if ( tempfiles )
+    if ( mTempFiles )
     {
         slotRunApp();
         return;
@@ -218,7 +211,7 @@ void KIOExec::slotRunApp()
         if ( (KDE::stat( src, &buff ) == 0) &&
              ((*it).time != buff.st_mtime) )
         {
-            if ( tempfiles )
+            if ( mTempFiles )
             {
                 if ( KMessageBox::questionYesNo( 0L,
                                                  i18n( "The supposedly temporary file\n%1\nhas been modified.\nDo you still want to delete it?", dest.toDisplayString(QUrl::PreferLocalFile)),
@@ -242,7 +235,7 @@ void KIOExec::slotRunApp()
             }
         }
 
-        if ((!dest.isLocalFile() || tempfiles) && exit_code == 0) {
+        if ((!dest.isLocalFile() || mTempFiles) && exit_code == 0) {
             // Wait for a reasonable time so that even if the application forks on startup (like OOo or amarok)
             // it will have time to start up and read the file before it gets deleted. #130709.
             qDebug() << "sleeping...";
@@ -258,26 +251,36 @@ void KIOExec::slotRunApp()
 
 int main( int argc, char **argv )
 {
-    /*  K4AboutData aboutData( "kioexec", "kioexec", ki18n("KIOExec"),
-     *        KDE_VERSION_STRING, ki18n(description), KAboutData::License_GPL,
-     *        ki18n("(c) 1998-2000,2003 The KFM/Konqueror Developers"));
-     *    aboutData.addAuthor(ki18n("David Faure"),KLocalizedString(), "faure@kde.org");
-     *    aboutData.addAuthor(ki18n("Stephan Kulow"),KLocalizedString(), "coolo@kde.org");
-     *    aboutData.addAuthor(ki18n("Bernhard Rosenkraenzer"),KLocalizedString(), "bero@arklinux.org");
-     *    aboutData.addAuthor(ki18n("Waldo Bastian"),KLocalizedString(), "bastian@kde.org");
-     *    aboutData.addAuthor(ki18n("Oswald Buddenhagen"),KLocalizedString(), "ossi@kde.org");
-     *    aboutData.setProgramIconName("kde");
-     */
-    QCommandLineParser parser;
-    /*parser.addOption(QCommandLineOption(QStringList() << "tempfiles" , i18n("Treat URLs as local files and delete them afterwards")));
-    parser.addOption(QCommandLineOption(QStringList() << "suggestedfilename <file name>" , ki18n("Suggested file name for the downloaded file")));
-    parser.addOption(QCommandLineOption(QStringList() << "+command", i18n("Command to execute")));
-    parser.addOption(QCommandLineOption(QStringList() << "+[URLs]", i18n("URL(s) or local file(s) used for 'command'"))); */
     QApplication app( argc, argv);
-    app.setQuitOnLastWindowClosed(false);
-    parser.process(app);
+    KAboutData aboutData( "kioexec", "kioexec", i18n("KIOExec"),
+         "111.111", i18n(description), KAboutData::License_GPL,
+         i18n("(c) 1998-2000,2003 The KFM/Konqueror Developers"));
+    aboutData.addAuthor(i18n("David Faure"),QString(), "faure@kde.org");
+    aboutData.addAuthor(i18n("Stephan Kulow"),QString(), "coolo@kde.org");
+    aboutData.addAuthor(i18n("Bernhard Rosenkraenzer"),QString(), "bero@arklinux.org");
+    aboutData.addAuthor(i18n("Waldo Bastian"),QString(), "bastian@kde.org");
+    aboutData.addAuthor(i18n("Oswald Buddenhagen"),QString(), "ossi@kde.org");
+    aboutData.setProgramIconName("kde");
+    KAboutData::setApplicationData(aboutData);
 
-    KIOExec exec;
+    QCommandLineParser parser;
+    parser.addOption(QCommandLineOption(QStringList() << "tempfiles" , i18n("Treat URLs as local files and delete them afterwards")));
+    parser.addOption(QCommandLineOption(QStringList() << "suggestedfilename <file name>" , i18n("Suggested file name for the downloaded file")));
+    parser.addPositionalArgument("command", i18n("Command to execute"));
+    parser.addPositionalArgument("urls", i18n("URL(s) or local file(s) used for 'command'"));
+
+    app.setQuitOnLastWindowClosed(false);
+
+    aboutData.setupCommandLine(&parser);
+    parser.process(app);
+    aboutData.processCommandLine(&parser);
+
+    if (parser.positionalArguments().count() < 1) {
+        parser.showHelp(-1);
+        return -1;
+    }
+
+    KIOExec exec(parser.positionalArguments(), parser.isSet(QStringLiteral("tempfiles")), QLatin1String("suggestedfilename"));
 
     // Don't go into the event loop if we already want to exit (#172197)
     if (exec.exited())

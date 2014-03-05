@@ -33,12 +33,13 @@
 namespace KIO { class Job; }
 
 class KJob;
+class QCommandLineParser;
 
 class KIOExec : public QObject
 {
     Q_OBJECT
 public:
-    KIOExec();
+    KIOExec(const QStringList &args, bool tempFiles, const QString &suggestedFileName);
 
     bool exited() const { return mExited; }
 
@@ -48,8 +49,8 @@ public Q_SLOTS:
 
 protected:
     bool mExited;
-    bool tempfiles;
-    QString suggestedFileName;
+    bool mTempFiles;
+    QString mSuggestedFileName;
     int counter;
     int expectedCounter;
     QString command;
