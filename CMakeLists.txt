@@ -119,7 +119,6 @@ add_subdirectory(solid-hardware)
 # add_subdirectory(doc) #FIXME need to fix kdoctools first: https://git.reviewboard.kde.org/r/116650/
 
 # Artwork
-# add_subdirectory(desktoptheme)
 # add_subdirectory(pics)
 
 # KDE integration for attica
