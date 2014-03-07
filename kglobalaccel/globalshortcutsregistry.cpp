@@ -314,6 +314,11 @@ bool GlobalShortcutsRegistry::registerKey(int key, GlobalShortcut *shortcut)
         return false;
         }
 
+    if (QKeySequence(key).toString() == "Shift+\\") {
+        kDebug() << "Not registering" << QKeySequence(key).toString() << "Because breaks |";
+        return false;
+    }
+
     kDebug() << "Registering key" << QKeySequence(key).toString() << "for"
              << shortcut->context()->component()->uniqueName() << ":" << shortcut->uniqueName();
 
