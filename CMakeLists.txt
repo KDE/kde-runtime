@@ -13,6 +13,7 @@ find_package(ECM 0.0.8 REQUIRED NO_MODULE)
 
 include(CMakePackageConfigHelpers)
 include(FeatureSummary)
+include(CheckIncludeFiles)
 include(WriteBasicConfigVersionFile)
 
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0)
@@ -49,75 +50,10 @@ find_package(KF5 CONFIG REQUIRED COMPONENTS
 
 find_package(KF5Plasma REQUIRED NO_MODULE)
 
-# needed for set_package_properties macro
+# needed for set_package_properties macro and many projects depend on it stil
 find_package(KF5KDE4Support REQUIRED NO_MODULE)
 
-# 
-# #search packages used by KDE
-# find_package(KDE4 4.9.95 REQUIRED)
-# include(KDE4Defaults)
-# 
-# if (WIN32)
-#     set (STRIGI_TYPE "OPTIONAL")
-# else ()
-#     set (STRIGI_TYPE "REQUIRED")
-# endif ()
-# 
-# find_package(Strigi)
-# set_package_properties(Strigi PROPERTIES DESCRIPTION "Desktop indexing and search support"
-#                        URL "http://strigi.sourceforge.net"
-#                        TYPE ${STRIGI_TYPE}
-#                       )
-# 
-
-# find_package(NepomukCore)
-# set_package_properties(NepomukCore PROPERTIES DESCRIPTION "Nepomuk Core Libraries"
-#                        URL "https://projects.kde.org/nepomuk-core"
-#                        TYPE OPTIONAL
-#                       )
-
-find_package(SLP)
-set_package_properties(SLP PROPERTIES DESCRIPTION "SLP (Service Location Protocol) implementation"
-                       URL "http://www.openslp.org/"
-                       TYPE OPTIONAL
-                       PURPOSE "Provides SLP support in the network:/ kioslave."
-                      )
-
-# find_package(LibAttica 0.1.4)
-# set_package_properties(LibAttica PROPERTIES DESCRIPTION "A library to access Open Collaboration Service providers"
-#                        URL "https://projects.kde.org/attica"
-#                        TYPE REQUIRED
-#                        PURPOSE "Attica is needed for the Get Hot New Stuff support"
-#                       )
-# 
-# find_package(QCA2 2.0.0)
-# set_package_properties(QCA2 PROPERTIES DESCRIPTION "Support for remote plasma widgets"
-#                        URL "http://delta.affinix.com/qca"
-#                        TYPE OPTIONAL
-#                       )
-# 
-# check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
-# check_include_files(sys/time.h HAVE_SYS_TIME_H)
-
-
-find_package(XCB MODULE COMPONENTS XCB)
-set_package_properties(XCB PROPERTIES DESCRIPTION "X protocol C-language Binding"
-                       URL "http://xcb.freedesktop.org"
-                       TYPE OPTIONAL
-                       PURPOSE "XCB is needed for X11 backend of KGlobalAccel"
-                       )
-if(XCB_FOUND)
-    # If we are building with XCB, we want to have all required components
-    # installed
-    find_package(XCB MODULE REQUIRED COMPONENTS KEYSYMS)
-endif()
-
-configure_file (config-runtime.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-runtime.h )
-
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-
-# Build infrastructure
-# add_subdirectory(cmake)
 
 # Background processes
 # add_subdirectory(kpasswdserver)
@@ -125,7 +61,6 @@ add_subdirectory(kdontchangethehostname)
 add_subdirectory(kglobalaccel)
 # add_subdirectory(knotify)
 add_subdirectory(ktimezoned)
-
 add_subdirectory(kuiserver)
 
 if ( UNIX )
@@ -192,8 +127,5 @@ if(LIBATTICA_FOUND)
 #   macro_optional_add_subdirectory(attica)
 endif(LIBATTICA_FOUND)
 
-# feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)
-
-########### install files ###############
-# install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/kde4 DESTINATION ${BIN_INSTALL_DIR})
-
+configure_file (config-runtime.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-runtime.h )
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
