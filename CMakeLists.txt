@@ -116,7 +116,7 @@ add_subdirectory(solid-hardware)
 # add_subdirectory(l10n)
 # add_subdirectory(localization)
 # add_subdirectory(kde-menu)
-# macro_optional_add_subdirectory(doc)
+# add_subdirectory(doc) #FIXME need to fix kdoctools first: https://git.reviewboard.kde.org/r/116650/
 
 # Artwork
 # add_subdirectory(desktoptheme)
