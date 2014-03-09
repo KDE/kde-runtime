@@ -24,12 +24,18 @@ if(NETWORKMANAGER_FOUND)
     endif(NM_0_7)
 endif(NETWORKMANAGER_FOUND)
 
-find_package(QNtrack)
-set_package_properties(QNtrack PROPERTIES DESCRIPTION "Network status tracking library"
-                       URL "http://launchpad.net/ntrack"
-                       TYPE OPTIONAL
-                       PURPOSE "Provides data input for Solid network status"
-                      )
+
+# FIXME: Re-enable the above when:
+# * QNTrack has been ported to Qt5
+# * cmake/modules/FindQNtrack.cmake has been adapted to the Qt5 dependency
+
+#find_package(QNtrack)
+#set_package_properties(QNtrack PROPERTIES DESCRIPTION "Network status tracking library"
+#                       URL "http://launchpad.net/ntrack"
+#                       TYPE OPTIONAL
+#                       PURPOSE "Provides data input for Solid network status"
+#                      )
+SET(QNTRACK_FOUND FALSE) # Forced to false, see above FIXME
 
 if(QNTRACK_FOUND)
     MESSAGE(STATUS "Found QNtrack, will use it as a data input for Solid network status")
