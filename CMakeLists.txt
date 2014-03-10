@@ -46,14 +46,9 @@ find_package(KF5 CONFIG REQUIRED COMPONENTS
     IdleTime ItemModels WidgetsAddons WindowSystem Codecs Archive CoreAddons Solid ThreadWeaver
     Config Auth JS Wallet DBusAddons Sonnet Init GlobalAccel
     I18n GuiAddons Service ConfigWidgets ItemViews Notifications IconThemes Completion JobWidgets TextWidgets XmlGui Crash
-    KCMUtils UnitConversion Bookmarks KIO Parts Kross Declarative NewStuff NotifyConfig Emoticons Sonnet KHtml KCMUtils Su)
+    KCMUtils UnitConversion Bookmarks KIO Parts Kross Declarative NewStuff NotifyConfig Emoticons Sonnet KHtml KCMUtils Su Plasma KDE4Support)
 
-find_package(KF5Plasma REQUIRED NO_MODULE)
-
-# needed for set_package_properties macro and many projects depend on it stil
-find_package(KF5KDE4Support REQUIRED NO_MODULE)
-
-include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+include_directories (${CMAKE_CURRENT_BINARY_DIR})
 
 # Background processes
 # add_subdirectory(kpasswdserver)
