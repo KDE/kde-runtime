@@ -36,7 +36,7 @@ if(NOT WIN32)
   qt5_wrap_ui(kcm_componentchooser_SRCS terminalemulatorconfig_ui.ui wmconfig_ui.ui)
 endif(NOT WIN32)
 
-kde4_add_plugin(kcm_componentchooser ${kcm_componentchooser_SRCS})
+add_library(kcm_componentchooser MODULE ${kcm_componentchooser_SRCS})
 
 
 

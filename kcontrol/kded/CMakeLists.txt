@@ -6,7 +6,7 @@
 set(kcm_kded_PART_SRCS kcmkded.cpp )
 
 
-kde4_add_plugin(kcm_kded ${kcm_kded_PART_SRCS})
+add_library(kcm_kded MODULE ${kcm_kded_PART_SRCS})
 
 
 target_link_libraries(kcm_kded ${KDE4_KDEUI_LIBS})

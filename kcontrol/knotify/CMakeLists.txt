@@ -6,7 +6,7 @@ set(kcm_knotify_PART_SRCS knotify.cpp )
 
 qt5_wrap_ui(kcm_knotify_PART_SRCS playersettings.ui )
 
-kde4_add_plugin(kcm_knotify ${kcm_knotify_PART_SRCS})
+add_library(kcm_knotify MODULE ${kcm_knotify_PART_SRCS})
 
 
 target_link_libraries(kcm_knotify

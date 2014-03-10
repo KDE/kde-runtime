@@ -5,9 +5,9 @@ add_subdirectory( pics )
 
 set(kcm_locale_PART_SRCS kcmlocale.cpp)
 
-kde4_add_ui_files(kcm_locale_PART_SRCS kcmlocalewidget.ui )
+qt5_wrap_ui(kcm_locale_PART_SRCS kcmlocalewidget.ui )
 
-kde4_add_plugin(kcm_locale ${kcm_locale_PART_SRCS})
+add_library(kcm_locale MODULE ${kcm_locale_PART_SRCS})
 
 target_link_libraries(kcm_locale
     Qt5::Widgets

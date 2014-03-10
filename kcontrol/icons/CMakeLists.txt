@@ -5,7 +5,7 @@ add_subdirectory(tests)
 
 set(kcm_icons_PART_SRCS iconthemes.cpp icons.cpp main.cpp )
 
-kde4_add_plugin(kcm_icons ${kcm_icons_PART_SRCS})
+add_library(kcm_icons MODULE ${kcm_icons_PART_SRCS})
 
 target_link_libraries(kcm_icons
     Qt5::Widgets

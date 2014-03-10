@@ -1,7 +1,7 @@
 set(kcmemoticons_SRCS emoticonslist.cpp)
 qt5_wrap_ui(kcmemoticons_SRCS emoticonslist.ui)
 
-kde4_add_plugin(kcm_emoticons ${kcmemoticons_SRCS})
+add_library(kcm_emoticons MODULE ${kcmemoticons_SRCS})
 target_link_libraries(kcm_emoticons
                       KF5::NewStuff
                       KF5::KDE4Support

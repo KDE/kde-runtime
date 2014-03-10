@@ -2,7 +2,7 @@ set(kcm_spellchecking_SRCS
    spellchecking.cpp
    )
 
-kde4_add_plugin(kcmspellchecking ${kcm_spellchecking_SRCS})
+add_library(kcmspellchecking MODULE ${kcm_spellchecking_SRCS})
 
 target_link_libraries(kcmspellchecking
                       KF5::SonnetUi
