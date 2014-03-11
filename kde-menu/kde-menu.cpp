@@ -22,7 +22,7 @@
 #include <QtCore/QFile>
 #include <QtDBus/QtDBus>
 
-#include <kaboutdata.h>
+#include <k4aboutdata.h>
 #include <kapplication.h>
 #include <kcmdlineargs.h>
 #include <kglobal.h>
@@ -31,7 +31,6 @@
 #include <kservicegroup.h>
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
-#include "klauncher_iface.h"
 #include <ksycoca.h>
 
 static const char appName[] = "kde-menu";
@@ -66,13 +65,13 @@ static void findMenuEntry(KServiceGroup::Ptr parent, const QString &name, const 
 
       if (e->isType(KST_KServiceGroup))
       {
-         KServiceGroup::Ptr g = KServiceGroup::Ptr::staticCast( e );
+         KServiceGroup::Ptr g = e;
 
          findMenuEntry(g, name.isEmpty() ? g->caption() : name+'/'+g->caption(), menuId);
       }
       else if (e->isType(KST_KService))
       {
-         KService::Ptr s = KService::Ptr::staticCast( e );
+         KService::Ptr s = e;
          if (s->menuId() == menuId)
          {
             if (bPrintMenuId)
@@ -108,9 +107,9 @@ int main(int argc, char **argv)
    "The --highlight option can be used to visually indicate to the user where\n"
    "in the KDE menu a specific application is located.");
 
-   KAboutData d(appName, "kde-menu", ki18n("kde-menu"), appVersion,
+   K4AboutData d(appName, "kde-menu", ki18n("kde-menu"), appVersion,
                 ki18n(description),
-                KAboutData::License_GPL, ki18n("(c) 2003 Waldo Bastian"));
+                K4AboutData::License_GPL, ki18n("(c) 2003 Waldo Bastian"));
    d.addAuthor(ki18n("Waldo Bastian"), ki18n("Author"), "bastian@kde.org");
 
    KCmdLineArgs::init(argc, argv, &d);
@@ -147,14 +146,7 @@ int main(int argc, char **argv)
       args.append("--incremental");
       args.append("--checkstamps");
       QString command = KStandardDirs::findExe(KBUILDSYCOCA_EXENAME);
-      QDBusMessage reply = KToolInvocation::klauncher()->call("kdeinit_exec_wait", command, args, QStringList(), QString());
-      if (reply.type() != QDBusMessage::ReplyMessage)
-      {
-         qWarning("Can not talk to klauncher!");
-         command = KStandardDirs::findExe(command);
-         command += ' ' + args.join(" ");
-         system(command.toLocal8Bit());
-      }
+	  KToolInvocation::ensureKdeinitRunning();
    }
 
    QString menuId = args->arg(0);
