@@ -18,9 +18,13 @@
 
 #include "globalshortcut.h"
 
+#warning Remove private header kglobalshortcutinfo_p.once this kglobalaccel daemon is merged with the kglobalaccel framework
+#include "kglobalshortcutinfo_p.h"
+
 #include "component.h"
 #include "globalshortcutcontext.h"
 #include "globalshortcutsregistry.h"
+
 
 #include <kdebug.h>
 
@@ -65,8 +69,6 @@ GlobalShortcut::~GlobalShortcut()
 GlobalShortcut::operator KGlobalShortcutInfo () const
     {
     KGlobalShortcutInfo info;
-#warning This needs to be re-enabled once kglobalacceld is together with the framework
-#if 0
     info.d->uniqueName = _uniqueName;
     info.d->friendlyName = _friendlyName;
     info.d->contextUniqueName = context()->uniqueName();
@@ -81,7 +83,6 @@ GlobalShortcut::operator KGlobalShortcutInfo () const
         {
         info.d->defaultKeys.append(QKeySequence(key));
         }
-#endif
     return info;
     }
 
