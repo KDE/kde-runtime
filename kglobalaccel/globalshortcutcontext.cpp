@@ -20,7 +20,7 @@
 
 #include "globalshortcut.h"
 
-#include "kdebug.h"
+#include <QDebug>
 
 GlobalShortcutContext::GlobalShortcutContext(
         const QString &uniqueName,

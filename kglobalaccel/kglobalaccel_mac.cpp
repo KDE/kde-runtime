@@ -20,7 +20,7 @@
 
 #include "kglobalaccel_mac.h"
 
-#include <kdebug.h>
+#include <QDebug>
 
 #ifdef Q_WS_MAC
 
@@ -38,7 +38,7 @@ OSStatus hotKeyEventHandler(EventHandlerCallRef inHandlerCallRef, EventRef inEve
         if (GetEventParameter(inEvent, kEventParamKeyCode, typeUInt32, NULL, sizeof(keycode), NULL, &keycode) != noErr) {
             kWarning(125) << "Error retrieving keycode parameter from event";
         }
-        kDebug() << " key down, keycode = " << keycode;
+        qDebug() << " key down, keycode = " << keycode;
     } else if (eventKind == kEventHotKeyPressed) {
         KGlobalAccelImpl* impl = static_cast<KGlobalAccelImpl *>(inUserData);
         EventHotKeyID hotkey;
@@ -86,15 +86,15 @@ KGlobalAccelImpl::~KGlobalAccelImpl()
 bool KGlobalAccelImpl::grabKey( int keyQt, bool grab )
 {
     if (grab) {
-        kDebug() << "Grabbing key " << keyQt;
+        qDebug() << "Grabbing key " << keyQt;
         QList<uint> keyCodes;
         uint mod;
         KKeyServer::keyQtToCodeMac( keyQt, keyCodes );
         KKeyServer::keyQtToModMac( keyQt, mod );
         
-        kDebug() << "keyQt: " << keyQt << " mod: " << mod;
+        qDebug() << "keyQt: " << keyQt << " mod: " << mod;
         foreach (uint keyCode, keyCodes) {
-            kDebug() << "  keyCode: " << keyCode;
+            qDebug() << "  keyCode: " << keyCode;
         }
         
         EventHotKeyID ehkid;
@@ -110,7 +110,7 @@ bool KGlobalAccelImpl::grabKey( int keyQt, bool grab )
         }
         refs->insert(keyQt, hotkeys);
     } else {
-        kDebug() << "Ungrabbing key " << keyQt;
+        qDebug() << "Ungrabbing key " << keyQt;
         if (refs->count(keyQt) == 0) kWarning(125) << "Trying to ungrab a key thas is not grabbed";
         foreach (const EventHotKeyRef &ref, refs->value(keyQt)) {
             if (UnregisterEventHotKey(ref) != noErr) {

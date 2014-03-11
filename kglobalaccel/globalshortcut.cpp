@@ -26,7 +26,7 @@
 #include "globalshortcutsregistry.h"
 
 
-#include <kdebug.h>
+#include <QDebug>
 
 #include <QKeySequence>
 
@@ -187,7 +187,7 @@ void GlobalShortcut::setKeys(const QList<int> newKeys)
             }
         else
             {
-            kDebug() << _uniqueName << "skipping because key" << QKeySequence(key).toString() << "is already taken";
+            qDebug() << _uniqueName << "skipping because key" << QKeySequence(key).toString() << "is already taken";
             _keys.append(0);
             }
         }
@@ -224,7 +224,7 @@ void GlobalShortcut::setActive()
         {
         if (key != 0 && !GlobalShortcutsRegistry::self()->registerKey(key, this))
             {
-            kDebug() << uniqueName() << ": Failed to register " << QKeySequence(key).toString();
+            qDebug() << uniqueName() << ": Failed to register " << QKeySequence(key).toString();
             }
         }
 
@@ -244,7 +244,7 @@ void GlobalShortcut::setInactive()
         {
         if (key != 0 && !GlobalShortcutsRegistry::self()->unregisterKey(key, this))
             {
-            kDebug() << uniqueName() << ": Failed to unregister " << QKeySequence(key).toString();
+            qDebug() << uniqueName() << ": Failed to unregister " << QKeySequence(key).toString();
             }
         }
 

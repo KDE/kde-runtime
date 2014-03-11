@@ -27,7 +27,7 @@
 #include "kglobalaccel.h"
 
 #include <kapplication.h>
-#include <kdebug.h>
+#include <QDebug>
 
 KGlobalAccelImpl::KGlobalAccelImpl(GlobalShortcutsRegistry* owner)
 	: m_owner(owner)

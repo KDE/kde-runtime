@@ -35,7 +35,7 @@
 #include <KLocalizedString>
 #include "kglobalaccel.h"
 #include "knotification.h"
-#include "kdebug.h"
+#include <QDebug>
 
 
 struct KGlobalAccelDPrivate
@@ -101,7 +101,7 @@ GlobalShortcut *KGlobalAccelDPrivate::findAction(const QStringList &actionId) co
     // Check if actionId is valid
     if (actionId.size() != 4)
         {
-        kDebug() << "Invalid! '" << actionId << "'";
+        qDebug() << "Invalid! '" << actionId << "'";
         return NULL;
         }
 
@@ -133,7 +133,7 @@ GlobalShortcut *KGlobalAccelDPrivate::findAction(
     if (!component)
         {
 #ifdef KDEDGLOBALACCEL_TRACE
-        kDebug() << componentUnique << "not found";
+        qDebug() << componentUnique << "not found";
 #endif
         return NULL;
         }
@@ -145,13 +145,13 @@ GlobalShortcut *KGlobalAccelDPrivate::findAction(
 #ifdef KDEDGLOBALACCEL_TRACE
     if (shortcut)
         {
-        kDebug() << componentUnique
+        qDebug() << componentUnique
                  << contextUnique
                  << shortcut->uniqueName();
         }
     else
         {
-        kDebug() << "No match for" << shortcutUnique;
+        qDebug() << "No match for" << shortcutUnique;
         }
 #endif
     return shortcut;
@@ -217,7 +217,7 @@ void KGlobalAccelDPrivate::_k_newGlobalShortcutNotification()
 {
     Q_FOREACH(const QString &uniqueName, changedComponents.keys())
         {
-        kDebug() << "Showing Notification for component" << uniqueName;
+        qDebug() << "Showing Notification for component" << uniqueName;
 
         KdeDGlobalAccel::Component *component = GlobalShortcutsRegistry::self()->getComponent(uniqueName);
         if (!component)
@@ -282,7 +282,7 @@ bool KGlobalAccelD::init()
             this, SLOT(_k_newGlobalShortcutNotification()));
 
     if (!QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.kglobalaccel"))) {
-        kWarning() << "Failed to register service org.kde.kglobalaccel";
+        qWarning() << "Failed to register service org.kde.kglobalaccel";
         return false;
     }
 
@@ -290,7 +290,7 @@ bool KGlobalAccelD::init()
             QLatin1String("/kglobalaccel"),
             this,
             QDBusConnection::ExportScriptableContents)) {
-        kWarning() << "Failed to register object kglobalaccel in org.kde.kglobalaccel";
+        qWarning() << "Failed to register object kglobalaccel in org.kde.kglobalaccel";
         return false;
     }
 
@@ -399,7 +399,7 @@ QList<QDBusObjectPath> KGlobalAccelD::allComponents() const
 void KGlobalAccelD::blockGlobalShortcuts(bool block)
     {
 #ifdef KDEDGLOBALACCEL_TRACE
-    kDebug() << block;
+    qDebug() << block;
 #endif
     block
         ? GlobalShortcutsRegistry::self()->deactivateShortcuts(true)
@@ -430,7 +430,7 @@ QList<int> KGlobalAccelD::defaultShortcut(const QStringList &action) const
 void KGlobalAccelD::doRegister(const QStringList &actionId)
 {
 #ifdef KDEDGLOBALACCEL_TRACE
-    kDebug() << actionId;
+    qDebug() << actionId;
 #endif
 
     // Check because we would not want to add a action for an invalid
@@ -460,7 +460,7 @@ void KGlobalAccelD::doRegister(const QStringList &actionId)
 QDBusObjectPath KGlobalAccelD::getComponent(const QString &componentUnique) const
     {
 #ifdef KDEDGLOBALACCEL_TRACE
-    kDebug() << componentUnique;
+    qDebug() << componentUnique;
 #endif
 
     KdeDGlobalAccel::Component *component =
@@ -481,7 +481,7 @@ QDBusObjectPath KGlobalAccelD::getComponent(const QString &componentUnique) cons
 QList<KGlobalShortcutInfo> KGlobalAccelD::getGlobalShortcutsByKey(int key) const
     {
 #ifdef KDEDGLOBALACCEL_TRACE
-    kDebug() << key;
+    qDebug() << key;
 #endif
     QList<GlobalShortcut*> shortcuts =
         GlobalShortcutsRegistry::self()->getShortcutsByKey(key);
@@ -490,7 +490,7 @@ QList<KGlobalShortcutInfo> KGlobalAccelD::getGlobalShortcutsByKey(int key) const
     Q_FOREACH(const GlobalShortcut *sc, shortcuts)
         {
 #ifdef KDEDGLOBALACCEL_TRACE
-    kDebug() << sc->context()->uniqueName() << sc->uniqueName();
+    qDebug() << sc->context()->uniqueName() << sc->uniqueName();
 #endif
         rc.append(static_cast<KGlobalShortcutInfo>(*sc));
         }
@@ -511,7 +511,7 @@ bool KGlobalAccelD::isGlobalShortcutAvailable(int shortcut, const QString &compo
 void KGlobalAccelD::setInactive(const QStringList &actionId)
     {
 #ifdef KDEDGLOBALACCEL_TRACE
-    kDebug() << actionId;
+    qDebug() << actionId;
 #endif
 
     GlobalShortcut *shortcut = d->findAction(actionId);
@@ -523,7 +523,7 @@ void KGlobalAccelD::setInactive(const QStringList &actionId)
 bool KGlobalAccelD::unregister(const QString &componentUnique, const QString &shortcutUnique)
 {
 #ifdef KDEDGLOBALACCEL_TRACE
-    kDebug() << componentUnique << shortcutUnique;
+    qDebug() << componentUnique << shortcutUnique;
 #endif
 
     // Stop grabbing the key
@@ -541,7 +541,7 @@ bool KGlobalAccelD::unregister(const QString &componentUnique, const QString &sh
 void KGlobalAccelD::unRegister(const QStringList &actionId)
 {
 #ifdef KDEDGLOBALACCEL_TRACE
-    kDebug() << actionId;
+    qDebug() << actionId;
 #endif
 
     // Stop grabbing the key
@@ -608,7 +608,7 @@ QList<int> KGlobalAccelD::setShortcut(const QStringList &actionId,
 void KGlobalAccelD::setForeignShortcut(const QStringList &actionId, const QList<int> &keys)
 {
 #ifdef KDEDGLOBALACCEL_TRACE
-    kDebug() << actionId;
+    qDebug() << actionId;
 #endif
 
     GlobalShortcut *shortcut = d->findAction(actionId);

@@ -22,9 +22,9 @@
 #include "globalshortcutcontext.h"
 #include "globalshortcutsregistry.h"
 
-#include <KDE/KDebug>
 #include <KDE/KRun>
 
+#include <QDebug>
 #include <QtCore/QStringList>
 #include <QKeySequence>
 
@@ -165,7 +165,7 @@ bool Component::cleanUp()
 
     Q_FOREACH (GlobalShortcut *shortcut, _current->_actions)
         {
-        kDebug() << _current->_actions.size();
+        qDebug() << _current->_actions.size();
         if (!shortcut->isPresent())
             {
             changed = true;
@@ -189,7 +189,7 @@ bool Component::createGlobalShortcutContext(
     {
     if (_contexts.value(uniqueName))
         {
-        kDebug() << "Shortcut Context " << uniqueName << "already exists for component " << _uniqueName;
+        qDebug() << "Shortcut Context " << uniqueName << "already exists for component " << _uniqueName;
         return false;
         }
     _contexts.insert(uniqueName, new GlobalShortcutContext(uniqueName, friendlyName, this));
@@ -327,7 +327,7 @@ bool Component::isShortcutAvailable(
         const QString &component,
         const QString &context) const
     {
-    kDebug() << QKeySequence(key).toString() << component;
+    qDebug() << QKeySequence(key).toString() << component;
 
     // if this component asks for the key. only check the keys in the same
     // context
@@ -382,7 +382,7 @@ void Component::loadSettings(KConfigGroup &configGroup)
                     // The shortcut is already used. The config file is
                     // broken. Ignore the request.
                     keys.removeAll(key);
-                    kWarning() << "Shortcut found twice in kglobalshortcutsrc.";
+                    qWarning() << "Shortcut found twice in kglobalshortcutsrc.";
                     }
                 }
             }
@@ -472,11 +472,11 @@ void Component::writeSettings(KConfigGroup& configGroup) const
             contextGroup.writeEntry("_k_friendly_name", context->friendlyName());
             }
 
-        // kDebug() << "writing group " << _uniqueName << ":" << context->uniqueName();
+        // qDebug() << "writing group " << _uniqueName << ":" << context->uniqueName();
 
         Q_FOREACH(const GlobalShortcut *shortcut, context->_actions)
             {
-            // kDebug() << "writing" << shortcut->uniqueName();
+            // qDebug() << "writing" << shortcut->uniqueName();
 
             // We do not write fresh shortcuts.
             // We do not write session shortcuts
@@ -484,7 +484,7 @@ void Component::writeSettings(KConfigGroup& configGroup) const
                 {
                 continue;
                 }
-            // kDebug() << "really writing" << shortcut->uniqueName();
+            // qDebug() << "really writing" << shortcut->uniqueName();
 
             QStringList entry(stringFromKeys(shortcut->keys()));
             entry.append(stringFromKeys(shortcut->defaultKeys()));

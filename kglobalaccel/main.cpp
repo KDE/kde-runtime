@@ -26,7 +26,7 @@
 #include <kcmdlineargs.h>
 #include <kcrash.h>
 #include <kde_file.h>
-#include <kdebug.h>
+#include <QDebug>
 #include <klocale.h>
 
 #include <signal.h>
@@ -74,13 +74,13 @@ extern "C" Q_DECL_EXPORT int kdemain(int argc, char **argv)
     // check if kglobalaccel is disabled
     if (!isEnabled())
         {
-        kDebug() << "kglobalaccel is disabled!";
+        qDebug() << "kglobalaccel is disabled!";
         return 0;
         }
 
     if (!KUniqueApplication::start())
         {
-        kDebug() << "kglobalaccel is already running!";
+        qDebug() << "kglobalaccel is already running!";
         return (0);
         }
 
