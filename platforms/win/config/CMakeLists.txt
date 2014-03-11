@@ -3,13 +3,13 @@ set(kcmplatform_SRCS platform.cpp
                      menuManager.cpp
 					 shellEdit.cpp
 					 )
-kde4_add_ui_files(kcmplatform_SRCS platform.ui 
+qt5_wrap_ui(kcmplatform_SRCS platform.ui 
                                    shellEdit.ui)
 
-kde4_add_plugin(kcm_platform ${kcmplatform_SRCS})
-target_link_libraries(kcm_platform ${KDE4_KDEUI_LIBS} 
-                                   ${KDE4_KPARTS_LIBS} 
-                                   ${KDE4_KCMUTILS_LIBRARY})
+add_library(kcm_platform MODULE ${kcmplatform_SRCS})
+target_link_libraries(kcm_platform KF5::KDE4Support 
+                                   KF5::Parts 
+                                   KF5::KCMUtils)
 
 install(TARGETS kcm_platform  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

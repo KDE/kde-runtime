@@ -11,7 +11,7 @@ qt5_wrap_ui(kcm_kdnssd_PART_SRCS configdialog.ui )
 add_library(kcm_kdnssd MODULE ${kcm_kdnssd_PART_SRCS})
 
 
-target_link_libraries(kcm_kdnssd  ${KDE4_KDNSSD_LIBS} ${KDE4_KDEUI_LIBS} )
+target_link_libraries(kcm_kdnssd  KF5::DNSSD KF5::KDE4Support )
 
 install(TARGETS kcm_kdnssd  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

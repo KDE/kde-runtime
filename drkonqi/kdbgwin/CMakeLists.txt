@@ -13,7 +13,7 @@ set(kdbgwin_SRCS
     outputters.cpp
 )
 
-set(COMMON_LIBS ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} dbghelp psapi shlwapi)
+set(COMMON_LIBS KF5::KDE4Support dbghelp psapi shlwapi)
 
 if ( MINGW )
     # FIXME this should be handled in a higher level cmake with proper find

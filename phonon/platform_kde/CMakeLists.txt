@@ -1,5 +1,3 @@
-include_directories(${KDE4_KIO_INCLUDES})
-
 set(kde_PART_SRCS
 	kdeplatformplugin.cpp
 	kiomediastream.cpp

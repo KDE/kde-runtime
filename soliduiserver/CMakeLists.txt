@@ -8,9 +8,9 @@ set(kded_soliduiserver_SRCS
    deviceserviceaction.cpp
 )
 
-kde4_add_ui_files(kded_soliduiserver_SRCS deviceactionsdialogview.ui)
+qt5_wrap_ui(kded_soliduiserver_SRCS deviceactionsdialogview.ui)
 
-kde4_add_plugin(kded_soliduiserver ${kded_soliduiserver_SRCS})
+add_library(kded_soliduiserver MODULE ${kded_soliduiserver_SRCS})
 
 
 target_link_libraries(kded_soliduiserver KF5::Solid KF5::DBusAddons KF5::KDE4Support KF5::Wallet)

@@ -4,7 +4,7 @@ set(kded_solidautoeject_SRCS
    solidautoeject.cpp
 )
 
-kde4_add_plugin(kded_solidautoeject ${kded_solidautoeject_SRCS})
+add_library(kded_solidautoeject MODULE ${kded_solidautoeject_SRCS})
 
 target_link_libraries(kded_solidautoeject KF5::Solid KF5::DBusAddons KF5::KDE4Support)
 

@@ -1,7 +1,7 @@
 project(KDEBASE_RUNTIME)
 
 
-cmake_minimum_required(VERSION 2.8.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 set(QT_MIN_VERSION "5.2.0")
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
@@ -25,6 +25,7 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings)
 
+include(ECMMarkAsTest)
 include(ECMOptionalAddSubdirectory)
 include(ECMMarkNonGuiExecutable)
 include(ECMInstallIcons)
@@ -65,7 +66,7 @@ if ( UNIX )
 endif ( UNIX )
 
 if(NepomukCore_FOUND)
-#     macro_optional_add_subdirectory(nepomuk)
+#     add_subdirectory(nepomuk)
 endif(NepomukCore_FOUND)
 
 # Plugins/components required for basic utility
@@ -73,7 +74,7 @@ add_subdirectory(kcontrol)
 add_subdirectory(kioslave)
 add_subdirectory(kurifilter-plugins)
 add_subdirectory(phonon)
-# macro_optional_add_subdirectory(renamedlgplugins)
+# add_subdirectory(renamedlgplugins)
 
 # UI Helper applications
 add_subdirectory(drkonqi)
@@ -117,7 +118,7 @@ add_subdirectory(pics)
 
 # KDE integration for attica
 if(LIBATTICA_FOUND)
-#   macro_optional_add_subdirectory(attica)
+    add_subdirectory(attica)
 endif(LIBATTICA_FOUND)
 
 configure_file (config-runtime.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-runtime.h )

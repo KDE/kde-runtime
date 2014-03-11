@@ -6,15 +6,13 @@ add_definitions(-DKDE_DEFAULT_DEBUG_AREA=300200)
 
 include_directories(
   ${QT_INCLUDES}
-  ${KDE4_INCLUDES}
-  ${KDE4_KIO_INCLUDES}
   ${SOPRANO_INCLUDE_DIR}
   ${NEPOMUK_CORE_INCLUDE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${nepomuk_kio_slaves_SOURCE_DIR}/common
 )
 
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DDISABLE_NEPOMUK_LEGACY)
+add_definitions (-DDISABLE_NEPOMUK_LEGACY)
 
 set(kio_nepomuksearch_PART_SRCS
   kio_nepomuksearch.cpp
@@ -27,8 +25,8 @@ kde4_add_plugin(kio_nepomuksearch
   ${kio_nepomuksearch_PART_SRCS})
 
 target_link_libraries(kio_nepomuksearch
-  ${KDE4_KIO_LIBS}
-  ${KDE4_SOLID_LIBS}
+  KF5::KIOWidgets
+  KF5::Solid
   ${NEPOMUK_CORE_LIBRARY}
   ${SOPRANO_LIBRARIES}
   )

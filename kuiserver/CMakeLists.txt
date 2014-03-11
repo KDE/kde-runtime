@@ -1,7 +1,5 @@
 add_subdirectory( tests )
 
-include_directories( ${KDE4_KIO_INCLUDES} )
-
 # for dbus_add_activation_service
 include(MacroDBusAddActivationService)
 
@@ -41,7 +39,7 @@ qt5_wrap_ui(kuiserver_KDEINIT_SRCS configdialog.ui)
   qt5_add_dbus_interface(kuiserver_KDEINIT_SRCS ${jobviewserver_xml} jobviewserver_interface )
 #</JobViewServer>
 
-qt4_add_dbus_adaptor(kuiserver_KDEINIT_SRCS org.kde.kuiserver.xml progresslistmodel.h ProgressListModel kuiserveradaptor )
+qt5_add_dbus_adaptor(kuiserver_KDEINIT_SRCS org.kde.kuiserver.xml progresslistmodel.h ProgressListModel kuiserveradaptor )
 
 
 dbus_add_activation_service(org.kde.kuiserver.service.in)

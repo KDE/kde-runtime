@@ -10,7 +10,7 @@ kde4_add_app_icon(SOURCES "${KDE4_INSTALL_DIR}/share/icons/oxygen/*/actions/appl
 
 add_executable(kwinshutdown ${SOURCES})
 
-target_link_libraries(kwinshutdown ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS})
+target_link_libraries(kwinshutdown  KF5::KDE4Support)
 
 ########### install ###############
 

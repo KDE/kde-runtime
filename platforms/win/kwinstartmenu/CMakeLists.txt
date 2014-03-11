@@ -15,9 +15,9 @@ set(kded_winstartmenu_SRCS
     ${shared_SOURCES}
 )
 
-qt4_add_dbus_adaptor(kded_winstartmenu_SRCS org.kde.WinStartMenu.xml winstartmenu.h WinStartMenuModule winstartmenu_adaptor WinStartMenuAdaptor)
-kde4_add_plugin(kded_winstartmenu ${kded_winstartmenu_SRCS})
-target_link_libraries( kded_winstartmenu ${KDE4_KIO_LIBS} ole32 uuid )
+qt5_add_dbus_adaptor(kded_winstartmenu_SRCS org.kde.WinStartMenu.xml winstartmenu.h WinStartMenuModule winstartmenu_adaptor WinStartMenuAdaptor)
+add_library(kded_winstartmenu MODULE ${kded_winstartmenu_SRCS})
+target_link_libraries( kded_winstartmenu KF5::KIOWidgets ole32 uuid )
 
 ########### install ###############
 
@@ -30,7 +30,7 @@ install( FILES kwinstartmenurc DESTINATION  ${CONFIG_INSTALL_DIR} )
 
 add_executable(kwinstartmenu main.cpp ${shared_SOURCES})
 ecm_mark_nongui_executable(kwinstartmenu)
-target_link_libraries(kwinstartmenu ${KDE4_KIO_LIBS} ole32 uuid )
+target_link_libraries(kwinstartmenu KF5::KIOWidgets ole32 uuid )
 
 ########### install ###############
 

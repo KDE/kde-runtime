@@ -9,7 +9,7 @@ set(kcm_kded_PART_SRCS kcmkded.cpp )
 add_library(kcm_kded MODULE ${kcm_kded_PART_SRCS})
 
 
-target_link_libraries(kcm_kded ${KDE4_KDEUI_LIBS})
+target_link_libraries(kcm_kded KF5::KDE4Support)
 
 install(TARGETS kcm_kded  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

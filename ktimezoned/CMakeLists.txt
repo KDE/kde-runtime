@@ -8,7 +8,7 @@ add_library(kded_ktimezoned MODULE ${kded_ktimezoned_SRCS})
 
 kservice_desktop_to_json(kded_ktimezoned ktimezoned.desktop)
 
-#qt4_add_dbus_adaptor(kded_ktimezoned_SRCS org.kde.KTimeZoned ktimezonedbus.h DBusHandler)
+#qt5_add_dbus_adaptor(kded_ktimezoned_SRCS org.kde.KTimeZoned ktimezonedbus.h DBusHandler)
 
 target_link_libraries(kded_ktimezoned
    Qt5::Core

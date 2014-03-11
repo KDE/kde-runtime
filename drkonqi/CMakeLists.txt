@@ -60,7 +60,7 @@ set(drkonqi_SRCS
 #    duplicatefinderjob.cpp
 )
 
-kde4_add_ui_files(drkonqi_SRCS
+qt5_wrap_ui(drkonqi_SRCS
     ui/maindialog.ui
     ui/backtracewidget.ui
     ui/assistantpage_introduction.ui

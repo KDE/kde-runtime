@@ -18,21 +18,21 @@ set(kcmnepomuk_SRCS
   removablemediacache.cpp
   )
 
-qt4_add_dbus_interface(kcmnepomuk_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.NepomukServer.xml nepomukserverinterface)
-qt4_add_dbus_interface(kcmnepomuk_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.ServiceControl.xml servicecontrol)
-qt4_add_dbus_interface(kcmnepomuk_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.FileIndexer.xml fileindexerinterface)
-qt4_add_dbus_interface(kcmnepomuk_SRCS ./org.freedesktop.Akonadi.NepomukFeeder.xml akonadifeederinterface)
+qt5_add_dbus_interface(kcmnepomuk_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.NepomukServer.xml nepomukserverinterface)
+qt5_add_dbus_interface(kcmnepomuk_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.ServiceControl.xml servicecontrol)
+qt5_add_dbus_interface(kcmnepomuk_SRCS ${NEPOMUK_CORE_DBUS_INTERFACES_DIR}/org.kde.nepomuk.FileIndexer.xml fileindexerinterface)
+qt5_add_dbus_interface(kcmnepomuk_SRCS ./org.freedesktop.Akonadi.NepomukFeeder.xml akonadifeederinterface)
 
-kde4_add_ui_files(kcmnepomuk_SRCS
+qt5_wrap_ui(kcmnepomuk_SRCS
   nepomukconfigwidget.ui
   indexfolderselectionwidget.ui
   excludefilterselectiondialog.ui)
 
-kde4_add_plugin(kcm_nepomuk ${kcmnepomuk_SRCS})
+add_library(kcm_nepomuk MODULE ${kcmnepomuk_SRCS})
 
 target_link_libraries(kcm_nepomuk
-  ${KDE4_KDEUI_LIBS}
-  ${KDE4_KIO_LIBS}
+  KF5::KDE4Support
+  KF5::KIOWidgets
   ${NEPOMUK_CORE_LIBRARY}
   ${SOPRANO_LIBRARIES}
   ${KDE4_SOLID_LIBRARY}
