@@ -73,4 +73,4 @@ void NotifyByLogfile::notify( int id, KNotifyConfig * config )
 	finish( id );
 }
 
-#include "notifybylogfile.moc"
+#include "moc_notifybylogfile.cpp"

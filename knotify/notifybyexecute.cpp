@@ -67,4 +67,4 @@ void NotifyByExecute::notify( int id, KNotifyConfig * config )
 	finish( id );
 }
 
-#include "notifybyexecute.moc"
+#include "moc_notifybyexecute.cpp"

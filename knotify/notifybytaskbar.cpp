@@ -46,4 +46,4 @@ void NotifyByTaskbar::notify( int id, KNotifyConfig * config )
 	finish( id );
 }
 
-#include "notifybytaskbar.moc"
+#include "moc_notifybytaskbar.cpp"

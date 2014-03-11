@@ -25,7 +25,11 @@
 
 #include "knotifyplugin.h"
 
-#include "kspeechinterface.h"
+namespace org {
+namespace kde {
+	class KSpeech;
+}
+}
 
 class NotifyByKTTS : public KNotifyPlugin
 {

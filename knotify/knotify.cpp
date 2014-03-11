@@ -70,7 +70,9 @@ void KNotify::loadConfig()
 #ifndef Q_WS_MAC
 	addPlugin(new NotifyByTaskbar(this));
 #endif
+#if 0 //TODO: port tts plugin to kf5
 	addPlugin(new NotifyByKTTS(this));
+#endif
 
 	KService::List offers = KServiceTypeTrader::self()->query("KNotify/NotifyMethod");
 

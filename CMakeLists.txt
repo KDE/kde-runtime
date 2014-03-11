@@ -54,7 +54,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR})
 # add_subdirectory(kpasswdserver)
 add_subdirectory(kdontchangethehostname)
 add_subdirectory(kglobalaccel)
-# add_subdirectory(knotify)
+add_subdirectory(knotify)
 add_subdirectory(ktimezoned)
 add_subdirectory(kuiserver)
 

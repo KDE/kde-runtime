@@ -44,6 +44,7 @@
 #include <kurl.h>
 #include <config-runtime.h>
 #include <kcomponentdata.h>
+#include <kglobal.h>
 #include <knotifyconfig.h>
 
 // Phonon headers
@@ -221,8 +222,7 @@ void NotifyBySound::notify( int eventId, KNotifyConfig * config )
     // get file name
 	if ( KUrl::isRelativeUrl(soundFile) )
 	{
-		QString search = QString("%1/sounds/%2").arg(config->appname).arg(soundFile);
-		search = KGlobal::mainComponent().dirs()->findResource("data", search);
+		QString search = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("%1/sounds/%2").arg(config->appname).arg(soundFile));
 		if ( search.isEmpty() )
 			soundFile = KStandardDirs::locate( "sound", soundFile );
 		else
@@ -322,5 +322,5 @@ void NotifyBySound::closeNow()
 	}
 }
 
-#include "notifybysound.moc"
+#include "moc_notifybysound.cpp"
 // vim: ts=4 noet

@@ -19,6 +19,7 @@
  */
 
 #include "knotifyconfig.h"
+#include <ksharedconfig.h>
 
 #include <ksharedconfig.h>
 #include <kconfiggroup.h>
@@ -30,12 +31,12 @@
 typedef QCache<QString, KSharedConfig::Ptr> ConfigCache;
 K_GLOBAL_STATIC_WITH_ARGS(ConfigCache , static_cache, (15))
 
-static KSharedConfig::Ptr retrieve_from_cache(const QString& filename, const char *resourceType="config") 
+static KSharedConfig::Ptr retrieve_from_cache(const QString& filename, QStandardPaths::StandardLocation resourceType = QStandardPaths::ConfigLocation)
 {
 	QCache<QString, KSharedConfig::Ptr> &cache = *static_cache;
 	if (cache.contains(filename)) 
 		return *cache[filename];
-	KSharedConfig::Ptr m = KSharedConfig::openConfig (filename , KConfig::NoGlobals, resourceType );
+	KSharedConfig::Ptr m = KSharedConfig::openConfig (filename, KConfig::NoGlobals, resourceType );
 	cache.insert(filename, new KSharedConfig::Ptr(m));
 	return m;
 }
@@ -50,7 +51,7 @@ void KNotifyConfig::reparseConfiguration()
 
 KNotifyConfig::KNotifyConfig( const QString & _appname, const ContextList & _contexts, const QString & _eventid )
 	: appname (_appname),
-	eventsfile(retrieve_from_cache(_appname+'/'+_appname + ".notifyrc" , "data" )),
+	eventsfile(retrieve_from_cache(_appname+'/'+_appname + ".notifyrc" , QStandardPaths::GenericDataLocation )),
 	configfile(retrieve_from_cache(_appname+QString::fromAscii( ".notifyrc" ))),
 	contexts(_contexts) , eventid(_eventid)
 {

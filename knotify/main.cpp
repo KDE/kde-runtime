@@ -20,7 +20,7 @@
 
 
 #include <kuniqueapplication.h>
-#include <kaboutdata.h>
+#include <k4aboutdata.h>
 #include <kcmdlineargs.h>
 #include <kdebug.h>
 #include <kglobal.h>
@@ -35,9 +35,9 @@
 
 int main(int argc, char **argv)
 {
-    KAboutData aboutdata("knotify", "knotify4", ki18n("KNotify"),
+    K4AboutData aboutdata("knotify", "knotify5", ki18n("KNotify"),
                          KDE_VERSION_STRING, ki18n("KDE Notification Daemon"),
-                         KAboutData::License_GPL, ki18n("(C) 1997-2008, KDE Developers"));
+                         K4AboutData::License_GPL, ki18n("(C) 1997-2008, KDE Developers"));
     aboutdata.addAuthor(ki18n("Olivier Goffart"),ki18n("Current Maintainer"),"ogoffart@kde.org");
     aboutdata.addAuthor(ki18n("Carsten Pfeiffer"),ki18n("Previous Maintainer"),"pfeiffer@kde.org");
     aboutdata.addAuthor(ki18n("Christian Esken"),KLocalizedString(),"esken@kde.org");

@@ -211,4 +211,4 @@ void KSolidNotify::slotServiceOwnerChanged( const QString & serviceName, const Q
 }
 
 
-#include "ksolidnotify.moc"
+#include "moc_ksolidnotify.cpp"
