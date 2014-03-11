@@ -21,6 +21,8 @@
 
 #include <QtCore/QDateTime>
 
+#include <KDebug>
+
 KConfigGroup
 AutomounterSettings::deviceSettings(const QString &udi)
 {

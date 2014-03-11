@@ -1,17 +1,12 @@
 set(kcm_device_automounter_SRCS DeviceAutomounterKCM.cpp DeviceModel.cpp)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+qt5_wrap_ui(kcm_device_automounter_SRCS DeviceAutomounterKCM.ui)
 
+kconfig_add_kcfg_files(kcm_device_automounter_SRCS ../lib/AutomounterSettingsBase.kcfgc LayoutSettings.kcfgc)
 
+add_library(kcm_device_automounter MODULE ${kcm_device_automounter_SRCS} ${device_automounter_lib_SRCS})
 
-kde4_add_ui_files(kcm_device_automounter_SRCS DeviceAutomounterKCM.ui)
-
-kde4_add_kcfg_files(kcm_device_automounter_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../lib/AutomounterSettingsBase.kcfgc ${CMAKE_CURRENT_SOURCE_DIR}/LayoutSettings.kcfgc)
-
-
-kde4_add_plugin(kcm_device_automounter ${kcm_device_automounter_SRCS} ${device_automounter_lib_SRCS})
-
-target_link_libraries(kcm_device_automounter KF5::Solid KF5::KDE4Support)
+target_link_libraries(kcm_device_automounter KF5::DBusAddons KF5::KCMUtils KF5::Solid KF5::KDE4Support)
 
 install(TARGETS kcm_device_automounter DESTINATION ${PLUGIN_INSTALL_DIR})
 

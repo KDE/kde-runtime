@@ -41,7 +41,7 @@ K_PLUGIN_FACTORY(DeviceAutomounterKCMFactory, registerPlugin<DeviceAutomounterKC
 K_EXPORT_PLUGIN(DeviceAutomounterKCMFactory("kcm_device_automounter"))
 
 DeviceAutomounterKCM::DeviceAutomounterKCM(QWidget *parent, const QVariantList &)
-    : KCModule(DeviceAutomounterKCMFactory::componentData(), parent)
+    : KCModule(parent)
 {
     KAboutData *about = new KAboutData("kcm_device_automounter",
                                        0,
@@ -237,3 +237,6 @@ DeviceAutomounterKCM::loadLayout()
     deviceView->setExpanded(m_devices->index(0,0), LayoutSettings::attachedExpanded());
     deviceView->setExpanded(m_devices->index(1,0), LayoutSettings::detatchedExpanded());
 }
+
+#include "moc_DeviceAutomounterKCM.cpp"
+#include "DeviceAutomounterKCM.moc"

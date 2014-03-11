@@ -134,10 +134,10 @@ DeviceModel::index(int row, int column, const QModelIndex &parent) const
             return QModelIndex();
         if (parent.row() == 0) {
             if (row >= 0 && row < m_attached.size() && column >= 0 && column <= 2)
-                return createIndex(row, column, 0);
+                return createIndex(row, column, quintptr(0));
         } else if (parent.row() == 1) {
             if (row >= 0 && row < m_disconnected.size() && column >= 0 && column <= 2)
-                return createIndex(row, column, 1);
+                return createIndex(row, column, quintptr(1));
         }
     } else {
          if ((row == 0 || row == 1) && column >= 0 && column <= 2)

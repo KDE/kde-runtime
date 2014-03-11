@@ -60,7 +60,7 @@ add_subdirectory(kuiserver)
 if ( UNIX )
    add_subdirectory(soliduiserver)
    add_subdirectory(solidautoeject)
-#    add_subdirectory(solid-device-automounter)
+   add_subdirectory(solid-device-automounter)
    add_subdirectory(solid-networkstatus)
 endif ( UNIX )
 

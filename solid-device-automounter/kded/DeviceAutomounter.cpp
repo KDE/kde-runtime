@@ -98,6 +98,9 @@ DeviceAutomounter::deviceAdded(const QString &udi)
     AutomounterSettings::self()->writeConfig();
     if (dev.is<Solid::StorageAccess>()) {
         Solid::StorageAccess *sa = dev.as<Solid::StorageAccess>();
-        connect(sa, SIGNAL(accessibilityChanged(bool, const QString)), this, SLOT(deviceMountChanged(bool, const QString)));
+        connect(sa, SIGNAL(accessibilityChanged(bool, QString)), this, SLOT(deviceMountChanged(bool, const QString)));
     }
 }
+
+#include "moc_DeviceAutomounter.cpp"
+#include "DeviceAutomounter.moc"
