@@ -39,7 +39,6 @@ find_package(Qt5Widgets REQUIRED NO_MODULE)
 find_package(Qt5X11Extras REQUIRED NO_MODULE)
 find_package(Qt5Concurrent REQUIRED NO_MODULE)
 
-#include(ConfigureChecks.cmake)
 
 # Load CMake, Compiler and InstallDirs settings from KF5 and the following are already somewhat "done" tier1/tier2 libs from kdelibs:
 find_package(KF5 CONFIG REQUIRED COMPONENTS
@@ -90,7 +89,7 @@ endif ( UNIX )
 
 # Command-line tools (e.g. for shell scripts)
 if ( UNIX )
-#    add_subdirectory(kdeeject)
+   add_subdirectory(kdeeject)
 endif ( UNIX )
 add_subdirectory(kfile)
 add_subdirectory(kioclient)
@@ -105,11 +104,11 @@ add_subdirectory(menu)
 add_subdirectory(solid-hardware)
 
 # Platform-specific integration
-# add_subdirectory(platforms)
+add_subdirectory(platforms)
 
 # Default settings, content and config
-# add_subdirectory(l10n)
-# add_subdirectory(localization)
+add_subdirectory(l10n)
+add_subdirectory(localization)
 # add_subdirectory(doc) #FIXME need to fix kdoctools first: https://git.reviewboard.kde.org/r/116650/
 add_subdirectory(kde-menu)
 
