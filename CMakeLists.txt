@@ -50,7 +50,7 @@ find_package(KF5 CONFIG REQUIRED COMPONENTS
 include_directories (${CMAKE_CURRENT_BINARY_DIR})
 
 # Background processes
-# add_subdirectory(kpasswdserver)
+add_subdirectory(kpasswdserver)
 add_subdirectory(kdontchangethehostname)
 add_subdirectory(kglobalaccel)
 add_subdirectory(knotify)
