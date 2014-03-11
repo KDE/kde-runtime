@@ -23,10 +23,11 @@
 
 #include <QBoxLayout>
 
-#include <KDE/KAboutData>
+#include <kaboutdata.h>
 #include <KDE/KDialog>
 #include <KDE/KPluginFactory>
 #include <KDE/KTabWidget>
+#include <KLocalizedString>
 #include <kdeversion.h>
 
 #include "devicepreference.h"
@@ -40,14 +41,14 @@ K_PLUGIN_FACTORY(PhononKcmFactory, registerPlugin<PhononKcm>();)
 K_EXPORT_PLUGIN(PhononKcmFactory("kcm_phonon"))
 
 PhononKcm::PhononKcm(QWidget *parent, const QVariantList &args)
-    : KCModule(PhononKcmFactory::componentData(), parent, args)
+    : KCModule(parent, args)
 {
     KAboutData *about = new KAboutData(
-            "kcm_phonon", 0, ki18n("Phonon Configuration Module"),
-            KDE_VERSION_STRING, KLocalizedString(), KAboutData::License_GPL,
-            ki18n("Copyright 2006 Matthias Kretz"));
-    about->addAuthor(ki18n("Matthias Kretz"), KLocalizedString(), "kretz@kde.org");
-    about->addAuthor(ki18n("Colin Guthrie"), KLocalizedString(), "colin@mageia.org");
+            "kcm_phonon", 0, i18n("Phonon Configuration Module"),
+            KDE_VERSION_STRING, QString(), KAboutData::License_GPL,
+            i18n("Copyright 2006 Matthias Kretz"));
+    about->addAuthor(i18n("Matthias Kretz"), QString(), "kretz@kde.org");
+    about->addAuthor(i18n("Colin Guthrie"), QString(), "colin@mageia.org");
     setAboutData(about);
 
     setLayout(new QHBoxLayout);

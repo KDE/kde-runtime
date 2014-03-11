@@ -6,11 +6,10 @@ project(PHONON-KDE-RUNTIME)
 
 add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
 
-include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES})
+find_package(Phonon4Qt5 4.6.60 NO_MODULE)
+include_directories(BEFORE ${PHONON_INCLUDES})
 
 option(KDEBASE_DISABLE_MULTIMEDIA "Disable multimedia support (default: off)" OFF)
-
-# print a message for backward compatibility:
 if(KDE4_DISABLE_MULTIMEDIA)
    message(STATUS "*********** The switch KDE4_DISABLE_MULTIMEDIA is not supported anymore, use KDEBASE_DISABLE_MULTIMEDIA instead ************")
 endif(KDE4_DISABLE_MULTIMEDIA)
@@ -19,12 +18,6 @@ endif(KDE4_DISABLE_MULTIMEDIA)
 if(KDEBASE_DISABLE_MULTIMEDIA)
    message(STATUS "NOTICE: Multimedia support DISABLED (KDEBASE_DISABLE_MULTIMEDIA == ON)")
 else(KDEBASE_DISABLE_MULTIMEDIA)
-   set(PHONON_MIN_VERSION "4.4.57")
-   macro_ensure_version("${PHONON_MIN_VERSION}" "${PHONON_VERSION}" _phonon_version_ok)
-   if(NOT _phonon_version_ok)
-    message(FATAL_ERROR "The installed Phonon is too old. Found version ${PHONON_VERSION}. Required is ${PHONON_MIN_VERSION}")
-   endif()
-
    find_package(Alsa)
    option(WITH_ALSA "Use ALSA, if found" ON)
    if(NOT WITH_ALSA)
@@ -56,5 +49,5 @@ else(KDEBASE_DISABLE_MULTIMEDIA)
 
    add_subdirectory(kded-module)
    add_subdirectory(platform_kde)
-   macro_optional_add_subdirectory(kcm)
+   add_subdirectory(kcm)
 endif(KDEBASE_DISABLE_MULTIMEDIA)

@@ -20,6 +20,7 @@
 #include "testspeakerwidget.h"
 #include "audiosetup.h"
 #include <stdio.h>
+#include <klocalizedstring.h>
 
 static uint32_t s_CurrentIndex = PA_INVALID_INDEX;
 static TestSpeakerWidget *s_CurrentWidget = NULL;
@@ -33,7 +34,7 @@ static void finish_cb(ca_context *, uint32_t id, int, void *)
 }
 
 TestSpeakerWidget::TestSpeakerWidget(const pa_channel_position_t pos, ca_context *canberra, AudioSetup* ss)
-  : KPushButton(KIcon("preferences-desktop-sound"), "Test", ss)
+  : KPushButton(QIcon::fromTheme("preferences-desktop-sound"), "Test", ss)
   , m_Ss(ss)
   , m_Pos(pos)
   , m_Canberra(canberra)

@@ -165,11 +165,11 @@ DevicePreference::DevicePreference(QWidget *parent)
     setupUi(this);
 
     // Setup the buttons
-    testPlaybackButton->setIcon(KIcon("media-playback-start"));
+    testPlaybackButton->setIcon(QIcon::fromTheme("media-playback-start"));
     testPlaybackButton->setEnabled(false);
     testPlaybackButton->setToolTip(i18n("Test the selected device"));
-    deferButton->setIcon(KIcon("go-down"));
-    preferButton->setIcon(KIcon("go-up"));
+    deferButton->setIcon(QIcon::fromTheme("go-down"));
+    preferButton->setIcon(QIcon::fromTheme("go-up"));
 
     // Configure the device list
     deviceList->setDragDropMode(QAbstractItemView::InternalMove);
@@ -646,7 +646,7 @@ void DevicePreference::on_preferButton_clicked()
 {
     QAbstractItemModel *model = deviceList->model();
     {
-        AudioOutputDeviceModel *deviceModel = qobject_cast<AudioOutputDeviceModel *>(model);
+        AudioOutputDeviceModel *deviceModel = dynamic_cast<AudioOutputDeviceModel *>(model);
         if (deviceModel) {
             deviceModel->moveUp(deviceList->currentIndex());
             updateButtonsEnabled();
@@ -654,7 +654,7 @@ void DevicePreference::on_preferButton_clicked()
         }
     }
     {
-        AudioCaptureDeviceModel *deviceModel = qobject_cast<AudioCaptureDeviceModel *>(model);
+        AudioCaptureDeviceModel *deviceModel = dynamic_cast<AudioCaptureDeviceModel *>(model);
         if (deviceModel) {
             deviceModel->moveUp(deviceList->currentIndex());
             updateButtonsEnabled();
@@ -662,7 +662,7 @@ void DevicePreference::on_preferButton_clicked()
         }
     }
     {
-        VideoCaptureDeviceModel *deviceModel = qobject_cast<VideoCaptureDeviceModel *>(model);
+        VideoCaptureDeviceModel *deviceModel = dynamic_cast<VideoCaptureDeviceModel *>(model);
         if (deviceModel) {
             deviceModel->moveUp(deviceList->currentIndex());
             updateButtonsEnabled();
@@ -675,7 +675,7 @@ void DevicePreference::on_deferButton_clicked()
 {
     QAbstractItemModel *model = deviceList->model();
     {
-        AudioOutputDeviceModel *deviceModel = qobject_cast<AudioOutputDeviceModel *>(model);
+        AudioOutputDeviceModel *deviceModel = dynamic_cast<AudioOutputDeviceModel *>(model);
         if (deviceModel) {
             deviceModel->moveDown(deviceList->currentIndex());
             updateButtonsEnabled();
@@ -683,7 +683,7 @@ void DevicePreference::on_deferButton_clicked()
         }
     }
     {
-        AudioCaptureDeviceModel *deviceModel = qobject_cast<AudioCaptureDeviceModel *>(model);
+        AudioCaptureDeviceModel *deviceModel = dynamic_cast<AudioCaptureDeviceModel *>(model);
         if (deviceModel) {
             deviceModel->moveDown(deviceList->currentIndex());
             updateButtonsEnabled();
@@ -691,7 +691,7 @@ void DevicePreference::on_deferButton_clicked()
         }
     }
     {
-        VideoCaptureDeviceModel *deviceModel = qobject_cast<VideoCaptureDeviceModel *>(model);
+        VideoCaptureDeviceModel *deviceModel = dynamic_cast<VideoCaptureDeviceModel *>(model);
         if (deviceModel) {
             deviceModel->moveDown(deviceList->currentIndex());
             updateButtonsEnabled();
@@ -951,7 +951,7 @@ void DevicePreference::on_testPlaybackButton_toggled(bool down)
             m_videoWidget->setWindowTitle(i18n("Testing %1", device.name()));
             m_videoWidget->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint);
             if (device.property("icon").canConvert(QVariant::String))
-                m_videoWidget->setWindowIcon(KIcon(device.property("icon").toString()));
+                m_videoWidget->setWindowIcon(QIcon::fromTheme(device.property("icon").toString()));
             m_videoWidget->move(QCursor::pos() - QPoint(250, 295));
             m_videoWidget->resize(320, 240);
             m_videoWidget->show();

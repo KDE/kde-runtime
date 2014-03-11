@@ -21,6 +21,7 @@
 #define PHONON_KIOMEDIASTREAM_H
 
 #include <Phonon/AbstractMediaStream>
+#include <KIO/Job>
 
 class QUrl;
 

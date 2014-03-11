@@ -32,6 +32,7 @@ class DeviceListing;
 
 class KdePlatformPlugin : public QObject, public PlatformPlugin
 {
+	Q_PLUGIN_METADATA(IID "3PlatformPlugin.phonon.kde.org" FILE "phononbackend.json")
     Q_INTERFACES(Phonon::PlatformPlugin)
     Q_OBJECT
     public:

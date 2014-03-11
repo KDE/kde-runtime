@@ -32,6 +32,8 @@
 #include <kdebug.h>
 #include <kicon.h>
 #include <kuser.h>
+#include <klocalizedstring.h>
+#include <kiconloader.h>
 
 #include <glib.h>
 #include <pulse/xmalloc.h>

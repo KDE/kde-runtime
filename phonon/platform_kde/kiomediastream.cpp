@@ -264,5 +264,5 @@ void KioMediaStreamPrivate::_k_read()
 
 } // namespace Phonon
 
-#include "kiomediastream.moc"
+#include "moc_kiomediastream.cpp"
 // vim: sw=4 sts=4 et tw=100

@@ -72,8 +72,7 @@ HardwareDatabasePrivate::HardwareDatabasePrivate()
         return;
     }
     const QString cacheFileName =
-        KGlobal::mainComponent().dirs()->saveLocation("cache", QLatin1String("libphonon/"))
-        + QLatin1String("hardwaredatabase");
+        QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + QStringLiteral("/libphonon/hardwaredatabase/");
     const QFileInfo dbFileInfo(dbFileName);
     const QFileInfo cacheFileInfo(cacheFileName);
     if (!cacheFileInfo.exists() || cacheFileInfo.lastModified() < dbFileInfo.lastModified()) {

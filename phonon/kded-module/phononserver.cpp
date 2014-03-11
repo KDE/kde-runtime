@@ -22,7 +22,6 @@
 #include "deviceinfo.h"
 
 #include <kconfiggroup.h>
-#include <kprocess.h>
 
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -36,6 +35,7 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QSettings>
 #include <QtCore/QTimerEvent>
+#include <QtCore/QProcess>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusMetaType>
@@ -53,9 +53,7 @@
 #include <alsa/asoundlib.h>
 #endif // HAVE_LIBASOUND2
 
-K_PLUGIN_FACTORY(PhononServerFactory,
-        registerPlugin<PhononServer>();
-        )
+K_PLUGIN_FACTORY(PhononServerFactory, registerPlugin<PhononServer>(); )
 K_EXPORT_PLUGIN(PhononServerFactory("phononserver"))
 
 using namespace Phonon;
@@ -1130,7 +1128,7 @@ void PhononServer::askToRemoveDevices(const QStringList &devList, int type, cons
             {
                 if (button == KDialog::User1) {
                     kDebug(601) << "start kcm_phonon";
-                    KProcess::startDetached(QLatin1String("kcmshell4"), QStringList(QLatin1String("kcm_phonon")));
+                    QProcess::startDetached(QLatin1String("kcmshell4"), QStringList(QLatin1String("kcm_phonon")));
                     reject();
                 } else {
                     KDialog::slotButtonClicked(button);
@@ -1139,7 +1137,7 @@ void PhononServer::askToRemoveDevices(const QStringList &devList, int type, cons
     } *dialog = new MyDialog;
     dialog->setPlainCaption(areAudio ? i18n("Removed Sound Devices") : i18n("Removed Video Devices"));
     dialog->setButtons(KDialog::Yes | KDialog::No | KDialog::User1);
-    KIcon icon(areAudio ? "audio-card" : "camera-web");
+    QIcon icon = QIcon::fromTheme(areAudio ? "audio-card" : "camera-web");
     dialog->setWindowIcon(icon);
     dialog->setModal(false);
     KGuiItem yes(KStandardGuiItem::yes());
@@ -1148,14 +1146,14 @@ void PhononServer::askToRemoveDevices(const QStringList &devList, int type, cons
     dialog->setButtonGuiItem(KDialog::No, KStandardGuiItem::no());
     dialog->setButtonGuiItem(KDialog::User1, KGuiItem(i18nc("short string for a button, it opens "
                     "the Phonon page of System Settings", "Manage Devices"),
-                KIcon("preferences-system"),
+                QIcon::fromTheme("preferences-system"),
                 i18n("Open the System Settings page for device configuration where you can "
                     "manually remove disconnected devices from the cache.")));
     dialog->setEscapeButton(KDialog::No);
     dialog->setDefaultButton(KDialog::User1);
 
     bool checkboxResult = false;
-    int res = KMessageBox::createKMessageBox(dialog, icon,
+    QDialogButtonBox::StandardButton res = KMessageBox::createKMessageBox(dialog, new QDialogButtonBox(), icon,
             i18n("<html><p>KDE detected that one or more internal devices were removed.</p>"
                 "<p><b>Do you want KDE to permanently forget about these devices?</b></p>"
                 "<p>This is the list of devices KDE thinks can be removed:<ul><li>%1</li></ul></p></html>",
@@ -1164,7 +1162,7 @@ void PhononServer::askToRemoveDevices(const QStringList &devList, int type, cons
             i18n("Do not ask again for these devices"),
             &checkboxResult, KMessageBox::Notify);
 
-    result = (res == KDialog::Yes ? KMessageBox::Yes : KMessageBox::No);
+    result = (res == QDialogButtonBox::Yes ? KMessageBox::Yes : KMessageBox::No);
     if (result == KMessageBox::Yes) {
         if (areAudio) {
             kDebug(601) << "removeAudioDevices" << indexes;
@@ -1181,3 +1179,5 @@ void PhononServer::askToRemoveDevices(const QStringList &devList, int type, cons
         KMessageBox::saveDontShowAgainYesNo(dontAskAgainName, result);
     }
 }
+
+#include "phononserver.moc"

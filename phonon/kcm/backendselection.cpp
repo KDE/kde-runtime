@@ -24,21 +24,22 @@
 #include <QtCore/QStringList>
 #include <QListWidget>
 
+#include <KCModuleProxy>
+#include <KConfig>
 #include <KDE/KApplication>
-#include <KDE/KCModuleProxy>
-#include <KDE/KConfig>
 #include <KDE/KIcon>
 #include <KDE/KIconLoader>
 #include <KDE/KRun>
 #include <KDE/KServiceTypeProfile>
 #include <KDE/KServiceTypeTrader>
+#include <KLocalizedString>
 
 BackendSelection::BackendSelection(QWidget *parent)
     : QWidget(parent)
 {
     setupUi(this);
 
-    m_messageWidget->setShown(false);
+    m_messageWidget->setVisible(false);
     m_messageWidget->setCloseButtonVisible(false);
     m_messageWidget->setMessageType(KMessageWidget::Information);
     m_messageWidget->setText(i18nc("@info User changed Phonon backend",
@@ -205,7 +206,7 @@ void BackendSelection::selectionChanged()
 
 void BackendSelection::openWebsite(const QString &url)
 {
-    new KRun(KUrl(url), window());
+    new KRun(QUrl(url), window());
 }
 
 void BackendSelection::up()

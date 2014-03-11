@@ -5,9 +5,9 @@ set(kded_phonon_SRCS
    hardwaredatabase.cpp
 )
 
-kde4_add_plugin(kded_phononserver ${kded_phonon_SRCS})
+add_library(kded_phononserver MODULE ${kded_phonon_SRCS})
 
-target_link_libraries(kded_phononserver ${KDE4_KDEUI_LIBS} ${KDE4_PHONON_LIBS} ${KDE4_SOLID_LIBS})
+target_link_libraries(kded_phononserver ${PHONON_LIBRARIES} KF5::ConfigCore KF5::DBusAddons KF5::Solid KF5::Service KF5::KDE4Support)
 
 if(ALSA_FOUND)
    target_link_libraries(kded_phononserver ${ASOUND_LIBRARY})

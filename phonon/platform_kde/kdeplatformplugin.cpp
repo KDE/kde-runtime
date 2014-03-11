@@ -25,7 +25,7 @@
 #include <QtCore/QtPlugin>
 #include <QtCore/QCoreApplication>
 
-#include <kaboutdata.h>
+#include <k4aboutdata.h>
 #include <kdebug.h>
 #include <kcomponentdata.h>
 #include <kglobal.h>
@@ -90,7 +90,7 @@ void KdePlatformPlugin::notification(const char *notificationName, const QString
         const char *actionSlot) const
 {
     KNotification *notification = new KNotification(notificationName);
-    notification->setComponentData(componentData());
+    notification->setComponentName(componentData().componentName());
     notification->setText(text);
     //notification->setPixmap(...);
     notification->addContext(QLatin1String("Application"), KGlobal::mainComponent().componentName());
@@ -104,7 +104,7 @@ void KdePlatformPlugin::notification(const char *notificationName, const QString
 QString KdePlatformPlugin::applicationName() const
 {
     ensureMainComponentData();
-    const KAboutData *ad = KGlobal::mainComponent().aboutData();
+    const K4AboutData *ad = KGlobal::mainComponent().aboutData();
     if (ad) {
         const QString programName = ad->programName();
         if (programName.isEmpty()) {
@@ -314,8 +314,6 @@ DeviceAccessList KdePlatformPlugin::deviceAccessListFor(
 
 
 } // namespace Phonon
-
-Q_EXPORT_PLUGIN2(phonon_platform_kde, Phonon::KdePlatformPlugin)
 
 #include "kdeplatformplugin.moc"
 // vim: sw=4 sts=4 et tw=100

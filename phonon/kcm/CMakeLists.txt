@@ -1,4 +1,4 @@
-macro_optional_find_package(PulseAudio 0.9.16)
+find_package(PulseAudio 0.9.16)
 set_package_properties(PulseAudio PROPERTIES DESCRIPTION "PulseAudio Audio Server"
                        URL "http://www.pulseaudio.org/"
                        TYPE OPTIONAL
@@ -18,22 +18,22 @@ add_feature_info ("Audio setup GUI" CANBERRA_FOUND
                  )
 
 set(kcmphonon_SRCS main.cpp devicepreference.cpp backendselection.cpp)
-kde4_add_ui_files(kcmphonon_SRCS devicepreference.ui backendselection.ui)
-set(kcmphonon_LIBS ${KDE4_PHONON_LIBS} ${KDE4_KCMUTILS_LIBS} ${KDE4_KIO_LIBS})
+qt5_wrap_ui(kcmphonon_SRCS devicepreference.ui backendselection.ui)
+set(kcmphonon_LIBS KF5::KDE4Support KF5::KCMUtils KF5::IconThemes KF5::ConfigWidgets KF5::KIOWidgets ${PHONON_LIBRARY})
 
 if(GLIB2_FOUND AND PULSEAUDIO_FOUND AND CANBERRA_FOUND)
   add_definitions(-DHAVE_PULSEAUDIO)
 
   set(kcmphonon_SRCS ${kcmphonon_SRCS} audiosetup.cpp testspeakerwidget.cpp)
-  kde4_add_ui_files(kcmphonon_SRCS audiosetup.ui)
+  qt5_wrap_ui(kcmphonon_SRCS audiosetup.ui)
 
   include_directories(${GLIB2_INCLUDE_DIR} ${PULSEAUDIO_INCLUDE_DIR} ${CANBERRA_INCLUDE_DIRS})
 
   set(kcmphonon_LIBS ${kcmphonon_LIBS} ${GLIB2_LIBRARIES} ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${CANBERRA_LIBRARIES})
 endif(GLIB2_FOUND AND PULSEAUDIO_FOUND AND CANBERRA_FOUND)
 
-kde4_add_plugin(kcm_phonon ${kcmphonon_SRCS})
-target_link_libraries(kcm_phonon ${kcmphonon_LIBS})
+add_library(kcm_phonon MODULE ${kcmphonon_SRCS})
+target_link_libraries(kcm_phonon ${kcmphonon_LIBS} KF5::ConfigWidgets)
 
 install(TARGETS kcm_phonon  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
@@ -44,9 +44,9 @@ install(FILES devicepreference.upd DESTINATION ${DATA_INSTALL_DIR}/kconf_update)
 
 ########### update helper ###############
 add_executable(phonon_devicepreference_update devicepreference_update.cpp)
-target_link_libraries(phonon_devicepreference_update ${KDE4_KDECORE_LIBS})
+target_link_libraries(phonon_devicepreference_update KF5::KDE4Support)
 install(TARGETS phonon_devicepreference_update DESTINATION ${LIB_INSTALL_DIR}/kconf_update_bin)
 
 add_executable(phonon_deviceuids_update deviceuids_update.cpp)
-target_link_libraries(phonon_deviceuids_update ${KDE4_KDECORE_LIBS})
+target_link_libraries(phonon_deviceuids_update KF5::KDE4Support)
 install(TARGETS phonon_deviceuids_update DESTINATION ${LIB_INSTALL_DIR}/kconf_update_bin)
