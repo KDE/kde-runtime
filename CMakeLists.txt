@@ -110,8 +110,8 @@ add_subdirectory(platforms)
 # Default settings, content and config
 add_subdirectory(l10n)
 add_subdirectory(localization)
-# add_subdirectory(doc) #FIXME need to fix kdoctools first: https://git.reviewboard.kde.org/r/116650/
 add_subdirectory(kde-menu)
+add_subdirectory(doc)
 
 # Artwork
 add_subdirectory(pics)
