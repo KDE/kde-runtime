@@ -10,10 +10,10 @@ if(ALSA_FOUND)
    qt5_add_resources(kde_PART_SRCS resources.qrc)
 endif(ALSA_FOUND)
 
-kservice_desktop_to_json(phononbackend phononbackend.desktop)
-
 add_library(kde MODULE ${kde_PART_SRCS})
 target_link_libraries(kde ${PHONON_LIBRARY} KF5::KDE4Support KF5::KIOWidgets)
+
+kservice_desktop_to_json(kde phononbackend.desktop)
 
 if(ALSA_FOUND)
    target_link_libraries(kde ${ASOUND_LIBRARY})
