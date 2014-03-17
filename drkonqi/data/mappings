@@ -37,19 +37,6 @@ bluedevil-network-panu=solid|bluetooth
 bluedevil-sendfile=solid|bluetooth
 bluedevil-wizard=solid|bluetooth
 
-#KDE Platform (Nepomuk)
-nepomukbackup=nepomuk|backupservice
-nepomukcleaner=nepomuk|general
-nepomukcontroller=nepomuk|controller
-nepomukindexer=nepomuk|fileindexer
-nepomukfileindexer=nepomuk|fileindexer
-nepomukfilewatch=nepomuk|filewatch
-nepomukstorage=nepomuk|storage
-nepomukserver=nepomuk|general
-nepomukservicestub=nepomuk|general
-nepomukshell=nepomukshell|Misc
-metadataextractor=nepomuk|general
-
 #KDE Plasma Desktop (Plasma & KRunner)
 plasma-desktop=plasma|general
 plasma-mid=plasma|general
@@ -100,11 +87,6 @@ akonadi_maildispatcher_agent=Akonadi|Mail Dispatcher Agent
 akonadi_mailfilter_agent=Akonadi|Mail Filter Agent
 akonadi_mailthreader_agent=Akonadi|general
 akonadi_mixedmaildir_resource=Akonadi|Mixed Maildir resource
-akonadi_nepomuk_feeder=Akonadi|Nepomuk Feeder Agents
-akonadi_nepomuk_calendar_feeder=Akonadi|Nepomuk Feeder Agents
-akonadi_nepomuk_contact_feeder=Akonadi|Nepomuk Feeder Agents
-akonadi_nepomuk_email_feeder=Akonadi|Nepomuk Feeder Agents
-akonadi_nepomuktag_resource=Akonadi|Nepomuk Feeder Agents
 akonadi_nntp_resource=Akonadi|general
 akonadi_pop3_resource=Akonadi|POP3 Resource
 akonadi_strigi_feeder=Akonadi|general
@@ -285,4 +267,4 @@ multimedia=kdemultimedia|taglib
 imaging=digikam|digikamimageplugins|kipiplugins
 networkmanager=knetworkmanager|Network Management|solid
 scanner=libksane
-filemanagement=konqueror|dolphin|nepomuk
+filemanagement=konqueror|dolphin

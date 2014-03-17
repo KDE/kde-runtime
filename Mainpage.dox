@@ -42,8 +42,6 @@ The following components are available:
 - <a href="../plasma/html/index.html">Plasma QML components</a>: some components usable as QML imports to access Plasma functionality
 - Various plugins for KUriFilter
 - Some basic localization information
-- The <a href="../nepomuk/html/index.html">Nepomuk daemon and helper
-  programs</a>
 - SolidUIServer, a KDED module to allow Solid to interact with
   the user, for example asking for passwords for encrypted volumes
 

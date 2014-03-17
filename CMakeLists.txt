@@ -65,10 +65,6 @@ if ( UNIX )
    add_subdirectory(solid-networkstatus)
 endif ( UNIX )
 
-if(NepomukCore_FOUND)
-#     add_subdirectory(nepomuk)
-endif(NepomukCore_FOUND)
-
 # Plugins/components required for basic utility
 add_subdirectory(kcontrol)
 add_subdirectory(kioslave)
