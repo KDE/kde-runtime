@@ -14,8 +14,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
  </authorgroup>
 
-	  <date>2011-11-28</date>
-	  <releaseinfo>4.8</releaseinfo>
+	  <date>2013-12-05</date>
+	  <releaseinfo>4.12</releaseinfo>
 
 	  <keywordset>
 		<keyword>KDE</keyword>
@@ -52,7 +52,9 @@ changes before you apply them.
 </para>
 
 <para>
-Each setting option in the various tabs has an individual Default button which
+Each setting option in the various tabs has an individual <inlinemediaobject>
+<imageobject><imagedata fileref="oxygen-22x22-document-revert.png" format="PNG"/>
+</imageobject></inlinemediaobject> default button which
 is activated whenever that setting is different to your country default value.
 Clicking on the button will restore only that setting to your Country default.
 </para>
@@ -85,7 +87,7 @@ only.
 
 <sect2 id="locale-languages">
 
-<title>Language</title>
+<title>Languages</title>
 
 <para>
 In this tab you can set your preferred languages for the &kde; Workspace and
@@ -97,9 +99,9 @@ The &kde; Workspace and Applications are written in American English and are
 translated into many different languages by teams of volunteers. These
 translations need to be installed first before you can choose to use them. The
 list of <guilabel>Available Languages</guilabel> shows what KDE translations
-are available on your system. If the language you want to use is not shown in
-this list then you will need to install it using the usual method for your
-system. Your system may have enabled the
+are installed and available on your system. If the language you want to use is 
+not shown in this list then you will need to install it using the usual method 
+for your system. Your system may have enabled the
 <guilabel>Install more languages</guilabel> button to make this easy for you.
 </para>
 
@@ -121,6 +123,13 @@ on the Add arrow button. You can remove a language from the
 on the Remove arrow button. You can change the order of preference in the
 <guilabel>Preferred Languages</guilabel> list by selecting a language and
 clicking on the Up or Down arrow button.
+</para>
+
+<para>Only languages listed in <guilabel>Preferred Languages</guilabel> and 
+<guilabel>Available Languages</guilabel> will be offered as options  
+for <guilabel>Primary language</guilabel> and <guilabel>Fallback language</guilabel> 
+in the <guilabel>Switch Application Language</guilabel> dialog of the 
+<guimenu>Help</guimenu> menu.
 </para>
 
 <note>
@@ -353,6 +362,39 @@ different epochs (start dates). For example, the Hebrew calendar is into its
 58th century (2010 Gregorian is roughly 5771 Hebrew), so may use a window of
 5750 to 5850.
 </para>
+
+<para>The <guilabel>Week number system</guilabel> option determines how the 
+week number will be calculated. There are four options available:</para>
+<variablelist>
+<varlistentry>
+<term><guilabel>ISO Week</guilabel></term>
+<listitem><para>Use the ISO standard Week Number. This will always use Monday 
+as the first day of the ISO week. This is the most commonly used system.
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Full First Week</guilabel></term>
+<listitem><para>The first week of the year starts on the first occurrence 
+of the <emphasis>First day of the week</emphasis>, and lasts for seven days. 
+Any days before Week 1 are considered part of the last week of the previous year. 
+This system is most commonly used in the USA.
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Partial First Week</guilabel></term>
+<listitem><para>The first week
+starts on the first day of the year. The second week of the year starts on
+the first occurrence of the <emphasis>First day of the week</emphasis>, and 
+lasts for seven days. The first week may not contain seven days.
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Simple Week</guilabel></term>
+<listitem><para>The first week starts on the first day of the year and lasts 
+seven days, with all new weeks starting on the same weekday as the first day 
+of the year.</para></listitem>
+</varlistentry>
+</variablelist>
 
 <para>
 In the <guilabel>First day of week</guilabel> drop-down box you can choose
