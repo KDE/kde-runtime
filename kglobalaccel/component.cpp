@@ -424,7 +424,7 @@ QStringList Component::shortcutNames( const QString &contextName) const
 
 bool Component::showKCM()
     {
-    return KRun::runCommand("kcmshell4 keys", NULL);
+    return KRun::runCommand("kcmshell5 keys", NULL);
     }
 
 

@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=kcmshell4 kcm_attica
+Exec=kcmshell5 kcm_attica
 Type=Service
 Icon=get-hot-new-stuff
 

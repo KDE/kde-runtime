@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=kcmshell4 kcmnotify
+Exec=kcmshell5 kcmnotify
 Icon=preferences-desktop-notification
 Type=Service
 X-KDE-ServiceTypes=KCModule

@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=kcmshell4 emoticons
+Exec=kcmshell5 emoticons
 Icon=face-smile
 Type=Service
 X-DocPath=kcontrol/emoticons/index.html

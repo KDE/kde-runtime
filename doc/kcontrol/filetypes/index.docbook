@@ -70,7 +70,7 @@ without opening and analyzing the format of each and every file.</para>
 <para>You can start this module  
 by opening &systemsettings; and selecting <guilabel>File Associations</guilabel> in the 
 <guilabel>Common Appearance and Behavior</guilabel> category. Alternatively, you can start it by
-typing <command>kcmshell4 filetypes</command> from the terminal or &krunner;.</para>
+typing <command>kcmshell5 filetypes</command> from the terminal or &krunner;.</para>
 
 <para>The file associations are organized into several categories, and
 at a minimum you will have:</para>

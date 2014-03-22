@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=kcmshell4 spellchecking
+Exec=kcmshell5 spellchecking
 Icon=tools-check-spelling
 Type=Service
 X-KDE-ServiceTypes=KCModule

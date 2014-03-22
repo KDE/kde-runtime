@@ -1128,7 +1128,7 @@ void PhononServer::askToRemoveDevices(const QStringList &devList, int type, cons
             {
                 if (button == KDialog::User1) {
                     kDebug(601) << "start kcm_phonon";
-                    QProcess::startDetached(QLatin1String("kcmshell4"), QStringList(QLatin1String("kcm_phonon")));
+                    QProcess::startDetached(QLatin1String("kcmshell5"), QStringList(QLatin1String("kcm_phonon")));
                     reject();
                 } else {
                     KDialog::slotButtonClicked(button);

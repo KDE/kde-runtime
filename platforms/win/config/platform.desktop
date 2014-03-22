@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=kcmshell4 platform
+Exec=kcmshell5 platform
 Icon=kde-windows
 Type=Service
 X-DocPath=kcontrol/platform/index.html
