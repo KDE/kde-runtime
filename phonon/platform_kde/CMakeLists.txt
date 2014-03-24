@@ -6,7 +6,7 @@ set(kde_PART_SRCS
 
 if(ALSA_FOUND)
    qt5_add_resources(kde_PART_SRCS resources.qrc)
-endif(ALSA_FOUND)
+endif()
 
 add_library(kde MODULE ${kde_PART_SRCS})
 target_link_libraries(kde ${PHONON_LIBRARY} KF5::KDE4Support KF5::KIOWidgets)
@@ -15,7 +15,7 @@ kservice_desktop_to_json(kde phononbackend.desktop)
 
 if(ALSA_FOUND)
    target_link_libraries(kde ${ASOUND_LIBRARY})
-endif(ALSA_FOUND)
+endif()
 
 if(NOT WIN32)
    set_target_properties(kde PROPERTIES
@@ -24,7 +24,7 @@ if(NOT WIN32)
                              BUILD_WITH_INSTALL_RPATH TRUE
                              INSTALL_RPATH ${LIB_INSTALL_DIR}
    )
-endif(NOT WIN32)
+endif()
 
 install(TARGETS kde DESTINATION ${PLUGIN_INSTALL_DIR}/plugins/phonon_platform)
 install(FILES phonon.notifyrc DESTINATION ${DATA_INSTALL_DIR}/phonon)

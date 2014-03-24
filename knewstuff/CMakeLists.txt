@@ -13,4 +13,4 @@ if(LIBATTICA_FOUND)
 
   install(TARGETS khotnewstuff-upload ${INSTALL_TARGETS_DEFAULT_ARGS} )
   install( FILES khotnewstuff_upload.knsrc DESTINATION  ${CONFIG_INSTALL_DIR} )
-endif(LIBATTICA_FOUND)
+endif()

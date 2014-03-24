@@ -17,12 +17,12 @@ set(kcm_componentchooser_SRCS
 if(NOT WIN32)
   set(kcm_componentchooser_SRCS ${kcm_componentchooser_SRCS}
     componentchooserterminal.cpp ktimerdialog.cpp)
-endif(NOT WIN32)
+endif()
 
 if(Q_WS_X11)
   set(kcm_componentchooser_SRCS ${kcm_componentchooser_SRCS}
      componentchooserwm.cpp )
-endif(Q_WS_X11)
+endif()
 
 qt5_wrap_ui(kcm_componentchooser_SRCS
   browserconfig_ui.ui
@@ -34,7 +34,7 @@ qt5_wrap_ui(kcm_componentchooser_SRCS
 
 if(NOT WIN32)
   qt5_wrap_ui(kcm_componentchooser_SRCS terminalemulatorconfig_ui.ui wmconfig_ui.ui)
-endif(NOT WIN32)
+endif()
 
 add_library(kcm_componentchooser MODULE ${kcm_componentchooser_SRCS})
 

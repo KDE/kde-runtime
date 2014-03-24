@@ -17,12 +17,12 @@ set_package_properties(NetworkManager PROPERTIES DESCRIPTION "The NetworkManager
 
 if(NETWORKMANAGER_FOUND)
     if(NM_0_7)
-        MESSAGE(STATUS "Adding in-process NetworkManager service-wart to kded module")
+        message(STATUS "Adding in-process NetworkManager service-wart to kded module")
         set(kded_networkstatus_PART_SRCS ${kded_networkstatus_PART_SRCS} networkmanagerstatus.cpp)
         include_directories(${NETWORKMANAGER_INCLUDE_DIRS})
         add_definitions(-DNM_BACKEND_ENABLED)
-    endif(NM_0_7)
-endif(NETWORKMANAGER_FOUND)
+    endif()
+endif()
 
 
 # FIXME: Re-enable the above when:
@@ -35,15 +35,15 @@ endif(NETWORKMANAGER_FOUND)
 #                       TYPE OPTIONAL
 #                       PURPOSE "Provides data input for Solid network status"
 #                      )
-SET(QNTRACK_FOUND FALSE) # Forced to false, see above FIXME
+set(QNTRACK_FOUND FALSE) # Forced to false, see above FIXME
 
 if(QNTRACK_FOUND)
-    MESSAGE(STATUS "Found QNtrack, will use it as a data input for Solid network status")
+    message(STATUS "Found QNtrack, will use it as a data input for Solid network status")
     set(kded_networkstatus_PART_SRCS ${kded_networkstatus_PART_SRCS} ntracknetworkstate.cpp)
     add_definitions(-DHAVE_QNTRACK)
-else(QNTRACK_FOUND)
-    MESSAGE(STATUS "QNtrack not found.  Can be used as a data input to Solid network status.  See https://launchpad.net/ntrack")
-endif(QNTRACK_FOUND)
+else()
+    message(STATUS "QNtrack not found.  Can be used as a data input to Solid network status.  See https://launchpad.net/ntrack")
+endif()
 
 include_directories(${QNTRACK_INCLUDE_DIR})
 qt5_add_dbus_adaptor(kded_networkstatus_PART_SRCS ../org.kde.Solid.Networking.Service.xml networkstatus.h NetworkStatusModule)
@@ -60,7 +60,7 @@ target_link_libraries(kded_networkstatus KF5::DBusAddons KF5::Solid KF5::KDE4Sup
 
 if(QNTRACK_FOUND)
    target_link_libraries(kded_networkstatus ${QNTRACK_LIBRARIES})
-endif(QNTRACK_FOUND)
+endif()
 
 install(TARGETS kded_networkstatus DESTINATION ${PLUGIN_INSTALL_DIR})
 

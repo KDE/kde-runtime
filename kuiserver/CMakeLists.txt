@@ -55,7 +55,7 @@ if (Q_WS_MAC)
     set_target_properties(kuiserver PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/Info.plist.template)
     set_target_properties(kuiserver PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "org.kde.kuiserver")
     set_target_properties(kuiserver PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "KDE UI Server")
-endif (Q_WS_MAC)
+endif ()
 
 
 target_link_libraries(kdeinit_kuiserver

@@ -1,6 +1,6 @@
 if ( UNIX )
    add_subdirectory(kdesu)
-endif ( UNIX )
+endif ()
 
 add_subdirectory(kcontrol)
 add_subdirectory(glossary)

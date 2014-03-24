@@ -13,4 +13,4 @@ if (UNIX)
    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/make_icontheme_symlink.cmake "exec_program(${CMAKE_COMMAND} ARGS -E create_symlink oxygen \"\$ENV{DESTDIR}${ICON_INSTALL_DIR}/default.kde4\")\n")
    # and add it as post-install script to any of the installed targets, so it will be executed during "make install"
    install(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/make_icontheme_symlink.cmake)
-endif (UNIX)
+endif ()

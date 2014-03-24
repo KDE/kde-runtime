@@ -7,7 +7,7 @@ check_function_exists("uname" HAVE_UNAME)
 
 if (NOT DEBUG_PACKAGE_INSTALLER_NAME)
     set (DEBUG_PACKAGE_INSTALLER_NAME "installdbgsymbols.sh")
-endif (NOT DEBUG_PACKAGE_INSTALLER_NAME)
+endif ()
 
 # find_package(KdepimLibs)
 set_package_properties(KdepimLibs PROPERTIES DESCRIPTION "The KDE PIM Libraries"
@@ -27,7 +27,7 @@ add_subdirectory( parser )
 add_subdirectory( tests )
 if ( WIN32 )
     add_subdirectory( kdbgwin )
-endif ( WIN32 )
+endif ()
 
 set(drkonqi_SRCS
     main.cpp

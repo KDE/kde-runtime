@@ -1,8 +1,8 @@
 if (WIN32)
     set(kded_ktimezoned_SRCS ktimezoned_win.cpp)
-else (WIN32)
+else ()
     set(kded_ktimezoned_SRCS ktimezoned.cpp)
-endif (WIN32)
+endif ()
 
 add_library(kded_ktimezoned MODULE ${kded_ktimezoned_SRCS})
 

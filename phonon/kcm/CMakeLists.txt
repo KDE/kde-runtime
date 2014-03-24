@@ -30,7 +30,7 @@ if(GLIB2_FOUND AND PULSEAUDIO_FOUND AND CANBERRA_FOUND)
   include_directories(${GLIB2_INCLUDE_DIR} ${PULSEAUDIO_INCLUDE_DIR} ${CANBERRA_INCLUDE_DIRS})
 
   set(kcmphonon_LIBS ${kcmphonon_LIBS} ${GLIB2_LIBRARIES} ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${CANBERRA_LIBRARIES})
-endif(GLIB2_FOUND AND PULSEAUDIO_FOUND AND CANBERRA_FOUND)
+endif()
 
 add_library(kcm_phonon MODULE ${kcmphonon_SRCS})
 target_link_libraries(kcm_phonon ${kcmphonon_LIBS} KF5::ConfigWidgets)

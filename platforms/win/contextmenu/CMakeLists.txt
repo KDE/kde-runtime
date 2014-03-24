@@ -14,15 +14,15 @@ if(MINGW)
     )
 
     add_definitions(-DUNICODE)
-else(MINGW)
+else()
     set(contextsrc ${contextsrc} kdecm.rc)
-endif(MINGW)
+endif()
 set(contextsrc ${contextsrc} kdecm.def)
 add_library( kdecm SHARED ${contextsrc} )
 
 if(MINGW)
     set_target_properties(kdecm PROPERTIES LINK_FLAGS "-Wl,--kill-at")
-endif(MINGW)
+endif()
 
 
 target_link_libraries(kdecm ole32 comctl32 uuid Qt5::Core Qt5::DBus )

@@ -15,5 +15,5 @@ if( NOT WIN32 )
 								${CMAKE_CURRENT_SOURCE_DIR}/backtraceparsertest_data backtraceparsertest_data
 						   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 						  )
-	endif ( NOT ${CMAKE_CURRENT_BINARY_DIR} EQUAL ${CMAKE_CURRENT_SOURCE_DIR} )
-endif( NOT WIN32 )
+	endif ()
+endif()
