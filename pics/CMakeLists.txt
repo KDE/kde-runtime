@@ -1,4 +1,3 @@
-add_subdirectory( hicolor )
 add_subdirectory( emoticons )
 
 add_executable(ksvgtopng ksvgtopng.cpp)
