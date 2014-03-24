@@ -1,9 +1,5 @@
-add_subdirectory( emoticons )
-
-add_executable(ksvgtopng ksvgtopng.cpp)
-ecm_mark_nongui_executable(ksvgtopng)
-target_link_libraries(ksvgtopng Qt5::Svg)
-install(TARGETS ksvgtopng ${INSTALL_TARGETS_DEFAULT_ARGS})
+add_subdirectory(emoticons)
+add_subdirectory(ksvgtopng)
 
 # create a symlink for the default icon theme,
 # so that fallbacks work even for themes that don't inherit from oxygen
