@@ -39,7 +39,7 @@
 
 #include <KPluginFactory>
 #include <KPluginLoader>
-#include "kcmkded.moc"
+#include <KLocalizedString>
 
 K_PLUGIN_FACTORY(KDEDFactory,
         registerPlugin<KDEDConfig>();
@@ -66,13 +66,13 @@ enum StartupColumns
 static const int LibraryRole = Qt::UserRole + 1;
 
 KDEDConfig::KDEDConfig(QWidget* parent, const QVariantList &) :
-	KCModule( KDEDFactory::componentData(), parent )
+	KCModule( parent )
 {
 	KAboutData *about =
-		new KAboutData( I18N_NOOP( "kcmkded" ), 0, ki18n( "KDE Service Manager" ),
-				0, KLocalizedString(), KAboutData::License_GPL,
-				ki18n( "(c) 2002 Daniel Molkentin" ) );
-	about->addAuthor(ki18n("Daniel Molkentin"),KLocalizedString(),"molkentin@kde.org");
+		new KAboutData( I18N_NOOP( "kcmkded" ), 0, i18n( "KDE Service Manager" ),
+				0, QString(), KAboutData::License_GPL,
+				i18n( "(c) 2002 Daniel Molkentin" ) );
+	about->addAuthor(i18n("Daniel Molkentin"), QString(),"molkentin@kde.org");
 	setAboutData( about );
 	setButtons(Apply|Default|Help);
 	setQuickHelp( i18n("<h1>Service Manager</h1><p>This module allows you to have an overview of all plugins of the "
@@ -188,7 +188,7 @@ void KDEDConfig::load()
 		QString servicePath = (*it)->entryPath();
 		kDebug() << servicePath;
 
-		const KDesktopFile file( "services", servicePath );
+        const KDesktopFile file(QStandardPaths::GenericDataLocation, "kde5/services/" + servicePath );
 		const KConfigGroup grp = file.desktopGroup();
 		// The logic has to be identical to Kded::initModules.
 		// They interpret X-KDE-Kded-autoload as false if not specified
@@ -248,7 +248,7 @@ void KDEDConfig::save()
 		QString servicePath = (*it)->entryPath();
 		kDebug() << servicePath;
 
-		const KDesktopFile file( "services", servicePath );
+        const KDesktopFile file(QStandardPaths::GenericDataLocation, "kde5/services/" + servicePath );
 		const KConfigGroup grp = file.desktopGroup();
 		if (grp.readEntry("X-KDE-Kded-autoload", false)){
 
@@ -481,3 +481,4 @@ void KDEDConfig::slotItemChecked(QTreeWidgetItem*, int column)
 	}
 }
 
+#include "kcmkded.moc"

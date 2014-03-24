@@ -25,15 +25,12 @@
 
 #include <QtDBus/QtDBus>
 
-//Added by qt3to4:
-
 #include <klocale.h>
 #include <kaboutdata.h>
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 
-#include <kdnssd/settings.h>
-#include <kdnssd/domainbrowser.h>
+#include <dnssd/domainbrowser.h>
 
 #define MDNSD_CONF "/etc/mdnsd.conf"
 #define MDNSD_PID "/var/run/mdnsd.pid"
@@ -42,16 +39,16 @@ K_PLUGIN_FACTORY(KCMDnssdFactory, registerPlugin<KCMDnssd>();)
 K_EXPORT_PLUGIN(KCMDnssdFactory("kcmkdnssd"))
 
 KCMDnssd::KCMDnssd(QWidget *parent, const QVariantList&)
-		: KCModule( KCMDnssdFactory::componentData(), parent)
+		: KCModule( parent)
 {
 
     widget = new Ui_ConfigDialog();
     widget->setupUi(this);
     setAboutData(new KAboutData("kcm_kdnssd", 0,
-	                            ki18n("ZeroConf configuration"),0,KLocalizedString(),KAboutData::License_GPL,
-	                            ki18n("(C) 2004-2007 Jakub Stachowski")));
+	                            i18n("ZeroConf configuration"),0, QString(),KAboutData::License_GPL,
+	                            i18n("(C) 2004-2007 Jakub Stachowski")));
     setQuickHelp(i18n("Setup services browsing with ZeroConf"));
-    addConfig(DNSSD::Configuration::self(),this);
+    addConfig(KDNSSD::Configuration::self(),this);
     setButtons( Default|Apply );
 }
 
