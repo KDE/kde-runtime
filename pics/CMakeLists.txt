@@ -1,4 +1,3 @@
-add_subdirectory(emoticons)
 add_subdirectory(ksvgtopng)
 
 # create a symlink for the default icon theme,
