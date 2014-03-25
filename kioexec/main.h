@@ -29,6 +29,7 @@
 #include <QtCore/QTimer>
 
 #include <QUrl>
+#include <QDateTime>
 
 namespace KIO { class Job; }
 
@@ -57,7 +58,7 @@ protected:
     struct FileInfo {
        QString path;
        QUrl url;
-       int time;
+       QDateTime time;
     };
     QList<FileInfo> fileList;
     int jobCounter;
