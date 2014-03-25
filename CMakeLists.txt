@@ -101,7 +101,9 @@ add_subdirectory(menu)
 add_subdirectory(solid-hardware)
 
 # Platform-specific integration
-add_subdirectory(platforms)
+if(WIN32)
+    add_subdirectory(kwindowsaddons)
+endif()
 
 # Default settings, content and config
 add_subdirectory(l10n)
