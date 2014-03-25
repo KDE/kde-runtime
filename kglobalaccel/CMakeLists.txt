@@ -40,25 +40,25 @@ if ( Q_WS_QWS )
 endif ()
 
 # kf5_add_kdeinit_executable( kglobalaccel NOGUI ${kglobalaccel_SRCS} )
-kf5_add_kdeinit_executable( kglobalaccel ${kglobalaccel_SRCS} )
-target_link_libraries(kdeinit_kglobalaccel Qt5::DBus KF5::GlobalAccel KF5::KCMUtils KF5::I18n KF5::XmlGui KF5::KDE4Support)
+kf5_add_kdeinit_executable( kglobalaccel5 ${kglobalaccel_SRCS} )
+target_link_libraries(kdeinit_kglobalaccel5 Qt5::DBus KF5::GlobalAccel KF5::KCMUtils KF5::I18n KF5::XmlGui KF5::KDE4Support)
 
 if (${XCB_XCB_FOUND} AND ${XCB_KEYSYMS_FOUND})
-    target_link_libraries(kdeinit_kglobalaccel Qt5::X11Extras ${XCB_XCB_LIBRARY} ${XCB_KEYSYMS_LIBRARY})
+    target_link_libraries(kdeinit_kglobalaccel5 Qt5::X11Extras ${XCB_XCB_LIBRARY} ${XCB_KEYSYMS_LIBRARY})
 endif()
 
 if(Q_WS_MAC)
-   target_link_libraries(kdeinit_kglobalaccel ${CARBON_LIBRARY})
+   target_link_libraries(kdeinit_kglobalaccel5 ${CARBON_LIBRARY})
 endif()
-target_link_libraries(kglobalaccel kdeinit_kglobalaccel)
+target_link_libraries(kglobalaccel5 kdeinit_kglobalaccel5)
 
 # Install application and configuration
-install( TARGETS kdeinit_kglobalaccel ${INSTALL_TARGETS_DEFAULT_ARGS} )
-install( TARGETS kglobalaccel ${INSTALL_TARGETS_DEFAULT_ARGS} )
+install( TARGETS kdeinit_kglobalaccel5 ${INSTALL_TARGETS_DEFAULT_ARGS} )
+install( TARGETS kglobalaccel5 ${INSTALL_TARGETS_DEFAULT_ARGS} )
 # install( FILES kglobalaccel.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
-install( FILES kglobalaccel.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES kglobalaccel.desktop  DESTINATION ${SERVICES_INSTALL_DIR} RENAME kglobalaccel5.desktop)
 # KNotify configuration
-install( FILES kglobalaccel.notifyrc DESTINATION ${DATA_INSTALL_DIR}/kglobalaccel )
+install( FILES kglobalaccel.notifyrc DESTINATION ${DATA_INSTALL_DIR}/kglobalaccel RENAME kglobalaccel5.notifyrc )
 
 # Install some update file (not yet working)
 #install( FILES kconf/kdedglobalaccel_kde42.upd DESTINATION ${DATA_INSTALL_DIR}/kconf_update)
