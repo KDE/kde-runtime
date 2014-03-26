@@ -24,28 +24,23 @@
 #include <QtCore/QFile>
 #include <QtCore/Q_PID>
 
-#include <QtWidgets/QApplication>
-#include <kdeversion.h>
-//#include <kstandarddirs.h>
-#include <qdebug.h>
-#include <kmessagebox.h>
-#include <kaboutdata.h>
 #include <kio/job.h>
-#include <krun.h>
-#include <kglobal.h>
-#include <kio/netaccess.h>
-#include <kservice.h>
-#include <klocale.h>
+#include <kio/copyjob.h>
+#include <kio/desktopexecparser.h>
+#include <QApplication>
+#include <QDebug>
+#include <KMessageBox>
+#include <KAboutData>
+#include <KRun>
+#include <KService>
 #include <KLocalizedString>
-#include <KStandardDirs>
-#include <kdeversion.h>
-#include <kaboutdata.h>
-#include <kstartupinfo.h>
-#include <kshell.h>
-#include <kde_file.h>
-#include <qcommandlineparser.h>
-#include <qcommandlineoption.h>
+#include <KAboutData>
+
+#include <QCommandLineParser>
+#include <QCommandLineOption>
 #include <QStandardPaths>
+#include <QThread>
+#include <QFileInfo>
 
 static const char description[] =
         I18N_NOOP("KIO Exec - Opens remote files, watches modifications, asks for upload");
@@ -53,18 +48,20 @@ static const char description[] =
 
 KIOExec::KIOExec(const QStringList &args, bool tempFiles, const QString &suggestedFileName)
     : mExited(false)
+    , mTempFiles(tempFiles)
+    , mSuggestedFileName(suggestedFileName)
+    , expectedCounter(0)
+    , command(args.first())
+    , jobCounter(0)
 {
-    mTempFiles = tempFiles;
-    mSuggestedFileName = suggestedFileName;
-    expectedCounter = 0;
-    jobCounter = 0;
-    command = args.first();
     qDebug() << "command=" << command;
 
     for ( int i = 1; i < args.count(); i++ )
     {
-        QUrl url(args.value(i));
-	url = KIO::NetAccess::mostLocalUrl( url, 0 );
+        KIO::StatJob* mostlocal = KIO::mostLocalUrl( args.value(i) );
+        bool b = mostlocal->exec();
+        Q_ASSERT(b);
+        QUrl url = mostlocal->mostLocalUrl();
 
         //kDebug() << "url=" << url.url() << " filename=" << url.fileName();
         // A local file, not an URL ?
@@ -82,7 +79,7 @@ KIOExec::KIOExec(const QStringList &args, bool tempFiles, const QString &suggest
             if ( !url.isValid() )
                 KMessageBox::error( 0L, i18n( "The URL %1\nis malformed" ,  url.url() ) );
             else if ( mTempFiles )
-                KMessageBox::error( 0L, i18n( "Remote URL %1\nnot allowed with --tempfiles switch" ,  url.url() ) );
+                KMessageBox::error( 0L, i18n( "Remote URL %1\nnot allowed with --tempfiles switch" ,  url.toDisplayString() ) );
             else
             // We must fetch the file
             {
@@ -92,8 +89,8 @@ KIOExec::KIOExec(const QStringList &args, bool tempFiles, const QString &suggest
                 // Build the destination filename, in ~/.kde/cache-*/krun/
                 // Unlike KDE-1.1, we put the filename at the end so that the extension is kept
                 // (Some programs rely on it)
-                QString tmp = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + '/' + "krun/"  +
-                              QString("%1_%2_%3").arg(getpid()).arg(jobCounter++).arg(fileName);
+                QString tmp = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/krun/"  +
+                              QString("%1_%2_%3").arg(QCoreApplication::applicationPid()).arg(jobCounter++).arg(fileName);
                 FileInfo file;
                 file.path = tmp;
                 file.url = url;
@@ -136,7 +133,7 @@ void KIOExec::slotResult( KJob * job )
         QList<FileInfo>::Iterator it = fileList.begin();
         for(;it != fileList.end(); ++it)
         {
-           if ((*it).path == path)
+           if (it->path == path)
               break;
         }
 
@@ -174,16 +171,17 @@ void KIOExec::slotRunApp()
     QList<FileInfo>::Iterator it = fileList.begin();
     for ( ; it != fileList.end() ; ++it )
     {
-        KDE_struct_stat buff;
-        (*it).time = KDE_stat( QFile::encodeName((*it).path), &buff ) ? 0 : buff.st_mtime;
+        QFileInfo info(QFile::encodeName(it->path));
+        it->time = info.lastModified();
         QUrl url;
-        url.setPath((*it).path);
+        url.setPath(it->path);
         list << url;
     }
 
-    QStringList params = KRun::processDesktopExec(service, list);
+    KIO::DesktopExecParser execParser(service, list);
+    QStringList params = execParser.resultingArguments();
 
-    qDebug() << "EXEC " << KShell::joinArgs( params );
+    qDebug() << "EXEC " << params.join(" ");
 
 #ifdef Q_WS_X11
     // propagate the startup identification to the started process
@@ -202,14 +200,12 @@ void KIOExec::slotRunApp()
     qDebug() << "EXEC done";
 
     // Test whether one of the files changed
-    it = fileList.begin();
-    for( ;it != fileList.end(); ++it )
+    for(it = fileList.begin(); it != fileList.end(); ++it )
     {
-        KDE_struct_stat buff;
-        QString src = (*it).path;
-        QUrl dest = (*it).url;
-        if ( (KDE::stat( src, &buff ) == 0) &&
-             ((*it).time != buff.st_mtime) )
+        QString src = it->path;
+        QUrl dest = it->url;
+        QFileInfo info(src);
+        if ( info.exists() && (it->time != info.lastModified()) )
         {
             if ( mTempFiles )
             {
@@ -226,9 +222,10 @@ void KIOExec::slotRunApp()
                 {
                     qDebug() << "src='" << src << "'  dest='" << dest << "'";
                     // Do it the synchronous way.
-                    if ( !KIO::NetAccess::upload( src, dest, 0 ) )
+                    KIO::CopyJob* job = KIO::copy(src, dest);
+                    if ( !job->exec() )
                     {
-                        KMessageBox::error( 0L, KIO::NetAccess::lastErrorString() );
+                        KMessageBox::error( 0L, job->errorText() );
                         continue; // don't delete the temp file
                     }
                 }
@@ -239,9 +236,9 @@ void KIOExec::slotRunApp()
             // Wait for a reasonable time so that even if the application forks on startup (like OOo or amarok)
             // it will have time to start up and read the file before it gets deleted. #130709.
             qDebug() << "sleeping...";
-            sleep(180); // 3 mn
+            QThread::currentThread()->sleep(180); // 3 mn
             qDebug() << "about to delete " << src;
-            unlink( QFile::encodeName(src) );
+            QFile( QFile::encodeName(src) ).remove();
         }
     }
 
