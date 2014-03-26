@@ -50,6 +50,8 @@ find_package(KF5 CONFIG REQUIRED COMPONENTS
 
 include_directories (${CMAKE_CURRENT_BINARY_DIR})
 
+add_subdirectory(kde-cli-tools)
+
 # Background processes
 add_subdirectory(kpasswdserver)
 add_subdirectory(kdontchangethehostname)
@@ -74,29 +76,19 @@ add_subdirectory(phonon)
 
 # UI Helper applications
 add_subdirectory(drkonqi)
-add_subdirectory(kcmshell)
 add_subdirectory(kdebugdialog)
 add_subdirectory(khelpcenter)
 add_subdirectory(knetattach)
 add_subdirectory(knewstuff)
-add_subdirectory(keditfiletype)
 if ( UNIX )
    add_subdirectory(kdesu)
 endif ()
 
 # Command-line tools (e.g. for shell scripts)
-if ( UNIX )
-   add_subdirectory(kdeeject)
-endif ()
 add_subdirectory(kfile)
 add_subdirectory(kioclient)
 add_subdirectory(kioexec)
-add_subdirectory(ktraderclient)
 add_subdirectory(kreadconfig)
-add_subdirectory(kmimetypefinder)
-if (Qt5X11Extras_FOUND)
-  add_subdirectory(kstart)
-endif ()
 add_subdirectory(menu)
 add_subdirectory(solid-hardware)
 
