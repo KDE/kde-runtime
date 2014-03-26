@@ -50,7 +50,10 @@ find_package(KF5 CONFIG REQUIRED COMPONENTS
 
 include_directories (${CMAKE_CURRENT_BINARY_DIR})
 
+#directories to split
 add_subdirectory(kde-cli-tools)
+add_subdirectory(kioslave)
+add_subdirectory(kioslave-extra)
 
 # Background processes
 add_subdirectory(kpasswdserver)
@@ -69,7 +72,6 @@ endif ()
 
 # Plugins/components required for basic utility
 add_subdirectory(kcontrol)
-add_subdirectory(kioslave)
 add_subdirectory(kurifilter-plugins)
 add_subdirectory(phonon)
 # add_subdirectory(renamedlgplugins)
