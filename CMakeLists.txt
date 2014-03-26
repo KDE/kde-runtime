@@ -86,7 +86,6 @@ endif ()
 # Command-line tools (e.g. for shell scripts)
 add_subdirectory(kfile)
 add_subdirectory(kioclient)
-add_subdirectory(kioexec)
 add_subdirectory(kreadconfig)
 add_subdirectory(solid-hardware)
 
