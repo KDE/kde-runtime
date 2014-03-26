@@ -56,18 +56,16 @@ add_subdirectory(kioslave)
 add_subdirectory(kioslave-extra)
 add_subdirectory(plasma-workspace)
 add_subdirectory(plasma-desktop)
+add_subdirectory(khelpcenter)
 
 # Background processes
 add_subdirectory(kpasswdserver)
 add_subdirectory(kdontchangethehostname)
 add_subdirectory(kglobalaccel)
 add_subdirectory(knotify)
-add_subdirectory(ktimezoned)
-add_subdirectory(kuiserver)
 
 if ( UNIX )
    add_subdirectory(soliduiserver)
-   add_subdirectory(solidautoeject)
    add_subdirectory(solid-device-automounter)
    add_subdirectory(solid-networkstatus)
 endif ()
@@ -75,14 +73,11 @@ endif ()
 # Plugins/components required for basic utility
 add_subdirectory(kcontrol)
 add_subdirectory(kurifilter-plugins)
-add_subdirectory(phonon)
 # add_subdirectory(renamedlgplugins)
 
 # UI Helper applications
 add_subdirectory(drkonqi)
 add_subdirectory(kdebugdialog)
-add_subdirectory(khelpcenter)
-add_subdirectory(knetattach)
 add_subdirectory(knewstuff)
 if ( UNIX )
    add_subdirectory(kdesu)
@@ -93,7 +88,6 @@ add_subdirectory(kfile)
 add_subdirectory(kioclient)
 add_subdirectory(kioexec)
 add_subdirectory(kreadconfig)
-add_subdirectory(menu)
 add_subdirectory(solid-hardware)
 
 # Platform-specific integration
