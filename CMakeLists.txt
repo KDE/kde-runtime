@@ -54,6 +54,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR})
 add_subdirectory(kde-cli-tools)
 add_subdirectory(kioslave)
 add_subdirectory(kioslave-extra)
+add_subdirectory(plasma-desktop)
 
 # Background processes
 add_subdirectory(kpasswdserver)
