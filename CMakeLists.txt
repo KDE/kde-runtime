@@ -57,10 +57,10 @@ add_subdirectory(kioslave-extra)
 add_subdirectory(plasma-workspace)
 add_subdirectory(plasma-desktop)
 add_subdirectory(khelpcenter)
+add_subdirectory(oxygen)
 
 # Background processes
 add_subdirectory(kglobalaccel)
-add_subdirectory(knotify)
 
 if ( UNIX )
    add_subdirectory(soliduiserver)
