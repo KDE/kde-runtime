@@ -71,7 +71,6 @@ endif ()
 # Plugins/components required for basic utility
 add_subdirectory(kcontrol)
 add_subdirectory(kurifilter-plugins)
-# add_subdirectory(renamedlgplugins)
 
 # UI Helper applications
 add_subdirectory(drkonqi)
