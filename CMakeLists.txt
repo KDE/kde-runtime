@@ -59,7 +59,6 @@ add_subdirectory(plasma-desktop)
 add_subdirectory(khelpcenter)
 
 # Background processes
-add_subdirectory(kdontchangethehostname)
 add_subdirectory(kglobalaccel)
 add_subdirectory(knotify)
 
