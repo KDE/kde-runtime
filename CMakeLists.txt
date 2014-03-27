@@ -98,7 +98,7 @@ add_subdirectory(doc)
 
 # KDE integration for attica
 if(LIBATTICA_FOUND)
-    add_subdirectory(attica)
+    add_subdirectory(attica-kde)
 endif()
 
 configure_file (config-runtime.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-runtime.h )
