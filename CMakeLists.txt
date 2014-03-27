@@ -96,9 +96,6 @@ add_subdirectory(localization)
 add_subdirectory(kde-menu)
 add_subdirectory(doc)
 
-# Artwork
-add_subdirectory(pics)
-
 # KDE integration for attica
 if(LIBATTICA_FOUND)
     add_subdirectory(attica)
