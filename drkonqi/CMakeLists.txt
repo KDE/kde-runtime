@@ -2,6 +2,8 @@ project(drkonqi)
 
 include (CheckFunctionExists)
 
+find_package(KF5XmlRpcClient CONFIG)
+
 check_function_exists("strsignal" HAVE_STRSIGNAL)
 check_function_exists("uname" HAVE_UNAME)
 
@@ -31,23 +33,15 @@ endif ()
 
 set(drkonqi_SRCS
     main.cpp
-#     bugzillalib.cpp
     drkonqidialog.cpp
     statuswidget.cpp
     aboutbugreportingdialog.cpp
-#     reportassistantdialog.cpp
-#     reportassistantpage.cpp
-#     reportassistantpages_base.cpp
-#     reportassistantpages_bugzilla.cpp
-#     reportassistantpages_bugzilla_duplicates.cpp
-#     reportinterface.cpp
     backtraceratingwidget.cpp
     backtracewidget.cpp
     backtracegenerator.cpp
     drkonqi.cpp
     drkonqibackends.cpp
     detachedprocessmonitor.cpp
-#    productmapping.cpp
     debugpackageinstaller.cpp
     systeminformation.cpp
     crashedapplication.cpp
@@ -56,24 +50,40 @@ set(drkonqi_SRCS
     debuggermanager.cpp
     applicationdetailsexamples.cpp
     gdbhighlighter.cpp
-#     parsebugbacktraces.cpp # Requires kxmlrpcclient
-#    duplicatefinderjob.cpp
 )
+
+if(KF5XmlRpcClient_FOUND)
+    set(drkonqi_SRCS
+        ${drkonqi_SRCS}
+        bugzillalib.cpp
+        reportassistantdialog.cpp
+        reportassistantpage.cpp
+        reportassistantpages_base.cpp
+        reportassistantpages_bugzilla.cpp
+        reportassistantpages_bugzilla_duplicates.cpp
+        reportinterface.cpp
+        productmapping.cpp
+        parsebugbacktraces.cpp # Requires kxmlrpcclient
+        duplicatefinderjob.cpp
+    )
+    qt5_wrap_ui(drkonqi_SRCS
+        ui/assistantpage_introduction.ui
+        ui/assistantpage_bugawareness.ui
+        ui/assistantpage_conclusions.ui
+        ui/assistantpage_conclusions_dialog.ui
+        ui/assistantpage_bugzilla_login.ui
+        ui/assistantpage_bugzilla_duplicates.ui
+        ui/assistantpage_bugzilla_duplicates_dialog.ui
+        ui/assistantpage_bugzilla_duplicates_dialog_confirmation.ui
+        ui/assistantpage_bugzilla_information.ui
+        ui/assistantpage_bugzilla_preview.ui
+        ui/assistantpage_bugzilla_send.ui
+    )
+endif()
 
 qt5_wrap_ui(drkonqi_SRCS
     ui/maindialog.ui
     ui/backtracewidget.ui
-    ui/assistantpage_introduction.ui
-    ui/assistantpage_bugawareness.ui
-    ui/assistantpage_conclusions.ui
-    ui/assistantpage_conclusions_dialog.ui
-    ui/assistantpage_bugzilla_login.ui
-    ui/assistantpage_bugzilla_duplicates.ui
-    ui/assistantpage_bugzilla_duplicates_dialog.ui
-    ui/assistantpage_bugzilla_duplicates_dialog_confirmation.ui
-    ui/assistantpage_bugzilla_information.ui
-    ui/assistantpage_bugzilla_preview.ui
-    ui/assistantpage_bugzilla_send.ui
 )
 
 # if BACKTRACE_PARSER_DEBUG is enabled, it will show both the
@@ -88,9 +98,12 @@ target_link_libraries(drkonqi
     KF5::IconThemes
     KF5::WindowSystem
     KF5::Crash
-#    ${KDEPIMLIBS_KXMLRPCCLIENT_LIBRARY}
     drkonqi_backtrace_parser
 )
+
+if(KF5XmlRpcClient_FOUND)
+    target_link_libraries(drkonqi KF5::XmlRpcClient KF5::Wallet KF5::WebKit)
+endif()
 
 install(TARGETS drkonqi DESTINATION ${LIBEXEC_INSTALL_DIR})
 

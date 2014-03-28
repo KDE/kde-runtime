@@ -22,6 +22,7 @@
 #include <QCloseEvent>
 
 #include <KMessageBox>
+#include <KLocalizedString>
 
 #include "drkonqi.h"
 
@@ -44,7 +45,6 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
         m_reportInterface(new ReportInterface(this)),
         m_canClose(false)
 {
-    KGlobal::ref();
     setAttribute(Qt::WA_DeleteOnClose, true);
 
     //Set window properties
@@ -170,7 +170,6 @@ ReportAssistantDialog::ReportAssistantDialog(QWidget * parent) :
 
 ReportAssistantDialog::~ReportAssistantDialog()
 {
-    KGlobal::deref();
 }
 
 void ReportAssistantDialog::connectSignals(ReportAssistantPage * page)
@@ -183,8 +182,7 @@ void ReportAssistantDialog::connectSignals(ReportAssistantPage * page)
 void ReportAssistantDialog::currentPageChanged_slot(KPageWidgetItem * current , KPageWidgetItem * before)
 {
     //Page changed
-
-    enableButton(KDialog::Cancel, true);
+    buttonBox()->button(QDialogButtonBox::Cancel)->setEnabled(true);
     m_canClose = false;
 
     //Save data of the previous page
@@ -196,22 +194,22 @@ void ReportAssistantDialog::currentPageChanged_slot(KPageWidgetItem * current , 
     //Load data of the current(new) page
     if (current) {
         ReportAssistantPage* currentPage = dynamic_cast<ReportAssistantPage*>(current->widget());
-        enableNextButton(currentPage->isComplete());
+        nextButton()->setEnabled(currentPage->isComplete());
         currentPage->aboutToShow();
     }
 
     //If the current page is the last one, disable all the buttons until the bug is sent
     if (current->name() == QLatin1String(PAGE_BZSEND_ID)) {
-        enableNextButton(false);
-        enableButton(KDialog::User3, false); //Back button
-        enableButton(KDialog::User1, false);
+        nextButton()->setEnabled(false);
+        backButton()->setEnabled(false);
+        finishButton()->setEnabled(false);
     }
 }
 
 void ReportAssistantDialog::completeChanged(ReportAssistantPage* page, bool isComplete)
 {
     if (page == dynamic_cast<ReportAssistantPage*>(currentPage()->widget())) {
-        enableNextButton(isComplete);
+        nextButton()->setEnabled(isComplete);
     }
 }
 
@@ -219,10 +217,10 @@ void ReportAssistantDialog::assistantFinished(bool showBack)
 {
     //The assistant finished: allow the user to close the dialog normally
 
-    enableNextButton(false);
-    enableButton(KDialog::User3, showBack); //Back button
-    enableButton(KDialog::User1, true);
-    enableButton(KDialog::Cancel, false);
+    nextButton()->setEnabled(false);
+    backButton()->setEnabled(showBack);
+    finishButton()->setEnabled(true);
+    buttonBox()->button(QDialogButtonBox::Cancel)->setEnabled(false);
 
     m_canClose = true;
 }
@@ -322,11 +320,6 @@ void ReportAssistantDialog::back()
     }
 
     KAssistantDialog::back();
-}
-
-void ReportAssistantDialog::enableNextButton(bool enabled)
-{
-    enableButton(KDialog::User2, enabled);
 }
 
 void ReportAssistantDialog::reject()

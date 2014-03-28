@@ -50,8 +50,6 @@ private Q_SLOTS:
 
     void assistantFinished(bool);
 
-    void enableNextButton(bool);
-
     void showHelp();
 
     void next();

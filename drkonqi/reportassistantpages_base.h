@@ -21,6 +21,7 @@
 #define REPORTASSISTANTPAGES__BASE__H
 
 #include <QtCore/QPointer>
+#include <KDialog>
 
 #include "reportassistantdialog.h"
 #include "reportassistantpage.h"

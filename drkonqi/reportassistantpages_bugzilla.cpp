@@ -824,7 +824,7 @@ void UnhandledErrorDialog::saveErrorMessage()
     QString defaultName = QLatin1String("drkonqi-unhandled-bugzilla-error.html");
     QWeakPointer<KFileDialog> dlg = new KFileDialog(defaultName, QString(), this);
     dlg.data()->setSelection(defaultName);
-    dlg.data()->setCaption(i18nc("@title:window","Select Filename"));
+    dlg.data()->setWindowTitle(i18nc("@title:window","Select Filename"));
     dlg.data()->setOperationMode(KFileDialog::Saving);
     dlg.data()->setMode(KFile::File);
     dlg.data()->setConfirmOverwrite(true);

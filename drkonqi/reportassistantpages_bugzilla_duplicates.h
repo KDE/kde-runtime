@@ -28,6 +28,8 @@
 #include "ui_assistantpage_bugzilla_duplicates.h"
 #include "ui_assistantpage_bugzilla_duplicates_dialog.h"
 #include "ui_assistantpage_bugzilla_duplicates_dialog_confirmation.h"
+#include <QDate>
+#include <KDialog>
 
 class QDate;
 class QTreeWidgetItem;

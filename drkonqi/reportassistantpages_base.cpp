@@ -28,6 +28,7 @@
 #include <KIcon>
 #include <KUrl>
 #include <KMessageBox>
+#include <KLocalizedString>
 
 #include "drkonqi.h"
 #include "debuggermanager.h"
@@ -426,7 +427,6 @@ bool ConclusionPage::isComplete()
 ReportInformationDialog::ReportInformationDialog(const QString & reportText)
     : KDialog()
 {
-    KGlobal::ref();
     setAttribute(Qt::WA_DeleteOnClose, true);
 
     setButtons(KDialog::Close | KDialog::User1);
@@ -453,7 +453,6 @@ ReportInformationDialog::~ReportInformationDialog()
 {
     KConfigGroup config(KSharedConfig::openConfig(), "ReportInformationDialog");
     saveDialogSize(config);
-    KGlobal::deref();
 }
 
 void ReportInformationDialog::saveReport()

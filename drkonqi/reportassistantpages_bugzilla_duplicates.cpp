@@ -30,6 +30,7 @@
 #include <KIcon>
 #include <KMessageBox>
 #include <KInputDialog>
+#include <KLocalizedString>
 
 #include "drkonqi_globals.h"
 #include "reportinterface.h"
@@ -887,7 +888,6 @@ BugzillaReportConfirmationDialog::BugzillaReportConfirmationDialog(int bugNumber
     m_showProceedQuestion(false),
     m_bugNumber(bugNumber)
 {
-    KGlobal::ref();
     setAttribute(Qt::WA_DeleteOnClose, true);
     setModal(true);
 
@@ -963,7 +963,6 @@ BugzillaReportConfirmationDialog::BugzillaReportConfirmationDialog(int bugNumber
 
 BugzillaReportConfirmationDialog::~BugzillaReportConfirmationDialog()
 {
-    KGlobal::deref();
 }
 
 void BugzillaReportConfirmationDialog::checkProceed()
