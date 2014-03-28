@@ -48,8 +48,6 @@ find_package(KF5 CONFIG REQUIRED COMPONENTS
     I18n GuiAddons Service ConfigWidgets ItemViews Notifications IconThemes Completion JobWidgets TextWidgets XmlGui Crash
     KCMUtils UnitConversion Bookmarks KIO Parts Kross Declarative NewStuff NotifyConfig Emoticons Sonnet KHtml KCMUtils Su Plasma DNSSD KDE4Support)
 
-include_directories (${CMAKE_CURRENT_BINARY_DIR})
-
 #directories to split
 add_subdirectory(kde-cli-tools)
 add_subdirectory(kioslave)
@@ -98,5 +96,4 @@ if(LIBATTICA_FOUND)
     add_subdirectory(attica-kde)
 endif()
 
-configure_file (config-runtime.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-runtime.h )
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
