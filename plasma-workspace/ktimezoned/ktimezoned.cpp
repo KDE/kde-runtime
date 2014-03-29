@@ -28,6 +28,7 @@
 #include <QDebug>
 
 #include <KConfigGroup>
+#include <KConfig>
 #include <KDirWatch>
 #include <KPluginFactory>
 #include <KPluginLoader>
