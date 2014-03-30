@@ -98,6 +98,7 @@ target_link_libraries(drkonqi
     KF5::IconThemes
     KF5::WindowSystem
     KF5::Crash
+    KF5::KDE4Support
     drkonqi_backtrace_parser
 )
 
