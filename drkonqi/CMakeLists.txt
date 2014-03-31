@@ -55,29 +55,29 @@ set(drkonqi_SRCS
 if(KF5XmlRpcClient_FOUND)
     set(drkonqi_SRCS
         ${drkonqi_SRCS}
-        bugzillalib.cpp
-        reportassistantdialog.cpp
-        reportassistantpage.cpp
-        reportassistantpages_base.cpp
-        reportassistantpages_bugzilla.cpp
-        reportassistantpages_bugzilla_duplicates.cpp
-        reportinterface.cpp
-        productmapping.cpp
-        parsebugbacktraces.cpp # Requires kxmlrpcclient
-        duplicatefinderjob.cpp
+        bugzillaintegration/bugzillalib.cpp
+        bugzillaintegration/reportassistantdialog.cpp
+        bugzillaintegration/reportassistantpage.cpp
+        bugzillaintegration/reportassistantpages_base.cpp
+        bugzillaintegration/reportassistantpages_bugzilla.cpp
+        bugzillaintegration/reportassistantpages_bugzilla_duplicates.cpp
+        bugzillaintegration/reportinterface.cpp
+        bugzillaintegration/productmapping.cpp
+        bugzillaintegration/parsebugbacktraces.cpp # Requires kxmlrpcclient
+        bugzillaintegration/duplicatefinderjob.cpp
     )
     qt5_wrap_ui(drkonqi_SRCS
-        ui/assistantpage_introduction.ui
-        ui/assistantpage_bugawareness.ui
-        ui/assistantpage_conclusions.ui
-        ui/assistantpage_conclusions_dialog.ui
-        ui/assistantpage_bugzilla_login.ui
-        ui/assistantpage_bugzilla_duplicates.ui
-        ui/assistantpage_bugzilla_duplicates_dialog.ui
-        ui/assistantpage_bugzilla_duplicates_dialog_confirmation.ui
-        ui/assistantpage_bugzilla_information.ui
-        ui/assistantpage_bugzilla_preview.ui
-        ui/assistantpage_bugzilla_send.ui
+        bugzillaintegration/ui/assistantpage_introduction.ui
+        bugzillaintegration/ui/assistantpage_bugawareness.ui
+        bugzillaintegration/ui/assistantpage_conclusions.ui
+        bugzillaintegration/ui/assistantpage_conclusions_dialog.ui
+        bugzillaintegration/ui/assistantpage_bugzilla_login.ui
+        bugzillaintegration/ui/assistantpage_bugzilla_duplicates.ui
+        bugzillaintegration/ui/assistantpage_bugzilla_duplicates_dialog.ui
+        bugzillaintegration/ui/assistantpage_bugzilla_duplicates_dialog_confirmation.ui
+        bugzillaintegration/ui/assistantpage_bugzilla_information.ui
+        bugzillaintegration/ui/assistantpage_bugzilla_preview.ui
+        bugzillaintegration/ui/assistantpage_bugzilla_send.ui
     )
 endif()
 

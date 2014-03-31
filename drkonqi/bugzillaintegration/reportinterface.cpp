@@ -164,7 +164,7 @@ QString ReportInterface::generateReportFullText(bool drKonqiStamp) const
         report.append(QString("Distribution (Platform): %1\n").arg(
                                                         sysInfo->bugzillaPlatform()));
     }
-    report.append(QLatin1String("\n"));
+    report.append(QLatin1Char('\n'));
 
     //Details of the crash situation
     if (isBugAwarenessPageDataUseful()) {
@@ -195,14 +195,14 @@ QString ReportInterface::generateReportFullText(bool drKonqiStamp) const
     report.append(QString("-- Backtrace:\n"));
     if (!m_backtrace.isEmpty()) {
         QString formattedBacktrace = m_backtrace.trimmed();
-        report.append(formattedBacktrace + QLatin1String("\n"));
+        report.append(formattedBacktrace + QLatin1Char('\n'));
     } else {
         report.append(QString("A useful backtrace could not be generated\n"));
     }
 
     //Possible duplicates (selected by the user)
     if (!m_possibleDuplicates.isEmpty()) {
-        report.append(QLatin1String("\n"));
+        report.append(QLatin1Char('\n'));
         QString duplicatesString;
         Q_FOREACH(const QString & dupe, m_possibleDuplicates) {
             duplicatesString += QLatin1String("bug ") + dupe + QLatin1String(", ");
@@ -214,7 +214,7 @@ QString ReportInterface::generateReportFullText(bool drKonqiStamp) const
 
     //Several possible duplicates (by bugzilla query)
     if (!m_allPossibleDuplicatesByQuery.isEmpty()) {
-        report.append(QLatin1String("\n"));
+        report.append(QLatin1Char('\n'));
         QString duplicatesString;
         int count = m_allPossibleDuplicatesByQuery.count();
         for(int i=0; i < count && i < 5; i++) {

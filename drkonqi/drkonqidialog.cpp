@@ -32,12 +32,15 @@
 
 #include "drkonqi.h"
 #include "backtracewidget.h"
-#include "reportassistantdialog.h"
 #include "aboutbugreportingdialog.h"
 #include "crashedapplication.h"
 #include "debuggermanager.h"
 #include "debuggerlaunchers.h"
 #include "drkonqi_globals.h"
+#include "config-drkonqi.h"
+#if HAVE_XMLRPCCLIENT
+    #include "bugzillaintegration/reportassistantdialog.h"
+#endif
 
 static const char ABOUT_BUG_REPORTING_URL[] = "#aboutbugreporting";
 static const char DRKONQI_REPORT_BUG_URL[] =
@@ -176,7 +179,8 @@ void DrKonqiDialog::buildDialogButtons()
 
     bool enableReportAssistant = !crashedApp->bugReportAddress().isEmpty() &&
                                  crashedApp->fakeExecutableBaseName() != QLatin1String("drkonqi") &&
-                                 !DrKonqi::isSafer();
+                                 !DrKonqi::isSafer() &&
+                                 HAVE_XMLRPCCLIENT;
     enableButton(KDialog::User1, enableReportAssistant);
     connect(this, SIGNAL(user1Clicked()), this, SLOT(startBugReportAssistant()));
 
@@ -251,11 +255,11 @@ void DrKonqiDialog::enableDebugMenu(bool debuggerRunning)
 
 void DrKonqiDialog::startBugReportAssistant()
 {
-/*TODO: port bugzilla manager to KF5: needs kdepimlibs
+#if HAVE_XMLRPCCLIENT
     ReportAssistantDialog * bugReportAssistant = new ReportAssistantDialog();
     close();
     bugReportAssistant->show();
-*/
+#endif
 }
 
 void DrKonqiDialog::linkActivated(const QString& link)

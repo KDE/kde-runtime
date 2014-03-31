@@ -1,15 +1,12 @@
-set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR} )
-
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=1410)
 
 set(bugzillalibtest_SRCS
     bugzillalibtest.cpp 
-    ../../bugzillalib.cpp
-    ../../debugpackageinstaller.h
+    ../../bugzillaintegration/bugzillalib.cpp
 )
 
 add_executable(bugzillalibtest ${bugzillalibtest_SRCS})
 ecm_mark_as_test(bugzillalibtest)
 
-target_link_libraries(bugzillalibtest KF5::KIOWidgets ${KDEPIMLIBS_KXMLRPCCLIENT_LIBRARY})
+target_link_libraries(bugzillalibtest KF5::KIOWidgets KF5::KDE4Support KF5::XmlRpcClient)
 

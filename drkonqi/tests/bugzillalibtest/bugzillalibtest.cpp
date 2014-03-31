@@ -19,7 +19,7 @@
 
 #include <KApplication>
 #include <KCmdLineArgs>
-#include <KAboutData>
+#include <k4aboutdata.h>
 
 #include <KStandardDirs>
 #include <KProcess>
@@ -28,7 +28,7 @@
 
 #include <QtCore/QString>
 
-#include "../../bugzillalib.h"
+#include "../../bugzillaintegration/bugzillalib.h"
 #include "../../debugpackageinstaller.h"
 
 class BugzillaLibTest : public QObject
@@ -132,8 +132,8 @@ class BugzillaLibTest : public QObject
 
 int main (int argc, char ** argv)
 {
-    KAboutData aboutData( "bzlibtest", "bzlibtest", ki18n("BugzillaLib Test (DrKonqi2)"),
-        "1.0", ki18n("Test application for bugtracker manager lib"), KAboutData::License_GPL,
+    K4AboutData aboutData( "bzlibtest", "bzlibtest", ki18n("BugzillaLib Test (DrKonqi2)"),
+        "1.0", ki18n("Test application for bugtracker manager lib"), K4AboutData::License_GPL,
         ki18n("(c) 2009, DrKonqi2 Developers"));
     KCmdLineArgs::init( argc, argv, &aboutData );
 
@@ -154,4 +154,4 @@ int main (int argc, char ** argv)
     return app.exec();
 }
 
-#include "bzlibtest.moc"
+#include "bugzillalibtest.moc"
