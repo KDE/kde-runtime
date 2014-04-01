@@ -270,7 +270,7 @@ void KDEDConfig::save()
 
 	emit changed(false);
 
-	QDBusInterface kdedInterface( "org.kde.kded", "/kded", "org.kde.kded" );
+	QDBusInterface kdedInterface( "org.kde.kded5", "/kded", "org.kde.kded5" );
 	kdedInterface.call( "reconfigure" );
 	QTimer::singleShot(0, this, SLOT(slotServiceRunningToggled()));
 }
@@ -293,7 +293,7 @@ void KDEDConfig::defaults()
 void KDEDConfig::getServiceStatus()
 {
 	QStringList modules;
-	QDBusInterface kdedInterface( "org.kde.kded", "/kded", "org.kde.kded" );
+	QDBusInterface kdedInterface( "org.kde.kded5", "/kded", "org.kde.kded5" );
 	QDBusReply<QStringList> reply = kdedInterface.call( "loadedModules"  );
 
 	if ( reply.isValid() ) {
@@ -438,7 +438,7 @@ void KDEDConfig::slotStartService()
 {
 	QString service = _lvStartup->selectedItems().at(0)->data( StartupService, LibraryRole ).toString();
 
-	QDBusInterface kdedInterface( "org.kde.kded", "/kded","org.kde.kded" );
+	QDBusInterface kdedInterface( "org.kde.kded5", "/kded","org.kde.kded5" );
 	QDBusReply<bool> reply = kdedInterface.call( "loadModule", service  );
 
 	if ( reply.isValid() ) {
@@ -458,7 +458,7 @@ void KDEDConfig::slotStopService()
 	QString service = _lvStartup->selectedItems().at(0)->data( StartupService, LibraryRole ).toString();
 	kDebug() << "Stopping: " << service;
 
-	QDBusInterface kdedInterface( "org.kde.kded", "/kded", "org.kde.kded" );
+	QDBusInterface kdedInterface( "org.kde.kded5", "/kded", "org.kde.kded5" );
 	QDBusReply<bool> reply = kdedInterface.call( "unloadModule", service  );
 
 	if ( reply.isValid() ) {
