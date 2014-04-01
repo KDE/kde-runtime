@@ -109,7 +109,8 @@ QString getKDEStartMenuRootEntry()
 {
     QString result;
     result += settings.nameString() + ' ';
-    result += settings.versionString() + ' ';
+    if (!settings.versionString().isEmpty())
+        result += settings.versionString() + ' ';
     if (!settings.customString().isEmpty())
         result += settings.customString() + ' ';
  #ifdef QT_NO_DEBUG

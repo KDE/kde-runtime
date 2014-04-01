@@ -73,4 +73,4 @@ install( FILES kwalletd.notifyrc DESTINATION  ${DATA_INSTALL_DIR}/kwalletd )
 install( FILES kwallet-4.13.upd DESTINATION ${DATA_INSTALL_DIR}/kconf_update)
 
 add_subdirectory(tests)
-
+add_subdirectory(autotests)
