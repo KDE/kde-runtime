@@ -221,9 +221,9 @@ void BugzillaLoginPage::walletLogin()
 
 bool BugzillaLoginPage::canSetCookies()
 {
-    QDBusInterface kded(QLatin1String("org.kde.kded"),
+    QDBusInterface kded(QLatin1String("org.kde.kded5"),
                         QLatin1String("/kded"),
-                        QLatin1String("org.kde.kded"));
+                        QLatin1String("org.kde.kded5"));
     QDBusReply<bool> kcookiejarLoaded = kded.call(QLatin1String("loadModule"),
                                                   QLatin1String("kcookiejar"));
     if (!kcookiejarLoaded.isValid()) {
@@ -235,7 +235,7 @@ bool BugzillaLoginPage::canSetCookies()
     }
 
 
-    QDBusInterface kcookiejar(QLatin1String("org.kde.kded"),
+    QDBusInterface kcookiejar(QLatin1String("org.kde.kded5"),
                               QLatin1String("/modules/kcookiejar"),
                               QLatin1String("org.kde.KCookieServer"));
     QDBusReply<QString> advice = kcookiejar.call(QLatin1String("getDomainAdvice"),

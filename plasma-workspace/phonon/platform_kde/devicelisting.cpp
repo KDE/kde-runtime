@@ -127,7 +127,7 @@ QHash<QByteArray, QVariant> DeviceListing::objectDescriptionProperties(ObjectDes
 
 DeviceListing::DeviceListing()
     : m_phononServer(
-            QLatin1String("org.kde.kded"),
+            QLatin1String("org.kde.kded5"),
             QLatin1String("/modules/phononserver"),
             QLatin1String("org.kde.PhononServer"))
 {
@@ -135,7 +135,7 @@ DeviceListing::DeviceListing()
     config = KSharedConfig::openConfig("phonon_platform_kde");
     installAlsaPhononDeviceHandle();
 
-    QDBusConnection::sessionBus().connect(QLatin1String("org.kde.kded"), QLatin1String("/modules/phononserver"), QLatin1String("org.kde.PhononServer"),
+    QDBusConnection::sessionBus().connect(QLatin1String("org.kde.kded5"), QLatin1String("/modules/phononserver"), QLatin1String("org.kde.PhononServer"),
             QLatin1String("devicesChanged"), QString(), this, SLOT(devicesChanged()));
 }
 

@@ -64,7 +64,7 @@ void MenuManager::setMenuCreationEnabled(bool menu)
     KConfigGroup group( d->config, "General" );
 
     QDBusConnection bus = QDBusConnection::sessionBus();
-    QDBusInterface *interface = new QDBusInterface("org.kde.kded", "/kded"); 
+    QDBusInterface *interface = new QDBusInterface("org.kde.kded5", "/kded"); 
     
     interface->call("unloadModule", QString("winstartmenu"));
     if(!group.isImmutable())

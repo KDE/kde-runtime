@@ -277,7 +277,7 @@ void NetworkStatusModule::init()
         connect( d->backend, SIGNAL(statusChanged(Solid::Networking::Status)),
                  this, SLOT(solidNetworkingStatusChanged(Solid::Networking::Status)));
         Solid::Networking::Status status = d->backend->status();
-        registerNetwork( QLatin1String("SolidNetwork"), status, QLatin1String("org.kde.kded") );
+        registerNetwork( QLatin1String("SolidNetwork"), status, QLatin1String("org.kde.kded5") );
     }
 
     d->serviceWatcher = new QDBusServiceWatcher(this);

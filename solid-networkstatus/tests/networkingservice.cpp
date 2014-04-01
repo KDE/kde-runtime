@@ -59,7 +59,7 @@ QString toString( Solid::Networking::Status st )
 }
 
 TestService::TestService() : KMainWindow( 0 ),
-    m_service( new OrgKdeSolidNetworkingServiceInterface( "org.kde.kded", "/modules/networkstatus", QDBusConnection::sessionBus(), this ) ),
+    m_service( new OrgKdeSolidNetworkingServiceInterface( "org.kde.kded5", "/modules/networkstatus", QDBusConnection::sessionBus(), this ) ),
     m_status ( Solid::Networking::Unconnected ),
     m_nextStatus( Solid::Networking::Unconnected ),
     m_view( new QWidget( this ) )
@@ -95,7 +95,7 @@ void TestService::registerService()
 void TestService::serviceOwnerChanged( const QString& service,const QString& oldOwner, const QString& newOwner )
 {
     Q_UNUSED( oldOwner );
-    if ( !newOwner.isEmpty() && service == "org.kde.kded" ) {
+    if ( !newOwner.isEmpty() && service == "org.kde.kded5" ) {
         kDebug() << "KDED restarted, trying to re-register service with it";
         registerService();
     }
