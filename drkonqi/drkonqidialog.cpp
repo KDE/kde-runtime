@@ -25,6 +25,7 @@
 
 #include <QStandardPaths>
 #include <QMenu>
+#include <QDialogButtonBox>
 #include <QDebug>
 
 #include "drkonqi.h"
