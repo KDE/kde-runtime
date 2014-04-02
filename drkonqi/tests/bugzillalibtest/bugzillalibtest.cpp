@@ -16,17 +16,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 ******************************************************************/
-
-#include <KApplication>
-#include <KCmdLineArgs>
-#include <k4aboutdata.h>
-
-#include <KStandardDirs>
-#include <KProcess>
-
-#include <KDebug>
-
-#include <QtCore/QString>
+#include <QCommandLineParser>
+#include <QApplication>
+#include <QDebug>
+#include <KAboutData>
+#include <KLocalizedString>
 
 #include "../../bugzillaintegration/bugzillalib.h"
 #include "../../debugpackageinstaller.h"
@@ -44,13 +38,13 @@ class BugzillaLibTest : public QObject
             connect(manager, SIGNAL(sendReportError(QString)), this, SLOT(sendReportError(QString)));
             connect(manager, SIGNAL(sendReportErrorInvalidValues()), this, SLOT(sendBR2()));
             manager->tryLogin(user, password);
-            kDebug() << "Login ...";
+            qDebug() << "Login ...";
         }
 
     private Q_SLOTS:
         void loginFinished(bool ok)
         {
-            kDebug() << "Login Finished" << ok;
+            qDebug() << "Login Finished" << ok;
             if (!ok) {
                 return;
             }
@@ -76,7 +70,7 @@ class BugzillaLibTest : public QObject
 
         void loginError(const QString & msg)
         {
-            kDebug() << "Login Error" << msg;
+            qDebug() << "Login Error" << msg;
         }
 
         void sendBR()
@@ -94,7 +88,7 @@ class BugzillaLibTest : public QObject
             br.setDescription("bla bla large");
 
             manager->sendReport(br);
-            kDebug() << "Trying to send bug report";
+            qDebug() << "Trying to send bug report";
         }
 
         void sendBR2()
@@ -112,17 +106,17 @@ class BugzillaLibTest : public QObject
             br.setDescription("bla bla large");
 
             manager->sendReport(br);
-            kDebug() << "Trying to send bug report";
+            qDebug() << "Trying to send bug report";
         }
 
         void reportSent( int num)
         {
-            kDebug() << "BR sent " << num << manager->urlForBug(num);
+            qDebug() << "BR sent " << num << manager->urlForBug(num);
         }
 
         void sendReportError(const QString & msg)
         {
-            kDebug() << "Error sending bug report" << msg;
+            qDebug() << "Error sending bug report" << msg;
         }
 
     private:
@@ -132,25 +126,25 @@ class BugzillaLibTest : public QObject
 
 int main (int argc, char ** argv)
 {
-    K4AboutData aboutData( "bzlibtest", "bzlibtest", ki18n("BugzillaLib Test (DrKonqi2)"),
-        "1.0", ki18n("Test application for bugtracker manager lib"), K4AboutData::License_GPL,
-        ki18n("(c) 2009, DrKonqi2 Developers"));
-    KCmdLineArgs::init( argc, argv, &aboutData );
+    QApplication app(argc, argv);
+    KAboutData aboutData( "bzlibtest", "bzlibtest", i18n("BugzillaLib Test (DrKonqi2)"),
+        "1.0", i18n("Test application for bugtracker manager lib"), KAboutData::License_GPL,
+        i18n("(c) 2009, DrKonqi2 Developers"));
 
-    KCmdLineOptions options;
-    options.add("user <username>", ki18nc("@info:shell","bugstest.kde.org username"));
-    options.add("pass <password>", ki18nc("@info:shell","bugstest.kde.org password"));
-    KCmdLineArgs::addCmdLineOptions(options);
+    QCommandLineParser parser;
+    parser.addOption(QCommandLineOption("user", i18nc("@info:shell","bugstest.kde.org username"), "username"));
+    parser.addOption(QCommandLineOption("pass", i18nc("@info:shell","bugstest.kde.org password"), "password"));
 
-    KApplication app;
+    aboutData.setupCommandLine(&parser);
+    parser.process(app);
+    aboutData.processCommandLine(&parser);
 
-    if (!KCmdLineArgs::parsedArgs()->isSet("user") || !KCmdLineArgs::parsedArgs()->isSet("pass")) {
-        kDebug() << "Provide bugstest.kde.org username and password. See help";
+    if (!parser.isSet("user") || !parser.isSet("pass")) {
+        qDebug() << "Provide bugstest.kde.org username and password. See help";
         return 0;
     }
 
-    new BugzillaLibTest(KCmdLineArgs::parsedArgs()->getOption("user"),
-                                                    KCmdLineArgs::parsedArgs()->getOption("pass") );
+    new BugzillaLibTest(parser.value("user"), parser.value("pass"));
     return app.exec();
 }
 

@@ -40,7 +40,6 @@ class SystemInformation: public QObject
         bool compiledSources() const;
         void setCompiledSources(bool);
 
-        QString kdeVersion() const;
         QString qtVersion() const;
 
     private Q_SLOTS:

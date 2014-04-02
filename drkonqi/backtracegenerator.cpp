@@ -27,9 +27,10 @@
  *****************************************************************/
 #include "backtracegenerator.h"
 
-#include <KDebug>
-#include <KTemporaryFile>
+#include <QTemporaryFile>
+#include <QDebug>
 #include <KShell>
+#include <KProcess>
 
 #include "parser/backtraceparser.h"
 
@@ -50,7 +51,7 @@ BacktraceGenerator::BacktraceGenerator(const Debugger & debugger, QObject *paren
 BacktraceGenerator::~BacktraceGenerator()
 {
     if (m_proc && m_proc->state() == QProcess::Running) {
-        kWarning() << "Killing running debugger instance";
+        qWarning() << "Killing running debugger instance";
         m_proc->disconnect(this);
         m_proc->terminate();
         if (!m_proc->waitForFinished(10000)) {
@@ -81,7 +82,7 @@ bool BacktraceGenerator::start()
     m_proc = new KProcess;
     m_proc->setEnv("LC_ALL", "C");   // force C locale
 
-    m_temp = new KTemporaryFile;
+    m_temp = new QTemporaryFile;
     m_temp->open();
     m_temp->write(m_debugger.backtraceBatchCommands().toLatin1());
     m_temp->write("\n", 1);

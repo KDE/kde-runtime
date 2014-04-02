@@ -9,6 +9,4 @@ add_library(drkonqi_backtrace_parser STATIC ${BACKTRACEPARSER_SRCS})
 target_link_libraries(drkonqi_backtrace_parser
     PUBLIC
         Qt5::Core
-    PRIVATE
-        KF5::KDE4Support
 )

@@ -21,8 +21,8 @@
 
 #include <QPainter>
 #include <QPixmap>
+#include <QIcon>
 
-#include <KIcon>
 
 BacktraceRatingWidget::BacktraceRatingWidget(QWidget * parent) :
         QWidget(parent),
@@ -33,9 +33,9 @@ BacktraceRatingWidget::BacktraceRatingWidget(QWidget * parent) :
 {
     setMinimumSize(105, 24);
 
-    m_starPixmap = KIcon("favorites").pixmap(QSize(22, 22));
-    m_disabledStarPixmap = KIcon("favorites").pixmap(QSize(22, 22), QIcon::Disabled);
-    m_errorPixmap = KIcon("dialog-error").pixmap(QSize(22, 22));
+    m_starPixmap = QIcon::fromTheme("favorites").pixmap(QSize(22, 22));
+    m_disabledStarPixmap = QIcon::fromTheme("favorites").pixmap(QSize(22, 22), QIcon::Disabled);
+    m_errorPixmap = QIcon::fromTheme("dialog-error").pixmap(QSize(22, 22));
 }
 
 void BacktraceRatingWidget::setUsefulness(BacktraceParser::Usefulness usefulness)

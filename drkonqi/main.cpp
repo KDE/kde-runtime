@@ -28,9 +28,8 @@
 #include <cstdlib>
 #include <unistd.h>
 
-#include <k4aboutdata.h>
+#include <KAboutData>
 #include <KLocalizedString>
-#include <kglobal.h>
 #include <QCommandLineParser>
 
 #include "drkonqi.h"
@@ -59,17 +58,17 @@ int main(int argc, char* argv[])
     // Session management is not needed, do not even connect in order to survive longer than ksmserver.
     unsetenv("SESSION_MANAGER");
 
-    K4AboutData aboutData("drkonqi", "drkonqi", ki18n("The KDE Crash Handler"),
-                         version, ki18n(description),
-                         K4AboutData::License_GPL,
-                         ki18n("(C) 2000-2009, The DrKonqi Authors"));
-    aboutData.addAuthor(ki18nc("@info:credit","Hans Petter Bieker"), KLocalizedString(),
+    KAboutData aboutData("drkonqi", "drkonqi", i18n("The KDE Crash Handler"),
+                         version, i18n(description),
+                         KAboutData::License_GPL,
+                         i18n("(C) 2000-2009, The DrKonqi Authors"));
+    aboutData.addAuthor(i18nc("@info:credit","Hans Petter Bieker"), QString(),
                          "bieker@kde.org");
-    aboutData.addAuthor(ki18nc("@info:credit","Dario Andres Rodriguez"), KLocalizedString(),
+    aboutData.addAuthor(i18nc("@info:credit","Dario Andres Rodriguez"), QString(),
                          "andresbajotierra@gmail.com");
-    aboutData.addAuthor(ki18nc("@info:credit","George Kiagiadakis"), KLocalizedString(),
+    aboutData.addAuthor(i18nc("@info:credit","George Kiagiadakis"), QString(),
                          "gkiagia@users.sourceforge.net");
-    aboutData.addAuthor(ki18nc("@info:credit","A. L. Spehr"), KLocalizedString(),
+    aboutData.addAuthor(i18nc("@info:credit","A. L. Spehr"), QString(),
                          "spehr@kde.org");
     aboutData.setProgramIconName("tools-report-bug");
 
@@ -107,7 +106,9 @@ int main(int argc, char* argv[])
     parser.addOption(keepRunningOption);
     parser.addOption(threadOption);
 
+    aboutData.setupCommandLine(&parser);
     parser.process(qa);
+    aboutData.processCommandLine(&parser);
 
     DrKonqi::setSignal(parser.value(signalOption).toInt());
     DrKonqi::setAppName(parser.value(appNameOption));
@@ -128,7 +129,6 @@ int main(int argc, char* argv[])
     }
 
     qa.setQuitOnLastWindowClosed(false);
-    KGlobal::setAllowQuit(true);
 
     DrKonqiDialog *w = new DrKonqiDialog();
     w->show();

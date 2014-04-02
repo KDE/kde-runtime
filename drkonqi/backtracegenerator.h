@@ -28,11 +28,12 @@
 #ifndef BACKTRACEGENERATOR_H
 #define BACKTRACEGENERATOR_H
 
-#include <KProcess>
+#include <QProcess>
+#include <QTemporaryFile>
 
 #include "debugger.h"
 
-class KTemporaryFile;
+class KProcess;
 class BacktraceParser;
 
 class BacktraceGenerator : public QObject
@@ -78,7 +79,7 @@ private Q_SLOTS:
 private:
     const Debugger    m_debugger;
     KProcess *        m_proc;
-    KTemporaryFile *  m_temp;
+    QTemporaryFile *  m_temp;
     QByteArray        m_output;
     State             m_state;
     BacktraceParser * m_parser;

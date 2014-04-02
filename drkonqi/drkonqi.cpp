@@ -44,15 +44,15 @@
 #include <QtCore/QWeakPointer>
 #include <QtCore/QTextStream>
 #include <QtCore/QTimerEvent>
+#include <QtCore/QTemporaryFile>
+#include <QtCore/QDebug>
+#include <QtWidgets/QFileDialog>
 
 #include <KMessageBox>
-#include <KFileDialog>
-#include <KTemporaryFile>
-#include <KIO/NetAccess>
 #include <KCrash>
-#include <KDebug>
 #include <KLocalizedString>
-#include <KUrl>
+#include <KJobWidgets>
+#include <kio/filecopyjob.h>
 
 #include "systeminformation.h"
 #include "crashedapplication.h"
@@ -96,7 +96,7 @@ public:
     }
 protected:
     void timerEvent(QTimerEvent *event) {
-        kDebug() << "Enabling drkonqi crash catching";
+        qDebug() << "Enabling drkonqi crash catching";
         KCrash::setDrKonqiEnabled(true);
         killTimer(event->timerId());
         this->deleteLater();
@@ -113,7 +113,7 @@ bool DrKonqi::init()
         // is not drkonqi already. If it is drkonqi, delay enabling crash catching
         // to prevent recursive crashes (in case it crashes at startup)
         if (crashedApplication()->fakeExecutableBaseName() != "drkonqi") {
-            kDebug() << "Enabling drkonqi crash catching";
+            qDebug() << "Enabling drkonqi crash catching";
             KCrash::setDrKonqiEnabled(true);
         } else {
             new EnableCrashCatchingDelayed;
@@ -149,8 +149,8 @@ CrashedApplication *DrKonqi::crashedApplication()
 void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
 {
     if (isSafer()) {
-        KTemporaryFile tf;
-        tf.setSuffix(".kcrash.txt");
+        QTemporaryFile tf;
+        tf.setFileTemplate("XXXXXX.kcrash.txt");
         tf.setAutoRemove(false);
 
         if (tf.open()) {
@@ -166,11 +166,11 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
     } else {
         QString defname = getSuggestedKCrashFilename(crashedApplication());
 
-        QWeakPointer<KFileDialog> dlg = new KFileDialog(QUrl(), defname, parent);
-        dlg.data()->setSelection(defname);
+        QWeakPointer<QFileDialog> dlg = new QFileDialog(parent, defname);
+        dlg.data()->selectFile(defname);
         dlg.data()->setWindowTitle(i18nc("@title:window","Select Filename"));
-        dlg.data()->setOperationMode(KFileDialog::Saving);
-        dlg.data()->setMode(KFile::File);
+        dlg.data()->setAcceptMode(QFileDialog::AcceptSave);
+        dlg.data()->setFileMode(QFileDialog::AnyFile);
         dlg.data()->setConfirmOverwrite(true);
         dlg.data()->exec();
 
@@ -180,11 +180,13 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
             return;
         }
 
-        KUrl fileUrl = dlg.data()->selectedUrl();
+        QUrl fileUrl;
+        if(!dlg.data()->selectedUrls().isEmpty())
+            fileUrl = dlg.data()->selectedUrls().first();
         delete dlg.data();
 
         if (fileUrl.isValid()) {
-            KTemporaryFile tf;
+            QTemporaryFile tf;
             if (tf.open()) {
                 QTextStream ts(&tf);
                 ts << reportText;
@@ -195,8 +197,10 @@ void DrKonqi::saveReport(const QString & reportText, QWidget *parent)
                 return;
             }
 
-            if (!KIO::NetAccess::upload(tf.fileName(), fileUrl, parent)) {
-                KMessageBox::sorry(parent, KIO::NetAccess::lastErrorString());
+            KIO::FileCopyJob* job = KIO::file_copy(tf.fileName(), fileUrl);
+            KJobWidgets::setWindow(job, parent);
+            if (!job->exec()) {
+                KMessageBox::sorry(parent, job->errorText());
             }
         }
     }

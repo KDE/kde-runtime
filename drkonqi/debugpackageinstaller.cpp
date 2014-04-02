@@ -21,11 +21,11 @@
 
 #include "debugpackageinstaller.h"
 
-#include <KStandardDirs>
-#include <KDebug>
+#include <QDebug>
+#include <QStandardPaths>
 #include <KProcess>
 #include <KLocalizedString>
-#include <KProgressDialog>
+#include <QProgressDialog>
 
 #include "drkonqi.h"
 #include "crashedapplication.h"
@@ -33,7 +33,7 @@
 DebugPackageInstaller::DebugPackageInstaller(QObject *parent)
     : QObject(parent), m_installerProcess(0), m_progressDialog(0)
 {
-    m_executablePath = KStandardDirs::findExe(DEBUG_PACKAGE_INSTALLER_NAME); //defined from CMakeLists.txt
+    m_executablePath = QStandardPaths::findExecutable(DEBUG_PACKAGE_INSTALLER_NAME); //defined from CMakeLists.txt
 }
 
 bool DebugPackageInstaller::canInstallDebugPackages() const
@@ -62,12 +62,9 @@ void DebugPackageInstaller::installDebugPackages()
         m_installerProcess->start();
 
         //Show dialog
-        m_progressDialog = new KProgressDialog(qobject_cast<QWidget*>(parent()));
+        m_progressDialog = new QProgressDialog(i18nc("@info:progress", "Requesting installation of missing " "debug symbols packages..."), i18n("Cancel"), 0, 0, qobject_cast<QWidget*>(parent()));
         connect(m_progressDialog, SIGNAL(cancelClicked()), this, SLOT(progressDialogCanceled()));
-        m_progressDialog->progressBar()->setRange(0,0);
         m_progressDialog->setWindowTitle(i18nc("@title:window", "Missing debug symbols"));
-        m_progressDialog->setLabelText(i18nc("@info:progress", "Requesting installation of missing "
-                                                                    "debug symbols packages..."));
         m_progressDialog->show();
     }
 }

@@ -30,9 +30,8 @@
 #include <QtXml/QDomNamedNodeMap>
 
 #include <KIO/Job>
-#include <KUrl>
 #include <KLocalizedString>
-#include <KDebug>
+#include <QDebug>
 
 
 static const char columns[] = "bug_severity,priority,bug_status,product,short_desc,resolution";
@@ -61,7 +60,7 @@ BugzillaManager::BugzillaManager(const QString &bugTrackerUrl, QObject *parent)
         , m_logged(false)
         , m_searchJob(0)
 {
-    m_xmlRpcClient = new KXmlRpc::Client(KUrl(m_bugTrackerUrl + "xmlrpc.cgi"), this);
+    m_xmlRpcClient = new KXmlRpc::Client(QUrl(m_bugTrackerUrl + "xmlrpc.cgi"), this);
     m_xmlRpcClient->setUserAgent(QLatin1String("DrKonqi"));
 }
 
@@ -96,7 +95,7 @@ QString BugzillaManager::getUsername() const
 //BEGIN Bugzilla Action methods
 void BugzillaManager::fetchBugReport(int bugnumber, QObject * jobOwner)
 {
-    KUrl url = KUrl(QString(m_bugTrackerUrl) + QString(fetchBugUrl).arg(bugnumber));
+    QUrl url(m_bugTrackerUrl + QString(fetchBugUrl).arg(bugnumber));
 
     if (!jobOwner) {
         jobOwner = this;
@@ -130,7 +129,7 @@ void BugzillaManager::searchBugs(const QStringList & products,
 
     stopCurrentSearch();
 
-    m_searchJob = KIO::storedGet(KUrl(url) , KIO::Reload, KIO::HideProgressInfo);
+    m_searchJob = KIO::storedGet(QUrl(url) , KIO::Reload, KIO::HideProgressInfo);
     connect(m_searchJob, SIGNAL(finished(KJob*)) , this, SLOT(searchBugsJobFinished(KJob*)));
 }
 
@@ -331,7 +330,7 @@ void BugzillaManager::fetchProductInfoFinished(const QVariantMap & map)
 
 void BugzillaManager::callMessage(const QList<QVariant> & result, const QVariant & id)
 {
-    kDebug() << id << result;
+    qDebug() << id << result;
 
     if (id.toString() == QLatin1String("login")) {
         m_logged = true;
@@ -365,7 +364,7 @@ void BugzillaManager::callMessage(const QList<QVariant> & result, const QVariant
 
 void BugzillaManager::callFault(int errorCode, const QString & errorString, const QVariant & id)
 {
-    kDebug() << id << errorCode << errorString;
+    qDebug() << id << errorCode << errorString;
 
     QString genericError = i18nc("@info", "Received unexpected error code %1 from bugzilla. "
                                  "Error message was: %2", errorCode, errorString);

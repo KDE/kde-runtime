@@ -34,14 +34,14 @@
       </widget>
      </item>
      <item>
-      <widget class="KPushButton" name="m_searchMoreButton">
+      <widget class="QPushButton" name="m_searchMoreButton">
        <property name="enabled">
         <bool>false</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="KPushButton" name="m_stopSearchButton">
+      <widget class="QPushButton" name="m_stopSearchButton">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -98,7 +98,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="KPushButton" name="m_openReportButton">
+          <widget class="QPushButton" name="m_openReportButton">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -164,7 +164,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="KPushButton" name="m_removeSelectedDuplicateButton"/>
+          <widget class="QPushButton" name="m_removeSelectedDuplicateButton"/>
          </item>
         </layout>
        </item>
@@ -205,11 +205,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
-  </customwidget>
   <customwidget>
    <class>StatusWidget</class>
    <extends>QWidget</extends>

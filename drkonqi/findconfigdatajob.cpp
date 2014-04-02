@@ -19,11 +19,11 @@
 
 #include "findconfigdatajob.h"
 
-#include <KDebug>
+#include <QDebug>
 #include <KIO/Job>
 #include <KLocalizedString>
 
-FindConfigDataJob::FindConfigDataJob(const QString &productName, const KUrl &bugtrackerBaseUrl, QObject *parent)
+FindConfigDataJob::FindConfigDataJob(const QString &productName, const QUrl &bugtrackerBaseUrl, QObject *parent)
   : KJob(parent),
     m_job(0),
     m_url(bugtrackerBaseUrl)

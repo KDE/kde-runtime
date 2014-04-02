@@ -20,11 +20,11 @@
 #ifndef ABOUTBUGREPORTINGDIALOG__H
 #define ABOUTBUGREPORTINGDIALOG__H
 
-#include <KDialog>
+#include <QDialog>
 
-class KTextBrowser;
+class QTextBrowser;
 
-class AboutBugReportingDialog: public KDialog
+class AboutBugReportingDialog: public QDialog
 {
     Q_OBJECT
 
@@ -34,10 +34,10 @@ public:
     void showSection(const QString&);
 
 private Q_SLOTS:
-    void handleInternalLinks(const QString&);
+    void handleInternalLinks(const QUrl& url);
 
 private:
-    KTextBrowser * m_textBrowser;
+    QTextBrowser * m_textBrowser;
 };
 
 #endif

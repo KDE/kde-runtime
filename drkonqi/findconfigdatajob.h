@@ -23,7 +23,7 @@
 #include <QtCore/QStringList>
 
 #include <KJob>
-#include <KUrl>
+#include <QUrl>
 
 namespace KIO {
     class StoredTransferJob;
@@ -41,7 +41,7 @@ class FindConfigDataJob : public KJob
          * @param productName e.g. "plasma"
          * @param bugtrackerBaseUrl e.g. "https://bugs.kde.org"
          */
-        explicit FindConfigDataJob(const QString &productName, const KUrl &bugtrackerBaseUrl, QObject *parent = 0);
+        explicit FindConfigDataJob(const QString &productName, const QUrl &bugtrackerBaseUrl, QObject *parent = 0);
         virtual ~FindConfigDataJob();
 
         virtual void start();
@@ -62,7 +62,7 @@ class FindConfigDataJob : public KJob
 
     private:
         KIO::StoredTransferJob *m_job;
-        KUrl m_url;
+        QUrl m_url;
         QString m_data;
         QString m_errorString;
 };

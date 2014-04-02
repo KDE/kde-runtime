@@ -18,7 +18,7 @@
 #include "backtraceparsergdb.h"
 #include "backtraceparser_p.h"
 #include <QtCore/QRegExp>
-#include <KDebug>
+#include <QtCore/QDebug>
 
 //BEGIN BacktraceLineGdb
 
@@ -88,7 +88,7 @@ void BacktraceLineGdb::parse()
             }
         }
 
-        kDebug() << d->m_stackFrameNumber << d->m_functionName << d->m_file << d->m_library;
+        qDebug() << d->m_stackFrameNumber << d->m_functionName << d->m_file << d->m_library;
         return;
     }
 
@@ -98,26 +98,26 @@ void BacktraceLineGdb::parse()
                       "0x[0-9a-f]+.*|"
                       "Current language:.*");
     if (regExp.exactMatch(d->m_line)) {
-        kDebug() << "garbage detected:" << d->m_line;
+        qDebug() << "garbage detected:" << d->m_line;
         d->m_type = Crap;
         return;
     }
 
     regExp.setPattern("Thread [0-9]+\\s+\\(Thread [0-9a-fx]+\\s+\\(.*\\)\\):\n");
     if (regExp.exactMatch(d->m_line)) {
-        kDebug() << "thread start detected:" << d->m_line;
+        qDebug() << "thread start detected:" << d->m_line;
         d->m_type = ThreadStart;
         return;
     }
 
     regExp.setPattern("\\[Current thread is [0-9]+ \\(.*\\)\\]\n");
     if (regExp.exactMatch(d->m_line)) {
-        kDebug() << "thread indicator detected:" << d->m_line;
+        qDebug() << "thread indicator detected:" << d->m_line;
         d->m_type = ThreadIndicator;
         return;
     }
 
-    kDebug() << "line" << d->m_line << "did not match";
+    qDebug() << "line" << d->m_line << "did not match";
 }
 
 void BacktraceLineGdb::rate()

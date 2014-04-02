@@ -25,23 +25,25 @@
 #include <QCheckBox>
 #include <QToolTip>
 #include <QCursor>
+#include <QFileDialog>
+#include <QTemporaryFile>
 
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
 
-#include <KDebug>
-#include <KIcon>
+#include <QDebug>
 #include <KMessageBox>
 #include <KToolInvocation>
-#include <KWallet/Wallet>
+#include <KLocalizedString>
+#include <KWallet/kwallet.h>
 #include <KCapacityBar>
 
 /* Unhandled error dialog includes */
-#include <KFileDialog>
 #include <KWebView>
 #include <KIO/Job>
-#include <KIO/NetAccess>
-#include <KTemporaryFile>
+#include <KConfigGroup>
+#include <KSharedConfig>
+#include <KJobWidgets>
 
 #include "reportinterface.h"
 #include "systeminformation.h"
@@ -74,8 +76,8 @@ BugzillaLoginPage::BugzillaLoginPage(ReportAssistantDialog * parent) :
                                    "You need to login with your %1 account in order to proceed.",
                                    QLatin1String(KDE_BUGZILLA_SHORT_URL)));
 
-    ui.m_loginButton->setGuiItem(KGuiItem2(i18nc("@action:button", "Login"),
-                                              KIcon("network-connect"),
+    KGuiItem::assign(ui.m_loginButton, KGuiItem2(i18nc("@action:button", "Login"),
+                                              QIcon::fromTheme("network-connect"),
                                               i18nc("@info:tooltip", "Use this button to login "
                                               "to the KDE bug tracking system using the provided "
                                               "username and password.")));
@@ -246,7 +248,7 @@ bool BugzillaLoginPage::canSetCookies()
         return false;
     }
 
-    kDebug() << "Got reply from KCookieServer:" << advice.value();
+    qDebug() << "Got reply from KCookieServer:" << advice.value();
 
     if (advice.value() == QLatin1String("Reject")) {
         QString msg = i18nc("@info 1 is the bugzilla website url",
@@ -266,7 +268,7 @@ bool BugzillaLoginPage::canSetCookies()
                                                        QLatin1String(KDE_BUGZILLA_URL),
                                                        QLatin1String("Accept"));
             if (!success.isValid() || !success.value()) {
-                kWarning() << "Failed to set domain advice in KCookieServer";
+                qWarning() << "Failed to set domain advice in KCookieServer";
                 return false;
             } else {
                 return true;
@@ -671,14 +673,14 @@ BugzillaSendPage::BugzillaSendPage(ReportAssistantDialog * parent)
 
     ui.setupUi(this);
 
-    ui.m_retryButton->setGuiItem(KGuiItem2(i18nc("@action:button", "Retry..."),
-                                              KIcon("view-refresh"),
+    KGuiItem::assign(ui.m_retryButton, KGuiItem2(i18nc("@action:button", "Retry..."),
+                                              QIcon::fromTheme("view-refresh"),
                                               i18nc("@info:tooltip", "Use this button to retry "
                                                   "sending the crash report if it failed before.")));
 
-    ui.m_showReportContentsButton->setGuiItem(
+    KGuiItem::assign(ui.m_showReportContentsButton,
                     KGuiItem2(i18nc("@action:button", "Sho&w Contents of the Report"),
-                            KIcon("document-preview"),
+                            QIcon::fromTheme("document-preview"),
                             i18nc("@info:tooltip", "Use this button to show the generated "
                             "report information about this crash.")));
     connect(ui.m_showReportContentsButton, SIGNAL(clicked()), this, SLOT(openReportContents()));
@@ -770,15 +772,15 @@ void BugzillaSendPage::openReportContents()
 //BEGIN UnhandledErrorDialog
 
 UnhandledErrorDialog::UnhandledErrorDialog(QWidget * parent, const QString & error, const QString & extendedMessage)
-    : KDialog(parent)
+    : QDialog(parent)
 {
-    setWindowTitle(KDialog::makeStandardCaption(i18nc("@title:window", "Unhandled Bugzilla Error")));
+    setWindowTitle(i18nc("@title:window", "Unhandled Bugzilla Error"));
     setWindowModality(Qt::ApplicationModal);
 
-    setButtons(KDialog::Close | KDialog::User1);
-    setButtonText(KDialog::User1, i18nc("@action:button save html to a file","Save to a file"));
-    setButtonIcon(KDialog::User1, KIcon("document-save"));
-    connect(this, SIGNAL(user1Clicked()), this, SLOT(saveErrorMessage()));
+    QPushButton* saveButton = new QPushButton(this);
+    saveButton->setText(i18nc("@action:button save html to a file","Save to a file"));
+    saveButton->setIcon(QIcon::fromTheme("document-save"));
+    connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(saveErrorMessage()));
 
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -786,7 +788,7 @@ UnhandledErrorDialog::UnhandledErrorDialog(QWidget * parent, const QString & err
 
     QLabel * iconLabel = new QLabel(this);
     iconLabel->setFixedSize(32, 32);
-    iconLabel->setPixmap(KIcon("dialog-warning").pixmap(32, 32));
+    iconLabel->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(32, 32));
 
     QLabel * mainLabel = new QLabel(this);
     mainLabel->setWordWrap(true);
@@ -798,13 +800,16 @@ UnhandledErrorDialog::UnhandledErrorDialog(QWidget * parent, const QString & err
     titleLayout->addWidget(iconLabel);
     titleLayout->addWidget(mainLabel);
 
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
+    buttonBox->setStandardButtons(QDialogButtonBox::Close);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+
     QVBoxLayout * layout = new QVBoxLayout();
     layout->addLayout(titleLayout);
     layout->addWidget(htmlView);
-
-    QWidget * mainWidget = new QWidget(this);
-    mainWidget->setLayout(layout);
-    setMainWidget(mainWidget);
+    layout->addWidget(buttonBox);
+    setLayout(layout);
 
     m_extendedHTMLError = extendedMessage;
     mainLabel->setText(i18nc("@label", "There was an unhandled Bugzilla error: %1.<br />"
@@ -822,11 +827,11 @@ UnhandledErrorDialog::UnhandledErrorDialog(QWidget * parent, const QString & err
 void UnhandledErrorDialog::saveErrorMessage()
 {
     QString defaultName = QLatin1String("drkonqi-unhandled-bugzilla-error.html");
-    QWeakPointer<KFileDialog> dlg = new KFileDialog(defaultName, QString(), this);
-    dlg.data()->setSelection(defaultName);
+    QWeakPointer<QFileDialog> dlg = new QFileDialog(this);
+    dlg.data()->selectFile(defaultName);
     dlg.data()->setWindowTitle(i18nc("@title:window","Select Filename"));
-    dlg.data()->setOperationMode(KFileDialog::Saving);
-    dlg.data()->setMode(KFile::File);
+    dlg.data()->setAcceptMode(QFileDialog::AcceptSave);
+    dlg.data()->setFileMode(QFileDialog::AnyFile);
     dlg.data()->setConfirmOverwrite(true);
     if ( dlg.data()->exec() )
     {
@@ -835,11 +840,13 @@ void UnhandledErrorDialog::saveErrorMessage()
             return;
         }
 
-        KUrl fileUrl = dlg.data()->selectedUrl();
+        QUrl fileUrl;
+        if(!dlg.data()->selectedUrls().isEmpty())
+            fileUrl = dlg.data()->selectedUrls().first();
         delete dlg.data();
 
         if (fileUrl.isValid()) {
-            KTemporaryFile tf;
+            QTemporaryFile tf;
             if (tf.open()) {
                 QTextStream ts(&tf);
                 ts << m_extendedHTMLError;
@@ -850,8 +857,10 @@ void UnhandledErrorDialog::saveErrorMessage()
                 return;
             }
 
-            if (!KIO::NetAccess::upload(tf.fileName(), fileUrl, this)) {
-                KMessageBox::sorry(this, KIO::NetAccess::lastErrorString());
+            KIO::FileCopyJob* job = KIO::file_copy(tf.fileName(), fileUrl);
+            KJobWidgets::setWindow(job, this);
+            if (!job->exec()) {
+                KMessageBox::sorry(this, job->errorString());
             }
         }
     }

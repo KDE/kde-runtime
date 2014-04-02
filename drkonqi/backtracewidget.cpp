@@ -24,11 +24,9 @@
 #include <QVBoxLayout>
 #include <QScrollBar>
 
-#include <KIcon>
 #include <KMessageBox>
 #include <KLocalizedString>
 #include <KToolInvocation>
-#include <KGlobalSettings>
 
 #include "drkonqi.h"
 #include "backtraceratingwidget.h"
@@ -66,29 +64,29 @@ BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent,
     ui.m_extraDetailsLabel->setStyleSheet(QLatin1String(extraDetailsLabelMargin));
 
     //Setup the buttons
-    ui.m_reloadBacktraceButton->setGuiItem(
+    KGuiItem::assign(ui.m_reloadBacktraceButton,
                 KGuiItem2(i18nc("@action:button", "&Reload"),
-                          KIcon("view-refresh"), i18nc("@info:tooltip", "Use this button to "
+                          QIcon::fromTheme("view-refresh"), i18nc("@info:tooltip", "Use this button to "
                           "reload the crash information (backtrace). This is useful when you have "
                           "installed the proper debug symbol packages and you want to obtain "
                           "a better backtrace.")));
     connect(ui.m_reloadBacktraceButton, SIGNAL(clicked()), this, SLOT(regenerateBacktrace()));
 
-    ui.m_installDebugButton->setGuiItem(
+    KGuiItem::assign(ui.m_installDebugButton,
                 KGuiItem2(i18nc("@action:button", "&Install Debug Symbols"),
-                          KIcon("system-software-update"), i18nc("@info:tooltip", "Use this button to "
+                          QIcon::fromTheme("system-software-update"), i18nc("@info:tooltip", "Use this button to "
                           "install the missing debug symbols packages.")));
     ui.m_installDebugButton->setVisible(false);
     connect(ui.m_installDebugButton, SIGNAL(clicked()), this, SLOT(installDebugPackages()));
 
-    ui.m_copyButton->setGuiItem(KGuiItem2(QString(), KIcon("edit-copy"),
+    KGuiItem::assign(ui.m_copyButton, KGuiItem2(QString(), QIcon::fromTheme("edit-copy"),
                                           i18nc("@info:tooltip", "Use this button to copy the "
                                                 "crash information (backtrace) to the clipboard.")));
     connect(ui.m_copyButton, SIGNAL(clicked()) , this, SLOT(copyClicked()));
     ui.m_copyButton->setEnabled(false);
 
-    ui.m_saveButton->setGuiItem(KGuiItem2(QString(),
-                                          KIcon("document-save"),
+    KGuiItem::assign(ui.m_saveButton, KGuiItem2(QString(),
+                                          QIcon::fromTheme("document-save"),
                                           i18nc("@info:tooltip", "Use this button to save the "
                                           "crash information (backtrace) to a file. This is useful "
                                           "if you want to take a look at it or to report the bug "
@@ -115,13 +113,13 @@ BacktraceWidget::BacktraceWidget(BacktraceGenerator *generator, QWidget *parent,
                  "down where the mess started. They may look meaningless to you, but they might "
                  "actually contain a wealth of useful information.<br />Backtraces are commonly "
                  "used during interactive and post-mortem debugging.</p>"));
-        ui.m_backtraceHelpIcon->setPixmap(KIcon("help-hint").pixmap(48,48));
+        ui.m_backtraceHelpIcon->setPixmap(QIcon::fromTheme("help-hint").pixmap(48,48));
         connect(ui.m_toggleBacktraceCheckBox, SIGNAL(toggled(bool)), this,
                 SLOT(toggleBacktrace(bool)));
         toggleBacktrace(false);
     }
 
-    ui.m_backtraceEdit->setFont( KGlobalSettings::fixedFont() );
+    ui.m_backtraceEdit->setFont( QFontDatabase::systemFont(QFontDatabase::FixedFont) );
 }
 
 void BacktraceWidget::setAsLoading()

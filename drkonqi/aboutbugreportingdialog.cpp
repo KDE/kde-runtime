@@ -21,29 +21,30 @@
 #include "aboutbugreportingdialog.h"
 
 #include <KLocalizedString>
-#include <KGlobal>
 #include <KConfig>
-#include <KIcon>
+#include <KSharedConfig>
 #include <KToolInvocation>
-#include <KTextBrowser>
+#include <KWindowConfig>
+#include <QTextBrowser>
+#include <qboxlayout.h>
+#include <QDialogButtonBox>
+#include <qdesktopservices.h>
 
 #include "drkonqi_globals.h"
 
 AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
-        KDialog(parent)
+        QDialog(parent)
 {
     setAttribute(Qt::WA_DeleteOnClose, true);
 
-    setWindowIcon(KIcon("help-hint"));
-    setCaption(i18nc("@title title of the dialog", "About Bug Reporting - Help"));
+    setWindowIcon(QIcon::fromTheme("help-hint"));
+    setWindowTitle(i18nc("@title title of the dialog", "About Bug Reporting - Help"));
 
-    setButtons(KDialog::Close);
-    setDefaultButton(KDialog::Close);
-
-    m_textBrowser = new KTextBrowser(this);
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    setLayout(layout);
+    m_textBrowser = new QTextBrowser(this);
     m_textBrowser->setMinimumSize(QSize(600, 300));
-    m_textBrowser->setNotifyClick(true);
-    connect(m_textBrowser, SIGNAL(urlClick(QString)), this, SLOT(handleInternalLinks(QString)));
+    connect(m_textBrowser, SIGNAL(anchorClicked(QUrl)), this, SLOT(handleInternalLinks(QUrl)));
 
     QString text =
 
@@ -199,25 +200,30 @@ AboutBugReportingDialog::AboutBugReportingDialog(QWidget * parent):
 
     m_textBrowser->setText(text);
 
-    setMainWidget(m_textBrowser);
+    layout->addWidget(m_textBrowser);
+
+    QDialogButtonBox* box = new QDialogButtonBox(QDialogButtonBox::Close, this);
+    connect(box, SIGNAL(accepted()), SIGNAL(accepted()));
+    connect(box, SIGNAL(rejected()), SIGNAL(rejected()));
+    layout->addWidget(box);
 
     KConfigGroup config(KSharedConfig::openConfig(), "AboutBugReportingDialog");
-    restoreDialogSize(config);
+    KWindowConfig::restoreWindowSize(windowHandle(), config);
 }
 
 AboutBugReportingDialog::~AboutBugReportingDialog( )
 {
     KConfigGroup config(KSharedConfig::openConfig(), "AboutBugReportingDialog");
-    saveDialogSize(config);
+    KWindowConfig::saveWindowSize(windowHandle(), config);
 }
 
-void AboutBugReportingDialog::handleInternalLinks(const QString& url)
+void AboutBugReportingDialog::handleInternalLinks(const QUrl& url)
 {
     if (!url.isEmpty()) {
-        if (url.startsWith('#')) {
-            showSection(url.mid(1,url.length()));
+        if (url.scheme().isEmpty() && url.hasFragment()) {
+            showSection(url.fragment());
         } else {
-            KToolInvocation::invokeBrowser(url);
+            QDesktopServices::openUrl(url);
         }
     }
 }

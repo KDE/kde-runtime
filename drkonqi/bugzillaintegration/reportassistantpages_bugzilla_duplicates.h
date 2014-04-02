@@ -29,7 +29,8 @@
 #include "ui_assistantpage_bugzilla_duplicates_dialog.h"
 #include "ui_assistantpage_bugzilla_duplicates_dialog_confirmation.h"
 #include <QDate>
-#include <KDialog>
+#include <QDialog>
+#include <kguiitem.h>
 
 class QDate;
 class QTreeWidgetItem;
@@ -108,7 +109,7 @@ private:
 };
 
 /** Internal bug-info dialog **/
-class BugzillaReportInformationDialog : public KDialog
+class BugzillaReportInformationDialog : public QDialog
 {
     Q_OBJECT
 
@@ -144,9 +145,10 @@ private:
     int                                         m_bugNumber;
     QString                                     m_closedStateString;
     int                                         m_duplicatesCount;
+    QPushButton*                                m_suggestButton;
 };
 
-class BugzillaReportConfirmationDialog : public KDialog
+class BugzillaReportConfirmationDialog : public QDialog
 {
     Q_OBJECT
 

@@ -19,16 +19,13 @@
 
 #include "drkonqidialog.h"
 
-#include <KMenu>
-#include <KIcon>
-#include <KStandardDirs>
-#include <KLocale>
-#include <KTabWidget>
-#include <KDebug>
 #include <KToolInvocation>
+#include <KWindowConfig>
+#include <KLocalizedString>
 
-#include <KGlobal>
 #include <QStandardPaths>
+#include <QMenu>
+#include <QDebug>
 
 #include "drkonqi.h"
 #include "backtracewidget.h"
@@ -47,19 +44,23 @@ static const char DRKONQI_REPORT_BUG_URL[] =
     KDE_BUGZILLA_URL "enter_bug.cgi?product=drkonqi&format=guided";
 
 DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
-        KDialog(parent),
+        QDialog(parent),
         m_aboutBugReportingDialog(0),
         m_backtraceWidget(0)
 {
-    KGlobal::ref();
     setAttribute(Qt::WA_DeleteOnClose, true);
 
     //Setting dialog title and icon
-    setCaption(DrKonqi::crashedApplication()->name());
-    setWindowIcon(KIcon("tools-report-bug"));
+    setWindowTitle(DrKonqi::crashedApplication()->name());
+    setWindowIcon(QIcon::fromTheme("tools-report-bug"));
 
-    m_tabWidget = new KTabWidget(this);
-    setMainWidget(m_tabWidget);
+    QVBoxLayout* l = new QVBoxLayout(this);
+    m_tabWidget = new QTabWidget(this);
+    l->addWidget(m_tabWidget);
+    m_buttonBox = new QDialogButtonBox(this);
+    connect(m_buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accepted);
+    connect(m_buttonBox, &QDialogButtonBox::rejected, this, &QDialog::rejected);
+    l->addWidget(m_buttonBox);
 
     connect(m_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabIndexChanged(int)));
 
@@ -75,15 +76,14 @@ DrKonqiDialog::DrKonqiDialog(QWidget * parent) :
     setMinimumSize(QSize(640,320));
     resize(minimumSize());
     KConfigGroup config(KSharedConfig::openConfig(), "General");
-    restoreDialogSize(config);
+    KWindowConfig::restoreWindowSize(windowHandle(), config);
+    setLayout(l);
 }
 
 DrKonqiDialog::~DrKonqiDialog()
 {
     KConfigGroup config(KSharedConfig::openConfig(), "General");
-    saveDialogSize(config);
-
-    KGlobal::deref();
+    KWindowConfig::saveWindowSize(windowHandle(), config);
 }
 
 void DrKonqiDialog::tabIndexChanged(int index)
@@ -158,9 +158,9 @@ void DrKonqiDialog::buildIntroWidget()
                                              //so it doesn't make sense to display them in decimal
                                              QString().sprintf("0x%8x", crashedApp->signalNumber()),
                                     #endif
-                                             KGlobal::locale()->formatDate(crashedApp->datetime().date(), KLocale::ShortDate),
+                                             crashedApp->datetime().date().toString(Qt::DefaultLocaleShortDate),
 
-                                             KGlobal::locale()->formatTime(crashedApp->datetime().time(), true)
+                                             crashedApp->datetime().time().toString()
                                              ));
 }
 
@@ -168,33 +168,37 @@ void DrKonqiDialog::buildDialogButtons()
 {
     const CrashedApplication *crashedApp = DrKonqi::crashedApplication();
 
-    //Set kdialog buttons
-    setButtons(KDialog::User3 | KDialog::User2 | KDialog::User1 | KDialog::Close);
+    //Set dialog buttons
+    m_buttonBox->setStandardButtons(QDialogButtonBox::Close);
 
-    //Report bug button
-    setButtonGuiItem(KDialog::User1, KGuiItem2(i18nc("@action:button", "Report &Bug"),
-                                               KIcon("tools-report-bug"),
-                                               i18nc("@info:tooltip",
-                                                     "Starts the bug report assistant.")));
+    //Report bug button: User1
+    QPushButton* reportButton = new QPushButton(m_buttonBox);
+    KGuiItem2 reportItem(i18nc("@action:button", "Report &Bug"),
+                         QIcon::fromTheme("tools-report-bug"),
+                         i18nc("@info:tooltip", "Starts the bug report assistant."));
+    KGuiItem::assign(reportButton, reportItem);
+    m_buttonBox->addButton(reportButton, QDialogButtonBox::ActionRole);
 
     bool enableReportAssistant = !crashedApp->bugReportAddress().isEmpty() &&
                                  crashedApp->fakeExecutableBaseName() != QLatin1String("drkonqi") &&
                                  !DrKonqi::isSafer() &&
                                  HAVE_XMLRPCCLIENT;
-    enableButton(KDialog::User1, enableReportAssistant);
-    connect(this, SIGNAL(user1Clicked()), this, SLOT(startBugReportAssistant()));
+    reportButton->setEnabled(enableReportAssistant);
+    connect(reportButton, SIGNAL(clicked(bool)), SLOT(startBugReportAssistant()));
 
-    //Default debugger button and menu (only for developer mode)
+    //Default debugger button and menu (only for developer mode): User2
     DebuggerManager *debuggerManager = DrKonqi::debuggerManager();
-    setButtonGuiItem(KDialog::User2, KGuiItem2(i18nc("@action:button this is the debug menu button "
-                                               "label which contains the debugging applications",
-                                               "&Debug"), KIcon("applications-development"),
+    m_debugButton = new QPushButton(m_buttonBox);
+    KGuiItem2 debugItem(i18nc("@action:button this is the debug menu button label which contains the debugging applications",
+                                               "&Debug"), QIcon::fromTheme("applications-development"),
                                                i18nc("@info:tooltip", "Starts a program to debug "
-                                                     "the crashed application.")));
-    showButton(KDialog::User2, debuggerManager->showExternalDebuggers());
+                                                     "the crashed application."));
+    KGuiItem::assign(m_debugButton, debugItem);
+    m_debugButton->setVisible(debuggerManager->showExternalDebuggers());
+    m_buttonBox->addButton(m_debugButton, QDialogButtonBox::ActionRole);
 
-    m_debugMenu = new KMenu(this);
-    setButtonMenu(KDialog::User2, m_debugMenu);
+    m_debugMenu = new QMenu(this);
+    m_debugButton->setMenu(m_debugMenu);
 
     QList<AbstractDebuggerLauncher*> debuggers = debuggerManager->availableExternalDebuggers();
     foreach(AbstractDebuggerLauncher *launcher, debuggers) {
@@ -208,28 +212,29 @@ void DrKonqiDialog::buildDialogButtons()
     connect(debuggerManager, SIGNAL(debuggerRunning(bool)), SLOT(enableDebugMenu(bool)));
 
     //Restart application button
-    setButtonGuiItem(KDialog::User3, KGuiItem2(i18nc("@action:button", "&Restart Application"),
-                                               KIcon("system-reboot"),
-                                               i18nc("@info:tooltip", "Use this button to restart "
-                                                     "the crashed application.")));
-    enableButton(KDialog::User3, !crashedApp->hasBeenRestarted() &&
+    KGuiItem2 restartItem(i18nc("@action:button", "&Restart Application"),
+              QIcon::fromTheme("system-reboot"),
+              i18nc("@info:tooltip", "Use this button to restart "
+              "the crashed application."));
+    m_restartButton = new QPushButton(m_buttonBox);
+    KGuiItem::assign(m_restartButton, restartItem);
+    m_restartButton->setEnabled(!crashedApp->hasBeenRestarted() &&
                                  crashedApp->fakeExecutableBaseName() != QLatin1String("drkonqi"));
-    connect(this, SIGNAL(user3Clicked()), crashedApp, SLOT(restart()));
+    connect(m_restartButton, SIGNAL(clicked(bool)), crashedApp, SLOT(restart()));
     connect(crashedApp, SIGNAL(restarted(bool)), this, SLOT(applicationRestarted(bool)));
 
     //Close button
     QString tooltipText = i18nc("@info:tooltip",
                                 "Close this dialog (you will lose the crash information.)");
-    setButtonToolTip(KDialog::Close, tooltipText);
-    setButtonWhatsThis(KDialog::Close, tooltipText);
-    setDefaultButton(KDialog::Close);
-    setButtonFocus(KDialog::Close);
+    m_buttonBox->button(QDialogButtonBox::Close)->setToolTip(tooltipText);
+    m_buttonBox->button(QDialogButtonBox::Close)->setWhatsThis(tooltipText);
+    m_buttonBox->button(QDialogButtonBox::Close)->setFocus();
 }
 
 void DrKonqiDialog::addDebugger(AbstractDebuggerLauncher *launcher)
 {
-    QAction *action = new QAction(KIcon("applications-development"),
-                                  xi18nc("@action:inmenu 1 is the debugger name",
+    QAction *action = new QAction(QIcon::fromTheme("applications-development"),
+                                  i18nc("@action:inmenu 1 is the debugger name",
                                          "Debug in <application>%1</application>",
                                          launcher->name()), m_debugMenu);
     m_debugMenu->addAction(action);
@@ -244,13 +249,13 @@ void DrKonqiDialog::removeDebugger(AbstractDebuggerLauncher *launcher)
         m_debugMenu->removeAction(action);
         action->deleteLater();
     } else {
-        kError() << "Invalid launcher";
+        qWarning() << "Invalid launcher";
     }
 }
 
 void DrKonqiDialog::enableDebugMenu(bool debuggerRunning)
 {
-    enableButton(KDialog::User2, !debuggerRunning);
+    m_debugButton->setEnabled(!debuggerRunning);
 }
 
 void DrKonqiDialog::startBugReportAssistant()
@@ -269,7 +274,7 @@ void DrKonqiDialog::linkActivated(const QString& link)
     } else if (link == QLatin1String(DRKONQI_REPORT_BUG_URL)) {
         KToolInvocation::invokeBrowser(link);
     } else if (link.startsWith(QLatin1String("http"))) {
-        kWarning() << "unexpected link";
+        qWarning() << "unexpected link";
         KToolInvocation::invokeBrowser(link);
     }
 }
@@ -287,5 +292,5 @@ void DrKonqiDialog::showAboutBugReporting()
 
 void DrKonqiDialog::applicationRestarted(bool success)
 {
-    enableButton(KDialog::User3, !success);
+    m_restartButton->setEnabled(!success);
 }

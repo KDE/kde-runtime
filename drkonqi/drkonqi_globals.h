@@ -18,7 +18,7 @@
 #define DRKONQI_GLOBALS_H
 
 #include <KGuiItem>
-#include <KIcon>
+#include <QIcon>
 
 /** This class provides a custom constructor to fill the "toolTip"
  * and "whatsThis" texts of KGuiItem with the same text.
@@ -26,7 +26,7 @@
 class KGuiItem2 : public KGuiItem
 {
 public:
-    inline KGuiItem2(const QString &text, const KIcon &icon, const QString &toolTip)
+    inline KGuiItem2(const QString &text, const QIcon &icon, const QString &toolTip)
             : KGuiItem(text, icon, toolTip, toolTip) {}
 };
 

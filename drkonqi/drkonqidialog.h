@@ -23,17 +23,17 @@
 #include <QtCore/QPointer>
 #include <QtCore/QHash>
 
-#include <KDialog>
+#include <QDialog>
 
 #include "ui_maindialog.h"
 
 class BacktraceWidget;
 class AboutBugReportingDialog;
-class KTabWidget;
+class QTabWidget;
 class AbstractDebuggerLauncher;
-class KMenu;
+class QDialogButtonBox;
 
-class DrKonqiDialog: public KDialog
+class DrKonqiDialog: public QDialog
 {
     Q_OBJECT
 
@@ -60,7 +60,7 @@ private Q_SLOTS:
 private:
     void showAboutBugReporting();
 
-    KTabWidget *                        m_tabWidget;
+    QTabWidget *                        m_tabWidget;
 
     QPointer<AboutBugReportingDialog>   m_aboutBugReportingDialog;
 
@@ -69,8 +69,11 @@ private:
 
     BacktraceWidget *                   m_backtraceWidget;
 
-    KMenu *m_debugMenu;
+    QMenu *m_debugMenu;
     QHash<AbstractDebuggerLauncher*, QAction*> m_debugMenuActions;
+    QDialogButtonBox*                   m_buttonBox;
+    QPushButton*                        m_debugButton;
+    QPushButton*                        m_restartButton;
 };
 
 #endif

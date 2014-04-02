@@ -19,7 +19,7 @@
 
 #include "duplicatefinderjob.h"
 
-#include <KDebug>
+#include <QDebug>
 
 #include "backtracegenerator.h"
 #include "parser/backtraceparser.h"
@@ -32,7 +32,7 @@ DuplicateFinderJob::DuplicateFinderJob(const QList<int> &bugIds, BugzillaManager
     m_manager(manager),
     m_bugIds(bugIds)
 {
-    kDebug() << "Possible duplicates:" << m_bugIds;
+    qDebug() << "Possible duplicates:" << m_bugIds;
     connect(m_manager, SIGNAL(bugReportFetched(BugReport,QObject*)), this, SLOT(slotBugReportFetched(BugReport,QObject*)));
     connect(m_manager, SIGNAL(bugReportError(QString,QObject*)), this, SLOT(slotBugReportError(QString,QObject*)));
 }
@@ -59,7 +59,7 @@ void DuplicateFinderJob::analyzeNextBug()
     }
 
     const int bugId = m_bugIds.takeFirst();
-    kDebug() << "Fetching:" << bugId;
+    qDebug() << "Fetching:" << bugId;
     m_manager->fetchBugReport(bugId, this);
 }
 
@@ -68,10 +68,10 @@ void DuplicateFinderJob::fetchBug(const QString &bugId)
     bool ok;
     const int num = bugId.toInt(&ok);
     if (ok) {
-        kDebug() << "Fetching:" << bugId;
+        qDebug() << "Fetching:" << bugId;
         m_manager->fetchBugReport(num, this);
     } else {
-        kDebug() << "Bug id not valid:" << bugId;
+        qDebug() << "Bug id not valid:" << bugId;
         analyzeNextBug();
     }
 }
@@ -87,26 +87,26 @@ void DuplicateFinderJob::slotBugReportFetched(const BugReport &bug, QObject *own
 
     BacktraceGenerator *btGenerator = DrKonqi::debuggerManager()->backtraceGenerator();
     const ParseBugBacktraces::DuplicateRating rating = parse.findDuplicate(btGenerator->parser()->parsedBacktraceLines());
-    kDebug() << "Duplicate rating:" << rating;
+    qDebug() << "Duplicate rating:" << rating;
 
     //TODO handle more cases here
     if (rating != ParseBugBacktraces::PerfectDuplicate) {
-        kDebug() << "Bug" << bug.bugNumber() << "most likely not a duplicate:" << rating;
+        qDebug() << "Bug" << bug.bugNumber() << "most likely not a duplicate:" << rating;
         analyzeNextBug();
         return;
     }
 
     //The Bug is a duplicate, now find out the status and resolution of the existing report
     if (bug.resolutionValue() == BugReport::Duplicate) {
-        kDebug() << "Found duplicate is a duplicate itself.";
+        qDebug() << "Found duplicate is a duplicate itself.";
         if (!m_result.duplicate) {
             m_result.duplicate = bug.bugNumberAsInt();
         }
         fetchBug(bug.markedAsDuplicateOf());
     } else if ((bug.statusValue() == BugReport::UnknownStatus) || (bug.resolutionValue() == BugReport::UnknownResolution)) {
-        kDebug() << "Either the status or the resolution is unknown.";
-        kDebug() << "Status \"" << bug.bugStatus() << "\" known:" << (bug.statusValue() != BugReport::UnknownStatus);
-        kDebug() << "Resolution \"" << bug.resolution() << "\" known:" << (bug.resolutionValue() != BugReport::UnknownResolution);
+        qDebug() << "Either the status or the resolution is unknown.";
+        qDebug() << "Status \"" << bug.bugStatus() << "\" known:" << (bug.statusValue() != BugReport::UnknownStatus);
+        qDebug() << "Resolution \"" << bug.resolution() << "\" known:" << (bug.resolutionValue() != BugReport::UnknownResolution);
         analyzeNextBug();
     } else {
         if (!m_result.duplicate) {
@@ -115,7 +115,7 @@ void DuplicateFinderJob::slotBugReportFetched(const BugReport &bug, QObject *own
         m_result.parentDuplicate = bug.bugNumberAsInt();
         m_result.status = bug.statusValue();
         m_result.resolution = bug.resolutionValue();
-        kDebug() << "Found duplicate information (id/status/resolution):" << bug.bugNumber() << bug.bugStatus() << bug.resolution();
+        qDebug() << "Found duplicate information (id/status/resolution):" << bug.bugNumber() << bug.bugStatus() << bug.resolution();
         emitResult();
     }
 }
@@ -125,6 +125,6 @@ void DuplicateFinderJob::slotBugReportError(const QString &message, QObject *own
     if (this != owner) {
         return;
     }
-    kDebug() << "Error fetching bug:" << message;
+    qDebug() << "Error fetching bug:" << message;
     analyzeNextBug();
 }

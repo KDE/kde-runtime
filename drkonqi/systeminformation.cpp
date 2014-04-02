@@ -28,13 +28,11 @@
 
 #include <QtCore/QFile>
 
-#include <KStandardDirs>
 #include <KProcess>
-#include <KDebug>
+#include <QDebug>
 #include <KConfig>
 #include <KConfigGroup>
-#include <kdeversion.h>
-#include <KGlobal>
+#include <KSharedConfig>
 #include <QStandardPaths>
 
 static const QString OS_UNSPECIFIED = "unspecified";
@@ -82,7 +80,7 @@ void SystemInformation::tryToSetBugzillaPlatformFromExternalInfo()
     //Run lsb_release async
     QString lsb_release = QStandardPaths::findExecutable(QLatin1String("lsb_release"));
     if ( !lsb_release.isEmpty() ) {
-        kDebug() << "found lsb_release";
+        qDebug() << "found lsb_release";
         KProcess *process = new KProcess();
         process->setOutputChannelMode(KProcess::OnlyStdoutChannel);
         process->setEnv("LC_ALL", "C");
@@ -216,7 +214,7 @@ QString SystemInformation::fetchOSDetailInformation() const
 #ifdef HAVE_UNAME
     struct utsname buf;
     if (uname(&buf) == -1) {
-        kDebug() << "call to uname failed" << perror;
+        qDebug() << "call to uname failed" << perror;
     } else {
         operatingSystem = QString::fromLocal8Bit(buf.sysname) + ' '
             + QString::fromLocal8Bit(buf.release) + ' '
@@ -289,11 +287,6 @@ bool SystemInformation::compiledSources() const
 void SystemInformation::setCompiledSources(bool compiled)
 {
     m_compiledSources = compiled;
-}
-
-QString SystemInformation::kdeVersion() const
-{
-    return KDE::versionString();
 }
 
 QString SystemInformation::qtVersion() const

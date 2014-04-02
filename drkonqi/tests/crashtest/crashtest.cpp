@@ -27,15 +27,14 @@
  *****************************************************************/
 
 // Let's crash.
-#include <kapplication.h>
 #include <kcrash.h>
 #include <kaboutdata.h>
-#include <kcmdlineargs.h>
-#include <kdebug.h>
 #include <assert.h>
 #include <QtConcurrentMap>
 #include <KLocalizedString>
-#include <k4aboutdata.h>
+#include <QCommandLineParser>
+#include <QApplication>
+#include <KAboutData>
 
 enum CrashType { Crash, Malloc, Div0, Assert, QAssert, Threads };
 
@@ -122,30 +121,27 @@ void level1(int t)
 
 int main(int argc, char *argv[])
 {
-  K4AboutData aboutData("crashtext", 0, ki18n("Crash Test for DrKonqi"),
+  QApplication app(argc, argv);
+  KAboutData aboutData("crashtext", 0, i18n("Crash Test for DrKonqi"),
                        "1.1",
-                       ki18n("Crash Test for DrKonqi"),
-                       K4AboutData::License_GPL,
-                       ki18n("(c) 2000-2002 David Faure, Waldo Bastian"));
+                       i18n("Crash Test for DrKonqi"),
+                       KAboutData::License_GPL,
+                       i18n("(c) 2000-2002 David Faure, Waldo Bastian"));
 
-  KCmdLineArgs::init(argc, argv, &aboutData);
-
-  KCmdLineOptions options;
-  options.add("autorestart", ki18n("Automatically restart"));
-  options.add("+crash|malloc|div0|assert|threads", ki18n("Type of crash."));
-  KCmdLineArgs::addCmdLineOptions(options);
-
-  KApplication app(false);
-  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+  QCommandLineParser parser;
+  parser.addOption(QCommandLineOption("autorestart", i18n("Automatically restart")));
+  parser.addPositionalArgument("type", i18n("Type of crash."), "crash|malloc|div0|assert|threads");
+  aboutData.setupCommandLine(&parser);
+  parser.process(app);
+  aboutData.processCommandLine(&parser);
 
   //start drkonqi directly so that drkonqi's output goes to the console
   KCrash::CrashFlags flags = KCrash::AlwaysDirectly;
-  if (args->isSet("autorestart"))
+  if (parser.isSet("autorestart"))
     flags |= KCrash::AutoRestart;
   KCrash::setFlags(flags);
-  kDebug() << flags;
 
-  QByteArray type = args->count() ? args->arg(0).toUtf8() : "";
+  QByteArray type = parser.positionalArguments().isEmpty() ? QByteArray() : parser.positionalArguments().first().toUtf8();
   int crashtype = Crash;
   if (type == "malloc")
     crashtype = Malloc;

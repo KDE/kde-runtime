@@ -25,10 +25,9 @@
 #include <QToolTip>
 
 #include <KToolInvocation>
-#include <KIcon>
-#include <KUrl>
 #include <KMessageBox>
 #include <KLocalizedString>
+#include <KWindowConfig>
 
 #include "drkonqi.h"
 #include "debuggermanager.h"
@@ -46,7 +45,7 @@ IntroductionPage::IntroductionPage(ReportAssistantDialog * parent)
         : ReportAssistantPage(parent)
 {
     ui.setupUi(this);
-    ui.m_warningIcon->setPixmap(KIcon("dialog-warning").pixmap(64,64));
+    ui.m_warningIcon->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(64,64));
 }
 
 //END IntroductionPage
@@ -214,9 +213,9 @@ ConclusionPage::ConclusionPage(ReportAssistantDialog * parent)
 
     ui.setupUi(this);
 
-    ui.m_showReportInformationButton->setGuiItem(
+    KGuiItem::assign(ui.m_showReportInformationButton,
                     KGuiItem2(i18nc("@action:button", "&Show Contents of the Report"),
-                            KIcon("document-preview"),
+                            QIcon::fromTheme("document-preview"),
                             i18nc("@info:tooltip", "Use this button to show the generated "
                             "report information about this crash.")));
     connect(ui.m_showReportInformationButton, SIGNAL(clicked()),
@@ -239,7 +238,7 @@ void ConclusionPage::finishClicked()
             subject= subject.arg(crashedApp->datetime().toString("yyyy-MM-dd"));
             KToolInvocation::invokeMailer(reportAddress, "", "" , subject, report);
         } else {
-            if (KUrl(reportAddress).isRelative()) { //Scheme is missing
+            if (QUrl(reportAddress).isRelative()) { //Scheme is missing
                 reportAddress = QString::fromLatin1("http://%1").arg(reportAddress);
             }
             KToolInvocation::invokeBrowser(reportAddress);
@@ -425,34 +424,33 @@ bool ConclusionPage::isComplete()
 //BEGIN ReportInformationDialog
 
 ReportInformationDialog::ReportInformationDialog(const QString & reportText)
-    : KDialog()
+    : QDialog()
 {
     setAttribute(Qt::WA_DeleteOnClose, true);
+    setWindowTitle(i18nc("@title:window","Contents of the Report"));
 
-    setButtons(KDialog::Close | KDialog::User1);
-    setDefaultButton(KDialog::Close);
-    setCaption(i18nc("@title:window","Contents of the Report"));
-
-    ui.setupUi(mainWidget());
+    ui.setupUi(this);
     ui.m_reportInformationBrowser->setPlainText(reportText);
 
-    setButtonGuiItem(KDialog::User1, KGuiItem2(i18nc("@action:button", "&Save to File..."),
-                                               KIcon("document-save"),
+    QPushButton* saveButton = new QPushButton(ui.buttonBox);
+    KGuiItem::assign(saveButton, KGuiItem2(i18nc("@action:button", "&Save to File..."),
+                                               QIcon::fromTheme("document-save"),
                                                i18nc("@info:tooltip", "Use this button to save the "
                                                "generated crash report information to "
                                                "a file. You can use this option to report the "
                                                "bug later.")));
-    connect(this, SIGNAL(user1Clicked()), this, SLOT(saveReport()));
+    connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(saveReport()));
+    ui.buttonBox->addButton(saveButton, QDialogButtonBox::ActionRole);
 
-    setInitialSize(QSize(800, 600));
+    resize(QSize(800, 600));
     KConfigGroup config(KSharedConfig::openConfig(), "ReportInformationDialog");
-    restoreDialogSize(config);
+    KWindowConfig::restoreWindowSize(windowHandle(), config);
 }
 
 ReportInformationDialog::~ReportInformationDialog()
 {
     KConfigGroup config(KSharedConfig::openConfig(), "ReportInformationDialog");
-    saveDialogSize(config);
+    KWindowConfig::saveWindowSize(windowHandle(), config);
 }
 
 void ReportInformationDialog::saveReport()

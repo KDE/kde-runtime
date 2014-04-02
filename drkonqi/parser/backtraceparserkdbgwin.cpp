@@ -17,7 +17,7 @@
 */
 #include "backtraceparserkdbgwin.h"
 #include "backtraceparser_p.h"
-#include <KDebug>
+#include <QDebug>
 
 //BEGIN BacktraceLineKdbgwin
 
@@ -66,11 +66,11 @@ void BacktraceLineKdbgwin::parse()
         d->m_functionName = regExp.cap(2);
         d->m_file = regExp.cap(3).trimmed();
 
-        kDebug() << d->m_functionName << d->m_file << d->m_library;
+        qDebug() << d->m_functionName << d->m_file << d->m_library;
         return;
     }
 
-    kDebug() << "line" << d->m_line << "did not match";
+    qDebug() << "line" << d->m_line << "did not match";
 }
 
 void BacktraceLineKdbgwin::rate()

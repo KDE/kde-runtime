@@ -98,12 +98,11 @@ target_link_libraries(drkonqi
     KF5::IconThemes
     KF5::WindowSystem
     KF5::Crash
-    KF5::KDE4Support
     drkonqi_backtrace_parser
 )
 
 if(KF5XmlRpcClient_FOUND)
-    target_link_libraries(drkonqi KF5::XmlRpcClient KF5::Wallet KF5::WebKit)
+    target_link_libraries(drkonqi KF5::XmlRpcClient KF5::Wallet KF5::WebKit KF5::ConfigWidgets KF5::WidgetsAddons KF5::JobWidgets KF5::Completion KF5::Wallet Qt5::DBus)
 endif()
 
 install(TARGETS drkonqi DESTINATION ${LIBEXEC_INSTALL_DIR})

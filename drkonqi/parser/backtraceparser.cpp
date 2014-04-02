@@ -21,7 +21,7 @@
 #include "backtraceparsernull.h"
 #include <QtCore/QRegExp>
 #include <QtCore/QMetaEnum>
-#include <KDebug>
+#include <QtCore/QDebug>
 
 //factory
 BacktraceParser *BacktraceParser::newParser(const QString & debuggerName, QObject *parent)
@@ -324,7 +324,7 @@ void BacktraceParser::calculateRatingData()
         rating += static_cast<uint>(line.rating()) * multiplier;
         bestPossibleRating += static_cast<uint>(BacktraceLine::BestRating) * multiplier;
 
-        kDebug() << line.rating() << line.toString();
+        qDebug() << line.rating() << line.toString();
     }
 
     //Generate a simplified backtrace
@@ -384,11 +384,11 @@ void BacktraceParser::calculateRatingData()
         }
     }
 
-    kDebug() << "Rating:" << rating << "out of" << bestPossibleRating << "Usefulness:"
+    qDebug() << "Rating:" << rating << "out of" << bestPossibleRating << "Usefulness:"
              << staticMetaObject.enumerator(staticMetaObject.indexOfEnumerator("Usefulness")).valueToKey(d->m_usefulness);
-    kDebug() << "90%:" << (bestPossibleRating*0.90) << "70%:" << (bestPossibleRating*0.70)
+    qDebug() << "90%:" << (bestPossibleRating*0.90) << "70%:" << (bestPossibleRating*0.70)
              << "40%:" << (bestPossibleRating*0.40);
-    kDebug() << "Have seen stack base:" << haveSeenStackBase << "Lines counted:" << counter;
+    qDebug() << "Have seen stack base:" << haveSeenStackBase << "Lines counted:" << counter;
 }
 
 #include "backtraceparser.moc"

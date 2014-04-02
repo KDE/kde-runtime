@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>ConfirmationDialog</class>
- <widget class="QWidget" name="ConfirmationDialog">
+ <widget class="QDialog" name="ConfirmationDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -139,20 +139,20 @@
        <item>
         <widget class="QRadioButton" name="proceedRadioNo">
          <property name="text">
-          <string>No, do not file a new bug report, and cancel the assistant</string>
+          <string>No, do not file &amp;a new bug report, and cancel the assistant</string>
          </property>
          <attribute name="buttonGroup">
-          <string>buttonGroupProceedQuestion</string>
+          <string notr="true">buttonGroupProceedQuestion</string>
          </attribute>
         </widget>
        </item>
        <item>
         <widget class="QRadioButton" name="proceedRadioYes">
          <property name="text">
-          <string>Proceed with reporting the bug</string>
+          <string>Proceed with reporting &amp;the bug</string>
          </property>
          <attribute name="buttonGroup">
-          <string>buttonGroupProceedQuestion</string>
+          <string notr="true">buttonGroupProceedQuestion</string>
          </attribute>
         </widget>
        </item>
@@ -206,20 +206,20 @@
        <item>
         <widget class="QRadioButton" name="markAsDuplicateCheck">
          <property name="text">
-          <string>Not really sure: mark as a possible duplicate</string>
+          <string>Not &amp;really sure: mark as a possible duplicate</string>
          </property>
          <attribute name="buttonGroup">
-          <string>buttonGroupProceed</string>
+          <string notr="true">buttonGroupProceed</string>
          </attribute>
         </widget>
        </item>
        <item>
         <widget class="QRadioButton" name="attachToBugReportCheck">
          <property name="text">
-          <string>Completely sure: attach my information to this report</string>
+          <string>Completely sure: attach my &amp;information to this report</string>
          </property>
          <attribute name="buttonGroup">
-          <string>buttonGroupProceed</string>
+          <string notr="true">buttonGroupProceed</string>
          </attribute>
         </widget>
        </item>
@@ -240,12 +240,52 @@
      </property>
     </spacer>
    </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>ConfirmationDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>345</x>
+     <y>461</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>342</x>
+     <y>483</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>ConfirmationDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>230</x>
+     <y>470</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>232</x>
+     <y>492</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
  <buttongroups>
-  <buttongroup name="buttonGroupProceedQuestion"/>
   <buttongroup name="buttonGroupProceed"/>
+  <buttongroup name="buttonGroupProceedQuestion"/>
  </buttongroups>
 </ui>

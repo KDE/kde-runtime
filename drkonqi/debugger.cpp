@@ -18,10 +18,8 @@
 
 #include <KConfig>
 #include <KConfigGroup>
-#include <KGlobal>
-#include <KStandardDirs>
-#include <KMacroExpanderBase>
-#include <KDebug>
+#include <KMacroExpander>
+#include <QDebug>
 
 #include "crashedapplication.h"
 #include "drkonqi.h"
@@ -46,7 +44,7 @@ bool Debugger::isValid() const
 bool Debugger::isInstalled() const
 {
     QString tryexec = tryExec();
-    return !tryexec.isEmpty() && !KStandardDirs::findExe(tryexec).isEmpty();
+    return !tryexec.isEmpty() && !QStandardPaths::findExecutable(tryexec).isEmpty();
 }
 
 QString Debugger::name() const
@@ -130,9 +128,7 @@ void Debugger::expandString(QString & str, ExpandStringUsage usage, const QStrin
 //static
 QList<Debugger> Debugger::availableDebuggers(const char *regexp, const QString & backend)
 {
-    KStandardDirs *dirs = KGlobal::dirs();
-    QStringList debuggers = dirs->findAllResources("appdata", QLatin1String(regexp),
-                                                   KStandardDirs::NoDuplicates);
+    QStringList debuggers = QStandardPaths::locateAll(QStandardPaths::DataLocation, QLatin1String(regexp));
 
     QList<Debugger> result;
     foreach (const QString & debuggerFile, debuggers) {

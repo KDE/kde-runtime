@@ -21,7 +21,7 @@
 #define REPORTASSISTANTPAGES__BASE__H
 
 #include <QtCore/QPointer>
-#include <KDialog>
+#include <QtWidgets/QDialog>
 
 #include "reportassistantdialog.h"
 #include "reportassistantpage.h"
@@ -103,7 +103,7 @@ private Q_SLOTS:
 private:
     Ui::AssistantPageConclusions            ui;
 
-    QPointer<KDialog>                       m_infoDialog;
+    QPointer<QDialog>                       m_infoDialog;
 
     bool                                    m_isBKO;
     bool                                    m_needToReport;
@@ -112,7 +112,7 @@ Q_SIGNALS:
     void finished(bool);
 };
 
-class ReportInformationDialog : public KDialog
+class ReportInformationDialog : public QDialog
 {
     Q_OBJECT
 public:

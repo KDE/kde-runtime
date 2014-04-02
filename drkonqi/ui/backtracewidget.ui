@@ -35,7 +35,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="KTextBrowser" name="m_backtraceEdit"/>
+            <widget class="QTextBrowser" name="m_backtraceEdit"/>
            </item>
           </layout>
          </widget>
@@ -106,14 +106,14 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="KPushButton" name="m_reloadBacktraceButton">
+        <widget class="QPushButton" name="m_reloadBacktraceButton">
          <property name="isDragEnabled" stdset="0">
           <bool>false</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="KPushButton" name="m_installDebugButton"/>
+        <widget class="QPushButton" name="m_installDebugButton"/>
        </item>
        <item>
         <spacer name="horizontalSpacer_2">
@@ -129,10 +129,10 @@
         </spacer>
        </item>
        <item>
-        <widget class="KPushButton" name="m_copyButton"/>
+        <widget class="QPushButton" name="m_copyButton"/>
        </item>
        <item>
-        <widget class="KPushButton" name="m_saveButton"/>
+        <widget class="QPushButton" name="m_saveButton"/>
        </item>
       </layout>
      </item>
@@ -158,16 +158,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>ktextbrowser.h</header>
-  </customwidget>
   <customwidget>
    <class>StatusWidget</class>
    <extends>QWidget</extends>

@@ -19,8 +19,7 @@
 #include <signal.h>
 
 #include <QtCore/QTimerEvent>
-
-#include <KDebug>
+#include <QtCore/QDebug>
 
 DetachedProcessMonitor::DetachedProcessMonitor(QObject *parent)
         : QObject(parent), m_pid(0)
@@ -37,7 +36,7 @@ void DetachedProcessMonitor::timerEvent(QTimerEvent *event)
 {
     Q_ASSERT(m_pid != 0);
     if (::kill(m_pid, 0) < 0) {
-        kDebug() << "Process" << m_pid << "finished. kill(2) returned errno:" << perror;
+        qDebug() << "Process" << m_pid << "finished. kill(2) returned errno:" << perror;
         killTimer(event->timerId());
         m_pid = 0;
         emit processFinished();

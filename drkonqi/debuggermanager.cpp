@@ -17,7 +17,6 @@
 #include "debuggermanager.h"
 
 #include <KConfigGroup>
-#include <KGlobal>
 
 #include "debugger.h"
 #include "debuggerlaunchers.h"

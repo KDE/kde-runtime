@@ -21,27 +21,29 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QMetaEnum>
 #include <QtCore/QCoreApplication>
-#include <k4aboutdata.h>
-#include <KCmdLineOptions>
+#include <QCommandLineParser>
+#include <kaboutdata.h>
 #include <KLocalizedString>
 
 int main(int argc, char **argv)
 {
-    K4AboutData aboutData("backtraceparsertest_manual", 0,
-                         ki18n("backtraceparsertest_manual"), "1.0");
-    KCmdLineArgs::init(argc, argv, &aboutData);
+    QCoreApplication app(argc, argv);
+    KAboutData aboutData("backtraceparsertest_manual", QString(), i18n("backtraceparsertest_manual"), "1.0");
+    KAboutData::setApplicationData(aboutData);
 
-    KCmdLineOptions options;
-    options.add("debugger <name>", ki18n("The debugger name passed to the parser factory"), "gdb");
-    options.add("+file", ki18n("A file containing the backtrace."));
-    KCmdLineArgs::addCmdLineOptions(options);
+    QCommandLineParser parser;
+    parser.addOption(QCommandLineOption("debugger", i18n("The debugger name passed to the parser factory"), "name", "gdb"));
+    parser.addPositionalArgument("file", i18n("A file containing the backtrace."), "[file]");
+    aboutData.setupCommandLine(&parser);
+    parser.process(app);
+    aboutData.processCommandLine(&parser);
 
-    QCoreApplication app(KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv());
-    QCoreApplication::setApplicationName(QLatin1String("backtraceparsertest_manual"));
-
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    QString debugger = args->getOption("debugger");
-    QString file = args->arg(0);
+    QString debugger = parser.value("debugger");
+    if(parser.positionalArguments().isEmpty()) {
+        parser.showHelp(1);
+        return 1;
+    }
+    QString file = parser.positionalArguments().first();
 
     if (!QFile::exists(file)) {
         QTextStream(stderr) << "The specified file does not exist" << endl;
@@ -49,16 +51,16 @@ int main(int argc, char **argv)
     }
 
     FakeBacktraceGenerator generator;
-    QSharedPointer<BacktraceParser> parser(BacktraceParser::newParser(debugger));
-    parser->connectToGenerator(&generator);
+    QSharedPointer<BacktraceParser> btparser(BacktraceParser::newParser(debugger));
+    btparser->connectToGenerator(&generator);
     generator.sendData(file);
 
     QMetaEnum metaUsefulness = BacktraceParser::staticMetaObject.enumerator(
                                 BacktraceParser::staticMetaObject.indexOfEnumerator("Usefulness"));
-    QTextStream(stdout) << "Usefulness: " << metaUsefulness.valueToKey(parser->backtraceUsefulness()) << endl;
-    QTextStream(stdout) << "First valid functions: " << parser->firstValidFunctions().join(" ") << endl;
-    QTextStream(stdout) << "Simplified backtrace:\n" << parser->simplifiedBacktrace() << endl;
-    QStringList l = static_cast<QStringList>(parser->librariesWithMissingDebugSymbols().toList());
+    QTextStream(stdout) << "Usefulness: " << metaUsefulness.valueToKey(btparser->backtraceUsefulness()) << endl;
+    QTextStream(stdout) << "First valid functions: " << btparser->firstValidFunctions().join(" ") << endl;
+    QTextStream(stdout) << "Simplified backtrace:\n" << btparser->simplifiedBacktrace() << endl;
+    QStringList l = static_cast<QStringList>(btparser->librariesWithMissingDebugSymbols().toList());
     QTextStream(stdout) << "Missing dbgsym libs: " << l.join(" ") << endl;
 
     return 0;

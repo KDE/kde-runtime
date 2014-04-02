@@ -20,7 +20,7 @@
 
 #include "reportinterface.h"
 
-#include <KDebug>
+#include <QDebug>
 #include <KLocalizedString>
 
 #include "drkonqi.h"
@@ -147,7 +147,6 @@ QString ReportInterface::generateReportFullText(bool drKonqiStamp) const
     //Program name and versions
     report.append(QString("Application: %1 (%2)\n").arg(crashedApp->fakeExecutableBaseName(),
                                                         crashedApp->version()));
-    report.append(QString("KDE Platform Version: %1").arg(sysInfo->kdeVersion()));
     if ( sysInfo->compiledSources() ) {
         report.append(QString(" (Compiled from sources)\n"));
     } else {
@@ -242,10 +241,9 @@ QString ReportInterface::generateAttachmentComment() const
     QString comment;
 
     //Program name and versions
-    comment.append(QString("%1 (%2) on KDE Platform %3 using Qt %4\n\n")
+    comment.append(QStringLiteral("%1 (%2) using Qt %4\n\n")
                    .arg(crashedApp->fakeExecutableBaseName())
                    .arg(crashedApp->version())
-                   .arg(sysInfo->kdeVersion())
                    .arg(sysInfo->qtVersion()));
 
     //Details of the crash situation

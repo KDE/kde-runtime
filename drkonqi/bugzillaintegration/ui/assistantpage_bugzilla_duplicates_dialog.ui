@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>AssistantPageBugzillaDuplicatesDialog</class>
- <widget class="QWidget" name="AssistantPageBugzillaDuplicatesDialog">
+ <widget class="QDialog" name="AssistantPageBugzillaDuplicatesDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -43,7 +43,7 @@
       </widget>
      </item>
      <item>
-      <widget class="KPushButton" name="m_retryButton">
+      <widget class="QPushButton" name="m_retryButton">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -62,14 +62,14 @@
      <widget class="QWidget" name="verticalLayoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="KTextBrowser" name="m_infoBrowser"/>
+        <widget class="QTextBrowser" name="m_infoBrowser"/>
        </item>
       </layout>
      </widget>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="KTextBrowser" name="m_backtraceBrowser"/>
+        <widget class="QTextBrowser" name="m_backtraceBrowser"/>
        </item>
       </layout>
      </widget>
@@ -98,19 +98,16 @@
      </property>
     </spacer>
    </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close</set>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>ktextbrowser.h</header>
-  </customwidget>
   <customwidget>
    <class>StatusWidget</class>
    <extends>QWidget</extends>
@@ -119,5 +116,38 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>AssistantPageBugzillaDuplicatesDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>514</x>
+     <y>333</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>515</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>AssistantPageBugzillaDuplicatesDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>331</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>260</x>
+     <y>345</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

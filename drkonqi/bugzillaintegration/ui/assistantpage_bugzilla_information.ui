@@ -43,7 +43,7 @@
     </layout>
    </item>
    <item>
-    <widget class="KTextEdit" name="m_detailsEdit">
+    <widget class="QTextEdit" name="m_detailsEdit">
      <property name="acceptRichText">
       <bool>false</bool>
      </property>
@@ -102,19 +102,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>klineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>KComboBox</class>
    <extends>QComboBox</extends>
    <header>kcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>KTextEdit</class>
-   <extends>QTextEdit</extends>
-   <header>ktextedit.h</header>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

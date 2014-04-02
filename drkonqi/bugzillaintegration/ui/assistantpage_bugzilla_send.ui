@@ -30,10 +30,10 @@
       </spacer>
      </item>
      <item>
-      <widget class="KPushButton" name="m_retryButton"/>
+      <widget class="QPushButton" name="m_retryButton"/>
      </item>
      <item>
-      <widget class="KPushButton" name="m_showReportContentsButton"/>
+      <widget class="QPushButton" name="m_showReportContentsButton"/>
      </item>
     </layout>
    </item>
@@ -115,11 +115,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
-  </customwidget>
   <customwidget>
    <class>StatusWidget</class>
    <extends>QWidget</extends>

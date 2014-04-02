@@ -20,7 +20,7 @@
 
 #include <KShell>
 #include <KProcess>
-#include <KDebug>
+#include <QDebug>
 
 #include "detachedprocessmonitor.h"
 #include "drkonqi.h"
@@ -41,7 +41,7 @@ QString DefaultDebuggerLauncher::name() const
 void DefaultDebuggerLauncher::start()
 {
     if ( qobject_cast<DebuggerManager*>(parent())->debuggerIsRunning() ) {
-        kWarning() << "Another debugger is already running";
+        qWarning() << "Another debugger is already running";
         return;
     }
 
@@ -53,7 +53,7 @@ void DefaultDebuggerLauncher::start()
     if ( pid > 0 ) {
         m_monitor->startMonitoring(pid);
     } else {
-        kError() << "Could not start debugger:" << name();
+        qWarning() << "Could not start debugger:" << name();
         emit finished();
     }
 }

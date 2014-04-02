@@ -1,10 +1,10 @@
 add_executable( backtraceparsertest fakebacktracegenerator.cpp backtraceparsertest.cpp)
-target_link_libraries( backtraceparsertest Qt5::Test Qt5::Core KF5::KDE4Support KF5::KIOWidgets drkonqi_backtrace_parser)
+target_link_libraries( backtraceparsertest Qt5::Test Qt5::Core KF5::KIOWidgets drkonqi_backtrace_parser)
 ecm_mark_as_test(backtraceparsertest)
 add_test(backtraceparsertest backtraceparsertest)
 
 add_executable(backtraceparsertest_manual fakebacktracegenerator.cpp backtraceparsertest_manual.cpp)
-target_link_libraries(backtraceparsertest_manual Qt5::Core KF5::I18n KF5::KDE4Support KF5::KIOWidgets drkonqi_backtrace_parser)
+target_link_libraries(backtraceparsertest_manual Qt5::Core KF5::I18n KF5::KIOWidgets drkonqi_backtrace_parser)
 ecm_mark_as_test(backtraceparsertest_manual)
 
 # create a link so that the data directory can be accessed from the build directory, where the test runs

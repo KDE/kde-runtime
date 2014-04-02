@@ -137,14 +137,14 @@ private:
     Ui::AssistantPageBugzillaSend           ui;
     QString                                 reportUrl;
 
-    QPointer<KDialog>                       m_contentsDialog;
+    QPointer<QDialog>                       m_contentsDialog;
 
 Q_SIGNALS:
     void finished(bool);
 
 };
 
-class UnhandledErrorDialog: public KDialog
+class UnhandledErrorDialog: public QDialog
 {
     Q_OBJECT
 
