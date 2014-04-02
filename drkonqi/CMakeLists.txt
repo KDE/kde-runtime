@@ -95,7 +95,6 @@ add_executable(drkonqi ${drkonqi_SRCS})
 
 target_link_libraries(drkonqi
     KF5::I18n
-    KF5::IconThemes
     KF5::WindowSystem
     KF5::CoreAddons
     KF5::Service
