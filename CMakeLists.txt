@@ -72,7 +72,6 @@ add_subdirectory(kurifilter-plugins)
 
 # UI Helper applications
 add_subdirectory(drkonqi)
-add_subdirectory(kdebugdialog)
 add_subdirectory(knewstuff)
 
 # Command-line tools (e.g. for shell scripts)
