@@ -21,21 +21,20 @@
 
 #include "kglobalacceld.h"
 
-#include <kuniqueapplication.h>
-#include <k4aboutdata.h>
-#include <kcmdlineargs.h>
 #include <kcrash.h>
-#include <kde_file.h>
+#include <KAboutData>
+#include <KLocalizedString>
+#include <KDBusService>
 #include <QDebug>
-#include <klocale.h>
+#include <QApplication>
 
 #include <signal.h>
 
 static bool isEnabled()
-    {
+{
     // TODO: Check if kglobalaccel can be disabled
     return true;
-    }
+}
 
 
 static void sighandler(int /*sig*/)
@@ -46,7 +45,7 @@ static void sighandler(int /*sig*/)
 
 
 extern "C" Q_DECL_EXPORT int kdemain(int argc, char **argv)
-    {
+{
     // Disable Session Management the right way (C)
     //
     // ksmserver has global shortcuts. disableSessionManagement() does not prevent Qt from
@@ -55,50 +54,35 @@ extern "C" Q_DECL_EXPORT int kdemain(int argc, char **argv)
     // ksmserver tries to register with kglobalaccel).
     unsetenv( "SESSION_MANAGER" );
 
-    K4AboutData aboutdata(
+    QApplication app(argc, argv);
+    KAboutData aboutdata(
             "kglobalaccel",
-            0,
-            ki18n("KDE Global Shortcuts Service"),
+            QString(),
+            i18n("KDE Global Shortcuts Service"),
             "0.2",
-            ki18n("KDE Global Shortcuts Service"),
-            K4AboutData::License_LGPL,
-            ki18n("(C) 2007-2009  Andreas Hartmetz, Michael Jansen"));
-    aboutdata.addAuthor(ki18n("Andreas Hartmetz"),ki18n("Maintainer"),"ahartmetz@gmail.com");
-    aboutdata.addAuthor(ki18n("Michael Jansen"),ki18n("Maintainer"),"kde@michael-jansen.biz");
+            i18n("KDE Global Shortcuts Service"),
+            KAboutData::License_LGPL,
+            i18n("(C) 2007-2009  Andreas Hartmetz, Michael Jansen"));
+    aboutdata.addAuthor(i18n("Andreas Hartmetz"),i18n("Maintainer"),"ahartmetz@gmail.com");
+    aboutdata.addAuthor(i18n("Michael Jansen"),i18n("Maintainer"),"kde@michael-jansen.biz");
 
     aboutdata.setProgramIconName("kglobalaccel");
-
-    KCmdLineArgs::init( argc, argv, &aboutdata );
-    KUniqueApplication::addCmdLineOptions();
+    KAboutData::setApplicationData(aboutdata);
 
     // check if kglobalaccel is disabled
-    if (!isEnabled())
-        {
+    if (!isEnabled()) {
         qDebug() << "kglobalaccel is disabled!";
         return 0;
-        }
+    }
 
-    if (!KUniqueApplication::start())
-        {
-        qDebug() << "kglobalaccel is already running!";
-        return (0);
-        }
+    KDBusService service(KDBusService::Unique);
 
-    // As in the KUniqueApplication example only create a instance AFTER
-    // calling KUniqueApplication::start()
-    KUniqueApplication app;
-
-    // This app is started automatically, no need for session management
-    app.disableSessionManagement();
     app.setQuitOnLastWindowClosed( false );
 
     // Stop gracefully
-    //There is no SIGINT and SIGTERM under wince
-#ifndef _WIN32_WCE
-    KDE_signal(SIGINT, sighandler);
-    KDE_signal(SIGTERM, sighandler);
-#endif
-    KDE_signal(SIGHUP, sighandler);
+    ::signal(SIGINT, sighandler);
+    ::signal(SIGTERM, sighandler);
+    ::signal(SIGHUP, sighandler);
 
     // Restart on a crash
     KCrash::setFlags(KCrash::AutoRestart);
@@ -109,4 +93,4 @@ extern "C" Q_DECL_EXPORT int kdemain(int argc, char **argv)
     }
 
     return app.exec();
-    }
+}

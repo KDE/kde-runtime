@@ -22,7 +22,7 @@
 #include "globalshortcutcontext.h"
 #include "globalshortcutsregistry.h"
 
-#include <KDE/KRun>
+#include <KRun>
 
 #include <QDebug>
 #include <QtCore/QStringList>

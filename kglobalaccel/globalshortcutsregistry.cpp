@@ -22,7 +22,6 @@
 #include "globalshortcutcontext.h"
 
 #include <QDebug>
-#include "kglobal.h"
 #include <KLocalizedString>
 #include "knotification.h"
 
@@ -178,11 +177,11 @@ bool GlobalShortcutsRegistry::isShortcutAvailable(
     }
 
 
+Q_GLOBAL_STATIC( GlobalShortcutsRegistry, _self );
 GlobalShortcutsRegistry * GlobalShortcutsRegistry::self()
-    {
-    K_GLOBAL_STATIC( GlobalShortcutsRegistry, self );
-    return self;
-    }
+{
+    return _self;
+}
 
 
 bool GlobalShortcutsRegistry::keyPressed(int keyQt)

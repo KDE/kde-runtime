@@ -55,6 +55,13 @@ class GlobalShortcutsRegistry : public QObject
     Q_CLASSINFO("D-Bus Interface", "org.kde.KdedGlobalAccel.GlobalShortcutsRegistry")
 
 public:
+    /**
+     * Use GlobalShortcutsRegistry::self()
+     *
+     * @internal
+     */
+    GlobalShortcutsRegistry();
+    ~GlobalShortcutsRegistry();
 
     /**
      * Activate all shortcuts having their application present.
@@ -150,10 +157,6 @@ private:
     //called by the implementation to inform us about key presses
     //returns true if the key was handled
     bool keyPressed(int keyQt);
-
-    GlobalShortcutsRegistry();
-
-    ~GlobalShortcutsRegistry();
 
     QHash<int, GlobalShortcut*> _active_keys;
     QHash<QString, KdeDGlobalAccel::Component *> _components;
