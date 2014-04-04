@@ -1,6 +1,5 @@
 project(KDEBASE_RUNTIME)
 
-
 cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 set(QT_MIN_VERSION "5.2.0")
 
@@ -55,7 +54,6 @@ add_subdirectory(kioslave-extra)
 add_subdirectory(plasma-workspace)
 add_subdirectory(plasma-desktop)
 add_subdirectory(khelpcenter)
-add_subdirectory(oxygen)
 
 # Background processes
 add_subdirectory(kglobalaccel)
