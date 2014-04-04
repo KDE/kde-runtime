@@ -92,7 +92,7 @@ void KWalletExecuter::pamRead(const QString &value) const
 
 void KWalletExecuter::execute_kwallet(int toWalletPipe[2], int envSocket)
 {
-    int x = 2;
+    int x = 3;
     //Close fd that are not of interest of kwallet
     for (; x < 64; ++x) {
         if (x != toWalletPipe[0] && x != envSocket) {
