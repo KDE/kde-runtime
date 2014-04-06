@@ -74,7 +74,6 @@ add_subdirectory(knewstuff)
 
 # Command-line tools (e.g. for shell scripts)
 add_subdirectory(kfile)
-add_subdirectory(kreadconfig)
 
 # Platform-specific integration
 if(WIN32)

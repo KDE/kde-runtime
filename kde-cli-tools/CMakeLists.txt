@@ -6,6 +6,7 @@ add_subdirectory(kmimetypefinder)
 add_subdirectory(ktraderclient)
 add_subdirectory(kioclient)
 add_subdirectory(ksvgtopng)
+add_subdirectory(kreadconfig)
 
 if(Qt5X11Extras_FOUND)
     add_subdirectory(kstart)
