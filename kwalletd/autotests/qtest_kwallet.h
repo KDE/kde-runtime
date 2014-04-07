@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) \
     TestObject tc; \
     KGlobal::ref(); /* don't quit qeventloop after closing a mainwindow */ \
     int result = QTest::qExec( &tc, argc, argv ); \
-    dbus.start("kill", QStringList() << pid); \
+    dbus.start("kill", QStringList() << "-9" << pid); \
     dbus.waitForFinished(); \
     return result; \
 }

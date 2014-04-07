@@ -28,12 +28,15 @@
  */
 class KWalletExecuter : public QObject
 {
+    Q_OBJECT
     protected:
         KWalletExecuter(QObject *parent=0);
         void execute();
         void pamOpen();
         void pamWrite(const QString &value) const;
         void pamRead(const QString &value) const;
+    protected Q_SLOTS:
+        void cleanupTestCase();
     private:
         void execute_kwallet(int toWalletPipe[2], int envSocket);
 

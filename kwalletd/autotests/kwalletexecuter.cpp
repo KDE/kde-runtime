@@ -181,3 +181,12 @@ void KWalletExecuter::execute()
         loop.exec();
     }
 }
+
+void KWalletExecuter::cleanupTestCase()
+{
+    QDBusMessage msg =
+    QDBusMessage::createMethodCall("org.kde.kwalletd", "/MainApplication", "org.kde.KApplication", "quit");
+    const QDBusMessage reply = QDBusConnection::sessionBus().call(msg);
+
+    Q_ASSERT(reply.type() != QDBusMessage::ErrorMessage);
+}
