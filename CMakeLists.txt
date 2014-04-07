@@ -48,12 +48,10 @@ find_package(KF5 CONFIG REQUIRED COMPONENTS
     KCMUtils UnitConversion Bookmarks KIO Parts Kross Declarative NewStuff NotifyConfig Emoticons Sonnet KHtml KCMUtils Su Plasma DNSSD KDE4Support)
 
 #directories to split
-add_subdirectory(kde-cli-tools)
 add_subdirectory(kioslave)
 add_subdirectory(kioslave-extra)
 add_subdirectory(plasma-workspace)
 add_subdirectory(plasma-desktop)
-add_subdirectory(khelpcenter)
 
 # Background processes
 add_subdirectory(kglobalaccel)
