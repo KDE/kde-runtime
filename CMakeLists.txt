@@ -50,8 +50,6 @@ find_package(KF5 CONFIG REQUIRED COMPONENTS
 #directories to split
 add_subdirectory(kioslave)
 add_subdirectory(kioslave-extra)
-add_subdirectory(plasma-workspace)
-add_subdirectory(plasma-desktop)
 
 # Background processes
 add_subdirectory(kglobalaccel)

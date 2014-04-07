@@ -1,6 +1,0 @@
-add_subdirectory(kioslave)
-add_subdirectory(ktimezoned)
-add_subdirectory(kuiserver)
-add_subdirectory(menu)
-add_subdirectory(phonon)
-add_subdirectory(solidautoeject)
