@@ -49,5 +49,4 @@ else()
 
    add_subdirectory(kded-module)
    add_subdirectory(platform_kde)
-   add_subdirectory(kcm)
 endif()

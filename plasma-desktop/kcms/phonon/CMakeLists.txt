@@ -1,3 +1,6 @@
+find_package(Phonon4Qt5 4.6.60 NO_MODULE)
+include_directories(BEFORE ${PHONON_INCLUDES})
+
 find_package(PulseAudio 0.9.16)
 set_package_properties(PulseAudio PROPERTIES DESCRIPTION "PulseAudio Audio Server"
                        URL "http://www.pulseaudio.org/"
