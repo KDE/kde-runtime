@@ -52,8 +52,6 @@ add_subdirectory(kioslave)
 add_subdirectory(kioslave-extra)
 
 # Background processes
-add_subdirectory(kglobalaccel)
-
 if ( UNIX )
    add_subdirectory(soliduiserver)
    add_subdirectory(solid-device-automounter)
@@ -65,7 +63,6 @@ add_subdirectory(kcontrol)
 add_subdirectory(kurifilter-plugins)
 
 # UI Helper applications
-add_subdirectory(drkonqi)
 add_subdirectory(knewstuff)
 
 # Command-line tools (e.g. for shell scripts)
@@ -81,10 +78,5 @@ add_subdirectory(l10n)
 add_subdirectory(localization)
 add_subdirectory(kde-menu)
 add_subdirectory(doc)
-
-# KDE integration for attica
-if(LIBATTICA_FOUND)
-    add_subdirectory(attica-kde)
-endif()
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
