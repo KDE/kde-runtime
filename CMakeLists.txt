@@ -47,10 +47,6 @@ find_package(KF5 CONFIG REQUIRED COMPONENTS
     I18n GuiAddons Service ConfigWidgets ItemViews Notifications IconThemes Completion JobWidgets TextWidgets XmlGui Crash
     KCMUtils UnitConversion Bookmarks KIO Parts Kross Declarative NewStuff NotifyConfig Emoticons Sonnet KHtml KCMUtils Su Plasma DNSSD KDE4Support)
 
-#directories to split
-add_subdirectory(kioslave)
-add_subdirectory(kioslave-extra)
-
 # Background processes
 if ( UNIX )
    add_subdirectory(soliduiserver)
@@ -60,7 +56,6 @@ endif ()
 
 # Plugins/components required for basic utility
 add_subdirectory(kcontrol)
-add_subdirectory(kurifilter-plugins)
 
 # UI Helper applications
 add_subdirectory(knewstuff)
