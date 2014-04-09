@@ -1,12 +1,3 @@
-if ( UNIX )
-   add_subdirectory(kdesu)
-endif ()
-
-add_subdirectory(kcontrol)
 add_subdirectory(glossary)
-add_subdirectory(kdebugdialog)
-add_subdirectory(khelpcenter)
-add_subdirectory(kioslave)
-add_subdirectory(knetattach)
 add_subdirectory(onlinehelp)
 add_subdirectory(fundamentals)
