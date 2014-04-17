@@ -72,6 +72,5 @@ endif()
 add_subdirectory(l10n)
 add_subdirectory(localization)
 add_subdirectory(kde-menu)
-add_subdirectory(doc)
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
