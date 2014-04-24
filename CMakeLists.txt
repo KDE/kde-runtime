@@ -57,9 +57,6 @@ endif ()
 # Plugins/components required for basic utility
 add_subdirectory(kcontrol)
 
-# UI Helper applications
-add_subdirectory(knewstuff)
-
 # Command-line tools (e.g. for shell scripts)
 add_subdirectory(kfile)
 
