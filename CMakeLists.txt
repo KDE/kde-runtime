@@ -60,11 +60,6 @@ add_subdirectory(kcontrol)
 # Command-line tools (e.g. for shell scripts)
 add_subdirectory(kfile)
 
-# Platform-specific integration
-if(WIN32)
-    add_subdirectory(kwindowsaddons)
-endif()
-
 # Default settings, content and config
 add_subdirectory(kde-menu)
 
