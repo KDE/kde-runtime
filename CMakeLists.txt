@@ -56,10 +56,4 @@ endif ()
 # Plugins/components required for basic utility
 add_subdirectory(kcontrol)
 
-# Command-line tools (e.g. for shell scripts)
-add_subdirectory(kfile)
-
-# Default settings, content and config
-add_subdirectory(kde-menu)
-
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
