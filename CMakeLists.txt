@@ -51,7 +51,6 @@ find_package(KF5 CONFIG REQUIRED COMPONENTS
 if ( UNIX )
    add_subdirectory(soliduiserver)
    add_subdirectory(solid-device-automounter)
-   add_subdirectory(solid-networkstatus)
 endif ()
 
 # Plugins/components required for basic utility
