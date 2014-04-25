@@ -53,7 +53,4 @@ if ( UNIX )
    add_subdirectory(solid-device-automounter)
 endif ()
 
-# Plugins/components required for basic utility
-add_subdirectory(kcontrol)
-
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
