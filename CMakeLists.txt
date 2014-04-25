@@ -66,7 +66,6 @@ if(WIN32)
 endif()
 
 # Default settings, content and config
-add_subdirectory(localization)
 add_subdirectory(kde-menu)
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
