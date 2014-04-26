@@ -47,10 +47,4 @@ find_package(KF5 REQUIRED COMPONENTS
     I18n GuiAddons Service ConfigWidgets ItemViews Notifications IconThemes Completion JobWidgets TextWidgets XmlGui Crash
     KCMUtils UnitConversion Bookmarks KIO Parts Kross Declarative NewStuff NotifyConfig Emoticons Sonnet KHtml KCMUtils Su Plasma DNSSD KDE4Support)
 
-# Background processes
-if ( UNIX )
-   add_subdirectory(soliduiserver)
-   add_subdirectory(solid-device-automounter)
-endif ()
-
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
