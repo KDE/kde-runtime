@@ -366,7 +366,7 @@ void AudioSetup::updateCard(const pa_card_info *pInfo)
         const quint32 priority = profile->priority;
         const QPair<QString, QString> name(profile->name ? QString::fromUtf8(profile->name) : QString(),
                                            profile->description ? QString::fromUtf8(profile->description) : QString());
-        info.profiles.insert(priority, name);
+        info.profiles.insertMulti(priority, name);
     }
 
     if (pInfo->active_profile)
