@@ -33,7 +33,10 @@
 #include <QtDBus/QDBusConnectionInterface>
 #include <kstandarddirs.h>
 
+#ifndef Q_OS_WIN
 extern char **environ;
+#endif
+
 KWalletExecuter::KWalletExecuter(QObject* parent): QObject(parent)
 {
 }
@@ -180,4 +183,13 @@ void KWalletExecuter::execute()
         connect(watcher, SIGNAL(serviceRegistered(QString)), &loop, SLOT(quit()));
         loop.exec();
     }
+}
+
+void KWalletExecuter::cleanupTestCase()
+{
+    QDBusMessage msg =
+    QDBusMessage::createMethodCall("org.kde.kwalletd", "/MainApplication", "org.kde.KApplication", "quit");
+    const QDBusMessage reply = QDBusConnection::sessionBus().call(msg);
+
+    Q_ASSERT(reply.type() != QDBusMessage::ErrorMessage);
 }
