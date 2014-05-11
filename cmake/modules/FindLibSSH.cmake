@@ -70,8 +70,6 @@ endif (LIBSSH_INCLUDE_DIR AND LibSSH_FIND_VERSION)
 # so we need this if() here.
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(LibSSH
-                                  FOUND_VAR
-                                    LIBSSH_FOUND
                                   REQUIRED_VARS
                                     LIBSSH_LIBRARIES
                                     LIBSSH_INCLUDE_DIR
