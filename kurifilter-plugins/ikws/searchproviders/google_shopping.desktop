@@ -10,6 +10,7 @@ Name[da]=Google Shopping
 Name[de]=Google-Shopping
 Name[el]=Google Αγορές
 Name[es]=Compras de Google
+Name[et]=Google Shopping
 Name[eu]=Google erosketak
 Name[fi]=Google Shopping
 Name[fr]=Boutique « Google »
@@ -60,6 +61,7 @@ Query[da]=https://www.google.com/search?hl=en&tbm=shop&q=\\{@}
 Query[de]=https://www.google.com/search?hl=en&tbm=shop&q=\\{@}
 Query[el]=https://www.google.com/search?hl=en&tbm=shop&q=\\{@}
 Query[es]=https://www.google.com/search?hl=en&tbm=shop&q=\\{@}
+Query[et]=https://www.google.com/search?hl=en&tbm=shop&q=\\{@}
 Query[eu]=https://www.google.com/search?hl=en&tbm=shop&q=\\{@}
 Query[fi]=https://www.google.com/search?hl=en&tbm=shop&q=\\{@}
 Query[fr]=https://www.google.com/search?hl=en&tbm=shop&q=\\{@}

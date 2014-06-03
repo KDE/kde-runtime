@@ -12,6 +12,7 @@ Name[da]=Ordbog fra det galisiske akademi (RAG)
 Name[de]=Lexikon der galizischen Akademie (RAG)
 Name[el]=Λεξικό της γαλικιανής ακαδημίας (RAG)
 Name[es]=Diccionario de la Real Academia Gallega (RAG)
+Name[et]=Galicia akadeemia (RAG) sõnaraamat
 Name[eu]=RAG Galiziako Akademiaren hiztegia
 Name[fi]=Galician Akatemian sanakirja (RAG)
 Name[fr]=Dictionnaire de l'Académie de Galice (RAG)
@@ -56,6 +57,7 @@ Query[da]=http://www.realacademiagalega.org/dicionario#searchNoun.do?nounTitle=\
 Query[de]=http://www.realacademiagalega.org/dicionario#searchNoun.do?nounTitle=\\{@}
 Query[el]=http://www.realacademiagalega.org/dicionario#searchNoun.do?nounTitle=\\{@}
 Query[es]=http://www.realacademiagalega.org/dicionario#searchNoun.do?nounTitle=\\{@}
+Query[et]=http://www.realacademiagalega.org/dicionario#searchNoun.do?nounTitle=\\{@}
 Query[eu]=http://www.realacademiagalega.org/dicionario#searchNoun.do?nounTitle=\\{@}
 Query[fi]=http://www.realacademiagalega.org/dicionario#searchNoun.do?nounTitle=\\{@}
 Query[fr]=http://www.realacademiagalega.org/dicionario#searchNoun.do?nounTitle=\\{@}
