@@ -1,7 +1,7 @@
 /*
     This file is part of KNewStuff.
     Copyright (c) 2002 Cornelius Schumacher <schumacher@kde.org>
-    Copyright (c) 2007-2009 Jeremy Whiting <jeremy@scitools.com>
+    Copyright (c) 2007-2009 Jeremy Whiting <jpwhiting@kde.org>
     Copyright (c) 2009 Frederik Gladhorn <gladhorn@kde.org>
 
     This library is free software; you can redistribute it and/or
