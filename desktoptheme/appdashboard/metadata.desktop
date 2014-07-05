@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Application dashboard
+Name[ar]=لوحة تحكم التطبيقات
 Name[bg]=Табло за програми
 Name[bn]=অ্যাপলিকেশন ড্যাশবোর্ড
 Name[bs]=Programska instrument tabla
@@ -62,6 +63,7 @@ Name[x-test]=xxApplication dashboardxx
 Name[zh_CN]=程序面板
 Name[zh_TW]=應用程式控制面板
 Comment=Intended as Application dashboard default
+Comment[ar]=اجعلها كتطبيق لوحة التحكم الافتراضي
 Comment[bg]=Табло със стандартни програми
 Comment[bn]=অ্যাপলিকেশন ড্যাশবোর্ড ডিফল্ট হিসাবে পরিকল্পিত
 Comment[bs]=Namijenjeno kao podrazumijevana programska instrument tabla

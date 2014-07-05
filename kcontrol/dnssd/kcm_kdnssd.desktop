@@ -3,7 +3,7 @@ Exec=kcmshell4 kcm_kdnssd
 Icon=preferences-system-network-discovery
 Name=Service Discovery
 Name[af]=Dienste ontdekker
-Name[ar]=استكشاف الخدمات
+Name[ar]=استكشاف الخدمة
 Name[ast]=Guetador de servicios
 Name[be]=Пошук сервісаў
 Name[be@latin]=Pošuk słužbaŭ
@@ -92,7 +92,7 @@ Name[zh_TW]=服務偵測
 
 Comment=Configure service discovery
 Comment[af]=Stel dienste ontdekker op
-Comment[ar]=اضبط استكشاف الخدمات
+Comment[ar]=اضبط استكشاف الخدمة
 Comment[ast]=Configura'l guetador de servicios
 Comment[be]=Настаўленні пошуку сервісаў
 Comment[be@latin]=Naładź pošuk słužbaŭ

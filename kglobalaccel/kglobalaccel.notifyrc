@@ -1,7 +1,7 @@
 [Global]
 IconName=preferences-desktop-keyboard
 Comment=Global Keyboard Shortcuts
-Comment[ar]=الاختصارات العمومية للوحة المفاتيح
+Comment[ar]=اختصارات لوحة المفاتيح العمومية
 Comment[ast]=Accesos rápidos de tecláu globales
 Comment[bg]=Глобални бързи клавиши
 Comment[bn]=গ্লোবাল কীবোর্ড শর্টকাট
@@ -302,7 +302,7 @@ Comment[zh_TW]=應用程式名稱
 
 [Event/newshortcutregistered]
 Name=Global Shortcut Registration
-Name[ar]=خادم الاختصارات العمومية
+Name[ar]=تسجيل الاختصارات العمومية
 Name[ast]=Rexistru d'accesu rápidu global
 Name[bg]=Централно указване на съкратени клавиши
 Name[bn]=গ্লোবাল শর্টকাট নথীভুক্তকরণ
@@ -374,7 +374,7 @@ Name[x-test]=xxGlobal Shortcut Registrationxx
 Name[zh_CN]=全局快捷键注册
 Name[zh_TW]=全域捷徑註冊
 Comment=An application registered new global shortcuts.
-Comment[ar]=قد سجّل برنامج اختصاراً عموميّاً جديداً
+Comment[ar]=تطبيق مسجل اختصارات عمومية جديدة.
 Comment[ast]=Una aplicación rexistró nuevos accesos rápidos globales.
 Comment[bg]=Програма регистрира нови общи бързи клавиши.
 Comment[bn]=একটি অ্যাপলিকেশন নতুন গ্লোবাল শর্টকাট নথীভুক্ত করেছে।

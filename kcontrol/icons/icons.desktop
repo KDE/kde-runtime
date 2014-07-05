@@ -13,7 +13,7 @@ X-KDE-Weight=70
 
 Name=Icons
 Name[af]=Ikone
-Name[ar]=الأيقونات
+Name[ar]=أيقونات
 Name[as]=আইকন
 Name[ast]=Iconos
 Name[be]=Значкі
@@ -198,6 +198,7 @@ Comment[zh_CN]=自定义 KDE 图标
 Comment[zh_TW]=自訂 KDE 圖示
 
 X-KDE-Keywords=icons,effects,size,hicolor,locolor
+X-KDE-Keywords[ar]=أيقونات,مؤثرات,حجم,ألوان داكنة,ألوان خافتة
 X-KDE-Keywords[bg]=icons,effects,size,hicolor,locolor,икони,ефекти,размер
 X-KDE-Keywords[bn]=icons,effects,size,hicolor,locolor
 X-KDE-Keywords[bs]=icons,effects,size,hicolor,locolor,ikone,efekti,veličina,boje

@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Newspaper Layout
+Name[ar]=تخطيط صحيفة
 Name[ast]=Disposición de periódicu
 Name[bg]=Вестникарски изглед
 Name[bn]=সংবাদপত্র বিন্যাস
@@ -67,6 +68,7 @@ Name[zh_CN]=报纸布局
 Name[zh_TW]=報紙佈局
 
 Comment=A layout that puts widgets into columns
+Comment[ar]=مخطط يضع الودجات في الأعمدة
 Comment[ast]=Una disposición qu'alluga los elementos gráficos en columnes
 Comment[bg]=Подребда на джаджите в колони
 Comment[bs]=Raspored koji ređa grafičke kontrole u kolone

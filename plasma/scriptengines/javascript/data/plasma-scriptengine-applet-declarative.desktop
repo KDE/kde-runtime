@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Declarative widget
+Name[ar]=ودجة بيانية
 Name[ast]=Elementu gráficu declarativu
 Name[bg]=Декларативна джаджа
 Name[bs]=Deklarativna grafička kontrola
@@ -61,6 +62,7 @@ Name[x-test]=xxDeclarative widgetxx
 Name[zh_CN]=描述部件
 Name[zh_TW]=宣告元件
 Comment=Native Plasma widget written in QML and JavaScript
+Comment[ar]=ودجة بلازما أصلية كتبت بواسطة QML وجافا سكربت
 Comment[ast]=Elementu gráficu nativu de Plasma escritu en QML y JavaScript
 Comment[bg]=Оригинална джаджа за Plasma, написана наQML и JavaScript
 Comment[bs]=Samosvojni plazma grafičkih kontrola napisana u QML‑u i javaskriptu

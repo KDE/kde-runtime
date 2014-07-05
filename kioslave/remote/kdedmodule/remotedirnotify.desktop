@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Remote URL Change Notifier
-Name[ar]=منبه قاعدة URL البعيدة
+Name[ar]=منبه على التغيير في رابط عن بعد
 Name[ast]=Notificador de cambeos n'URL remotu
 Name[bg]=Уведомител за промени в отдалечени URL-адреси
 Name[bn]=দূরবর্তী ইউ-আর-এল পরিবর্তন নোটিফায়ার
@@ -69,7 +69,7 @@ Name[x-test]=xxRemote URL Change Notifierxx
 Name[zh_CN]=远程 URL 更改通知器
 Name[zh_TW]=遠端網址變更通知程式
 Comment=Provides change notification for network folders
-Comment[ar]=يوفر إشعارات بالتغيير لمجلدات الشبكة
+Comment[ar]=يوفر تنبيهات بالتغيير في مجلدات الشبكة
 Comment[ast]=Proporciona notificaciones visuales pa carpetes de rede
 Comment[bg]=Уведомления за промени в мрежови папки
 Comment[bn]=নেটওয়ার্ক ফোল্ডার-এ পরিবর্তনের সূচনা দেয়
