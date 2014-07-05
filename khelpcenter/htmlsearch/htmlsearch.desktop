@@ -195,6 +195,7 @@ Comment[zh_CN]=索引生成
 Comment[zh_TW]=產生索引
 
 X-KDE-Keywords=Help,HTML,Search,Index,htdig,htsearch,htmerge,Scope,Language
+X-KDE-Keywords[ar]=مساعدة,HTML,بحث,فهرس,htdig,htsearch,htmerge,نطاق,لغة
 X-KDE-Keywords[bg]=Help,HTML,Search,Index,htdig,htsearch,htmerge,Scope,Language,Помощ,Търсене,Индекс,Език
 X-KDE-Keywords[bn]=Help,HTML,Search,Index,htdig,htsearch,htmerge,Scope,Language
 X-KDE-Keywords[bs]=Help,HTML,Search,Index,htdig,htsearch,htmerge,Scope,Language,pomoć,pretraga,indeks

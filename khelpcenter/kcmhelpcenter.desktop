@@ -103,7 +103,7 @@ Name[zh_TW]=說明索引
 
 Comment=Help center search index configuration and generation
 Comment[af]=Hulp sentrum soektog indeks opstelling en genereering
-Comment[ar]=توليد وإعداد فهرس بحث مركز المساعدة
+Comment[ar]=توليد وضبط فهرس بحث مركز المساعدة
 Comment[ast]=Configuración y xeneración del índiz de gueta del centru d'ayuda
 Comment[be]=Настаўленне і стварэнне індэксу для пошуку ў дакументацыі
 Comment[be@latin]=Naładžvańnie j stvareńnie źmiestu dla pošuku ŭ centry dapamohi
@@ -191,6 +191,7 @@ Comment[zh_CN]=帮助中心搜索索引配置和生成
 Comment[zh_TW]=求助中心搜尋索引的組態與產生
 
 X-KDE-Keywords=khelpcenter,help,index,search
+X-KDE-Keywords[ar]=مركز مساعدة كدي,مساعدة,فهرس,بحث
 X-KDE-Keywords[bg]=khelpcenter,help,index,search,помощ,индекс,търсене
 X-KDE-Keywords[bn]=khelpcenter,help,index,search
 X-KDE-Keywords[bs]=khelpcenter,help,index,search,pomoć,pretraga,indeks
