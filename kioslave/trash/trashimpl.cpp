@@ -363,9 +363,6 @@ bool TrashImpl::moveToTrash( const QString& origPath, int trashId, const QString
 
     const qulonglong pathSize = DiscSpaceUtil::sizeOfPath( origPath );
 
-    TrashSizeCache trashSize( trashDirectoryPath( trashId ) );
-    trashSize.initialize();
-
     const QString dest = filesPath( trashId, fileId );
     if ( !move( origPath, dest ) ) {
         // Maybe the move failed due to no permissions to delete source.
@@ -377,7 +374,10 @@ bool TrashImpl::moveToTrash( const QString& origPath, int trashId, const QString
         return false;
     }
 
-    trashSize.add( pathSize );
+    if (QFileInfo(dest).isDir()) {
+        TrashSizeCache trashSize( trashDirectoryPath( trashId ) );
+        trashSize.add( fileId, pathSize );
+    }
 
     fileAdded();
     return true;
@@ -390,15 +390,11 @@ bool TrashImpl::moveFromTrash( const QString& dest, int trashId, const QString& 
         src += QLatin1Char('/');
         src += relativePath;
     }
-    const qulonglong pathSize = DiscSpaceUtil::sizeOfPath( src );
-
-    TrashSizeCache trashSize( trashDirectoryPath( trashId ) );
-    trashSize.initialize();
-
     if ( !move( src, dest ) )
         return false;
 
-    trashSize.remove( pathSize );
+    TrashSizeCache trashSize( trashDirectoryPath( trashId ) );
+    trashSize.remove( fileId );
 
     return true;
 }
@@ -442,14 +438,14 @@ bool TrashImpl::copyToTrash( const QString& origPath, int trashId, const QString
 
     const qulonglong pathSize = DiscSpaceUtil::sizeOfPath( origPath );
 
-    TrashSizeCache trashSize( trashDirectoryPath( trashId ) );
-    trashSize.initialize();
-
     const QString dest = filesPath( trashId, fileId );
     if ( !copy( origPath, dest ) )
         return false;
 
-    trashSize.add( pathSize );
+    if (QFileInfo(dest).isDir()) {
+        TrashSizeCache trashSize( trashDirectoryPath( trashId ) );
+        trashSize.add( fileId, pathSize );
+    }
 
     fileAdded();
     return true;
@@ -531,8 +527,6 @@ bool TrashImpl::del( int trashId, const QString& fileId )
     QString info = infoPath(trashId, fileId);
     QString file = filesPath(trashId, fileId);
 
-    const qulonglong fileSize = DiscSpaceUtil::sizeOfPath( file );
-
     QByteArray info_c = QFile::encodeName(info);
 
     KDE_struct_stat buff;
@@ -544,13 +538,14 @@ bool TrashImpl::del( int trashId, const QString& fileId )
         return false;
     }
 
-    TrashSizeCache trashSize( trashDirectoryPath( trashId ) );
-    trashSize.initialize();
-
-    if ( !synchronousDel( file, true, QFileInfo(file).isDir() ) )
+    const bool isDir = QFileInfo(file).isDir();
+    if ( !synchronousDel( file, true, isDir ) )
         return false;
 
-    trashSize.remove( fileSize );
+    if (isDir) {
+        TrashSizeCache trashSize( trashDirectoryPath( trashId ) );
+        trashSize.remove( fileId );
+    }
 
     QFile::remove( info );
     fileRemoved();
@@ -1118,9 +1113,9 @@ bool TrashImpl::adaptTrashSize( const QString& origPath, int trashId )
         // calculate size of the files to be put into the trash
         qulonglong additionalSize = DiscSpaceUtil::sizeOfPath( origPath );
 
-        const TrashSizeCache trashSize( trashPath );
+        TrashSizeCache trashSize( trashPath );
         DiscSpaceUtil util(trashPath + QString::fromLatin1("/files/"));
-        if ( util.usage( trashSize.size() + additionalSize ) >= percent ) {
+        if ( util.usage( trashSize.calculateSize() + additionalSize ) >= percent ) {
             if ( actionType == 0 ) { // warn the user only
                 m_lastErrorCode = KIO::ERR_SLAVE_DEFINED;
                 m_lastErrorMessage = i18n( "The trash has reached its maximum size!\nCleanup the trash manually." );
@@ -1156,8 +1151,8 @@ bool TrashImpl::adaptTrashSize( const QString& origPath, int trashId )
 
                     del( trashId, info.fileName() ); // delete trashed file
 
-                    const TrashSizeCache trashSize( trashPath );
-                    if ( util.usage( trashSize.size() + additionalSize ) < percent ) // check whether we have enough space now
+                    TrashSizeCache trashSize( trashPath );
+                    if ( util.usage( trashSize.calculateSize() + additionalSize ) < percent ) // check whether we have enough space now
                          deleteFurther = false;
                 }
             }

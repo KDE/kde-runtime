@@ -88,7 +88,7 @@ private Q_SLOTS:
     void restoreFileToDeletedDirectory();
 
     void emptyTrash();
-    void testTrashSize();
+    void testEmptyTrashSize();
 
 protected Q_SLOTS:
     void slotEntries( KIO::Job*, const KIO::UDSEntryList& );
@@ -99,6 +99,7 @@ private:
     void trashDirectory( const QString& origPath, const QString& fileName );
     void copyFromTrash( const QString& fileId, const QString& destPath, const QString& relativePath = QString() );
     void moveFromTrash( const QString& fileId, const QString& destPath, const QString& relativePath = QString() );
+    void checkDirCacheValidity();
 
     QString homeTmpDir() const;
     QString otherTmpDir() const;
