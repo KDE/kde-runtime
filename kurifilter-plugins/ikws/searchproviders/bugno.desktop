@@ -21,7 +21,6 @@ Name[el]=Αναζήτηση αριθμού σφάλματος στη βάση δ
 Name[en_GB]=KDE Bug Database Bug Number Search
 Name[eo]=Serĉo laŭ numero en la datumbazo de cimoj de KDE
 Name[es]=Búsqueda de número de fallo en la base de datos de fallos de KDE
-Name[et]=Veanumbri otsing KDE vigade andmebaasist
 Name[eu]=KDEren akatsen datu-baseko zenbaki-bilaketa
 Name[fa]=جستجوی شماره اشکال دادگان اشکال KDE
 Name[fi]=KDE-vikailmoitustietokannan numerohaku
@@ -106,7 +105,6 @@ Query[el]=https://bugs.kde.org/show_bug.cgi?id=\\{@}
 Query[en_GB]=https://bugs.kde.org/show_bug.cgi?id=\\{@}
 Query[eo]=https://bugs.kde.org/show_bug.cgi?id=\\{@}
 Query[es]=https://bugs.kde.org/show_bug.cgi?id=\\{@}
-Query[et]=https://bugs.kde.org/show_bug.cgi?id=\\{@}
 Query[eu]=https://bugs.kde.org/show_bug.cgi?id=\\{@}
 Query[fa]=https://bugs.kde.org/show_bug.cgi?id=\\{@}
 Query[fi]=https://bugs.kde.org/show_bug.cgi?id=\\{@}

@@ -23,7 +23,6 @@ Name[el]=TV Tome
 Name[en_GB]=TV Tome
 Name[eo]=TV Tome
 Name[es]=TV Tome
-Name[et]=TV Tome
 Name[eu]=TV Tome
 Name[fa]=TV Tome
 Name[fi]=TV Tome
@@ -114,7 +113,6 @@ Query[el]=http://www.tv.com/search.php?type=11&stype=all&qs=\\{@}&x=0&y=0
 Query[en_GB]=http://www.tv.com/search.php?type=11&stype=all&qs=\\{@}&x=0&y=0
 Query[eo]=http://www.tv.com/search.php?type=11&stype=all&qs=\\{@}&x=0&y=0
 Query[es]=http://www.tv.com/search.php?type=11&stype=all&qs=\\{@}&x=0&y=0
-Query[et]=http://www.tv.com/search.php?type=11&stype=all&qs=\\{@}&x=0&y=0
 Query[eu]=http://www.tv.com/search.php?type=11&stype=all&qs=\\{@}&x=0&y=0
 Query[fa]=http://www.tv.com/search.php?type=11&stype=all&qs=\\{@}&x=0&y=0
 Query[fi]=http://www.tv.com/search.php?type=11&stype=all&qs=\\{@}&x=0&y=0

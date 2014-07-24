@@ -24,7 +24,6 @@ Name[el]=Εγχειρίδιο αναφοράς Python
 Name[en_GB]=Python Reference Manual
 Name[eo]=Manlibro de Pitono
 Name[es]=Manual de referencia de Python
-Name[et]=Python Reference Manual
 Name[eu]=Python erreferentzia-eskuliburua
 Name[fa]=راهنمای مرجع Python
 Name[fi]=Python Reference Manual
@@ -104,7 +103,6 @@ Query[de]=https://www.google.com/search?sourceid=python-search&q=\\{@}&submit=Se
 Query[el]=https://www.google.com/search?sourceid=python-search&q=\\{@}&submit=Search&q=site%3Apython.org
 Query[en_GB]=https://www.google.com/search?sourceid=python-search&q=\\{@}&submit=Search&q=site%3Apython.org
 Query[es]=https://www.google.com/search?sourceid=python-search&q=\\{@}&submit=Search&q=site%3Apython.org
-Query[et]=https://www.google.com/search?sourceid=python-search&q=\\{@}&submit=Search&q=site%3Apython.org
 Query[eu]=https://www.google.com/search?sourceid=python-search&q=\\{@}&submit=Search&q=site%3Apython.org
 Query[fa]=https://www.google.com/search?sourceid=python-search&q=\\{@}&submit=Search&q=site%3Apython.org
 Query[fi]=https://www.google.com/search?sourceid=python-search&q=\\{@}&submit=Search&q=site%3Apython.org

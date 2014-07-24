@@ -23,7 +23,6 @@ Name[el]=Feedster
 Name[en_GB]=Feedster
 Name[eo]=Feedster
 Name[es]=Feedster
-Name[et]=Feedster
 Name[eu]=Feedster
 Name[fa]=Feedster
 Name[fi]=Feedster
@@ -105,7 +104,6 @@ Query[de]=http://www.feedster.com/index.php?page=search/web&type=Web&search=\\{@
 Query[el]=http://www.feedster.com/index.php?page=search/web&type=Web&search=\\{@}
 Query[en_GB]=http://www.feedster.com/index.php?page=search/web&type=Web&search=\\{@}
 Query[es]=http://www.feedster.com/index.php?page=search/web&type=Web&search=\\{@}
-Query[et]=http://www.feedster.com/index.php?page=search/web&type=Web&search=\\{@}
 Query[eu]=http://www.feedster.com/index.php?page=search/web&type=Web&search=\\{@}
 Query[fa]=http://www.feedster.com/index.php?page=search/web&type=Web&search=\\{@}
 Query[fi]=http://www.feedster.com/index.php?page=search/web&type=Web&search=\\{@}

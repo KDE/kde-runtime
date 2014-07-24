@@ -23,7 +23,6 @@ Name[el]=Netcraft
 Name[en_GB]=Netcraft
 Name[eo]=Netcraft
 Name[es]=Netcraft
-Name[et]=Netcraft
 Name[eu]=Netcraft
 Name[fa]=Netcraft
 Name[fi]=Netcraft
@@ -115,7 +114,6 @@ Query[el]=http://uptime.netcraft.com/up/graph?site=\\{@}
 Query[en_GB]=http://uptime.netcraft.com/up/graph?site=\\{@}
 Query[eo]=http://uptime.netcraft.com/up/graph?site=\\{@}
 Query[es]=http://uptime.netcraft.com/up/graph?site=\\{@}
-Query[et]=http://uptime.netcraft.com/up/graph?site=\\{@}
 Query[eu]=http://uptime.netcraft.com/up/graph?site=\\{@}
 Query[fa]=http://uptime.netcraft.com/up/graph?site=\\{@}
 Query[fi]=http://uptime.netcraft.com/up/graph?site=\\{@}

@@ -17,7 +17,6 @@ Name[el]=Vimeo
 Name[en_GB]=Vimeo
 Name[eo]=Vimeo
 Name[es]=Vimeo
-Name[et]=Vimeo
 Name[eu]=Vimeo
 Name[fa]=Vimeo
 Name[fi]=Vimeo
@@ -83,7 +82,6 @@ Query[de]=http://vimeo.com/search?q=\\{@}
 Query[el]=http://vimeo.com/search?q=\\{@}
 Query[en_GB]=http://vimeo.com/search?q=\\{@}
 Query[es]=http://vimeo.com/search?q=\\{@}
-Query[et]=http://vimeo.com/search?q=\\{@}
 Query[eu]=http://vimeo.com/search?q=\\{@}
 Query[fa]=http://vimeo.com/search?q=\\{@}
 Query[fi]=http://vimeo.com/search?q=\\{@}

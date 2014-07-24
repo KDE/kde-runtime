@@ -21,7 +21,6 @@ Name[el]=Αναζήτηση νέων Πακέτων Debian για σταθερή
 Name[en_GB]=Debian Backports Search
 Name[eo]=Serĉo por retroflikaĵoj de Debiano
 Name[es]=Búsqueda de backports de Debian
-Name[et]=Debiani backport'ide otsing
 Name[eu]=Debian-en backport-en bilaketa
 Name[fa]=جستجوی پس‌درگاههای دبیان
 Name[fi]=Debianin Backports-tietokanta
@@ -99,7 +98,6 @@ Query[de]=http://packages.debian.org/search?suite=squeeze-backports&section=all&
 Query[el]=http://packages.debian.org/search?suite=squeeze-backports&section=all&arch=any&searchon=names&keywords=\\{@}
 Query[en_GB]=http://packages.debian.org/search?suite=squeeze-backports&section=all&arch=any&searchon=names&keywords=\\{@}
 Query[es]=http://packages.debian.org/search?suite=squeeze-backports&section=all&arch=any&searchon=names&keywords=\\{@}
-Query[et]=http://packages.debian.org/search?suite=squeeze-backports&section=all&arch=any&searchon=names&keywords=\\{@}
 Query[eu]=http://packages.debian.org/search?suite=squeeze-backports&section=all&arch=any&searchon=names&keywords=\\{@}
 Query[fa]=http://packages.debian.org/search?suite=squeeze-backports&section=all&arch=any&searchon=names&keywords=\\{@}
 Query[fi]=http://packages.debian.org/search?suite=squeeze-backports&section=all&arch=any&searchon=names&keywords=\\{@}

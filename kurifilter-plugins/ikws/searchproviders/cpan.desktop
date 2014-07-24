@@ -22,7 +22,6 @@ Name[el]=CPAN - Περιεκτικό δίκτυο αρχειοθήκης perl
 Name[en_GB]=CPAN - Comprehensive Perl Archive Network
 Name[eo]=CPAN - Ampleksa reta arkivo de Perl
 Name[es]=CPAN - Comprehensive Perl Archive Network
-Name[et]=CPAN - Comprehensive Perl Archive Network
 Name[eu]=CPAN - Perl artxibo-sare zabala
 Name[fa]=CPAN - شبکه‌ وسیع بایگانی پرل
 Name[fi]=CPAN – Comprehensive Perl Archive Network
@@ -106,7 +105,6 @@ Query[el]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}
 Query[en_GB]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}
 Query[eo]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}
 Query[es]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}
-Query[et]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}
 Query[eu]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}
 Query[fa]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}
 Query[fi]=http://search.cpan.org/search?mode=\\{mode,2,""}&query=\\{query,q,1}

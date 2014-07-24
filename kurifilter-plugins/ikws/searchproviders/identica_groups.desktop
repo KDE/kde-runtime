@@ -17,7 +17,6 @@ Name[el]=Identi.ca Groups
 Name[en_GB]=Identi.ca Groups
 Name[eo]=Grupoj de Identi.ko
 Name[es]=Grupos Identi.ca
-Name[et]=Identi.ca grupid
 Name[eu]=Identi.ca-ren taldeak
 Name[fa]=گروههای Identi.ca
 Name[fi]=Identi.ca-ryhmähaku
@@ -83,7 +82,6 @@ Query[de]=https://identi.ca/search/group?q=\\{@}
 Query[el]=https://identi.ca/search/group?q=\\{@}
 Query[en_GB]=https://identi.ca/search/group?q=\\{@}
 Query[es]=https://identi.ca/search/group?q=\\{@}
-Query[et]=https://identi.ca/search/group?q=\\{@}
 Query[eu]=https://identi.ca/search/group?q=\\{@}
 Query[fa]=https://identi.ca/search/group?q=\\{@}
 Query[fi]=https://identi.ca/search/group?q=\\{@}

@@ -22,7 +22,6 @@ Name[el]=LEO-Translate
 Name[en_GB]=LEO-Translate
 Name[eo]=LEO-Tradukilo
 Name[es]=LEO-Translate
-Name[et]=LEO-Translate
 Name[eu]=LEO itzulpenak
 Name[fa]=LEO - ترجمه کردن
 Name[fi]=LEO-käännös
@@ -115,7 +114,6 @@ Query[el]=http://dict.leo.org/?search=\\{@}
 Query[en_GB]=http://dict.leo.org/?search=\\{@}
 Query[eo]=http://dict.leo.org/?search=\\{@}
 Query[es]=http://dict.leo.org/?search=\\{@}
-Query[et]=http://dict.leo.org/?search=\\{@}
 Query[eu]=http://dict.leo.org/?search=\\{@}
 Query[fa]=http://dict.leo.org/?search=\\{@}
 Query[fi]=http://dict.leo.org/?search=\\{@}

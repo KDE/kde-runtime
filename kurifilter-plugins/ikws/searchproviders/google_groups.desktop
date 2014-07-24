@@ -23,7 +23,6 @@ Name[el]=Ομάδες του Google
 Name[en_GB]=Google Groups
 Name[eo]=Guglo Grupoj
 Name[es]=Grupos de Google
-Name[et]=Google uudisegrupid
 Name[eu]=Google-ren taldeak
 Name[fa]=گروههای گوگل
 Name[fi]=Googlen keskusteluryhmät
@@ -107,7 +106,6 @@ Query[de]=https://groups.google.com/groups?oi=djq&as_q=\\{@}
 Query[el]=https://groups.google.com/groups?oi=djq&as_q=\\{@}
 Query[en_GB]=https://groups.google.com/groups?oi=djq&as_q=\\{@}
 Query[es]=https://groups.google.com/groups?oi=djq&as_q=\\{@}
-Query[et]=https://groups.google.com/groups?oi=djq&as_q=\\{@}
 Query[eu]=https://groups.google.com/groups?oi=djq&as_q=\\{@}
 Query[fa]=https://groups.google.com/groups?oi=djq&as_q=\\{@}
 Query[fi]=https://groups.google.fi/groups?oi=djq&as_q=\\{@}

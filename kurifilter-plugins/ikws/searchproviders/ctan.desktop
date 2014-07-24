@@ -22,7 +22,6 @@ Name[el]=CTAN - Περιεκτικό δίκτυο αρχειοθήκης TeX
 Name[en_GB]=CTAN - Comprehensive TeX Archive Network
 Name[eo]=CPAN - Ampleksa reta arkivo de TeX
 Name[es]=CTAN - Comprehensive TeX Archive Network
-Name[et]=CTAN - Comprehensive TeX Archive Network
 Name[eu]=CTAN - TeX artxibo-sare zabala
 Name[fa]=CTAN - شبکه وسیع بایگانی TeX
 Name[fi]=CTAN – Comprehensive TeX Archive Network
@@ -103,7 +102,6 @@ Query[de]=http://ctan.org/search?phrase=\\{@}
 Query[el]=http://ctan.org/search?phrase=\\{@}
 Query[en_GB]=http://ctan.org/search?phrase=\\{@}
 Query[es]=http://ctan.org/search?phrase=\\{@}
-Query[et]=http://ctan.org/search?phrase=\\{@}
 Query[eu]=http://ctan.org/search?phrase=\\{@}
 Query[fa]=http://ctan.org/search?phrase=\\{@}
 Query[fi]=http://ctan.org/search?phrase=\\{@}

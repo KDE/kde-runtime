@@ -23,7 +23,6 @@ Name[el]=Αναζήτηση εικόνων του Google
 Name[en_GB]=Google Image Search
 Name[eo]=Bildoserĉo de Guglo
 Name[es]=Búsqueda de imágenes de Google
-Name[et]=Google piltide otsing
 Name[eu]=Google-ren irudi-bilaketa
 Name[fa]=جستجوی تصویر گوگل
 Name[fi]=Googlen kuvahaku
@@ -107,7 +106,6 @@ Query[de]=https://www.google.com/search?site=imghp&tbm=isch&q=\\{@}
 Query[el]=https://www.google.com/search?site=imghp&tbm=isch&q=\\{@}
 Query[en_GB]=https://www.google.com/search?site=imghp&tbm=isch&q=\\{@}
 Query[es]=https://www.google.com/search?site=imghp&tbm=isch&q=\\{@}
-Query[et]=https://www.google.com/search?site=imghp&tbm=isch&q=\\{@}
 Query[eu]=https://www.google.com/search?site=imghp&tbm=isch&q=\\{@}
 Query[fa]=https://www.google.com/search?site=imghp&tbm=isch&q=\\{@}
 Query[fi]=https://www.google.fi/search?site=imghp&tbm=isch&q=\\{@}

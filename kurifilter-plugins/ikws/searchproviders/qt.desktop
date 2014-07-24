@@ -24,7 +24,6 @@ Name[el]=Τελευταία τεκμηρίωση του Qt στο διαδίκτ
 Name[en_GB]=Latest Qt Online Documentation
 Name[eo]=La plej aktuala reta dokumentado de Qt
 Name[es]=Ultima documentación Qt en línea
-Name[et]=Qt uusim dokumentatsioon võrgus
 Name[eu]=Qt lineako azken dokumentazioa
 Name[fa]=آخرین مستندات برخط Qt
 Name[fi]=Uusin Qt-dokumentaatio
@@ -103,7 +102,6 @@ Query[de]=http://qt-project.org/doc/search/qt-5.0?search=\\{@}
 Query[el]=http://qt-project.org/doc/search/qt-5.0?search=\\{@}
 Query[en_GB]=http://qt-project.org/doc/search/qt-5.0?search=\\{@}
 Query[es]=http://qt-project.org/doc/search/qt-5.0?search=\\{@}
-Query[et]=http://qt-project.org/doc/search/qt-5.0?search=\\{@}
 Query[eu]=http://qt-project.org/doc/search/qt-5.0?search=\\{@}
 Query[fa]=http://qt-project.org/doc/search/qt-5.0?search=\\{@}
 Query[fi]=http://qt-project.org/doc/search/qt-5.0?search=\\{@}

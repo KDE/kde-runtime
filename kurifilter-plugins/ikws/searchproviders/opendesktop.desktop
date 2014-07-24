@@ -17,7 +17,6 @@ Name[el]=openDesktop.org
 Name[en_GB]=openDesktop.org
 Name[eo]=openDesktop.org
 Name[es]=openDesktop.org
-Name[et]=openDesktop.org
 Name[eu]=openDesktop.org
 Name[fa]=openDesktop.org
 Name[fi]=openDesktop.org
@@ -85,7 +84,6 @@ Query[el]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[en_GB]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[eo]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[es]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
-Query[et]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[eu]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[fa]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
 Query[fi]=http://www.opendesktop.org/content/search.php?search=Search&name=\\{@}
