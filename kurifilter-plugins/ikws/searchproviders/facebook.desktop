@@ -17,6 +17,7 @@ Name[el]=Facebook
 Name[en_GB]=Facebook
 Name[eo]=Vizaĵlibro
 Name[es]=Facebook
+Name[et]=Facebook
 Name[eu]=Facebook
 Name[fa]=فیس‌بوک
 Name[fi]=Facebook
@@ -82,6 +83,7 @@ Query[de]=https://www.facebook.com/search/?q=\\{@}&init=quick
 Query[el]=https://www.facebook.com/search/?q=\\{@}&init=quick
 Query[en_GB]=https://www.facebook.com/search/?q=\\{@}&init=quick
 Query[es]=https://www.facebook.com/search/?q=\\{@}&init=quick
+Query[et]=https://www.facebook.com/search/?q=\\{@}&init=quick
 Query[eu]=https://www.facebook.com/search/?q=\\{@}&init=quick
 Query[fa]=https://www.facebook.com/search/?q=\\{@}&init=quick
 Query[fi]=https://www.facebook.com/search/?q=\\{@}&init=quick

@@ -17,6 +17,7 @@ Name[el]=Identi.ca People
 Name[en_GB]=Identi.ca People
 Name[eo]=Presonoj de Identi.ko
 Name[es]=Gente Identi.ca
+Name[et]=Identi.ca inimesed
 Name[eu]=Identi.ca-ren jendea
 Name[fa]=اعضای Identi.ca
 Name[fi]=Identi.ca-ihmishaku
@@ -82,6 +83,7 @@ Query[de]=https://identi.ca/search/people?q=\\{@}&search=Search
 Query[el]=https://identi.ca/search/people?q=\\{@}&search=Search
 Query[en_GB]=https://identi.ca/search/people?q=\\{@}&search=Search
 Query[es]=https://identi.ca/search/people?q=\\{@}&search=Search
+Query[et]=https://identi.ca/search/people?q=\\{@}&search=Search
 Query[eu]=https://identi.ca/search/people?q=\\{@}&search=Search
 Query[fa]=https://identi.ca/search/people?q=\\{@}&search=Search
 Query[fi]=https://identi.ca/search/people?q=\\{@}&search=Search

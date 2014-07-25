@@ -16,6 +16,7 @@ Name[el]=Τεχνική βάση KDE
 Name[en_GB]=KDE TechBase
 Name[eo]=Novaĵoj de KDE
 Name[es]=KDE TechBase
+Name[et]=KDE TechBase
 Name[eu]=KDE TechBase
 Name[fa]=اخبار KDE
 Name[fi]=KDE:n TechBase
@@ -84,6 +85,7 @@ Query[el]=http://techbase.kde.org/Special:Search?search=\\{@}&fulltext=Search
 Query[en_GB]=http://techbase.kde.org/Special:Search?search=\\{@}&fulltext=Search
 Query[eo]=http://techbase.kde.org/Special:Search?search=\\{@}&fulltext=Search
 Query[es]=http://techbase.kde.org/Special:Search?search=\\{@}&fulltext=Search
+Query[et]=http://techbase.kde.org/Special:Search?search=\\{@}&fulltext=Search
 Query[eu]=http://techbase.kde.org/Special:Search?search=\\{@}&fulltext=Search
 Query[fa]=http://techbase.kde.org/Special:Search?search=\\{@}&fulltext=Search
 Query[fi]=http://techbase.kde.org/Special:Search?search=\\{@}&fulltext=Search

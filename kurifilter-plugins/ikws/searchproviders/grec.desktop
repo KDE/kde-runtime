@@ -22,6 +22,7 @@ Name[el]=Μεγάλο Λεξικό της Καταλανικής Γλώσσας 
 Name[en_GB]=Great Dictionary of the Catalan Language (GRan Enciclopèdia  Catalana)
 Name[eo]=Granda vortaro de la kataluna lingvo (GRan Enciclopèdia  Catalana)
 Name[es]=Gran diccionario del idioma catalán (Gran Enciclopèdia Catalana)
+Name[et]=Suur katalaani sõnaraamat (GRan Enciclopèdia  Catalana)
 Name[eu]=Gran Enciclopèdia Catalana entziklopedia
 Name[fa]=واژه‌نامه بزرگ زبان کاتالان (GRan Enciclopèdia  Catalana)
 Name[fi]=Katalaanin suuri sanakirja (GRan Enciclopèdia  Catalana)
@@ -102,6 +103,7 @@ Query[el]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[en_GB]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[eo]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[es]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
+Query[et]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[eu]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[fa]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[fi]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}

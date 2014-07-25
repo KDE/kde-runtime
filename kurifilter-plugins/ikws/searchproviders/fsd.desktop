@@ -22,6 +22,7 @@ Name[el]=FSF/UNESCO Free Software Directory
 Name[en_GB]=FSF/UNESCO Free Software Directory
 Name[eo]=Dosierujoj de liberaj programaroj de FSF/UNESCO
 Name[es]=Directorio de software libre de FSF/UNESCO
+Name[et]=FSF/UNESCO Free Software Directory
 Name[eu]=FSF/UNESCO software-direktorio askea
 Name[fa]=واژه‌نامه نرم‌افزار آزاد FSF/UNESCO
 Name[fi]=FSF/UNESCO:n vapaiden ohjelmien hakemisto
@@ -109,6 +110,7 @@ Query[el]=http://directory.fsf.org/search/fsd-search.py?q=\\{@}
 Query[en_GB]=http://directory.fsf.org/search/?query=\\{@}
 Query[eo]=http://directory.fsf.org/search/?query=\\{@}
 Query[es]=http://directory.fsf.org/search/fsd-search.py?q=\\{@}
+Query[et]=http://directory.fsf.org/search/?query=\\{@}
 Query[eu]=http://directory.fsf.org/search/?query=\\{@}
 Query[fa]=http://directory.fsf.org/search/?query=\\{@}
 Query[fi]=http://directory.fsf.org/search/?query=\\{@}

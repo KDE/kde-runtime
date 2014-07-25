@@ -23,6 +23,7 @@ Name[el]=SourceForge
 Name[en_GB]=SourceForge
 Name[eo]=SourceForge
 Name[es]=SourceForge
+Name[et]=SourceForge
 Name[eu]=SourceForge
 Name[fa]=سورس فرج
 Name[fi]=SourceForge
@@ -112,6 +113,7 @@ Query[el]=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\
 Query[en_GB]=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\{exact,"0"}&words=\\{@}
 Query[eo]=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\{exact,"0"}&words=\\{@}
 Query[es]=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\{exact,"0"}&words=\\{@}
+Query[et]=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\{exact,"0"}&words=\\{@}
 Query[eu]=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\{exact,"0"}&words=\\{@}
 Query[fa]=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\{exact,"0"}&words=\\{@}
 Query[fi]=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\{exact,"0"}&words=\\{@}

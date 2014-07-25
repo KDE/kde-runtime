@@ -17,6 +17,7 @@ Name[el]=GitHub
 Name[en_GB]=GitHub
 Name[eo]=GitHub
 Name[es]=GitHub
+Name[et]=GitHub
 Name[eu]=GitHub
 Name[fa]=GitHub
 Name[fi]=GitHub
@@ -82,6 +83,7 @@ Query[de]=https://github.com/search?q=\\{@}&x=0&y=0
 Query[el]=https://github.com/search?q=\\{@}&x=0&y=0
 Query[en_GB]=https://github.com/search?q=\\{@}&x=0&y=0
 Query[es]=https://github.com/search?q=\\{@}&x=0&y=0
+Query[et]=https://github.com/search?q=\\{@}&x=0&y=0
 Query[eu]=https://github.com/search?q=\\{@}&x=0&y=0
 Query[fa]=https://github.com/search?q=\\{@}&x=0&y=0
 Query[fi]=https://github.com/search?q=\\{@}&x=0&y=0

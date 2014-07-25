@@ -42,6 +42,7 @@ ExtraNames[el]=Αρχική διαδρομή,Ημερομηνία διαγραφ
 ExtraNames[en_GB]=Original Path,Deletion Date
 ExtraNames[eo]=Origina vojo,Foriga dato
 ExtraNames[es]=Ruta original,Fecha de borrado
+ExtraNames[et]=Algne asukoht,Kustutamisaeg
 ExtraNames[eu]=Jatorrizko bide-izena, ezabatze-data
 ExtraNames[fa]=مسیر اصلی، تاریخ حذف
 ExtraNames[fi]=Alkuperäinen polku, poistopäivä

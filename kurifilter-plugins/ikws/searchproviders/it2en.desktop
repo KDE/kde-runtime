@@ -24,6 +24,7 @@ Name[el]=WordReference.com Μετάφραση: Ιταλικά σε Αγγλικ�
 Name[en_GB]=WordReference.com Translation: Italian to English
 Name[eo]=Tradukado WordReference.com: itale anglen
 Name[es]=WordReference.com Traducción: italiano a inglés
+Name[et]=WordReference.com tõlkimine: itaalia->inglise
 Name[eu]=WordReference.com italieratik ingeleserako itzulpenak
 Name[fa]=ترجمه WordReference.com: ایتالیایی به انگلیسی
 Name[fi]=WordReference.com-käännös italiasta englanniksi
@@ -111,6 +112,7 @@ Query[el]=http://www.wordreference.com/it/en/translation.asp?iten=\\{@}
 Query[en_GB]=http://www.wordreference.com/it/en/translation.asp?iten=\\{@}
 Query[eo]=http://www.wordreference.com/it/en/translation.asp?iten=\\{@}
 Query[es]=http://www.wordreference.com/it/en/translation.asp?iten=\\{@}
+Query[et]=http://www.wordreference.com/it/en/translation.asp?iten=\\{@}
 Query[eu]=http://www.wordreference.com/it/en/translation.asp?iten=\\{@}
 Query[fa]=http://www.wordreference.com/it/en/translation.asp?iten=\\{@}
 Query[fi]=http://www.wordreference.com/it/en/translation.asp?iten=\\{@}

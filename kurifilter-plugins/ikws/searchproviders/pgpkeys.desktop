@@ -22,6 +22,7 @@ Name[el]=Αναζήτηση κλειδιού OpenPGP
 Name[en_GB]=OpenPGP Key Search
 Name[eo]=Ŝlosilserĉo de OpenPGP
 Name[es]=Búsqueda de clave OpenPGP
+Name[et]=OpenPGP võtme otsing
 Name[eu]=OpenPGP gako-bilatzailea
 Name[fa]=جستجوی کلید OpenPGP
 Name[fi]=OpenPGP-avainhaku
@@ -102,6 +103,7 @@ Query[de]=http://pgp.mit.edu:11371/pks/lookup?search=\\{@}&op=vindex
 Query[el]=http://pgp.mit.edu:11371/pks/lookup?search=\\{@}&op=vindex
 Query[en_GB]=http://pgp.mit.edu:11371/pks/lookup?search=\\{@}&op=vindex
 Query[es]=http://pgp.mit.edu:11371/pks/lookup?search=\\{@}&op=vindex
+Query[et]=http://pgp.mit.edu:11371/pks/lookup?search=\\{@}&op=vindex
 Query[eu]=http://pgp.mit.edu:11371/pks/lookup?search=\\{@}&op=vindex
 Query[fa]=http://pgp.mit.edu:11371/pks/lookup?search=\\{@}&op=vindex
 Query[fi]=http://pgp.mit.edu:11371/pks/lookup?search=\\{@}&op=vindex

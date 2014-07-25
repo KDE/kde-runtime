@@ -22,6 +22,7 @@ Name[el]=Αναζήτηση εφαρμογών του KDE
 Name[en_GB]=KDE App Search
 Name[eo]=Serĉo de aplikaĵoj de KDE
 Name[es]=Búsqueda de aplicaciones de KDE
+Name[et]=KDE rakenduste otsing
 Name[eu]=KDEren aplikazio-bilaketa
 Name[fa]=جستجوی کاربرد KDE
 Name[fi]=KDE App -haku
@@ -114,6 +115,7 @@ Query[el]=http://www.kde-apps.org/content/search.php?search=Search&name=\\{@}
 Query[en_GB]=http://www.kde-apps.org/content/search.php?search=Search&name=\\{@}
 Query[eo]=http://www.kde-apps.org/content/search.php?search=Search&name=\\{@}
 Query[es]=http://www.kde-apps.org/content/search.php?search=Search&name=\\{@}
+Query[et]=http://www.kde-apps.org/content/search.php?search=Search&name=\\{@}
 Query[eu]=http://www.kde-apps.org/content/search.php?search=Search&name=\\{@}
 Query[fa]=http://www.kde-apps.org/content/search.php?search=Search&name=\\{@}
 Query[fi]=http://www.kde-apps.org/content/search.php?search=Search&name=\\{@}

@@ -15,6 +15,7 @@ Name[el]=YouTube
 Name[en_GB]=YouTube
 Name[eo]=Jutjubo
 Name[es]=YouTube
+Name[et]=YouTube
 Name[eu]=YouTube
 Name[fa]=YouTube
 Name[fi]=YouTube
@@ -80,6 +81,7 @@ Query[de]=https://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[el]=https://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[en_GB]=https://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[es]=https://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
+Query[et]=https://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[eu]=https://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[fa]=https://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f
 Query[fi]=https://www.youtube.com/results?search_query=\\{@}&search_type=&aq=f

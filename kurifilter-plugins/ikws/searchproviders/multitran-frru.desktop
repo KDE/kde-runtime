@@ -21,6 +21,7 @@ Name[el]=Multitran - Μετάφραση μεταξύ Γαλλικών και Ρ�
 Name[en_GB]=Multitran - Translate Between French and Russian
 Name[eo]=Multitran - Traduko inter la franca kaj la rusa
 Name[es]=Multitran - Traducción entre francés y ruso
+Name[et]=Multitran - tõlkimine: prantsuse-vene
 Name[eu]=Multitran frantsesetik errusierarako itzulpenak
 Name[fa]=Multitran - Translate Between French and Russian
 Name[fi]=Multitran – käännä ranskasta venäjään
@@ -105,6 +106,7 @@ Query[el]=http://multitran.ru/c/m.exe?l1=4&s=\\{@}
 Query[en_GB]=http://multitran.ru/c/m.exe?l1=4&s=\\{@}
 Query[eo]=http://multitran.ru/c/m.exe?l1=4&s=\\{@}
 Query[es]=http://multitran.ru/c/m.exe?l1=4&s=\\{@}
+Query[et]=http://multitran.ru/c/m.exe?l1=4&s=\\{@}
 Query[eu]=http://multitran.ru/c/m.exe?l1=4&s=\\{@}
 Query[fa]=http://multitran.ru/c/m.exe?l1=4&s=\\{@}
 Query[fi]=http://multitran.ru/c/m.exe?l1=4&s=\\{@}

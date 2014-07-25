@@ -23,6 +23,7 @@ Name[el]=Θησαυρός λέξεων HyperDictionary.com
 Name[en_GB]=HyperDictionary.com Thesaurus
 Name[eo]=Tezaŭro de HyperDictionary.com
 Name[es]=Tesauro de HyperDictionary.com
+Name[et]=HyperDictionary.com tesaurus
 Name[eu]=HyperDictionary.com thesaurusa
 Name[fa]=فرهنگ جامع HyperDictionary.com
 Name[fi]=HyperDictionary.com-synonyymisanakirja
@@ -114,6 +115,7 @@ Query[el]=http://www.hyperdictionary.com/search.aspx?Dict=T&define=\\{@}
 Query[en_GB]=http://www.hyperdictionary.com/search.aspx?Dict=T&define=\\{@}
 Query[eo]=http://www.hyperdictionary.com/search.aspx?Dict=T&define=\\{@}
 Query[es]=http://www.hyperdictionary.com/search.aspx?Dict=T&define=\\{@}
+Query[et]=http://www.hyperdictionary.com/search.aspx?Dict=T&define=\\{@}
 Query[eu]=http://www.hyperdictionary.com/search.aspx?Dict=T&define=\\{@}
 Query[fa]=http://www.hyperdictionary.com/search.aspx?Dict=T&define=\\{@}
 Query[fi]=http://www.hyperdictionary.com/search.aspx?Dict=T&define=\\{@}

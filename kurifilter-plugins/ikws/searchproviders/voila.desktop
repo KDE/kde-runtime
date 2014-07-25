@@ -23,6 +23,7 @@ Name[el]=Voila
 Name[en_GB]=Voila
 Name[eo]=Voila
 Name[es]=Voila
+Name[et]=Voila
 Name[eu]=Voila
 Name[fa]=Voila
 Name[fi]=Voila
@@ -115,6 +116,7 @@ Query[el]=http://www.voila.com/S/geek?an=1&kw=\\{@}&dt=*
 Query[en_GB]=http://www.voila.com/S/geek?an=1&kw=\\{@}&dt=*
 Query[eo]=http://www.voila.com/S/geek?an=1&kw=\\{@}&dt=*
 Query[es]=http://www.voila.com/S/geek?an=1&kw=\\{@}&dt=*
+Query[et]=http://www.voila.com/S/geek?an=1&kw=\\{@}&dt=*
 Query[eu]=http://www.voila.com/S/geek?an=1&kw=\\{@}&dt=*
 Query[fa]=http://www.voila.com/S/geek?an=1&kw=\\{@}&dt=*
 Query[fi]=http://www.voila.com/S/geek?an=1&kw=\\{@}&dt=*

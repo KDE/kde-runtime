@@ -22,6 +22,7 @@ Name[el]=Λίστα δικτυακών βιβλίων
 Name[en_GB]=Internet Book List
 Name[eo]=Interreta librolisto
 Name[es]=Lista de libros de Internet
+Name[et]=Internet Book List
 Name[eu]=Internet Book List
 Name[fa]=فهرست کتاب اینترنت
 Name[fi]=Internet Book List
@@ -108,6 +109,7 @@ Query[el]=http://www.iblist.com/search/search.php?item=\\{@}&submit=Search
 Query[en_GB]=http://www.iblist.com/search/search.php?item=\\{@}&submit=Search
 Query[eo]=http://www.iblist.com/search/search.php?item=\\{@}&submit=Search
 Query[es]=http://www.iblist.com/search/search.php?item=\\{@}&submit=Search
+Query[et]=http://www.iblist.com/search/search.php?item=\\{@}&submit=Search
 Query[eu]=http://www.iblist.com/search/search.php?item=\\{@}&submit=Search
 Query[fa]=http://www.iblist.com/search/search.php?item=\\{@}&submit=Search
 Query[fi]=http://www.iblist.com/search/search.php?item=\\{@}&submit=Search

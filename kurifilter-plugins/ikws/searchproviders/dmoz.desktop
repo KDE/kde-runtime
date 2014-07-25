@@ -23,6 +23,7 @@ Name[el]=Open Directory
 Name[en_GB]=Open Directory
 Name[eo]=Malferma dosierujo
 Name[es]=Directorio abierto
+Name[et]=Open Directory
 Name[eu]=Open Directory
 Name[fa]=Open Directory
 Name[fi]=Open Directory
@@ -115,6 +116,7 @@ Query[el]=http://search.dmoz.org/cgi-bin/search?search=\\{@}
 Query[en_GB]=http://search.dmoz.org/cgi-bin/search?search=\\{@}
 Query[eo]=http://search.dmoz.org/cgi-bin/search?search=\\{@}
 Query[es]=http://search.dmoz.org/cgi-bin/search?search=\\{@}
+Query[et]=http://search.dmoz.org/cgi-bin/search?search=\\{@}
 Query[eu]=http://search.dmoz.org/cgi-bin/search?search=\\{@}
 Query[fa]=http://search.dmoz.org/cgi-bin/search?search=\\{@}
 Query[fi]=http://search.dmoz.org/cgi-bin/search?search=\\{@}
