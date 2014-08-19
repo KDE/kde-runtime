@@ -38,6 +38,7 @@
 #include <Plasma/PackageStructure>
 #include <Plasma/Package>
 #include <Plasma/PackageMetadata>
+#include <Plasma/Theme>
 
 static const char description[] = I18N_NOOP("Install, list, remove Plasma packages");
 static const char version[] = "0.2";
@@ -401,6 +402,13 @@ int main(int argc, char **argv)
             }
 
             QStringList installed = packages(pluginTypes);
+            //Get list of installed desktop themes with Plasma::Theme::listThemeInfo
+            if (type.compare(i18nc("package type", "theme"), Qt::CaseInsensitive) == 0 ||
+                type.compare("theme", Qt::CaseInsensitive) == 0) {
+                foreach (KPluginInfo theme, Plasma::Theme::listThemeInfo()) {
+                      installed << theme.pluginName();
+                }
+            }
             if (installed.contains(pluginName)) {
                 if (installer->uninstallPackage(pluginName, packageRoot)) {
                     output(i18n("Successfully removed %1", pluginName));
@@ -409,20 +417,9 @@ int main(int argc, char **argv)
                     delete installer;
                     return 1;
                 }
-            // Need to check for theme package type, and uninstall anyway, since they aren't returned
-            // in the list of plugins. Fixes https://bugs.kde.org/show_bug.cgi?id=149479
-            } else if (type.compare(i18nc("package type", "theme"), Qt::CaseInsensitive) == 0 ||
-                       type.compare("theme", Qt::CaseInsensitive) == 0) {
-                if (installer->uninstallPackage(pluginName, packageRoot)) {
-                    output(i18n("Successfully removed %1", pluginName));
-                } else if (!args->isSet("upgrade")) {
-                    output(i18n("Removal of %1 failed.", pluginName));
-                    delete installer;
-                    return 1;
-                }
-            }else {
-                output(i18n("Plugin %1 is not installed.", pluginName));
-                return 1;
+            }
+            else {
+                output(i18n("Plugin %1 is not installed now.", pluginName));
             }
         }
         if (args->isSet("install") || args->isSet("upgrade")) {
