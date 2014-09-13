@@ -1,6 +1,16 @@
 [Desktop Entry]
 Keys=qwv
 Name=Qwant Videos
+Name[nl]=Qwant video's
+Name[sk]=Qwant videá
+Name[sv]=Qwant-videor
+Name[uk]=Відео Qwant
+Name[x-test]=xxQwant Videosxx
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
+Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
+Query[sk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
+Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
+Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
+Query[x-test]=xxhttps://www.qwant.com/single?q=\\{@}&client=kde&source=videosxx
 X-KDE-ServiceTypes=SearchProvider
 Type=Service
