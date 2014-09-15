@@ -5,6 +5,10 @@ Name[nl]=Qwant sociaal
 Name[pl]=Qwant - społeczność
 Name[pt_BR]=Qwant Social
 Name[sk]=Qwant sociálne
+Name[sr]=Друштвено преко Кванта
+Name[sr@ijekavian]=Друштвено преко Кванта
+Name[sr@ijekavianlatin]=Društveno preko Qwanta
+Name[sr@latin]=Društveno preko Qwanta
 Name[sv]=Qwant-social
 Name[uk]=Соціальне Qwant
 Name[x-test]=xxQwant Socialxx
@@ -13,6 +17,10 @@ Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[pl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[pt_BR]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[sk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[sr]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[sr@ijekavian]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[sr@ijekavianlatin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[sr@latin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[x-test]=xxhttps://www.qwant.com/single?q=\\{@}&client=kde&source=socialxx
