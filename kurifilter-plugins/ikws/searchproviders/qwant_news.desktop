@@ -1,6 +1,8 @@
 [Desktop Entry]
 Keys=qwn
 Name=Qwant News
+Name[de]=Qwant-Neuigkeiten
+Name[en_GB]=Qwant News
 Name[et]=Qwant News
 Name[nl]=Qwant nieuws
 Name[pl]=Qwant - aktualności
@@ -15,6 +17,8 @@ Name[sv]=Qwant-nyheter
 Name[uk]=Новини Qwant
 Name[x-test]=xxQwant Newsxx
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[en_GB]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[et]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[pl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news

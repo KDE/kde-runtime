@@ -1,6 +1,8 @@
 [Desktop Entry]
 Keys=qwi
 Name=Qwant Images
+Name[de]=Qwant-Bilder
+Name[en_GB]=Qwant Images
 Name[et]=Qwant Images
 Name[nl]=Qwant afbeeldingen
 Name[pl]=Qwant - obrazy
@@ -15,6 +17,8 @@ Name[sv]=Qwant-bilder
 Name[uk]=Зображення Qwant
 Name[x-test]=xxQwant Imagesxx
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[en_GB]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[et]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[pl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
