@@ -30,6 +30,9 @@ GdbHighlighter::GdbHighlighter(QTextDocument* parent, const QList<BacktraceLine>
         lines.insert(l, line);
         l += line.toString().count('\n');
     }
+    // Add a dummy, in case the last backtrace line has more than 1 '\n' char.
+    const BacktraceLine dummy;
+    lines.insert(l, dummy);
 
     // setup formates
     KColorScheme scheme(QPalette::Active);
@@ -71,7 +74,8 @@ void GdbHighlighter::highlightBlock(const QString& text)
         // -1 since we skip the first line
         QMap< int, BacktraceLine >::iterator it = lines.lowerBound(lineNr - 1);
         Q_ASSERT(it != lines.end());
-        // lowerbound would return the next higher item, even though we want the former one
+        // QMap::lowerBound() returns the next higher item or
+        // the dummy item, but we want the one before that.
         if (it.key() > lineNr - 1) {
             --it;
         }

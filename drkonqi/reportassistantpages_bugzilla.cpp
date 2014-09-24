@@ -283,9 +283,18 @@ void BugzillaLoginPage::loginClicked()
 {
     if (!(ui.m_userEdit->text().isEmpty() || ui.m_passwordEdit->text().isEmpty())) {
 
+#ifndef Q_OS_MAC
+        // On Apple OS X, the following test is omitted (for now) because kded4,
+        // the KDE daemon is not usually running (OS X is not a KDE desktop) and
+        // the absence of kded4 causes Dr Konqi to crash.
+        //
+        // The code based on cookies is intended to be replaced because Bugzilla
+        // and bugs.kde.org no longer use cookies (Bugzilla 4.4.5, July 2014).
+        //
         if (!canSetCookies()) {
             return;
         }
+#endif
 
         ui.m_loginButton->setEnabled(false);
 

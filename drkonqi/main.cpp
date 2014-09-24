@@ -44,6 +44,10 @@ static const char description[] = I18N_NOOP("The KDE Crash Handler gives the use
 int main(int argc, char* argv[])
 {
 #ifndef Q_OS_WIN //krazy:exclude=cpp
+// TODO - Investigate and fix this, or work around it as follows...
+// #if !defined(Q_OS_WIN) && !defined(Q_OS_MAC)
+// When starting Dr Konqi via kdeinit4, Apple OS X aborts us unconditionally for
+// using setgid/setuid, even if the privs were those of the logged-in user.
 // Drop privs.
     setgid(getgid());
     if (setuid(getuid()) < 0 && geteuid() != getuid()) {
@@ -106,6 +110,9 @@ int main(int argc, char* argv[])
 
     DrKonqiDialog *w = new DrKonqiDialog();
     w->show();
+    // Make sure the Dr Konqi dialog comes to the front, whatever the platform
+    // or window manager, but especially on Apple OS X.
+    w->raise();
     int ret = qa->exec();
 
     DrKonqi::cleanup();
