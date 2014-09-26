@@ -1,0 +1,46 @@
+[Desktop Entry]
+Keys=qwi
+Name=Qwant Images
+Name[ca]=Imatges a Qwant
+Name[cs]=Qwant - Obrázky
+Name[da]=Qwant Images
+Name[de]=Qwant-Bilder
+Name[en_GB]=Qwant Images
+Name[es]=Qwant Imágenes
+Name[et]=Qwant Images
+Name[nds]=Qwant-Biller
+Name[nl]=Qwant afbeeldingen
+Name[pl]=Qwant - obrazy
+Name[pt]=Imagens do Qwant
+Name[pt_BR]=Imagens do Qwant
+Name[sk]=Qwant obrázky
+Name[sr]=Слике преко Кванта
+Name[sr@ijekavian]=Слике преко Кванта
+Name[sr@ijekavianlatin]=Slike preko Qwanta
+Name[sr@latin]=Slike preko Qwanta
+Name[sv]=Qwant-bilder
+Name[uk]=Зображення Qwant
+Name[x-test]=xxQwant Imagesxx
+Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[da]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[en_GB]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[et]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[nds]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[pl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[pt]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[pt_BR]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[sk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[sr]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[sr@ijekavian]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[sr@ijekavianlatin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[sr@latin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[x-test]=xxhttps://www.qwant.com/single?q=\\{@}&client=kde&source=imagesxx
+X-KDE-ServiceTypes=SearchProvider
+Type=Service

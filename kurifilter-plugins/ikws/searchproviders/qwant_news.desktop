@@ -1,0 +1,46 @@
+[Desktop Entry]
+Keys=qwn
+Name=Qwant News
+Name[ca]=Notícies a Qwant
+Name[cs]=Qwant - Novinky
+Name[da]=Qwant News
+Name[de]=Qwant-Neuigkeiten
+Name[en_GB]=Qwant News
+Name[es]=Qwant Noticias
+Name[et]=Qwant News
+Name[nds]=Qwant-Narichten
+Name[nl]=Qwant nieuws
+Name[pl]=Qwant - aktualności
+Name[pt]=Notícias do Qwant
+Name[pt_BR]=Notícias do Qwant
+Name[sk]=Qwant Novinky 
+Name[sr]=Вести преко Кванта
+Name[sr@ijekavian]=Вести преко Кванта
+Name[sr@ijekavianlatin]=Vesti preko Qwanta
+Name[sr@latin]=Vesti preko Qwanta
+Name[sv]=Qwant-nyheter
+Name[uk]=Новини Qwant
+Name[x-test]=xxQwant Newsxx
+Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[da]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[en_GB]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[et]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[nds]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[pl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[pt]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[pt_BR]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[sk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[sr]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[sr@ijekavian]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[sr@ijekavianlatin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[sr@latin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[x-test]=xxhttps://www.qwant.com/single?q=\\{@}&client=kde&source=newsxx
+X-KDE-ServiceTypes=SearchProvider
+Type=Service
