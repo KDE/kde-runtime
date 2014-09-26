@@ -21,6 +21,14 @@
 
 #include "kglobalacceld.h"
 
+#ifdef Q_OS_MAC
+// kglobalaccel is defined NOGUI in the CMakeFile, but should not create its
+// KUniqueApplication instance with GUIenabled=false .
+// Undefining KDE_WITHOUT_GUI restores the pre 4.14.1 default behaviour (GUIenabled=true)
+#undef KDE_WITHOUT_GUI
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 #include <kuniqueapplication.h>
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
@@ -54,6 +62,20 @@ extern "C" KDE_EXPORT int kdemain(int argc, char **argv)
     // get a hang on kglobalaccel restart (kglobalaccel tries to register with ksmserver,
     // ksmserver tries to register with kglobalaccel).
     unsetenv( "SESSION_MANAGER" );
+#ifdef Q_OS_MAC
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+    if (mainBundle) {
+        // get the application's Info Dictionary. For app bundles this would live in the bundle's Info.plist,
+        // for regular executables it is obtained in another way.
+        CFMutableDictionaryRef infoDict = (CFMutableDictionaryRef) CFBundleGetInfoDictionary(mainBundle);
+        if (infoDict) {
+            // Add or set the "LSUIElement" key with/to value "1". This can simply be a CFString.
+            CFDictionarySetValue(infoDict, CFSTR("LSUIElement"), CFSTR("1"));
+            // That's it. We're now considered as an "agent" by the window server, and thus will have
+            // neither menubar nor presence in the Dock or App Switcher.
+        }
+    }
+#endif
 
     KAboutData aboutdata(
             "kglobalaccel",
