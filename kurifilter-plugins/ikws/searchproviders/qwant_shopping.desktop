@@ -21,6 +21,7 @@ Name[sr@latin]=Kupovina preko Qwanta
 Name[sv]=Qwant-shopping
 Name[uk]=Qwant торгівля
 Name[x-test]=xxQwant Shoppingxx
+Name[zh_TW]=Qwant Shopping
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
@@ -42,5 +43,6 @@ Query[sr@latin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[x-test]=xxhttps://www.qwant.com/single?q=\\{@}&client=kde&source=shoppingxx
+Query[zh_TW]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 X-KDE-ServiceTypes=SearchProvider
 Type=Service

@@ -21,6 +21,7 @@ Name[sr@latin]=Vesti preko Qwanta
 Name[sv]=Qwant-nyheter
 Name[uk]=Новини Qwant
 Name[x-test]=xxQwant Newsxx
+Name[zh_TW]=Qwant News
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
@@ -42,5 +43,6 @@ Query[sr@latin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[x-test]=xxhttps://www.qwant.com/single?q=\\{@}&client=kde&source=newsxx
+Query[zh_TW]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 X-KDE-ServiceTypes=SearchProvider
 Type=Service
