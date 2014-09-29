@@ -1,15 +1,20 @@
 [Desktop Entry]
 Keys=qwso
 Name=Qwant Social
+Name[ca]=Social a Qwant
 Name[es]=Qwant Social
 Name[nl]=Qwant sociaal
+Name[pt]=Qwant Social
 Name[sk]=Sociálne Qwant
 Name[sv]=Qwant-social
 Name[uk]=Соціальне Qwant
 Name[x-test]=xxQwant Socialxx
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[pt]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[sk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social

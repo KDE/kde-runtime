@@ -1,15 +1,21 @@
 [Desktop Entry]
 Keys=qwn
 Name=Qwant News
+Name[ca]=Notícies a Qwant
+Name[de]=Qwant-Neuigkeiten
 Name[es]=Qwant Noticias
 Name[nl]=Qwant nieuws
+Name[pt]=Notícias do Qwant
 Name[sk]=Novinky Qwant
 Name[sv]=Qwant-nyheter
 Name[uk]=Новини Qwant
 Name[x-test]=xxQwant Newsxx
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[pt]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[sk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
