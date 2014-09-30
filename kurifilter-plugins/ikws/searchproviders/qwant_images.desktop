@@ -2,6 +2,7 @@
 Keys=qwi
 Name=Qwant Images
 Name[ca]=Imatges a Qwant
+Name[cs]=Qwant - Obrázky
 Name[de]=Qwant-Bilder
 Name[es]=Qwant Imágenes
 Name[nl]=Qwant afbeeldingen
@@ -12,6 +13,7 @@ Name[uk]=Зображення Qwant
 Name[x-test]=xxQwant Imagesxx
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images

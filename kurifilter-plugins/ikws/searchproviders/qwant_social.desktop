@@ -2,6 +2,7 @@
 Keys=qwso
 Name=Qwant Social
 Name[ca]=Social a Qwant
+Name[cs]=Qwant - Sociální sítě
 Name[es]=Qwant Social
 Name[nl]=Qwant sociaal
 Name[pt]=Qwant Social
@@ -11,6 +12,7 @@ Name[uk]=Соціальне Qwant
 Name[x-test]=xxQwant Socialxx
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
