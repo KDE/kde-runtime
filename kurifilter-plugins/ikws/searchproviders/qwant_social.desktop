@@ -8,6 +8,7 @@ Name[de]=Qwant-Sozial
 Name[en_GB]=Qwant Social
 Name[es]=Qwant Social
 Name[et]=Qwant Social
+Name[ia]=Qwant Social
 Name[nds]=Qwant-Meenschap
 Name[nl]=Qwant sociaal
 Name[pl]=Qwant - społeczność
@@ -30,6 +31,7 @@ Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[en_GB]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[et]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[ia]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[nds]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[pl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
