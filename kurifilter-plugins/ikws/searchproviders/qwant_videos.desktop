@@ -6,8 +6,15 @@ Name[cs]=Qwant - Videa
 Name[de]=Qwant-Videos
 Name[es]=Qwant Vídeos
 Name[nl]=Qwant video's
+Name[pl]=Qwant - wideo
 Name[pt]=Vídeos do Qwant
+Name[pt_BR]=Vídeos do Qwant
 Name[sk]=Videá Qwant
+Name[sl]=Qwant - video
+Name[sr]=Квант-видео
+Name[sr@ijekavian]=Квант-видео
+Name[sr@ijekavianlatin]=Qwant-video
+Name[sr@latin]=Qwant-video
 Name[sv]=Qwant-videor
 Name[uk]=Відео Qwant
 Name[x-test]=xxQwant Videosxx
@@ -17,8 +24,15 @@ Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
+Query[pl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[pt]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
+Query[pt_BR]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[sk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
+Query[sl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
+Query[sr]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
+Query[sr@ijekavian]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
+Query[sr@ijekavianlatin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
+Query[sr@latin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[x-test]=xxhttps://www.qwant.com/single?q=\\{@}&client=kde&source=videosxx

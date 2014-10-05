@@ -6,8 +6,15 @@ Name[cs]=Qwant - Sociální sítě
 Name[de]=Qwant-Sozial
 Name[es]=Qwant Social
 Name[nl]=Qwant sociaal
+Name[pl]=Qwant - społeczność
 Name[pt]=Qwant Social
+Name[pt_BR]=Qwant Social
 Name[sk]=Sociálne Qwant
+Name[sl]=Qwant - družabno
+Name[sr]=Квант-дружење
+Name[sr@ijekavian]=Квант-дружење
+Name[sr@ijekavianlatin]=Qwant-druženje
+Name[sr@latin]=Qwant-druženje
 Name[sv]=Qwant-social
 Name[uk]=Соціальне Qwant
 Name[x-test]=xxQwant Socialxx
@@ -17,8 +24,15 @@ Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[pl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[pt]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[pt_BR]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[sk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[sl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[sr]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[sr@ijekavian]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[sr@ijekavianlatin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[sr@latin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[x-test]=xxhttps://www.qwant.com/single?q=\\{@}&client=kde&source=socialxx
