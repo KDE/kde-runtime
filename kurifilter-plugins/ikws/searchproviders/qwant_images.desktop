@@ -4,11 +4,13 @@ Name=Qwant Images
 Name[ca]=Imatges a Qwant
 Name[cs]=Qwant - Obrázky
 Name[de]=Qwant-Bilder
+Name[en_GB]=Qwant Images
 Name[es]=Qwant Imágenes
 Name[nl]=Qwant afbeeldingen
 Name[pl]=Qwant - obrazy
 Name[pt]=Imagens do Qwant
 Name[pt_BR]=Imagens do Qwant
+Name[ru]=Qwant: Изображения
 Name[sk]=Obrázky Qwant
 Name[sl]=Qwant - slike
 Name[sr]=Квант-слике
@@ -22,11 +24,13 @@ Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[en_GB]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[pl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[pt]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[pt_BR]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[ru]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[sk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[sl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[sr]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images

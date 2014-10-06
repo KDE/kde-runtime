@@ -4,11 +4,13 @@ Name=Qwant Shopping
 Name[ca]=Compres a Qwant
 Name[cs]=Qwant - Nakupování
 Name[de]=Qwant-Shopping
+Name[en_GB]=Qwant Shopping
 Name[es]=Qwant Compras
 Name[nl]=Qwant winkelen
 Name[pl]=Qwant - zakupy
 Name[pt]=Compras do Qwant
 Name[pt_BR]=Compras do Qwant
+Name[ru]=Qwant: Покупки
 Name[sk]=Nakupovanie Qwant
 Name[sl]=Qwant - nakupovanje
 Name[sr]=Квант-шопинг
@@ -22,11 +24,13 @@ Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
+Query[en_GB]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[pl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[pt]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[pt_BR]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
+Query[ru]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[sk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[sl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[sr]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping

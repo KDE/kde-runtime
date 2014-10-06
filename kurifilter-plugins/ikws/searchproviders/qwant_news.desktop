@@ -4,11 +4,13 @@ Name=Qwant News
 Name[ca]=Notícies a Qwant
 Name[cs]=Qwant - Novinky
 Name[de]=Qwant-Nachrichten
+Name[en_GB]=Qwant News
 Name[es]=Qwant Noticias
 Name[nl]=Qwant nieuws
 Name[pl]=Qwant - aktualności
 Name[pt]=Notícias do Qwant
 Name[pt_BR]=Notícias do Qwant
+Name[ru]=Qwant: Новости
 Name[sk]=Novinky Qwant
 Name[sl]=Qwant - novice
 Name[sr]=Квант-вести
@@ -22,11 +24,13 @@ Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[en_GB]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[pl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[pt]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[pt_BR]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[ru]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[sk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[sl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[sr]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
