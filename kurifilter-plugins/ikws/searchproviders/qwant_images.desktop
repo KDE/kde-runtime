@@ -8,6 +8,7 @@ Name[de]=Qwant-Bilder
 Name[en_GB]=Qwant Images
 Name[es]=Qwant Imágenes
 Name[et]=Qwant Images
+Name[fi]=Qwant-kuvahaku
 Name[ia]=Qwant Images
 Name[nds]=Qwant-Biller
 Name[nl]=Qwant afbeeldingen
@@ -32,6 +33,7 @@ Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[en_GB]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[et]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[fi]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[ia]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[nds]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
