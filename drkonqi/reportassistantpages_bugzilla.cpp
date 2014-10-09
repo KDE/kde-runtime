@@ -64,8 +64,10 @@ static const char konquerorKWalletEntryPassword[] = "Bugzilla_password";
 
 BugzillaLoginPage::BugzillaLoginPage(ReportAssistantDialog * parent) :
         ReportAssistantPage(parent),
-        m_wallet(0), m_walletWasOpenedBefore(false)
+        m_wallet(0), m_walletWasOpenedBefore(false),
+        m_bugzillaVersionFound(false)
 {
+    connect(bugzillaManager(), SIGNAL(bugzillaVersionFound()), this, SLOT(bugzillaVersionFound()));
     connect(bugzillaManager(), SIGNAL(loginFinished(bool)), this, SLOT(loginFinished(bool)));
     connect(bugzillaManager(), SIGNAL(loginError(QString,QString)), this, SLOT(loginError(QString,QString)));
 
@@ -105,10 +107,18 @@ bool BugzillaLoginPage::isComplete()
     return bugzillaManager()->getLogged();
 }
 
+void BugzillaLoginPage::bugzillaVersionFound()
+{
+    // Login depends on first knowing the Bugzilla software version number.
+    m_bugzillaVersionFound = true;
+    updateLoginButtonStatus();
+}
+
 void BugzillaLoginPage::updateLoginButtonStatus()
 {
     ui.m_loginButton->setEnabled( !ui.m_userEdit->text().isEmpty() &&
-                                  !ui.m_passwordEdit->text().isEmpty() );
+                                  !ui.m_passwordEdit->text().isEmpty() &&
+                                  m_bugzillaVersionFound );
 }
 
 void BugzillaLoginPage::loginError(const QString & err, const QString & extendedMessage)
@@ -221,6 +231,10 @@ void BugzillaLoginPage::walletLogin()
 
 bool BugzillaLoginPage::canSetCookies()
 {
+    if (bugzillaManager()->securityMethod() != BugzillaManager::UseCookies) {
+        kDebug() << "Bugzilla software no longer issues cookies.";
+        return false;
+    }
     QDBusInterface kded(QLatin1String("org.kde.kded"),
                         QLatin1String("/kded"),
                         QLatin1String("org.kde.kded"));
@@ -286,12 +300,13 @@ void BugzillaLoginPage::loginClicked()
 #ifndef Q_OS_MAC
         // On Apple OS X, the following test is omitted (for now) because kded4,
         // the KDE daemon is not usually running (OS X is not a KDE desktop) and
-        // the absence of kded4 causes Dr Konqi to crash.
+        // the absence of kded4 causes Dr Konqi to crash in canSetCookies().
         //
-        // The code based on cookies is intended to be replaced because Bugzilla
-        // and bugs.kde.org no longer use cookies (Bugzilla 4.4.5, July 2014).
+        // As of Bugzilla 4.4.5, July 2014, Bugzilla software and bugs.kde.org
+        // no longer issue cookies.
         //
-        if (!canSetCookies()) {
+        if ((bugzillaManager()->securityMethod() == BugzillaManager::UseCookies)
+            && (!canSetCookies())) {
             return;
         }
 #endif
