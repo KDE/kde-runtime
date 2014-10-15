@@ -150,9 +150,9 @@ KWalletD::~KWalletD() {
 	qDeleteAll(_transactions);
 }
 
-#ifdef Q_WS_X11
 void KWalletD::connectToScreenSaver()
 {
+#ifdef Q_WS_X11
     screensaver = new QDBusInterface("org.freedesktop.ScreenSaver", "/ScreenSaver", "org.freedesktop.ScreenSaver");
     if (!screensaver->isValid()) {
         kDebug() << "Service org.freedesktop.ScreenSaver not found. Retrying in 10 seconds...";
@@ -162,8 +162,8 @@ void KWalletD::connectToScreenSaver()
         connect(screensaver, SIGNAL(ActiveChanged(bool)), SLOT(screenSaverChanged(bool)));
         kDebug() << "connected to screen saver service.";
     }
-}
 #endif
+}
 
 int KWalletD::generateHandle() {
 	int rc;
