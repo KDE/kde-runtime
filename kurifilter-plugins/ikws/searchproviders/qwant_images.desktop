@@ -22,6 +22,7 @@ Name[sr@latin]=Qwant-slike
 Name[sv]=Qwant-bilder
 Name[uk]=Зображення Qwant
 Name[x-test]=xxQwant Imagesxx
+Name[zh_TW]=Qwant Images
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
@@ -44,5 +45,6 @@ Query[sr@latin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[x-test]=xxhttps://www.qwant.com/single?q=\\{@}&client=kde&source=imagesxx
+Query[zh_TW]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 X-KDE-ServiceTypes=SearchProvider
 Type=Service
