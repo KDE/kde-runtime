@@ -1063,6 +1063,9 @@ bool TrashImpl::parseURL( const KUrl& url, int& trashId, QString& fileId, QStrin
     if (url.protocol() != QLatin1String("trash"))
         return false;
     const QString path = url.path();
+    if (path.isEmpty()) {
+        return false;
+    }
     int start = 0;
     if ( path[0] == QLatin1Char('/') ) // always true I hope
         start = 1;
