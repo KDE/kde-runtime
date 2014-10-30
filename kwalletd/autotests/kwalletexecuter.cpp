@@ -31,6 +31,8 @@
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusServiceWatcher>
 #include <QtDBus/QDBusConnectionInterface>
+#include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kstandarddirs.h>
 
 #ifndef Q_OS_WIN
@@ -39,6 +41,11 @@ extern char **environ;
 
 KWalletExecuter::KWalletExecuter(QObject* parent): QObject(parent)
 {
+    // Make sure wallet is enabled, otherwise test will fail
+    KConfig cfg("kwalletrc");
+    KConfigGroup cg( &cfg, "Wallet");
+    cg.writeEntry("First Use", false);
+    cg.writeEntry("Enabled", true);
 }
 
 void KWalletExecuter::pamOpen()
