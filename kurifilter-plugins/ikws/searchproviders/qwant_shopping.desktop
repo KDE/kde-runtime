@@ -7,6 +7,7 @@ Name[de]=Qwant-Shopping
 Name[en_GB]=Qwant Shopping
 Name[es]=Qwant Compras
 Name[fi]=Qwant-tuotehaku
+Name[hu]=Qwant vásárlás
 Name[id]=Qwant Belanja
 Name[it]=Acquisti di Qwant
 Name[nl]=Qwant winkelen
@@ -31,6 +32,7 @@ Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[en_GB]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[fi]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
+Query[hu]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[id]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[it]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
