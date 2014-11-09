@@ -4,6 +4,7 @@ Name=Qwant Videos
 Name[ca]=Vídeos a Qwant
 Name[cs]=Qwant - Videa
 Name[de]=Qwant-Videos
+Name[el]=Qwant Βίντεο
 Name[en_GB]=Qwant Videos
 Name[es]=Qwant Vídeos
 Name[fi]=Qwant-videohaku
@@ -29,6 +30,7 @@ Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
+Query[el]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[en_GB]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[fi]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos

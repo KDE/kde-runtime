@@ -4,6 +4,7 @@ Name=Qwant Shopping
 Name[ca]=Compres a Qwant
 Name[cs]=Qwant - Nakupování
 Name[de]=Qwant-Shopping
+Name[el]=Qwant Αγορές
 Name[en_GB]=Qwant Shopping
 Name[es]=Qwant Compras
 Name[fi]=Qwant-tuotehaku
@@ -29,6 +30,7 @@ Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
+Query[el]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[en_GB]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[fi]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
