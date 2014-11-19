@@ -380,7 +380,7 @@ static int startApp()
 #endif
         KDEsuDialog dlg(user, auth_user, keep && !terminal, icon, withIgnoreButton);
         if (prompt)
-            dlg.addCommentLine(i18n("Command:"), command);
+            dlg.addCommentLine(i18n("Command:"), QFile::decodeName(command));
         if (defKeep)
             dlg.setKeepPassword(true);
 
