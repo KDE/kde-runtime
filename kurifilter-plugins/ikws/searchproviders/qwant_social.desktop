@@ -10,6 +10,7 @@ Name[es]=Qwant Social
 Name[fi]=Qwant Social
 Name[hu]=Qwant közösségi
 Name[id]=Qwant Sosial
+Name[is]=Qwant samfélagsmiðlar
 Name[it]=Qwant Sociale
 Name[nl]=Qwant sociaal
 Name[pl]=Qwant - społeczność
@@ -36,6 +37,7 @@ Query[es]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[fi]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[hu]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[id]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[is]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[it]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[pa]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
