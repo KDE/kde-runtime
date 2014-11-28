@@ -3,6 +3,7 @@ Keys=qwi
 Name=Qwant Images
 Name[ca]=Imatges a Qwant
 Name[cs]=Qwant - Obrázky
+Name[da]=Qwant Images
 Name[de]=Qwant-Bilder
 Name[el]=Qwant Εικόνες
 Name[en_GB]=Qwant Images
@@ -30,6 +31,7 @@ Name[zh_TW]=Qwant Images
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[da]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[de]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[el]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[en_GB]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
