@@ -222,9 +222,10 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent )
     load();
 
     connect( m_ui->cbExternal, SIGNAL( toggled( bool ) ), this, SLOT( externalToggled( bool ) ) );
-    connect( m_ui->cbArts, SIGNAL(clicked(bool)), this, SLOT(slotChanged()));
+    connect( m_ui->cbSoundSystem, SIGNAL(clicked(bool)), this, SLOT(slotChanged()));
     connect( m_ui->cbExternal, SIGNAL(clicked(bool)), this, SLOT(slotChanged()));
     connect( m_ui->cbNone, SIGNAL(clicked(bool)), this, SLOT(slotChanged()));
+    connect( m_ui->cbVolume, SIGNAL(clicked(bool)), this, SLOT(slotChanged()));
     connect( m_ui->volumeSlider, SIGNAL( valueChanged ( int ) ), this, SLOT( slotChanged() ) );
     connect( m_ui->reqExternal, SIGNAL( textChanged( const QString& ) ), this, SLOT( slotChanged() ) );
     m_ui->reqExternal->setMode(KFile::File|KFile::ExistingOnly|KFile::LocalOnly);
@@ -237,6 +238,7 @@ void PlayerSettingsDialog::load()
     bool useExternal = config.readEntry( "Use external player", false );
     m_ui->cbExternal->setChecked( useExternal );
     m_ui->reqExternal->setUrl( config.readPathEntry( "External player", QString() ) );
+    m_ui->cbVolume->setChecked( config.readEntry( "ChangeVolume", false ) );
     m_ui->volumeSlider->setValue( config.readEntry( "Volume", 100 ) );
 
     if ( !m_ui->cbExternal->isChecked() )
@@ -259,6 +261,7 @@ void PlayerSettingsDialog::save()
     config.writePathEntry( "External player", m_ui->reqExternal->url().path() );
     config.writeEntry( "Use external player", m_ui->cbExternal->isChecked() );
     config.writeEntry( "Volume", m_ui->volumeSlider->value() );
+    config.writeEntry( "ChangeVolume", m_ui->cbVolume->isChecked() );
     config.writeEntry( "No sound",  m_ui->cbNone->isChecked() );
 
     config.sync();
@@ -277,7 +280,7 @@ void PlayerSettingsDialog::slotChanged()
 
 void PlayerSettingsDialog::defaults()
 {
-    m_ui->cbArts->setChecked(true);
+    m_ui->cbSoundSystem->setChecked(true);
     m_change=true;
     emit changed(true);
 }

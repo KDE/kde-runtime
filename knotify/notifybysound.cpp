@@ -77,17 +77,19 @@ struct Player
 class PlayerPool
 {
 	public:
-		PlayerPool() : m_idlePlayer(0), m_volume(1.0) {}
+		PlayerPool() : m_idlePlayer(0), m_changeVolume(false), m_volume(1.0) {}
 
 		Player *getPlayer();
 		void returnPlayer(Player *);
 		void clear();
 
+		void setChangeVolume(bool b);
 		void setVolume(float volume);
 
 	private:
 		Player *m_idlePlayer;
 		QList<Player *> m_playersInUse;
+		bool m_changeVolume;
 		float m_volume;
 };
 
@@ -100,7 +102,9 @@ Player *PlayerPool::getPlayer()
 		p = m_idlePlayer;
 		m_idlePlayer = 0;
 	}
-	p->setVolume(m_volume);
+	if (m_changeVolume) {
+		p->setVolume(m_volume);
+	}
 	m_playersInUse << p;
 	return p;
 }
@@ -121,11 +125,23 @@ void PlayerPool::clear()
 	m_idlePlayer = 0;
 }
 
+void PlayerPool::setChangeVolume(bool b)
+{
+	m_changeVolume = b;
+	if (m_changeVolume) {
+		foreach (Player *p, m_playersInUse) {
+			p->setVolume(m_volume);
+		}
+	}
+}
+
 void PlayerPool::setVolume(float v)
 {
 	m_volume = v;
-	foreach (Player *p, m_playersInUse) {
-		p->setVolume(v);
+	if (m_changeVolume) {
+		foreach (Player *p, m_playersInUse) {
+			p->setVolume(v);
+		}
 	}
 }
 
@@ -141,9 +157,6 @@ class NotifyBySound::Private
 		PlayerPool playerPool;
 		QBasicTimer poolTimer;
 		QQueue<int> closeQueue;
-
-		int volume;
-
 };
 
 NotifyBySound::NotifyBySound(QObject *parent) : KNotifyPlugin(parent),d(new Private)
@@ -188,6 +201,7 @@ void NotifyBySound::loadConfig()
 		d->playerMode = Private::NoSound;
 	}
 	// load default volume
+	d->playerPool.setChangeVolume( cg.readEntry( "ChangeVolume", false ) );
 	setVolume( cg.readEntry( "Volume", 100 ) );
 }
 
@@ -263,8 +277,7 @@ void NotifyBySound::setVolume( int volume )
 {
 	if ( volume<0 ) volume=0;
 	if ( volume>=100 ) volume=100;
-	d->volume = volume;
-	d->playerPool.setVolume(d->volume / 100.0);
+	d->playerPool.setVolume(volume / 100.0);
 }
 
 
