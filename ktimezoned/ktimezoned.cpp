@@ -99,6 +99,7 @@ void KTimeZoned::init(bool restart)
         config.reparseConfiguration();
     KConfigGroup group(&config, "TimeZones");
     mZoneinfoDir     = group.readEntry(ZONEINFO_DIR);
+    mZoneinfoDir     = QFileInfo(mZoneinfoDir).canonicalFilePath(); // just in case /usr or /usr/share is a symlink
     mZoneTab         = group.readEntry(ZONE_TAB);
     mConfigLocalZone = group.readEntry(LOCAL_ZONE);
     QString ztc      = group.readEntry(ZONE_TAB_CACHE, QString());
