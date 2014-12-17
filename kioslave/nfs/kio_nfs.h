@@ -31,8 +31,6 @@
 #include <QtCore/QStringList>
 #include <QtCore/QTimer>
 
-#include "rpc_mnt2.h"
-#include "rpc_mnt3.h"
 #include "rpc_nfs2_prot.h"
 #include "rpc_nfs3_prot.h"
 
