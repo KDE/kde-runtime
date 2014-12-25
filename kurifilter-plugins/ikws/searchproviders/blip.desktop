@@ -68,7 +68,6 @@ Name[ug]=Blip.tv
 Name[uk]=Blip.tv
 Name[vi]=Blip.tv
 Name[wa]=Blip.tv
-Name[x-test]=xxBlip.tvxx
 Name[zh_CN]=Blip.tv
 Name[zh_TW]=Blip.tv
 Query=https://blip.tv/search?q=\\{@}
@@ -120,7 +119,6 @@ Query[tr]=https://blip.tv/search?q=\\{@}
 Query[ug]=https://blip.tv/search?q=\\{@}
 Query[uk]=https://blip.tv/search?q=\\{@}
 Query[wa]=https://blip.tv/search?q=\\{@}
-Query[x-test]=xxhttps://blip.tv/search?q=\\{@}xx
 Query[zh_CN]=https://blip.tv/search?q=\\{@}
 Query[zh_TW]=https://blip.tv/search?q=\\{@}
 ServiceTypes=SearchProvider

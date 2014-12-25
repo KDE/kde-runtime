@@ -79,7 +79,6 @@ Name[ug]=Compiz
 Name[uk]=Compiz
 Name[vi]=Compiz
 Name[wa]=Compiz
-Name[x-test]=xxCompizxx
 Name[zh_CN]=Compiz
 Name[zh_TW]=Compiz
 Exec=compiz ccp

@@ -83,7 +83,6 @@ Name[ug]=ئىنتېرنېت كىتاب تىزىمى
 Name[uk]=Список книг Internet
 Name[vi]=Danh sách cuốn sách Mạng
 Name[wa]=Djivêye des lives sol daegntoele
-Name[x-test]=xxInternet Book Listxx
 Name[zh_CN]=互联网图书列表
 Name[zh_TW]=網際網路書目列表
 X-KDE-ServiceTypes=SearchProvider
@@ -172,6 +171,5 @@ Query[uz]=http://www.iblist.com/search/search.php?item=\\{@}&submit=Search
 Query[uz@cyrillic]=http://www.iblist.com/search/search.php?item=\\{@}&submit=Search
 Query[vi]=http://www.iblist.com/search/search.php?item=\\{@}&submit=Search
 Query[wa]=http://www.iblist.com/search/search.php?item=\\{@}&submit=Search
-Query[x-test]=xxhttp://www.iblist.com/search/search.php?item=\\{@}&submit=Searchxx
 Query[zh_CN]=http://www.iblist.com/search/search.php?item=\\{@}&submit=Search
 Query[zh_TW]=http://www.iblist.com/search/search.php?item=\\{@}&submit=Search

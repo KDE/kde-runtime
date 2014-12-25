@@ -88,7 +88,6 @@ Name[uz@cyrillic]=Ruby дастур архиви
 Name[vi]=Kho lưu trữ ứng dụng Ruby
 Name[wa]=Årtchives di programes Ruby
 Name[xh]=Indawo ye Ruby yokugcina Isicelo
-Name[x-test]=xxRuby Application Archivexx
 Name[zh_CN]=Ruby 应用程序档案
 Name[zh_TW]=Ruby 應用程式檔案庫
 X-KDE-ServiceTypes=SearchProvider
@@ -177,6 +176,5 @@ Query[uz]=http://www.ruby-lang.org/en/raa-list.rhtml?name=\\{@}
 Query[uz@cyrillic]=http://www.ruby-lang.org/en/raa-list.rhtml?name=\\{@}
 Query[vi]=http://www.ruby-lang.org/en/raa-list.rhtml?name=\\{@}
 Query[wa]=http://www.ruby-lang.org/en/raa-list.rhtml?name=\\{@}
-Query[x-test]=xxhttp://www.ruby-lang.org/en/raa-list.rhtml?name=\\{@}xx
 Query[zh_CN]=http://www.ruby-lang.org/en/raa-list.rhtml?name=\\{@}
 Query[zh_TW]=http://www.ruby-lang.org/en/raa-list.rhtml?name=\\{@}

@@ -70,7 +70,6 @@ Name[ug]=ئاۋاز تەدبىرى
 Name[uk]=Правила доступу до звукових пристроїв
 Name[vi]=Chế độ âm thanh
 Name[wa]=Politike do son
-Name[x-test]=xxSound Policyxx
 Name[zh_CN]=声音策略
 Name[zh_TW]=音效政策
 Comment=Provides sound system policy to applications
@@ -135,7 +134,6 @@ Comment[ug]=پروگراممىغا ئاۋاز سىستېما تەدبىرى بى
 Comment[uk]=Права доступу до звукової системи для програм
 Comment[vi]=Cung cấp chế độ âm thanh hệ thống cho các ứng dụng
 Comment[wa]=Dene åzès programes li politike do son do sistinme
-Comment[x-test]=xxProvides sound system policy to applicationsxx
 Comment[zh_CN]=为应用程序提供系统声音策略
 Comment[zh_TW]=提供音效系統政策給應用程式
 

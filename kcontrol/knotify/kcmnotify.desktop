@@ -77,7 +77,6 @@ Name[ug]=باشقۇرۇش ئۇقتۇرۇشى
 Name[uk]=Керування сповіщеннями
 Name[vi]=Quản lý các thông báo
 Name[wa]=Manaedjî les notifiaedjes
-Name[x-test]=xxManage Notificationsxx
 Name[zh_CN]=管理通知
 Name[zh_TW]=管理通知
 Comment=System Notification Configuration
@@ -168,7 +167,6 @@ Comment[uz@cyrillic]=Тизимнинг хабарномаларини мосл�
 Comment[vi]=Cấu hình Thông báo Hệ thống
 Comment[wa]=Apontiaedje po les notifiaedjes do sistinme
 Comment[xh]=Uqwalaselo Lwezaziso Zendlela yokusebenza
-Comment[x-test]=xxSystem Notification Configurationxx
 Comment[zh_CN]=系统通知配置
 Comment[zh_TW]=系統通知組態
 
@@ -230,7 +228,6 @@ X-KDE-Keywords[ug]=سىستېما ئاۋازلىرى، ئۈن، بىلدۈرۈش
 X-KDE-Keywords[uk]=System sounds,Audio,Sound,Notify,Alerts,Notification,popups,звук,система,системні звуки,звуки системи,сповіщення,нагадування,підказки,контекст
 X-KDE-Keywords[vi]=Âm thanh hệ thống,Âm,Âm thanh,Thông báo,Cảnh báo,Thông báo,System sounds,Audio,Sound,Notify,Alerts,Notification,popups
 X-KDE-Keywords[wa]=Sons sistinme,Sons do sistinme,Odio,Son,Notifyî,Abranles,Notifiaedje,aspitants purneas
-X-KDE-Keywords[x-test]=xxSystem sounds,Audio,Sound,Notify,Alerts,Notification,popupsxx
 X-KDE-Keywords[zh_CN]=System sounds,Audio,Sound,Notify,Alerts,Notification,popups,系统声音,声音,音效,警告,提醒,弹出消息
 X-KDE-Keywords[zh_TW]=System sounds,Audio,Sound,Notify,Alerts,Notification,popups
 

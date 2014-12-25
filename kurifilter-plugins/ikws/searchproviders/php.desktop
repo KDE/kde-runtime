@@ -89,7 +89,6 @@ Name[uz@cyrillic]=PHP қидириш
 Name[vi]=Tìm kiếm PHP
 Name[wa]=Cweraedje PHP
 Name[xh]=Uphendlo lwe PHP
-Name[x-test]=xxPHP Searchxx
 Name[zh_CN]=PHP 搜索
 Name[zh_TW]=PHP 搜尋
 Query=http://www.php.net/manual-lookup.php?pattern=\\{@}
@@ -157,7 +156,6 @@ Query[ug]=http://www.php.net/manual-lookup.php?pattern=\\{@}
 Query[uk]=http://www.php.net/manual-lookup.php?pattern=\\{@}
 Query[vi]=http://www.php.net/manual-lookup.php?pattern=\\{@}
 Query[wa]=http://www.php.net/manual-lookup.php?pattern=\\{@}
-Query[x-test]=xxhttp://www.php.net/manual-lookup.php?pattern=\\{@}xx
 Query[zh_CN]=http://www.php.net/manual-lookup.php?pattern=\\{@}
 Query[zh_TW]=http://www.php.net/manual-lookup.php?pattern=\\{@}"}&pattern=\\{@}
 X-KDE-ServiceTypes=SearchProvider

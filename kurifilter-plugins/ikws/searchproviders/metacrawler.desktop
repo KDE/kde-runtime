@@ -89,7 +89,6 @@ Name[uz@cyrillic]=MetaCrawler
 Name[vi]=MetaCrawler
 Name[wa]=MetaCrawler
 Name[xh]=MetaCrawler
-Name[x-test]=xxMetaCrawlerxx
 Name[zh_CN]=MetaCrawler
 Name[zh_TW]=MetaCrawler
 X-KDE-ServiceTypes=SearchProvider
@@ -143,6 +142,5 @@ Query[tr]=http://www.metacrawler.com/info.metac.cloud.other/search/web?q=\\{@}
 Query[ug]=http://www.metacrawler.com/info.metac.cloud.other/search/web?q=\\{@}
 Query[uk]=http://www.metacrawler.com/info.metac.cloud.other/search/web?q=\\{@}
 Query[wa]=http://www.metacrawler.com/info.metac.cloud.other/search/web?q=\\{@}
-Query[x-test]=xxhttp://www.metacrawler.com/info.metac.cloud.other/search/web?q=\\{@}xx
 Query[zh_CN]=http://www.metacrawler.com/info.metac.cloud.other/search/web?q=\\{@}
 Query[zh_TW]=http://www.metacrawler.com/info.metac.cloud.other/search/web?q=\\{@}

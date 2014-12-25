@@ -27,7 +27,6 @@ Name[sr@ijekavianlatin]=Qwant
 Name[sr@latin]=Qwant
 Name[sv]=Qwant
 Name[uk]=Qwant
-Name[x-test]=xxQwantxx
 Name[zh_TW]=Qwant
 Query=https://www.qwant.com/?q=\\{@}&client=kde&source=web
 Query[ca]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
@@ -57,7 +56,6 @@ Query[sr@ijekavianlatin]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
 Query[sr@latin]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
 Query[sv]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
 Query[uk]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
-Query[x-test]=xxhttps://www.qwant.com/?q=\\{@}&client=kde&source=webxx
 Query[zh_TW]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
 X-KDE-ServiceTypes=SearchProvider
 Type=Service

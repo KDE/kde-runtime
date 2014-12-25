@@ -69,7 +69,6 @@ Name[ug]=Jamendo
 Name[uk]=Jamendo
 Name[vi]=Jamendo
 Name[wa]=Jamendo
-Name[x-test]=xxJamendoxx
 Name[zh_CN]=Jamendo
 Name[zh_TW]=Jamendo
 Query=http://www.jamendo.com/en/search?qs=q=\\{@}
@@ -121,7 +120,6 @@ Query[tr]=http://www.jamendo.com/en/search?qs=q=\\{@}
 Query[ug]=http://www.jamendo.com/en/search?qs=q=\\{@}
 Query[uk]=http://www.jamendo.com/en/search?qs=q=\\{@}
 Query[wa]=http://www.jamendo.com/en/search?qs=q=\\{@}
-Query[x-test]=xxhttp://www.jamendo.com/en/search?qs=q=\\{@}xx
 Query[zh_CN]=http://www.jamendo.com/en/search?qs=q=\\{@}
 Query[zh_TW]=http://www.jamendo.com/en/search?qs=q=\\{@}
 ServiceTypes=SearchProvider

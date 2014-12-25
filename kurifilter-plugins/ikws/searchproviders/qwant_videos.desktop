@@ -27,7 +27,6 @@ Name[sr@ijekavianlatin]=Qwant-video
 Name[sr@latin]=Qwant-video
 Name[sv]=Qwant-videor
 Name[uk]=Відео Qwant
-Name[x-test]=xxQwant Videosxx
 Name[zh_TW]=Qwant Videos
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
@@ -57,7 +56,6 @@ Query[sr@ijekavianlatin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=
 Query[sr@latin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
-Query[x-test]=xxhttps://www.qwant.com/single?q=\\{@}&client=kde&source=videosxx
 Query[zh_TW]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 X-KDE-ServiceTypes=SearchProvider
 Type=Service

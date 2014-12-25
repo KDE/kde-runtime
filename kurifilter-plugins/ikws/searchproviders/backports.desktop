@@ -84,7 +84,6 @@ Name[ug]=Debian ئامبار ئىزدە
 Name[uk]=Пошук серед додаткових пакетів Debian
 Name[vi]=Tìm kiếm Cổng sau Debian
 Name[wa]=Cweraedje di backports Debian
-Name[x-test]=xxDebian Backports Searchxx
 Name[zh_CN]=Debian 仓库搜索
 Name[zh_TW]=Debian Backports 搜尋
 Query=http://packages.debian.org/search?suite=squeeze-backports&section=all&arch=any&searchon=names&keywords=\\{@}
@@ -135,7 +134,6 @@ Query[tr]=http://packages.debian.org/search?suite=squeeze-backports&section=all&
 Query[ug]=http://packages.debian.org/search?suite=squeeze-backports&section=all&arch=any&searchon=names&keywords=\\{@}
 Query[uk]=http://packages.debian.org/search?suite=squeeze-backports&section=all&arch=any&searchon=names&keywords=\\{@}
 Query[wa]=http://packages.debian.org/search?suite=squeeze-backports&section=all&arch=any&searchon=names&keywords=\\{@}
-Query[x-test]=xxhttp://packages.debian.org/search?suite=squeeze-backports&section=all&arch=any&searchon=names&keywords=\\{@}xx
 Query[zh_CN]=http://packages.debian.org/search?suite=squeeze-backports&section=all&arch=any&searchon=names&keywords=\\{@}
 Query[zh_TW]=http://packages.debian.org/search?suite=squeeze-backports&section=all&arch=any&searchon=names&keywords=\\{@}
 X-KDE-ServiceTypes=SearchProvider

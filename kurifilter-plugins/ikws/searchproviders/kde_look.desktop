@@ -68,7 +68,6 @@ Name[ug]=KDE Look
 Name[uk]=KDE Look
 Name[vi]=KDE Look
 Name[wa]=KDE Look (Rivnance)
-Name[x-test]=xxKDE Lookxx
 Name[zh_CN]=KDE 美化资源站
 Name[zh_TW]=KDE Look
 Query=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
@@ -137,7 +136,6 @@ Query[ug]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[uk]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[vi]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[wa]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
-Query[x-test]=xxhttp://www.kde-look.org/content/search.php?search=Search&name=\\{@}xx
 Query[zh_CN]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 Query[zh_TW]=http://www.kde-look.org/content/search.php?search=Search&name=\\{@}
 ServiceTypes=SearchProvider

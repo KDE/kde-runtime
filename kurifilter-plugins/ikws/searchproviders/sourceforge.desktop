@@ -89,7 +89,6 @@ Name[uz@cyrillic]=SourceForge
 Name[vi]=SourceForge
 Name[wa]=SourceForge
 Name[xh]=SourceForge
-Name[x-test]=xxSourceForgexx
 Name[zh_CN]=SourceForge
 Name[zh_TW]=SourceForge
 Query=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\{exact,"0"}&words=\\{@}
@@ -176,7 +175,6 @@ Query[uz]=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\
 Query[uz@cyrillic]=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\{exact,"0"}&words=\\{@}
 Query[vi]=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\{exact,"0"}&words=\\{@}
 Query[wa]=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\{exact,"0"}&words=\\{@}
-Query[x-test]=xxhttp://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\{exact,"0"}&words=\\{@}xx
 Query[zh_CN]=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\{exact,"0"}&words=\\{@}
 Query[zh_TW]=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\\{exact,"0"}&words=\\{@}
 X-KDE-ServiceTypes=SearchProvider

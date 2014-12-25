@@ -99,7 +99,6 @@ Name[uz@cyrillic]=Давлат/регион ва тил
 Name[vi]=Quốc gia và ngôn ngữ
 Name[wa]=Payis & lingaedje
 Name[xh]=Ilizwe/Ummandla & Ulwimi
-Name[x-test]=xxCountry/Region & Languagexx
 Name[zh_CN]=国家/地区和语言
 Name[zh_TW]=國家/地區與語言
 Comment=Language, numeric, and time settings for your particular region
@@ -189,7 +188,6 @@ Comment[uz@cyrillic]=Давлатингиз учун тил, сон ва вақ�
 Comment[vi]=Ngôn ngữ, số và các thiết lập về thời gian cho vùng cụ thể
 Comment[wa]=Apontiaedje do lingaedje et des preferinces (prezintaedje des limeros, des dates, evnd.) po vosse payis
 Comment[xh]=Ulwimi, amanani, kunye nezicwangciso zexesha zommandla wakho
-Comment[x-test]=xxLanguage, numeric, and time settings for your particular regionxx
 Comment[zh_CN]=您所在地区的语言、数字和时间设置
 Comment[zh_TW]=您所在地區的語言、數字和時間設定
 
@@ -249,7 +247,6 @@ X-KDE-Keywords[ug]=تىل،تەرجىمە،سانلارنىڭ يېزىلىشى،
 X-KDE-Keywords[uk]=language,translation,number format,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,currency,money,fractional digits,calendar,time,date,formats,week,week start,first,paper,size,letter,A4,measure,metric,English,Imperial,мова,мови,переклад,переклади,числа,формат,число,локаль,країна,набір,символ,кодування,розряд,тисяч,дробовий,дробова частина,роздільник,символ,знак,додатне,додатний,додатній,від’ємний,від’ємне,валюта,гроші,грошова одиниця,календар,час,дата,формати,тиждень,робочий тиждень,початок тижня,перший,папір,аркуш,вимір,виміри,вимірювання,одиниці вимірювання,метричний,метричні,метр,англійські,імперські
 X-KDE-Keywords[vi]=ngôn ngữ,dịch,định dạng số,tiền tệ,thời gian,ngày,định dạng,miền địa phương,Nước,quốc gia,bộ ký tự,bảng mã,ký hiệu thập phân,dấu cách hàng nghìn,ký hiệu,dấu phân cách,dấu,dương,âm,phân số,tuần,bắt đầu tuần,language,translation,number format,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,currency,money,fractional digits,calendar,time,date,formats,week,week start,first,paper,size,letter,A4,measure,metric,English,Imperial
 X-KDE-Keywords[wa]=lingaedje,ratournaedje,cogne des nombes,locåle,Payi,payis,djeus d' caracteres,djeus di caracteres,simbole des decimåles,separateu des meyes,simbole,separateu,sene,pôzitif,negatif,manoye,cwårs,çanses,liårds,liyårds,caracteres di fraccions,calindrî,eure,date,cognes,samwinne,cominçmint del samwinne,prumî djoû del samwinne,kimince del samwinne,prumî,papî,grandeu,grandeur,lete,A4,mezeure,muzeure,metrike,Inglès,Imperiå
-X-KDE-Keywords[x-test]=xxlanguage,translation,number format,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,currency,money,fractional digits,calendar,time,date,formats,week,week start,first,paper,size,letter,A4,measure,metric,English,Imperialxx
 X-KDE-Keywords[zh_CN]=language,translation,number format,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,currency,money,fractional digits,calendar,time,date,formats,week,week start,first,paper,size,letter,A4,measure,metric,English,Imperial,语言,翻译,数字格式,语系,国家,字符集,千分符,十进制符号,符号,分隔符,正数,负数,现金,钱,日历,分号,时间,日期,星期,周,第一,纸张,大小,信件,度量,度量衡,英制,公制
 X-KDE-Keywords[zh_TW]=language,translation,number format,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,currency,money,fractional digits,calendar,time,date,formats,week,week start,first,paper,size,letter,A4,measure,metric,English,Imperial
 

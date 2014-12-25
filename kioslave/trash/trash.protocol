@@ -105,7 +105,6 @@ ExtraNames[ug]=ئەسلى يولى، ئۆچۈرۈلگەن ۋاقتى
 ExtraNames[uk]=Шлях,Дата вилучення
 ExtraNames[vi]=Đường dẫn gốc,Ngày xoá
 ExtraNames[wa]=Tchimin do cominçmint, Date di disfaçaedje
-ExtraNames[x-test]=xxOriginal Path,Deletion Datexx
 ExtraNames[zh_CN]=原始路径,删除日期
 ExtraNames[zh_TW]=原始路徑,刪除日期
 ExtraTypes=QString,QDateTime
