@@ -89,6 +89,7 @@ Name[uz@cyrillic]=Merriam-Webster луғати
 Name[vi]=Từ điển Merriam-Webster
 Name[wa]=Diccionaire inglès Merriam-Webster
 Name[xh]= Dikshinari ye Merriam-Webster
+Name[x-test]=xxMerriam-Webster Dictionaryxx
 Name[zh_CN]=韦氏词典
 Name[zh_TW]=韋氏詞典
 X-KDE-ServiceTypes=SearchProvider
@@ -180,5 +181,6 @@ Query[uz]=http://www.m-w.com/cgi-bin/dictionary?book=Dictionary&va=\\{@}
 Query[uz@cyrillic]=http://www.m-w.com/cgi-bin/dictionary?book=Dictionary&va=\\{@}
 Query[vi]=http://www.m-w.com/cgi-bin/dictionary?book=Dictionary&va=\\{@}
 Query[wa]=http://www.m-w.com/cgi-bin/dictionary?book=Dictionary&va=\\{@}
+Query[x-test]=xxhttp://www.m-w.com/cgi-bin/dictionary?book=Dictionary&va=\\{@}xx
 Query[zh_CN]=http://www.m-w.com/cgi-bin/dictionary?book=Dictionary&va=\\{@}
 Query[zh_TW]=http://www.m-w.com/cgi-bin/dictionary?book=Dictionary&va=\\{@}

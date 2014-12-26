@@ -59,6 +59,7 @@ Name[ug]=پروگرامما تىزگىن تاختىسى
 Name[uk]=Панель приладів програм
 Name[vi]=Bảng điều khiển ứng dụng
 Name[wa]=Tåvlea d' boird des programes
+Name[x-test]=xxApplication dashboardxx
 Name[zh_CN]=程序面板
 Name[zh_TW]=應用程式控制面板
 Comment=Intended as Application dashboard default
@@ -120,6 +121,7 @@ Comment[ug]=پروگرامما تىزگىن تاختىنى كۆڭۈلدىكىگ�
 Comment[uk]=Призначено бути типовою панеллю приладів програм
 Comment[vi]=Mặc định có mục đích là bảng điều khiển ứng dụng
 Comment[wa]=Fwait po esse li prémetou tåvlea d' boird des programes
+Comment[x-test]=xxIntended as Application dashboard defaultxx
 Comment[zh_CN]=设为应用程序面板的默认
 Comment[zh_TW]=應用程式預設控制面板
 

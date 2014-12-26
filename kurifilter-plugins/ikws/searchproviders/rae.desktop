@@ -89,6 +89,7 @@ Name[uz]=Ispan akademiyasining (RAE) lugʻati
 Name[uz@cyrillic]=Испан академиясининг (RAE) луғати
 Name[vi]=Từ điển của Viện hàn lâm Tây Ban Nha (RAE)
 Name[wa]=Diccionaire del Royåle Academeye Espagnole (RAE)
+Name[x-test]=xxDictionary of the Spanish Academy (RAE)xx
 Name[zh_CN]=西班牙学院的字典(RAE)
 Name[zh_TW]=西班牙金像獎字典 (RAE)
 Query=http://www.rae.es/drae/?val=\\{@}
@@ -140,6 +141,7 @@ Query[tr]=http://www.rae.es/drae/?val=\\{@}
 Query[ug]=http://www.rae.es/drae/?val=\\{@}
 Query[uk]=http://www.rae.es/drae/?val=\\{@}
 Query[wa]=http://www.rae.es/drae/?val=\\{@}
+Query[x-test]=xxhttp://www.rae.es/drae/?val=\\{@}xx
 Query[zh_CN]=http://www.rae.es/drae/?val=\\{@}
 Query[zh_TW]=http://www.rae.es/drae/?val=\\{@}
 X-KDE-ServiceTypes=SearchProvider

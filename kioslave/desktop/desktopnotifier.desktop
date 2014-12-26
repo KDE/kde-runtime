@@ -66,6 +66,7 @@ Name[ug]=مۇندەرىجە كۆزەتكۈچ
 Name[uk]=Нагляд за каталогами
 Name[vi]=Trình theo dõi thư mục
 Name[wa]=Waiteu des ridants
+Name[x-test]=xxDirectory Watcherxx
 Name[zh_CN]=目录监视器
 Name[zh_TW]=目錄監控器
 ServiceTypes=KDEDModule
@@ -140,6 +141,7 @@ Comment[ug]=مۇندەرىجە ئۆزگىرىشىنى كۆزەتكۈچ
 Comment[uk]=Спостереження за змінами у каталогах
 Comment[vi]=Theo dõi sự thay đổi của các thư mục
 Comment[wa]=Corwaite les candjmints ezès ridants
+Comment[x-test]=xxMonitors directories for changesxx
 Comment[zh_CN]=监视目录的更改
 Comment[zh_TW]=監控目錄的改變
 

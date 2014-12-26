@@ -87,6 +87,7 @@ Name[uz]=Openbox
 Name[uz@cyrillic]=Openbox
 Name[vi]=Openbox
 Name[wa]=Openbox
+Name[x-test]=xxOpenboxxx
 Name[zh_CN]=Openbox
 Name[zh_TW]=Openbox
 Exec=openbox

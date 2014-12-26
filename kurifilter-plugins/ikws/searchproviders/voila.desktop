@@ -90,6 +90,7 @@ Name[uz@cyrillic]=Voila
 Name[vi]=Tra Voilà
 Name[wa]=Voilà
 Name[xh]=Voila
+Name[x-test]=xxVoilaxx
 Name[zh_CN]=Voila
 Name[zh_TW]=Voila
 X-KDE-ServiceTypes=SearchProvider
@@ -178,5 +179,6 @@ Query[uz]=http://www.voila.com/S/geek?an=1&kw=\\{@}&dt=*
 Query[uz@cyrillic]=http://www.voila.com/S/geek?an=1&kw=\\{@}&dt=*
 Query[vi]=http://www.voila.com/S/geek?an=1&kw=\\{@}&dt=*
 Query[wa]=http://www.voila.com/S/geek?an=1&kw=\\{@}&dt=*
+Query[x-test]=xxhttp://www.voila.com/S/geek?an=1&kw=\\{@}&dt=*xx
 Query[zh_CN]=http://www.voila.com/S/geek?an=1&kw=\\{@}&dt=*
 Query[zh_TW]=http://www.voila.com/S/geek?an=1&kw=\\{@}&dt=*

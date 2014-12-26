@@ -72,6 +72,7 @@ Name[ug]=Compiz ئۆزلەشتۈر ('compiz-kde-launcher' نى ئېچىش ئۈچ
 Name[uk]=Нетиповий Compiz (створити скрипт-обгортку «compiz-kde-launcher» для його запуску)
 Name[vi]=Compiz tùy biến (tạo một lệnh gói 'compiz-kde-launcher' để chạy nó)
 Name[wa]=Compiz a vosse môde (ahivez on scripe wrapper « compiz-kde-launcher » po l' enonder)
+Name[x-test]=xxCompiz custom (create wrapper script 'compiz-kde-launcher' to launch it)xx
 Name[zh_CN]=Compiz 定制(创建包装脚本“compiz-kde-launcher”以启动它)
 Name[zh_TW]=Compiz 自訂（建立外包文稿 compiz-kde-launcher 來啟動）
 Exec=compiz-kde-launcher

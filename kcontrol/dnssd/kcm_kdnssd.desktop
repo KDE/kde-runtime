@@ -86,6 +86,7 @@ Name[uz]=Tarmoqdagi xizmatlarni qidirish
 Name[uz@cyrillic]=Тармоқдаги хизматларни қидириш
 Name[vi]=Khám phá dịch vụ
 Name[wa]=Discovraedje di siervices
+Name[x-test]=xxService Discoveryxx
 Name[zh_CN]=服务探索
 Name[zh_TW]=服務偵測
 
@@ -174,6 +175,7 @@ Comment[uz]=Tarmoqdagi xizmatlarni qidirishni moslash
 Comment[uz@cyrillic]=Тармоқдаги хизматларни қидиришни мослаш
 Comment[vi]=Cấu hình khả năng khám phám dịch vụ
 Comment[wa]=Apontyî l' discovraedje di siervices
+Comment[x-test]=xxConfigure service discoveryxx
 Comment[zh_CN]=配置服务探索
 Comment[zh_TW]=設定服務偵測
 StartupNotify=true

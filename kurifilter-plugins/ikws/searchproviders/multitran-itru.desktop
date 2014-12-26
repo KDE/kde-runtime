@@ -82,6 +82,7 @@ Name[uz]=Multitran - Italyanchadan Ruschaga tarjima
 Name[uz@cyrillic]=Multitran - Италянчадан Русчага таржима
 Name[vi]=Multitran - Dịch giữa tiếng Ý và tiếng Nga
 Name[wa]=Multitran - Ratoûne inte l' Itålyin eyet l' Russe
+Name[x-test]=xxMultitran - Translate Between Italian and Russianxx
 Name[zh_CN]=Multitran - 在意大利语和俄语之间互译
 Name[zh_TW]=Multitran - 翻譯義大利語和俄語
 X-KDE-ServiceTypes=SearchProvider
@@ -165,5 +166,6 @@ Query[uz]=http://multitran.ru/c/m.exe?l1=23&s=\\{@}
 Query[uz@cyrillic]=http://multitran.ru/c/m.exe?l1=23&s=\\{@}
 Query[vi]=http://multitran.ru/c/m.exe?l1=23&s=\\{@}
 Query[wa]=http://multitran.ru/c/m.exe?l1=23&s=\\{@}
+Query[x-test]=xxhttp://multitran.ru/c/m.exe?l1=23&s=\\{@}xx
 Query[zh_CN]=http://multitran.ru/c/m.exe?l1=23&s=\\{@}
 Query[zh_TW]=http://multitran.ru/c/m.exe?l1=23&s=\\{@}

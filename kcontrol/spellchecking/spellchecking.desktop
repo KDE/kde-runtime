@@ -96,6 +96,7 @@ Name[uz@cyrillic]=Имлони текширувчи
 Name[vi]=Trình kiểm tra chính tả
 Name[wa]=Coridjrece ortografike
 Name[xh]=Umkhangeki Wopelo
+Name[x-test]=xxSpell Checkerxx
 Name[zh_CN]=拼写检查器
 Name[zh_TW]=拼字檢查器
 
@@ -183,6 +184,7 @@ Comment[uz@cyrillic]=Имло текширувчини мослаш
 Comment[vi]=Cấu hình trình kiểm tra chính tả
 Comment[wa]=Apontyî l' coridjrece ortografike
 Comment[xh]=Qwalasela umkhangelo wopelo
+Comment[x-test]=xxConfigure the spell checkerxx
 Comment[zh_CN]=配置拼写检查器
 Comment[zh_TW]=設定拼字檢查器
 
@@ -244,6 +246,7 @@ X-KDE-Keywords[ug]=ئىملا
 X-KDE-Keywords[uk]=Spell,правопис,перевірка,правопису
 X-KDE-Keywords[vi]=Chính tả
 X-KDE-Keywords[wa]=Coridjrece,speli,sipeli,coridjî,ortografike,ortografeye,ortografe
+X-KDE-Keywords[x-test]=xxSpellxx
 X-KDE-Keywords[zh_CN]=Spell,拼写
 X-KDE-Keywords[zh_TW]=Spell
 

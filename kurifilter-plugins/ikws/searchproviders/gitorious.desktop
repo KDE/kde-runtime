@@ -68,6 +68,7 @@ Name[ug]=Gitorious
 Name[uk]=Gitorious
 Name[vi]=Gitorious
 Name[wa]=Gitorious
+Name[x-test]=xxGitoriousxx
 Name[zh_CN]=Gitorious
 Name[zh_TW]=Gitorious
 Query=https://gitorious.org/search?q=\\{@}&commit=Search
@@ -119,6 +120,7 @@ Query[tr]=https://gitorious.org/search?q=\\{@}&commit=Search
 Query[ug]=https://gitorious.org/search?q=\\{@}&commit=Search
 Query[uk]=https://gitorious.org/search?q=\\{@}&commit=Search
 Query[wa]=https://gitorious.org/search?q=\\{@}&commit=Search
+Query[x-test]=xxhttps://gitorious.org/search?q=\\{@}&commit=Searchxx
 Query[zh_CN]=https://gitorious.org/search?q=\\{@}&commit=Search
 Query[zh_TW]=https://gitorious.org/search?q=\\{@}&commit=Search
 ServiceTypes=SearchProvider

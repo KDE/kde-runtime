@@ -89,6 +89,7 @@ Name[uz@cyrillic]=Open Directory
 Name[vi]=Thư mục mở
 Name[wa]=Open Directory
 Name[xh]=Vula Ulawulo
+Name[x-test]=xxOpen Directoryxx
 Name[zh_CN]=Open Directory
 Name[zh_TW]=開啟目錄
 X-KDE-ServiceTypes=SearchProvider
@@ -180,5 +181,6 @@ Query[uz]=http://search.dmoz.org/cgi-bin/search?search=\\{@}
 Query[uz@cyrillic]=http://search.dmoz.org/cgi-bin/search?search=\\{@}
 Query[vi]=http://search.dmoz.org/cgi-bin/search?search=\\{@}
 Query[wa]=http://search.dmoz.org/cgi-bin/search?search=\\{@}
+Query[x-test]=xxhttp://search.dmoz.org/cgi-bin/search?search=\\{@}xx
 Query[zh_CN]=http://search.dmoz.org/cgi-bin/search?search=\\{@}
 Query[zh_TW]=http://search.dmoz.org/cgi-bin/search?search=\\{@}

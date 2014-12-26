@@ -88,6 +88,7 @@ Name[uz]=Netcraft
 Name[uz@cyrillic]=Netcraft
 Name[vi]=Tra Netcraft
 Name[wa]=Netcraft
+Name[x-test]=xxNetcraftxx
 Name[zh_CN]=Netcraft
 Name[zh_TW]=Netcraft
 X-KDE-ServiceTypes=SearchProvider
@@ -179,5 +180,6 @@ Query[uz]=http://uptime.netcraft.com/up/graph?site=\\{@}
 Query[uz@cyrillic]=http://uptime.netcraft.com/up/graph?site=\\{@}
 Query[vi]=http://uptime.netcraft.com/up/graph?site=\\{@}
 Query[wa]=http://uptime.netcraft.com/up/graph?site=\\{@}
+Query[x-test]=xxhttp://uptime.netcraft.com/up/graph?site=\\{@}xx
 Query[zh_CN]=http://uptime.netcraft.com/up/graph?site=\\{@}
 Query[zh_TW]=http://uptime.netcraft.com/up/graph?site=\\{@}
