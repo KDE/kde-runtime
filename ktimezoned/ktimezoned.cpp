@@ -554,11 +554,12 @@ bool KTimeZoned::checkTZ(const char *envZone)
         {
             // TZ specifies a file name, either relative to zoneinfo/ or absolute.
             QString TZfile = QFile::decodeName(envZone + 1);
-            if (TZfile.startsWith(mZoneinfoDir))
+            const QString realZoneinfoDir = QFileInfo(mZoneinfoDir).canonicalFilePath(); // just in case /usr or /usr/share is a symlink
+            if (TZfile.startsWith(realZoneinfoDir))
             {
                 // It's an absolute file name in the zoneinfo directory.
                 // Convert it to a file name relative to zoneinfo/.
-                TZfile = TZfile.mid(mZoneinfoDir.length());
+                TZfile = TZfile.mid(realZoneinfoDir.length());
             }
             if (TZfile.startsWith(QLatin1Char('/')))
             {
@@ -627,13 +628,14 @@ bool KTimeZoned::matchZoneFile(const QString &path)
         QFileInfo fiz(zoneInfoFileName);
         if (fiz.exists() && fiz.isReadable())
         {
-            if (zoneInfoFileName.startsWith(mZoneinfoDir))
+            const QString realZoneinfoDir = QFileInfo(mZoneinfoDir).canonicalFilePath(); // just in case /usr or /usr/share is a symlink
+            if (zoneInfoFileName.startsWith(realZoneinfoDir))
             {
                 // We've got the zoneinfo file path.
                 // The time zone name is the part of the path after the zoneinfo directory.
                 // Note that some systems (e.g. Gentoo) have zones under zoneinfo which
                 // are not in zone.tab, so don't validate against mZones.
-                mLocalZone = zoneInfoFileName.mid(mZoneinfoDir.length() + 1);
+                mLocalZone = zoneInfoFileName.mid(realZoneinfoDir.length() + 1);
                 // kDebug(1221) << "local=" << mLocalZone;
             }
             else

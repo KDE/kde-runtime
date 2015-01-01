@@ -91,4 +91,4 @@ CurrencyIntroducedDate=1999,01,01
 #CurrencySubunitsInCirculation=true
 #CurrencySubunitsPerUnit=100
 #CurrencyDecimalPlacesDisplay=2
-CurrencyCountriesInUse=AT,BE,CY,FI,FR,DE,EE,GR,IE,IT,LU,LV,MT,NL,PT,SK,SI,ES,MC,SM,VA,AD,ME,ZW
+CurrencyCountriesInUse=AT,BE,CY,FI,FR,DE,EE,GR,IE,IT,LT,LU,LV,MT,NL,PT,SK,SI,ES,MC,SM,VA,AD,ME,ZW
