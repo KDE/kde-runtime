@@ -28,6 +28,7 @@ Name[sr@latin]=Qwant-druženje
 Name[sv]=Qwant-social
 Name[uk]=Соціальне Qwant
 Name[x-test]=xxQwant Socialxx
+Name[zh_CN]=Qwant 社交
 Name[zh_TW]=Qwant Social
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
@@ -58,6 +59,7 @@ Query[sr@latin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[x-test]=xxhttps://www.qwant.com/single?q=\\{@}&client=kde&source=socialxx
+Query[zh_CN]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[zh_TW]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 X-KDE-ServiceTypes=SearchProvider
 Type=Service
