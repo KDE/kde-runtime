@@ -127,6 +127,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QStack>
 #include <QtCore/QString>
+#include <QTextCodec>
 
 #ifdef SIMPLE_MAN2HTML
 # include <stdlib.h>
@@ -134,11 +135,12 @@
 # include <dirent.h>
 # include <sys/stat.h>
 # include <QDebug>
+#include <QFile>
+#include <kencodingprober.h>
 # define kDebug(x) QDebug(QtDebugMsg)
 # define kWarning(x) QDebug(QtWarningMsg) << "WARNING "
 # define BYTEARRAY(x) x.constData()
 #else
-# include <QTextCodec>
 # include <QTextDocument>
 # include <kglobal.h>
 # include <klocale.h>
@@ -171,14 +173,6 @@ static int s_nroff = 1; // NROFF mode by default
 static QByteArray mandoc_name;  // Nm can store the first used name
 
 static int mandoc_name_count = 0; /* Don't break on the first Nm */
-
-static char *strlimitcpy(char *to, char *from, int n, int limit)
-{                               /* Assumes space for limit plus a null */
-  const int len = n > limit ? limit : n;
-  qstrncpy(to, from, len + 1);
-  to[len] = '\0';
-  return to;
-}
 
 /* below this you should not change anything unless you know a lot
 ** about this program or about troff.
@@ -384,7 +378,7 @@ static const CSTRDEF standardchar[] =
   { V('b', 'r'), 1, "|" },
   { V('b', 'u'), 1, "&bull;" },
   { V('b', 'v'), 1, "|" },
-  { V('c', 'i'), 1, "&#x25CB;" }, // circle ### TODO verify
+  { V('c', 'i'), 1, "&#x25CB;" }, // circle
   { V('c', 'o'), 1, "&copy;" },
   { V('c', 't'), 1, "&cent;" },
   { V('d', 'e'), 1, "&deg;" },
@@ -2712,6 +2706,8 @@ static char *scan_expression(char *c, int *result, const unsigned int numLoop)
 {
   int value = 0, value2, sign = 1, opex = 0;
   char oper = 'c';
+  bool oldSkipEscape = skip_escape;
+  skip_escape = true;  // evaluating an expression shall not print it
 
   if (*c == '!')
   {
@@ -2907,8 +2903,13 @@ static char *scan_expression(char *c, int *result, const unsigned int numLoop)
     if (*c == ')') c++;
   }
   *result = value;
+
+  skip_escape = oldSkipEscape;
+
   return c;
 }
+
+//---------------------------------------------------------------------
 
 static char *scan_expression(char *c, int *result)
 {
@@ -4709,7 +4710,7 @@ static char *scan_request(char *c)
         }
         case REQ_Bl: // mdoc(7) "Begin List"
         {
-          char list_options[NULL_TERMINATED(MED_STR_MAX)];
+          QByteArray list_options;
           char *nl = strchr(c, '\n');
           c = c + j;
           if (dl_set[itemdepth])
@@ -4720,15 +4721,15 @@ static char *scan_request(char *c)
           if (nl)
           {
             /* Parse list options */
-            strlimitcpy(list_options, c, nl - c, MED_STR_MAX);
+            list_options = QByteArray(c, nl - c);
           }
-          if (strstr(list_options, "-bullet"))
+          if ( list_options.contains("-bullet") )
           {
             /* HTML Unnumbered List */
             dl_set[itemdepth] = BL_BULLET_LIST;
             out_html("<UL>\n");
           }
-          else if (strstr(list_options, "-enum"))
+          else if ( list_options.contains("-enum") )
           {
             /* HTML Ordered List */
             dl_set[itemdepth] = BL_ENUM_LIST;
@@ -4879,19 +4880,19 @@ static char *scan_request(char *c)
         }
         case REQ_Bd:    /* mdoc(7) */
         {            /* Seems like a kind of example/literal mode */
-          char bd_options[NULL_TERMINATED(MED_STR_MAX)];
+          QByteArray bd_options;
           char *nl = strchr(c, '\n');
           c = c + j;
           if (nl)
-            strlimitcpy(bd_options, c, nl - c, MED_STR_MAX);
+            bd_options = QByteArray(c, nl - c);
           out_html(NEWLINE);
           mandoc_bd_options = 0; /* Remember options for terminating Bl */
-          if (strstr(bd_options, "-offset indent"))
+          if ( bd_options.contains("-offset indent") )
           {
             mandoc_bd_options |= BD_INDENT;
             out_html("<BLOCKQUOTE>\n");
           }
-          if (strstr(bd_options, "-literal") || strstr(bd_options, "-unfilled"))
+          if ( bd_options.contains("-literal") || bd_options.contains("-unfilled") )
           {
             if (fillout)
             {
@@ -5280,7 +5281,7 @@ static char *scan_request(char *c)
             if (nextbreak)
             {
               /* Remember the name for later. */
-              strlimitcpy(mandoc_name, c, nextbreak - c, SMALL_STR_MAX);
+              mandoc_name = QByteArray(c, nextbreak - c);
             }
           }
           mandoc_name_count++;
@@ -6059,43 +6060,39 @@ void output_real(const char *insert)
   std::cout << insert;
 }
 
+//---------------------------------------------------------------------
+
 char *read_man_page(const char *filename)
 {
-  char *man_buf = NULL;
+  QFile f(QFile::decodeName(filename));
 
-  FILE *man_stream = NULL;
-  struct stat stbuf;
-  size_t buf_size;
-  if (stat(filename, &stbuf) == -1)
+  if ( !f.open(QIODevice::ReadOnly) )
   {
-    std::cerr << "read_man_page: can not find " << filename << std::endl;
-    return NULL;
+    std::cerr << "read_man_page: can not open " << filename << std::endl;
+    return 0;
   }
-  if (!S_ISREG(stbuf.st_mode))
-  {
-    std::cerr << "read_man_page: no file " << filename << std::endl;
-    return NULL;
-  }
-  buf_size = stbuf.st_size;
-  man_buf = new char[buf_size + 5];
-  man_stream = fopen(filename, "r");
-  if (man_stream)
-  {
-    man_buf[0] = '\n';
-    if (fread(man_buf + 1, 1, buf_size, man_stream) == buf_size)
-    {
-      man_buf[buf_size] = '\n';
-      man_buf[buf_size + 1] = man_buf[buf_size + 2] = '\0';
-    }
-    else
-    {
-      delete [] man_buf;
-      man_buf = NULL;
-    }
-    fclose(man_stream);
-  }
-  return man_buf;
+
+  QByteArray array = f.readAll();
+
+  // as we do not know in which encoding the man source is, try to automatically
+  // detect it and always return it as UTF-8
+  KEncodingProber encodingProber;
+  encodingProber.feed(array);
+  kDebug(7107) << "auto-detect encoding for" << filename << "guess=" << encodingProber.encoding()
+               << "confidence=" << encodingProber.confidence();
+  QString out = QTextCodec::codecForName(encodingProber.encoding())->toUnicode(array);
+  array = out.toUtf8();
+
+  const int len = array.size();
+  char *buf = new char[len + 4];
+  memmove(buf + 1, array.data(), len);
+  buf[0] = buf[len+1] = '\n'; // Start and end with an end of line
+  buf[len+2] = buf[len+3] = '\0'; // Two NUL characters at end
+
+  return buf;
 }
+
+//---------------------------------------------------------------------
 
 #ifndef KIO_MAN_TEST
 int main(int argc, char **argv)
