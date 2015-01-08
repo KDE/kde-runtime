@@ -942,13 +942,13 @@ void sftpProtocol::special(const QByteArray &) {
      * in the buffer). Checking the return value (for >0) would be a good idea
      * to debug the problem.
      */
-    rc = channel_poll(mSftp->channel, 0);
+    rc = ssh_channel_poll(mSftp->channel, 0);
     if (rc > 0) {
-        rc = channel_poll(mSftp->channel, 1);
+        rc = ssh_channel_poll(mSftp->channel, 1);
     }
 
     if (rc < 0) {
-        kDebug(KIO_SFTP_DB) << "channel_poll failed: " << ssh_get_error(mSession);
+        kDebug(KIO_SFTP_DB) << "ssh_channel_poll failed: " << ssh_get_error(mSession);
     }
 
     setTimeoutSpecialCommand(KIO_SFTP_SPECIAL_TIMEOUT);
