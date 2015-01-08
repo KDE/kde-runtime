@@ -5161,7 +5161,7 @@ static char *scan_request(char *c)
         case REQ_Op:    /* mdoc(7) */
         {
           trans_char(c, '"', '\a');
-          c = c + j;
+          c += j;
           if (*c == '\n') c++;
           out_html(set_font("R"));
           out_html("[");
@@ -5178,7 +5178,7 @@ static char *scan_request(char *c)
         case REQ_Oo:    /* mdoc(7) */
         {
           trans_char(c, '"', '\a');
-          c = c + j;
+          c += j;
           if (*c == '\n') c++;
           out_html(set_font("R"));
           out_html("[");
@@ -5192,10 +5192,10 @@ static char *scan_request(char *c)
         case REQ_Oc:    /* mdoc(7) */
         {
           trans_char(c, '"', '\a');
-          c = c + j;
-          c = scan_troff_mandoc(c, 1, NULL);
+          c += j;
           out_html(set_font("R"));
           out_html("]");
+          c = scan_troff_mandoc(c, 1, NULL);
           if (fillout)
             curpos++;
           else
@@ -5319,6 +5319,15 @@ static char *scan_request(char *c)
 
           out_html(set_font("B"));
 
+          if ( mandoc_synopsis && mandoc_name_count )
+          {
+            /* Break lines only in the Synopsis.
+             * The Synopsis section seems to be treated
+             * as a special case - Bummer!
+             */
+            out_html("<BR>");
+          }
+
           // only show name if
           // .Nm (first not-null-length defined name)
           // .Nm name
@@ -5332,8 +5341,8 @@ static char *scan_request(char *c)
               c = scan_troff_mandoc(argPointers[0], 1, 0);
           }
 
+          mandoc_name_count++;
           out_html(set_font("R"));
-
 #if 0
           if (mandoc_synopsis && mandoc_name_count)
           {
@@ -5427,7 +5436,7 @@ static char *scan_request(char *c)
         case REQ_nN:    /* mdoc(7) */
         {
           trans_char(c, '"', '\a');
-          c = c + j;
+          c += j;
           if (*c == '\n') c++;
           out_html(set_font("B"));
           c = scan_troff_mandoc(c, 1, NULL);
