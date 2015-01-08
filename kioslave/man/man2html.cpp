@@ -129,14 +129,18 @@
 #include <QtCore/QString>
 #include <QTextCodec>
 
+//#include <kencodingprober.h>
+
 #ifdef SIMPLE_MAN2HTML
 # include <stdlib.h>
 # include <iostream>
 # include <dirent.h>
 # include <sys/stat.h>
 # include <QDebug>
-#include <QFile>
-#include <kencodingprober.h>
+# include <QFile>
+# include <QFileInfo>
+# include <QDir>
+# include <kfilterdev.h>
 # define kDebug(x) QDebug(QtDebugMsg)
 # define kWarning(x) QDebug(QtWarningMsg) << "WARNING "
 # define BYTEARRAY(x) x.constData()
@@ -6054,6 +6058,84 @@ void scan_man_page(const char *man_page)
 
 //---------------------------------------------------------------------
 
+char *manPageToUtf8(const QByteArray &input, const QByteArray &dirName)
+{
+  // as we do not know in which encoding the man source is, try to automatically
+  // detect it and always return it as UTF-8
+
+  QByteArray encoding;
+
+  // some pages contain "coding:" information. See "man manconv"
+  // (but I find pages which do not excactly obey the format described in manconv, e.g.
+  // the control char is either "." or "'")
+  // Therefore use a QRegExp
+  QRegExp regex("[\\.']\\\\\".*coding:\\s*(\\S*)\\s", Qt::CaseInsensitive);
+  if ( regex.indexIn(QLatin1String(input)) == 0 )
+  {
+    encoding = regex.cap(1).toLatin1();
+
+    kDebug(7107) << "found embedded encoding" << encoding;
+  }
+  else
+  {
+    // check according to the dirName the man page is in
+
+    // if the dirName contains a ".", the encoding follows, e.g. "de.UTF-8"
+    int dot = dirName.indexOf('.');
+    if ( dot != -1 )
+    {
+      encoding = dirName.mid(dot + 1);
+    }
+    else
+    {
+      /* wanted to use KEncodingProber ... however it fails and gives very unreliable
+         results ... telling me often UTF-8 encoded pages are EUC-JP or gb18030 ...
+         In fact all man pages here on openSuse are encoded in UTF-8
+
+      KEncodingProber encodingProber;
+      encodingProber.feed(input);
+
+      kDebug(7107) << "auto-detect encoding; guess=" << encodingProber.encoding()
+                   << "confidence=" << encodingProber.confidence();
+
+      encoding = encodingProber.encoding();
+      */
+
+      // the original bug report #141340
+      // mentioned the env var MAN_ICONV_INPUT_CHARSET ... let's check if it is set
+      // This seems not be a std. man-db env var, but I find several traces of it on the web
+      encoding = qgetenv("MAN_ICONV_INPUT_CHARSET");
+
+      if ( encoding.isEmpty() )
+        encoding = "UTF-8";
+    }
+  }
+
+  QTextCodec *codec = 0;
+
+  if ( !encoding.isEmpty() )
+    codec = QTextCodec::codecForName(encoding);
+
+  if ( !codec ) // fallback encoding
+    codec = QTextCodec::codecForName("ISO-8859-1");
+
+  kDebug(7107) << "using the encoding" << codec->name() << "for file in dir" << dirName;
+
+  QString out = codec->toUnicode(input);
+  QByteArray array = out.toUtf8();
+
+  // TODO get rid of this double allocation and scan a QByteArray
+  const int len = array.size();
+  char *buf = new char[len + 4];
+  memmove(buf + 1, array.data(), len);
+  buf[0] = buf[len+1] = '\n'; // Start and end with an end of line
+  buf[len+2] = buf[len+3] = '\0'; // Two NUL characters at end
+
+  return buf;
+}
+
+//---------------------------------------------------------------------
+
 #ifdef SIMPLE_MAN2HTML
 void output_real(const char *insert)
 {
@@ -6064,32 +6146,22 @@ void output_real(const char *insert)
 
 char *read_man_page(const char *filename)
 {
-  QFile f(QFile::decodeName(filename));
+  QIODevice *fd = KFilterDev::deviceForFile(filename);
 
-  if ( !f.open(QIODevice::ReadOnly) )
+  if ( !fd || !fd->open(QIODevice::ReadOnly) )
   {
     std::cerr << "read_man_page: can not open " << filename << std::endl;
     return 0;
   }
 
-  QByteArray array = f.readAll();
+  QDir dir(QFileInfo(QFile::decodeName(filename)).dir());
+  dir.cdUp();
+  char *data = manPageToUtf8(fd->readAll(), QFile::encodeName(dir.dirName()));
 
-  // as we do not know in which encoding the man source is, try to automatically
-  // detect it and always return it as UTF-8
-  KEncodingProber encodingProber;
-  encodingProber.feed(array);
-  kDebug(7107) << "auto-detect encoding for" << filename << "guess=" << encodingProber.encoding()
-               << "confidence=" << encodingProber.confidence();
-  QString out = QTextCodec::codecForName(encodingProber.encoding())->toUnicode(array);
-  array = out.toUtf8();
+  fd->close();
+  delete fd;
 
-  const int len = array.size();
-  char *buf = new char[len + 4];
-  memmove(buf + 1, array.data(), len);
-  buf[0] = buf[len+1] = '\n'; // Start and end with an end of line
-  buf[len+2] = buf[len+3] = '\0'; // Two NUL characters at end
-
-  return buf;
+  return data;
 }
 
 //---------------------------------------------------------------------
