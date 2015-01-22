@@ -1448,7 +1448,6 @@ sftpProtocol::StatusCode sftpProtocol::sftpPut(const KUrl& url, int permissions,
           sftp_unlink(mSftp, dest.constData());
         }
       }
-      delete attr;
       sftp_attributes_free(attr);
     }
 
