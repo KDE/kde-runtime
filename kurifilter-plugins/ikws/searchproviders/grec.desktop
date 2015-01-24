@@ -14,7 +14,7 @@ Name[bn]=কাটালান ভাষার অভিধান (GRan Enciclop
 Name[bs]=Veliki rječnik katalonskog jezika (GRan Enciclopèdia Catalana)
 Name[ca]=Gran diccionari de la Llengua Catalana (Grup Enciclopèdia Catalana)
 Name[ca@valencia]=Gran diccionari de la Llengua Catalana (Grup Enciclopèdia Catalana)
-Name[cs]=Velký katalánský slovník (GRan Enciclopèdia  Catalana)
+Name[cs]=Velký katalánský slovník (GRan Enciclopèdia Catalana)
 Name[csb]=Wiôldżi słowôrz katalońsczégò jãzëka (GRan Enciclopèdia Catalana)
 Name[da]=Storartet ordbog for det katalanske sprog (GRan Enciclopèdia  Catalana)
 Name[de]=Großes Wörterbuch der Katalanischen Sprache (GRan Enciclopèdia Catalana)
@@ -26,7 +26,6 @@ Name[et]=Suur katalaani sõnaraamat (GRan Enciclopèdia  Catalana)
 Name[eu]=Gran Enciclopèdia Catalana entziklopedia
 Name[fa]=واژه‌نامه بزرگ زبان کاتالان (GRan Enciclopèdia  Catalana)
 Name[fi]=Katalaanin suuri sanakirja (GRan Enciclopèdia  Catalana)
-Name[fr]=Remarquable dictionnaire pour la langue catalane (GRan Enciclopèdia Catalana)
 Name[fy]=Great Dictionary of the Catalan Language (GRan Enciclopèdia  Catalana)
 Name[ga]=OllFhoclóir Catalóinise (GRan Enciclopèdia  Catalana)
 Name[gl]=GRan Enciclopèdia Catalana
@@ -107,7 +106,6 @@ Query[et]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[eu]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[fa]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[fi]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
-Query[fr]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[fy]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[ga]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
 Query[gl]=http://ec.grec.net/cgi-bin/AppDLC3.exe?APP=CERCADLC&GECART=\\{@}
