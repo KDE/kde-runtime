@@ -17,7 +17,7 @@ Name[br]=Teuliadur API KDE
 Name[bs]=KDE API dokumentacija
 Name[ca]=Documentació de l'API del KDE
 Name[ca@valencia]=Documentació de l'API de KDE
-Name[cs]=KDE API dokumentace
+Name[cs]=Dokumentace KDE API
 Name[csb]=Dokùmentacëjô API KDE
 Name[cy]=Dogfenniaeth API KDE
 Name[da]=KDE API Dokumentation
@@ -30,6 +30,7 @@ Name[et]=KDE API dokumentatsioon
 Name[eu]=KDEren API dokumentazioa
 Name[fa]=مستندات KDE ِAPI
 Name[fi]=KDE:n API-dokumentaatio
+Name[fr]=Documentation de l'API de KDE
 Name[fy]=KDE API Dokumintaasje
 Name[ga]=Doiciméadú API KDE
 Name[gl]=Documentación da API de KDE
@@ -116,6 +117,7 @@ Query[et]=http://api.kde.org/classmapper.php?class=\\{@}
 Query[eu]=http://api.kde.org/classmapper.php?class=\\{@}
 Query[fa]=http://api.kde.org/classmapper.php?class=\\{@}
 Query[fi]=http://api.kde.org/classmapper.php?class=\\{@}
+Query[fr]=http://api.kde.org/classmapper.php?class=\\{@}
 Query[fy]=http://api.kde.org/classmapper.php?class=\\{@}
 Query[ga]=http://api.kde.org/classmapper.php?class=\\{@}
 Query[gl]=http://api.kde.org/classmapper.php?class=\\{@}

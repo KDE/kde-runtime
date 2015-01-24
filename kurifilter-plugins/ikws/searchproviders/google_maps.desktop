@@ -8,7 +8,7 @@ Name[bn]=গুগল ম্যাপ
 Name[bs]=Google mape
 Name[ca]=Google Maps
 Name[ca@valencia]=Google Maps
-Name[cs]=Google mapy
+Name[cs]=Mapy Google
 Name[da]=Google Maps
 Name[de]=Google Maps
 Name[el]=Google Maps
@@ -19,6 +19,7 @@ Name[et]=Google Maps
 Name[eu]=Google Maps
 Name[fa]=نقشه‌های گوگل
 Name[fi]=Google Maps (kartat)
+Name[fr]=Cartes « Google »
 Name[ga]=Mapaí Google
 Name[gl]=Google Maps
 Name[gu]=ગુગલ નકશાઓ
@@ -85,6 +86,7 @@ Query[et]=https://maps.google.com/maps?q=\\{@}&ie=UTF8&iwloc=addr
 Query[eu]=https://maps.google.com/maps?q=\\{@}&ie=UTF8&iwloc=addr
 Query[fa]=https://maps.google.com/maps?q=\\{@}&ie=UTF8&iwloc=addr
 Query[fi]=https://maps.google.com/maps?q=\\{@}&ie=UTF8&iwloc=addr
+Query[fr]=https://maps.google.com/maps?q=\\{@}&ie=UTF8&iwloc=addr
 Query[gl]=https://maps.google.com/maps?q=\\{@}&ie=UTF8&iwloc=addr
 Query[hi]=https://maps.google.com/maps?q=\\{@}&ie=UTF8&iwloc=addr
 Query[hu]=https://maps.google.com/maps?q=\\{@}&ie=UTF8&iwloc=addr
