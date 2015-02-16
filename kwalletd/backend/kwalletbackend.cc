@@ -266,7 +266,7 @@ int Backend::open(const QByteArray& password, WId w) {
 	if (_open) {
 		return -255;  // already open
 	}
-	
+
 	setPassword(password);
    return openInternal(w);
 }
@@ -287,20 +287,20 @@ int Backend::openPreHashed(const QByteArray &passwordHash)
    if (_open) {
       return -255;  // already open
    }
-   
+
    // check the password hash for correct size (currently fixed)
    if (passwordHash.size() != 20 && passwordHash.size() != 40 &&
 	   passwordHash.size() != 56) {
       return -42; // unsupported encryption scheme
    }
-   
+
    _passhash = passwordHash;
    _newPassHash = passwordHash;
    _useNewHash = true;//Only new hash is supported
 
    return openInternal();
 }
- 
+
 int Backend::openInternal(WId w)
 {
 	// No wallet existed.  Let's create it.
@@ -350,7 +350,9 @@ int Backend::openInternal(WId w)
     if (0 == phandler){
         return 42; // unknown cipher or hash
     }
-    return phandler->read(this, db, w);
+    int result = phandler->read(this, db, w);
+    delete phandler;
+    return result;
 }
 
 void Backend::swapToNewHash()
@@ -427,6 +429,7 @@ int Backend::sync(WId w) {
         notification->setText( i18n("Failed to sync wallet <b>%1</b> to disk. Error codes are:\nRC <b>%2</b>\nSF <b>%3</b>. Please file a BUG report using this information to bugs.kde.org").arg(_name).arg(rc).arg(sf.errorString()) );
         notification->sendEvent();
     }
+    delete phandler;
     return rc;
 }
 
@@ -439,7 +442,7 @@ int Backend::close(bool save) {
 			return rc;
 		}
 	}
-	
+
 	// do the actual close
 	for (FolderMap::ConstIterator i = _entries.constBegin(); i != _entries.constEnd(); ++i) {
 		for (EntryMap::ConstIterator j = i.value().constBegin(); j != i.value().constEnd(); ++j) {
@@ -447,13 +450,13 @@ int Backend::close(bool save) {
 		}
 	}
 	_entries.clear();
-	
+
 	// empty the password hash
 	_passhash.fill(0);
     _newPassHash.fill(0);
 
 	_open = false;
-	
+
 	return 0;
 }
 
