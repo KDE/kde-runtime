@@ -1,6 +1,7 @@
 [Desktop Entry]
 Keys=qwso
 Name=Qwant Social
+Name[bs]=Qwant društveno
 Name[ca]=Social a Qwant
 Name[cs]=Qwant Social
 Name[da]=Qwant Social
@@ -34,6 +35,7 @@ Name[x-test]=xxQwant Socialxx
 Name[zh_CN]=Qwant 社交
 Name[zh_TW]=Qwant Social
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[bs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[da]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social

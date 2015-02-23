@@ -1,6 +1,7 @@
 [Desktop Entry]
 Keys=qwv
 Name=Qwant Videos
+Name[bs]=Qwant Videos
 Name[ca]=Vídeos a Qwant
 Name[cs]=Videa Qwan
 Name[da]=Qwant Videos
@@ -34,6 +35,7 @@ Name[x-test]=xxQwant Videosxx
 Name[zh_CN]=Qwant 视频
 Name[zh_TW]=Qwant Videos
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
+Query[bs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
 Query[da]=https://www.qwant.com/single?q=\\{@}&client=kde&source=videos
