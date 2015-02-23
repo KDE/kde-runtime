@@ -1,6 +1,7 @@
 [Desktop Entry]
 Keys=qw
 Name=Qwant
+Name[bs]=Qwant
 Name[ca]=Qwant
 Name[cs]=Qwant
 Name[da]=Qwant
@@ -34,6 +35,7 @@ Name[uk]=Qwant
 Name[x-test]=xxQwantxx
 Name[zh_TW]=Qwant
 Query=https://www.qwant.com/?q=\\{@}&client=kde&source=web
+Query[bs]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
 Query[ca]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
 Query[cs]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
 Query[da]=https://www.qwant.com/?q=\\{@}&client=kde&source=web

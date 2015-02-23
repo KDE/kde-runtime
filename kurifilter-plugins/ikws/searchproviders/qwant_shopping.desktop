@@ -1,6 +1,7 @@
 [Desktop Entry]
 Keys=qwsh
 Name=Qwant Shopping
+Name[bs]=Qwant kupovina
 Name[ca]=Compres a Qwant
 Name[cs]=Qwant Shopping
 Name[da]=Qwant Shopping
@@ -34,6 +35,7 @@ Name[uk]=Qwant торгівля
 Name[x-test]=xxQwant Shoppingxx
 Name[zh_TW]=Qwant Shopping
 Query=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
+Query[bs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[ca]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[cs]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[da]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
