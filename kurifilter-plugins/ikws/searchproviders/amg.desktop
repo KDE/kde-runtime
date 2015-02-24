@@ -100,6 +100,7 @@ Query[da]=http://www.allmusic.com/search/all/\\{@}
 Query[de]=http://www.allmusic.com/search/all/\\{@}
 Query[el]=http://www.allmusic.com/search/all/\\{@}
 Query[en_GB]=http://www.allmusic.com/search/all/\\{@}
+Query[eo]=http://www.allmusic.com/search/all/\\{@}
 Query[es]=http://www.allmusic.com/search/all/\\{@}
 Query[et]=http://www.allmusic.com/search/all/\\{@}
 Query[eu]=http://www.allmusic.com/search/all/\\{@}
