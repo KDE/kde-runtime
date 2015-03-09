@@ -127,6 +127,9 @@
 #include <QtCore/QMap>
 #include <QtCore/QStack>
 #include <QtCore/QString>
+#include <QTextCodec>
+
+//#include <kencodingprober.h>
 
 #ifdef SIMPLE_MAN2HTML
 # include <stdlib.h>
@@ -134,11 +137,14 @@
 # include <dirent.h>
 # include <sys/stat.h>
 # include <QDebug>
+# include <QFile>
+# include <QFileInfo>
+# include <QDir>
+# include <kfilterdev.h>
 # define kDebug(x) QDebug(QtDebugMsg)
 # define kWarning(x) QDebug(QtWarningMsg) << "WARNING "
 # define BYTEARRAY(x) x.constData()
 #else
-# include <QTextCodec>
 # include <QTextDocument>
 # include <kglobal.h>
 # include <klocale.h>
@@ -152,8 +158,6 @@
 #define HUGE_STR_MAX  10000
 #define LARGE_STR_MAX 2000
 #define MED_STR_MAX   500
-#define SMALL_STR_MAX 100
-#define TINY_STR_MAX  10
 
 #define DOCTYPE "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n"
 
@@ -171,14 +175,6 @@ static int s_nroff = 1; // NROFF mode by default
 static QByteArray mandoc_name;  // Nm can store the first used name
 
 static int mandoc_name_count = 0; /* Don't break on the first Nm */
-
-static char *strlimitcpy(char *to, char *from, int n, int limit)
-{                               /* Assumes space for limit plus a null */
-  const int len = n > limit ? limit : n;
-  qstrncpy(to, from, len + 1);
-  to[len] = '\0';
-  return to;
-}
 
 /* below this you should not change anything unless you know a lot
 ** about this program or about troff.
@@ -384,7 +380,7 @@ static const CSTRDEF standardchar[] =
   { V('b', 'r'), 1, "|" },
   { V('b', 'u'), 1, "&bull;" },
   { V('b', 'v'), 1, "|" },
-  { V('c', 'i'), 1, "&#x25CB;" }, // circle ### TODO verify
+  { V('c', 'i'), 1, "&#x25CB;" }, // circle
   { V('c', 'o'), 1, "&copy;" },
   { V('c', 't'), 1, "&cent;" },
   { V('d', 'e'), 1, "&deg;" },
@@ -595,6 +591,55 @@ static const CSTRDEF standardchar[] =
   { V('a', 'n'), 1, "-" }, // "horizontal arrow extension"  ### TODO Where in Unicode?
 };
 
+// long form for abbreviated standard names (.St macro)
+struct StandardNames
+{
+  const char *abbrev;
+  const char *formalName;
+};
+
+static const StandardNames STANDARD_NAMES[] =
+{
+  { "-ansiC", "ANSI X3.159-1989 ('ANSI C89')" },
+  { "-ansiC-89", "ANSI X3.159-1989 ('ANSI C89')" },
+  { "-isoC", "ISO/IEC 9899:1990 ('ISO C90')" },
+  { "-isoC-90", "ISO/IEC 9899:1990 ('ISO C90')" },
+  { "-isoC-99", "ISO/IEC 9899:1999 ('ISO C99')" },
+  { "-isoC-2011", "ISO/IEC 9899:2011 ('ISO C11')" },
+  { "-iso9945-1-90", "ISO/IEC 9945-1:1990 ('POSIX.1')" },
+  { "-iso9945-1-96", "ISO/IEC 9945-1:1996 ('POSIX.1')" },
+  { "-p1003.1", "IEEE Std 1003.1 ('POSIX.1')" },
+  { "-p1003.1-88", "IEEE Std 1003.1-1988 ('POSIX.1')" },
+  { "-p1003.1-90", "ISO/IEC 9945-1:1990 ('POSIX.1')" },
+  { "-p1003.1-96", "ISO/IEC 9945-1:1996 ('POSIX.1')" },
+  { "-p1003.1b-93", "IEEE Std 1003.1b-1993 ('POSIX.1')" },
+  { "-p1003.1c-95", "IEEE Std 1003.1c-1995 ('POSIX.1')" },
+  { "-p1003.1g-2000", "IEEE Std 1003.1g-2000 ('POSIX.1')" },
+  { "-p1003.1i-95", "IEEE Std 1003.1i-1995 ('POSIX.1')" },
+  { "-p1003.1-2001", "IEEE Std 1003.1-2001 ('POSIX.1')" },
+  { "-p1003.1-2004", "IEEE Std 1003.1-2004 ('POSIX.1')" },
+  { "-p1003.1-2008", "IEEE Std 1003.1-2008 ('POSIX.1')" },
+  { "-iso9945-2-93", "ISO/IEC 9945-2:1993 ('POSIX.2')" },
+  { "-p1003.2", "IEEE Std 1003.2 ('POSIX.2')" },
+  { "-p1003.2-92", "IEEE Std 1003.2-1992 ('POSIX.2')" },
+  { "-p1003.2a-92", "IEEE Std 1003.2a-1992 ('POSIX.2')" },
+  { "-susv2", "Version 2 of the Single UNIX Specification ('SUSv2')" },
+  { "-susv3", "Version 3 of the Single UNIX Specification ('SUSv3')" },
+  { "-svid4", "System V Interface Definition, Fourth Edition ('SVID4')" },
+  { "-xbd5", "X/Open Base Definitions Issue 5 ('XBD5')" },
+  { "-xcu5", "X/Open Commands and Utilities Issue 5 ('XCU5')" },
+  { "-xcurses4.2", "X/Open Curses Issue 4, Version 2 ('XCURSES4.2')" },
+  { "-xns5", "X/Open Networking Services Issue 5 ('XNS5')" },
+  { "-xns5.2", "X/Open Networking Services Issue 5.2 ('XNS5.2')" },
+  { "-xpg3", "X/Open Portability Guide Issue 3 ('XPG3')" },
+  { "-xpg4", "X/Open Portability Guide Issue 4 ('XPG4')" },
+  { "-xpg4.2", "X/Open Portability Guide Issue 4, Version 2 ('XPG4.2')" },
+  { "-xsh5", "X/Open System Interfaces and Headers Issue 5 ('XSH5')" },
+  { "-ieee754", "IEEE Std 754-1985" },
+  { "-iso8802-3", "ISO/IEC 8802-3:1989" }
+};
+
+
 /* default: print code */
 
 
@@ -605,7 +650,7 @@ static char *buffer = NULL;
 static int buffpos = 0, buffmax = 0;
 static bool scaninbuff = false;
 static int itemdepth = 0;
-static int section = 0;
+static int in_div = 0;
 static int dl_set[20] = { 0 };
 static QStack<QByteArray> listItemStack;
 static bool still_dd = 0;
@@ -993,13 +1038,24 @@ static void add_links(char *c)
   output_real(c);
 }
 
+//---------------------------------------------------------------------
+
 static QByteArray current_font;
 static int current_size = 0;
+
+/*
+ "fillout" is the mode of text output:
+ 1 = fill mode (line breaks happen when the browser wants them. Normal HTML text)
+ 0 = no-fill mode (preformatted text (<pre>..</pre>).
+     Input lines are output as-is, retaining line breaks and ignoring the current line length.
+*/
 static int fillout = 1;
+
+//---------------------------------------------------------------------
 
 static void out_html(const char *c)
 {
-  if (!c) return;
+  if ( !c || !*c ) return;
 
   // Added, probably due to the const?
   char *c2 = qstrdup(c);
@@ -2210,7 +2266,11 @@ static void clear_table(TABLEROW *table)
   }
 }
 
+//---------------------------------------------------------------------
+
 static char *scan_expression(char *c, int *result);
+
+//---------------------------------------------------------------------
 
 static char *scan_format(char *c, TABLEROW **result, int *maxcol)
 {
@@ -2339,6 +2399,8 @@ static char *scan_format(char *c, TABLEROW **result, int *maxcol)
   return c;
 }
 
+//---------------------------------------------------------------------
+
 static TABLEROW *next_row(TABLEROW *tr)
 {
   if (tr->next)
@@ -2355,6 +2417,8 @@ static TABLEROW *next_row(TABLEROW *tr)
     return tr->next;
   }
 }
+
+//---------------------------------------------------------------------
 
 static char itemreset[20] = "\\fR\\s0";
 
@@ -2712,6 +2776,8 @@ static char *scan_expression(char *c, int *result, const unsigned int numLoop)
 {
   int value = 0, value2, sign = 1, opex = 0;
   char oper = 'c';
+  bool oldSkipEscape = skip_escape;
+  skip_escape = true;  // evaluating an expression shall not print it
 
   if (*c == '!')
   {
@@ -2907,13 +2973,20 @@ static char *scan_expression(char *c, int *result, const unsigned int numLoop)
     if (*c == ')') c++;
   }
   *result = value;
+
+  skip_escape = oldSkipEscape;
+
   return c;
 }
+
+//---------------------------------------------------------------------
 
 static char *scan_expression(char *c, int *result)
 {
   return scan_expression(c, result, 0);
 }
+
+//---------------------------------------------------------------------
 
 static void trans_char(char *c, char s, char t)
 {
@@ -3283,6 +3356,8 @@ static char *skip_till_newline(char *c)
   return c;
 }
 
+//---------------------------------------------------------------------
+
 static bool s_whileloop = false;
 
 /// Processing the .while request
@@ -3380,6 +3455,8 @@ static void request_mixed_fonts(char*& c, int j, const char* font1, const char* 
 //static int ifelseval=0;
 // If/else can be nested!
 static QStack<int> s_ifelseval;
+
+//---------------------------------------------------------------------
 
 // Process a (mdoc) request involving quotes
 static char* process_quote(char* c, int j, const char* open, const char* close)
@@ -4273,9 +4350,8 @@ static char *scan_request(char *c)
           if (fillout)
             out_html("<br>\n");
           else
-          {
             out_html(NEWLINE);
-          }
+
           curpos = 0;
           c = skip_till_newline(c);
           break;
@@ -4373,10 +4449,10 @@ static char *scan_request(char *c)
             out_html("</PRE>");
           }
           trans_char(c, '"', '\a');
-          if (section)
+          if (in_div)
           {
             out_html("</div>\n");
-            section = 0;
+            in_div = 0;
           }
           if (mode)
             out_html("\n<H3>");
@@ -4390,7 +4466,7 @@ static char *scan_request(char *c)
             out_html("</H2>\n");
 
           out_html("<div>\n");
-          section = 1;
+          in_div = 1;
           curpos = 0;
           break;
         }
@@ -4408,6 +4484,27 @@ static char *scan_request(char *c)
             curpos++;
           else
             curpos = 0;
+          break;
+        }
+        case REQ_St: // groff_mdoc
+        {
+          c += j;
+          getArguments(c, args);
+          if ( args.count() )
+          {
+            bool found = false;
+            for (size_t i = 0; i < (sizeof(STANDARD_NAMES) / sizeof(STANDARD_NAMES[0])); i++)
+            {
+              if ( args[0] == STANDARD_NAMES[i].abbrev )
+              {
+                found = true;
+                out_html(STANDARD_NAMES[i].formalName);
+                break;
+              }
+            }
+            if ( !found )  // an unknown standard - print the abbreviation
+              out_html(args[0]);
+          }
           break;
         }
         case REQ_TS: // Table Start tbl(1)
@@ -4709,7 +4806,7 @@ static char *scan_request(char *c)
         }
         case REQ_Bl: // mdoc(7) "Begin List"
         {
-          char list_options[NULL_TERMINATED(MED_STR_MAX)];
+          QByteArray list_options;
           char *nl = strchr(c, '\n');
           c = c + j;
           if (dl_set[itemdepth])
@@ -4720,15 +4817,15 @@ static char *scan_request(char *c)
           if (nl)
           {
             /* Parse list options */
-            strlimitcpy(list_options, c, nl - c, MED_STR_MAX);
+            list_options = QByteArray(c, nl - c);
           }
-          if (strstr(list_options, "-bullet"))
+          if ( list_options.contains("-bullet") )
           {
             /* HTML Unnumbered List */
             dl_set[itemdepth] = BL_BULLET_LIST;
             out_html("<UL>\n");
           }
-          else if (strstr(list_options, "-enum"))
+          else if ( list_options.contains("-enum") )
           {
             /* HTML Ordered List */
             dl_set[itemdepth] = BL_ENUM_LIST;
@@ -4879,19 +4976,19 @@ static char *scan_request(char *c)
         }
         case REQ_Bd:    /* mdoc(7) */
         {            /* Seems like a kind of example/literal mode */
-          char bd_options[NULL_TERMINATED(MED_STR_MAX)];
+          QByteArray bd_options;
           char *nl = strchr(c, '\n');
           c = c + j;
           if (nl)
-            strlimitcpy(bd_options, c, nl - c, MED_STR_MAX);
+            bd_options = QByteArray(c, nl - c);
           out_html(NEWLINE);
           mandoc_bd_options = 0; /* Remember options for terminating Bl */
-          if (strstr(bd_options, "-offset indent"))
+          if ( bd_options.contains("-offset indent") )
           {
             mandoc_bd_options |= BD_INDENT;
             out_html("<BLOCKQUOTE>\n");
           }
-          if (strstr(bd_options, "-literal") || strstr(bd_options, "-unfilled"))
+          if ( bd_options.contains("-literal") || bd_options.contains("-unfilled") )
           {
             if (fillout)
             {
@@ -5088,7 +5185,7 @@ static char *scan_request(char *c)
         case REQ_Op:    /* mdoc(7) */
         {
           trans_char(c, '"', '\a');
-          c = c + j;
+          c += j;
           if (*c == '\n') c++;
           out_html(set_font("R"));
           out_html("[");
@@ -5105,7 +5202,7 @@ static char *scan_request(char *c)
         case REQ_Oo:    /* mdoc(7) */
         {
           trans_char(c, '"', '\a');
-          c = c + j;
+          c += j;
           if (*c == '\n') c++;
           out_html(set_font("R"));
           out_html("[");
@@ -5119,10 +5216,10 @@ static char *scan_request(char *c)
         case REQ_Oc:    /* mdoc(7) */
         {
           trans_char(c, '"', '\a');
-          c = c + j;
-          c = scan_troff_mandoc(c, 1, NULL);
+          c += j;
           out_html(set_font("R"));
           out_html("]");
+          c = scan_troff_mandoc(c, 1, NULL);
           if (fillout)
             curpos++;
           else
@@ -5244,6 +5341,20 @@ static char *scan_request(char *c)
           if ( mandoc_name.isEmpty() && args.count() )
             mandoc_name = args[0];
 
+          if ( mandoc_synopsis )
+          {
+            /* Break lines only in the Synopsis.
+             * The Synopsis section seems to be treated
+             * as a special case - Bummer!
+             * Do not insert a break before the very first Nm in this section
+             */
+
+            if ( mandoc_name_count )
+              out_html("<BR>");
+
+            mandoc_name_count++;
+          }
+
           out_html(set_font("B"));
 
           // only show name if
@@ -5260,51 +5371,6 @@ static char *scan_request(char *c)
           }
 
           out_html(set_font("R"));
-
-#if 0
-          if (mandoc_synopsis && mandoc_name_count)
-          {
-            /* Break lines only in the Synopsis.
-             * The Synopsis section seems to be treated
-             * as a special case - Bummer!
-             */
-            out_html("<BR>");
-          }
-          else if (!mandoc_name_count)
-          {
-            const char *nextbreak = strchr(c, '\n');
-            const char *nextspace = strchr(c, ' ');
-            if (nextspace < nextbreak)
-              nextbreak = nextspace;
-
-            if (nextbreak)
-            {
-              /* Remember the name for later. */
-              strlimitcpy(mandoc_name, c, nextbreak - c, SMALL_STR_MAX);
-            }
-          }
-          mandoc_name_count++;
-
-          out_html(set_font("B"));
-          // ### FIXME: fill_words must be used
-          while (*c == ' ' || *c == '\t') c++;
-          if ((tolower(*c) >= 'a' && tolower(*c) <= 'z') || (*c >= '0' && *c <= '9'))
-          {
-            // alphanumeric argument
-            c = scan_troff_mandoc(c, 1, NULL);
-            out_html(set_font("R"));
-            out_html(NEWLINE);
-          }
-          else
-          {
-            /* If Nm has no argument, use one from an earlier
-            * Nm command that did have one.  Hope there aren't
-            * too many commands that do this.
-            */
-            out_html(mandoc_name);
-            out_html(set_font("R"));
-          }
-#endif
 
           if (fillout)
             curpos++;
@@ -5348,17 +5414,52 @@ static char *scan_request(char *c)
         case REQ_Ev:    /* mdoc(7) */
         case REQ_Fr:    /* mdoc(7) */
         case REQ_Li:    /* mdoc(7) */
-        case REQ_No:    /* mdoc(7) */
-        case REQ_Ns:    /* mdoc(7) */
-        case REQ_Tn:    /* mdoc(7) */
         case REQ_nN:    /* mdoc(7) */
         {
           trans_char(c, '"', '\a');
-          c = c + j;
+          c += j;
           if (*c == '\n') c++;
           out_html(set_font("B"));
           c = scan_troff_mandoc(c, 1, NULL);
           out_html(set_font("R"));
+          out_html(NEWLINE);
+          if (fillout)
+            curpos++;
+          else
+            curpos = 0;
+          break;
+        }
+        case REQ_Tn:    /* mdoc(7) Trade Names ... prints its arguments in a smaller font */
+        {
+          trans_char(c, '"', '\a');
+          c += j;
+          if (*c == '\n') c++;
+          out_html("<small>");
+          c = scan_troff_mandoc(c, 1, NULL);
+          out_html("</small>");
+          if (fillout)
+            curpos++;
+          else
+            curpos = 0;
+          break;
+        }
+        case REQ_Ns:    /* mdoc(7) No-Space Macro */
+        {
+          c += j;
+          while (*c && isspace(*c) && (*c != '\n')) c++;
+          // fallthrough (The '.Ns' macro always invokes the '.No' macro...)
+        }
+        case REQ_No:    /* mdoc(7) Normal Text Macro */
+        {
+          if ( request == REQ_No ) // not fallen through from REQ_Ns
+          {
+            trans_char(c, '"', '\a');
+            c += j;
+            if (*c == '\n') c++;
+          }
+          out_html("<span style=\"font-style:normal\">");
+          c = scan_troff_mandoc(c, 1, NULL);
+          out_html("</span>");
           out_html(NEWLINE);
           if (fillout)
             curpos++;
@@ -5672,10 +5773,9 @@ static bool mandoc_line = false; // Signals whether to look for embedded mandoc 
 
 static char *scan_troff(char *c, bool san, char **result)
 {   /* san : stop at newline */
-  char *h;
-  char intbuff[NULL_TERMINATED(MED_STR_MAX)];
-  int ibp = 0;
-#define FLUSHIBP  if (ibp) { intbuff[ibp]=0; out_html(intbuff); ibp=0; }
+  QByteArray intbuff;
+  intbuff.reserve(MED_STR_MAX);
+#define FLUSHIBP  { out_html(intbuff); intbuff.clear(); }
   char *exbuffer;
   int exbuffpos, exbuffmax, exnewline_for_fun;
   bool exscaninbuff;
@@ -5703,7 +5803,7 @@ static char *scan_troff(char *c, bool san, char **result)
     }
     scaninbuff = true;
   }
-  h = c; // ### FIXME below are too many tests that may go before the position of c
+  char *h = c; // ### FIXME below are too many tests that may go before the position of c
   /* start scanning */
 
   while (h && *h && (!san || newline_for_fun || (*h != '\n')) && !break_the_while_loop)
@@ -5771,56 +5871,46 @@ static char *scan_troff(char *c, bool san, char **result)
       switch (*h)
       {
         case '&':
-          intbuff[ibp++] = '&';
-          intbuff[ibp++] = 'a';
-          intbuff[ibp++] = 'm';
-          intbuff[ibp++] = 'p';
-          intbuff[ibp++] = ';';
+        {
+          intbuff += "&amp;";
           curpos++;
           break;
+        }
         case '<':
-          intbuff[ibp++] = '&';
-          intbuff[ibp++] = 'l';
-          intbuff[ibp++] = 't';
-          intbuff[ibp++] = ';';
+        {
+          intbuff += "&lt;";
           curpos++;
           break;
+        }
         case '>':
-          intbuff[ibp++] = '&';
-          intbuff[ibp++] = 'g';
-          intbuff[ibp++] = 't';
-          intbuff[ibp++] = ';';
+        {
+          intbuff += "&gt;";
           curpos++;
           break;
+        }
         case '"':
-          intbuff[ibp++] = '&';
-          intbuff[ibp++] = 'q';
-          intbuff[ibp++] = 'u';
-          intbuff[ibp++] = 'o';
-          intbuff[ibp++] = 't';
-          intbuff[ibp++] = ';';
+        {
+          intbuff += "&quot;";
           curpos++;
           break;
+        }
         case '\n':
+        {
           if (h != c && h[-1] == '\n' && fillout)
           {
-            intbuff[ibp++] = '<';
-            intbuff[ibp++] = 'P';
-            intbuff[ibp++] = '>';
+            intbuff += "<p>";
           }
           if (contained_tab && fillout)
           {
-            intbuff[ibp++] = '<';
-            intbuff[ibp++] = 'B';
-            intbuff[ibp++] = 'R';
-            intbuff[ibp++] = '>';
+            intbuff += "<br>";
           }
           contained_tab = 0;
           curpos = 0;
           usenbsp = 0;
-          intbuff[ibp++] = '\n';
+          intbuff += '\n';
           FLUSHIBP;
           break;
+        }
         case '\t':
         {
           int curtab = 0;
@@ -5836,8 +5926,8 @@ static char *scan_troff(char *c, bool san, char **result)
             {
               while (curpos < tabstops[curtab])
               {
-                intbuff[ibp++] = ' ';
-                if (ibp > 480)
+                intbuff += ' ';
+                if (intbuff.length() > MED_STR_MAX)
                 {
                   FLUSHIBP;
                 }
@@ -5855,9 +5945,10 @@ static char *scan_troff(char *c, bool san, char **result)
               out_html("</TT>");
             }
           }
+          break;
         }
-        break;
         default:
+        {
           if (*h == ' ' && (h[-1] == '\n' || usenbsp))
           {
             FLUSHIBP;
@@ -5867,18 +5958,21 @@ static char *scan_troff(char *c, bool san, char **result)
               curpos = 0;
             }
             usenbsp = fillout;
-            if (usenbsp) out_html("&nbsp;");
-            else intbuff[ibp++] = ' ';
+            if (usenbsp)
+              out_html("&nbsp;");
+            else
+              intbuff += ' ';
           }
-          else if (*h > 31 && *h < 127) intbuff[ibp++] = *h;
+          else if (*h > 31 && *h < 127) intbuff += *h;
           else if (((unsigned char)(*h)) > 127)
           {
-            intbuff[ibp++] = *h;
+            intbuff += *h;
           }
           curpos++;
           break;
+        }
       }
-      if (ibp > (MED_STR_MAX - 20)) FLUSHIBP;
+      if ( intbuff.length() > MED_STR_MAX ) FLUSHIBP;
       h++;
     }
   }
@@ -5960,7 +6054,7 @@ void scan_man_page(const char *man_page)
   s_argumentList.clear();
   listItemStack.clear();
 
-  section = 0;
+  in_div = 0;
 
   s_dollarZero = ""; // No macro called yet!
   mandoc_name = "";
@@ -5994,10 +6088,10 @@ void scan_man_page(const char *man_page)
   }
   out_html(NEWLINE);
 
-  if (section)
+  if (in_div)
   {
     output_real("</div><div style=\"margin-left: 2cm\">\n");
-    section = 0;
+    in_div = 0;
   }
 
   if (output_possible)
@@ -6053,49 +6147,113 @@ void scan_man_page(const char *man_page)
 
 //---------------------------------------------------------------------
 
+char *manPageToUtf8(const QByteArray &input, const QByteArray &dirName)
+{
+  // as we do not know in which encoding the man source is, try to automatically
+  // detect it and always return it as UTF-8
+
+  QByteArray encoding;
+
+  // some pages contain "coding:" information. See "man manconv"
+  // (but I find pages which do not excactly obey the format described in manconv, e.g.
+  // the control char is either "." or "'")
+  // Therefore use a QRegExp
+  QRegExp regex("[\\.']\\\\\".*coding:\\s*(\\S*)\\s", Qt::CaseInsensitive);
+  if ( regex.indexIn(QLatin1String(input)) == 0 )
+  {
+    encoding = regex.cap(1).toLatin1();
+
+    kDebug(7107) << "found embedded encoding" << encoding;
+  }
+  else
+  {
+    // check according to the dirName the man page is in
+
+    // if the dirName contains a ".", the encoding follows, e.g. "de.UTF-8"
+    int dot = dirName.indexOf('.');
+    if ( dot != -1 )
+    {
+      encoding = dirName.mid(dot + 1);
+    }
+    else
+    {
+      /* wanted to use KEncodingProber ... however it fails and gives very unreliable
+         results ... telling me often UTF-8 encoded pages are EUC-JP or gb18030 ...
+         In fact all man pages here on openSuse are encoded in UTF-8
+
+      KEncodingProber encodingProber;
+      encodingProber.feed(input);
+
+      kDebug(7107) << "auto-detect encoding; guess=" << encodingProber.encoding()
+                   << "confidence=" << encodingProber.confidence();
+
+      encoding = encodingProber.encoding();
+      */
+
+      // the original bug report #141340
+      // mentioned the env var MAN_ICONV_INPUT_CHARSET ... let's check if it is set
+      // This seems not be a std. man-db env var, but I find several traces of it on the web
+      encoding = qgetenv("MAN_ICONV_INPUT_CHARSET");
+
+      if ( encoding.isEmpty() )
+        encoding = "UTF-8";
+    }
+  }
+
+  QTextCodec *codec = 0;
+
+  if ( !encoding.isEmpty() )
+    codec = QTextCodec::codecForName(encoding);
+
+  if ( !codec ) // fallback encoding
+    codec = QTextCodec::codecForName("ISO-8859-1");
+
+  kDebug(7107) << "using the encoding" << codec->name() << "for file in dir" << dirName;
+
+  QString out = codec->toUnicode(input);
+  QByteArray array = out.toUtf8();
+
+  // TODO get rid of this double allocation and scan a QByteArray
+  const int len = array.size();
+  char *buf = new char[len + 4];
+  memmove(buf + 1, array.data(), len);
+  buf[0] = buf[len+1] = '\n'; // Start and end with an end of line
+  buf[len+2] = buf[len+3] = '\0'; // Two NUL characters at end
+
+  return buf;
+}
+
+//---------------------------------------------------------------------
+
 #ifdef SIMPLE_MAN2HTML
 void output_real(const char *insert)
 {
   std::cout << insert;
 }
 
+//---------------------------------------------------------------------
+
 char *read_man_page(const char *filename)
 {
-  char *man_buf = NULL;
+  QIODevice *fd = KFilterDev::deviceForFile(filename);
 
-  FILE *man_stream = NULL;
-  struct stat stbuf;
-  size_t buf_size;
-  if (stat(filename, &stbuf) == -1)
+  if ( !fd || !fd->open(QIODevice::ReadOnly) )
   {
-    std::cerr << "read_man_page: can not find " << filename << std::endl;
-    return NULL;
+    std::cerr << "read_man_page: can not open " << filename << std::endl;
+    return 0;
   }
-  if (!S_ISREG(stbuf.st_mode))
-  {
-    std::cerr << "read_man_page: no file " << filename << std::endl;
-    return NULL;
-  }
-  buf_size = stbuf.st_size;
-  man_buf = new char[buf_size + 5];
-  man_stream = fopen(filename, "r");
-  if (man_stream)
-  {
-    man_buf[0] = '\n';
-    if (fread(man_buf + 1, 1, buf_size, man_stream) == buf_size)
-    {
-      man_buf[buf_size] = '\n';
-      man_buf[buf_size + 1] = man_buf[buf_size + 2] = '\0';
-    }
-    else
-    {
-      delete [] man_buf;
-      man_buf = NULL;
-    }
-    fclose(man_stream);
-  }
-  return man_buf;
+
+  QDir dir(QFileInfo(QFile::decodeName(filename)).dir());
+  dir.cdUp();
+  char *data = manPageToUtf8(fd->readAll(), QFile::encodeName(dir.dirName()));
+
+  fd->close();
+  delete fd;
+
+  return data;
 }
+
+//---------------------------------------------------------------------
 
 #ifndef KIO_MAN_TEST
 int main(int argc, char **argv)
