@@ -54,18 +54,18 @@ nepomukshell=nepomukshell|Misc
 metadataextractor=nepomuk|general
 
 #KDE Plasma Desktop (Plasma & KRunner)
-plasma-desktop=plasma|general
-plasma-mid=plasma|general
-plasma-overlay=plasma|general
-plasma2jolie=plasma|general
-plasmagik=plasma|general
-plasmapkg=plasma|general
-knotificationareaitemtest=plasma|widget-systemtray
-knotificationicontest=plasma|widget-systemtray
-lancelot=plasma|widget-lancelot
-plasma-netbook=plasma|plasma-netbook
+plasma-desktop=plasma4|general
+plasma-mid=plasma4|general
+plasma-overlay=plasma4|general
+plasma2jolie=plasma4|general
+plasmagik=plasma4|general
+plasmapkg=plasma4|general
+knotificationareaitemtest=plasma4|widget-systemtray
+knotificationicontest=plasma4|widget-systemtray
+lancelot=plasma4|widget-lancelot
+plasma-netbook=plasma4|plasma-netbook
 kactivitymanagerd=kactivities|general
-plasma-windowed=plasma|general
+plasma-windowed=plasma4|general
 plasma-device=Active|General
 
 #KDE Plasma SDK (Plasmate)
