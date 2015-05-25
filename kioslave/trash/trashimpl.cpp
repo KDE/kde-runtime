@@ -131,25 +131,32 @@ int TrashImpl::testDir( const QString &_name ) const
   return 0; // success
 }
 
-bool TrashImpl::init()
+void TrashImpl::deleteEmptyTrashInfraStructure()
 {
-    if ( m_initStatus == InitOK )
-        return true;
-    if ( m_initStatus == InitError )
-        return false;
-
-    // Check the trash directory and its info and files subdirs
-    // see also kdesktop/init.cc for first time initialization
-    m_initStatus = InitError;
-    // $XDG_DATA_HOME/Trash, i.e. ~/.local/share/Trash by default.
-    const QString xdgDataDir = KGlobal::dirs()->localxdgdatadir();
-    if ( !KStandardDirs::makeDir( xdgDataDir, 0700 ) ) {
-        kWarning() << "failed to create " << xdgDataDir ;
-        return false;
+#ifdef Q_OS_MAC
+    // For each known trash directory...
+    if ( !m_trashDirectoriesScanned ) {
+        scanTrashDirectories();
     }
+    TrashDirMap::const_iterator it = m_trashDirectories.constBegin();
+    for ( ; it != m_trashDirectories.constEnd() ; ++it ) {
+        const QString trashPath = it.value();
+        QString infoPath = trashPath + QString::fromLatin1("/info");
 
-    const QString trashDir = xdgDataDir + QString::fromLatin1("Trash");
+        kDebug() << "empty Trash" << trashPath << "; removing infrastructure";
+        synchronousDel(infoPath, false, true);
+        synchronousDel(trashPath + QString::fromLatin1("/files"), false, true);
+        if ( trashPath.endsWith(QString::fromLatin1("/KDE.trash")) ) {
+            synchronousDel(trashPath, false, true);
+        }
+    }
+#endif
+}
+
+bool TrashImpl::createTrashInfraStructure(int trashId, const QString &path)
+{
     int err;
+    QString trashDir = (path.isEmpty())? trashDirectoryPath(trashId) : path;
     if ( ( err = testDir( trashDir ) ) ) {
         error( err, trashDir );
         return false;
@@ -162,6 +169,41 @@ bool TrashImpl::init()
         error( err, trashDir + QString::fromLatin1("/files") );
         return false;
     }
+    return true;
+}
+
+bool TrashImpl::init()
+{
+    if ( m_initStatus == InitOK )
+        return true;
+    if ( m_initStatus == InitError )
+        return false;
+
+    // Check the trash directory and its info and files subdirs
+    // see also kdesktop/init.cc for first time initialization
+    m_initStatus = InitError;
+#ifndef Q_OS_MAC
+    // $XDG_DATA_HOME/Trash, i.e. ~/.local/share/Trash by default.
+    const QString xdgDataDir = KGlobal::dirs()->localxdgdatadir();
+    if ( !KStandardDirs::makeDir( xdgDataDir, 0700 ) ) {
+        kWarning() << "failed to create " << xdgDataDir ;
+        return false;
+    }
+
+    const QString trashDir = xdgDataDir + QString::fromLatin1("Trash");
+    if (!createTrashInfraStructure(0, trashDir)) {
+        return false;
+    }
+#else
+    // we DO NOT create ~/.Trash on OS X, that's the operating system's privilege
+    QString trashDir = QDir::homePath() + QString::fromLatin1("/.Trash");
+    if (!QFileInfo(trashDir).isDir()) {
+        error( KIO::ERR_DOES_NOT_EXIST, trashDir );
+        return false;
+    }
+    trashDir += QString::fromLatin1("/KDE.trash");
+    // we don't have to call createTrashInfraStructure() here because it'll be called when needed.
+#endif
     m_trashDirectories.insert( 0, trashDir );
     m_initStatus = InitOK;
     kDebug() << "initialization OK, home trash dir: " << trashDir;
@@ -245,6 +287,9 @@ bool TrashImpl::createInfo( const QString& origPath, int& trashId, QString& file
     const QString origFileName = url.fileName();
 
     // Make destination file in info/
+#ifdef Q_OS_MAC
+    createTrashInfraStructure(trashId);
+#endif
     url.setPath( infoPath( trashId, origFileName ) ); // we first try with origFileName
     KUrl baseDirectory;
     baseDirectory.setPath( url.directory() );
@@ -349,6 +394,9 @@ QString TrashImpl::filesPath( int trashId, const QString& fileId ) const
 
 bool TrashImpl::deleteInfo( int trashId, const QString& fileId )
 {
+#ifdef Q_OS_MAC
+    createTrashInfraStructure(trashId);
+#endif
     bool ok = QFile::remove( infoPath( trashId, fileId ) );
     if ( ok )
         fileRemoved();
@@ -366,6 +414,9 @@ bool TrashImpl::moveToTrash( const QString& origPath, int trashId, const QString
     TrashSizeCache trashSize( trashDirectoryPath( trashId ) );
     trashSize.initialize();
 
+#ifdef Q_OS_MAC
+    createTrashInfraStructure(trashId);
+#endif
     const QString dest = filesPath( trashId, fileId );
     if ( !move( origPath, dest ) ) {
         // Maybe the move failed due to no permissions to delete source.
@@ -445,6 +496,9 @@ bool TrashImpl::copyToTrash( const QString& origPath, int trashId, const QString
     TrashSizeCache trashSize( trashDirectoryPath( trashId ) );
     trashSize.initialize();
 
+#ifdef Q_OS_MAC
+    createTrashInfraStructure(trashId);
+#endif
     const QString dest = filesPath( trashId, fileId );
     if ( !copy( origPath, dest ) )
         return false;
@@ -528,6 +582,10 @@ bool TrashImplKDE_mkdir( int trashId, const QString& fileId, int permissions )
 
 bool TrashImpl::del( int trashId, const QString& fileId )
 {
+#ifdef Q_OS_MAC
+    createTrashInfraStructure(trashId);
+#endif
+
     QString info = infoPath(trashId, fileId);
     QString file = filesPath(trashId, fileId);
 
@@ -791,6 +849,9 @@ void TrashImpl::fileAdded()
 void TrashImpl::fileRemoved()
 {
     if ( isEmpty() ) {
+#ifdef Q_OS_MAC
+        deleteEmptyTrashInfraStructure();
+#endif
         KConfigGroup group = m_config.group( "Status" );
         group.writeEntry( "Empty", true );
         m_config.sync();
@@ -800,6 +861,51 @@ void TrashImpl::fileRemoved()
     // which will be done by the job soon after this.
 }
 
+#ifdef Q_OS_MAC
+#include <CoreFoundation/CoreFoundation.h>
+#include <DiskArbitration/DiskArbitration.h>
+#include <sys/param.h>
+#include <sys/mount.h>
+static int idForMountPoint(const QString &mountPoint)
+{
+    DADiskRef disk;
+    CFDictionaryRef descDict;
+    DASessionRef session = DASessionCreate(NULL);
+    int devId = -1;
+    if (session) {
+        QByteArray mp = QFile::encodeName(mountPoint);
+        struct statfs statFS;
+        statfs(mp.constData(), &statFS);
+        disk = DADiskCreateFromBSDName(kCFAllocatorDefault, session, statFS.f_mntfromname);
+        if (disk) {
+            descDict = DADiskCopyDescription(disk);
+            if (descDict) {
+                CFNumberRef cfMajor = (CFNumberRef)CFDictionaryGetValue(descDict, kDADiskDescriptionMediaBSDMajorKey);
+                CFNumberRef cfMinor = (CFNumberRef)CFDictionaryGetValue(descDict, kDADiskDescriptionMediaBSDMinorKey);
+                int major, minor;
+                if ( CFNumberGetValue(cfMajor, kCFNumberIntType, &major) && CFNumberGetValue(cfMinor, kCFNumberIntType, &minor) ) {
+                    kDebug() << "major=" << major << " minor=" << minor;
+                    devId = 1000 * major + minor;
+                }
+                CFRelease(cfMajor);
+                CFRelease(cfMinor);
+            }
+            else {
+                kDebug() << "couldn't get DADiskCopyDescription from" << disk;
+            }
+            CFRelease(disk);
+        }
+        else {
+            kDebug() << "DADiskCreateFromBSDName failed on statfs from" << mp;
+        }
+        CFRelease(session);
+    }
+    else {
+        kDebug() << "couldn't create DASession";
+    }
+    return devId;
+}
+#else
 static int idForDevice(const Solid::Device& device)
 {
     const Solid::Block* block = device.as<Solid::Block>();
@@ -811,6 +917,7 @@ static int idForDevice(const Solid::Device& device)
         return -1;
     }
 }
+#endif
 
 int TrashImpl::findTrashDirectory( const QString& origPath )
 {
@@ -829,8 +936,10 @@ int TrashImpl::findTrashDirectory( const QString& origPath )
     QString mountPoint = mp->mountPoint();
     const QString trashDir = trashForMountPoint( mountPoint, true );
     kDebug() << "mountPoint=" << mountPoint << " trashDir=" << trashDir;
+#ifndef Q_OS_MAC
     if ( trashDir.isEmpty() )
         return 0; // no trash available on partition
+#endif
     int id = idForTrashDirectory( trashDir );
     if ( id > -1 ) {
         kDebug() << " known with id " << id;
@@ -848,6 +957,9 @@ int TrashImpl::findTrashDirectory( const QString& origPath )
     return m_lastId;
 #endif
 
+#ifdef Q_OS_MAC
+    id = idForMountPoint(mountPoint);
+#else
     const QString query = QString::fromLatin1("[StorageAccess.accessible == true AND StorageAccess.filePath == '")+mountPoint+QString::fromLatin1("']");
     //kDebug() << "doing solid query:" << query;
     const QList<Solid::Device> lst = Solid::Device::listFromQuery(query);
@@ -859,6 +971,7 @@ int TrashImpl::findTrashDirectory( const QString& origPath )
 
     // new trash dir found, register it
     id = idForDevice( device );
+#endif
     if (id == -1) {
         return 0;
     }
@@ -882,7 +995,11 @@ void TrashImpl::scanTrashDirectories() const
             int trashId = idForTrashDirectory( trashDir );
             if ( trashId == -1 ) {
                 // new trash dir found, register it
+#ifdef Q_OS_MAC
+                trashId = idForMountPoint(topdir);
+#else
                 trashId = idForDevice( *it );
+#endif
                 if (trashId == -1) {
                     continue;
                 }
@@ -915,7 +1032,11 @@ QString TrashImpl::trashForMountPoint( const QString& topdir, bool createIfNeede
 {
     // (1) Administrator-created $topdir/.Trash directory
 
+#ifndef Q_OS_MAC
     const QString rootTrashDir = topdir + QString::fromLatin1("/.Trash");
+#else
+    const QString rootTrashDir = topdir + QString::fromLatin1("/.Trashes");
+#endif
     const QByteArray rootTrashDir_c = QFile::encodeName( rootTrashDir );
     // Can't use QFileInfo here since we need to test for the sticky bit
     uid_t uid = getuid();
@@ -927,18 +1048,22 @@ QString TrashImpl::trashForMountPoint( const QString& topdir, bool createIfNeede
              && ((buff.st_mode & requiredBits) == requiredBits)
              && (::access(rootTrashDir_c, W_OK) == 0) // must be user-writable
             ) {
-            const QString trashDir = rootTrashDir + QLatin1Char('/') + QString::number( uid );
+            QString trashDir = rootTrashDir + QLatin1Char('/') + QString::number( uid );
             const QByteArray trashDir_c = QFile::encodeName( trashDir );
             if ( KDE_lstat( trashDir_c, &buff ) == 0 ) {
                 if ( (buff.st_uid == uid) // must be owned by user
                      && (S_ISDIR(buff.st_mode)) // must be a dir
                      && (!S_ISLNK(buff.st_mode)) // not a symlink
                      && (buff.st_mode & 0777) == 0700 ) { // rwx for user
+#ifdef Q_OS_MAC
+                    trashDir += QString::fromLatin1("/KDE.trash");
+#endif
                     return trashDir;
                 }
                 kDebug() << "Directory " << trashDir << " exists but didn't pass the security checks, can't use it";
             }
             else if ( createIfNeeded && initTrashDirectory( trashDir_c ) ) {
+                kDebug() << "trashForMountPoint creating trash for mp=" << topdir << "->" << trashDir;
                 return trashDir;
             }
         } else {
@@ -946,6 +1071,7 @@ QString TrashImpl::trashForMountPoint( const QString& topdir, bool createIfNeede
         }
     }
 
+#ifndef Q_OS_MAC
     // (2) $topdir/.Trash-$uid
     const QString trashDir = topdir + QString::fromLatin1("/.Trash-") + QString::number( uid );
     const QByteArray trashDir_c = QFile::encodeName( trashDir );
@@ -966,6 +1092,8 @@ QString TrashImpl::trashForMountPoint( const QString& topdir, bool createIfNeede
     if ( createIfNeeded && initTrashDirectory( trashDir_c ) ) {
         return trashDir;
     }
+#endif
+    kDebug() << "trashForMountPoint for" << topdir << "returns empty-handed";
     return QString();
 }
 
@@ -1121,6 +1249,9 @@ bool TrashImpl::adaptTrashSize( const QString& origPath, int trashId )
         // calculate size of the files to be put into the trash
         qulonglong additionalSize = DiscSpaceUtil::sizeOfPath( origPath );
 
+#ifdef Q_OS_MAC
+        createTrashInfraStructure(trashId);
+#endif
         const TrashSizeCache trashSize( trashPath );
         DiscSpaceUtil util(trashPath + QString::fromLatin1("/files/"));
         if ( util.usage( trashSize.size() + additionalSize ) >= percent ) {

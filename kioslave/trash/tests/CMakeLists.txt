@@ -14,7 +14,12 @@ set(testtrash_SRCS
 
 kde4_add_unit_test(testtrash ${testtrash_SRCS})
 
-target_link_libraries(testtrash ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTTEST_LIBRARY})
+set(kio_trash_LIBS ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS})
+
+target_link_libraries(testtrash ${kio_trash_LIBS} ${QT_QTTEST_LIBRARY})
+if(APPLE)
+    target_link_libraries(testtrash "-framework DiskArbitration")
+endif(APPLE)
 
 ### next target ###
 

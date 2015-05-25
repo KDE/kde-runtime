@@ -156,6 +156,14 @@ private Q_SLOTS:
     void jobFinished(KJob *job);
 
 private:
+    // delete the files and info subdirectories from all known trash directories
+    // (supposed to be empty!) to make sure OS X sees the trash as empty too.
+    // Stub except on OS X.
+    void deleteEmptyTrashInfraStructure();
+    // create the trash infrastructure; also called
+    // to recreate it on OS X.
+    bool createTrashInfraStructure(int trashId, const QString &path = QString());
+
     /// Last error code stored in class to simplify API.
     /// Note that this means almost no method can be const.
     int m_lastErrorCode;

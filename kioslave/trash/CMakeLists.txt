@@ -14,11 +14,16 @@ else(WIN32)
   set(kio_trash_PART_SRCS kio_trash.cpp ${trashcommon_PART_SRCS})
 endif(WIN32)
 
+set(kio_trash_LIBS ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS})
+if(APPLE)
+    set(kio_trash_LIBS ${kio_trash_LIBS} "-framework DiskArbitration")
+endif(APPLE)
+
 if(NOT MINGW)
 kde4_add_plugin(kio_trash ${kio_trash_PART_SRCS})
 
 
-target_link_libraries(kio_trash  ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS})
+target_link_libraries(kio_trash  ${kio_trash_LIBS})
 
 install(TARGETS kio_trash  DESTINATION ${PLUGIN_INSTALL_DIR} )
 endif(NOT MINGW)
@@ -39,7 +44,7 @@ install(TARGETS ktrash ${INSTALL_TARGETS_DEFAULT_ARGS})
 if(NOT WIN32)
     set(kcm_trash_PART_SRCS kcmtrash.cpp ${trashcommon_PART_SRCS})
     kde4_add_plugin(kcm_trash ${kcm_trash_PART_SRCS})
-    target_link_libraries(kcm_trash  ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS})
+    target_link_libraries(kcm_trash  ${KDE4_KDEUI_LIBS} ${kio_trash_LIBS})
 
     install(TARGETS kcm_trash DESTINATION ${PLUGIN_INSTALL_DIR})
 endif(NOT WIN32)
