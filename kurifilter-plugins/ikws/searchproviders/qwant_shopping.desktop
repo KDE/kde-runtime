@@ -31,6 +31,7 @@ Name[sr@ijekavian]=Куповина преко Кванта
 Name[sr@ijekavianlatin]=Kupovina preko Qwanta
 Name[sr@latin]=Kupovina preko Qwanta
 Name[sv]=Qwant-shopping
+Name[tr]=Qwant Alışveriş
 Name[uk]=Qwant торгівля
 Name[x-test]=xxQwant Shoppingxx
 Name[zh_CN]=Qwant 购物
@@ -66,6 +67,7 @@ Query[sr@ijekavian]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopp
 Query[sr@ijekavianlatin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[sr@latin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
+Query[tr]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[x-test]=xxhttps://www.qwant.com/single?q=\\{@}&client=kde&source=shoppingxx
 Query[zh_CN]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
