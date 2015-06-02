@@ -14,6 +14,7 @@ Name[fi]=Qwant-kuvahaku
 Name[fr]=Images « Qwant »
 Name[gl]=Qwant Images
 Name[hu]=Qwant képek
+Name[ia]=Qwant Images
 Name[id]=Qwant Gambar
 Name[is]=Qwant myndir
 Name[it]=Immagini di Qwant
@@ -50,6 +51,7 @@ Query[fi]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[fr]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[gl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[hu]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[ia]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[id]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[is]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[it]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
