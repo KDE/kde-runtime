@@ -21,6 +21,7 @@ Name[it]=Qwant
 Name[ko]=Qwant
 Name[nb]=Qwant
 Name[nl]=Qwant
+Name[nn]=Qwant
 Name[pa]=ਕਿਊਵਾਂਟ
 Name[pl]=Qwant
 Name[pt]=Qwant
@@ -58,6 +59,7 @@ Query[it]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
 Query[ko]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
 Query[nb]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
 Query[nl]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
+Query[nn]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
 Query[pa]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
 Query[pl]=https://www.qwant.com/?q=\\{@}&client=kde&source=web
 Query[pt]=https://www.qwant.com/?q=\\{@}&client=kde&source=web

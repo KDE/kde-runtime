@@ -21,6 +21,7 @@ Name[it]=Notizie di Qwant
 Name[ko]=Qwant 뉴스
 Name[nb]=Qwant nyheter
 Name[nl]=Qwant nieuws
+Name[nn]=Qwant-nyheiter
 Name[pa]=ਕਿਊਵਾਂਟ ਖ਼ਬਰਾਂ
 Name[pl]=Qwant - aktualności
 Name[pt]=Notícias do Qwant
@@ -58,6 +59,7 @@ Query[it]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[ko]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[nb]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[nn]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[pa]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[pl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[pt]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news

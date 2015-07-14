@@ -21,6 +21,7 @@ Name[it]=Acquisti di Qwant
 Name[ko]=Qwant 쇼핑
 Name[nb]=Qwant shopping
 Name[nl]=Qwant winkelen
+Name[nn]=Qwant-handling
 Name[pa]=ਕਿਊਵਾਂਟ ਖਰੀਦਦਾਰੀ
 Name[pl]=Qwant - zakupy
 Name[pt]=Compras do Qwant
@@ -58,6 +59,7 @@ Query[it]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[ko]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[nb]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
+Query[nn]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[pa]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[pl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping
 Query[pt]=https://www.qwant.com/single?q=\\{@}&client=kde&source=shopping

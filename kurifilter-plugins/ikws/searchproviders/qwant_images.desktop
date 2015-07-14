@@ -21,6 +21,7 @@ Name[it]=Immagini di Qwant
 Name[ko]=Qwant 그림
 Name[nb]=Qwant-bilder
 Name[nl]=Qwant afbeeldingen
+Name[nn]=Qwant-bilete
 Name[pa]=ਕਿਊਵਾਂਟ ਚਿੱਤਰ
 Name[pl]=Qwant - obrazy
 Name[pt]=Imagens do Qwant
@@ -58,6 +59,7 @@ Query[it]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[ko]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[nb]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
+Query[nn]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[pa]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[pl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[pt]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
