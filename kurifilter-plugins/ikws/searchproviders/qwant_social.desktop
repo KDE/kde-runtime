@@ -19,6 +19,7 @@ Name[it]=Qwant Sociale
 Name[ko]=Qwant 소셜
 Name[nb]=Qwant sosialt
 Name[nl]=Qwant sociaal
+Name[nn]=Qwant sosialt
 Name[pa]=ਕਿਊਵਾਂਟ ਸਮਾਜਿਕ
 Name[pl]=Qwant - społeczność
 Name[pt]=Qwant Social
@@ -55,6 +56,7 @@ Query[it]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[ko]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[nb]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[nl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
+Query[nn]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[pa]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[pl]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[pt]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
