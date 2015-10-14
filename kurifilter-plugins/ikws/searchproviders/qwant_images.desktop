@@ -35,7 +35,6 @@ Name[sr@ijekavian]=Слике преко Кванта
 Name[sr@ijekavianlatin]=Slike preko Qwanta
 Name[sr@latin]=Slike preko Qwanta
 Name[sv]=Qwant-bilder
-Name[tr]=Qwant Resimler
 Name[uk]=Зображення Qwant
 Name[x-test]=xxQwant Imagesxx
 Name[zh_CN]=Qwant 图像
@@ -75,7 +74,6 @@ Query[sr@ijekavian]=https://www.qwant.com/single?q=\\{@}&client=kde&source=image
 Query[sr@ijekavianlatin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[sr@latin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
-Query[tr]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images
 Query[x-test]=xxhttps://www.qwant.com/single?q=\\{@}&client=kde&source=imagesxx
 Query[zh_CN]=https://www.qwant.com/single?q=\\{@}&client=kde&source=images

@@ -35,7 +35,6 @@ Name[sr@ijekavian]=Друштвено преко Кванта
 Name[sr@ijekavianlatin]=Društveno preko Qwanta
 Name[sr@latin]=Društveno preko Qwanta
 Name[sv]=Qwant-social
-Name[tr]=Qwant Sosyal
 Name[uk]=Соціальне Qwant
 Name[x-test]=xxQwant Socialxx
 Name[zh_CN]=Qwant 社交
@@ -75,7 +74,6 @@ Query[sr@ijekavian]=https://www.qwant.com/single?q=\\{@}&client=kde&source=socia
 Query[sr@ijekavianlatin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[sr@latin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
-Query[tr]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
 Query[x-test]=xxhttps://www.qwant.com/single?q=\\{@}&client=kde&source=socialxx
 Query[zh_CN]=https://www.qwant.com/single?q=\\{@}&client=kde&source=social
