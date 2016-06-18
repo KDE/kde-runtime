@@ -23,7 +23,7 @@ if (HAVE_XDR_U_LONGLONG_T)
     add_definitions(-DHAVE_XDR_U_LONGLONG_T)
 endif (HAVE_XDR_U_LONGLONG_T)
 
- add_definitions(-DTRANSLATION_DOMAIN=\"kio_nfs\")
+ add_definitions(-DTRANSLATION_DOMAIN="kio_nfs")
 
 set(kio_nfs_PART_SRCS kio_nfs.cpp nfsv2.cpp nfsv3.cpp rpc_nfs3_prot_xdr.c rpc_nfs2_prot_xdr.c )
 
