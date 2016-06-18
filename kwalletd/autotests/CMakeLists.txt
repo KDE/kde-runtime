@@ -1,4 +1,4 @@
-add_definitions(-DTEST_DATA="\\\"${CMAKE_CURRENT_SOURCE_DIR}/\\\"")
+add_definitions(-DTEST_DATA="${CMAKE_CURRENT_SOURCE_DIR}/")
 
 set(testname testpamopen)
 include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
