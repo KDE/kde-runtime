@@ -174,8 +174,10 @@ QVariant WebPHandler::option(ImageOption option) const
 
 void WebPHandler::setOption(ImageOption option, const QVariant &value)
 {
-    if (option == Quality)
-        quality = qBound(0, value.toInt(), 100);
+    if (option == Quality) {
+        if ( value.toInt() >= 0 )
+            quality = qBound(0, value.toInt(), 100);
+    }
 }
 
 //---------------------------------------------------------------------
