@@ -116,7 +116,7 @@ bool WebPHandler::write(const QImage &image)
     if ( image.hasAlphaChannel() ) {
         size = WebPEncodeRGBA(imageData, image.width(), image.height(), image.width() * 4, quality, &output);
     } else {
-        size = WebPEncodeRGB(imageData, image.width(), image.height(), image.width() * 4, quality, &output);
+        size = WebPEncodeRGB(imageData, image.width(), image.height(), image.width() * 3, quality, &output);
     }
     delete [] imageData;
 
