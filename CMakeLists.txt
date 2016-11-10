@@ -109,7 +109,7 @@ add_subdirectory(kimgio)
 macro_optional_add_subdirectory(renamedlgplugins)
 
 # UI Helper applications
-add_subdirectory(drkonqi)
+macro_optional_add_subdirectory(drkonqi)
 add_subdirectory(kcmshell)
 add_subdirectory(kdebugdialog)
 macro_optional_add_subdirectory(khelpcenter)
