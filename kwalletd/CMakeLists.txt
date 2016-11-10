@@ -17,6 +17,9 @@ endif((GPGME_FOUND AND QGPGME_FOUND) OR Gpgmepp_FOUND)
 if (GPGME_FOUND AND QGPGME_FOUND)
     include_directories(${QGPGME_INCLUDE_DIR})
 endif (GPGME_FOUND AND QGPGME_FOUND)
+if (Gpgmepp_FOUND)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+endif (Gpgmepp_FOUND)
 
 ########### build backends #########
 add_subdirectory(backend)
