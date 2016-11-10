@@ -40,6 +40,7 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <gpgme.h>
+#include <boost/shared_ptr.hpp>
 #endif
 
 class PageIntro : public QWizardPage

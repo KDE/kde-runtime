@@ -33,6 +33,7 @@
 #include <gpgme++/data.h>
 #include <gpgme++/encryptionresult.h>
 #include <gpgme++/decryptionresult.h>
+#include <boost/shared_ptr.hpp>
 #endif
 #include "backendpersisthandler.h"
 #include "kwalletbackend.h"
