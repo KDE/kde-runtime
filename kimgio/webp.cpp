@@ -116,7 +116,7 @@ bool WebPHandler::write(const QImage &image)
     if ( image.hasAlphaChannel() ) {
         size = WebPEncodeRGBA(imageData, image.width(), image.height(), image.width() * 4, quality, &output);
     } else {
-        size = WebPEncodeRGB(imageData, image.width(), image.height(), image.width() * 4, quality, &output);
+        size = WebPEncodeRGB(imageData, image.width(), image.height(), image.width() * 3, quality, &output);
     }
     delete [] imageData;
 
@@ -174,8 +174,10 @@ QVariant WebPHandler::option(ImageOption option) const
 
 void WebPHandler::setOption(ImageOption option, const QVariant &value)
 {
-    if (option == Quality)
-        quality = qBound(0, value.toInt(), 100);
+    if (option == Quality) {
+        if ( value.toInt() >= 0 )
+            quality = qBound(0, value.toInt(), 100);
+    }
 }
 
 //---------------------------------------------------------------------
