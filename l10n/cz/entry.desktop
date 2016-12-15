@@ -1,5 +1,8 @@
 [KCM Locale]
 Name=Czechia
+Name[ca]=Txèquia
+Name[sv]=Tjeckien
+Name[x-test]=xxCzechiaxx
 Region=centraleurope
 Languages=cs
 DecimalSymbol=,
