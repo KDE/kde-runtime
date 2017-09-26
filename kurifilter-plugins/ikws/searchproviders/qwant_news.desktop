@@ -36,6 +36,7 @@ Name[sr@ijekavian]=Вести преко Кванта
 Name[sr@ijekavianlatin]=Vesti preko Qwanta
 Name[sr@latin]=Vesti preko Qwanta
 Name[sv]=Qwant-nyheter
+Name[tr]=Qwant Haberler
 Name[uk]=Новини Qwant
 Name[x-test]=xxQwant Newsxx
 Name[zh_CN]=Qwant 新闻
@@ -76,6 +77,7 @@ Query[sr@ijekavian]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[sr@ijekavianlatin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[sr@latin]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[sv]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
+Query[tr]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[uk]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
 Query[x-test]=xxhttps://www.qwant.com/single?q=\\{@}&client=kde&source=newsxx
 Query[zh_CN]=https://www.qwant.com/single?q=\\{@}&client=kde&source=news
